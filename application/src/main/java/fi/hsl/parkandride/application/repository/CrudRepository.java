@@ -11,5 +11,5 @@ public interface CrudRepository<T extends IdentifiedDomainObject> {
 
     void delete(Long id);
 
-    void save(T parkingArea);
+    T save(T parkingArea);
 }

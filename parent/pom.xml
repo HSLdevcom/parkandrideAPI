@@ -22,7 +22,7 @@
 	</properties>
 
 	<dependencyManagement>
-    <dependencies>
+		<dependencies>
 			<dependency>
 				<groupId>fi.hsl.parkandride</groupId>
 				<artifactId>parkandride-application</artifactId>
@@ -54,6 +54,11 @@
 			<artifactId>spring-boot-starter-jetty</artifactId>
 		</dependency>
 
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+		</dependency>
 		<dependency>
 			<groupId>org.assertj</groupId>
 			<artifactId>assertj-core</artifactId>

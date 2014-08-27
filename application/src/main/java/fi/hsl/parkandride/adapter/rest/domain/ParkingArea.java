@@ -1,6 +1,6 @@
 package fi.hsl.parkandride.adapter.rest.domain;
 
-import fi.hsl.parkandride.application.domain.MultiLingualString;
+import fi.hsl.parkandride.core.domain.MultiLingualString;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -25,14 +25,14 @@ public class ParkingArea {
         this.name = name;
     }
 
-    public fi.hsl.parkandride.application.domain.ParkingArea toApplicationDomain() {
-        fi.hsl.parkandride.application.domain.ParkingArea applicationDomain = new fi.hsl.parkandride.application.domain.ParkingArea();
+    public fi.hsl.parkandride.core.domain.ParkingArea toApplicationDomain() {
+        fi.hsl.parkandride.core.domain.ParkingArea applicationDomain = new fi.hsl.parkandride.core.domain.ParkingArea();
         applicationDomain.setId(parkingAreaId);
         applicationDomain.setName(getName());
         return applicationDomain;
     }
 
-    public static ParkingArea fromApplicationDomain(fi.hsl.parkandride.application.domain.ParkingArea applicationDomain) {
+    public static ParkingArea fromApplicationDomain(fi.hsl.parkandride.core.domain.ParkingArea applicationDomain) {
         ParkingArea restDomain = new ParkingArea();
         restDomain.setParkingAreaId(applicationDomain.getId());
         restDomain.setName(applicationDomain.getName());

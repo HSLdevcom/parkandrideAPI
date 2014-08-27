@@ -1,4 +1,4 @@
-package fi.hsl.parkandride.application.domain;
+package fi.hsl.parkandride.core.domain;
 
 public class MultiLingualString {
     public final String fi;

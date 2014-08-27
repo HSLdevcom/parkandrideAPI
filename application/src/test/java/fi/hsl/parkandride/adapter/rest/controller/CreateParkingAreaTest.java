@@ -19,8 +19,8 @@ import org.springframework.http.converter.json.MappingJackson2HttpMessageConvert
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import fi.hsl.parkandride.application.port.event.parkingarea.CreateParkingAreaEvent;
-import fi.hsl.parkandride.application.service.ParkingAreaService;
+import fi.hsl.parkandride.core.port.event.parkingarea.CreateParkingAreaEvent;
+import fi.hsl.parkandride.core.service.ParkingAreaService;
 import fi.hsl.parkandride.adapter.rest.controller.fixture.RestDataFixture;
 import fi.hsl.parkandride.adapter.rest.controller.fixture.RestEventFixture;
 

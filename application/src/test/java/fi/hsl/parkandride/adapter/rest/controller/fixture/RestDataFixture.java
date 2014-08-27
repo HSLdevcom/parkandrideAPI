@@ -1,6 +1,6 @@
 package fi.hsl.parkandride.adapter.rest.controller.fixture;
 
-import fi.hsl.parkandride.application.domain.ParkingArea;
+import fi.hsl.parkandride.core.domain.ParkingArea;
 
 public abstract class RestDataFixture {
     public static ParkingArea customIdParkingArea(Long id) {

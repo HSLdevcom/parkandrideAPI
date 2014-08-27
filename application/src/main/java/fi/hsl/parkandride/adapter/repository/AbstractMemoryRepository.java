@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicLong;
 
-import fi.hsl.parkandride.application.domain.IdentifiedDomainObject;
+import fi.hsl.parkandride.core.domain.IdentifiedDomainObject;
 
 public class AbstractMemoryRepository<T extends IdentifiedDomainObject> {
     private Map<Long, T> domainObjects = Collections.emptyMap();

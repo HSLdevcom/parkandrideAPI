@@ -1,13 +1,9 @@
-package fi.hsl.parkandride.application.domain;
+package fi.hsl.parkandride.core.domain;
 
-import java.util.Collections;
-import java.util.List;
-
-public class ParkingArea implements IdentifiedDomainObject {
+public class ParkingFacility implements IdentifiedDomainObject {
     private Long id;
     private MultiLingualString name;
     private ParkingProperties properties;
-    private List<ParkingFacility> facilities = Collections.emptyList();
 
     @Override
     public Long getId() {
@@ -33,13 +29,5 @@ public class ParkingArea implements IdentifiedDomainObject {
 
     public void setProperties(ParkingProperties properties) {
         this.properties = properties;
-    }
-
-    public void setFacilities(List<ParkingFacility> facilities) {
-        this.facilities = Collections.unmodifiableList(facilities);
-    }
-
-    public List<ParkingFacility> getFacilities() {
-        return this.facilities;
     }
 }

@@ -1,4 +1,4 @@
-package fi.hsl.parkandride.application.domain;
+package fi.hsl.parkandride.core.domain;
 
 public interface IdentifiedDomainObject {
     Long getId();

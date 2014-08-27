@@ -10,9 +10,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import fi.hsl.parkandride.application.port.event.parkingarea.CreateParkingAreaEvent;
-import fi.hsl.parkandride.application.port.event.parkingarea.ParkingAreaCreatedEvent;
-import fi.hsl.parkandride.application.service.ParkingAreaService;
+import fi.hsl.parkandride.core.port.event.parkingarea.CreateParkingAreaEvent;
+import fi.hsl.parkandride.core.port.event.parkingarea.ParkingAreaCreatedEvent;
+import fi.hsl.parkandride.core.service.ParkingAreaService;
 import fi.hsl.parkandride.adapter.rest.domain.ParkingArea;
 
 @RestController

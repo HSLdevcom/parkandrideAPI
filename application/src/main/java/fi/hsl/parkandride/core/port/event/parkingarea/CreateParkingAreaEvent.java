@@ -1,6 +1,6 @@
-package fi.hsl.parkandride.application.port.event.parkingarea;
+package fi.hsl.parkandride.core.port.event.parkingarea;
 
-import fi.hsl.parkandride.application.domain.ParkingArea;
+import fi.hsl.parkandride.core.domain.ParkingArea;
 
 public class CreateParkingAreaEvent {
     public final ParkingArea parkingArea;

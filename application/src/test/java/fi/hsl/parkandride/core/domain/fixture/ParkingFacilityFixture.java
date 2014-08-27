@@ -1,10 +1,10 @@
-package fi.hsl.parkandride.application.domain.fixture;
+package fi.hsl.parkandride.core.domain.fixture;
 
 import java.util.Map;
 
-import fi.hsl.parkandride.application.domain.MultiLingualString;
-import fi.hsl.parkandride.application.domain.ParkingFacility;
-import fi.hsl.parkandride.application.domain.ParkingProperties;
+import fi.hsl.parkandride.core.domain.MultiLingualString;
+import fi.hsl.parkandride.core.domain.ParkingFacility;
+import fi.hsl.parkandride.core.domain.ParkingProperties;
 
 public class ParkingFacilityFixture {
     public interface ParkingFacilityId {

@@ -1,4 +1,4 @@
-package fi.hsl.parkandride.rest.controller;
+package fi.hsl.parkandride.adapter.rest.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -10,10 +10,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import fi.hsl.parkandride.application.event.parkingarea.CreateParkingAreaEvent;
-import fi.hsl.parkandride.application.event.parkingarea.ParkingAreaCreatedEvent;
+import fi.hsl.parkandride.application.port.event.parkingarea.CreateParkingAreaEvent;
+import fi.hsl.parkandride.application.port.event.parkingarea.ParkingAreaCreatedEvent;
 import fi.hsl.parkandride.application.service.ParkingAreaService;
-import fi.hsl.parkandride.rest.domain.ParkingArea;
+import fi.hsl.parkandride.adapter.rest.domain.ParkingArea;
 
 @RestController
 @RequestMapping("/parking-areas")

@@ -1,4 +1,4 @@
-package fi.hsl.parkandride.infrastructure.repository;
+package fi.hsl.parkandride.adapter.repository;
 
 import java.util.ArrayList;
 import java.util.Collection;

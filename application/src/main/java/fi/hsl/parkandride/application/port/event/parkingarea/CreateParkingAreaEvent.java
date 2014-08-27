@@ -1,4 +1,4 @@
-package fi.hsl.parkandride.application.event.parkingarea;
+package fi.hsl.parkandride.application.port.event.parkingarea;
 
 import fi.hsl.parkandride.application.domain.ParkingArea;
 

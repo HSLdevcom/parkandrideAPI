@@ -3,9 +3,9 @@ package fi.hsl.parkandride.application.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import fi.hsl.parkandride.application.event.parkingarea.CreateParkingAreaEvent;
-import fi.hsl.parkandride.application.event.parkingarea.ParkingAreaCreatedEvent;
-import fi.hsl.parkandride.application.repository.ParkingAreaRepository;
+import fi.hsl.parkandride.application.port.event.parkingarea.CreateParkingAreaEvent;
+import fi.hsl.parkandride.application.port.event.parkingarea.ParkingAreaCreatedEvent;
+import fi.hsl.parkandride.application.port.repository.ParkingAreaRepository;
 
 @Service
 public class ParkingAreaService {

@@ -1,4 +1,4 @@
-package fi.hsl.parkandride.rest.controller;
+package fi.hsl.parkandride.adapter.rest.controller;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
@@ -19,10 +19,10 @@ import org.springframework.http.converter.json.MappingJackson2HttpMessageConvert
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import fi.hsl.parkandride.application.event.parkingarea.CreateParkingAreaEvent;
+import fi.hsl.parkandride.application.port.event.parkingarea.CreateParkingAreaEvent;
 import fi.hsl.parkandride.application.service.ParkingAreaService;
-import fi.hsl.parkandride.rest.controller.fixture.RestDataFixture;
-import fi.hsl.parkandride.rest.controller.fixture.RestEventFixture;
+import fi.hsl.parkandride.adapter.rest.controller.fixture.RestDataFixture;
+import fi.hsl.parkandride.adapter.rest.controller.fixture.RestEventFixture;
 
 public class CreateParkingAreaTest {
     private MockMvc mockMvc;

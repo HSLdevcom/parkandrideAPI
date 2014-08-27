@@ -1,4 +1,4 @@
-package fi.hsl.parkandride.application.repository;
+package fi.hsl.parkandride.application.port.repository;
 
 import java.util.Collection;
 

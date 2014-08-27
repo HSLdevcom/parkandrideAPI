@@ -1,4 +1,4 @@
-package fi.hsl.parkandride.rest.domain;
+package fi.hsl.parkandride.adapter.rest.domain;
 
 import fi.hsl.parkandride.application.domain.MultiLingualString;
 

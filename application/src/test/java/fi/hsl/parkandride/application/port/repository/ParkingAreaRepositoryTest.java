@@ -1,4 +1,4 @@
-package fi.hsl.parkandride.application.repository;
+package fi.hsl.parkandride.application.port.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -7,7 +7,7 @@ import org.junit.Test;
 
 import fi.hsl.parkandride.application.domain.ParkingArea;
 import fi.hsl.parkandride.application.domain.fixture.ParkingAreaFixture;
-import fi.hsl.parkandride.infrastructure.repository.ParkingAreaMemoryRepository;
+import fi.hsl.parkandride.adapter.repository.ParkingAreaMemoryRepository;
 
 public class ParkingAreaRepositoryTest {
     private final ParkingAreaRepository parkingAreaRepository = new ParkingAreaMemoryRepository();

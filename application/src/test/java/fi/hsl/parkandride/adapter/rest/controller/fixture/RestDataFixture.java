@@ -1,4 +1,4 @@
-package fi.hsl.parkandride.rest.controller.fixture;
+package fi.hsl.parkandride.adapter.rest.controller.fixture;
 
 import fi.hsl.parkandride.application.domain.ParkingArea;
 

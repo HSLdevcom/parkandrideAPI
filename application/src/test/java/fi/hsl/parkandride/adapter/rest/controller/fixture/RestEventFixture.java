@@ -1,6 +1,6 @@
-package fi.hsl.parkandride.rest.controller.fixture;
+package fi.hsl.parkandride.adapter.rest.controller.fixture;
 
-import fi.hsl.parkandride.application.event.parkingarea.ParkingAreaCreatedEvent;
+import fi.hsl.parkandride.application.port.event.parkingarea.ParkingAreaCreatedEvent;
 
 public abstract class RestEventFixture {
     public static ParkingAreaCreatedEvent parkingAreaCreated(Long id) { return new ParkingAreaCreatedEvent(RestDataFixture.customIdParkingArea(id)); }

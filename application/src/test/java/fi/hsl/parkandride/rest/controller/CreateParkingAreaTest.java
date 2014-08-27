@@ -63,7 +63,7 @@ public class CreateParkingAreaTest {
     }
 
     @Test
-    public void location_header_is_present_in_request() throws Exception {
+    public void location_header_is_present_in_response() throws Exception {
         mockMvc.perform(
                 post("/parking-areas")
                         .content(RestDataFixture.defaultParkingAreaJSON())

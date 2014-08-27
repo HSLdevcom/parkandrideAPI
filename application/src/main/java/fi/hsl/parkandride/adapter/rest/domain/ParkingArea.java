@@ -1,13 +1,11 @@
 package fi.hsl.parkandride.adapter.rest.domain;
 
-import fi.hsl.parkandride.core.domain.MultiLingualString;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ParkingArea {
     private Long parkingAreaId;
-    private MultiLingualString name;
+    private MultiLingualString parkingAreaName;
 
     public String getParkingAreaId() {
         return String.valueOf(parkingAreaId);
@@ -17,25 +15,25 @@ public class ParkingArea {
         this.parkingAreaId = parkingAreaId;
     }
 
-    public MultiLingualString getName() {
-        return name;
+    public MultiLingualString getParkingAreaName() {
+        return parkingAreaName;
     }
 
-    public void setName(MultiLingualString name) {
-        this.name = name;
+    public void setParkingAreaName(MultiLingualString parkingAreaName) {
+        this.parkingAreaName = parkingAreaName;
     }
 
-    public fi.hsl.parkandride.core.domain.ParkingArea toApplicationDomain() {
-        fi.hsl.parkandride.core.domain.ParkingArea applicationDomain = new fi.hsl.parkandride.core.domain.ParkingArea();
-        applicationDomain.setId(parkingAreaId);
-        applicationDomain.setName(getName());
-        return applicationDomain;
+    public fi.hsl.parkandride.core.domain.ParkingArea toCoreDomain() {
+        fi.hsl.parkandride.core.domain.ParkingArea to = new fi.hsl.parkandride.core.domain.ParkingArea();
+        to.setId(parkingAreaId);
+        to.setName(parkingAreaName.toCoreDomain());
+        return to;
     }
 
-    public static ParkingArea fromApplicationDomain(fi.hsl.parkandride.core.domain.ParkingArea applicationDomain) {
-        ParkingArea restDomain = new ParkingArea();
-        restDomain.setParkingAreaId(applicationDomain.getId());
-        restDomain.setName(applicationDomain.getName());
-        return restDomain;
+    public static ParkingArea fromCoreDomain(fi.hsl.parkandride.core.domain.ParkingArea from) {
+        ParkingArea to = new ParkingArea();
+        to.setParkingAreaId(from.getId());
+        to.setParkingAreaName(MultiLingualString.fromCoreDomain(from.getName()));
+        return to;
     }
 }

@@ -23,8 +23,8 @@ public class ParkingAreaCommandController {
 
     @RequestMapping(method = RequestMethod.POST)
     public ResponseEntity<ParkingArea> createParkingArea(@RequestBody ParkingArea parkingArea, UriComponentsBuilder builder) {
-        ParkingAreaCreatedEvent e = parkingAreaService.createParkingArea(new CreateParkingAreaEvent(parkingArea.toApplicationDomain()));
-        ParkingArea newParkingArea = ParkingArea.fromApplicationDomain(e.parkingArea);
+        ParkingAreaCreatedEvent e = parkingAreaService.createParkingArea(new CreateParkingAreaEvent(parkingArea.toCoreDomain()));
+        ParkingArea newParkingArea = ParkingArea.fromCoreDomain(e.parkingArea);
 
         HttpHeaders headers = new HttpHeaders();
         headers.setLocation(builder.path("/parking-areas/{id}").buildAndExpand(newParkingArea.getParkingAreaId().toString()).toUri());

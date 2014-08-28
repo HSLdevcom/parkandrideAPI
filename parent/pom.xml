@@ -19,6 +19,7 @@
 		<java.version>1.8</java.version>
 
 		<assertj.version>1.6.1</assertj.version>
+		<guava.version>18.0</guava.version>
 		<json-path-assert.version>0.8.1</json-path-assert.version>
 	</properties>
 
@@ -28,6 +29,12 @@
 				<groupId>fi.hsl.parkandride</groupId>
 				<artifactId>parkandride-application</artifactId>
 				<version>${project.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>com.google.guava</groupId>
+				<artifactId>guava</artifactId>
+				<version>${guava.version}</version>
 			</dependency>
 
 			<dependency>

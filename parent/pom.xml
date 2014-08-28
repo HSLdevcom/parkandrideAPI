@@ -19,6 +19,7 @@
     <java.version>1.8</java.version>
 
     <assertj.version>1.6.1</assertj.version>
+    <guava.version>18.0</guava.version>
 
     <maven-plugin.coveralls.version>2.2.0</maven-plugin.coveralls.version>
     <maven-plugin.jacoco.version>0.7.1.201405082137</maven-plugin.jacoco.version>
@@ -65,6 +66,12 @@
         <groupId>fi.hsl.parkandride</groupId>
         <artifactId>parkandride-application</artifactId>
         <version>${project.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>com.google.guava</groupId>
+        <artifactId>guava</artifactId>
+        <version>${guava.version}</version>
       </dependency>
 
       <dependency>

@@ -13,6 +13,12 @@
 	<artifactId>parkandride-application</artifactId>
 	<packaging>jar</packaging>
 
+	<properties>
+		<frontend-maven-plugin.version>0.0.16</frontend-maven-plugin.version>
+		<frontend-maven-plugin.node.version>v0.10.31</frontend-maven-plugin.node.version>
+		<frontend-maven-plugin.npm.version>1.4.24</frontend-maven-plugin.npm.version>
+	</properties>
+
 	<dependencies>
 		<dependency>
 			<groupId>com.google.guava</groupId>
@@ -23,5 +29,71 @@
 			<artifactId>spring-data-commons</artifactId>
 		</dependency>
 	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+				<executions>
+					<execution>
+						<goals>
+							<goal>repackage</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>com.github.eirslett</groupId>
+				<artifactId>frontend-maven-plugin</artifactId>
+				<version>${frontend-maven-plugin.version}</version>
+				<configuration>
+					<workingDirectory>src/main/frontend</workingDirectory>
+				</configuration>
+				<executions>
+
+					<execution>
+						<id>install node and npm</id>
+						<goals>
+							<goal>install-node-and-npm</goal>
+						</goals>
+						<configuration>
+							<nodeVersion>${frontend-maven-plugin.node.version}</nodeVersion>
+							<npmVersion>${frontend-maven-plugin.npm.version}</npmVersion>
+						</configuration>
+					</execution>
+
+					<execution>
+						<id>npm install</id>
+						<goals>
+							<goal>npm</goal>
+						</goals>
+					</execution>
+
+					<execution>
+						<id>grunt build</id>
+						<goals>
+							<goal>grunt</goal>
+						</goals>
+						<configuration>
+							<arguments>--no-color</arguments>
+						</configuration>
+					</execution>
+
+					<!--<execution>-->
+						<!--<id>javascript tests</id>-->
+						<!--<goals>-->
+							<!--<goal>karma</goal>-->
+						<!--</goals>-->
+						<!--<configuration>-->
+							<!--<karmaConfPath>src/test/javascript/karma.conf.ci.js</karmaConfPath>-->
+						<!--</configuration>-->
+					<!--</execution>-->
+
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+
 
 </project>

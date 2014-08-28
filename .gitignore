@@ -1,4 +1,9 @@
 .idea
 *.iml
 target
+node
+node_modules
+vendor
+build
+bin
 

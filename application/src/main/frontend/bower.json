@@ -1,6 +1,6 @@
 {
-  "name": "ng-boilerplate",
-  "version": "0.3.2",
+  "name": "parkandrideAPI",
+  "version": "0.0.1-SNAPSHOT",
   "devDependencies": {
     "angular": "~1.2",
     "angular-mocks": "~1.2",

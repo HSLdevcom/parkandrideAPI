@@ -14,6 +14,7 @@
 	<packaging>jar</packaging>
 
 	<properties>
+		<exec-maven-plugin.version>1.2.1</exec-maven-plugin.version>
 		<frontend-maven-plugin.version>0.0.16</frontend-maven-plugin.version>
 		<frontend-maven-plugin.node.version>v0.10.31</frontend-maven-plugin.node.version>
 		<frontend-maven-plugin.npm.version>1.4.24</frontend-maven-plugin.npm.version>
@@ -80,6 +81,7 @@
 						<goals>
 							<goal>grunt</goal>
 						</goals>
+						<phase>process-resources</phase>
 						<configuration>
 							<arguments>--no-color</arguments>
 						</configuration>
@@ -97,6 +99,29 @@
 
 				</executions>
 			</plugin>
+
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>exec-maven-plugin</artifactId>
+				<version>${exec-maven-plugin.version}</version>
+				<executions>
+					<execution>
+						<id>bower install</id>
+						<phase>generate-resources</phase>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+						<configuration>
+							<executable>node_modules/.bin/bower</executable>
+							<workingDirectory>src/main/frontend</workingDirectory>
+							<arguments>
+								<argument>install</argument>
+							</arguments>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
 		</plugins>
 	</build>
 

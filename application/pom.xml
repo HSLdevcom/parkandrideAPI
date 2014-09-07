@@ -120,6 +120,12 @@
 						</configuration>
 					</execution>
 				</executions>
+				<configuration>
+					<environmentVariables>
+						<PATH>${project.basedir}/src/main/frontend/node:${env.PATH}</PATH>
+					</environmentVariables>
+					<workingDirectory>${basedir}</workingDirectory>
+				</configuration>
 			</plugin>
 
 		</plugins>

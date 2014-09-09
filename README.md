@@ -1,4 +1,4 @@
-parkandrideAPI
+parkandrideAPI [![Build Status](https://travis-ci.org/istonikula/parkandrideAPI.svg?branch=master)](https://travis-ci.org/istonikula/parkandrideAPI)
 ==============
 
 HSL open source project to collect and share parking capacity information 

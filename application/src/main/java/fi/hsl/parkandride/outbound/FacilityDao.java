@@ -6,9 +6,6 @@ import com.mysema.query.sql.postgres.PostgresQueryFactory;
 
 import fi.hsl.parkandride.core.outbound.FacilityRepository;
 
-/**
- * Created by samppa on 10/09/14.
- */
 public class FacilityDao implements FacilityRepository {
 
     private final PostgresQueryFactory queryFactory;

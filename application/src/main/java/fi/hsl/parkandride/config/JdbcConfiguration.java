@@ -1,6 +1,10 @@
 package fi.hsl.parkandride.config;
 
+import java.sql.Connection;
+import java.sql.SQLException;
+
 import javax.annotation.PostConstruct;
+import javax.inject.Provider;
 import javax.sql.DataSource;
 
 import org.flywaydb.core.Flyway;
@@ -11,10 +15,32 @@ import com.mysema.query.sql.Configuration;
 
 import com.mysema.query.sql.PostgresTemplates;
 import com.mysema.query.sql.SQLTemplates;
+import com.mysema.query.sql.postgres.PostgresQueryFactory;
 import com.zaxxer.hikari.HikariDataSource;
 
 @org.springframework.context.annotation.Configuration
 public class JdbcConfiguration {
+
+    @Bean
+    public PostgresQueryFactory queryFactory() {
+        return new PostgresQueryFactory(querydslConfiguration(), connectionProvider());
+    }
+
+    @Bean
+    public Provider<Connection> connectionProvider() {
+        final DataSource ds = dataSource();
+        return new Provider<Connection>() {
+            @Override
+            public Connection get() {
+                try {
+                    // TODO: ensure connection is transactional!
+                    return ds.getConnection();
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        };
+    }
 
     @Bean
     public DataSource dataSource() {

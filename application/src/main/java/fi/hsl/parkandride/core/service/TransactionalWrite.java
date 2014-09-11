@@ -4,13 +4,13 @@ import static java.lang.annotation.ElementType.METHOD;
 import static java.lang.annotation.ElementType.TYPE;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import static org.springframework.transaction.annotation.Isolation.READ_COMMITTED;
-import static org.springframework.transaction.annotation.Propagation.MANDATORY;
 import static org.springframework.transaction.annotation.Propagation.REQUIRED;
 
-import java.lang.annotation.*;
+import java.lang.annotation.Documented;
+import java.lang.annotation.Inherited;
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
 
-import org.springframework.transaction.annotation.Isolation;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 @Target({ METHOD, TYPE})

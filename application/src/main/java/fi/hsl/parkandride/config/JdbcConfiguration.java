@@ -15,8 +15,6 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import com.mysema.query.sql.Configuration;
-
-import com.mysema.query.sql.PostgresTemplates;
 import com.mysema.query.sql.SQLTemplates;
 import com.mysema.query.sql.postgres.PostgresQueryFactory;
 import com.zaxxer.hikari.HikariDataSource;
@@ -78,7 +76,8 @@ public class JdbcConfiguration {
 
     @Bean
     public SQLTemplates sqlTemplates() {
-        return new PostgresTemplates();
+        // TODO: use PostGISTemplates for Postgresql
+        return new H2GISTemplates();
     }
 
 }

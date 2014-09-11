@@ -5,3 +5,5 @@ create table facility (
 
   primary key (id)
 );
+
+create sequence facility_id_seq increment by 1 start with 1;

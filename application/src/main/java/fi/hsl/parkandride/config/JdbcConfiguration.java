@@ -10,6 +10,9 @@ import javax.sql.DataSource;
 import org.flywaydb.core.Flyway;
 import org.h2.Driver;
 import org.springframework.context.annotation.Bean;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import com.mysema.query.sql.Configuration;
 
@@ -19,6 +22,7 @@ import com.mysema.query.sql.postgres.PostgresQueryFactory;
 import com.zaxxer.hikari.HikariDataSource;
 
 @org.springframework.context.annotation.Configuration
+@EnableTransactionManagement
 public class JdbcConfiguration {
 
     @Bean
@@ -51,6 +55,11 @@ public class JdbcConfiguration {
         ds.setJdbcUrl("jdbc:h2:mem:liipi;DB_CLOSE_DELAY=-1;MODE=PostgreSQL");
 
         return ds;
+    }
+
+    @Bean
+    public PlatformTransactionManager txManager() {
+        return new DataSourceTransactionManager(dataSource());
     }
 
     @PostConstruct

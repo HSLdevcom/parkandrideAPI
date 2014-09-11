@@ -2,6 +2,7 @@ package fi.hsl.parkandride.outbound.sql;
 
 import static com.mysema.query.types.PathMetadataFactory.*;
 
+import com.mysema.query.sql.SQLExpressions;
 import com.mysema.query.types.path.*;
 
 import com.mysema.query.types.PathMetadata;

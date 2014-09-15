@@ -56,7 +56,7 @@ public class JdbcConfiguration {
     }
 
     @Bean
-    public PlatformTransactionManager txManager() {
+    public PlatformTransactionManager transactionManager() {
         return new DataSourceTransactionManager(dataSource());
     }
 
@@ -71,6 +71,7 @@ public class JdbcConfiguration {
     @Bean
     public Configuration querydslConfiguration() {
         Configuration conf = new Configuration(sqlTemplates());
+//        conf.register("FACILITY", "BORDER", H2PolygonType.DEFAULT);
         return conf;
     }
 

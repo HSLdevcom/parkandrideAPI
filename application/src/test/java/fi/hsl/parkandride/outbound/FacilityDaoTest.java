@@ -2,47 +2,111 @@ package fi.hsl.parkandride.outbound;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.util.List;
+
 import javax.inject.Inject;
 
 import org.geolatte.geom.Polygon;
 import org.geolatte.geom.codec.Wkt;
-import org.junit.Before;
+import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import com.mysema.query.sql.postgres.PostgresQueryFactory;
-
-import fi.hsl.parkandride.config.JdbcConfiguration;
 import fi.hsl.parkandride.core.domain.Facility;
+import fi.hsl.parkandride.core.outbound.FacilityRepository;
+import fi.hsl.parkandride.core.outbound.FacilitySearch;
+import fi.hsl.parkandride.outbound.sql.QFacility;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = JdbcConfiguration.class)
+@ContextConfiguration(classes = TestConfiguration.class)
 public class FacilityDaoTest {
 
+    public static final String NAME = "Facility";
+
+    private static final Polygon BORDER = polygon("POLYGON((" +
+            "60.25055 25.010827, " +
+            "60.250023 25.011867, " +
+            "60.250337 25.012479, " +
+            "60.250886 25.011454, " +
+            "60.25055 25.010827))");
+
+    public static final Polygon OVERLAPPING_AREA = polygon("POLYGON((" +
+            "60.251343 25.011942, " +
+            "60.250454 25.011717, " +
+            "60.250848 25.013487, " +
+            "60.251343 25.011942))");
+
+    public static final Polygon NON_OVERLAPPING_AREA = polygon("POLYGON((" +
+            "60.251343 25.011942, " +
+            "60.250816 25.012211, " +
+            "60.250848 25.013487, " +
+            "60.251343 25.011942))");
+
+    @Inject TestHelper testHelper;
+
     @Inject
-    PostgresQueryFactory queryFactory;
+    FacilityRepository facilityDao;
 
-    private FacilityDao facilityDao;
+//    @Before
+//    public void initDao() {
+//        facilityDao = new FacilityDao(queryFactory);
+//    }
 
-    @Before
-    public void initDao() {
-        facilityDao = new FacilityDao(queryFactory);
+    @After
+    public void cleanup() {
+        testHelper.clear(QFacility.facility);
     }
 
     @Test
-    public void insert_facility() {
-        Facility facility = new Facility();
-        facility.name = "Facility";
-        facility.border = polygon("POLYGON((" +
-                "2784304.4 8455636.2, " +
-                "2784218.43 8455719.52, " +
-                "2784269.14 8455772.95, " +
-                "2784358.75 8455688.77, " +
-                "2784304.4 8455636.2))");
+    public void cru() {
+        Facility facility = createFacility();
+
+        // Insert
         long id = facilityDao.insertFacility(facility);
         assertThat(id).isGreaterThan(0);
+        assertThat(facility.id).isEqualTo(id);
+
+        // Find by id
+        facility = facilityDao.getFacility(id);
+        assertThat(facility).isNotNull();
+        assertThat(facility.name).isEqualTo(NAME);
+
+        // Update
+        facility.name = "changed name";
+        facilityDao.updateFacility(facility);
+        assertThat(facilityDao.getFacility(id).name).isEqualTo("changed name");
+
+        // Find by geometry
+        assertThat(findByGeometry(OVERLAPPING_AREA)).hasSize(1);
+
+        // Not found by geometry
+        assertThat(findByGeometry(NON_OVERLAPPING_AREA)).isEmpty();
+    }
+
+    private List<Facility> findByGeometry(Polygon geometry) {
+        FacilitySearch search = new FacilitySearch();
+        search.within = geometry;
+        return facilityDao.findFacilities(search);
+    }
+
+    private Facility createFacility() {
+        Facility facility = new Facility();
+        facility.id = 0l;
+        facility.name = NAME;
+        facility.border = BORDER;
+        return facility;
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void get_throws_an_exception_if_not_found() {
+        facilityDao.getFacility(0);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void update_throws_an_exception_if_not_found() {
+        facilityDao.updateFacility(createFacility());
     }
 
     private static Polygon polygon(String wktShape) {

@@ -2,7 +2,6 @@ package fi.hsl.parkandride.outbound.sql;
 
 import static com.mysema.query.types.PathMetadataFactory.*;
 
-import com.mysema.query.sql.SQLExpressions;
 import com.mysema.query.types.path.*;
 
 import com.mysema.query.types.PathMetadata;
@@ -57,7 +56,7 @@ public class QFacility extends RelationalPathSpatial<QFacility> {
     }
 
     public void addMetadata() {
-        addMetadata(border, ColumnMetadata.named("BORDER").withIndex(3).ofType(Types.OTHER).withSize(6).notNull());
+        addMetadata(border, ColumnMetadata.named("BORDER").withIndex(3).ofType(Types.OTHER).withSize(3).notNull());
         addMetadata(id, ColumnMetadata.named("ID").withIndex(1).ofType(Types.BIGINT).withSize(19).notNull());
         addMetadata(name, ColumnMetadata.named("NAME").withIndex(2).ofType(Types.VARCHAR).withSize(255).notNull());
     }

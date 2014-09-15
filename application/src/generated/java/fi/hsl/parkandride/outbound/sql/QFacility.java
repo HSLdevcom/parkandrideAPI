@@ -35,6 +35,8 @@ public class QFacility extends RelationalPathSpatial<QFacility> {
 
     public final com.mysema.query.sql.PrimaryKey<QFacility> constraint4 = createPrimaryKey(id);
 
+    public final com.mysema.query.sql.ForeignKey<QFacilityAlias> _facilityAliasFk = createInvForeignKey(id, "FACILITY_ID");
+
     public QFacility(String variable) {
         super(QFacility.class, forVariable(variable), "PUBLIC", "FACILITY");
         addMetadata();

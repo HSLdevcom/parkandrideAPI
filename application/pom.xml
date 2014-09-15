@@ -58,6 +58,11 @@
       <version>${querydsl.version}</version>
     </dependency>
     <dependency>
+      <groupId>org.geolatte</groupId>
+      <artifactId>geolatte-common</artifactId>
+      <version>0.7.1</version>
+    </dependency>
+    <dependency>
       <groupId>org.postgis</groupId>
       <artifactId>postgis-jdbc</artifactId>
       <version>${postgis-jdbc.version}</version>

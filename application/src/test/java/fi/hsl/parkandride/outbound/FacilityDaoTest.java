@@ -14,10 +14,13 @@ import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import com.google.common.collect.ImmutableSortedSet;
+
 import fi.hsl.parkandride.core.domain.Facility;
 import fi.hsl.parkandride.core.outbound.FacilityRepository;
 import fi.hsl.parkandride.core.outbound.FacilitySearch;
 import fi.hsl.parkandride.outbound.sql.QFacility;
+import fi.hsl.parkandride.outbound.sql.QFacilityAlias;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = TestConfiguration.class)
@@ -43,6 +46,7 @@ public class FacilityDaoTest {
             "60.250816 25.012211, " +
             "60.250848 25.013487, " +
             "60.251343 25.011942))");
+    public static final ImmutableSortedSet<String> ALIASES = ImmutableSortedSet.of("alias", "blias");
 
     @Inject TestHelper testHelper;
 
@@ -56,7 +60,7 @@ public class FacilityDaoTest {
 
     @After
     public void cleanup() {
-        testHelper.clear(QFacility.facility);
+        testHelper.clear(QFacilityAlias.facilityAlias, QFacility.facility);
     }
 
     @Test
@@ -72,6 +76,7 @@ public class FacilityDaoTest {
         facility = facilityDao.getFacility(id);
         assertThat(facility).isNotNull();
         assertThat(facility.name).isEqualTo(NAME);
+        assertThat(facility.aliases).isEqualTo(ALIASES);
 
         // Update
         facility.name = "changed name";
@@ -79,7 +84,9 @@ public class FacilityDaoTest {
         assertThat(facilityDao.getFacility(id).name).isEqualTo("changed name");
 
         // Find by geometry
-        assertThat(findByGeometry(OVERLAPPING_AREA)).hasSize(1);
+        List<Facility> facilities = findByGeometry(OVERLAPPING_AREA);
+        assertThat(facilities).hasSize(1);
+        assertThat(facilities.get(0).aliases).isEqualTo(ALIASES);
 
         // Not found by geometry
         assertThat(findByGeometry(NON_OVERLAPPING_AREA)).isEmpty();
@@ -96,6 +103,7 @@ public class FacilityDaoTest {
         facility.id = 0l;
         facility.name = NAME;
         facility.border = BORDER;
+        facility.aliases = ALIASES;
         return facility;
     }
 

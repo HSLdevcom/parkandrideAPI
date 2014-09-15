@@ -11,8 +11,8 @@ import org.flywaydb.core.Flyway;
 import org.h2.Driver;
 import org.springframework.context.annotation.Bean;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.jdbc.datasource.DataSourceUtils;
 import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import com.mysema.query.sql.Configuration;
 import com.mysema.query.sql.SQLTemplates;
@@ -20,7 +20,6 @@ import com.mysema.query.sql.postgres.PostgresQueryFactory;
 import com.zaxxer.hikari.HikariDataSource;
 
 @org.springframework.context.annotation.Configuration
-@EnableTransactionManagement
 public class JdbcConfiguration {
 
     @Bean
@@ -30,16 +29,15 @@ public class JdbcConfiguration {
 
     @Bean
     public Provider<Connection> connectionProvider() {
-        final DataSource ds = dataSource();
+        final DataSource dataSource = dataSource();
         return new Provider<Connection>() {
             @Override
             public Connection get() {
-                try {
-                    // TODO: ensure connection is transactional!
-                    return ds.getConnection();
-                } catch (SQLException e) {
-                    throw new RuntimeException(e);
+                Connection conn = DataSourceUtils.getConnection(dataSource);
+                if (!DataSourceUtils.isConnectionTransactional(conn, dataSource)) {
+                    throw new RuntimeException("Connection should be transactional");
                 }
+                return conn;
             }
         };
     }

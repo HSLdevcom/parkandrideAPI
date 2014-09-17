@@ -3,6 +3,7 @@ package fi.hsl.parkandride.outbound;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
+import java.util.SortedSet;
 
 import javax.inject.Inject;
 
@@ -79,14 +80,25 @@ public class FacilityDaoTest {
         assertThat(facility.aliases).isEqualTo(ALIASES);
 
         // Update
-        facility.name = "changed name";
+        final String newName = "changed name";
+        final SortedSet<String> newAliases = ImmutableSortedSet.of("clias");
+
+        facility.name = newName;
+        facility.aliases = newAliases;
         facilityDao.updateFacility(facility);
-        assertThat(facilityDao.getFacility(id).name).isEqualTo("changed name");
+        facility = facilityDao.getFacility(id);
+        assertThat(facility.name).isEqualTo("changed name");
+        assertThat(facility.aliases).isEqualTo(newAliases);
+
+        // Remove aliases
+        final SortedSet<String> emptyAliases = ImmutableSortedSet.of();
+        facility.aliases = emptyAliases;
+        facilityDao.updateFacility(facility);
 
         // Find by geometry
         List<Facility> facilities = findByGeometry(OVERLAPPING_AREA);
         assertThat(facilities).hasSize(1);
-        assertThat(facilities.get(0).aliases).isEqualTo(ALIASES);
+        assertThat(facilities.get(0).aliases).isEqualTo(emptyAliases);
 
         // Not found by geometry
         assertThat(findByGeometry(NON_OVERLAPPING_AREA)).isEmpty();

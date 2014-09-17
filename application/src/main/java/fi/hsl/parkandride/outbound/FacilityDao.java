@@ -7,7 +7,10 @@ import static java.lang.String.format;
 
 import java.util.*;
 
+import com.google.common.base.*;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
 import com.mysema.query.ResultTransformer;
 import com.mysema.query.dml.StoreClause;
 import com.mysema.query.sql.SQLExpressions;
@@ -56,14 +59,6 @@ public class FacilityDao implements FacilityRepository {
         return id;
     }
 
-    private void insertAliases(long facilityId, SortedSet<String> aliases) {
-        SQLInsertClause insertBatch = queryFactory.insert(qAlias);
-        for (String alias : aliases) {
-            insertBatch.set(qAlias.facilityId, facilityId).set(qAlias.alias, alias).addBatch();
-        }
-        insertBatch.execute();
-    }
-
     @TransactionalWrite
     @Override
     public void updateFacility(Facility facility) {
@@ -73,6 +68,28 @@ public class FacilityDao implements FacilityRepository {
         populate(facility, update);
         if (update.execute() != 1) {
             throw new IllegalArgumentException(format("Facility#%s not found", facility.id));
+        }
+
+        updateAliases(facility.id, facility.aliases);
+    }
+
+    private void updateAliases(Long facilityId, Set<String> newAliases) {
+        Set<String> oldAliases = findAliases(facilityId);
+        Set<String> addedAliases = Sets.newHashSet();
+        for (String newAlias : newAliases) {
+            if (!oldAliases.remove(newAlias)) {
+                addedAliases.add(newAlias);
+            }
+        }
+        insertAliases(facilityId, addedAliases);
+        deleteAliases(facilityId, oldAliases);
+    }
+
+    private void deleteAliases(Long facilityId, Set<String> aliases) {
+        if (!aliases.isEmpty()) {
+            queryFactory.delete(qAlias)
+                    .where(qAlias.facilityId.eq(facilityId), qAlias.alias.in(aliases))
+                    .execute();
         }
     }
 
@@ -104,17 +121,36 @@ public class FacilityDao implements FacilityRepository {
         return new ArrayList<>(facilities.values());
     }
 
+    private void insertAliases(long facilityId, Collection<String> aliases) {
+        if (!aliases.isEmpty()) {
+            SQLInsertClause insertBatch = queryFactory.insert(qAlias);
+            for (String alias : aliases) {
+                insertBatch.set(qAlias.facilityId, facilityId).set(qAlias.alias, alias).addBatch();
+            }
+            insertBatch.execute();
+        }
+    }
+
     private Map<Long, Facility> fetchAliases(Map<Long, Facility> facilitiesById) {
         if (!facilitiesById.isEmpty()) {
-            Map<Long, Set<String>> aliasesByFacilityId = queryFactory.from(qAlias)
-                    .where(qAlias.facilityId.in(facilitiesById.keySet()))
-                    .transform(aliasesByFacilityIdMapping);
+            Map<Long, Set<String>> aliasesByFacilityId = findAliases(facilitiesById.keySet());
 
             for (Map.Entry<Long, Set<String>> entry : aliasesByFacilityId.entrySet()) {
                 facilitiesById.get(entry.getKey()).aliases = new TreeSet<>(entry.getValue());
             }
         }
         return facilitiesById;
+    }
+
+    private Set<String> findAliases(Long facilityId) {
+        Set<String> aliases = findAliases(ImmutableSet.of(facilityId)).get(facilityId);
+        return aliases != null ? aliases : Sets.newHashSet();
+    }
+
+    private Map<Long, Set<String>> findAliases(Set<Long> facilitiesById) {
+        return queryFactory.from(qAlias)
+                .where(qAlias.facilityId.in(facilitiesById))
+                .transform(aliasesByFacilityIdMapping);
     }
 
     private void populate(Facility facility, StoreClause store) {

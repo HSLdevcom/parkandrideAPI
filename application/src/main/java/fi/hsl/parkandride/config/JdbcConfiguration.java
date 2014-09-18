@@ -17,7 +17,10 @@ import org.springframework.transaction.PlatformTransactionManager;
 import com.mysema.query.sql.Configuration;
 import com.mysema.query.sql.SQLTemplates;
 import com.mysema.query.sql.postgres.PostgresQueryFactory;
+import com.mysema.query.sql.types.EnumByNameType;
 import com.zaxxer.hikari.HikariDataSource;
+
+import fi.hsl.parkandride.core.domain.CapacityType;
 
 @org.springframework.context.annotation.Configuration
 public class JdbcConfiguration {
@@ -69,6 +72,7 @@ public class JdbcConfiguration {
     @Bean
     public Configuration querydslConfiguration() {
         Configuration conf = new Configuration(sqlTemplates());
+        conf.register("CAPACITY", "CAPACITY_TYPE", new EnumByNameType<CapacityType>(CapacityType.class));
 //        conf.register("FACILITY", "BORDER", H2PolygonType.DEFAULT);
         return conf;
     }

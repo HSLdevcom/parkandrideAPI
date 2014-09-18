@@ -1,5 +1,8 @@
 package fi.hsl.parkandride.outbound;
 
+import static fi.hsl.parkandride.core.domain.CapacityType.BICYCLE;
+import static fi.hsl.parkandride.core.domain.CapacityType.CAR;
+import static fi.hsl.parkandride.core.domain.CapacityType.PARK_AND_RIDE;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
@@ -20,6 +23,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSortedSet;
 
 import fi.hsl.parkandride.core.domain.Capacity;
+import fi.hsl.parkandride.core.domain.CapacityType;
 import fi.hsl.parkandride.core.domain.Facility;
 import fi.hsl.parkandride.core.outbound.FacilityRepository;
 import fi.hsl.parkandride.core.outbound.FacilitySearch;
@@ -54,7 +58,7 @@ public class FacilityDaoTest {
 
     public static final SortedSet<String> ALIASES = ImmutableSortedSet.of("alias", "blias");
 
-    public static final Map<String, Capacity> CAPACITIES = ImmutableMap.of("car", new Capacity(100, 1), "bicycle", new Capacity(10, 0));
+    public static final Map<CapacityType, Capacity> CAPACITIES = ImmutableMap.of(CAR, new Capacity(100, 1), BICYCLE, new Capacity(10, 0));
 
     @Inject TestHelper testHelper;
 
@@ -90,13 +94,17 @@ public class FacilityDaoTest {
         // Update
         final String newName = "changed name";
         final SortedSet<String> newAliases = ImmutableSortedSet.of("clias");
+        final Map<CapacityType, Capacity> newCapacities = ImmutableMap.of(CAR, new Capacity(100, 50), PARK_AND_RIDE, new Capacity(5, 0));
 
         facility.name = newName;
         facility.aliases = newAliases;
+        facility.capacities = newCapacities;
+
         facilityDao.updateFacility(facility);
         facility = facilityDao.getFacility(id);
         assertThat(facility.name).isEqualTo("changed name");
         assertThat(facility.aliases).isEqualTo(newAliases);
+        assertThat(facility.capacities).isEqualTo(newCapacities);
 
         // Remove aliases
         final SortedSet<String> emptyAliases = ImmutableSortedSet.of();

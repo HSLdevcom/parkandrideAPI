@@ -29,4 +29,9 @@ public class Capacity {
             return false;
         }
     }
+
+    @Override
+    public String toString() {
+        return "" + built +  " -" + unavailable;
+    }
 }

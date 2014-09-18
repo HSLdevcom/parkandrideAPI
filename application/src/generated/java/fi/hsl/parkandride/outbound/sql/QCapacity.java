@@ -29,7 +29,7 @@ public class QCapacity extends RelationalPathSpatial<QCapacity> {
 
     public final NumberPath<Integer> built = createNumber("built", Integer.class);
 
-    public final StringPath capacityType = createString("capacityType");
+    public final EnumPath<fi.hsl.parkandride.core.domain.CapacityType> capacityType = createEnum("capacityType", fi.hsl.parkandride.core.domain.CapacityType.class);
 
     public final NumberPath<Long> facilityId = createNumber("facilityId", Long.class);
 

@@ -22,6 +22,6 @@ public class Facility {
 
     public SortedSet<String> aliases = new TreeSet<>();
 
-    public Map<String, Capacity> capacities = new HashMap<>();
+    public Map<CapacityType, Capacity> capacities = new HashMap<>();
 
 }

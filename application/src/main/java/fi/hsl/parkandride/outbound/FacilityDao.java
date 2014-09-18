@@ -24,6 +24,7 @@ import com.mysema.query.types.QBean;
 import com.mysema.query.types.expr.SimpleExpression;
 
 import fi.hsl.parkandride.core.domain.Capacity;
+import fi.hsl.parkandride.core.domain.CapacityType;
 import fi.hsl.parkandride.core.domain.Facility;
 import fi.hsl.parkandride.core.outbound.FacilityRepository;
 import fi.hsl.parkandride.core.outbound.FacilitySearch;
@@ -55,7 +56,7 @@ public class FacilityDao implements FacilityRepository {
     public static final ResultTransformer<Map<Long, Set<String>>> aliasesByFacilityIdMapping =
             groupBy(qAlias.facilityId).as(set(qAlias.alias));
 
-    public static final ResultTransformer<Map<Long, Map<String, Capacity>>> capacitiesByFacilityIdMapping =
+    public static final ResultTransformer<Map<Long, Map<CapacityType, Capacity>>> capacitiesByFacilityIdMapping =
             groupBy(qCapacity.facilityId).as(map(qCapacity.capacityType, capacityMapping));
 
     private static final QBean<Facility> facilityMapping = new QBean<>(Facility.class, true, qFacility.all());
@@ -84,27 +85,74 @@ public class FacilityDao implements FacilityRepository {
     @TransactionalWrite
     @Override
     public void updateFacility(Facility facility) {
-        checkNotNull(facility, "facility");
-        SQLUpdateClause update = update();
-        update.where(qFacility.id.eq(facility.id));
-        populate(facility, update);
-        if (update.execute() != 1) {
-            throw new IllegalArgumentException(format("Facility#%s not found", facility.id));
-        }
-
-        updateAliases(facility.id, facility.aliases);
+        updateFacility(facility, getFacility(facility.id, true));
     }
 
-    private void updateAliases(Long facilityId, Set<String> newAliases) {
-        Set<String> oldAliases = findAliases(facilityId);
+    @TransactionalWrite
+    @Override
+    public void updateFacility(Facility newFacility, Facility oldFacility) {
+        checkNotNull(newFacility, "facility");
+        SQLUpdateClause update = update();
+        update.where(qFacility.id.eq(newFacility.id));
+        populate(newFacility, update);
+        if (update.execute() != 1) {
+            throw new IllegalArgumentException(format("Facility#%s not found", newFacility.id));
+        }
+
+        updateAliases(newFacility.id, newFacility.aliases, oldFacility.aliases);
+        updateCapacities(newFacility.id, newFacility.capacities, oldFacility.capacities);
+    }
+
+    private void updateCapacities(Long facilityId, Map<CapacityType, Capacity> newCapacities, Map<CapacityType, Capacity> oldCapacities) {
+        Map<CapacityType, Capacity> oldCapacitiesCopy = new HashMap<>(oldCapacities);
+        Map<CapacityType, Capacity> addedCapacities = new HashMap<>();
+        Map<CapacityType, Capacity> updatedCapacities = new HashMap<>();
+
+        for (Map.Entry<CapacityType, Capacity> entry : newCapacities.entrySet()) {
+            CapacityType type = entry.getKey();
+            Capacity newCapacity = entry.getValue();
+            Capacity oldCapacity = oldCapacitiesCopy.remove(type);
+            if (oldCapacity == null) {
+                addedCapacities.put(type, newCapacity);
+            } else if (!newCapacity.equals(oldCapacity)) {
+                updatedCapacities.put(type, newCapacity);
+            }
+        }
+
+        insertCapacities(facilityId, addedCapacities);
+        updateCapacities(facilityId, updatedCapacities);
+        deleteCapacities(facilityId, oldCapacitiesCopy.keySet());
+    }
+
+    private void updateCapacities(Long facilityId, Map<CapacityType, Capacity> updatedCapacities) {
+        for (Map.Entry<CapacityType, Capacity> entry : updatedCapacities.entrySet()) {
+            Capacity capacity = entry.getValue();
+            SQLUpdateClause update = queryFactory.update(qCapacity)
+                    .where(qCapacity.facilityId.eq(facilityId), qCapacity.capacityType.eq(entry.getKey()));
+            update.set(qCapacity.built, capacity.built);
+            update.set(qCapacity.unavailable, capacity.unavailable);
+            update.execute();
+        }
+    }
+
+    private void deleteCapacities(Long facilityId, Set<CapacityType> deletedCapacities) {
+        if (!deletedCapacities.isEmpty()) {
+            queryFactory.delete(qCapacity)
+                    .where(qCapacity.facilityId.eq(facilityId), qCapacity.capacityType.in(deletedCapacities))
+                    .execute();
+        }
+    }
+
+    private void updateAliases(Long facilityId, Set<String> newAliases, Set<String> oldAliases) {
+        Set<String> oldAliasesCopy = new HashSet<>(oldAliases);
         Set<String> addedAliases = Sets.newHashSet();
         for (String newAlias : newAliases) {
-            if (!oldAliases.remove(newAlias)) {
+            if (!oldAliasesCopy.remove(newAlias)) {
                 addedAliases.add(newAlias);
             }
         }
         insertAliases(facilityId, addedAliases);
-        deleteAliases(facilityId, oldAliases);
+        deleteAliases(facilityId, oldAliasesCopy);
     }
 
     private void deleteAliases(Long facilityId, Set<String> aliases) {
@@ -118,7 +166,17 @@ public class FacilityDao implements FacilityRepository {
     @TransactionalRead
     @Override
     public Facility getFacility(long id) {
-        Facility facility = query().where(qFacility.id.eq(id)).singleResult(facilityMapping);
+        return getFacility(id, false);
+    }
+
+    @TransactionalRead
+    @Override
+    public Facility getFacility(long id, boolean forUpdate) {
+        PostgresQuery qry = query().where(qFacility.id.eq(id));
+        if (forUpdate) {
+            qry.forUpdate();
+        }
+        Facility facility = qry.singleResult(facilityMapping);
         if (facility == null) {
             throw new IllegalArgumentException(format("Facility#%s not found", id));
         }
@@ -158,10 +216,10 @@ public class FacilityDao implements FacilityRepository {
         }
     }
 
-    private void insertCapacities(long id, Map<String, Capacity> capacities) {
+    private void insertCapacities(long id, Map<CapacityType, Capacity> capacities) {
         if (capacities != null && !capacities.isEmpty()) {
             SQLInsertClause insertBatch = queryFactory.insert(qCapacity);
-            for (Map.Entry<String, Capacity> entry : capacities.entrySet()) {
+            for (Map.Entry<CapacityType, Capacity> entry : capacities.entrySet()) {
                 Capacity capacity = entry.getValue();
                 insertBatch.set(qCapacity.facilityId, id);
                 insertBatch.set(qCapacity.capacityType, entry.getKey());
@@ -186,9 +244,9 @@ public class FacilityDao implements FacilityRepository {
 
     private Map<Long, Facility> fetchCapacities(Map<Long, Facility> facilitiesById) {
         if (!facilitiesById.isEmpty()) {
-            Map<Long, Map<String, Capacity>> capacities = findCapacities(facilitiesById.keySet());
+            Map<Long, Map<CapacityType, Capacity>> capacities = findCapacities(facilitiesById.keySet());
 
-            for (Map.Entry<Long, Map<String, Capacity>> entry : capacities.entrySet()) {
+            for (Map.Entry<Long, Map<CapacityType, Capacity>> entry : capacities.entrySet()) {
                 facilitiesById.get(entry.getKey()).capacities = entry.getValue();
             }
         }
@@ -206,7 +264,7 @@ public class FacilityDao implements FacilityRepository {
                 .transform(aliasesByFacilityIdMapping);
     }
 
-    private Map<Long, Map<String, Capacity>> findCapacities(Set<Long> facilitiesById) {
+    private Map<Long, Map<CapacityType, Capacity>> findCapacities(Set<Long> facilitiesById) {
         return queryFactory.from(qCapacity)
                 .where(qCapacity.facilityId.in(facilitiesById))
                 .transform(capacitiesByFacilityIdMapping);

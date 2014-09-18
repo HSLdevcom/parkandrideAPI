@@ -1,4 +1,4 @@
-parkandrideAPI [![Build Status](https://travis-ci.org/HSLdevcom/parkandrideAPI.svg)](https://travis-ci.org/HSLdevcom/parkandrideAPI) [![Coverage Status](https://coveralls.io/repos/HSLdevcom/parkandrideAPI/badge.png)](https://coveralls.io/r/HSLdevcom/parkandrideAPI)
+parkandrideAPI [![Build Status](https://travis-ci.org/HSLdevcom/parkandrideAPI.svg)](https://travis-ci.org/HSLdevcom/parkandrideAPI) [![Coverage Status](https://coveralls.io/repos/HSLdevcom/parkandrideAPI/badge.png?branch=master)](https://coveralls.io/r/HSLdevcom/parkandrideAPI?branch=master)
 ==============
 
 HSL open source project to collect and share parking capacity information 

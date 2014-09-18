@@ -2,11 +2,7 @@ package fi.hsl.parkandride.core.domain;
 
 import static com.google.common.collect.Sets.newLinkedHashSet;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeSet;
+import java.util.*;
 
 import org.geolatte.geom.Geometry;
 
@@ -20,7 +16,7 @@ public class Facility {
 
     public Geometry border;
 
-    public SortedSet<String> aliases = new TreeSet<>();
+    public Set<String> aliases = new HashSet<>();
 
     public Map<CapacityType, Capacity> capacities = new HashMap<>();
 

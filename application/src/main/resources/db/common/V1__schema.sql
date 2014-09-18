@@ -8,6 +8,7 @@ create table facility (
 
 create sequence facility_id_seq increment by 1 start with 1;
 
+
 create table facility_alias (
   facility_id bigint not null,
   alias varchar(255) not null,
@@ -18,6 +19,7 @@ create table facility_alias (
     references facility (id)
 );
 
+
 create table capacity_type (
   name varchar(64) not null,
 
@@ -27,6 +29,7 @@ create table capacity_type (
 insert into capacity_type values ('CAR');
 insert into capacity_type values ('BICYCLE');
 insert into capacity_type values ('PARK_AND_RIDE');
+
 
 create table capacity (
   facility_id bigint not null,

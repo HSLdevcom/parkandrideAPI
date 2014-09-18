@@ -16,7 +16,7 @@ public interface FacilityRepository {
 
     Facility getFacility(long id);
 
-    Facility getFacility(long id, boolean forUpdate);
+    Facility getFacilityForUpdate(long id);
 
     List<Facility> findFacilities(FacilitySearch search);
 

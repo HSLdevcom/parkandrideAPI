@@ -9,7 +9,6 @@ import static java.lang.String.format;
 import java.util.*;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 import com.mysema.query.ResultTransformer;
 import com.mysema.query.Tuple;
@@ -63,6 +62,7 @@ public class FacilityDao implements FacilityRepository {
 
     private static final SimpleExpression<Long> nextFacilityId = SQLExpressions.nextval("facility_id_seq");
 
+
     private final PostgresQueryFactory queryFactory;
 
     public FacilityDao(PostgresQueryFactory queryFactory) {
@@ -92,8 +92,7 @@ public class FacilityDao implements FacilityRepository {
     @Override
     public void updateFacility(Facility newFacility, Facility oldFacility) {
         checkNotNull(newFacility, "facility");
-        SQLUpdateClause update = update();
-        update.where(qFacility.id.eq(newFacility.id));
+        SQLUpdateClause update = updateFacility().where(qFacility.id.eq(newFacility.id));
         populate(newFacility, update);
         if (update.execute() != 1) {
             throw new IllegalArgumentException(format("Facility#%s not found", newFacility.id));
@@ -104,24 +103,26 @@ public class FacilityDao implements FacilityRepository {
     }
 
     private void updateCapacities(Long facilityId, Map<CapacityType, Capacity> newCapacities, Map<CapacityType, Capacity> oldCapacities) {
-        Map<CapacityType, Capacity> oldCapacitiesCopy = new HashMap<>(oldCapacities);
+        Map<CapacityType, Capacity> toBeRemoved = new HashMap<>(oldCapacities);
         Map<CapacityType, Capacity> addedCapacities = new HashMap<>();
         Map<CapacityType, Capacity> updatedCapacities = new HashMap<>();
 
-        for (Map.Entry<CapacityType, Capacity> entry : newCapacities.entrySet()) {
-            CapacityType type = entry.getKey();
-            Capacity newCapacity = entry.getValue();
-            Capacity oldCapacity = oldCapacitiesCopy.remove(type);
-            if (oldCapacity == null) {
-                addedCapacities.put(type, newCapacity);
-            } else if (!newCapacity.equals(oldCapacity)) {
-                updatedCapacities.put(type, newCapacity);
+        if (newCapacities != null) {
+            for (Map.Entry<CapacityType, Capacity> entry : newCapacities.entrySet()) {
+                CapacityType type = entry.getKey();
+                Capacity newCapacity = entry.getValue();
+                Capacity oldCapacity = toBeRemoved.remove(type);
+                if (oldCapacity == null) {
+                    addedCapacities.put(type, newCapacity);
+                } else if (!newCapacity.equals(oldCapacity)) {
+                    updatedCapacities.put(type, newCapacity);
+                }
             }
         }
 
         insertCapacities(facilityId, addedCapacities);
         updateCapacities(facilityId, updatedCapacities);
-        deleteCapacities(facilityId, oldCapacitiesCopy.keySet());
+        deleteCapacities(facilityId, toBeRemoved.keySet());
     }
 
     private void updateCapacities(Long facilityId, Map<CapacityType, Capacity> updatedCapacities) {
@@ -144,15 +145,17 @@ public class FacilityDao implements FacilityRepository {
     }
 
     private void updateAliases(Long facilityId, Set<String> newAliases, Set<String> oldAliases) {
-        Set<String> oldAliasesCopy = new HashSet<>(oldAliases);
+        Set<String> toBeRemoved = new HashSet<>(oldAliases);
         Set<String> addedAliases = Sets.newHashSet();
-        for (String newAlias : newAliases) {
-            if (!oldAliasesCopy.remove(newAlias)) {
-                addedAliases.add(newAlias);
+        if (newAliases != null) {
+            for (String newAlias : newAliases) {
+                if (!toBeRemoved.remove(newAlias)) {
+                    addedAliases.add(newAlias);
+                }
             }
         }
         insertAliases(facilityId, addedAliases);
-        deleteAliases(facilityId, oldAliasesCopy);
+        deleteAliases(facilityId, toBeRemoved);
     }
 
     private void deleteAliases(Long facilityId, Set<String> aliases) {
@@ -169,10 +172,14 @@ public class FacilityDao implements FacilityRepository {
         return getFacility(id, false);
     }
 
-    @TransactionalRead
+    @TransactionalWrite
     @Override
-    public Facility getFacility(long id, boolean forUpdate) {
-        PostgresQuery qry = query().where(qFacility.id.eq(id));
+    public Facility getFacilityForUpdate(long id) {
+        return getFacility(id, true);
+    }
+
+    private Facility getFacility(long id, boolean forUpdate) {
+        PostgresQuery qry = fromFacility().where(qFacility.id.eq(id));
         if (forUpdate) {
             qry.forUpdate();
         }
@@ -189,12 +196,12 @@ public class FacilityDao implements FacilityRepository {
     @TransactionalRead
     @Override
     public List<Facility> findFacilities(FacilitySearch search) { // TODO: add search and paging parameters
-        PostgresQuery qry = query();
+        PostgresQuery qry = fromFacility();
         qry.limit(search.limit);
         qry.offset(search.offset);
 
-        if (search.within != null) {
-            qry.where(qFacility.border.intersects(search.within));
+        if (search.intersecting != null) {
+            qry.where(qFacility.border.intersects(search.intersecting));
         }
 
         Map<Long, Facility> facilities = qry.map(qFacility.id, facilityMapping);
@@ -253,11 +260,6 @@ public class FacilityDao implements FacilityRepository {
         return facilitiesById;
     }
 
-    private Set<String> findAliases(Long facilityId) {
-        Set<String> aliases = findAliases(ImmutableSet.of(facilityId)).get(facilityId);
-        return aliases != null ? aliases : Sets.newHashSet();
-    }
-
     private Map<Long, Set<String>> findAliases(Set<Long> facilitiesById) {
         return queryFactory.from(qAlias)
                 .where(qAlias.facilityId.in(facilitiesById))
@@ -279,11 +281,11 @@ public class FacilityDao implements FacilityRepository {
         return queryFactory.insert(qFacility);
     }
 
-    private SQLUpdateClause update() {
+    private SQLUpdateClause updateFacility() {
         return queryFactory.update(qFacility);
     }
 
-    private PostgresQuery query() {
+    private PostgresQuery fromFacility() {
         return queryFactory.from(qFacility);
     }
 

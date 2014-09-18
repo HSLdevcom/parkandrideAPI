@@ -8,6 +8,6 @@ public class FacilitySearch {
 
     public long offset = 0;
 
-    public Polygon within;
+    public Polygon intersecting;
 
 }

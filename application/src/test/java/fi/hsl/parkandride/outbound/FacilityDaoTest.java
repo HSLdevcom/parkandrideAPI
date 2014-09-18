@@ -60,15 +60,11 @@ public class FacilityDaoTest {
 
     public static final Map<CapacityType, Capacity> CAPACITIES = ImmutableMap.of(CAR, new Capacity(100, 1), BICYCLE, new Capacity(10, 0));
 
+
     @Inject TestHelper testHelper;
 
     @Inject
     FacilityRepository facilityDao;
-
-//    @Before
-//    public void initDao() {
-//        facilityDao = new FacilityDao(queryFactory);
-//    }
 
     @After
     public void cleanup() {
@@ -76,7 +72,7 @@ public class FacilityDaoTest {
     }
 
     @Test
-    public void cru() {
+    public void create_read_update() {
         Facility facility = createFacility();
 
         // Insert
@@ -106,15 +102,16 @@ public class FacilityDaoTest {
         assertThat(facility.aliases).isEqualTo(newAliases);
         assertThat(facility.capacities).isEqualTo(newCapacities);
 
-        // Remove aliases
-        final SortedSet<String> emptyAliases = ImmutableSortedSet.of();
-        facility.aliases = emptyAliases;
+        // Remove aliases and capacities
+        facility.aliases = null;
+        facility.capacities = null;
         facilityDao.updateFacility(facility);
 
         // Find by geometry
         List<Facility> facilities = findByGeometry(OVERLAPPING_AREA);
         assertThat(facilities).hasSize(1);
-        assertThat(facilities.get(0).aliases).isEqualTo(emptyAliases);
+        assertThat(facilities.get(0).aliases).isEmpty();
+        assertThat(facilities.get(0).capacities).isEmpty();
 
         // Not found by geometry
         assertThat(findByGeometry(NON_OVERLAPPING_AREA)).isEmpty();
@@ -122,7 +119,7 @@ public class FacilityDaoTest {
 
     private List<Facility> findByGeometry(Polygon geometry) {
         FacilitySearch search = new FacilitySearch();
-        search.within = geometry;
+        search.intersecting = geometry;
         return facilityDao.findFacilities(search);
     }
 

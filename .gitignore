@@ -6,5 +6,6 @@ node_modules
 vendor
 build
 bin
-
-
+QGeometryColumns.java
+QSchemaVersion.java
+QSpatialRefSys.java

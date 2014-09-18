@@ -13,6 +13,32 @@ create table facility_alias (
   alias varchar(255) not null,
 
   primary key (facility_id, alias),
+
   constraint facility_alias_fk foreign key (facility_id)
     references facility (id)
+);
+
+create table capacity_type (
+  name varchar(64) not null,
+
+  primary key (name)
+);
+
+insert into capacity_type values ('car');
+insert into capacity_type values ('bicycle');
+insert into capacity_type values ('truck');
+
+create table capacity (
+  facility_id bigint not null,
+  capacity_type varchar(64) not null,
+  built int not null,
+  unavailable int not null,
+
+  primary key (facility_id, capacity_type),
+
+  constraint capacity_facility_id_fk foreign key (facility_id)
+    references facility (id),
+
+  constraint capacity_capacity_type_fk foreign key (capacity_type)
+    references capacity_type (name)
 );

@@ -3,6 +3,7 @@ package fi.hsl.parkandride.outbound;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
+import java.util.Map;
 import java.util.SortedSet;
 
 import javax.inject.Inject;
@@ -15,11 +16,14 @@ import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSortedSet;
 
+import fi.hsl.parkandride.core.domain.Capacity;
 import fi.hsl.parkandride.core.domain.Facility;
 import fi.hsl.parkandride.core.outbound.FacilityRepository;
 import fi.hsl.parkandride.core.outbound.FacilitySearch;
+import fi.hsl.parkandride.outbound.sql.QCapacity;
 import fi.hsl.parkandride.outbound.sql.QFacility;
 import fi.hsl.parkandride.outbound.sql.QFacilityAlias;
 
@@ -47,7 +51,10 @@ public class FacilityDaoTest {
             "60.250816 25.012211, " +
             "60.250848 25.013487, " +
             "60.251343 25.011942))");
-    public static final ImmutableSortedSet<String> ALIASES = ImmutableSortedSet.of("alias", "blias");
+
+    public static final SortedSet<String> ALIASES = ImmutableSortedSet.of("alias", "blias");
+
+    public static final Map<String, Capacity> CAPACITIES = ImmutableMap.of("car", new Capacity(100, 1), "bicycle", new Capacity(10, 0));
 
     @Inject TestHelper testHelper;
 
@@ -61,7 +68,7 @@ public class FacilityDaoTest {
 
     @After
     public void cleanup() {
-        testHelper.clear(QFacilityAlias.facilityAlias, QFacility.facility);
+        testHelper.clear(QFacilityAlias.facilityAlias, QCapacity.capacity, QFacility.facility);
     }
 
     @Test
@@ -78,6 +85,7 @@ public class FacilityDaoTest {
         assertThat(facility).isNotNull();
         assertThat(facility.name).isEqualTo(NAME);
         assertThat(facility.aliases).isEqualTo(ALIASES);
+        assertThat(facility.capacities).isEqualTo(CAPACITIES);
 
         // Update
         final String newName = "changed name";
@@ -116,6 +124,7 @@ public class FacilityDaoTest {
         facility.name = NAME;
         facility.border = BORDER;
         facility.aliases = ALIASES;
+        facility.capacities = CAPACITIES;
         return facility;
     }
 

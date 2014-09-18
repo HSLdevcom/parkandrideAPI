@@ -2,6 +2,8 @@ package fi.hsl.parkandride.core.domain;
 
 import static com.google.common.collect.Sets.newLinkedHashSet;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -19,5 +21,7 @@ public class Facility {
     public Geometry border;
 
     public SortedSet<String> aliases = new TreeSet<>();
+
+    public Map<String, Capacity> capacities = new HashMap<>();
 
 }

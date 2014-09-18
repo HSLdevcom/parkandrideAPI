@@ -10,127 +10,127 @@
     <relativePath>../parent/pom.xml</relativePath>
   </parent>
 
-	<artifactId>parkandride-application</artifactId>
-	<packaging>jar</packaging>
+  <artifactId>parkandride-application</artifactId>
+  <packaging>jar</packaging>
 
-	<properties>
-		<exec-maven-plugin.version>1.2.1</exec-maven-plugin.version>
-		<frontend-maven-plugin.version>0.0.16</frontend-maven-plugin.version>
-		<frontend-maven-plugin.node.version>v0.10.31</frontend-maven-plugin.node.version>
-		<frontend-maven-plugin.npm.version>1.4.26</frontend-maven-plugin.npm.version>
-	</properties>
+  <properties>
+    <exec-maven-plugin.version>1.2.1</exec-maven-plugin.version>
+    <frontend-maven-plugin.version>0.0.16</frontend-maven-plugin.version>
+    <frontend-maven-plugin.node.version>v0.10.31</frontend-maven-plugin.node.version>
+    <frontend-maven-plugin.npm.version>1.4.26</frontend-maven-plugin.npm.version>
+  </properties>
 
-	<dependencies>
-		<dependency>
-			<groupId>com.google.guava</groupId>
-			<artifactId>guava</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.data</groupId>
-			<artifactId>spring-data-commons</artifactId>
-		</dependency>
-	</dependencies>
+  <dependencies>
+    <dependency>
+      <groupId>com.google.guava</groupId>
+      <artifactId>guava</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.data</groupId>
+      <artifactId>spring-data-commons</artifactId>
+    </dependency>
+  </dependencies>
 
-	<build>
-		<resources>
-			<resource>
-				<directory>src/main/frontend/bin</directory>
-			</resource>
-		</resources>
-		<plugins>
-			<plugin>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-maven-plugin</artifactId>
-				<executions>
-					<execution>
-						<goals>
-							<goal>repackage</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>com.github.eirslett</groupId>
-				<artifactId>frontend-maven-plugin</artifactId>
-				<version>${frontend-maven-plugin.version}</version>
-				<configuration>
-					<workingDirectory>src/main/frontend</workingDirectory>
-				</configuration>
-				<executions>
+  <build>
+    <resources>
+      <resource>
+        <directory>src/main/frontend/bin</directory>
+      </resource>
+    </resources>
+    <plugins>
+      <plugin>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <goals>
+              <goal>repackage</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>com.github.eirslett</groupId>
+        <artifactId>frontend-maven-plugin</artifactId>
+        <version>${frontend-maven-plugin.version}</version>
+        <configuration>
+          <workingDirectory>src/main/frontend</workingDirectory>
+        </configuration>
+        <executions>
 
-					<execution>
-						<id>install node and npm</id>
-						<goals>
-							<goal>install-node-and-npm</goal>
-						</goals>
-						<configuration>
-							<nodeVersion>${frontend-maven-plugin.node.version}</nodeVersion>
-							<npmVersion>${frontend-maven-plugin.npm.version}</npmVersion>
-						</configuration>
-					</execution>
+          <execution>
+            <id>install node and npm</id>
+            <goals>
+              <goal>install-node-and-npm</goal>
+            </goals>
+            <configuration>
+              <nodeVersion>${frontend-maven-plugin.node.version}</nodeVersion>
+              <npmVersion>${frontend-maven-plugin.npm.version}</npmVersion>
+            </configuration>
+          </execution>
 
-					<execution>
-						<id>npm install</id>
-						<goals>
-							<goal>npm</goal>
-						</goals>
-					</execution>
+          <execution>
+            <id>npm install</id>
+            <goals>
+              <goal>npm</goal>
+            </goals>
+          </execution>
 
-					<execution>
-						<id>grunt build</id>
-						<goals>
-							<goal>grunt</goal>
-						</goals>
-						<phase>process-resources</phase>
-						<configuration>
-							<arguments>--no-color</arguments>
-						</configuration>
-					</execution>
+          <execution>
+            <id>grunt build</id>
+            <goals>
+              <goal>grunt</goal>
+            </goals>
+            <phase>process-resources</phase>
+            <configuration>
+              <arguments>--no-color</arguments>
+            </configuration>
+          </execution>
 
-					<!-- Commented out because build currently stops here and does not go forward...
-					<execution>
-						<id>javascript tests</id>
-						<goals>
-							<goal>karma</goal>
-						</goals>
-						<configuration>
-							<karmaConfPath>build/karma-unit.js</karmaConfPath>
-						</configuration>
-					</execution>
-					-->
+          <!-- Commented out because build currently stops here and does not go forward...
+          <execution>
+            <id>javascript tests</id>
+            <goals>
+              <goal>karma</goal>
+            </goals>
+            <configuration>
+              <karmaConfPath>build/karma-unit.js</karmaConfPath>
+            </configuration>
+          </execution>
+          -->
 
-				</executions>
-			</plugin>
+        </executions>
+      </plugin>
 
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>exec-maven-plugin</artifactId>
-				<version>${exec-maven-plugin.version}</version>
-				<executions>
-					<execution>
-						<id>bower install</id>
-						<phase>generate-resources</phase>
-						<goals>
-							<goal>exec</goal>
-						</goals>
-						<configuration>
-							<executable>node_modules/.bin/bower</executable>
-							<workingDirectory>src/main/frontend</workingDirectory>
-							<arguments>
-								<argument>install</argument>
-							</arguments>
-						</configuration>
-					</execution>
-				</executions>
-				<configuration>
-					<environmentVariables>
-						<PATH>${project.basedir}/src/main/frontend/node:${env.PATH}</PATH>
-					</environmentVariables>
-				</configuration>
-			</plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <version>${exec-maven-plugin.version}</version>
+        <executions>
+          <execution>
+            <id>bower install</id>
+            <phase>generate-resources</phase>
+            <goals>
+              <goal>exec</goal>
+            </goals>
+            <configuration>
+              <executable>node_modules/.bin/bower</executable>
+              <workingDirectory>src/main/frontend</workingDirectory>
+              <arguments>
+                <argument>install</argument>
+              </arguments>
+            </configuration>
+          </execution>
+        </executions>
+        <configuration>
+          <environmentVariables>
+            <PATH>${project.basedir}/src/main/frontend/node:${env.PATH}</PATH>
+          </environmentVariables>
+        </configuration>
+      </plugin>
 
-		</plugins>
-	</build>
+    </plugins>
+  </build>
 
 
   <properties>

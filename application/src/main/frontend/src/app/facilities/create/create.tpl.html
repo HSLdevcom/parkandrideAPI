@@ -1,0 +1,184 @@
+<div class="row">
+	<div class="col-md-6">
+	</div>
+	<div class="col-md-6 text-right">
+		<a class="btn btn-xs btn-primary" href="fasiliteetit.html" role="button" style="margin-top: 30px">
+			Peruuta
+		</a>
+		<a class="btn btn-xs btn-primary" href="fasiliteetti_read.html" role="button" style="margin-top: 30px; margin-left: 10px">
+			Tallenna muutokset
+		</a>
+	</div>
+</div>
+
+
+<div class="row">
+	<div class="col-md-6">
+
+		<h4>Pysäköintilaitos</h4>
+
+		<form class="form-horizontal" role="form">
+
+			<!--Nimi-->
+			<div class="form-group">
+				<label for="inputName" class="col-sm-5 control-label">* Nimi</label>
+				<div class="col-sm-7">
+					<input type="text" class="form-control" id="inputName" placeholder="P-Pasila">
+				</div>
+			</div>
+
+			<!--Aliakset-->
+			<div class="form-group">
+				<label for="inputAlias" class="col-sm-5 control-label">Aliakset</label>
+				<div class="col-sm-7">
+					<input type="text" class="form-control" id="inputAlias" placeholder="Parkki-Pasila, Pasilan parkki">
+				</div>
+			</div>
+
+		</form>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-md-6">
+
+		<h4>Kapasiteetti</h4>
+		<form class="form-horizontal" role="form">
+
+			<!-- Kapasiteetin tyyppi, alasvetovalikko -->
+			<div class="btn-group">
+				<p>  <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+					Henkilöauto <span class="caret"></span>
+				</button></p>
+				<ul class="dropdown-menu" role="menu">
+					<li><a href="#">Action</a></li>
+					<li><a href="#">Another action</a></li>
+					<li><a href="#">Something else here</a></li>
+					<li class="divider"></li>
+					<li><a href="#">Separated link</a></li>
+				</ul>
+			</div>
+
+			<!--Rakennettu kapasiteetti-->
+			<div class="form-group">
+				<label for="inputBuilt" class="col-sm-5 control-label">Rakennettu kapasiteetti</label>
+				<div class="col-sm-7">
+					<input type="text" class="form-control" id="inputBuilt" placeholder="200">
+				</div>
+			</div>
+
+			<!--Tilapäisesti poissa käytöstä-->
+			<div class="form-group">
+				<label for="inputTemporary" class="col-sm-5 control-label">Tilapäisesti pois käytöstä</label>
+				<div class="col-sm-7">
+					<input type="text" class="form-control" id="inputTemporary" placeholder="30">
+				</div>
+			</div>
+
+			<!--Lisää uusi kapasiteetti-->
+			<div class="text-right">
+				<a class="btn btn-xs btn-primary" href="#" role="button">
+					Uusi kapasiteettityyppi
+				</a>
+			</div>
+
+		</form>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-md-6">
+
+		<h4>Sijainti</h4>
+		<p>Käytä parkkilaitoksen reunapisteiden kirjaamiseen EURE-FIN-koordinaatistoa</p>
+		<form class="form-horizontal" role="form">
+
+			<!--1. reunapiste-->
+			<div class="form-group">
+				<label for="inputCornerpoint" class="col-sm-5 control-label">1. reunapiste (pituus/leveysasteet)</label>
+				<div class="col-sm-7">
+					<div class="input-group">
+						<input type="text" id="inputCornerpoint" class="form-control" placeholder="60.23411" />
+						<span class="input-group-btn" style="width:0px;"></span>
+						<input type="text" class="form-control" placeholder="60.12414" style="margin-left:-2px" />
+              <span class="input-group-btn">
+                <button class="btn btn-primary btn-remove" type="button" disabled>X</button>
+              </span>
+					</div>
+				</div>
+			</div>
+
+			<!--2. reunapiste-->
+			<div class="form-group">
+				<label for="inputCornerpoint" class="col-sm-5 control-label">2. reunapiste</label>
+				<div class="col-sm-7">
+					<div class="input-group">
+						<input type="text" id="inputCornerpoint" class="form-control" placeholder="60.23411" />
+						<span class="input-group-btn" style="width:0px;"></span>
+						<input type="text" class="form-control" placeholder="60.12414" style="margin-left:-2px" />
+          <span class="input-group-btn">
+            <button class="btn btn-primary btn-remove" type="button" disabled>X</button>
+          </span>
+					</div>
+				</div>
+			</div>
+
+			<!--3. reunapiste-->
+			<div class="form-group">
+				<label for="inputCornerpoint" class="col-sm-5 control-label">3. reunapiste</label>
+				<div class="col-sm-7">
+					<div class="input-group">
+						<input type="text" id="inputCornerpoint" class="form-control" placeholder="60.23411" />
+						<span class="input-group-btn" style="width:0px;"></span>
+						<input type="text" class="form-control" placeholder="60.12414" style="margin-left:-2px" />
+              <span class="input-group-btn">
+                <button class="btn btn-primary btn-remove" type="button" disabled>X</button>
+              </span>
+					</div>
+				</div>
+			</div>
+
+			<!--4. reunapiste-->
+			<div class="form-group">
+				<label for="inputCornerpoint" class="col-sm-5 control-label">4. reunapiste</label>
+				<div class="col-sm-7">
+					<div class="input-group">
+						<input type="text" id="inputCornerpoint" class="form-control" placeholder="60.23411" />
+						<span class="input-group-btn" style="width:0px;"></span>
+						<input type="text" class="form-control" placeholder="60.12414" style="margin-left:-2px" />
+                <span class="input-group-btn">
+                  <button class="btn btn-primary btn-remove" type="button">X</button>
+                </span>
+					</div>
+				</div>
+			</div>
+
+			<!--Lisää uusi reunapiste-->
+			<div class="text-right">
+				<a class="btn btn-xs btn-primary" href="#" role="button">
+					Uusi reunapiste
+				</a>
+			</div>
+
+		</form>
+	</div>
+
+	<div class="col-md-6 text-right">
+		<p>
+			<img style="float: right; width: 400px; padding-top: 10px"src="karttakuva.png" alt="Kartta">
+		</p>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-md-6">
+	</div>
+	<div class="col-md-6 text-right">
+		<a class="btn btn-xs btn-primary" href="fasiliteetit.html" role="button" style="margin-top: 30px">
+			Peruuta
+		</a>
+		<a class="btn btn-xs btn-primary" href="fasiliteetti_read.html" role="button" style="margin-top: 30px; margin-left: 10px">
+			Tallenna muutokset
+		</a>
+	</div>
+</div>

@@ -144,7 +144,7 @@ public class FacilityDaoTest {
     }
 
     private static Polygon polygon(String wktShape) {
-        return (Polygon) Wkt.newWktDecoder(Wkt.Dialect.POSTGIS_EWKT_1).decode(wktShape);
+        return (Polygon) Wkt.newDecoder(Wkt.Dialect.POSTGIS_EWKT_1).decode(wktShape);
     }
 
 }

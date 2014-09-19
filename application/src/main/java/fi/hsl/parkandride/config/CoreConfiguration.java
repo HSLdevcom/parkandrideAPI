@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 import com.mysema.query.sql.postgres.PostgresQueryFactory;
 
 import fi.hsl.parkandride.core.outbound.FacilityRepository;
+import fi.hsl.parkandride.core.service.FacilityService;
 import fi.hsl.parkandride.outbound.FacilityDao;
 
 @Configuration
@@ -22,6 +23,11 @@ public class CoreConfiguration {
     @Bean
     public FacilityRepository facilityRepository() {
         return new FacilityDao(queryFactory);
+    }
+
+    @Bean
+    public FacilityService facilityService () {
+        return new FacilityService(facilityRepository());
     }
 
 }

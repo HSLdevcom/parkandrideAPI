@@ -1,10 +1,10 @@
-package fi.hsl.parkandride.core.outbound;
+package fi.hsl.parkandride.core.domain;
 
 import org.geolatte.geom.Polygon;
 
 public class FacilitySearch {
 
-    public long limit = 100;
+    public int limit = 100;
 
     public long offset = 0;
 

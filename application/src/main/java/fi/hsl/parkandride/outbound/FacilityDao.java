@@ -26,7 +26,7 @@ import fi.hsl.parkandride.core.domain.Capacity;
 import fi.hsl.parkandride.core.domain.CapacityType;
 import fi.hsl.parkandride.core.domain.Facility;
 import fi.hsl.parkandride.core.outbound.FacilityRepository;
-import fi.hsl.parkandride.core.outbound.FacilitySearch;
+import fi.hsl.parkandride.core.domain.FacilitySearch;
 import fi.hsl.parkandride.core.service.TransactionalRead;
 import fi.hsl.parkandride.core.service.TransactionalWrite;
 import fi.hsl.parkandride.outbound.sql.QCapacity;
@@ -76,7 +76,6 @@ public class FacilityDao implements FacilityRepository {
         insert.set(qFacility.id, nextFacilityId);
         populate(facility, insert);
         long id = insert.executeWithKey(qFacility.id);
-        facility.id = id;
         insertAliases(id, facility.aliases);
         insertCapacities(id, facility.capacities);
         return id;
@@ -84,18 +83,18 @@ public class FacilityDao implements FacilityRepository {
 
     @TransactionalWrite
     @Override
-    public void updateFacility(Facility facility) {
-        updateFacility(facility, getFacility(facility.id, true));
+    public void updateFacility(long facilityId, Facility facility) {
+        updateFacility(facilityId, facility, getFacility(facility.id, true));
     }
 
     @TransactionalWrite
     @Override
-    public void updateFacility(Facility newFacility, Facility oldFacility) {
+    public void updateFacility(long facilityId, Facility newFacility, Facility oldFacility) {
         checkNotNull(newFacility, "facility");
-        SQLUpdateClause update = updateFacility().where(qFacility.id.eq(newFacility.id));
+        SQLUpdateClause update = updateFacility().where(qFacility.id.eq(facilityId));
         populate(newFacility, update);
         if (update.execute() != 1) {
-            throw new IllegalArgumentException(format("Facility#%s not found", newFacility.id));
+            throw new IllegalArgumentException(format("Facility#%s not found", facilityId));
         }
 
         updateAliases(newFacility.id, newFacility.aliases, oldFacility.aliases);
@@ -197,7 +196,7 @@ public class FacilityDao implements FacilityRepository {
     @Override
     public List<Facility> findFacilities(FacilitySearch search) { // TODO: add search and paging parameters
         PostgresQuery qry = fromFacility();
-        qry.limit(search.limit);
+        qry.limit(search.limit + 1);
         qry.offset(search.offset);
 
         if (search.intersecting != null) {

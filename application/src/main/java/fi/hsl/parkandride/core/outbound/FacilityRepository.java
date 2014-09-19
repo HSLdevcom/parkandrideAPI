@@ -3,16 +3,15 @@ package fi.hsl.parkandride.core.outbound;
 import java.util.List;
 
 import fi.hsl.parkandride.core.domain.Facility;
-import fi.hsl.parkandride.core.service.TransactionalRead;
-import fi.hsl.parkandride.core.service.TransactionalWrite;
+import fi.hsl.parkandride.core.domain.FacilitySearch;
 
 public interface FacilityRepository {
 
     long insertFacility(Facility facility);
 
-    void updateFacility(Facility facility);
+    void updateFacility(long facilityId, Facility facility);
 
-    void updateFacility(Facility newFacility, Facility oldFacility);
+    void updateFacility(long facilityId, Facility newFacility, Facility oldFacility);
 
     Facility getFacility(long id);
 

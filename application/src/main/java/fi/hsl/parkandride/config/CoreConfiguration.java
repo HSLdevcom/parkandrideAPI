@@ -14,7 +14,7 @@ import fi.hsl.parkandride.outbound.FacilityDao;
 
 @Configuration
 @Import(JdbcConfiguration.class)
-@EnableTransactionManagement
+@EnableTransactionManagement(proxyTargetClass = true)
 public class CoreConfiguration {
 
     @Inject PostgresQueryFactory queryFactory;

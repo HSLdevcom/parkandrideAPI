@@ -8,7 +8,7 @@ angular.module('facilities.create', [
             views: {
                 "main": {
                     controller: 'CreateCtrl',
-                    templateUrl: 'facilities/create/create.tpl.html'
+                    templateUrl: 'facilities/create.tpl.html'
                 }
             },
             data: { pageTitle: 'Create Facility' }

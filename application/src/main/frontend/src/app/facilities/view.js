@@ -8,7 +8,7 @@ angular.module('facilities.view', [
             views: {
                 "main": {
                     controller: 'ViewCtrl',
-                    templateUrl: 'facilities/view/view.tpl.html'
+                    templateUrl: 'facilities/view.tpl.html'
                 }
             },
             data: { pageTitle: 'View Facility' }

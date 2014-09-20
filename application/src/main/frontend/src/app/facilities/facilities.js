@@ -1,6 +1,7 @@
 angular.module('ngBoilerplate.facilities', [
     'ui.router',
-    'ngBoilerplate.facilities.create'
+    'facilities.create',
+    'facilities.view'
 ])
 
     .config(function config($stateProvider) {

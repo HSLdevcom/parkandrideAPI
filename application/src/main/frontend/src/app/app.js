@@ -1,6 +1,7 @@
 angular.module( 'ngBoilerplate', [
   'templates-app',
   'templates-common',
+  'filters',
   'ngBoilerplate.home',
   'ngBoilerplate.about',
   'ngBoilerplate.facilities',

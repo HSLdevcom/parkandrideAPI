@@ -10,7 +10,7 @@
 </div>
 
 
-<div class="panel panel-default" style="margin-top: 20px">
+<div class="panel panel-default" style="margin-top: 20px" ng-controller="FacilitiesCtrl as fctrl">
 
 	<table class="table table-bordered table-striped table-condensed">
 		<thead>
@@ -39,6 +39,10 @@
 		<tr>
 			<td><a href="#">Ruohoparkki</a></td>
 			<td>Henkilöauto, Polkupyörä</td>
+		</tr>
+		<tr ng-repeat="f in fctrl.list">
+			<td><a href="#">{{f.name}}</a></td>
+			<td>{{fctrl.capacityTypes(f) | joinBy: ", "}}</span></td>
 		</tr>
 		</tbody>
 	</table>

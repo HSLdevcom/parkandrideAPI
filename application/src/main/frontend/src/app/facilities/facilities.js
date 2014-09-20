@@ -17,7 +17,17 @@ angular.module('ngBoilerplate.facilities', [
         });
     })
 
-    .controller('FacilitiesCtrl', function FacilitiesController($scope) {
-    })
+    .controller('FacilitiesCtrl', [ '$scope', '$http', function FacilitiesController($scope, $http) {
+        var facilities = this;
+        facilities.list = [];
+
+        facilities.capacityTypes = function(facility) {
+            return Object.keys(facility.capacities);
+        };
+
+        $http.get('/api/facilities').success(function(data){
+            facilities.list = data.results;
+        });
+    } ])
 ;
 

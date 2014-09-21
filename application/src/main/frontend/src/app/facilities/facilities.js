@@ -28,6 +28,7 @@
             origThis.list = data.results;
         });
     }
+    // TODO this should be done in directive (as it qualifies to output formatting)?
     FacilitiesController.prototype.capacityTypes = function(facility) {
         return Object.keys(facility.capacities);
     };

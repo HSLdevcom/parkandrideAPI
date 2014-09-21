@@ -1,33 +1,34 @@
-angular.module('ngBoilerplate.facilities', [
-    'ui.router',
-    'facilities.create',
-    'facilities.view'
-])
+(function() {
+    var m = angular.module('ngBoilerplate.facilities', [
+        'ui.router',
+        'facilities.create',
+        'facilities.view'
+    ]);
 
-    .config(function config($stateProvider) {
-        $stateProvider.state('facilities', {
-            url: '/facilities',
-            views: {
-                "main": {
-                    controller: 'FacilitiesCtrl',
-                    templateUrl: 'facilities/facilities.tpl.html'
-                }
-            },
-            data: { pageTitle: 'Facilities' }
+    m.config(function config($stateProvider) {
+            $stateProvider.state('facilities', {
+                url: '/facilities',
+                views: {
+                    "main": {
+                        controller: 'FacilitiesCtrl',
+                        templateUrl: 'facilities/facilities.tpl.html'
+                    }
+                },
+                data: { pageTitle: 'Facilities' }
+            });
         });
-    })
 
-    .controller('FacilitiesCtrl', [ '$scope', '$http', function FacilitiesController($scope, $http) {
-        var facilities = this;
-        facilities.list = [];
+    m.controller('FacilitiesCtrl', ['$http', FacilitiesController]);
+    function FacilitiesController($http) {
+        var origThis = this;
+        this.list = [];
 
-        facilities.capacityTypes = function(facility) {
-            return Object.keys(facility.capacities);
-        };
-
-        $http.get('/api/facilities').success(function(data){
-            facilities.list = data.results;
+        // TODO extract to service
+        $http.get('/api/facilities').success(function (data) {
+            origThis.list = data.results;
         });
-    } ])
-;
-
+    }
+    FacilitiesController.prototype.capacityTypes = function(facility) {
+        return Object.keys(facility.capacities);
+    };
+})();

@@ -6,7 +6,8 @@
     "angular-mocks": "~1.2",
     "bootstrap": "^3.2.0",
     "angular-bootstrap": "~0.10.0",
-    "angular-ui-router": "~0.2"
+    "angular-ui-router": "~0.2",
+    "restangular": "1.4.0"
   },
   "dependencies": {}
 }

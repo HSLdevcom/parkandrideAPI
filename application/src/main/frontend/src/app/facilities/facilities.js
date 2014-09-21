@@ -1,6 +1,7 @@
 (function() {
     var m = angular.module('ngBoilerplate.facilities', [
         'ui.router',
+        'restangular',
         'facilities.create',
         'facilities.view'
     ]);
@@ -18,13 +19,13 @@
             });
         });
 
-    m.controller('FacilitiesCtrl', ['$http', FacilitiesController]);
-    function FacilitiesController($http) {
+    m.controller('FacilitiesCtrl', FacilitiesController);
+    function FacilitiesController(Restangular) {
         var origThis = this;
         this.list = [];
 
         // TODO extract to service
-        $http.get('/api/facilities').success(function (data) {
+        Restangular.one('facilities').get().then(function(data) {
             origThis.list = data.results;
         });
     }

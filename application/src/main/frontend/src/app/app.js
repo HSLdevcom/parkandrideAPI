@@ -5,12 +5,13 @@ angular.module( 'ngBoilerplate', [
   'ngBoilerplate.home',
   'ngBoilerplate.about',
   'ngBoilerplate.facilities',
-  'ui.router'
+  'ui.router',
+  'restangular'
 ])
 
-.config( function myAppConfig ( $stateProvider, $urlRouterProvider ) {
-//  $urlRouterProvider.otherwise( '/home' );
+.config( function myAppConfig ( $stateProvider, $urlRouterProvider, RestangularProvider ) {
   $urlRouterProvider.otherwise( '/facilities' );
+  RestangularProvider.setBaseUrl('/api');
 })
 
 .run( function run () {

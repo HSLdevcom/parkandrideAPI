@@ -1,8 +1,9 @@
-angular.module('facilities.view', [
-    'ui.router'
-])
+(function() {
+    var m = angular.module('facilities.view', [
+        'ui.router'
+    ]);
 
-    .config(function config($stateProvider) {
+    m.config(function config($stateProvider) {
         $stateProvider.state('facilities-view', { // dot notation in ui-router indicates nested ui-view
             url: '/facilities/view', // TODO set facilities base path on upper level and say here /create ?
             views: {
@@ -13,8 +14,8 @@ angular.module('facilities.view', [
             },
             data: { pageTitle: 'View Facility' }
         });
-    })
+    });
 
-    .controller('ViewCtrl', function ViewController($scope) {
-    })
-;
+    m.controller('ViewCtrl', ViewController);
+    function ViewController() {}
+})();

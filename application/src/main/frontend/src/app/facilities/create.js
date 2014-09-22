@@ -20,7 +20,7 @@
     function CreateController($state, Restangular) {
         this.facility = {};
         this.addFacility = function() {
-            var border =   {
+            var dummyBorder =   {
                 "type": "Polygon",
                     "coordinates": [[
                     [60.25055, 25.010827],
@@ -31,7 +31,7 @@
                 ]]
             };
 
-            this.facility.border = border;
+            this.facility.border = dummyBorder;
             Restangular.all('facilities').post(this.facility);
             $state.go('facilities');
         };

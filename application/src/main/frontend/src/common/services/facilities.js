@@ -1,7 +1,10 @@
 (function(){
-    var m = angular.module('ngBoilerplate.services.facilities', ['restangular']);
+    var m = angular.module('ngBoilerplate.services.facilities', [
+        'restangular',
+        'ngBoilerplate.resources.facilities'
+    ]);
 
-    m.factory('FacilityService', function(Restangular) {
+    m.factory('FacilityService', function(Restangular, Facility) {
         var api = {};
 
         api.getFacilities = function() {
@@ -11,11 +14,14 @@
         };
 
         api.getFacility = function(id) {
-            return Restangular.one('facilities', id).get();
+            return Restangular.one('facilities', id).get().then(function(data){
+                return Facility.build(data);
+            });
         };
 
         api.save = function(newFacility) {
-            Restangular.all('facilities').post(newFacility);
+            var data = Facility.toData(newFacility);
+            Restangular.all('facilities').post(data);
         };
 
         return api;

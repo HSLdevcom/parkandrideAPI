@@ -1,7 +1,8 @@
 (function() {
     var m = angular.module('facilities.create', [
         'ui.router',
-        'ngBoilerplate.services.facilities'
+        'ngBoilerplate.services.facilities',
+        'ngBoilerplate.resources.facilities'
     ]);
 
     m.config(function config($stateProvider) {
@@ -18,22 +19,10 @@
     });
 
     m.controller('CreateCtrl', CreateController);
-    function CreateController($state, FacilityService) {
-        this.facility = {};
+    function CreateController($state, FacilityService, Facility) {
+        this.facility = Facility.build({});
 
         this.addFacility = function() {
-            var dummyBorder =   {
-                "type": "Polygon",
-                    "coordinates": [[
-                    [60.25055, 25.010827],
-                    [60.250023, 25.011867],
-                    [60.250337, 25.012479],
-                    [60.250886, 25.011454],
-                    [60.25055, 25.010827]
-                ]]
-            };
-
-            this.facility.border = dummyBorder;
             FacilityService.save(this.facility);
             $state.go('facilities');
         };
@@ -53,13 +42,11 @@
     });
 
     m.controller('CapacityCtrl', CapacityController);
-    function CapacityController($log) {
-        this.capacity = {};
+    function CapacityController(Capacity) {
+        this.capacity = new Capacity();
         this.addCapacity = function(facility){
-            facility.capacities = (facility.capacities || {});
-            facility.capacities[this.capacity.type] = {'built': this.capacity.built, 'unavailable': this.capacity.unavailable };
-            $log.info(facility.capacities);
-            this.capacity = {};
+            facility.capacities.push(this.capacity);
+            this.capacity = new Capacity();
         };
     }
 })();

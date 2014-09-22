@@ -30,10 +30,24 @@
                     [60.25055, 25.010827]
                 ]]
             };
+
             this.facility.border = border;
             Restangular.all('facilities').post(this.facility);
             $state.go('facilities');
         };
     }
+
+    m.directive('aliases', function() {
+        return {
+            restrict: 'A',
+            require: 'ngModel',
+            link: function(scope, element, attr, ngModel) {
+                function fromView(text) {
+                    return (text || '').split(/\s*,\s*/);
+                }
+                ngModel.$parsers.push(fromView);
+            }
+        };
+    });
 })();
 

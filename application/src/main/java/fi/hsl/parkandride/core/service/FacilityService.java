@@ -35,7 +35,7 @@ public class FacilityService {
 
     @TransactionalRead
     public SearchResults search(FacilitySearch search) {
-        return SearchResults.of(repository.findFacilities(search), search.limit);
+        return repository.findFacilities(search);
     }
 
 }

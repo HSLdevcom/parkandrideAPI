@@ -4,6 +4,7 @@ import java.util.List;
 
 import fi.hsl.parkandride.core.domain.Facility;
 import fi.hsl.parkandride.core.domain.FacilitySearch;
+import fi.hsl.parkandride.core.domain.SearchResults;
 
 public interface FacilityRepository {
 
@@ -17,6 +18,6 @@ public interface FacilityRepository {
 
     Facility getFacilityForUpdate(long id);
 
-    List<Facility> findFacilities(FacilitySearch search);
+    SearchResults<Facility> findFacilities(FacilitySearch search);
 
 }

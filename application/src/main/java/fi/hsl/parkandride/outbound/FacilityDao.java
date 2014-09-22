@@ -25,6 +25,7 @@ import com.mysema.query.types.expr.SimpleExpression;
 import fi.hsl.parkandride.core.domain.Capacity;
 import fi.hsl.parkandride.core.domain.CapacityType;
 import fi.hsl.parkandride.core.domain.Facility;
+import fi.hsl.parkandride.core.domain.SearchResults;
 import fi.hsl.parkandride.core.outbound.FacilityRepository;
 import fi.hsl.parkandride.core.domain.FacilitySearch;
 import fi.hsl.parkandride.core.service.TransactionalRead;
@@ -194,7 +195,7 @@ public class FacilityDao implements FacilityRepository {
 
     @TransactionalRead
     @Override
-    public List<Facility> findFacilities(FacilitySearch search) { // TODO: add search and paging parameters
+    public SearchResults<Facility> findFacilities(FacilitySearch search) { // TODO: add search and paging parameters
         PostgresQuery qry = fromFacility();
         qry.limit(search.limit + 1);
         qry.offset(search.offset);
@@ -207,7 +208,7 @@ public class FacilityDao implements FacilityRepository {
         fetchAliases(facilities);
         fetchCapacities(facilities);
 
-        return new ArrayList<>(facilities.values());
+        return SearchResults.of(new ArrayList<>(facilities.values()), search.limit);
     }
 
     private void insertAliases(long facilityId, Collection<String> aliases) {

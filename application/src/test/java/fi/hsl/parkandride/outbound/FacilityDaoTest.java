@@ -120,7 +120,7 @@ public class FacilityDaoTest {
     private List<Facility> findByGeometry(Polygon geometry) {
         FacilitySearch search = new FacilitySearch();
         search.intersecting = geometry;
-        return facilityDao.findFacilities(search);
+        return facilityDao.findFacilities(search).results;
     }
 
     private Facility createFacility() {

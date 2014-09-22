@@ -23,8 +23,8 @@ public class FacilityService {
 
     @TransactionalWrite
     public Facility updateFacility(long facilityId, Facility facility) {
-        // XXX: oldFacility = getFacilityForUpdate
-        repository.updateFacility(facilityId, facility);
+        Facility oldFacility = repository.getFacilityForUpdate(facilityId);
+        repository.updateFacility(facilityId, facility, oldFacility);
         return facility;
     }
 
@@ -37,5 +37,6 @@ public class FacilityService {
     public SearchResults search(FacilitySearch search) {
         return repository.findFacilities(search);
     }
+
 
 }

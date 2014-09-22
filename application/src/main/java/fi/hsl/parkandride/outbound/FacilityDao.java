@@ -98,11 +98,11 @@ public class FacilityDao implements FacilityRepository {
             throw new IllegalArgumentException(format("Facility#%s not found", facilityId));
         }
 
-        updateAliases(newFacility.id, newFacility.aliases, oldFacility.aliases);
-        updateCapacities(newFacility.id, newFacility.capacities, oldFacility.capacities);
+        updateAliases(facilityId, newFacility.aliases, oldFacility.aliases);
+        updateCapacities(facilityId, newFacility.capacities, oldFacility.capacities);
     }
 
-    private void updateCapacities(Long facilityId, Map<CapacityType, Capacity> newCapacities, Map<CapacityType, Capacity> oldCapacities) {
+    private void updateCapacities(long facilityId, Map<CapacityType, Capacity> newCapacities, Map<CapacityType, Capacity> oldCapacities) {
         Map<CapacityType, Capacity> toBeRemoved = new HashMap<>(oldCapacities);
         Map<CapacityType, Capacity> addedCapacities = new HashMap<>();
         Map<CapacityType, Capacity> updatedCapacities = new HashMap<>();
@@ -125,7 +125,7 @@ public class FacilityDao implements FacilityRepository {
         deleteCapacities(facilityId, toBeRemoved.keySet());
     }
 
-    private void updateCapacities(Long facilityId, Map<CapacityType, Capacity> updatedCapacities) {
+    private void updateCapacities(long facilityId, Map<CapacityType, Capacity> updatedCapacities) {
         for (Map.Entry<CapacityType, Capacity> entry : updatedCapacities.entrySet()) {
             Capacity capacity = entry.getValue();
             SQLUpdateClause update = queryFactory.update(qCapacity)
@@ -136,7 +136,7 @@ public class FacilityDao implements FacilityRepository {
         }
     }
 
-    private void deleteCapacities(Long facilityId, Set<CapacityType> deletedCapacities) {
+    private void deleteCapacities(long facilityId, Set<CapacityType> deletedCapacities) {
         if (!deletedCapacities.isEmpty()) {
             queryFactory.delete(qCapacity)
                     .where(qCapacity.facilityId.eq(facilityId), qCapacity.capacityType.in(deletedCapacities))
@@ -144,7 +144,7 @@ public class FacilityDao implements FacilityRepository {
         }
     }
 
-    private void updateAliases(Long facilityId, Set<String> newAliases, Set<String> oldAliases) {
+    private void updateAliases(long facilityId, Set<String> newAliases, Set<String> oldAliases) {
         Set<String> toBeRemoved = new HashSet<>(oldAliases);
         Set<String> addedAliases = Sets.newHashSet();
         if (newAliases != null) {
@@ -158,7 +158,7 @@ public class FacilityDao implements FacilityRepository {
         deleteAliases(facilityId, toBeRemoved);
     }
 
-    private void deleteAliases(Long facilityId, Set<String> aliases) {
+    private void deleteAliases(long facilityId, Set<String> aliases) {
         if (!aliases.isEmpty()) {
             queryFactory.delete(qAlias)
                     .where(qAlias.facilityId.eq(facilityId), qAlias.alias.in(aliases))

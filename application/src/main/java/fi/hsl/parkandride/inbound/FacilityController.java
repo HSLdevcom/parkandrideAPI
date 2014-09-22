@@ -7,6 +7,7 @@ import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
+import static org.springframework.web.bind.annotation.RequestMethod.PUT;
 
 import javax.inject.Inject;
 
@@ -41,6 +42,13 @@ public class FacilityController {
     @RequestMapping(method = GET, value = FACILITY)
     public ResponseEntity<Facility> getFacility(@PathVariable(FACILITY_ID) long facilityId) {
         Facility facility = facilityService.getFacility(facilityId);
+        return new ResponseEntity<>(facility, OK);
+    }
+
+    @RequestMapping(method = PUT, value = FACILITY)
+    public ResponseEntity<Facility> updateFacility(@PathVariable(FACILITY_ID) long facilityId,
+                                                   @RequestBody Facility facility) {
+        Facility response = facilityService.updateFacility(facilityId, facility);
         return new ResponseEntity<>(facility, OK);
     }
 

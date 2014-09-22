@@ -24,8 +24,7 @@
     });
 
     m.controller('ViewCtrl', ViewController);
-    function ViewController(facility, $log) {
-        this.facility = facility;
-        $log.info(facility);
+    function ViewController($scope, facility) {
+        $scope.facility = facility;
     }
 })();

@@ -17,6 +17,23 @@
     });
 
     m.controller('CreateCtrl', CreateController);
-    function CreateController() {}
+    function CreateController($state, Restangular) {
+        this.facility = {};
+        this.addFacility = function() {
+            var border =   {
+                "type": "Polygon",
+                    "coordinates": [[
+                    [60.25055, 25.010827],
+                    [60.250023, 25.011867],
+                    [60.250337, 25.012479],
+                    [60.250886, 25.011454],
+                    [60.25055, 25.010827]
+                ]]
+            };
+            this.facility.border = border;
+            Restangular.all('facilities').post(this.facility);
+            $state.go('facilities');
+        };
+    }
 })();
 

@@ -1,3 +1,5 @@
+<form name="createFacilityForm" class="form-horizontal" role="form" ng-controller="CreateCtrl as createCtrl" novalidate>
+
 <div class="row">
 	<div class="col-md-6">
 	</div>
@@ -5,7 +7,7 @@
 		<a class="btn btn-xs btn-primary" role="button" style="margin-top: 30px" ui-sref="facilities">
 			Peruuta
 		</a>
-		<a class="btn btn-xs btn-primary" role="button" style="margin-top: 30px; margin-left: 10px" ui-sref="facilities-view">
+		<a class="btn btn-xs btn-primary" role="button" style="margin-top: 30px; margin-left: 10px" ng-click="createFacilityForm.$valid && createCtrl.addFacility()">
 			Tallenna muutokset
 		</a>
 	</div>
@@ -16,16 +18,13 @@
 	<div class="col-md-6">
 
 		<h4>Pysäköintilaitos</h4>
-
-		<form class="form-horizontal" role="form">
-
-			<!--Nimi-->
 			<div class="form-group">
 				<label for="inputName" class="col-sm-5 control-label">* Nimi</label>
 				<div class="col-sm-7">
-					<input type="text" class="form-control" id="inputName" placeholder="P-Pasila">
+					<input name="inputName" type="text" class="form-control" ng-model="createCtrl.facility.name" required />
 				</div>
 			</div>
+			<div>createFacilityForm is {{createFacilityForm.$valid}}</div>
 
 			<!--Aliakset-->
 			<div class="form-group">
@@ -35,7 +34,6 @@
 				</div>
 			</div>
 
-		</form>
 	</div>
 </div>
 
@@ -43,7 +41,6 @@
 	<div class="col-md-6">
 
 		<h4>Kapasiteetti</h4>
-		<form class="form-horizontal" role="form">
 
 			<!-- Kapasiteetin tyyppi, alasvetovalikko -->
 			<div class="btn-group">
@@ -82,7 +79,6 @@
 				</a>
 			</div>
 
-		</form>
 	</div>
 </div>
 
@@ -91,7 +87,6 @@
 
 		<h4>Sijainti</h4>
 		<p>Käytä parkkilaitoksen reunapisteiden kirjaamiseen EURE-FIN-koordinaatistoa</p>
-		<form class="form-horizontal" role="form">
 
 			<!--1. reunapiste-->
 			<div class="form-group">
@@ -160,7 +155,6 @@
 				</a>
 			</div>
 
-		</form>
 	</div>
 
 	<div class="col-md-6 text-right">
@@ -177,8 +171,10 @@
 		<a class="btn btn-xs btn-primary" role="button" style="margin-top: 30px" ui-sref="facilities">
 			Peruuta
 		</a>
-		<a class="btn btn-xs btn-primary" role="button" style="margin-top: 30px; margin-left: 10px" ui-sref="facilities-view">
+		<a class="btn btn-xs btn-primary" role="button" style="margin-top: 30px; margin-left: 10px" ng-click="createCtrl.addFacility()">
 			Tallenna muutokset
 		</a>
 	</div>
 </div>
+
+</form>

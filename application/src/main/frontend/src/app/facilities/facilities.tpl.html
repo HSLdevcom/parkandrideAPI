@@ -20,28 +20,8 @@
 		</tr>
 		</thead>
 		<tbody>
-		<tr>
-			<td><a href="#">Malmin alaparkki</a></td>
-			<td>Henkilöauto</td>
-		</tr>
-		<tr>
-			<td><a href="#">Malmin asema</a></td>
-			<td>Polkupyörä</td>
-		</tr>
-		<tr>
-			<td><a href="#">Malmin parkki</a></td>
-			<td>Liityntäpysäköinti</td>
-		</tr>
-		<tr>
-			<td><a href="fasiliteetti_read.html">P-Pasila (toimiva linkki)</a></td>
-			<td>Henkilöauto</td>
-		</tr>
-		<tr>
-			<td><a href="#">Ruohoparkki</a></td>
-			<td>Henkilöauto, Polkupyörä</td>
-		</tr>
 		<tr ng-repeat="f in fctrl.list">
-			<td><a href="#">{{f.name}}</a></td>
+			<td><a ui-sref="facilities-view({id: f.id})">{{f.name}}</a></td>
 			<td>{{fctrl.capacityTypes(f) | joinBy: ", "}}</span></td>
 		</tr>
 		</tbody>

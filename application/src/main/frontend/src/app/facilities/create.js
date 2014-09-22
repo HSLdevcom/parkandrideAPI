@@ -20,6 +20,7 @@
     m.controller('CreateCtrl', CreateController);
     function CreateController($state, FacilityService) {
         this.facility = {};
+
         this.addFacility = function() {
             var dummyBorder =   {
                 "type": "Polygon",
@@ -50,5 +51,16 @@
             }
         };
     });
+
+    m.controller('CapacityCtrl', CapacityController);
+    function CapacityController($log) {
+        this.capacity = {};
+        this.addCapacity = function(facility){
+            facility.capacities = (facility.capacities || {});
+            facility.capacities[this.capacity.type] = {'built': this.capacity.built, 'unavailable': this.capacity.unavailable };
+            $log.info(facility.capacities);
+            this.capacity = {};
+        };
+    }
 })();
 

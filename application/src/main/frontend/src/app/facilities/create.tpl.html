@@ -37,47 +37,36 @@
 </div>
 
 <div class="row">
-	<div class="col-md-6">
+	<div class="col-md-6" ng-controller="CapacityCtrl as capacityCtrl">
+		<div>{{createCtrl.facility.capacities}}</div>
 
 		<h4>Kapasiteetti</h4>
 
-			<!-- Kapasiteetin tyyppi, alasvetovalikko -->
-			<div class="btn-group">
-				<p>  <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
-					Henkilöauto <span class="caret"></span>
-				</button></p>
-				<ul class="dropdown-menu" role="menu">
-					<li><a href="#">Action</a></li>
-					<li><a href="#">Another action</a></li>
-					<li><a href="#">Something else here</a></li>
-					<li class="divider"></li>
-					<li><a href="#">Separated link</a></li>
-				</ul>
-			</div>
+			<select ng-model="capacityCtrl.capacity.type">
+				<option value="CAR">Henkilöauto</option>
+				<option value="PARK_AND_RIDE">Liityntäpysäköinti</option>
+				<option value="BICYCLE">Polkupyörä</option>
+			</select>
 
-			<!--Rakennettu kapasiteetti-->
 			<div class="form-group">
 				<label for="inputBuilt" class="col-sm-5 control-label">Rakennettu kapasiteetti</label>
 				<div class="col-sm-7">
-					<input type="text" class="form-control" id="inputBuilt" placeholder="200">
+					<input name="inputBuilt" type="number" class="form-control" ng-model="capacityCtrl.capacity.built">
 				</div>
 			</div>
 
-			<!--Tilapäisesti poissa käytöstä-->
 			<div class="form-group">
 				<label for="inputTemporary" class="col-sm-5 control-label">Tilapäisesti pois käytöstä</label>
 				<div class="col-sm-7">
-					<input type="text" class="form-control" id="inputTemporary" placeholder="30">
+					<input nane="inputTemporary" type="number" class="form-control" ng-model="capacityCtrl.capacity.unavailable">
 				</div>
 			</div>
 
-			<!--Lisää uusi kapasiteetti-->
 			<div class="text-right">
-				<a class="btn btn-xs btn-primary" href="#" role="button">
-					Uusi kapasiteettityyppi
+				<a class="btn btn-xs btn-primary" role="button" ng-click="capacityCtrl.addCapacity(createCtrl.facility)">
+					Lisää
 				</a>
 			</div>
-
 	</div>
 </div>
 

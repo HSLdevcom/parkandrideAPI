@@ -1,12 +1,16 @@
 angular.module( 'ngBoilerplate', [
   'templates-app',
   'templates-common',
+
+  'ui.bootstrap.dropdown',
+  'ui.router',
+  'restangular',
+
   'filters',
+
   'ngBoilerplate.home',
   'ngBoilerplate.about',
-  'ngBoilerplate.facilities',
-  'ui.router',
-  'restangular'
+  'ngBoilerplate.facilities'
 ])
 
 .config( function myAppConfig ( $stateProvider, $urlRouterProvider, RestangularProvider ) {

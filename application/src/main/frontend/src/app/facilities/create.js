@@ -1,6 +1,7 @@
 (function() {
     var m = angular.module('facilities.create', [
-        'ui.router'
+        'ui.router',
+        'ngBoilerplate.services.facilities'
     ]);
 
     m.config(function config($stateProvider) {
@@ -17,7 +18,7 @@
     });
 
     m.controller('CreateCtrl', CreateController);
-    function CreateController($state, Restangular) {
+    function CreateController($state, FacilityService) {
         this.facility = {};
         this.addFacility = function() {
             var dummyBorder =   {
@@ -32,7 +33,7 @@
             };
 
             this.facility.border = dummyBorder;
-            Restangular.all('facilities').post(this.facility);
+            FacilityService.save(this.facility);
             $state.go('facilities');
         };
     }

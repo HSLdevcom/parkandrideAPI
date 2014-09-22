@@ -1,7 +1,7 @@
 (function() {
     var m = angular.module('ngBoilerplate.facilities', [
         'ui.router',
-        'restangular',
+        'ngBoilerplate.services.facilities',
         'facilities.create',
         'facilities.view'
     ]);
@@ -20,13 +20,12 @@
         });
 
     m.controller('FacilitiesCtrl', FacilitiesController);
-    function FacilitiesController(Restangular) {
+    function FacilitiesController(FacilityService) {
         var origThis = this;
         this.list = [];
 
-        // TODO extract to service
-        Restangular.one('facilities').get().then(function(data) {
-            origThis.list = data.results;
+        FacilityService.getFacilities().then(function(data){
+            origThis.list = data;
         });
     }
     // TODO this should be done in directive (as it qualifies to output formatting)?

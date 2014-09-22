@@ -1,7 +1,7 @@
 (function() {
     var m = angular.module('facilities.view', [
         'ui.router',
-        'restangular'
+        'ngBoilerplate.services.facilities'
     ]);
 
     m.config(function config($stateProvider) {
@@ -12,9 +12,8 @@
                     controller: 'ViewCtrl',
                     templateUrl: 'facilities/view.tpl.html',
                     resolve: {
-                        facility: function($stateParams, Restangular) {
-                            // TODO put to service
-                            return Restangular.one('facilities', $stateParams.id).get();
+                        facility: function($stateParams, FacilityService) {
+                            return FacilityService.getFacility($stateParams.id);
                         }
                     }
                 }

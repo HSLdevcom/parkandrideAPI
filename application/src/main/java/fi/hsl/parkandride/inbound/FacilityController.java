@@ -1,5 +1,6 @@
 package fi.hsl.parkandride.inbound;
 
+import static fi.hsl.parkandride.inbound.Paths.API;
 import static fi.hsl.parkandride.inbound.Paths.FACILITIES;
 import static fi.hsl.parkandride.inbound.Paths.FACILITY;
 import static fi.hsl.parkandride.inbound.Paths.FACILITY_ID;
@@ -55,6 +56,13 @@ public class FacilityController {
     @RequestMapping(method = GET, value = FACILITIES)
     public ResponseEntity<SearchResults<Facility>> findFacilities(FacilitySearch search) {
         SearchResults<Facility> results = facilityService.search(search);
+        return new ResponseEntity<>(results, OK);
+    }
+
+    // TODO: REMOVE - this method is only for demo/testing in the beginning of the project
+    @RequestMapping(method = POST, value = API + "/generate-test-facilities")
+    public ResponseEntity<SearchResults<Facility>> generateTestFacilities() {
+        SearchResults<Facility> results = facilityService.generateTestData();
         return new ResponseEntity<>(results, OK);
     }
 

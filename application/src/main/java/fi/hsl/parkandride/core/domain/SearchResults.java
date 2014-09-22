@@ -6,6 +6,10 @@ import com.google.common.collect.ImmutableList;
 
 public class SearchResults<T> {
 
+    public static <T> SearchResults<T> of(final List<T> results) {
+        return new SearchResults<T>(results, false);
+    }
+
     public static <T> SearchResults<T> of(final List<T> results, final int limit) {
         if (results.isEmpty()) {
             return (SearchResults<T>) SearchResults.EMPTY;

@@ -16,6 +16,8 @@ import org.geolatte.geom.codec.Wkt;
 import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -32,7 +34,8 @@ import fi.hsl.parkandride.outbound.sql.QFacility;
 import fi.hsl.parkandride.outbound.sql.QFacilityAlias;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = TestConfiguration.class)
+@SpringApplicationConfiguration(classes = TestConfiguration.class)
+@ActiveProfiles("h2")
 public class FacilityDaoTest {
 
     public static final String NAME = "Facility";

@@ -4,12 +4,18 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
+import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.sql.DataSource;
 
 import org.flywaydb.core.Flyway;
 import org.h2.Driver;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.PropertyPlaceholderAutoConfiguration;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.Profile;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.jdbc.datasource.DataSourceUtils;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -23,7 +29,40 @@ import com.zaxxer.hikari.HikariDataSource;
 import fi.hsl.parkandride.core.domain.CapacityType;
 
 @org.springframework.context.annotation.Configuration
+@Import({
+        PropertyPlaceholderAutoConfiguration.class,
+        JdbcConfiguration.H2.class
+    })
 public class JdbcConfiguration {
+
+    @org.springframework.context.annotation.Configuration
+    @Profile("h2")
+    public static class H2 {
+
+        @Bean
+        public String[] flywayLocations() {
+            return new String[] { "classpath:db/common", "classpath:db/h2" };
+        }
+
+        @Bean
+        public SQLTemplates sqlTemplates() {
+            // TODO: use PostGISTemplates for Postgresql
+            return new H2GISTemplates();
+        }
+    }
+
+    @Value("${jdbc.username}")
+    String username;
+
+    @Value("${jdbc.password}")
+    String password;
+
+    @Value("${jdbc.url}")
+    String url;
+
+    @Resource String[] flywayLocations;
+
+    @Inject SQLTemplates sqlTemplates;
 
     @Bean
     public PostgresQueryFactory queryFactory() {
@@ -49,10 +88,9 @@ public class JdbcConfiguration {
     public DataSource dataSource() {
         HikariDataSource ds = new HikariDataSource();
         ds.setDriverClassName(Driver.class.getName());
-        ds.setUsername("sa");
-        ds.setPassword("");
-        ds.setJdbcUrl("jdbc:h2:mem:liipi;DB_CLOSE_DELAY=-1;MODE=PostgreSQL");
-
+        ds.setUsername(username);
+        ds.setPassword(password);
+        ds.setJdbcUrl(url);
         return ds;
     }
 
@@ -65,22 +103,16 @@ public class JdbcConfiguration {
     public void dbMigration() {
         Flyway flyway = new Flyway();
         flyway.setDataSource(dataSource());
-        flyway.setLocations("classpath:db/common", "classpath:db/h2");
+        flyway.setLocations(flywayLocations);
         flyway.migrate();
     }
 
     @Bean
     public Configuration querydslConfiguration() {
-        Configuration conf = new Configuration(sqlTemplates());
+        Configuration conf = new Configuration(sqlTemplates);
         conf.register("CAPACITY", "CAPACITY_TYPE", new EnumByNameType<CapacityType>(CapacityType.class));
 //        conf.register("FACILITY", "BORDER", H2PolygonType.DEFAULT);
         return conf;
-    }
-
-    @Bean
-    public SQLTemplates sqlTemplates() {
-        // TODO: use PostGISTemplates for Postgresql
-        return new H2GISTemplates();
     }
 
 }

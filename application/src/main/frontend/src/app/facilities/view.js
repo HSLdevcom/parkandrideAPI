@@ -26,4 +26,11 @@
     function ViewController($scope, facility) {
         $scope.facility = facility;
     }
+
+    m.directive('viewNavi', function() {
+        return {
+            restrict: 'E',
+            templateUrl: 'facilities/view-navi.tpl.html'
+        };
+    });
 })();

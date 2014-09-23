@@ -2,8 +2,10 @@
     var m = angular.module('parkandride.facilities', [
         'ui.router',
         'pascalprecht.translate',
+
         'parkandride.services.facilities',
         'parkandride.services.translations',
+
         'facilities.create',
         'facilities.view'
     ]);

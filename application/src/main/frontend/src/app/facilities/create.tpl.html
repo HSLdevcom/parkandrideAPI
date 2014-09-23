@@ -42,11 +42,9 @@
 
 		<h4>Kapasiteetti</h4>
 
-			<select ng-model="capacityCtrl.capacity.capacityType">
-				<option value="CAR">Henkilöauto</option>
-				<option value="PARK_AND_RIDE">Liityntäpysäköinti</option>
-				<option value="BICYCLE">Polkupyörä</option>
-			</select>
+			<select ng-model="capacityCtrl.capacity.capacityType"
+					ng-options="c as ('facilities.common.capacity.' + c | translate) for c in capacityCtrl.capacityTypeOptions"
+			></select>
 
 			<div class="form-group">
 				<label for="inputBuilt" class="col-sm-5 control-label">Rakennettu kapasiteetti</label>

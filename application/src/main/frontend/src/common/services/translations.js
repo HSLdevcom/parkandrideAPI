@@ -20,11 +20,11 @@
         $translateProvider.translations('fi', translationsFI);
 
         $translateProvider.preferredLanguage('fi');
-        $translateProvider.useMissingTranslationHandler("$missingTranslation");
+        $translateProvider.useMissingTranslationHandler("missingTranslation");
         $translateProvider.usePostCompiling(true);
     });
 
-    m.factory('$missingTranslation', function($log) {
+    m.factory('missingTranslation', function($log) {
         return function(translationId) {
             $log.warn("Missing translation for '" + translationId + "'");
         };

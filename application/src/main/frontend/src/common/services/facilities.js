@@ -1,4 +1,4 @@
-(function(){
+(function() {
     var m = angular.module('parkandride.services.facilities', [
         'restangular',
         'parkandride.resources.facilities'

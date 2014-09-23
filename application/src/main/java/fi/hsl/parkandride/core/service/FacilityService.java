@@ -107,11 +107,11 @@ public class FacilityService {
         facility.name = name;
         facility.capacities.put(CapacityType.CAR, new Capacity(carCapacity, 0));
         facility.border = polygon("POLYGON((" +
-                "60.25055 25.010827, " +
-                "60.250023 25.011867, " +
-                "60.250337 25.012479, " +
-                "60.250886 25.011454, " +
-                "60.25055 25.010827))");
+                "25.010827 60.25055, " +
+                "25.011867 60.250023, " +
+                "25.012479 60.250337, " +
+                "25.011454 60.250886, " +
+                "25.010827 60.25055))");
         return createFacility(facility);
     }
 

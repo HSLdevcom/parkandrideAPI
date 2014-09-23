@@ -1,5 +1,5 @@
 (function(){
-    var m = angular.module('ngBoilerplate.services.translations', [
+    var m = angular.module('parkandride.services.translations', [
         'pascalprecht.translate'
     ]);
 

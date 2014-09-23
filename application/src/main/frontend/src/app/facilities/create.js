@@ -1,8 +1,8 @@
 (function() {
     var m = angular.module('facilities.create', [
         'ui.router',
-        'ngBoilerplate.services.facilities',
-        'ngBoilerplate.resources.facilities'
+        'parkandride.services.facilities',
+        'parkandride.resources.facilities'
     ]);
 
     m.config(function config($stateProvider) {

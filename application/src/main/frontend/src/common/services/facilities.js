@@ -1,7 +1,7 @@
 (function(){
-    var m = angular.module('ngBoilerplate.services.facilities', [
+    var m = angular.module('parkandride.services.facilities', [
         'restangular',
-        'ngBoilerplate.resources.facilities'
+        'parkandride.resources.facilities'
     ]);
 
     m.factory('FacilityService', function(Restangular, Facility) {

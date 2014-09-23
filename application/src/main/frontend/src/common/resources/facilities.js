@@ -1,5 +1,5 @@
 (function(){
-    var m = angular.module('ngBoilerplate.resources.facilities', []);
+    var m = angular.module('parkandride.resources.facilities', []);
 
     m.factory('Capacity', function() {
         function Capacity(capacityType, built, unavailable) {

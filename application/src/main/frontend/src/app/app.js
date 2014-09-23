@@ -1,4 +1,4 @@
-angular.module( 'ngBoilerplate', [
+angular.module( 'parkandride', [
   'templates-app',
   'templates-common',
 
@@ -7,7 +7,7 @@ angular.module( 'ngBoilerplate', [
 
   'filters',
 
-  'ngBoilerplate.facilities'
+  'parkandride.facilities'
 ])
 
 .config( function myAppConfig ( $stateProvider, $urlRouterProvider, RestangularProvider ) {
@@ -23,7 +23,7 @@ angular.module( 'ngBoilerplate', [
   // This is a good place for logic not specific to the template or route, such as menu logic or page title wiring
   $scope.$on('$stateChangeSuccess', function(event, toState, toParams, fromState, fromParams){
     if ( angular.isDefined( toState.data.pageTitle ) ) {
-      $scope.pageTitle = toState.data.pageTitle + ' | ngBoilerplate' ;
+      $scope.pageTitle = toState.data.pageTitle + ' | parkandride' ;
     }
   });
 })

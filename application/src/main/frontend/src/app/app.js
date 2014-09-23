@@ -2,7 +2,6 @@ angular.module( 'ngBoilerplate', [
   'templates-app',
   'templates-common',
 
-  'ui.bootstrap.dropdown',
   'ui.router',
   'restangular',
 

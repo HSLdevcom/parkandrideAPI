@@ -51,5 +51,12 @@
             this.capacity = new Capacity();
         };
     }
+
+    m.directive('createNavi', function() {
+        return {
+            restrict: 'E',
+            templateUrl: 'facilities/create-navi.tpl.html'
+        };
+    });
 })();
 

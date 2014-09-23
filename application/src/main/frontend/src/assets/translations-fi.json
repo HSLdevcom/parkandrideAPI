@@ -11,7 +11,8 @@
         "common": {
             "action": {
                 "back": "Takaisin",
-                "edit": "Muokkaa"
+                "edit": "Muokkaa",
+                "save": "Tallenna muutokset"
             },
             "capacity": {
                 "CAR": "Henkilöauto",

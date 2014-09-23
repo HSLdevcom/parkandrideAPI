@@ -12,13 +12,13 @@ import org.flywaydb.core.Flyway;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.PropertyPlaceholderAutoConfiguration;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Profile;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.jdbc.datasource.DataSourceUtils;
 import org.springframework.transaction.PlatformTransactionManager;
 
-import com.mysema.query.sql.Configuration;
 import com.mysema.query.sql.SQLTemplates;
 import com.mysema.query.sql.postgres.PostgresQueryFactory;
 import com.mysema.query.sql.spatial.PostGISTemplates;
@@ -27,14 +27,14 @@ import com.zaxxer.hikari.HikariDataSource;
 
 import fi.hsl.parkandride.core.domain.CapacityType;
 
-@org.springframework.context.annotation.Configuration
+@Configuration
 @Import({
         PropertyPlaceholderAutoConfiguration.class,
         JdbcConfiguration.H2.class
     })
 public class JdbcConfiguration {
 
-    @org.springframework.context.annotation.Configuration
+    @Configuration
     @Profile({"!psql"})
     public static class H2 {
 
@@ -55,7 +55,7 @@ public class JdbcConfiguration {
 
     }
 
-    @org.springframework.context.annotation.Configuration
+    @Configuration
     @Profile("psql")
     public static class Postgresql {
 
@@ -140,8 +140,8 @@ public class JdbcConfiguration {
     }
 
     @Bean
-    public Configuration querydslConfiguration() {
-        Configuration conf = new Configuration(sqlTemplates);
+    public com.mysema.query.sql.Configuration querydslConfiguration() {
+        com.mysema.query.sql.Configuration conf = new com.mysema.query.sql.Configuration(sqlTemplates);
         conf.register("CAPACITY", "CAPACITY_TYPE", new EnumByNameType<CapacityType>(CapacityType.class));
 //        conf.register("FACILITY", "BORDER", H2PolygonType.DEFAULT);
         return conf;

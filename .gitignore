@@ -9,3 +9,4 @@ bin
 QGeometryColumns.java
 QSchemaVersion.java
 QSpatialRefSys.java
+.DS_Store

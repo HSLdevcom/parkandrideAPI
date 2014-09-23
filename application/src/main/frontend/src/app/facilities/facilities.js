@@ -2,6 +2,7 @@
     var m = angular.module('ngBoilerplate.facilities', [
         'ui.router',
         'ngBoilerplate.services.facilities',
+        'ngBoilerplate.services.translations',
         'facilities.create',
         'facilities.view'
     ]);

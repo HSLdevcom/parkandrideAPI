@@ -68,7 +68,8 @@ module.exports = {
       'vendor/angular-ui-router/release/angular-ui-router.js',
       'vendor/angular-ui-utils/modules/route/route.js',
       'vendor/lodash/dist/lodash.js',
-      'vendor/restangular/dist/restangular.js'
+      'vendor/restangular/dist/restangular.js',
+      'vendor/angular-translate/angular-translate.js'
     ],
     css: [
     ],

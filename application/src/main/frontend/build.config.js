@@ -22,7 +22,7 @@ module.exports = {
   app_files: {
     js: [ 'src/**/*.js', '!src/**/*.spec.js', '!src/assets/**/*.js' ],
     jsunit: [ 'src/**/*.spec.js' ],
-    
+
     coffee: [ 'src/**/*.coffee', '!src/**/*.spec.coffee' ],
     coffeeunit: [ 'src/**/*.spec.coffee' ],
 
@@ -69,7 +69,8 @@ module.exports = {
       'vendor/angular-ui-utils/modules/route/route.js',
       'vendor/lodash/dist/lodash.js',
       'vendor/restangular/dist/restangular.js',
-      'vendor/angular-translate/angular-translate.js'
+      'vendor/angular-translate/angular-translate.js',
+      'vendor/angular-translate-loader-static-files/angular-translate-loader-static-files.js'
     ],
     css: [
     ],

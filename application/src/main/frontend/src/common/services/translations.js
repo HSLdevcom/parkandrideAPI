@@ -3,29 +3,11 @@
         'pascalprecht.translate'
     ]);
 
-    var translationsFI = {
-        "facilities": {
-            "title": "Fasiliteetit",
-            "list" : {
-              "name": "Nimi",
-              "types": "Tyypit"
-            },
-            "action" : {
-                "new" : "Lisää uusi fasiliteetti"
-            },
-            "common" : {
-                "capacity" : {
-                    "CAR" : "Henkilöauto",
-                    "PARK_AND_RIDE": "Liityntäpysäköinti",
-                    "BICYCLE" : "Polkupyörä"
-                }
-            }
-        }
-    };
-
     m.config(function($translateProvider){
-        $translateProvider.translations('fi', translationsFI);
-
+        $translateProvider.useStaticFilesLoader({
+            prefix: 'assets/translations-',
+            suffix: '.json'
+        });
         $translateProvider.preferredLanguage('fi');
         $translateProvider.useMissingTranslationHandler("missingTranslation");
         $translateProvider.usePostCompiling(true);

@@ -39,4 +39,12 @@
             })));
         };
     }
+
+    m.directive('facilitiesNavi', function() {
+        return {
+            restrict: 'E',
+            templateUrl: 'facilities/facilities-navi.tpl.html'
+        };
+    });
+
 })();

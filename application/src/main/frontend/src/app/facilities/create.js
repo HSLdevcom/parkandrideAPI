@@ -45,6 +45,7 @@
     m.controller('CapacityCtrl', CapacityController);
     function CapacityController(Capacity) {
         this.capacity = new Capacity();
+        this.capacityTypeOptions = Capacity.capacityTypes;
         this.addCapacity = function(facility){
             facility.capacities.push(this.capacity);
             this.capacity = new Capacity();

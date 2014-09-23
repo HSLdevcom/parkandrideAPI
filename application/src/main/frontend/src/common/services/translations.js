@@ -12,6 +12,13 @@
             },
             "action" : {
                 "new" : "Lisää uusi fasiliteetti"
+            },
+            "common" : {
+                "capacity" : {
+                    "CAR" : "Henkilöauto",
+                    "PARK_AND_RIDE": "Liityntäpysäköinti",
+                    "BICYCLE" : "Polkupyörä"
+                }
             }
         }
     };

@@ -54,8 +54,8 @@ public class FacilityController {
     }
 
     @RequestMapping(method = GET, value = FACILITIES)
-    public ResponseEntity<SearchResults<Facility>> findFacilities(FacilitySearch search) {
-        SearchResults<Facility> results = facilityService.search(search);
+    public ResponseEntity<SearchResults<Facility>> findFacilities(FacilitySearchDto search) {
+        SearchResults<Facility> results = facilityService.search(search.toFacilitySearch());
         return new ResponseEntity<>(results, OK);
     }
 

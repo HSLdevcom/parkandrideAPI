@@ -21,7 +21,9 @@
 
         api.save = function(newFacility) {
             var data = Facility.toData(newFacility);
-            Restangular.all('facilities').post(data);
+            return Restangular.all('facilities').post(data).then(function(response){
+                return response.id;
+            });
         };
 
         return api;

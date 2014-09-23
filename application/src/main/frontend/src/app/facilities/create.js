@@ -23,8 +23,9 @@
         this.facility = Facility.build({});
 
         this.addFacility = function() {
-            FacilityService.save(this.facility);
-            $state.go('facilities');
+            FacilityService.save(this.facility).then(function(id){
+                $state.go('facilities-view', { "id": id });
+            });
         };
     }
 

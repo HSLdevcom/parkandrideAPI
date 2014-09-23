@@ -7,8 +7,6 @@ angular.module( 'ngBoilerplate', [
 
   'filters',
 
-  'ngBoilerplate.home',
-  'ngBoilerplate.about',
   'ngBoilerplate.facilities'
 ])
 

@@ -1,7 +1,6 @@
 package fi.hsl.parkandride.config;
 
 import java.sql.Connection;
-import java.sql.SQLException;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
@@ -10,7 +9,6 @@ import javax.inject.Provider;
 import javax.sql.DataSource;
 
 import org.flywaydb.core.Flyway;
-import org.h2.Driver;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.PropertyPlaceholderAutoConfiguration;
 import org.springframework.context.annotation.Bean;
@@ -23,6 +21,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 import com.mysema.query.sql.Configuration;
 import com.mysema.query.sql.SQLTemplates;
 import com.mysema.query.sql.postgres.PostgresQueryFactory;
+import com.mysema.query.sql.spatial.PostGISTemplates;
 import com.mysema.query.sql.types.EnumByNameType;
 import com.zaxxer.hikari.HikariDataSource;
 
@@ -36,8 +35,12 @@ import fi.hsl.parkandride.core.domain.CapacityType;
 public class JdbcConfiguration {
 
     @org.springframework.context.annotation.Configuration
-    @Profile("h2")
+    @Profile({"!psql"})
     public static class H2 {
+
+        public H2() {
+            System.out.println("USING H2");
+        }
 
         @Bean
         public String[] flywayLocations() {
@@ -49,6 +52,27 @@ public class JdbcConfiguration {
             // TODO: use PostGISTemplates for Postgresql
             return new H2GISTemplates();
         }
+
+    }
+
+    @org.springframework.context.annotation.Configuration
+    @Profile("psql")
+    public static class Postgresql {
+
+        public Postgresql() {
+            System.out.println("USING POSTGRESQL");
+        }
+
+        @Bean
+        public String[] flywayLocations() {
+            return new String[] { "classpath:db/common" };
+        }
+
+        @Bean
+        public SQLTemplates sqlTemplates() {
+            // TODO: use PostGISTemplates for Postgresql
+            return new PostGISTemplates();
+        }
     }
 
     @Value("${jdbc.username}")
@@ -59,6 +83,9 @@ public class JdbcConfiguration {
 
     @Value("${jdbc.url}")
     String url;
+
+    @Value("${jdbc.driver}")
+    String driverClassName;
 
     @Resource String[] flywayLocations;
 
@@ -86,12 +113,17 @@ public class JdbcConfiguration {
 
     @Bean
     public DataSource dataSource() {
-        HikariDataSource ds = new HikariDataSource();
-        ds.setDriverClassName(Driver.class.getName());
-        ds.setUsername(username);
-        ds.setPassword(password);
-        ds.setJdbcUrl(url);
-        return ds;
+
+        try {
+            HikariDataSource ds = new HikariDataSource();
+            ds.setDriverClassName(driverClassName);
+            ds.setUsername(username);
+            ds.setPassword(password);
+            ds.setJdbcUrl(url);
+            return ds;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Bean

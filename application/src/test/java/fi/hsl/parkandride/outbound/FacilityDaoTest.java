@@ -35,7 +35,6 @@ import fi.hsl.parkandride.outbound.sql.QFacilityAlias;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = TestConfiguration.class)
-@ActiveProfiles("h2")
 public class FacilityDaoTest {
 
     public static final String NAME = "Facility";

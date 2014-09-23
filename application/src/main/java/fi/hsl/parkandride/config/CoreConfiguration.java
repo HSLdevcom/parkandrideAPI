@@ -16,7 +16,6 @@ import fi.hsl.parkandride.outbound.FacilityDao;
 
 @Configuration
 @Import(JdbcConfiguration.class)
-@PropertySource("classpath:common.properties")
 @EnableTransactionManagement(proxyTargetClass = true)
 public class CoreConfiguration {
 

@@ -73,12 +73,16 @@ public class FacilityDao implements FacilityRepository {
     @TransactionalWrite
     @Override
     public long insertFacility(Facility facility) {
+        long id = queryFactory.query().singleResult(nextFacilityId);
+
         SQLInsertClause insert = insertFacility();
-        insert.set(qFacility.id, nextFacilityId);
+        insert.set(qFacility.id, id);
         populate(facility, insert);
-        long id = insert.executeWithKey(qFacility.id);
+        insert.execute();
+
         insertAliases(id, facility.aliases);
         insertCapacities(id, facility.capacities);
+
         return id;
     }
 

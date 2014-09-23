@@ -45,7 +45,7 @@ public class FacilityService {
     }
 
     // TODO: REMOVE - this method is only for demo/testing in the beginning of the project
-    @TransactionalRead
+    @TransactionalWrite
     public SearchResults generateTestData() {
         List<Facility> facilities = new ArrayList<>(64);
         // Generated from "Liityntäpysäköinnin_autopaikat_ja_pyöräparkit.xls"

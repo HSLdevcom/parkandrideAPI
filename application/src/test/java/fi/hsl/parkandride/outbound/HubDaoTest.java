@@ -19,6 +19,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import com.google.common.collect.ImmutableSet;
 
 import fi.hsl.parkandride.core.domain.Hub;
+import fi.hsl.parkandride.core.domain.NotFoundException;
 import fi.hsl.parkandride.core.domain.SpatialSearch;
 import fi.hsl.parkandride.core.outbound.HubRepository;
 import fi.hsl.parkandride.outbound.sql.QHub;
@@ -44,10 +45,7 @@ public class HubDaoTest {
     @Test
     public void create_read_update() {
         // Insert
-        Hub hub = new Hub();
-        hub.name = "Malmi";
-        hub.location = LOCATION;
-        hub.facilityIds = FACILITY_IDS;
+        Hub hub = createHub();
 
         final long hubId = hubRepository.insertHub(hub);
         assertThat(hubId).isGreaterThan(0l);
@@ -86,6 +84,25 @@ public class HubDaoTest {
         assertThat(hubs).isEmpty();
 
     }
+
+    private Hub createHub() {
+        Hub hub = new Hub();
+        hub.name = "Malmi";
+        hub.location = LOCATION;
+        hub.facilityIds = FACILITY_IDS;
+        return hub;
+    }
+
+    @Test(expected = NotFoundException.class)
+    public void get_throws_an_exception_if_not_found() {
+        hubRepository.getHub(0);
+    }
+
+    @Test(expected = NotFoundException.class)
+    public void update_throws_an_exception_if_not_found() {
+        hubRepository.updateHub(0, createHub());
+    }
+
     private List<Hub> findByGeometry(Geometry geometry) {
         SpatialSearch search = new SpatialSearch();
         search.intersecting = geometry;

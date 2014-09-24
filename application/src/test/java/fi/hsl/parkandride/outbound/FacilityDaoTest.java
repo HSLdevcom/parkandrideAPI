@@ -129,12 +129,12 @@ public class FacilityDaoTest {
         return facility;
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = NotFoundException.class)
     public void get_throws_an_exception_if_not_found() {
         facilityDao.getFacility(0);
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = NotFoundException.class)
     public void update_throws_an_exception_if_not_found() {
         facilityDao.updateFacility(0, createFacility());
     }

@@ -22,11 +22,7 @@ import com.mysema.query.types.MappingProjection;
 import com.mysema.query.types.QBean;
 import com.mysema.query.types.expr.SimpleExpression;
 
-import fi.hsl.parkandride.core.domain.Capacity;
-import fi.hsl.parkandride.core.domain.CapacityType;
-import fi.hsl.parkandride.core.domain.Facility;
-import fi.hsl.parkandride.core.domain.PageableSpatialSearch;
-import fi.hsl.parkandride.core.domain.SearchResults;
+import fi.hsl.parkandride.core.domain.*;
 import fi.hsl.parkandride.core.outbound.FacilityRepository;
 import fi.hsl.parkandride.core.service.TransactionalRead;
 import fi.hsl.parkandride.core.service.TransactionalWrite;
@@ -99,7 +95,7 @@ public class FacilityDao implements FacilityRepository {
         SQLUpdateClause update = updateFacility().where(qFacility.id.eq(facilityId));
         populate(newFacility, update);
         if (update.execute() != 1) {
-            throw new IllegalArgumentException(format("Facility#%s not found", facilityId));
+            throw new FacilityNotFoundException(facilityId);
         }
 
         updateAliases(facilityId, newFacility.aliases, oldFacility.aliases);
@@ -189,7 +185,7 @@ public class FacilityDao implements FacilityRepository {
         }
         Facility facility = qry.singleResult(facilityMapping);
         if (facility == null) {
-            throw new IllegalArgumentException(format("Facility#%s not found", facilityId));
+            throw new FacilityNotFoundException(facilityId);
         }
         ImmutableMap<Long, Facility> facilityMap = ImmutableMap.of(facilityId, facility);
         fetchAliases(facilityMap);

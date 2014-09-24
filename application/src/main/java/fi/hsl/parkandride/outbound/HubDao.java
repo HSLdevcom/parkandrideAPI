@@ -18,6 +18,7 @@ import com.mysema.query.types.QBean;
 import com.mysema.query.types.expr.SimpleExpression;
 
 import fi.hsl.parkandride.core.domain.Hub;
+import fi.hsl.parkandride.core.domain.HubNotFoundException;
 import fi.hsl.parkandride.core.domain.SpatialSearch;
 import fi.hsl.parkandride.core.outbound.HubRepository;
 import fi.hsl.parkandride.core.service.TransactionalRead;
@@ -82,7 +83,7 @@ public class HubDao implements HubRepository {
         update.where(qHub.id.eq(hubId));
         populate(hub, update);
         if (update.execute() != 1) {
-            throw new IllegalArgumentException(format("Hub#%s not found", hubId));
+            throw new HubNotFoundException(hubId);
         }
 
         deleteHubFacilities(hubId);
@@ -98,7 +99,7 @@ public class HubDao implements HubRepository {
     public Hub getHub(long hubId) {
         List<Hub> results = findAll(new BooleanBuilder(qHub.id.eq(hubId)));
         if (results.isEmpty()) {
-            throw new IllegalArgumentException(format("Hub#%s not found", hubId));
+            throw new HubNotFoundException(hubId);
         }
         return results.get(0);
     }

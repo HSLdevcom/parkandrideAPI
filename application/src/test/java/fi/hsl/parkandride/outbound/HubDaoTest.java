@@ -84,7 +84,7 @@ public class HubDaoTest {
                 "25.01677 60.254548, " +
                 "25.015955 60.254351))"));
         assertThat(hubs).isEmpty();
-        
+
     }
     private List<Hub> findByGeometry(Geometry geometry) {
         SpatialSearch search = new SpatialSearch();

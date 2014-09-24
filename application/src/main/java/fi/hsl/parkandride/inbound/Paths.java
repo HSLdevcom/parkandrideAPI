@@ -11,4 +11,12 @@ public class Paths {
     public static final String FACILITY = FACILITIES + "/{" + FACILITY_ID + "}" ;
 
     public static final String CAPACITY_TYPES = API + "/capacity-types";
+
+
+    public static final String HUBS = API + "/hubs";
+
+    public static final String HUB_ID = "hubId";
+
+    public static final String HUB = HUBS + "/{" + HUB_ID + "}" ;
+
 }

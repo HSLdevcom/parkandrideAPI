@@ -12,23 +12,17 @@ import java.util.SortedSet;
 import javax.inject.Inject;
 
 import org.geolatte.geom.Polygon;
-import org.geolatte.geom.codec.Wkt;
 import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.SpringApplicationConfiguration;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSortedSet;
 
-import fi.hsl.parkandride.core.domain.Capacity;
-import fi.hsl.parkandride.core.domain.CapacityType;
-import fi.hsl.parkandride.core.domain.Facility;
+import fi.hsl.parkandride.core.domain.*;
 import fi.hsl.parkandride.core.outbound.FacilityRepository;
-import fi.hsl.parkandride.core.domain.FacilitySearch;
 import fi.hsl.parkandride.outbound.sql.QCapacity;
 import fi.hsl.parkandride.outbound.sql.QFacility;
 import fi.hsl.parkandride.outbound.sql.QFacilityAlias;
@@ -39,20 +33,20 @@ public class FacilityDaoTest {
 
     public static final String NAME = "Facility";
 
-    private static final Polygon BORDER = polygon("POLYGON((" +
+    private static final Polygon BORDER = (Polygon) Spatial.fromWkt("POLYGON((" +
             "25.010827 60.25055, " +
             "25.011867 60.250023, " +
             "25.012479 60.250337, " +
             "25.011454 60.250886, " +
             "25.010827 60.25055))");
 
-    public static final Polygon OVERLAPPING_AREA = polygon("POLYGON((" +
+    public static final Polygon OVERLAPPING_AREA = (Polygon) Spatial.fromWkt("POLYGON((" +
             "25.011942 60.251343, " +
             "25.011717 60.250454, " +
             "25.013487 60.250848, " +
             "25.011942 60.251343))");
 
-    public static final Polygon NON_OVERLAPPING_AREA = polygon("POLYGON((" +
+    public static final Polygon NON_OVERLAPPING_AREA = (Polygon) Spatial.fromWkt("POLYGON((" +
             "25.011942 60.251343, " +
             "25.012211 60.250816, " +
             "25.013487 60.250848, " +
@@ -120,7 +114,7 @@ public class FacilityDaoTest {
     }
 
     private List<Facility> findByGeometry(Polygon geometry) {
-        FacilitySearch search = new FacilitySearch();
+        PageableSpatialSearch search = new PageableSpatialSearch();
         search.intersecting = geometry;
         return facilityDao.findFacilities(search).results;
     }
@@ -143,10 +137,6 @@ public class FacilityDaoTest {
     @Test(expected = IllegalArgumentException.class)
     public void update_throws_an_exception_if_not_found() {
         facilityDao.updateFacility(0, createFacility());
-    }
-
-    private static Polygon polygon(String wktShape) {
-        return (Polygon) Wkt.newDecoder(Wkt.Dialect.POSTGIS_EWKT_1).decode(wktShape);
     }
 
 }

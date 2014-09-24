@@ -12,7 +12,6 @@ import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 import static org.springframework.web.bind.annotation.RequestMethod.PUT;
 
-import java.util.Arrays;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -27,7 +26,6 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import fi.hsl.parkandride.core.domain.CapacityType;
 import fi.hsl.parkandride.core.domain.Facility;
-import fi.hsl.parkandride.core.domain.FacilitySearch;
 import fi.hsl.parkandride.core.domain.SearchResults;
 import fi.hsl.parkandride.core.service.FacilityService;
 
@@ -60,8 +58,8 @@ public class FacilityController {
     }
 
     @RequestMapping(method = GET, value = FACILITIES)
-    public ResponseEntity<SearchResults<Facility>> findFacilities(FacilitySearchDto search) {
-        SearchResults<Facility> results = facilityService.search(search.toFacilitySearch());
+    public ResponseEntity<SearchResults<Facility>> findFacilities(PageableSpatialSearchDto search) {
+        SearchResults<Facility> results = facilityService.search(search.toSpatialSearch());
         return new ResponseEntity<>(results, OK);
     }
 

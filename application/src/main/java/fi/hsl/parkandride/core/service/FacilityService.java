@@ -6,11 +6,7 @@ import java.util.List;
 import org.geolatte.geom.Polygon;
 import org.geolatte.geom.codec.Wkt;
 
-import fi.hsl.parkandride.core.domain.Capacity;
-import fi.hsl.parkandride.core.domain.CapacityType;
-import fi.hsl.parkandride.core.domain.Facility;
-import fi.hsl.parkandride.core.domain.FacilitySearch;
-import fi.hsl.parkandride.core.domain.SearchResults;
+import fi.hsl.parkandride.core.domain.*;
 import fi.hsl.parkandride.core.outbound.FacilityRepository;
 
 public class FacilityService {
@@ -40,7 +36,7 @@ public class FacilityService {
     }
 
     @TransactionalRead
-    public SearchResults search(FacilitySearch search) {
+    public SearchResults search(PageableSpatialSearch search) {
         return repository.findFacilities(search);
     }
 

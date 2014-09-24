@@ -11,10 +11,15 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.sql.Connection;
 import java.sql.SQLException;
 
+import javax.inject.Inject;
 import javax.sql.DataSource;
 
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Import;
 
 import com.mysema.query.sql.Configuration;
 import com.mysema.query.sql.codegen.DefaultNamingStrategy;
@@ -22,6 +27,8 @@ import com.mysema.query.sql.codegen.MetaDataExporter;
 
 import fi.hsl.parkandride.config.JdbcConfiguration;
 
+@org.springframework.context.annotation.Configuration
+@Import(JdbcConfiguration.class)
 public class ExportQTypes {
 
     public static final String NAME_PREFIX = "Q";
@@ -29,32 +36,44 @@ public class ExportQTypes {
     public static final String PACKAGE_NAME = "fi.hsl.parkandride.outbound.sql";
 
     public static void main(String[] args) {
-        ApplicationContext ctx = new AnnotationConfigApplicationContext(JdbcConfiguration.class);
-        DataSource dataSource = ctx.getBean(DataSource.class);
-        Configuration configuration = ctx.getBean(Configuration.class);
-        MetaDataExporter exporter = new MetaDataExporter();
-        exporter.setPackageName(PACKAGE_NAME);
-//        exporter.setSchemaPattern("");
-        exporter.setInnerClassesForKeys(false);
-        exporter.setSpatial(true);
-        exporter.setNamePrefix(NAME_PREFIX);
-        exporter.setNamingStrategy(new DefaultNamingStrategy());
-        exporter.setTargetFolder(new File(TARGET_FOLDER));
-        exporter.setConfiguration(configuration);
-        Connection conn = null;
-        try {
-            conn = dataSource.getConnection();
-            deleteOldQTypes(TARGET_FOLDER, PACKAGE_NAME);
-            exporter.export(conn.getMetaData());
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            if (conn != null) {
+        SpringApplication application = new SpringApplication(ExportQTypes.class);
+        application.setWebEnvironment(false);
+        application.run(args);
+    }
+
+    @Inject DataSource dataSource;
+
+    @Inject Configuration configuration;
+
+    @Bean
+    public CommandLineRunner runner() {
+        return new CommandLineRunner() {
+            @Override
+            public void run(String... args) throws Exception {
+                MetaDataExporter exporter = new MetaDataExporter();
+                exporter.setPackageName(PACKAGE_NAME);
+                exporter.setInnerClassesForKeys(false);
+                exporter.setSpatial(true);
+                exporter.setNamePrefix(NAME_PREFIX);
+                exporter.setNamingStrategy(new DefaultNamingStrategy());
+                exporter.setTargetFolder(new File(TARGET_FOLDER));
+                exporter.setConfiguration(configuration);
+                Connection conn = null;
                 try {
-                    conn.close();
-                } catch (SQLException e) {}
+                    conn = dataSource.getConnection();
+                    deleteOldQTypes(TARGET_FOLDER, PACKAGE_NAME);
+                    exporter.export(conn.getMetaData());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                } finally {
+                    if (conn != null) {
+                        try {
+                            conn.close();
+                        } catch (SQLException e) {}
+                    }
+                }
             }
-        }
+        };
     }
     private static void deleteOldQTypes(final String target, final String pack)
             throws IOException {

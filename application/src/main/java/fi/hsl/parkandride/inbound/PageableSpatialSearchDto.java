@@ -1,14 +1,13 @@
 package fi.hsl.parkandride.inbound;
 
-import fi.hsl.parkandride.core.domain.FacilitySearch;
+import fi.hsl.parkandride.core.domain.PageableSpatialSearch;
+import fi.hsl.parkandride.core.domain.SpatialSearch;
 
-public class FacilitySearchDto {
+public class PageableSpatialSearchDto extends SpatialSearchDto {
 
-    private int limit = 100;
+    protected int limit = 100;
 
-    private long offset = 0l;
-
-    private BBox bbox;
+    protected long offset = 0l;
 
     public int getLimit() {
         return limit;
@@ -26,16 +25,9 @@ public class FacilitySearchDto {
         this.offset = offset;
     }
 
-    public BBox getBbox() {
-        return bbox;
-    }
-
-    public void setBbox(BBox bbox) {
-        this.bbox = bbox;
-    }
-
-    public FacilitySearch toFacilitySearch() {
-        FacilitySearch search = new FacilitySearch();
+    @Override
+    public PageableSpatialSearch toSpatialSearch() {
+        PageableSpatialSearch search = new PageableSpatialSearch();
         search.limit = limit;
         search.offset = offset;
         search.intersecting = bbox != null ? bbox.toPolygon() : null;

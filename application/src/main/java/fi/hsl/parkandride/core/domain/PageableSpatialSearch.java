@@ -1,13 +1,9 @@
 package fi.hsl.parkandride.core.domain;
 
-import org.geolatte.geom.Polygon;
-
-public class FacilitySearch {
+public class PageableSpatialSearch extends SpatialSearch {
 
     public int limit = 100;
 
     public long offset = 0l;
-
-    public Polygon intersecting;
 
 }

@@ -1,14 +1,19 @@
 package fi.hsl.parkandride.inbound;
 
 import static fi.hsl.parkandride.inbound.Paths.API;
+import static fi.hsl.parkandride.inbound.Paths.CAPACITY_TYPES;
 import static fi.hsl.parkandride.inbound.Paths.FACILITIES;
 import static fi.hsl.parkandride.inbound.Paths.FACILITY;
 import static fi.hsl.parkandride.inbound.Paths.FACILITY_ID;
+import static java.util.Arrays.asList;
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 import static org.springframework.web.bind.annotation.RequestMethod.PUT;
+
+import java.util.Arrays;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -20,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import fi.hsl.parkandride.core.domain.CapacityType;
 import fi.hsl.parkandride.core.domain.Facility;
 import fi.hsl.parkandride.core.domain.FacilitySearch;
 import fi.hsl.parkandride.core.domain.SearchResults;
@@ -64,6 +70,12 @@ public class FacilityController {
     public ResponseEntity<SearchResults<Facility>> generateTestFacilities() {
         SearchResults<Facility> results = facilityService.generateTestData();
         return new ResponseEntity<>(results, OK);
+    }
+
+    @RequestMapping(method = GET, value = CAPACITY_TYPES)
+    public ResponseEntity<List<CapacityType>> capacityTypes() {
+        List<CapacityType> types = asList(CapacityType.values());
+        return new ResponseEntity<>(types, OK);
     }
 
 }

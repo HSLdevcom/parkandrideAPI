@@ -10,4 +10,5 @@ public class Paths {
 
     public static final String FACILITY = FACILITIES + "/{" + FACILITY_ID + "}" ;
 
+    public static final String CAPACITY_TYPES = API + "/capacity-types";
 }

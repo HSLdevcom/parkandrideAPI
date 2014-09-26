@@ -1,0 +1,24 @@
+{
+    "facilities": {
+        "title": "Fasiliteetit",
+        "list": {
+            "name": "Nimi",
+            "types": "Tyypit"
+        },
+        "action": {
+            "new": "Lisää uusi fasiliteetti"
+        },
+        "common": {
+            "action": {
+                "back": "Takaisin",
+                "edit": "Muokkaa",
+                "save": "Tallenna muutokset"
+            },
+            "capacity": {
+                "CAR": "Henkilöauto",
+                "PARK_AND_RIDE": "Liityntäpysäköinti",
+                "BICYCLE": "Polkupyörä"
+            }
+        }
+    }
+}

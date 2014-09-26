@@ -1,7 +1,7 @@
 create table facility (
   id bigint not null,
   name varchar(255) not null,
-  border polygon not null,
+  border geometry not null,
 
   primary key (id)
 );

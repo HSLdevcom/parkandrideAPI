@@ -4,7 +4,7 @@ target
 node
 node_modules
 vendor
-build
+**/frontend/build
 bin
 QGeometryColumns.java
 QSchemaVersion.java

@@ -16,4 +16,4 @@ scp -oStrictHostKeyChecking=no -r -i $IDENTITY_FILE etc $AWS_USER@$AWS_HOST:
 scp -r -i $IDENTITY_FILE parkandride-application-$VERSION.jar $AWS_USER@$AWS_HOST:parkandride-application-latest.jar
 
 # stop and start docker container
-ssh -i $IDENTITY_FILE -t "$AWS_USER@$AWS_SERVER" "etc/deploy/restart.sh"
+ssh -i $IDENTITY_FILE -t "$AWS_USER@$AWS_HOST" "etc/deploy/restart.sh"

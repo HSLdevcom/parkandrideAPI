@@ -11,6 +11,6 @@ IDENTITY_FILE=/var/go/hsl-liipi.pem
 
 # transfer
 scp -r -i $IDENTITY_FILE etc $AWS_USER@$AWS_HOST:
-scp -r -i $IDENTITY_FILE parkandride-application-$VERSION.jar $AWS_USER@$AWS_SERVER:parkandride-application-latest.jar
+scp -r -i $IDENTITY_FILE parkandride-application-$VERSION.jar $AWS_USER@$AWS_HOST:parkandride-application-latest.jar
 
 # stop and start docker container, build new images and restart containers

@@ -3,7 +3,7 @@
 
     m.directive('polygon', function() {
         return {
-            restrict: 'AE',
+            restrict: 'E',
             template: '<div></div>',
             scope: {
                 polygon: '=ngModel',

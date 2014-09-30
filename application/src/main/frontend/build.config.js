@@ -70,9 +70,11 @@ module.exports = {
       'vendor/lodash/dist/lodash.js',
       'vendor/restangular/dist/restangular.js',
       'vendor/angular-translate/angular-translate.js',
-      'vendor/angular-translate-loader-static-files/angular-translate-loader-static-files.js'
+      'vendor/angular-translate-loader-static-files/angular-translate-loader-static-files.js',
+      'vendor/openlayers3/build/ol.js'
     ],
     css: [
+        'vendor/openlayers3/css/ol.css'
     ],
     assets: [
     ]

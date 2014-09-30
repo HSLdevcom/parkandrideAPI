@@ -2,7 +2,8 @@
     var m = angular.module('facilities.create', [
         'ui.router',
         'parkandride.services.facilities',
-        'parkandride.resources.facilities'
+        'parkandride.resources.facilities',
+        'parkandride.directives.map'
     ]);
 
     m.config(function config($stateProvider) {

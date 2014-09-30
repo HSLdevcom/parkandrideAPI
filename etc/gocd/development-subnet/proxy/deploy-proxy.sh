@@ -12,7 +12,6 @@ function version() {
   v=`echo $proxy_jar | sed -e 's/.*-\(.*\)\.jar/\1/'`
   echo $v
 }
-VERSION=`version`
 
 function transfer() {
   PROXY_LATEST="proxy-latest.jar"
@@ -23,4 +22,12 @@ function transfer() {
 
   ssh -i $IDENTITY_FILE -t $AWS_CI "cd proxy && rm $PROXY_LATEST; ln -s $PROXY_NEW $PROXY_LATEST"
 }
+
+function restart_container() {
+  ssh -i $IDENTITY_FILE -t $AWS_CI "sh proxy/restart.sh"
+}
+
+VERSION=`version`
 transfer
+restart_container
+

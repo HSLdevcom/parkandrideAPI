@@ -21,6 +21,6 @@ function transfer() {
   scp -oStrictHostKeyChecking=no -r -i $IDENTITY_FILE etc/docker/proxy $AWS_CI:
   scp -r -i $IDENTITY_FILE `dirname $0`/$PROXY_NEW $AWS_CI:proxy/$PROXY_NEW
 
-  ssh -i $IDENTITY_FILE -t $AWS_CI "cd proxy && rm $PROXY_LATEST && ln -s $PROXY_NEW $PROXY_LATEST"
+  ssh -i $IDENTITY_FILE -t $AWS_CI "cd proxy && rm $PROXY_LATEST; ln -s $PROXY_NEW $PROXY_LATEST"
 }
 transfer

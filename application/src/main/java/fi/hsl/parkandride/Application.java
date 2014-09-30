@@ -1,15 +1,24 @@
 package fi.hsl.parkandride;
 
+import java.io.IOException;
+
+import org.eclipse.jetty.util.resource.Resource;
+import org.eclipse.jetty.util.resource.ResourceCollection;
+import org.eclipse.jetty.webapp.WebAppContext;
 import org.geolatte.common.dataformats.json.jackson.JsonMapper;
 import org.geolatte.geom.Geometry;
 import org.geolatte.geom.crs.CrsId;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.web.WebMvcAutoConfiguration;
+import org.springframework.boot.context.embedded.EmbeddedServletContainerFactory;
+import org.springframework.boot.context.embedded.ServletContextInitializer;
+import org.springframework.boot.context.embedded.jetty.JettyEmbeddedServletContainerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.Profile;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 
 import com.fasterxml.jackson.databind.Module;
@@ -28,8 +37,9 @@ public class Application {
     }
 
     @Configuration
-    @Import(WebMvcAutoConfiguration.class)
+    @Import({ WebMvcAutoConfiguration.class, DevUIConfig.class })
     public static class UiConfig extends WebMvcAutoConfiguration.WebMvcAutoConfigurationAdapter {
+
         @Override
         public void addResourceHandlers(final ResourceHandlerRegistry registry) {
             super.addResourceHandlers(registry);
@@ -42,6 +52,32 @@ public class Application {
                 addSerializer(Geometry.class, new GeometrySerializer(jsonMapper));
                 addDeserializer(Geometry.class, new GeometryDeserializer(jsonMapper));
             }};
+        }
+    }
+
+    @Configuration
+    @Profile("dev")
+    public static class DevUIConfig {
+
+        @Bean
+        public EmbeddedServletContainerFactory servletContainer() {
+            return new JettyEmbeddedServletContainerFactory() {
+                @Override
+                protected void postProcessWebAppContext(WebAppContext webAppContext) {
+                    Resource defaultResource = webAppContext.getBaseResource();
+
+                    String projectDir = System.getProperty("user.dir");
+                    if (!projectDir.endsWith("application")) {
+                        projectDir += "/application";
+                    }
+                    try {
+                        Resource devResource = Resource.newResource(projectDir + "/src/main/frontend/build");
+                        webAppContext.setBaseResource(new ResourceCollection(defaultResource, devResource));
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            };
         }
     }
 }

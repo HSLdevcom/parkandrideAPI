@@ -26,18 +26,12 @@
 					<input id="inputAlias" type="text" class="form-control" ng-model="createCtrl.facility.aliases" aliases>
 				</div>
 			</div>
-	</div>
-</div>
 
-<div class="row">
-	<div class="col-md-6" ng-controller="CapacityCtrl as capacityCtrl">
-		<div>{{createCtrl.facility.capacities}}</div>
-
-		<h4>Kapasiteetti</h4>
+			<h4>Kapasiteetti</h4>
 
 			<select ng-model="capacityCtrl.capacity.capacityType"
 					ng-options="c as ('facilities.common.capacity.' + c | translate) for c in capacityCtrl.capacityTypeOptions"
-			></select>
+					></select>
 
 			<div class="form-group">
 				<label for="inputBuilt" class="col-sm-5 control-label">Rakennettu kapasiteetti</label>
@@ -59,88 +53,16 @@
 				</a>
 			</div>
 	</div>
+	<div class="col-md-6">
+
+		<h4>* Sijainti</h4>
+
+		<polygon ng-model="createCtrl.facility.border" editable="true" required></polygon>
+
+	</div>
 </div>
 
 <div class="row">
-	<div class="col-md-6">
-
-		<h4>Sijainti</h4>
-		<p>Käytä parkkilaitoksen reunapisteiden kirjaamiseen EURE-FIN-koordinaatistoa</p>
-
-			<!--1. reunapiste-->
-			<div class="form-group">
-				<label for="inputCornerpoint" class="col-sm-5 control-label">1. reunapiste (pituus/leveysasteet)</label>
-				<div class="col-sm-7">
-					<div class="input-group">
-						<input type="text" id="inputCornerpoint" class="form-control" placeholder="60.23411" />
-						<span class="input-group-btn" style="width:0px;"></span>
-						<input type="text" class="form-control" placeholder="60.12414" style="margin-left:-2px" />
-              <span class="input-group-btn">
-                <button class="btn btn-primary btn-remove" type="button" disabled>X</button>
-              </span>
-					</div>
-				</div>
-			</div>
-
-			<!--2. reunapiste-->
-			<div class="form-group">
-				<label for="inputCornerpoint" class="col-sm-5 control-label">2. reunapiste</label>
-				<div class="col-sm-7">
-					<div class="input-group">
-						<input type="text" id="inputCornerpoint" class="form-control" placeholder="60.23411" />
-						<span class="input-group-btn" style="width:0px;"></span>
-						<input type="text" class="form-control" placeholder="60.12414" style="margin-left:-2px" />
-          <span class="input-group-btn">
-            <button class="btn btn-primary btn-remove" type="button" disabled>X</button>
-          </span>
-					</div>
-				</div>
-			</div>
-
-			<!--3. reunapiste-->
-			<div class="form-group">
-				<label for="inputCornerpoint" class="col-sm-5 control-label">3. reunapiste</label>
-				<div class="col-sm-7">
-					<div class="input-group">
-						<input type="text" id="inputCornerpoint" class="form-control" placeholder="60.23411" />
-						<span class="input-group-btn" style="width:0px;"></span>
-						<input type="text" class="form-control" placeholder="60.12414" style="margin-left:-2px" />
-              <span class="input-group-btn">
-                <button class="btn btn-primary btn-remove" type="button" disabled>X</button>
-              </span>
-					</div>
-				</div>
-			</div>
-
-			<!--4. reunapiste-->
-			<div class="form-group">
-				<label for="inputCornerpoint" class="col-sm-5 control-label">4. reunapiste</label>
-				<div class="col-sm-7">
-					<div class="input-group">
-						<input type="text" id="inputCornerpoint" class="form-control" placeholder="60.23411" />
-						<span class="input-group-btn" style="width:0px;"></span>
-						<input type="text" class="form-control" placeholder="60.12414" style="margin-left:-2px" />
-                <span class="input-group-btn">
-                  <button class="btn btn-primary btn-remove" type="button">X</button>
-                </span>
-					</div>
-				</div>
-			</div>
-
-			<!--Lisää uusi reunapiste-->
-			<div class="text-right">
-				<a class="btn btn-xs btn-primary" href="#" role="button">
-					Uusi reunapiste
-				</a>
-			</div>
-
-	</div>
-
-	<div class="col-md-6 text-right">
-		<p>
-			<img style="float: right; width: 400px; padding-top: 10px" src="assets/karttakuva.png" alt="Kartta">
-		</p>
-	</div>
 </div>
 
 <div class="row">

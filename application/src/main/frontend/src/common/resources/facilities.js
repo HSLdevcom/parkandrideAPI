@@ -54,9 +54,10 @@
     });
 
     m.factory('Facility', function(Capacities){
-        function Facility(name, aliases, capacities) {
+        function Facility(name, aliases, border, capacities) {
             this.name = name;
             this.aliases = aliases;
+            this.border = border;
             this.capacities = Capacities.build(capacities);
         }
 
@@ -64,6 +65,7 @@
             return new Facility(
                 data.name,
                 data.aliases,
+                data.border,
                 data.capacities
             );
         };
@@ -73,16 +75,7 @@
             container.name = facility.name;
             container.aliases = facility.aliases;
             container.capacities = Capacities.toData(facility.capacities);
-            container.border = {
-                "type": "Polygon",
-                "coordinates": [[
-                    [60.25055, 25.010827],
-                    [60.250023, 25.011867],
-                    [60.250337, 25.012479],
-                    [60.250886, 25.011454],
-                    [60.25055, 25.010827]
-                ]]
-            };
+            container.border = facility.border;
 
             return container;
         };

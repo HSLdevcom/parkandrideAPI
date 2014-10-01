@@ -11,7 +11,8 @@ function version() {
     -Dexec.outputFile="version" \
     --non-recursive \
     --batch-mode \
-    org.codehaus.mojo:exec-maven-plugin:1.3.1:exec >/dev/null 2>&1 ||
+    --errors \
+    org.codehaus.mojo:exec-maven-plugin:1.3.1:exec ||
     { echo "Unable to determine version" 1>&2; exit 1; }
 
   sed -i -e "s/SNAPSHOT$/$GO_PIPELINE_COUNTER/" version

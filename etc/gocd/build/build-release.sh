@@ -9,6 +9,7 @@ function version() {
   mvn -Dexec.executable="echo" \
     -Dexec.args='${project.version}' \
     -Dexec.outputFile="version" \
+    --update-snapshots \
     --non-recursive \
     --batch-mode \
     --errors \
@@ -28,6 +29,7 @@ VERSION=`version`
 REVISION=`revision`
 
 mvn versions:set \
+    --update-snapshots \
     --batch-mode \
     --errors \
     -DgenerateBackupPoms=false \
@@ -35,6 +37,7 @@ mvn versions:set \
     --file parent/pom.xml
 
 mvn clean deploy \
+    --update-snapshots \
     --batch-mode \
     --errors \
     -DaltDeploymentRepository="staging::default::file:staging"

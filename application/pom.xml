@@ -184,6 +184,7 @@
             <goals>
               <goal>install-node-and-npm</goal>
             </goals>
+            <phase>generate-sources</phase>
             <configuration>
               <nodeVersion>${frontend-maven-plugin.node.version}</nodeVersion>
               <npmVersion>${frontend-maven-plugin.npm.version}</npmVersion>
@@ -195,6 +196,7 @@
             <goals>
               <goal>npm</goal>
             </goals>
+            <phase>generate-sources</phase>
           </execution>
 
           <execution>
@@ -202,7 +204,7 @@
             <goals>
               <goal>grunt</goal>
             </goals>
-            <phase>process-resources</phase>
+            <phase>generate-resources</phase>
             <configuration>
               <arguments>--no-color</arguments>
             </configuration>
@@ -230,7 +232,7 @@
         <executions>
           <execution>
             <id>bower install</id>
-            <phase>generate-resources</phase>
+            <phase>process-sources</phase>
             <goals>
               <goal>exec</goal>
             </goals>

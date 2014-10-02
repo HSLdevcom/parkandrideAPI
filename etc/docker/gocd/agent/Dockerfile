@@ -20,11 +20,10 @@ RUN apt-get -yqq install phantomjs > /dev/null
 VOLUME ["/var/lib/go/agent"]
 
 ENV HOME /var/go
-WORKDIR /var/go
 USER go
 
-ADD ./hsl-liipi.pem .
-RUN mkdir -p .m2
-ADD ./m2.settings .m2/settings.xml
+ADD hsl-liipi.pem /var/go/
+RUN mkdir -p /var/go/.m2
+ADD m2.settings /var/go/.m2/settings.xml
 
 CMD /etc/init.d/go-agent start

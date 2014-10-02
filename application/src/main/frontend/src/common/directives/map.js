@@ -4,11 +4,11 @@
     m.directive('polygon', function() {
         return {
             restrict: 'E',
-            template: '<div></div>',
             scope: {
                 polygon: '=ngModel',
                 editable: '='
             },
+            template: '<div class="polygon-map"></div>',
             transclude: false,
             link: function(scope, element, attrs) {
 
@@ -18,7 +18,7 @@
                 });
 
                 var map = new ol.Map({
-                    target: element[0],
+                    target: element.children()[0],
                     controls: ol.control.defaults().extend([
                         new ol.control.FullScreen()
                     ]),

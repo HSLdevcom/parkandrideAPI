@@ -22,6 +22,9 @@ VOLUME ["/var/lib/go/agent"]
 ENV HOME /var/go
 WORKDIR /var/go
 USER go
+
 ADD ./hsl-liipi.pem .
+RUN mkdir -p .m2
+ADD ./m2.settings .m2/settings.xml
 
 CMD /etc/init.d/go-agent start

@@ -27,30 +27,33 @@
 				</div>
 			</div>
 
-			<h4>Kapasiteetti</h4>
+			<div ng-controller="CapacityCtrl as capacityCtrl">
+				<h4>Kapasiteetti</h4>
+				<div>{{createCtrl.facility.capacities}}</div>
 
-			<select ng-model="capacityCtrl.capacity.capacityType"
-					ng-options="c as ('facilities.common.capacity.' + c | translate) for c in capacityCtrl.capacityTypeOptions"
-					></select>
+				<select ng-model="capacityCtrl.capacity.capacityType"
+						ng-options="c as ('facilities.common.capacity.' + c | translate) for c in capacityCtrl.capacityTypeOptions"
+						></select>
 
-			<div class="form-group">
-				<label for="inputBuilt" class="col-sm-5 control-label">Rakennettu kapasiteetti</label>
-				<div class="col-sm-7">
-					<input id="inputBuilt" type="number" class="form-control" ng-model="capacityCtrl.capacity.built">
+				<div class="form-group">
+					<label for="inputBuilt" class="col-sm-5 control-label">Rakennettu kapasiteetti</label>
+					<div class="col-sm-7">
+						<input id="inputBuilt" type="number" class="form-control" ng-model="capacityCtrl.capacity.built">
+					</div>
 				</div>
-			</div>
 
-			<div class="form-group">
-				<label for="inputTemporary" class="col-sm-5 control-label">Tilapäisesti pois käytöstä</label>
-				<div class="col-sm-7">
-					<input id="inputTemporary" type="number" class="form-control" ng-model="capacityCtrl.capacity.unavailable">
+				<div class="form-group">
+					<label for="inputTemporary" class="col-sm-5 control-label">Tilapäisesti pois käytöstä</label>
+					<div class="col-sm-7">
+						<input id="inputTemporary" type="number" class="form-control" ng-model="capacityCtrl.capacity.unavailable">
+					</div>
 				</div>
-			</div>
 
-			<div class="text-right">
-				<a class="btn btn-xs btn-primary" role="button" ng-click="capacityCtrl.addCapacity(createCtrl.facility)">
-					Lisää
-				</a>
+				<div class="text-right">
+					<a class="btn btn-xs btn-primary" role="button" ng-click="capacityCtrl.addCapacity(createCtrl.facility)">
+						Lisää
+					</a>
+				</div>
 			</div>
 	</div>
 	<div class="col-md-6">

@@ -1,9 +1,13 @@
 package fi.hsl.parkandride.core.domain;
 
+import javax.validation.constraints.Min;
+
 public class Capacity {
 
+    @Min(1)
     public int built;
 
+    @Min(0)
     public int unavailable;
 
     public Capacity() {}

@@ -20,8 +20,9 @@
                 return _.reduce(
                     capacities,
                     function(target, capacity) {
-                        target[capacity.capacityType] = _.clone(capacity);
-                        delete capacity.capacityType;
+                        var copy = _.clone(capacity);
+                        delete copy.capacityType;
+                        target[capacity.capacityType] = copy;
                         return target;
                     },
                     {});

@@ -19,7 +19,9 @@
 
                 var map = new ol.Map({
                     target: element[0],
-                    controls: ol.control.defaults(),
+                    controls: ol.control.defaults().extend([
+                        new ol.control.FullScreen()
+                    ]),
                     layers: [
                         new ol.layer.Tile({
                             source: new ol.source.OSM()

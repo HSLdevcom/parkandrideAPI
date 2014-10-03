@@ -1,6 +1,6 @@
 package fi.hsl.parkandride.core.service;
 
-import static org.junit.Assert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.fail;
 
 import java.util.List;
@@ -9,7 +9,6 @@ import java.util.Map;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.Test;
 
 import com.google.common.collect.ImmutableMap;

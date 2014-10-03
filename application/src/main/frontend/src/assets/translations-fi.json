@@ -17,7 +17,10 @@
             "capacity": {
                 "CAR": "Henkilöauto",
                 "PARK_AND_RIDE": "Liityntäpysäköinti",
-                "BICYCLE": "Polkupyörä"
+                "BICYCLE": "Polkupyörä",
+                "DISABLED": "Invapaikka",
+                "MOTORCYCLE": "Moottoripyörä",
+                "ELECTRIC_CAR": "Sähköauto"
             }
         }
     }

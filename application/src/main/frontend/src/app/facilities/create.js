@@ -3,10 +3,11 @@
         'ui.router',
         'parkandride.services.facilities',
         'parkandride.resources.facilities',
-        'parkandride.directives.map'
+        'parkandride.directives.map',
+        'ngTagsInput'
     ]);
 
-    m.config(function config($stateProvider) {
+    m.config(function($stateProvider) {
         $stateProvider.state('facilities-create', { // dot notation in ui-router indicates nested ui-view
             url: '/facilities/create', // TODO set facilities base path on upper level and say here /create ?
             views: {
@@ -15,20 +16,35 @@
                     templateUrl: 'facilities/create.tpl.html'
                 }
             },
-            data: { pageTitle: 'Create Facility' }
+            data: { pageTitle: 'Create Facility' },
+            resolve: {
+                capacityTypes: function(FacilityService) {
+                    return FacilityService.getCapacityTypes();
+                }
+            }
         });
     });
 
-    m.controller('CreateCtrl', CreateController);
-    function CreateController($state, FacilityService, Facility) {
-        this.facility = Facility.build({});
+    m.controller('CreateCtrl', function($scope, $state, FacilityService, Facility, capacityTypes) {
+        $scope.facility = {
+            aliases: [],
+            capacities: _.map(capacityTypes, function(capacityType) {
+                return {
+                    capacityType: capacityType,
+                    built: null,
+                    unavailable: null
+                };
+            })
+        };
 
-        this.addFacility = function() {
-            FacilityService.save(this.facility).then(function(id){
+        $scope.addFacility = function() {
+            var facility = _.cloneDeep($scope.facility);
+            facility.aliases = _.map(facility.aliases, function(alias) { return alias.text; });
+            FacilityService.save(facility).then(function(id){
                 $state.go('facilities-view', { "id": id });
             });
         };
-    }
+    });
 
     m.directive('aliases', function() {
         return {
@@ -42,16 +58,6 @@
             }
         };
     });
-
-    m.controller('CapacityCtrl', CapacityController);
-    function CapacityController(capacityTypes) {
-        this.capacity = {};
-        this.capacityTypeOptions = capacityTypes;
-        this.addCapacity = function(facility){
-            facility.capacities.push(this.capacity);
-            this.capacity = {};
-        };
-    }
 
     m.directive('createNavi', function() {
         return {

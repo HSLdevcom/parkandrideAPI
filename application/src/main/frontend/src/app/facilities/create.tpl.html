@@ -1,4 +1,4 @@
-<form name="createFacilityForm" class="form-horizontal" role="form" ng-controller="CreateCtrl as createCtrl" novalidate>
+<form name="createFacilityForm" class="form-horizontal" role="form" novalidate>
 
 <div class="row">
 	<div class="col-md-6">
@@ -14,45 +14,41 @@
 			<div class="form-group">
 				<label for="inputName" class="col-sm-5 control-label">* Nimi</label>
 				<div class="col-sm-7">
-					<input id="inputName" type="text" class="form-control" ng-model="createCtrl.facility.name" required />
+					<input id="inputName" type="text" class="form-control" ng-model="facility.name" required />
 				</div>
 			</div>
-			<div>createFacilityForm is {{createFacilityForm.$valid}}</div>
 
 			<!--Aliakset-->
 			<div class="form-group">
 				<label for="inputAlias" class="col-sm-5 control-label">Aliakset</label>
 				<div class="col-sm-7">
-					<input id="inputAlias" type="text" class="form-control" ng-model="createCtrl.facility.aliases" aliases>
+					<tags-input ng-model="facility.aliases" placeholder="Add an alias"></tags-input>
 				</div>
 			</div>
 
-			<div ng-controller="CapacityCtrl as capacityCtrl">
+			<div>
 				<h4>Kapasiteetti</h4>
-				<div>{{createCtrl.facility.capacities}}</div>
-
-				<select ng-model="capacityCtrl.capacity.capacityType"
-						ng-options="c as ('facilities.common.capacity.' + c | translate) for c in capacityCtrl.capacityTypeOptions"
-						></select>
-
-				<div class="form-group">
-					<label for="inputBuilt" class="col-sm-5 control-label">Rakennettu kapasiteetti</label>
-					<div class="col-sm-7">
-						<input id="inputBuilt" type="number" class="form-control" ng-model="capacityCtrl.capacity.built">
-					</div>
-				</div>
-
-				<div class="form-group">
-					<label for="inputTemporary" class="col-sm-5 control-label">Tilapäisesti pois käytöstä</label>
-					<div class="col-sm-7">
-						<input id="inputTemporary" type="number" class="form-control" ng-model="capacityCtrl.capacity.unavailable">
-					</div>
-				</div>
-
-				<div class="text-right">
-					<a class="btn btn-xs btn-primary" role="button" ng-click="capacityCtrl.addCapacity(createCtrl.facility)">
-						Lisää
-					</a>
+				<div class="panel panel-default">
+					<table class="table table-bordered table-striped table-condensed">
+						<thead>
+							<tr>
+								<th>Tyyppi</th>
+								<th>Rakennettu kapasiteetti</th>
+								<th>Tilapäisesti pois käytöstä</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr ng-repeat="capacity in facility.capacities">
+								<td>{{'facilities.common.capacity.' + capacity.capacityType | translate}}</td>
+								<td>
+									<input type="number" class="form-control" ng-model="capacity.built" min="0">
+								</td>
+								<td>
+									<input type="number" class="form-control" ng-model="capacity.unavailable" min="0">
+								</td>
+							</tr>
+						</tbody>
+					</table>
 				</div>
 			</div>
 	</div>
@@ -60,7 +56,7 @@
 
 		<h4>* Sijainti</h4>
 
-		<polygon ng-model="createCtrl.facility.border" editable="true" required></polygon>
+		<polygon ng-model="facility.border" editable="true" required></polygon>
 
 	</div>
 </div>

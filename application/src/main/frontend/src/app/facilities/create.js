@@ -49,7 +49,7 @@
         this.capacityTypeOptions = capacityTypes;
         this.addCapacity = function(facility){
             facility.capacities.push(this.capacity);
-            this.capacity = new Capacity();
+            this.capacity = {};
         };
     }
 

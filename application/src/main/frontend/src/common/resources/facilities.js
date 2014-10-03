@@ -19,7 +19,7 @@
                 return _.reduce(
                     capacities,
                     function(target, capacity) {
-                        if (capacity.built > 0 && capacity.unavailable >= 0) {
+                        if (capacity.built > 0) {
                             var copy = _.clone(capacity);
                             delete copy.capacityType;
                             target[capacity.capacityType] = copy;

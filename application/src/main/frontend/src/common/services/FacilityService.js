@@ -21,9 +21,15 @@
 
         api.save = function(newFacility) {
             var data = Facility.toData(newFacility);
-            return Restangular.all('facilities').post(data).then(function(response){
-                return response.id;
-            });
+            if (data.id) {
+                return Restangular.one('facilities', data.id).customPUT(data).then(function(response){
+                    return response.id;
+                });
+            } else {
+                return Restangular.all('facilities').post(data).then(function(response){
+                    return response.id;
+                });
+            }
         };
 
         api.getCapacityTypes = function() {

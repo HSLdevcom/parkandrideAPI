@@ -1,8 +1,6 @@
 (function() {
     var m = angular.module('parkandride.resources.facilities', []);
 
-    m.value('capacityTypes', ['CAR', 'PARK_AND_RIDE', 'BICYCLE']);
-
     m.factory('Capacities', function() {
         return {
             build: function (data) {
@@ -20,9 +18,11 @@
                 return _.reduce(
                     capacities,
                     function(target, capacity) {
-                        var copy = _.clone(capacity);
-                        delete copy.capacityType;
-                        target[capacity.capacityType] = copy;
+                        if (capacity.built > 0 && capacity.unavailable >= 0) {
+                            var copy = _.clone(capacity);
+                            delete copy.capacityType;
+                            target[capacity.capacityType] = copy;
+                        }
                         return target;
                     },
                     {});

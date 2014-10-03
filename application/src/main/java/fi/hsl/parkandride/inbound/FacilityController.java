@@ -71,9 +71,9 @@ public class FacilityController {
     }
 
     @RequestMapping(method = GET, value = CAPACITY_TYPES)
-    public ResponseEntity<List<CapacityType>> capacityTypes() {
+    public ResponseEntity<SearchResults<CapacityType>> capacityTypes() {
         List<CapacityType> types = asList(CapacityType.values());
-        return new ResponseEntity<>(types, OK);
+        return new ResponseEntity<>(SearchResults.of(types), OK);
     }
 
 }

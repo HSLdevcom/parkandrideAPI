@@ -26,6 +26,12 @@
             });
         };
 
+        api.getCapacityTypes = function() {
+            return Restangular.one('capacity-types').get().then(function(data) {
+                return data.results;
+            });
+        };
+
         return api;
     });
 })();

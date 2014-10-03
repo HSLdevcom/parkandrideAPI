@@ -4,15 +4,19 @@ import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 import java.util.List;
+import java.util.Map;
 
+import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.ConstraintViolationException;
 
-import org.springframework.http.HttpStatus;
+import org.springframework.boot.autoconfigure.web.BasicErrorController;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.context.request.RequestAttributes;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import fi.hsl.parkandride.core.domain.NotFoundException;
 import fi.hsl.parkandride.core.domain.Violation;
@@ -20,6 +24,9 @@ import fi.hsl.parkandride.core.service.ValidationException;
 
 @ControllerAdvice
 public class ExceptionHandlers {
+
+    @Inject
+    BasicErrorController errorController;
 
     @ExceptionHandler(NotFoundException.class)
     @ResponseStatus(value= NOT_FOUND)
@@ -29,10 +36,12 @@ public class ExceptionHandlers {
     }
 
     @ExceptionHandler(ValidationException.class)
-    @ResponseStatus(value = BAD_REQUEST)
     @ResponseBody
-    public List<Violation> validationException(ValidationException ex) {
-        return ex.violations;
+    public ResponseEntity<Map<String, Object>> validationException(HttpServletRequest request, ValidationException ex) {
+        request.setAttribute("javax.servlet.error.status_code", BAD_REQUEST.value());
+        ResponseEntity<Map<String, Object>> responseEntity = errorController.error(request);
+        responseEntity.getBody().put("violations", ex.violations);
+        return responseEntity;
     }
 
 }

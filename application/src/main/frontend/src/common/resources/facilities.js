@@ -1,85 +1,48 @@
 (function() {
     var m = angular.module('parkandride.resources.facilities', []);
 
-    m.factory('Capacity', function() {
-        function Capacity(capacityType, built, unavailable) {
-            this.capacityType = capacityType;
-            this.built = built;
-            this.unavailable = unavailable;
-        }
+    m.value('capacityTypes', ['CAR', 'PARK_AND_RIDE', 'BICYCLE']);
 
-        var capacityTypes = ['CAR', 'PARK_AND_RIDE', 'BICYCLE'];
-        function checkType(type) {
-            return capacityTypes.indexOf(type) !== -1;
-        }
-        Capacity.capacityTypes = angular.copy(capacityTypes);
+    m.factory('Capacities', function() {
+        return {
+            build: function (data) {
+                return _.reduce(
+                    data,
+                    function(target, capacity, key) {
+                        var copy = _.clone(capacity);
+                        copy.capacityType = key;
+                        return target;
+                    },
+                    []);
+            },
 
-        Capacity.build = function(k, v) {
-            if (!checkType(k)) {
-                return;
+            toData: function (capacities) {
+                return _.reduce(
+                    capacities,
+                    function(target, capacity) {
+                        var copy = _.clone(capacity);
+                        delete copy.capacityType;
+                        target[capacity.capacityType] = copy;
+                        return target;
+                    },
+                    {});
             }
-            return new Capacity(
-                k,
-                v.built,
-                v.unavailable
-            );
         };
-
-        Capacity.toData = function(capacity, container) {
-            return container[capacity.capacityType] =  {
-                "built" : capacity.built,
-                "unavailable" : capacity.unavailable
-            };
-        };
-
-        return Capacity;
-    });
-
-    m.factory('Capacities', function(Capacity) {
-        function Capacities() {}
-
-        Capacities.build = function(data) {
-            return _.map(data, function(v, k) {
-                return Capacity.build(k, v);
-            });
-        };
-
-        Capacities.toData = function(capacities) {
-            var container = {};
-            _.forEach(capacities, function(c) { Capacity.toData(c, container); });
-            return container;
-        };
-
-        return Capacities;
     });
 
     m.factory('Facility', function(Capacities){
-        function Facility(name, aliases, border, capacities) {
-            this.name = name;
-            this.aliases = aliases;
-            this.border = border;
-            this.capacities = Capacities.build(capacities);
-        }
+        return {
+            build: function(data) {
+                var copy = _.clone(data);
+                copy.capacities = Capacities.build(data.capacities);
+                return copy;
+            },
 
-        Facility.build = function(data) {
-            return new Facility(
-                data.name,
-                data.aliases,
-                data.border,
-                data.capacities
-            );
+            toData: function(facility) {
+                var copy = _.clone(facility);
+                copy.capacities = Capacities.toData(facility.capacities);
+                return copy;
+            }
         };
-
-        Facility.toData = function(facility) {
-            var container = {};
-            container.name = facility.name;
-            container.aliases = facility.aliases;
-            container.capacities = Capacities.toData(facility.capacities);
-            container.border = facility.border;
-
-            return container;
-        };
-
-        return Facility;
     });
 })();

@@ -20,22 +20,49 @@
             resolve: {
                 capacityTypes: function(FacilityService) {
                     return FacilityService.getCapacityTypes();
+                },
+                facility: function() {
+                    return {
+                        aliases: [],
+                        capacities: {}
+                    };
+                }
+            }
+        });
+        $stateProvider.state('facilities-edit', { // dot notation in ui-router indicates nested ui-view
+            url: '/facilities/edit/:id', // TODO set facilities base path on upper level and say here /create ?
+            views: {
+                "main": {
+                    controller: 'CreateCtrl',
+                    templateUrl: 'facilities/create.tpl.html'
+                }
+            },
+            data: { pageTitle: 'Edit Facility' },
+            resolve: {
+                capacityTypes: function(FacilityService) {
+                    return FacilityService.getCapacityTypes();
+                },
+                facility: function($stateParams, FacilityService) {
+                    return FacilityService.getFacility($stateParams.id);
                 }
             }
         });
     });
 
-    m.controller('CreateCtrl', function($scope, $state, FacilityService, Facility, capacityTypes) {
-        $scope.facility = {
-            aliases: [],
-            capacities: _.map(capacityTypes, function(capacityType) {
-                return {
-                    capacityType: capacityType,
-                    built: null,
-                    unavailable: null
-                };
-            })
-        };
+    m.controller('CreateCtrl', function($scope, $state, FacilityService, Facility, capacityTypes, facility) {
+
+        facility.capacities = _.map(capacityTypes, function(capacityType) {
+            var existing = _.find(facility.capacities, function(c) { return c.capacityType == capacityType; }) || {};
+            return {
+                capacityType: capacityType,
+                built: existing.built,
+                unavailable: existing.unavailable
+            };
+        });
+
+        facility.aliases = _.map(facility.aliases, function(a) { return { text: a }; });
+
+        $scope.facility = facility;
 
         $scope.addFacility = function() {
             var facility = _.cloneDeep($scope.facility);

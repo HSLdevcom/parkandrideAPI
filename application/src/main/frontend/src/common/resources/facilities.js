@@ -9,6 +9,7 @@
                     function(target, capacity, key) {
                         var copy = _.clone(capacity);
                         copy.capacityType = key;
+                        target.push(copy);
                         return target;
                     },
                     []);

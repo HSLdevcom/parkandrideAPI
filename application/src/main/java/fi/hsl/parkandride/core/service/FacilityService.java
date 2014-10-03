@@ -2,6 +2,12 @@ package fi.hsl.parkandride.core.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
+import javax.validation.Validation;
+import javax.validation.Validator;
 
 import org.geolatte.geom.Polygon;
 import org.geolatte.geom.codec.Wkt;
@@ -13,18 +19,23 @@ public class FacilityService {
 
     private final FacilityRepository repository;
 
-    public FacilityService(FacilityRepository repository) {
+    private final ValidationService validationService;
+
+    public FacilityService(FacilityRepository repository, ValidationService validationService) {
         this.repository = repository;
+        this.validationService = validationService;
     }
 
     @TransactionalWrite
     public Facility createFacility(Facility facility) {
+        validationService.validate(facility);
         facility.id = repository.insertFacility(facility);
         return facility;
     }
 
     @TransactionalWrite
     public Facility updateFacility(long facilityId, Facility facility) {
+        validationService.validate(facility);
         Facility oldFacility = repository.getFacilityForUpdate(facilityId);
         repository.updateFacility(facilityId, facility, oldFacility);
         return facility;

@@ -3,7 +3,8 @@
         'ui.router',
         'parkandride.services.facilities',
         'parkandride.resources.facilities',
-        'parkandride.directives.map'
+        'parkandride.directives.map',
+        'ngTagsInput'
     ]);
 
     m.config(function($stateProvider) {
@@ -25,18 +26,21 @@
     });
 
     m.controller('CreateCtrl', function($scope, $state, FacilityService, Facility, capacityTypes) {
-        $scope.facility = {};
-
-        $scope.facility.capacities = _.map(capacityTypes, function(capacityType) {
-            return {
-                capacityType: capacityType,
-                built: null,
-                unavailable: null
-            };
-        });
+        $scope.facility = {
+            aliases: [],
+            capacities: _.map(capacityTypes, function(capacityType) {
+                return {
+                    capacityType: capacityType,
+                    built: null,
+                    unavailable: null
+                };
+            })
+        };
 
         $scope.addFacility = function() {
-            FacilityService.save(this.facility).then(function(id){
+            var facility = _.cloneDeep($scope.facility);
+            facility.aliases = _.map(facility.aliases, function(alias) { return alias.text; });
+            FacilityService.save(facility).then(function(id){
                 $state.go('facilities-view', { "id": id });
             });
         };

@@ -11,7 +11,7 @@ IDENTITY_FILE=/var/go/hsl-liipi.pem
 
 DOCKER_REGISTRY="172.31.0.27:5000"
 LOCAL_IMAGE="parkandrideapi/server:demo"
-REGISTRY_IMAGE="$DOCKER_REGISTRY/LOCAL_IMAGE"
+REGISTRY_IMAGE="$DOCKER_REGISTRY/$LOCAL_IMAGE"
 CONTAINER_NAME="parkandrideapi-server-demo"
 DOCKERFILE_DIR="etc/docker/app"
 APP_LATEST="parkandride-application-latest.jar"
@@ -29,9 +29,9 @@ function push_image() {
 }
 
 function restart_container() {
-  ssh -i -oStrictHostKeyChecking=no -t $AWS_TEST "docker stop $CONTAINER_NAME"
-  ssh -i -t $AWS_TEST "docker rm $CONTAINER_NAME"
-  ssh -i -t $AWS_TEST "docker run -d -p 8080:8080 --name $CONTAINER_NAME $REGISTRY_IMAGE"
+  ssh -i $IDENTITY_FILE -oStrictHostKeyChecking=no $AWS_TEST "docker stop $CONTAINER_NAME"
+  ssh -i $IDENTITY_FILE $AWS_TEST "docker rm $CONTAINER_NAME"
+  ssh -i $IDENTITY_FILE $AWS_TEST "docker run -d -p 8081:8080 --name $CONTAINER_NAME $REGISTRY_IMAGE"
 }
 
 build_image

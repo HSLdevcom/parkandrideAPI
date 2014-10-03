@@ -28,19 +28,28 @@
 
 			<div>
 				<h4>Kapasiteetti</h4>
-				<table>
-					<tbody>
-						<tr ng-repeat="capacity in facility.capacities">
-							<td>{{'facilities.common.capacity.' + capacity.capacityType | translate}}</td>
-							<td>
-								<input type="number" class="form-control" ng-model="capacity.built">
-							</td>
-							<td>
-								<input type="number" class="form-control" ng-model="capacity.unavailable">
-							</td>
-						</tr>
-					</tbody>
-				</table>
+				<div class="panel panel-default">
+					<table class="table table-bordered table-striped table-condensed">
+						<thead>
+							<tr>
+								<th>Tyyppi</th>
+								<th>Rakennettu kapasiteetti</th>
+								<th>Tilapäisesti pois käytöstä</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr ng-repeat="capacity in facility.capacities">
+								<td>{{'facilities.common.capacity.' + capacity.capacityType | translate}}</td>
+								<td>
+									<input type="number" class="form-control" ng-model="capacity.built" min="0">
+								</td>
+								<td>
+									<input type="number" class="form-control" ng-model="capacity.unavailable" min="0">
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
 			</div>
 	</div>
 	<div class="col-md-6">

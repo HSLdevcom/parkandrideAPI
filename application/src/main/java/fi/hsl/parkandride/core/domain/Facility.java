@@ -1,16 +1,15 @@
 package fi.hsl.parkandride.core.domain;
 
-import static com.google.common.collect.Sets.newLinkedHashSet;
-
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import org.geolatte.geom.Geometry;
 import org.hibernate.validator.constraints.NotBlank;
-
-import com.google.common.collect.Sets;
 
 public class Facility {
 

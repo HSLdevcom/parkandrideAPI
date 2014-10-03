@@ -15,6 +15,7 @@ public class Capacity {
     public Capacity(int built) {
         this(built, 0);
     }
+
     public Capacity(int built, int unavailable) {
         this.built = built;
         this.unavailable = unavailable;

@@ -12,7 +12,7 @@
             url: '/facilities/create', // TODO set facilities base path on upper level and say here /create ?
             views: {
                 "main": {
-                    controller: 'CreateCtrl',
+                    controller: 'CreateCtrl as createCtrl',
                     templateUrl: 'facilities/create.tpl.html'
                 }
             },
@@ -33,7 +33,7 @@
             url: '/facilities/edit/:id', // TODO set facilities base path on upper level and say here /create ?
             views: {
                 "main": {
-                    controller: 'CreateCtrl',
+                    controller: 'CreateCtrl as createCtrl',
                     templateUrl: 'facilities/create.tpl.html'
                 }
             },
@@ -49,7 +49,7 @@
         });
     });
 
-    m.controller('CreateCtrl', function($scope, $state, FacilityService, Facility, capacityTypes, facility) {
+    m.controller('CreateCtrl', function($state, FacilityService, Facility, capacityTypes, facility) {
 
         facility.capacities = _.map(capacityTypes, function(capacityType) {
             var existing = _.find(facility.capacities, function(c) { return c.capacityType == capacityType; }) || {};
@@ -62,10 +62,10 @@
 
         facility.aliases = _.map(facility.aliases, function(a) { return { text: a }; });
 
-        $scope.facility = facility;
+        this.facility = facility;
 
-        $scope.addFacility = function() {
-            var facility = _.cloneDeep($scope.facility);
+        this.addFacility = function() {
+            var facility = _.cloneDeep(this.facility);
             facility.aliases = _.map(facility.aliases, function(alias) { return alias.text; });
             FacilityService.save(facility).then(function(id){
                 $state.go('facilities-view', { "id": id });

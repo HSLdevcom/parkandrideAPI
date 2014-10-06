@@ -55,6 +55,9 @@
                         type: "Polygon"
                     });
                     draw.on("drawstart", function(drawEvent) {
+                        if (document.activeElement) {
+                            document.activeElement.blur();
+                        }
                         featureOverlay.getFeatures().clear();
                     });
                     draw.on("drawend", function(drawEvent) {

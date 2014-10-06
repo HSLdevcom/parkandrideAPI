@@ -1,7 +1,7 @@
 (function() {
-    var m = angular.module('facilities.view', [
+    var m = angular.module('parkandride.facilityView', [
         'ui.router',
-        'parkandride.services.facilities'
+        'parkandride.FacilityResource'
     ]);
 
     m.config(function config($stateProvider) {
@@ -9,11 +9,11 @@
             url: '/facilities/view/:id', // TODO set facilities base path on upper level and say here /create ?
             views: {
                 "main": {
-                    controller: 'ViewCtrl as viewCtrl',
-                    templateUrl: 'facilities/view.tpl.html',
+                    controller: 'FacilityViewCtrl as viewCtrl',
+                    templateUrl: 'facilities/facilityView.tpl.html',
                     resolve: {
-                        facility: function($stateParams, FacilityService) {
-                            return FacilityService.getFacility($stateParams.id);
+                        facility: function($stateParams, FacilityResource) {
+                            return FacilityResource.getFacility($stateParams.id);
                         }
                     }
                 }
@@ -22,15 +22,15 @@
         });
     });
 
-    m.controller('ViewCtrl', ViewController);
+    m.controller('FacilityViewCtrl', ViewController);
     function ViewController(facility) {
         this.facility = facility;
     }
 
-    m.directive('viewNavi', function() {
+    m.directive('facilityViewNavi', function() {
         return {
             restrict: 'E',
-            templateUrl: 'facilities/view-navi.tpl.html'
+            templateUrl: 'facilities/facilityViewNavi.tpl.html'
         };
     });
 })();

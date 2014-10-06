@@ -1,9 +1,9 @@
-<form name="createFacilityForm" class="form-horizontal" role="form" novalidate>
+<form name="editFacilityForm" class="form-horizontal" role="form" novalidate>
 
 <div class="row">
 	<div class="col-md-6">
 	</div>
-	<create-navi></create-navi>
+	<facility-edit-navi></facility-edit-navi>
 </div>
 
 
@@ -14,7 +14,7 @@
 			<div class="form-group">
 				<label for="inputName" class="col-sm-5 control-label">* Nimi</label>
 				<div class="col-sm-7">
-					<input id="inputName" type="text" class="form-control" ng-model="createCtrl.facility.name" required />
+					<input id="inputName" type="text" class="form-control" ng-model="editCtrl.facility.name" required />
 				</div>
 			</div>
 
@@ -22,7 +22,7 @@
 			<div class="form-group">
 				<label for="inputAlias" class="col-sm-5 control-label">Aliakset</label>
 				<div class="col-sm-7">
-					<tags-input ng-model="createCtrl.facility.aliases" placeholder="Add an alias"></tags-input>
+					<tags-input ng-model="editCtrl.facility.aliases" placeholder="Add an alias"></tags-input>
 				</div>
 			</div>
 
@@ -38,7 +38,7 @@
 							</tr>
 						</thead>
 						<tbody>
-							<tr ng-repeat="capacity in createCtrl.facility.capacities">
+							<tr ng-repeat="capacity in editCtrl.facility.capacities">
 								<td>{{'facilities.common.capacity.' + capacity.capacityType | translate}}</td>
 								<td>
 									<input type="number" class="form-control" ng-model="capacity.built" min="0">
@@ -56,7 +56,7 @@
 
 		<h4>* Sijainti</h4>
 
-		<polygon ng-model="createCtrl.facility.border" editable="true" required></polygon>
+		<polygon ng-model="editCtrl.facility.border" editable="true" required></polygon>
 
 	</div>
 </div>
@@ -67,7 +67,7 @@
 <div class="row">
 	<div class="col-md-6">
 	</div>
-	<create-navi></create-navi>
+	<facility-edit-navi></facility-edit-navi>
 </div>
 
 </form>

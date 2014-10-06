@@ -8,7 +8,7 @@
 
         'filters',
 
-        'parkandride.facilities'
+        'parkandride.facilityList'
     ]);
 
     m.config(function myAppConfig($stateProvider, $urlRouterProvider, RestangularProvider) {
@@ -29,5 +29,3 @@
         });
     });
 })();
-
-

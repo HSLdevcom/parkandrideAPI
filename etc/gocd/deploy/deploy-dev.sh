@@ -2,10 +2,10 @@
 
 # NOTE: this script is expectd to be run from project checkout dir
 
+set -eu
+: ${TARGET_ENV:?}
+: ${TARGET_ENV_PORT:?}
 set -x
-
-TARGET_ENV=$1
-TARGET_ENV_PORT=$2
 
 VERSION=`cat version`
 AWS_TEST=ubuntu@54.171.6.108

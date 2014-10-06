@@ -20,11 +20,8 @@
                 capacityTypes: function(FacilityResource) {
                     return FacilityResource.getCapacityTypes();
                 },
-                facility: function() {
-                    return {
-                        aliases: [],
-                        capacities: {}
-                    };
+                facility: function(FacilityResource) {
+                    return FacilityResource.newFacility();
                 }
             }
         });
@@ -48,15 +45,10 @@
         });
     });
 
-    m.controller('FacilityCreateCtrl', function($state, FacilityResource, Facility, capacityTypes, facility) {
+    m.controller('FacilityCreateCtrl', function($state, FacilityResource, capacityTypes, facility) {
 
         facility.capacities = _.map(capacityTypes, function(capacityType) {
-            var existing = _.find(facility.capacities, function(c) { return c.capacityType == capacityType; }) || {};
-            return {
-                capacityType: capacityType,
-                built: existing.built,
-                unavailable: existing.unavailable
-            };
+            return FacilityResource.getOrCreateCapacity(facility, capacityType);
         });
 
         facility.aliases = _.map(facility.aliases, function(a) { return { text: a }; });

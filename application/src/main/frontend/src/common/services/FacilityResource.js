@@ -1,11 +1,59 @@
 (function() {
     var m = angular.module('parkandride.FacilityResource', [
-        'restangular',
-        'parkandride.resources.facilities'
+        'restangular'
     ]);
 
-    m.factory('FacilityResource', function(Restangular, Facility) {
+    function buildCapacities(data) {
+        return _.reduce(
+            data,
+            function(target, capacity, key) {
+                var copy = _.clone(capacity);
+                copy.capacityType = key;
+                target.push(copy);
+                return target;
+            },
+            []);
+    }
+
+    function capacitiesToData(capacities) {
+        return _.reduce(
+            capacities,
+            function(target, capacity) {
+                if (capacity.built > 0) {
+                    var copy = _.clone(capacity);
+                    delete copy.capacityType;
+                    target[capacity.capacityType] = copy;
+                }
+                return target;
+            },
+            {});
+    }
+
+    function buildFacility(data) {
+        var copy = _.clone(data);
+        copy.capacities = buildCapacities(data.capacities);
+        return copy;
+    }
+
+    function facilityToData(facility) {
+        var copy = _.clone(facility);
+        copy.capacities = capacitiesToData(facility.capacities);
+        return copy;
+    }
+
+    m.factory('FacilityResource', function(Restangular) {
         var api = {};
+
+        api.newFacility = function() {
+            return {
+                aliases: [],
+                capacities: {}
+            };
+        };
+
+        api.getOrCreateCapacity = function(facility, capacityType) {
+            return _.find(facility.capacities, function(c) { return c.capacityType == capacityType; }) || { capacityType: capacityType };
+        };
 
         api.getFacilities = function() {
             return Restangular.one('facilities').get().then(function(data) {
@@ -15,12 +63,12 @@
 
         api.getFacility = function(id) {
             return Restangular.one('facilities', id).get().then(function(data){
-                return Facility.build(data);
+                return buildFacility(data);
             });
         };
 
         api.save = function(newFacility) {
-            var data = Facility.toData(newFacility);
+            var data = facilityToData(newFacility);
             if (data.id) {
                 return Restangular.one('facilities', data.id).customPUT(data).then(function(response){
                     return response.id;
@@ -40,4 +88,5 @@
 
         return api;
     });
+
 })();

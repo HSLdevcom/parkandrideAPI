@@ -6,7 +6,7 @@
         'parkandride.FacilityResource',
         'parkandride.i18n',
 
-        'parkandride.facilityCreate',
+        'parkandride.facilityEdit',
         'parkandride.facilityView'
     ]);
 
@@ -40,7 +40,7 @@
         };
     }
 
-    m.directive('facilitiesNavi', function() {
+    m.directive('facilityListNavi', function() {
         return {
             restrict: 'E',
             templateUrl: 'facilities/facilityListNavi.tpl.html'

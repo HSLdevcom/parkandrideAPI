@@ -27,7 +27,7 @@
         this.facility = facility;
     }
 
-    m.directive('viewNavi', function() {
+    m.directive('facilityViewNavi', function() {
         return {
             restrict: 'E',
             templateUrl: 'facilities/facilityViewNavi.tpl.html'

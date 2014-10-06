@@ -1,5 +1,5 @@
 (function() {
-    var m = angular.module('parkandride.facilityCreate', [
+    var m = angular.module('parkandride.facilityEdit', [
         'ui.router',
         'parkandride.FacilityResource',
         'parkandride.directives.map',
@@ -11,8 +11,8 @@
             url: '/facilities/create', // TODO set facilities base path on upper level and say here /create ?
             views: {
                 "main": {
-                    controller: 'FacilityCreateCtrl as createCtrl',
-                    templateUrl: 'facilities/facilityCreate.tpl.html'
+                    controller: 'FacilityEditCtrl as editCtrl',
+                    templateUrl: 'facilities/facilityEdit.tpl.html'
                 }
             },
             data: { pageTitle: 'Create Facility' },
@@ -26,11 +26,11 @@
             }
         });
         $stateProvider.state('facilities-edit', { // dot notation in ui-router indicates nested ui-view
-            url: '/facilities/edit/:id', // TODO set facilities base path on upper level and say here /create ?
+            url: '/facilities/edit/:id', // TODO set facilities base path on upper level and say here /edit ?
             views: {
                 "main": {
-                    controller: 'FacilityCreateCtrl as createCtrl',
-                    templateUrl: 'facilities/facilityCreate.tpl.html'
+                    controller: 'FacilityEditCtrl as editCtrl',
+                    templateUrl: 'facilities/facilityEdit.tpl.html'
                 }
             },
             data: { pageTitle: 'Edit Facility' },
@@ -45,7 +45,7 @@
         });
     });
 
-    m.controller('FacilityCreateCtrl', function($state, FacilityResource, capacityTypes, facility) {
+    m.controller('FacilityEditCtrl', function($state, FacilityResource, capacityTypes, facility) {
 
         facility.capacities = _.map(capacityTypes, function(capacityType) {
             return FacilityResource.getOrCreateCapacity(facility, capacityType);
@@ -77,10 +77,10 @@
         };
     });
 
-    m.directive('createNavi', function() {
+    m.directive('facilityEditNavi', function() {
         return {
             restrict: 'E',
-            templateUrl: 'facilities/facilityCreateNavi.tpl.html'
+            templateUrl: 'facilities/facilityEditNavi.tpl.html'
         };
     });
 })();

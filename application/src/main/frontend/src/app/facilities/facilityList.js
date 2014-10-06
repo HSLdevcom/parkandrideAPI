@@ -1,13 +1,13 @@
 (function() {
-    var m = angular.module('parkandride.facilities', [
+    var m = angular.module('parkandride.facilityList', [
         'ui.router',
         'pascalprecht.translate',
 
-        'parkandride.services.facilities',
-        'parkandride.services.translations',
+        'parkandride.FacilityResource',
+        'parkandride.i18n',
 
-        'facilities.create',
-        'facilities.view'
+        'parkandride.facilityCreate',
+        'parkandride.facilityView'
     ]);
 
     m.config(function config($stateProvider) {
@@ -16,7 +16,7 @@
                 views: {
                     "main": {
                         controller: 'FacilitiesCtrl as fctrl',
-                        templateUrl: 'facilities/facilities.tpl.html'
+                        templateUrl: 'facilities/facilityList.tpl.html'
                     }
                 },
                 data: { pageTitle: 'Facilities' }
@@ -24,11 +24,11 @@
         });
 
     m.controller('FacilitiesCtrl', FacilitiesController);
-    function FacilitiesController(FacilityService, $translate) {
+    function FacilitiesController(FacilityResource, $translate) {
         var origThis = this;
         this.list = [];
 
-        FacilityService.getFacilities().then(function(data){
+        FacilityResource.getFacilities().then(function(data){
             origThis.list = data;
         });
 
@@ -43,7 +43,7 @@
     m.directive('facilitiesNavi', function() {
         return {
             restrict: 'E',
-            templateUrl: 'facilities/facilities-navi.tpl.html'
+            templateUrl: 'facilities/facilityListNavi.tpl.html'
         };
     });
 

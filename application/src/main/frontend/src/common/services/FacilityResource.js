@@ -1,10 +1,10 @@
 (function() {
-    var m = angular.module('parkandride.services.facilities', [
+    var m = angular.module('parkandride.FacilityResource', [
         'restangular',
         'parkandride.resources.facilities'
     ]);
 
-    m.factory('FacilityService', function(Restangular, Facility) {
+    m.factory('FacilityResource', function(Restangular, Facility) {
         var api = {};
 
         api.getFacilities = function() {

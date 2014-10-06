@@ -1,5 +1,5 @@
 (function() {
-    var m = angular.module('parkandride.services.translations', [
+    var m = angular.module('parkandride.i18n', [
         'pascalprecht.translate'
     ]);
 

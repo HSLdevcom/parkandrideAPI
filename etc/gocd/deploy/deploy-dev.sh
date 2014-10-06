@@ -4,15 +4,17 @@
 
 set -x
 
-VERSION=`cat version`
+TARGET_ENV=$1
+TARGET_ENV_PORT=$2
 
+VERSION=`cat version`
 AWS_TEST=ubuntu@54.171.6.108
 IDENTITY_FILE=/var/go/hsl-liipi.pem
 
 DOCKER_REGISTRY="172.31.0.27:5000"
-LOCAL_IMAGE="parkandrideapi/server:demo"
+LOCAL_IMAGE="parkandrideapi/server:$TARGET_ENV"
 REGISTRY_IMAGE="$DOCKER_REGISTRY/$LOCAL_IMAGE"
-CONTAINER_NAME="parkandrideapi-server-demo"
+CONTAINER_NAME="parkandrideapi-server-$TARGET_ENV"
 DOCKERFILE_DIR="etc/docker/app"
 APP_LATEST="parkandride-application-latest.jar"
 APP_NEW="parkandride-application-$VERSION.jar"
@@ -31,7 +33,7 @@ function push_image() {
 function restart_container() {
   ssh -i $IDENTITY_FILE -oStrictHostKeyChecking=no $AWS_TEST "docker stop $CONTAINER_NAME"
   ssh -i $IDENTITY_FILE $AWS_TEST "docker rm $CONTAINER_NAME"
-  ssh -i $IDENTITY_FILE $AWS_TEST "docker run -d -p 8081:8080 --name $CONTAINER_NAME $REGISTRY_IMAGE"
+  ssh -i $IDENTITY_FILE $AWS_TEST "docker run -d -p $TARGET_ENV_PORT:8080 --name $CONTAINER_NAME $REGISTRY_IMAGE"
 }
 
 build_image

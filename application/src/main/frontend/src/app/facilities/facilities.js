@@ -15,7 +15,7 @@
                 url: '/facilities',
                 views: {
                     "main": {
-                        controller: 'FacilitiesCtrl',
+                        controller: 'FacilitiesCtrl as fctrl',
                         templateUrl: 'facilities/facilities.tpl.html'
                     }
                 },

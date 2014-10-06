@@ -9,7 +9,7 @@
             url: '/facilities/view/:id', // TODO set facilities base path on upper level and say here /create ?
             views: {
                 "main": {
-                    controller: 'ViewCtrl',
+                    controller: 'ViewCtrl as viewCtrl',
                     templateUrl: 'facilities/view.tpl.html',
                     resolve: {
                         facility: function($stateParams, FacilityService) {
@@ -23,8 +23,8 @@
     });
 
     m.controller('ViewCtrl', ViewController);
-    function ViewController($scope, facility) {
-        $scope.facility = facility;
+    function ViewController(facility) {
+        this.facility = facility;
     }
 
     m.directive('viewNavi', function() {

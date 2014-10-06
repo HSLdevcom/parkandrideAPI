@@ -1,5 +1,7 @@
 (function() {
     var m = angular.module('parkandride', [
+        'ui.bootstrap',
+        
         'templates-app',
         'templates-common',
 

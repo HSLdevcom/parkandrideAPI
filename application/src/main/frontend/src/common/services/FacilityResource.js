@@ -55,7 +55,7 @@
             return _.find(facility.capacities, function(c) { return c.capacityType == capacityType; }) || { capacityType: capacityType };
         };
 
-        api.getFacilities = function() {
+        api.listFacilities = function() {
             return Restangular.one('facilities').get().then(function(data) {
                 return data.results;
             });
@@ -79,6 +79,23 @@
                 });
             }
         };
+
+        /*
+        api.findFacilitiesAsFeatures = function() {
+            return api.listFacilities().then(function(results) {
+                return _.map(results, function(facility) {
+                    var clone = _.cloneDeep(facility);
+                    var feature = {
+                        type: "Feature",
+                        geometry: clone.border,
+                        properties: clone
+                    };
+                    delete clone.border;
+                    return feature;
+                });
+            });
+        };
+        */
 
         api.getCapacityTypes = function() {
             return Restangular.one('capacity-types').get().then(function(data) {

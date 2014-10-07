@@ -8,7 +8,9 @@
 
         'filters',
 
-        'parkandride.facilityList'
+        'parkandride.facilityList',
+
+        'parkandride.hubList'
     ]);
 
     m.config(function myAppConfig($stateProvider, $urlRouterProvider, RestangularProvider) {

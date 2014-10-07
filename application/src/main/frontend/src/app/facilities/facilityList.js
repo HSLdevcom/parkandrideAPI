@@ -1,17 +1,14 @@
 (function() {
     var m = angular.module('parkandride.facilityList', [
         'ui.router',
-        'pascalprecht.translate',
-
-        'parkandride.FacilityResource',
         'parkandride.i18n',
-
+        'parkandride.FacilityResource',
         'parkandride.facilityEdit',
         'parkandride.facilityView'
     ]);
 
     m.config(function config($stateProvider) {
-            $stateProvider.state('facilities', {
+            $stateProvider.state('facility-list', {
                 url: '/facilities',
                 views: {
                     "main": {
@@ -28,14 +25,15 @@
         var origThis = this;
         this.list = [];
 
-        FacilityResource.getFacilities().then(function(data){
+        FacilityResource.listFacilities().then(function(data){
             origThis.list = data;
         });
 
         // TODO this should be done in directive (as it qualifies to output formatting)?
         this.translatedCapacities = function(facility) {
+            // FIXME: Refactor translate into i18n module!
             return _.values($translate.instant(_.map(Object.keys(facility.capacities), function (capacityType) {
-                return "facilities.common.capacity." + capacityType;
+                return "facilities.capacity." + capacityType;
             })));
         };
     }

@@ -39,7 +39,7 @@
 						</thead>
 						<tbody>
 							<tr ng-repeat="capacity in editCtrl.facility.capacities">
-								<td>{{'facilities.common.capacity.' + capacity.capacityType | translate}}</td>
+								<td>{{'facilities.capacity.' + capacity.capacityType | translate}}</td>
 								<td>
 									<input type="number" class="form-control" ng-model="capacity.built" min="0">
 								</td>

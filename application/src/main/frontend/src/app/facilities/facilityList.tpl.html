@@ -17,7 +17,7 @@
 		</thead>
 		<tbody>
 		<tr ng-repeat="f in fctrl.list">
-			<td><a ui-sref="facilities-view({id: f.id})">{{f.name}}</a></td>
+			<td><a ui-sref="facility-view({id: f.id})">{{f.name}}</a></td>
 			<td>{{fctrl.translatedCapacities(f) | joinBy: ", "}}</span></td>
 		</tr>
 		</tbody>

@@ -18,7 +18,7 @@ public class FeatureResults extends DefaultFeatureCollection {
 
     private static final ObjectToFeatureTransformation TRANSFORMATION = new ObjectToFeatureTransformation();
 
-    private static final Function<Object, Feature> TO_FEATURE = new Function<Object, Feature>() {
+    public static final Function<Object, Feature> TO_FEATURE = new Function<Object, Feature>() {
         @Nullable
         @Override
         public Feature apply(@Nullable Object input) {

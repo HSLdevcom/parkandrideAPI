@@ -1,5 +1,6 @@
 package fi.hsl.parkandride.inbound;
 
+import static fi.hsl.parkandride.inbound.FeatureResults.TO_FEATURE;
 import static fi.hsl.parkandride.inbound.UrlSchema.GEOJSON;
 import static fi.hsl.parkandride.inbound.UrlSchema.HUB;
 import static fi.hsl.parkandride.inbound.UrlSchema.HUBS;
@@ -13,6 +14,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.PUT;
 
 import javax.inject.Inject;
 
+import org.geolatte.common.Feature;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -44,6 +46,12 @@ public class HubController {
     public ResponseEntity<Hub> getHub(@PathVariable(HUB_ID) long hubId) {
         Hub hub = hubService.getHub(hubId);
         return new ResponseEntity<>(hub, OK);
+    }
+
+    @RequestMapping(method = GET, value = HUB, produces = GEOJSON)
+    public ResponseEntity<Feature> getHubAsFeature(@PathVariable(HUB_ID) long hubId) {
+        Hub hub = hubService.getHub(hubId);
+        return new ResponseEntity<Feature>(TO_FEATURE.apply(hub), OK);
     }
 
     @RequestMapping(method = PUT, value = HUB, produces = APPLICATION_JSON_VALUE)

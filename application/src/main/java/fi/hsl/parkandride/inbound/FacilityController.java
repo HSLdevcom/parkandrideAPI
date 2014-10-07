@@ -1,5 +1,6 @@
 package fi.hsl.parkandride.inbound;
 
+import static fi.hsl.parkandride.inbound.FeatureResults.TO_FEATURE;
 import static fi.hsl.parkandride.inbound.UrlSchema.*;
 import static java.util.Arrays.asList;
 import static org.springframework.http.HttpStatus.CREATED;
@@ -13,6 +14,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import org.geolatte.common.Feature;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -45,6 +47,12 @@ public class FacilityController {
     public ResponseEntity<Facility> getFacility(@PathVariable(FACILITY_ID) long facilityId) {
         Facility facility = facilityService.getFacility(facilityId);
         return new ResponseEntity<>(facility, OK);
+    }
+
+    @RequestMapping(method = GET, value = FACILITY, produces = GEOJSON)
+    public ResponseEntity<Feature> getFacilityAsFeature(@PathVariable(FACILITY_ID) long facilityId) {
+        Facility facility = facilityService.getFacility(facilityId);
+        return new ResponseEntity<Feature>(TO_FEATURE.apply(facility), OK);
     }
 
     @RequestMapping(method = PUT, value = FACILITY, produces = APPLICATION_JSON_VALUE)

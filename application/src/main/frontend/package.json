@@ -36,7 +36,7 @@
     "karma-jasmine": "^0.1.5",
     "grunt-karma": "^0.8.2",
     "karma-coffee-preprocessor": "^0.2.1",
-    "karma": "^0.12.9"
+    "karma": "^0.12.9",
 
     "grunt-protractor-runner": "^1.1.4",
     "grunt-protractor-webdriver": "^0.1.7",

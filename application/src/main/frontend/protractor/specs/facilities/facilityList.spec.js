@@ -1,6 +1,6 @@
 'use strict';
 
-var Pages = require('../pages/pages.js');
+var Pages = require('../../pages/pages.js');
 
 describe('Facilities list view', function() {
     var facilityListPage = new Pages.FacilityListPage();

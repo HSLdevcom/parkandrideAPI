@@ -33,7 +33,7 @@
         this.translatedCapacities = function(facility) {
             // FIXME: Refactor translate into i18n module!
             return _.values($translate.instant(_.map(Object.keys(facility.capacities), function (capacityType) {
-                return "facilities.common.capacity." + capacityType;
+                return "facilities.capacity." + capacityType;
             })));
         };
     }

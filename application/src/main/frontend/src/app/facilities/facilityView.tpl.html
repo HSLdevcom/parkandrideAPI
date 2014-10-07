@@ -10,7 +10,7 @@
 <div class="row">
 	<div class="col-md-6">
 		<div ng-repeat="c in viewCtrl.facility.capacities">
-			<h4>{{'facilities.common.capacity.' + c.capacityType | translate}}</h4>
+			<h4>{{'facilities.capacity.' + c.capacityType | translate}}</h4>
 			<p class="dataview">Rakennettu kapasiteetti: <strong>{{c.built}}</strong></p>
 			<p class="dataview">Josta tilapäisesti poissa käytöstä: <strong>{{c.unavailable}}</strong></p>
 		</div>

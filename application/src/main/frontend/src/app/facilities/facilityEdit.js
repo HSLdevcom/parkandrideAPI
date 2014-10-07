@@ -7,7 +7,7 @@
     ]);
 
     m.config(function($stateProvider) {
-        $stateProvider.state('facilities-create', { // dot notation in ui-router indicates nested ui-view
+        $stateProvider.state('facility-create', { // dot notation in ui-router indicates nested ui-view
             url: '/facilities/create', // TODO set facilities base path on upper level and say here /create ?
             views: {
                 "main": {
@@ -25,8 +25,8 @@
                 }
             }
         });
-        $stateProvider.state('facilities-edit', { // dot notation in ui-router indicates nested ui-view
-            url: '/facilities/edit/:id', // TODO set facilities base path on upper level and say here /edit ?
+        $stateProvider.state('facility-edit', { // dot notation in ui-router indicates nested ui-view
+            url: '/facilities/edit/:id',
             views: {
                 "main": {
                     controller: 'FacilityEditCtrl as editCtrl',
@@ -55,11 +55,11 @@
 
         this.facility = facility;
 
-        this.addFacility = function() {
+        this.saveFacility = function() {
             var facility = _.cloneDeep(this.facility);
             facility.aliases = _.map(facility.aliases, function(alias) { return alias.text; });
             FacilityResource.save(facility).then(function(id){
-                $state.go('facilities-view', { "id": id });
+                $state.go('facility-view', { "id": id });
             });
         };
     });

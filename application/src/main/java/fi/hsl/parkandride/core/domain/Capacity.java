@@ -42,4 +42,13 @@ public class Capacity {
     public String toString() {
         return "" + built +  " -" + unavailable;
     }
+
+
+    public int getBuilt() {
+        return built;
+    }
+
+    public int getUnavailable() {
+        return unavailable;
+    }
 }

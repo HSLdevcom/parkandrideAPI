@@ -1,4 +1,4 @@
-'use string';
+'use strict';
 
 var FacilityListPage = (function() {
     function FacilityListPage() {

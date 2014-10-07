@@ -8,20 +8,29 @@
         "action": {
             "new": "Lisää uusi fasiliteetti"
         },
-        "common": {
-            "action": {
-                "back": "Takaisin",
-                "edit": "Muokkaa",
-                "save": "Tallenna muutokset"
-            },
-            "capacity": {
-                "CAR": "Henkilöauto",
-                "PARK_AND_RIDE": "Liityntäpysäköinti",
-                "BICYCLE": "Polkupyörä",
-                "DISABLED": "Invapaikka",
-                "MOTORCYCLE": "Moottoripyörä",
-                "ELECTRIC_CAR": "Sähköauto"
-            }
+        "capacity": {
+            "CAR": "Henkilöauto",
+            "PARK_AND_RIDE": "Liityntäpysäköinti",
+            "BICYCLE": "Polkupyörä",
+            "DISABLED": "Invapaikka",
+            "MOTORCYCLE": "Moottoripyörä",
+            "ELECTRIC_CAR": "Sähköauto"
+        }
+    },
+    "hubs": {
+        "title": "Alueet",
+        "list": {
+            "name": "Nimi"
+        },
+        "action": {
+            "new": "Lisää uusi alue"
+        }
+    },
+    "common": {
+        "action": {
+            "back": "Takaisin",
+            "edit": "Muokkaa",
+            "save": "Tallenna muutokset"
         }
     }
 }

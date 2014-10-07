@@ -1,8 +1,8 @@
 exports.config = {
     seleniumAddress: 'http://localhost:4444/wd/hub',
-    baseUrl:'http://localhost:9100',
+    baseUrl:'http://localhost:8080',
     rootElement: 'html',
-    specs: [ './**/*.spec.js'],
+    specs: [ 'specs/**/*.spec.js'],
     allScriptsTimeout: 10000,
     chromeOnly: false,
 

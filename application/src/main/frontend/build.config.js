@@ -71,7 +71,7 @@ module.exports = {
       'vendor/restangular/dist/restangular.js',
       'vendor/angular-translate/angular-translate.js',
       'vendor/angular-translate-loader-static-files/angular-translate-loader-static-files.js',
-      'vendor/openlayers3/build/ol.js',
+      'vendor/openlayers3/build/ol-debug.js',
       'vendor/ng-tags-input/ng-tags-input.js'
     ],
     css: [

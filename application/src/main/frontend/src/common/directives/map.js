@@ -146,6 +146,8 @@
                 if (scope.point) {
                     var point = new ol.format.GeoJSON().readGeometry(scope.point);
                     setPoint(point);
+                    view.setCenter(point.getCoordinates());
+                    view.setZoom(14);
                 }
 
                 function setPoint(point) {
@@ -154,8 +156,6 @@
                     feature.setGeometry(point);
                     featureOverlay.getFeatures().clear();
                     featureOverlay.addFeature(feature);
-                    view.setCenter(point.getCoordinates());
-                    view.setZoom(14);
                 }
 
                 /*

@@ -19,6 +19,7 @@ import com.mysema.query.types.expr.SimpleExpression;
 
 import fi.hsl.parkandride.core.domain.Hub;
 import fi.hsl.parkandride.core.domain.HubNotFoundException;
+import fi.hsl.parkandride.core.domain.SearchResults;
 import fi.hsl.parkandride.core.domain.SpatialSearch;
 import fi.hsl.parkandride.core.outbound.HubRepository;
 import fi.hsl.parkandride.core.service.TransactionalRead;
@@ -117,11 +118,11 @@ public class HubDao implements HubRepository {
 
     @Override
     @TransactionalRead
-    public List<Hub> findHubs(SpatialSearch search) {
+    public SearchResults<Hub> findHubs(SpatialSearch search) {
         BooleanBuilder where = new BooleanBuilder();
         if (search.intersecting != null) {
             where.and(qHub.location.intersects(search.intersecting));
         }
-        return findAll(where);
+        return SearchResults.of(findAll(where));
     }
 }

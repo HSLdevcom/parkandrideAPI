@@ -55,8 +55,8 @@ public class HubController {
 
     @RequestMapping(method = GET, value = HUBS)
     public ResponseEntity<SearchResults<Hub>> findHubs(SpatialSearchDto search) {
-        List<Hub> results = hubService.search(search.toSpatialSearch());
-        return new ResponseEntity<>(SearchResults.of(results), OK);
+        SearchResults<Hub> results = hubService.search(search.toSpatialSearch());
+        return new ResponseEntity<>(results, OK);
     }
 
 }

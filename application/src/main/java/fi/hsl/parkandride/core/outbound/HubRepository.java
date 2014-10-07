@@ -14,6 +14,6 @@ public interface HubRepository {
 
     Hub getHub(long hubId);
 
-    List<Hub> findHubs(SpatialSearch search);
+    SearchResults<Hub> findHubs(SpatialSearch search);
 
 }

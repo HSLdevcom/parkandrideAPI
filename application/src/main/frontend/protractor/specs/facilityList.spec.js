@@ -1,11 +1,10 @@
 'use strict';
 
-var FacilityListPage = require('../pages/facilities/facilityList.page.js');
-var FacilityEditPage = require('../pages/facilities/facilityEdit.page.js');
+var Pages = require('../pages/pages.js');
 
 describe('Facilities list view', function() {
-    var facilityListPage = new FacilityListPage();
-    var facilityEditPage = new FacilityEditPage();
+    var facilityListPage = new Pages.FacilityListPage();
+    var facilityEditPage = new Pages.FacilityEditPage();
 
     beforeEach(function () {
         facilityListPage.get();

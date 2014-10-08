@@ -12,7 +12,7 @@
             },
             template: '<div class="map facility-map"></div>',
             transclude: false,
-            link: function(scope, element, attrs) {
+            link: function(scope, element, attrs, ctrl) {
 
                 var map = MapService.createMap(element, []);
                 var view = map.getView();

@@ -7,13 +7,14 @@
     m.directive('hubMap', function(MapService, FacilityResource) {
         return {
             restrict: 'E',
+            require: 'ngModel',
             scope: {
                 hub: '=ngModel',
                 editable: '='
             },
             template: '<div class="map hub-map"></div>',
             transclude: false,
-            link: function(scope, element, attrs) {
+            link: function(scope, element, attrs, ctrl) {
                 var editable = attrs.editable == "true";
 
                 var facilitiesLayer = new ol.layer.Vector({
@@ -35,6 +36,8 @@
                     setPoint(point);
                     view.setCenter(point.getCoordinates());
                     view.setZoom(14);
+                } else {
+                    ctrl.$setValidity("required", false);
                 }
 
                 function setPoint(point) {
@@ -52,6 +55,7 @@
                         scope.hub.location = new ol.format.GeoJSON().writeGeometry(point);
                         scope.$apply();
                         setPoint(point);
+                        ctrl.$setValidity("required", true);
                         return false;
                     });
 

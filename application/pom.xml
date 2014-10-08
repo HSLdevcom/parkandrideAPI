@@ -359,6 +359,21 @@
                   </target>
                 </configuration>
               </execution>
+              <execution>
+                <id>verify-results</id>
+                <phase>verify</phase>
+                <goals>
+                  <goal>run</goal>
+                </goals>
+                <configuration>
+                  <target>
+                    <exec dir="src/main/frontend/protractor" executable="bash" spawn="false" failonerror="true">
+                      <arg value="protractor.sh" />
+                      <arg value="verify" />
+                    </exec>
+                  </target>
+                </configuration>
+              </execution>
             </executions>
           </plugin>
         </plugins>

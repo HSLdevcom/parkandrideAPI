@@ -22,6 +22,7 @@ exports.config = {
         require('protractor-linkuisref-locator')(protractor);
 
         require('jasmine-reporters');
-        jasmine.getEnv().addReporter(new jasmine.JUnitXmlReporter('xmloutput', true, true));
+        jasmine.getEnv().addReporter(new jasmine.JUnitXmlReporter(
+            '.', true, true, 'protractor-results', true));
     }
 };

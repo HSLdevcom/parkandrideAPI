@@ -12,4 +12,4 @@ QSpatialRefSys.java
 .DS_Store
 phantomjsdriver.log
 application.log
-TEST-*.xml
+protractor-results.xml

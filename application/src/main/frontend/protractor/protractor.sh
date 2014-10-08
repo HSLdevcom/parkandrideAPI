@@ -54,6 +54,9 @@ case "$1" in
       ;;
   stop)
      kill -TERM $(print_process)
+     ;;
+  verify)
+     grep --quiet '<failure' $SCRIPT_DIR/protractor-results.xml && fail "There are test failures"
 esac
 
 exit 0

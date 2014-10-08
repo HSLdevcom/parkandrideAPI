@@ -10,7 +10,7 @@
                 polygon: '=ngModel',
                 editable: '='
             },
-            template: '<div class="facility-map"></div>',
+            template: '<div class="map facility-map"></div>',
             transclude: false,
             link: function(scope, element, attrs) {
 

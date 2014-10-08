@@ -11,7 +11,7 @@
                 hub: '=ngModel',
                 editable: '='
             },
-            template: '<div class="hub-map"></div>',
+            template: '<div class="map hub-map"></div>',
             transclude: false,
             link: function(scope, element, attrs) {
                 var editable = attrs.editable == "true";

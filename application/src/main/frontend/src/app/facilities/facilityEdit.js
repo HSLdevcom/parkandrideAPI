@@ -2,7 +2,7 @@
     var m = angular.module('parkandride.facilityEdit', [
         'ui.router',
         'parkandride.FacilityResource',
-        'parkandride.directives.map',
+        'parkandride.facilityMap',
         'ngTagsInput'
     ]);
 

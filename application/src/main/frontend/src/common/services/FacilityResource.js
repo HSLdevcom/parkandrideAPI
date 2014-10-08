@@ -1,7 +1,5 @@
 (function() {
-    var m = angular.module('parkandride.FacilityResource', [
-        'restangular'
-    ]);
+    var m = angular.module('parkandride.FacilityResource', []);
 
     function buildCapacities(data) {
         return _.reduce(
@@ -41,7 +39,7 @@
         return copy;
     }
 
-    m.factory('FacilityResource', function(Restangular) {
+    m.factory('FacilityResource', function($http) {
         var api = {};
 
         api.newFacility = function() {
@@ -56,50 +54,39 @@
         };
 
         api.listFacilities = function() {
-            return Restangular.one('facilities').get().then(function(data) {
-                return data.results;
+            return $http.get("/api/facilities").then(function(response) {
+                return response.data.results;
             });
         };
 
         api.getFacility = function(id) {
-            return Restangular.one('facilities', id).get().then(function(data){
-                return buildFacility(data);
+            return $http.get("/api/facilities/" + id).then(function(response){
+                return buildFacility(response.data);
             });
         };
 
         api.save = function(newFacility) {
             var data = facilityToData(newFacility);
             if (data.id) {
-                return Restangular.one('facilities', data.id).customPUT(data).then(function(response){
-                    return response.id;
+                return $http.put("/api/facilities/" + data.id, data).then(function(response){
+                    return response.data.id;
                 });
             } else {
-                return Restangular.all('facilities').post(data).then(function(response){
-                    return response.id;
+                return $http.post("/api/facilities", data).then(function(response){
+                    return response.data.id;
                 });
             }
         };
 
-        /*
-        api.findFacilitiesAsFeatures = function() {
-            return api.listFacilities().then(function(results) {
-                return _.map(results, function(facility) {
-                    var clone = _.cloneDeep(facility);
-                    var feature = {
-                        type: "Feature",
-                        geometry: clone.border,
-                        properties: clone
-                    };
-                    delete clone.border;
-                    return feature;
-                });
+        api.findFacilitiesAsFeatureCollection = function() {
+            return $http.get("/api/facilities.geojson").then(function(response) {
+                return response.data;
             });
         };
-        */
 
         api.getCapacityTypes = function() {
-            return Restangular.one('capacity-types').get().then(function(data) {
-                return data.results;
+            return $http.get("/api/capacity-types").then(function(response) {
+                return response.data.results;
             });
         };
 

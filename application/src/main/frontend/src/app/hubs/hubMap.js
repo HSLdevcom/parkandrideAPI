@@ -4,8 +4,6 @@
         'parkandride.FacilityResource'
     ]);
 
-    var selectionStyle = ol.interaction.Select.getDefaultStyleFunction();
-
     m.directive('hubMap', function(MapService, FacilityResource) {
         return {
             restrict: 'E',
@@ -20,12 +18,13 @@
 
                 var facilitiesLayer = new ol.layer.Vector({
                     source: new ol.source.Vector(),
-                    style: (editable ? MapService.getDefaultStyle() : selectionStyle)
+                    style: (editable ? MapService.facilityStyle : MapService.selectedFacilityStyle)
                 });
 
+                var width = 3;
                 var hubLayer = new ol.layer.Vector({
                     source: new ol.source.Vector(),
-                    style: MapService.getDefaultStyle()
+                    style: MapService.hubStyle
                 });
 
                 var map = MapService.createMap(element, [ facilitiesLayer, hubLayer ]);
@@ -58,7 +57,7 @@
 
                     var selectFeatures = new ol.interaction.Select({
                         toggleCondition: goog.functions.TRUE,
-                        style: selectionStyle,
+                        style: MapService.selectedFacilityStyle,
                         layers: [ facilitiesLayer ]
                     });
                     map.addInteraction(selectFeatures);

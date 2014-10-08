@@ -18,7 +18,7 @@
                 var view = map.getView();
 
                 var featureOverlay = new ol.FeatureOverlay({
-                    style: MapService.getDefaultStyle()
+                    style: MapService.facilityStyle
                 });
                 featureOverlay.setMap(map);
 

@@ -9,6 +9,7 @@ import org.geolatte.common.dataformats.json.jackson.JsonMapper;
 import org.geolatte.geom.Geometry;
 import org.geolatte.geom.crs.CrsId;
 import org.springframework.boot.SpringApplication;
+import org.springframework.boot.actuate.system.ApplicationPidListener;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.web.WebMvcAutoConfiguration;
 import org.springframework.boot.context.embedded.EmbeddedServletContainerFactory;
@@ -33,7 +34,10 @@ import fi.hsl.parkandride.inbound.GeometrySerializer;
 @Import(Application.UiConfig.class)
 public class Application {
     public static void main(String[] args) {
-        SpringApplication.run(Application.class, args);
+        SpringApplication app = new SpringApplication(Application.class);
+        app.addListeners(new ApplicationPidListener());
+        app.run(args);
+//        SpringApplication.run(Application.class, args);
     }
 
     @Configuration

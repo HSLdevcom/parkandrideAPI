@@ -336,7 +336,6 @@
                   <goal>run</goal>
                 </goals>
                 <configuration>
-                  <failOnError>false</failOnError>
                   <target>
                     <exec dir="src/main/frontend/protractor" executable="bash" spawn="false">
                       <arg value="protractor.sh" />

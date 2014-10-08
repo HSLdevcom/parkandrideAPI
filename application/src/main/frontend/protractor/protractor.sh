@@ -7,11 +7,20 @@ LOGFile="$SCRIPT_DIR/application.log"
 NODE_MODULES="$SCRIPT_DIR/../node_modules"
 SERVER_URL=localhost:8080
 
-function print_process() {
+log() {
+  echo "$@"
+}
+
+fail() {
+  log "ERROR" "$@"
+  exit 1
+}
+
+print_process() {
   echo $(<"$PIDFile")
 }
 
-function retryable_condition() {
+retryable_condition() {
   local condition=$1
   shift
   local max_duration=$1
@@ -28,7 +37,7 @@ function retryable_condition() {
   true
 }
 
-function is_server_up() {
+is_server_up() {
   curl --output /dev/null --silent --head --fail $SERVER_URL
 }
 
@@ -37,11 +46,11 @@ case "$1" in
       java -jar $JARFile 2>&1 > $LOGFile &
       ;;
   wait_until_started)
-      retryable_condition 'is_server_up' 60
+      retryable_condition 'is_server_up' 60 || fail "Failed to start application"
       ;;
   test)
       $NODE_MODULES/protractor/bin/webdriver-manager update
-      $NODE_MODULES/protractor/bin/protractor $SCRIPT_DIR/protractor.conf.js
+      $NODE_MODULES/protractor/bin/protractor $SCRIPT_DIR/protractor.conf.js || fail "There are test failures"
       ;;
   stop)
      kill -TERM $(print_process)

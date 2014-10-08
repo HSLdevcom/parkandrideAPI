@@ -60,7 +60,7 @@
                     });
 
                     var selectFeatures = new ol.interaction.Select({
-                        toggleCondition: goog.functions.TRUE,
+                        toggleCondition: function() { return true; },
                         style: MapService.selectedFacilityStyle,
                         layers: [ facilitiesLayer ]
                     });

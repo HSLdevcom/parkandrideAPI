@@ -18,7 +18,15 @@
             })
         }),
 
-        selectedFacilityStyle: ol.interaction.Select.getDefaultStyleFunction(),
+        selectedFacilityStyle: new ol.style.Style({
+            fill: new ol.style.Fill({
+                color: [255, 255, 255, 0.5] // transparent white
+            }),
+            stroke: new ol.style.Stroke({
+                color: [0, 153, 255, 1],
+                width: 3
+            })
+        }),
 
         hubStyle: new ol.style.Style({
             image: new ol.style.Circle({

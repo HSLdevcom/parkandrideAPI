@@ -9,14 +9,29 @@
 
 <div class="row">
 	<div class="col-md-6">
-		<div ng-repeat="c in viewCtrl.facility.capacities">
-			<h4>{{'facilities.capacity.' + c.capacityType | translate}}</h4>
-			<p class="dataview">Rakennettu kapasiteetti: <strong>{{c.built}}</strong></p>
-			<p class="dataview">Josta tilapäisesti poissa käytöstä: <strong>{{c.unavailable}}</strong></p>
-		</div>
+		<table class="table table-bordered table-striped table-condensed">
+			<thead>
+			<tr>
+				<th>Tyyppi</th>
+				<th>Rakennettu kapasiteetti</th>
+				<th>Tilapäisesti pois käytöstä</th>
+			</tr>
+			</thead>
+			<tbody>
+			<tr ng-repeat="capacity in viewCtrl.facility.capacities">
+				<td>{{'facilities.capacity.' + capacity.capacityType | translate}}</td>
+				<td>
+					{{capacity.built}}
+				</td>
+				<td>
+					{{capacity.unavailable}}
+				</td>
+			</tr>
+			</tbody>
+		</table>
 	</div>
 	<div class="col-md-6 text-right">
-		<polygon ng-model="viewCtrl.facility.border"></polygon>
+		<facility-map ng-model="viewCtrl.facility.border"></facility-map>
 	</div>
 </div>
 

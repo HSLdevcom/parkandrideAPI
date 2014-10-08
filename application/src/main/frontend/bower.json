@@ -9,7 +9,6 @@
     "angular-ui-router": "~0.2",
     "angular-translate": "2.4.0",
     "angular-translate-loader-static-files": "2.4.0",
-    "restangular": "1.4.0",
     "openlayers3": "~3.0.0",
     "ng-tags-input": "~2.1.1"
   },

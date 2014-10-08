@@ -28,7 +28,8 @@
     },
     "common": {
         "action": {
-            "back": "Takaisin",
+            "back": "Takaisin listaukseen",
+            "cancel": "Peruuta",
             "edit": "Muokkaa",
             "save": "Tallenna muutokset"
         }

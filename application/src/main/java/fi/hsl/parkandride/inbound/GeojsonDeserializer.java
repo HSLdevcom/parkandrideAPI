@@ -11,18 +11,24 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 
-public class GeometryDeserializer extends JsonDeserializer<Geometry> {
+/**
+ * This is a bridge deserializer for Jackson 1.9 used by Geolatte and Jackson 2.x.
+ */
+public class GeojsonDeserializer<T> extends JsonDeserializer<T> {
 
     private final JsonMapper jsonMapper;
 
-    public GeometryDeserializer(JsonMapper jsonMapper) {
+    private final Class<T> type;
+
+    public GeojsonDeserializer(JsonMapper jsonMapper, Class<T> type) {
         this.jsonMapper = jsonMapper;
+        this.type = type;
     }
 
     @Override
-    public Geometry deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException, JsonProcessingException {
+    public T deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException, JsonProcessingException {
         try {
-            return jsonMapper.fromJson(jp.readValueAsTree().toString(), Geometry.class);
+            return jsonMapper.fromJson(jp.readValueAsTree().toString(), type);
         } catch (JsonException e) {
             throw new IOException(e);
         }

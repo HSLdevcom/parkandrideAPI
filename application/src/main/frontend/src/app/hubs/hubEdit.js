@@ -1,8 +1,9 @@
 (function() {
     var m = angular.module('parkandride.hubEdit', [
         'ui.router',
+        'parkandride.hubMap',
         'parkandride.HubResource',
-        'parkandride.directives.map',
+        'parkandride.FacilityResource',
         'ngTagsInput'
     ]);
 

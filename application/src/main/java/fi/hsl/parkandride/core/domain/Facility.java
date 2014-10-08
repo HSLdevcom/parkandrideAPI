@@ -26,4 +26,25 @@ public class Facility {
     @Valid
     public Map<CapacityType, Capacity> capacities = new HashMap<>();
 
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public Geometry getBorder() {
+        return border;
+    }
+
+    public Set<String> getAliases() {
+        return aliases;
+    }
+
+    public Map<CapacityType, Capacity> getCapacities() {
+        return capacities;
+    }
+
 }

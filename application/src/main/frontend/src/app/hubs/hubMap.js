@@ -66,13 +66,19 @@
 
                     FacilityResource.findFacilitiesAsFeatureCollection().then(function(geojson) {
                         var features = new ol.format.GeoJSON().readFeatures(geojson);
+                        var extent = hubLayer.getSource().getExtent();
+
                         _.forEach(features, function (feature) {
                             feature.getGeometry().transform('EPSG:4326', 'EPSG:3857');
                             facilitiesLayer.getSource().addFeature(feature);
                             if (_.contains(scope.hub.facilityIds, feature.getId())) {
                                 selectedFeatures.push(feature);
+                                extent = ol.extent.extend(extent, feature.getGeometry().getExtent());
                             }
                         });
+                        if (!ol.extent.isEmpty(extent)) {
+                            view.fitExtent(extent, map.getSize());
+                        }
                         selectedFeatures.on("add", function (collectionEvent) {
                             scope.hub.facilityIds.push(collectionEvent.element.getId());
                             scope.$apply();
@@ -91,6 +97,10 @@
                             feature.getGeometry().transform('EPSG:4326', 'EPSG:3857');
                             facilitiesLayer.getSource().addFeature(feature);
                         });
+                        var extent = ol.extent.extend(hubLayer.getSource().getExtent(), facilitiesLayer.getSource().getExtent());
+                        if (!ol.extent.isEmpty(extent)) {
+                            view.fitExtent(extent, map.getSize());
+                        }
                     });
                 }
             }

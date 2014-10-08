@@ -1,5 +1,8 @@
 <div class="col-md-6 text-right">
-	<a class="btn btn-xs btn-primary" role="button" style="margin-top: 30px" ui-sref="hub-view({ id: editCtrl.hub.id })">
+	<a class="btn btn-xs btn-primary" role="button" style="margin-top: 30px" ng-show="!editCtrl.hub.id" ui-sref="hub-list">
+		{{'common.action.cancel' | translate }}
+	</a>
+	<a class="btn btn-xs btn-primary" role="button" style="margin-top: 30px" ng-show="editCtrl.hub.id" ui-sref="hub-view({ id: editCtrl.hub.id })">
 		{{'common.action.cancel' | translate }}
 	</a>
 	<a class="btn btn-xs btn-primary" role="button" style="margin-top: 30px; margin-left: 10px"

@@ -1,5 +1,8 @@
 <div class="col-md-6 text-right">
-	<a class="btn btn-xs btn-primary" role="button" style="margin-top: 30px" ui-sref="facility-view({ id: editCtrl.facility.id })">
+	<a class="btn btn-xs btn-primary" role="button" style="margin-top: 30px" ng-show="!editCtrl.facility.id" ui-sref="facility-list">
+		{{'common.action.cancel' | translate }}
+	</a>
+	<a class="btn btn-xs btn-primary" role="button" style="margin-top: 30px" ng-show="editCtrl.facility.id" ui-sref="facility-view({ id: editCtrl.facility.id })">
 		{{'common.action.cancel' | translate }}
 	</a>
 	<a class="btn btn-xs btn-primary" role="button" style="margin-top: 30px; margin-left: 10px"

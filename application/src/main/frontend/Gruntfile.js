@@ -19,9 +19,6 @@ module.exports = function ( grunt ) {
   grunt.loadNpmTasks('grunt-karma');
   grunt.loadNpmTasks('grunt-ng-annotate');
   grunt.loadNpmTasks('grunt-html2js');
-  grunt.loadNpmTasks('grunt-protractor-runner');
-  grunt.loadNpmTasks('grunt-protractor-webdriver');
-  grunt.loadNpmTasks('grunt-shell');
 
   /**
    * Load in our build configuration file.
@@ -558,47 +555,7 @@ module.exports = function ( grunt ) {
     }
   };
 
-  // e2e
-  var path = require('path'), ptorDir = 'node_modules/protractor/bin/';
-  var e2eConfig = {
-      protractor: {
-          options: {
-              configFile: 'node_modules/protractor/docs/referenceConf.js',
-              keepAlive: false,
-              noColor: false,
-              args: {}
-          },
-          test: {
-              configFile: 'protractor/protractor.conf.js',
-              options: {
-                  args: {} // Target-specific arguments
-              }
-          }
-      },
-      protractor_webdriver: {
-          alive: {
-              options: {
-                  path: ptorDir,
-                  keepAlive: true
-              }
-          },
-          dead: {
-              options: {
-                  path: ptorDir
-              }
-          }
-      },
-      shell: {
-          protractor: {
-              options: {
-                  stdout: true
-              },
-              command: path.resolve(ptorDir + 'webdriver-manager') + ' update --standalone'
-          }
-      }
-  };
-
-  grunt.initConfig( grunt.util._.extend( taskConfig, userConfig, e2eConfig ) );
+  grunt.initConfig( grunt.util._.extend( taskConfig, userConfig ) );
 
   /**
    * In order to make it safe to just compile or copy *only* what was changed,
@@ -631,13 +588,6 @@ module.exports = function ( grunt ) {
    */
   grunt.registerTask( 'compile', [
     'less:compile', 'copy:compile_assets', 'ngAnnotate', 'concat:compile_css', 'concat:compile_js', 'uglify', 'index:compile'
-  ]);
-
-  grunt.registerTask( 'e2e', [
-      'shell:protractor',
-      'protractor_webdriver:alive',
-      'protractor:test',
-      'protractor_webdriver:dead'
   ]);
 
   /**

@@ -35,12 +35,12 @@ function is_server_up() {
 case "$1" in
   start)
       java -jar $JARFile 2>&1 > $LOGFile &
-      echo "Process started"
       ;;
   wait_until_started)
       retryable_condition 'is_server_up' 60
       ;;
   test)
+      $NODE_MODULES/protractor/bin/webdriver-manager update
       $NODE_MODULES/protractor/bin/protractor $SCRIPT_DIR/protractor.conf.js
       ;;
   stop)

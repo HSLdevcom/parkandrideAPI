@@ -7,7 +7,7 @@ exports.config = {
 
     capabilities: {
       'browserName': 'phantomjs',
-      'phantomjs.binary.path':'../node_modules/karma-phantomjs-launcher/node_modules/phantomjs/lib/phantom/bin/phantomjs'
+      'phantomjs.binary.path':'../node_modules/phantomjs/lib/phantom/bin/phantomjs'
     },
 
     jasmineNodeOpts: {

@@ -80,7 +80,7 @@
                                 extent = ol.extent.extend(extent, feature.getGeometry().getExtent());
                             }
                         });
-                        if (!ol.extent.isEmpty(extent)) {
+                        if (!_.isEmpty(scope.hub.facilityIds)) {
                             view.fitExtent(extent, map.getSize());
                         }
                         selectedFeatures.on("add", function (collectionEvent) {
@@ -94,7 +94,7 @@
                             return true;
                         });
                     });
-                } else {
+                } else if (!_.isEmpty(scope.hub.facilityIds)) {
                     FacilityResource.findFacilitiesAsFeatureCollection({ ids: scope.hub.facilityIds }).then(function(geojson) {
                         var features = new ol.format.GeoJSON().readFeatures(geojson);
                         _.forEach(features, function (feature) {

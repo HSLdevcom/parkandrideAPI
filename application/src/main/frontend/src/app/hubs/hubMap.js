@@ -4,6 +4,8 @@
         'parkandride.FacilityResource'
     ]);
 
+    var selectionStyle = ol.interaction.Select.getDefaultStyleFunction();
+
     m.directive('hubMap', function(MapService, FacilityResource) {
         return {
             restrict: 'E',
@@ -14,10 +16,11 @@
             template: '<div class="hub-map"></div>',
             transclude: false,
             link: function(scope, element, attrs) {
+                var editable = attrs.editable == "true";
 
                 var facilitiesLayer = new ol.layer.Vector({
                     source: new ol.source.Vector(),
-                    style: MapService.getDefaultStyle()
+                    style: (editable ? MapService.getDefaultStyle() : selectionStyle)
                 });
 
                 var hubLayer = new ol.layer.Vector({
@@ -44,7 +47,7 @@
                     source.addFeature(feature);
                 }
 
-                if (attrs.editable == "true") {
+                if (editable) {
                     map.on('dblclick', function(event) {
                         var point = new ol.geom.Point(event.coordinate).transform('EPSG:3857', 'EPSG:4326');
                         scope.hub.location = new ol.format.GeoJSON().writeGeometry(point);
@@ -55,6 +58,7 @@
 
                     var selectFeatures = new ol.interaction.Select({
                         toggleCondition: goog.functions.TRUE,
+                        style: selectionStyle,
                         layers: [ facilitiesLayer ]
                     });
                     map.addInteraction(selectFeatures);
@@ -79,6 +83,14 @@
                             scope.hub.facilityIds = _.without(scope.hub.facilityIds, collectionEvent.element.getId());
                             scope.$apply();
                             return true;
+                        });
+                    });
+                } else {
+                    FacilityResource.findFacilitiesAsFeatureCollection({ ids: scope.hub.facilityIds }).then(function(geojson) {
+                        var features = new ol.format.GeoJSON().readFeatures(geojson);
+                        _.forEach(features, function (feature) {
+                            feature.getGeometry().transform('EPSG:4326', 'EPSG:3857');
+                            facilitiesLayer.getSource().addFeature(feature);
                         });
                     });
                 }

@@ -78,8 +78,10 @@
             }
         };
 
-        api.findFacilitiesAsFeatureCollection = function() {
-            return $http.get("/api/facilities.geojson").then(function(response) {
+        api.findFacilitiesAsFeatureCollection = function(search) {
+            return $http.get("/api/facilities.geojson", {
+                params: search
+            }).then(function(response) {
                 return response.data;
             });
         };

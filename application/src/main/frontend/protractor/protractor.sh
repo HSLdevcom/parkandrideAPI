@@ -1,8 +1,10 @@
 #!/bin/bash
 
-JARFile="../../../target/parkandride-application-0.0.1-SNAPSHOT.jar"
-PIDFile="application.pid"
-LOGFile="application.log"
+SCRIPT_DIR="$(dirname $0)"
+JARFile="$SCRIPT_DIR/../../../../target/parkandride-application-0.0.1-SNAPSHOT.jar"
+PIDFile="$SCRIPT_DIR/application.pid"
+LOGFile="$SCRIPT_DIR/application.log"
+NODE_MODULES="$SCRIPT_DIR/../node_modules"
 SERVER_URL=localhost:8080
 
 function print_process() {
@@ -37,6 +39,9 @@ case "$1" in
       ;;
   wait_until_started)
       retryable_condition 'is_server_up' 60
+      ;;
+  test)
+      $NODE_MODULES/protractor/bin/protractor $SCRIPT_DIR/protractor.conf.js
       ;;
   stop)
      kill -TERM $(print_process)

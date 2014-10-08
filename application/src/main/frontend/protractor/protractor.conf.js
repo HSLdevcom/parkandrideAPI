@@ -1,14 +1,13 @@
 exports.config = {
-    seleniumAddress: 'http://localhost:4444/wd/hub',
     baseUrl:'http://localhost:8080',
+    chromeDriver: '../node_modules/protractor/selenium/chromedriver',
+    chromeOnly: false,
     rootElement: 'html',
     specs: [ 'specs/**/*.spec.js'],
-    allScriptsTimeout: 10000,
-    chromeOnly: false,
 
     capabilities: {
       'browserName': 'phantomjs',
-      'phantomjs.binary.path':'node_modules/karma-phantomjs-launcher/node_modules/phantomjs/lib/phantom/bin/phantomjs'
+      'phantomjs.binary.path':'../node_modules/karma-phantomjs-launcher/node_modules/phantomjs/lib/phantom/bin/phantomjs'
     },
 
     jasmineNodeOpts: {

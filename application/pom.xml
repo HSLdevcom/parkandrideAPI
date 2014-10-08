@@ -307,7 +307,7 @@
                 </goals>
                 <configuration>
                   <target>
-                    <exec dir="src/test/scripts" executable="bash" spawn="true">
+                    <exec dir="src/main/frontend/protractor" executable="bash" spawn="true">
                       <arg value="protractor.sh" />
                       <arg value="start" />
                     </exec>
@@ -322,9 +322,25 @@
                 </goals>
                 <configuration>
                   <target>
-                    <exec dir="src/test/scripts" executable="bash" spawn="false">
+                    <exec dir="src/main/frontend/protractor" executable="bash" spawn="false">
                       <arg value="protractor.sh" />
                       <arg value="wait_until_started" />
+                    </exec>
+                  </target>
+                </configuration>
+              </execution>
+              <execution>
+                <id>run-protractor</id>
+                <phase>integration-test</phase>
+                <goals>
+                  <goal>run</goal>
+                </goals>
+                <configuration>
+                  <failOnError>false</failOnError>
+                  <target>
+                    <exec dir="src/main/frontend/protractor" executable="bash" spawn="false">
+                      <arg value="protractor.sh" />
+                      <arg value="test" />
                     </exec>
                   </target>
                 </configuration>
@@ -337,31 +353,11 @@
                 </goals>
                 <configuration>
                   <target>
-                    <exec dir="src/test/scripts" executable="bash" spawn="false">
+                    <exec dir="src/main/frontend/protractor" executable="bash" spawn="false">
                       <arg value="protractor.sh" />
                       <arg value="stop" />
                     </exec>
                   </target>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
-          <plugin>
-            <groupId>com.github.eirslett</groupId>
-            <artifactId>frontend-maven-plugin</artifactId>
-            <version>${frontend-maven-plugin.version}</version>
-            <configuration>
-              <workingDirectory>src/main/frontend</workingDirectory>
-            </configuration>
-            <executions>
-              <execution>
-                <id>run-protractor</id>
-                <goals>
-                  <goal>grunt</goal>
-                </goals>
-                <phase>integration-test</phase>
-                <configuration>
-                  <arguments>--no-color e2e</arguments>
                 </configuration>
               </execution>
             </executions>

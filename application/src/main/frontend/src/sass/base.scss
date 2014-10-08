@@ -1,6 +1,8 @@
 @import '../../vendor/bootstrap-sass-official/assets/stylesheets/bootstrap.scss';
 
-@import 'variables.scss';
+@import 'variables';
+@import 'mixins';
+@import 'layouts';
 
 .ng-invalid.ng-dirty {
   border-color: #FA787E;

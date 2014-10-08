@@ -41,6 +41,7 @@
     "grunt-protractor-runner": "^1.1.4",
     "grunt-protractor-webdriver": "^0.1.7",
     "grunt-shell": "~1.1.1",
-    "protractor-linkuisref-locator": "^1.0.0"
+    "protractor-linkuisref-locator": "^1.0.0",
+    "jasmine-reporters": "1.0.1"
   }
 }

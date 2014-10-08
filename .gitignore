@@ -12,3 +12,4 @@ QSpatialRefSys.java
 .DS_Store
 phantomjsdriver.log
 application.log
+TEST-*.xml

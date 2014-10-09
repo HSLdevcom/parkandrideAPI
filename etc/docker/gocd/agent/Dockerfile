@@ -29,7 +29,28 @@ ENV MAVEN_OPTS -Xms256m -Xmx512m
 ENV PATH $M2_HOME/bin:$PATH
 
 # Install phantomjs
-RUN apt-get -yqq install phantomjs > /dev/null
+RUN apt-get -qqy install phantomjs > /dev/null
+
+# Install Google Chrome
+RUN wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add -
+RUN echo "deb http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list
+RUN apt-get -qqy update
+RUN apt-get -qqy install libxpm4 libxrender1 libgtk2.0-0 libnss3 libgconf-2-4
+RUN apt-get -qqy install google-chrome-stable
+
+# Dependencies to make "headless" chrome/selenium work
+RUN apt-get -qqy install xvfb gtk2-engines-pixbuf
+RUN apt-get -qqy install xfonts-cyrillic xfonts-100dpi xfonts-75dpi xfonts-base xfonts-scalable
+
+# Optional but nifty: For capturing screenshots of Xvfb display:
+RUN apt-get -qqy install imagemagick x11-apps
+
+# Install Xvfb init script
+ENV DISPLAY :99
+ADD xvfb_init /etc/init.d/xvfb
+RUN chmod a+x /etc/init.d/xvfb
+ADD xvfb-daemon-run /usr/bin/xvfb-daemon-run
+RUN chmod a+x /usr/bin/xvfb-daemon-run
 
 ADD hsl-liipi.pem /var/go/
 RUN mkdir -p /var/go/.m2
@@ -37,6 +58,9 @@ ADD m2.settings /var/go/.m2/settings.xml
 
 RUN chown -R go:go /var/go
 ENV HOME /var/go
+
+RUN adduser go sudo
+RUN echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
 USER go
 
 CMD /etc/init.d/go-agent start

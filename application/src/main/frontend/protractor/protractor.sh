@@ -2,7 +2,7 @@
 
 SCRIPT_DIR="$(dirname $0)"
 PATH="$SCRIPT_DIR/../node:$PATH"
-JARFile="$SCRIPT_DIR/../../../../target/parkandride-application-0.0.1-SNAPSHOT.jar"
+JARFile=${APP_JAR:-"$SCRIPT_DIR/../../../../target/parkandride-application-0.0.1-SNAPSHOT.jar"}
 PIDFile="$SCRIPT_DIR/application.pid"
 LOGFile="$SCRIPT_DIR/application.log"
 NODE_MODULES="$SCRIPT_DIR/../node_modules"

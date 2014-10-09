@@ -1,6 +1,7 @@
 (function() {
     var m = angular.module('parkandride.facilityView', [
         'ui.router',
+        'parkandride.facilityMap',
         'parkandride.FacilityResource'
     ]);
 

@@ -1,6 +1,7 @@
 (function() {
     var m = angular.module('parkandride.hubView', [
         'ui.router',
+        'parkandride.hubMap',
         'parkandride.HubResource'
     ]);
 

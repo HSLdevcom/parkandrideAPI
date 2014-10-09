@@ -3,6 +3,7 @@ package fi.hsl.parkandride.core.service;
 import java.util.List;
 
 import fi.hsl.parkandride.core.domain.Hub;
+import fi.hsl.parkandride.core.domain.SearchResults;
 import fi.hsl.parkandride.core.domain.SpatialSearch;
 import fi.hsl.parkandride.core.outbound.HubRepository;
 
@@ -32,7 +33,7 @@ public class HubService {
     }
 
     @TransactionalRead
-    public List<Hub> search(SpatialSearch search) {
+    public SearchResults<Hub> search(SpatialSearch search) {
         return repository.findHubs(search);
     }
 }

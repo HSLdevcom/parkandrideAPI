@@ -1,35 +1,35 @@
 (function() {
-    var m = angular.module('parkandride.HubResource', [
-        'restangular'
-    ]);
+    var m = angular.module('parkandride.HubResource', []);
 
-    m.factory('HubResource', function(Restangular) {
+    m.factory('HubResource', function($http) {
         var api = {};
 
         api.newHub = function() {
-            return {};
+            return {
+                facilityIds: []
+            };
         };
 
         api.listHubs = function() {
-            return Restangular.one('hubs').get().then(function(data) {
-                return data.results;
+            return $http.get('/api/hubs').then(function(response) {
+                return response.data.results;
             });
         };
 
         api.getHub = function(id) {
-            return Restangular.one('hubs', id).get().then(function(data) {
-                return data;
+            return $http.get('/api/hubs/' + id).then(function(response) {
+                return response.data;
             });
         };
 
         api.save = function(data) {
             if (data.id) {
-                return Restangular.one('hubs', data.id).customPUT(data).then(function(response) {
-                    return response.id;
+                return $http.put('/api/hubs/' + data.id, data).then(function(response) {
+                    return response.data.id;
                 });
             } else {
-                return Restangular.all('hubs').post(data).then(function(response) {
-                    return response.id;
+                return $http.post('/api/hubs', data).then(function(response) {
+                    return response.data.id;
                 });
             }
         };

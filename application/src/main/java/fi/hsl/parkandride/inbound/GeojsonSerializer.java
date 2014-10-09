@@ -11,19 +11,22 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 
-public class GeometrySerializer extends JsonSerializer<Geometry> {
+/**
+ * This is a bridge serializer for Jackson 1.9 used by Geolatte and Jackson 2.x.
+ */
+public class GeojsonSerializer<T> extends JsonSerializer<T> {
 
     private final JsonMapper jsonMapper;
 
-    public GeometrySerializer(JsonMapper jsonMapper) {
+    public GeojsonSerializer(JsonMapper jsonMapper) {
         this.jsonMapper = jsonMapper;
     }
 
     @Override
-    public void serialize(Geometry value, JsonGenerator jgen, SerializerProvider provider) throws IOException, JsonProcessingException {
+    public void serialize(T value, JsonGenerator jgen, SerializerProvider provider) throws IOException, JsonProcessingException {
         try {
-            jgen.writeRaw(':');
-            jgen.writeRaw(jsonMapper.toJson(value));
+//            jgen.writeRaw(':');
+            jgen.writeRawValue(jsonMapper.toJson(value));
         } catch (JsonException e) {
             throw new IOException(e);
         }

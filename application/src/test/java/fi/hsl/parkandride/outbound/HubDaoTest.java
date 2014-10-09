@@ -20,6 +20,7 @@ import com.google.common.collect.ImmutableSet;
 
 import fi.hsl.parkandride.core.domain.Hub;
 import fi.hsl.parkandride.core.domain.NotFoundException;
+import fi.hsl.parkandride.core.domain.SearchResults;
 import fi.hsl.parkandride.core.domain.SpatialSearch;
 import fi.hsl.parkandride.core.outbound.HubRepository;
 import fi.hsl.parkandride.outbound.sql.QHub;
@@ -69,7 +70,7 @@ public class HubDaoTest {
                 "25.015955 60.254351, " +
                 "25.0178 60.254649, " +
                 "25.016395 60.253675, " +
-                "25.015955 60.254351))"));
+                "25.015955 60.254351))")).results;
         assertThat(hubs.size()).isEqualTo(1);
         hub = hubs.get(0);
         assertThat(hub.name).isEqualTo("Malminkaari");
@@ -80,7 +81,7 @@ public class HubDaoTest {
                 "25.015955 60.254351, " +
                 "25.0178 60.254649, " +
                 "25.01677 60.254548, " +
-                "25.015955 60.254351))"));
+                "25.015955 60.254351))")).results;
         assertThat(hubs).isEmpty();
 
     }
@@ -103,7 +104,7 @@ public class HubDaoTest {
         hubRepository.updateHub(0, createHub());
     }
 
-    private List<Hub> findByGeometry(Geometry geometry) {
+    private SearchResults<Hub> findByGeometry(Geometry geometry) {
         SpatialSearch search = new SpatialSearch();
         search.intersecting = geometry;
         return hubRepository.findHubs(search);

@@ -1,6 +1,9 @@
 package fi.hsl.parkandride.inbound;
 
-public class Paths {
+public class UrlSchema {
+
+    public static final String GEOJSON = "application/vnd.geo+json";
+
 
     public static final String API = "/api";
 

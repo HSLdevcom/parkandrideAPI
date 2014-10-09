@@ -204,6 +204,10 @@ public class FacilityDao implements FacilityRepository {
             qry.where(qFacility.border.intersects(search.intersecting));
         }
 
+        if (search.ids != null && !search.ids.isEmpty()) {
+            qry.where(qFacility.id.in(search.ids));
+        }
+
         Map<Long, Facility> facilities = qry.map(qFacility.id, facilityMapping);
         fetchAliases(facilities);
         fetchCapacities(facilities);

@@ -5,9 +5,12 @@ exports.config = {
     rootElement: 'html',
     specs: [ 'specs/**/*.spec.js'],
 
+//    capabilities: {
+//      'browserName': 'phantomjs',
+//      'phantomjs.binary.path':'../node_modules/phantomjs/lib/phantom/bin/phantomjs'
+//    },
     capabilities: {
-      'browserName': 'phantomjs',
-      'phantomjs.binary.path':'../node_modules/phantomjs/lib/phantom/bin/phantomjs'
+      'browserName': 'chrome'
     },
 
     jasmineNodeOpts: {

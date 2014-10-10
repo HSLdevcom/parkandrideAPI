@@ -47,10 +47,8 @@ RUN apt-get -qqy install imagemagick x11-apps
 
 # Install Xvfb init script
 ENV DISPLAY :99
-ADD xvfb_init /etc/init.d/xvfb
+ADD etc-init.d-xvfb /etc/init.d/xvfb
 RUN chmod a+x /etc/init.d/xvfb
-ADD xvfb-daemon-run /usr/bin/xvfb-daemon-run
-RUN chmod a+x /usr/bin/xvfb-daemon-run
 
 ADD hsl-liipi.pem /var/go/
 RUN mkdir -p /var/go/.m2
@@ -58,9 +56,8 @@ ADD m2.settings /var/go/.m2/settings.xml
 
 RUN chown -R go:go /var/go
 ENV HOME /var/go
-
-RUN adduser go sudo
-RUN echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
+#RUN adduser go sudo
+#RUN echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
 USER go
 
 CMD /etc/init.d/go-agent start

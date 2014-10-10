@@ -19,7 +19,7 @@
     <frontend-maven-plugin.node.version>v0.10.31</frontend-maven-plugin.node.version>
     <frontend-maven-plugin.npm.version>1.4.26</frontend-maven-plugin.npm.version>
     <hikaricp.version>2.0.1</hikaricp.version>
-    <querydsl.version>3.5.0.BUILD-SNAPSHOT</querydsl.version>
+    <querydsl.version>3.5.0</querydsl.version>
     <flyway.version>3.0</flyway.version>
     <h2.version>1.4.181</h2.version>
     <h2gis.version>1.1.0</h2gis.version>

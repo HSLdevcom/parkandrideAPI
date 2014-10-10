@@ -139,4 +139,15 @@ public class FacilityDaoTest {
         facilityDao.updateFacility(0, createFacility());
     }
 
+    @Test
+    public void summarize_facilities() {
+        facilityDao.insertFacility(createFacility());
+        facilityDao.insertFacility(createFacility());
+        FacilitySummary summary = facilityDao.summarizeFacilities(new SpatialSearch()); // all
+
+        assertThat(summary.facilityCount).isEqualTo(2);
+        assertThat(summary.capacities).hasSize(2);
+        assertThat(summary.capacities.get(CAR)).isEqualTo(new Capacity(200, 2));
+        assertThat(summary.capacities.get(BICYCLE)).isEqualTo(new Capacity(20, 0));
+    }
 }

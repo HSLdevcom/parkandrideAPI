@@ -13,6 +13,9 @@ import com.google.common.collect.Sets;
 import com.mysema.query.ResultTransformer;
 import com.mysema.query.Tuple;
 import com.mysema.query.dml.StoreClause;
+import com.mysema.query.group.AbstractGroupExpression;
+import com.mysema.query.group.GroupBy;
+import com.mysema.query.group.GroupCollector;
 import com.mysema.query.sql.SQLExpressions;
 import com.mysema.query.sql.dml.SQLInsertClause;
 import com.mysema.query.sql.dml.SQLUpdateClause;
@@ -20,6 +23,7 @@ import com.mysema.query.sql.postgres.PostgresQuery;
 import com.mysema.query.sql.postgres.PostgresQueryFactory;
 import com.mysema.query.types.MappingProjection;
 import com.mysema.query.types.QBean;
+import com.mysema.query.types.expr.NumberExpression;
 import com.mysema.query.types.expr.SimpleExpression;
 
 import fi.hsl.parkandride.core.domain.*;
@@ -46,6 +50,24 @@ public class FacilityDao implements FacilityRepository {
                 return null;
             }
             return new Capacity(built, row.get(qCapacity.unavailable));
+        }
+    };
+
+    private static final NumberExpression<Long> facilityIdCount = qFacility.id.countDistinct();
+
+    private static final NumberExpression<Integer> capacityBuiltSum = qCapacity.built.sum();
+
+    private static final NumberExpression<Integer> capacityUnavailableSum = qCapacity.unavailable.sum();
+
+    private static MappingProjection<Capacity> capacitySummaryMapping = new MappingProjection<Capacity>(Capacity.class, capacityBuiltSum,
+            capacityUnavailableSum) {
+        @Override
+        protected Capacity map(Tuple row) {
+            Integer built = row.get(capacityBuiltSum);
+            if (built == null) {
+                return null;
+            }
+            return new Capacity(built, row.get(capacityUnavailableSum));
         }
     };
 
@@ -195,11 +217,43 @@ public class FacilityDao implements FacilityRepository {
 
     @TransactionalRead
     @Override
-    public SearchResults<Facility> findFacilities(PageableSpatialSearch search) { // TODO: add search and paging parameters
+    public SearchResults<Facility> findFacilities(PageableSpatialSearch search) {
         PostgresQuery qry = fromFacility();
         qry.limit(search.limit + 1);
         qry.offset(search.offset);
 
+        buildWhere(search, qry);
+
+        Map<Long, Facility> facilities = qry.map(qFacility.id, facilityMapping);
+        fetchAliases(facilities);
+        fetchCapacities(facilities);
+
+        return SearchResults.of(new ArrayList<>(facilities.values()), search.limit);
+    }
+
+    @TransactionalRead
+    @Override
+    public FacilitySummary summarizeFacilities(SpatialSearch search) {
+        PostgresQuery qry = fromFacility();
+
+        buildWhere(search, qry);
+
+        qry.leftJoin(qFacility._capacityFacilityIdFk, qCapacity);
+        qry.groupBy(qCapacity.capacityType);
+
+        long count = 0;
+        Map<CapacityType, Capacity> capacities = new HashMap<>();
+        for (Tuple tuple : qry.list(facilityIdCount, qCapacity.capacityType, capacitySummaryMapping)) {
+            if (count == 0) {
+                count = tuple.get(facilityIdCount);
+            }
+            capacities.put(tuple.get(qCapacity.capacityType), tuple.get(capacitySummaryMapping));
+        }
+
+        return new FacilitySummary(count, capacities);
+    }
+
+    private void buildWhere(SpatialSearch search, PostgresQuery qry) {
         if (search.intersecting != null) {
             qry.where(qFacility.border.intersects(search.intersecting));
         }
@@ -207,12 +261,6 @@ public class FacilityDao implements FacilityRepository {
         if (search.ids != null && !search.ids.isEmpty()) {
             qry.where(qFacility.id.in(search.ids));
         }
-
-        Map<Long, Facility> facilities = qry.map(qFacility.id, facilityMapping);
-        fetchAliases(facilities);
-        fetchCapacities(facilities);
-
-        return SearchResults.of(new ArrayList<>(facilities.values()), search.limit);
     }
 
     private void insertAliases(long facilityId, Collection<String> aliases) {

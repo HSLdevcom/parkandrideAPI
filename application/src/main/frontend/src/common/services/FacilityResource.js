@@ -86,6 +86,18 @@
             });
         };
 
+        api.summarizeFacilities = function(search) {
+            var params = _.cloneDeep(search);
+            params.summary = true;
+            return $http.get("/api/facilities", {
+                params: params
+            }).then(function(response) {
+                var clone = _.cloneDeep(response.data);
+                clone.capacities = buildCapacities(clone.capacities);
+                return clone;
+            });
+        };
+
         api.getCapacityTypes = function() {
             return $http.get("/api/capacity-types").then(function(response) {
                 return response.data.results;

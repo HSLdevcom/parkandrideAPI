@@ -2,6 +2,7 @@
     var m = angular.module('parkandride.hubEdit', [
         'ui.router',
         'parkandride.hubMap',
+        'parkandride.capacitiesTable',
         'parkandride.HubResource',
         'parkandride.FacilityResource',
         'ngTagsInput'
@@ -40,7 +41,7 @@
         });
     });
 
-    m.controller('HubEditCtrl', function($state, HubResource, hub) {
+    m.controller('HubEditCtrl', function($scope, $state, HubResource, FacilityResource, hub) {
 
         this.hub = hub;
 

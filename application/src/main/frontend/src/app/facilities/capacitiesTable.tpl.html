@@ -1,0 +1,22 @@
+<div class="panel panel-default" ng-show="capacities">
+	<table class="table table-bordered table-striped table-condensed">
+		<thead>
+		<tr>
+			<th>Tyyppi</th>
+			<th>Rakennettu kapasiteetti</th>
+			<th>Tilapäisesti pois käytöstä</th>
+		</tr>
+		</thead>
+		<tbody>
+		<tr ng-repeat="capacity in capacities">
+			<td>{{'facilities.capacity.' + capacity.capacityType | translate}}</td>
+			<td>
+				{{capacity.built}}
+			</td>
+			<td>
+				{{capacity.unavailable}}
+			</td>
+		</tr>
+		</tbody>
+	</table>
+</div>

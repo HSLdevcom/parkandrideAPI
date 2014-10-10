@@ -49,6 +49,7 @@ RUN apt-get -qqy install imagemagick x11-apps
 ENV DISPLAY :99
 ADD etc-init.d-xvfb /etc/init.d/xvfb
 RUN chmod a+x /etc/init.d/xvfb
+RUN chmod u+s `which Xvfb`
 
 ADD hsl-liipi.pem /var/go/
 RUN mkdir -p /var/go/.m2

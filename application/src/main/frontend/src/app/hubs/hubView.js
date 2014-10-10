@@ -18,7 +18,7 @@
                             return HubResource.getHub($stateParams.id);
                         },
                         summary: function(hub, FacilityResource) {
-                            return FacilityResource.summarizeFacilities({ ids: hub.facilityIds });
+                            return FacilityResource.summarizeFacilities(hub.facilityIds);
                         }
                     }
                 }

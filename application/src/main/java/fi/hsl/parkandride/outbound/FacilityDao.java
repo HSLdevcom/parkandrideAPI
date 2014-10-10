@@ -21,6 +21,7 @@ import com.mysema.query.sql.dml.SQLInsertClause;
 import com.mysema.query.sql.dml.SQLUpdateClause;
 import com.mysema.query.sql.postgres.PostgresQuery;
 import com.mysema.query.sql.postgres.PostgresQueryFactory;
+import com.mysema.query.types.ConstructorExpression;
 import com.mysema.query.types.MappingProjection;
 import com.mysema.query.types.QBean;
 import com.mysema.query.types.expr.NumberExpression;
@@ -42,7 +43,7 @@ public class FacilityDao implements FacilityRepository {
 
     private static final QCapacity qCapacity = QCapacity.capacity;
 
-    private static MappingProjection<Capacity> capacityMapping = new MappingProjection<Capacity>(Capacity.class, qCapacity.built, qCapacity.unavailable) {
+    private static final MappingProjection<Capacity> capacityMapping = new MappingProjection<Capacity>(Capacity.class, qCapacity.built, qCapacity.unavailable) {
         @Override
         protected Capacity map(Tuple row) {
             Integer built = row.get(qCapacity.built);
@@ -53,13 +54,11 @@ public class FacilityDao implements FacilityRepository {
         }
     };
 
-    private static final NumberExpression<Long> facilityIdCount = qFacility.id.countDistinct();
-
     private static final NumberExpression<Integer> capacityBuiltSum = qCapacity.built.sum();
 
     private static final NumberExpression<Integer> capacityUnavailableSum = qCapacity.unavailable.sum();
 
-    private static MappingProjection<Capacity> capacitySummaryMapping = new MappingProjection<Capacity>(Capacity.class, capacityBuiltSum,
+    private static final MappingProjection<Capacity> capacitySummaryMapping = new MappingProjection<Capacity>(Capacity.class, capacityBuiltSum,
             capacityUnavailableSum) {
         @Override
         protected Capacity map(Tuple row) {
@@ -238,17 +237,12 @@ public class FacilityDao implements FacilityRepository {
 
         buildWhere(search, qry);
 
+        long count = qry.singleResult(SQLExpressions.countAll);
+
         qry.leftJoin(qFacility._capacityFacilityIdFk, qCapacity);
         qry.groupBy(qCapacity.capacityType);
 
-        long count = 0;
-        Map<CapacityType, Capacity> capacities = new HashMap<>();
-        for (Tuple tuple : qry.list(facilityIdCount, qCapacity.capacityType, capacitySummaryMapping)) {
-            if (count == 0) {
-                count = tuple.get(facilityIdCount);
-            }
-            capacities.put(tuple.get(qCapacity.capacityType), tuple.get(capacitySummaryMapping));
-        }
+        Map<CapacityType, Capacity> capacities = qry.map(qCapacity.capacityType, capacitySummaryMapping);
 
         return new FacilitySummary(count, capacities);
     }

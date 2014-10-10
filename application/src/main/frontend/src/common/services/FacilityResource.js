@@ -39,7 +39,7 @@
         return copy;
     }
 
-    m.factory('FacilityResource', function($http) {
+    m.factory('FacilityResource', function($http, $q) {
         var api = {};
 
         api.newFacility = function() {
@@ -86,11 +86,15 @@
             });
         };
 
-        api.summarizeFacilities = function(search) {
-            var params = _.cloneDeep(search);
-            params.summary = true;
+        api.summarizeFacilities = function(facilityIds) {
+            if (_.isEmpty(facilityIds)){
+                var deferred = $q.defer();
+                deferred.resolve({ facilityCount: 0, capacities: [] });
+                return deferred.promise;
+            }
+
             return $http.get("/api/facilities", {
-                params: params
+                params: { summary: true, ids: facilityIds }
             }).then(function(response) {
                 var clone = _.cloneDeep(response.data);
                 clone.capacities = buildCapacities(clone.capacities);

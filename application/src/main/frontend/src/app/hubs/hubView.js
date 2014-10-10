@@ -2,6 +2,7 @@
     var m = angular.module('parkandride.hubView', [
         'ui.router',
         'parkandride.hubMap',
+        'parkandride.FacilityResource',
         'parkandride.HubResource'
     ]);
 
@@ -15,6 +16,9 @@
                     resolve: {
                         hub: function($stateParams, HubResource) {
                             return HubResource.getHub($stateParams.id);
+                        },
+                        summary: function(hub, FacilityResource) {
+                            return FacilityResource.summarizeFacilities({ ids: hub.facilityIds });
                         }
                     }
                 }
@@ -23,10 +27,10 @@
         });
     });
 
-    m.controller('HubViewCtrl', ViewController);
-    function ViewController(hub) {
+    m.controller('HubViewCtrl', function($scope, hub, summary, FacilityResource) {
         this.hub = hub;
-    }
+        this.summary = summary;
+    });
 
     m.directive('hubViewNavi', function() {
         return {

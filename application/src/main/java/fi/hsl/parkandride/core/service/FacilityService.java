@@ -51,6 +51,11 @@ public class FacilityService {
         return repository.findFacilities(search);
     }
 
+    @TransactionalRead
+    public FacilitySummary summarize(SpatialSearch search) {
+        return repository.summarizeFacilities(search);
+    }
+
     // TODO: REMOVE - this method is only for demo/testing in the beginning of the project
     @TransactionalWrite
     public SearchResults generateTestData() {

@@ -11,8 +11,6 @@ public class PageableSpatialSearchDto extends SpatialSearchDto {
 
     protected long offset = 0l;
 
-    protected Set<Long> ids;
-
     public int getLimit() {
         return limit;
     }
@@ -27,14 +25,6 @@ public class PageableSpatialSearchDto extends SpatialSearchDto {
 
     public void setOffset(long offset) {
         this.offset = offset;
-    }
-
-    public Set<Long> getIds() {
-        return ids;
-    }
-
-    public void setIds(Set<Long> ids) {
-        this.ids = ids;
     }
 
     @Override

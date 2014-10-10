@@ -25,6 +25,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import fi.hsl.parkandride.core.domain.CapacityType;
 import fi.hsl.parkandride.core.domain.Facility;
+import fi.hsl.parkandride.core.domain.FacilitySummary;
 import fi.hsl.parkandride.core.domain.SearchResults;
 import fi.hsl.parkandride.core.service.FacilityService;
 
@@ -66,6 +67,12 @@ public class FacilityController {
     public ResponseEntity<SearchResults<Facility>> findFacilities(PageableSpatialSearchDto search) {
         SearchResults<Facility> results = facilityService.search(search.toSpatialSearch());
         return new ResponseEntity<>(results, OK);
+    }
+
+    @RequestMapping(method = GET, value = FACILITIES, params = "summary", produces = APPLICATION_JSON_VALUE)
+    public ResponseEntity<FacilitySummary> summarizeFacilities(SpatialSearchDto search) {
+        FacilitySummary summary = facilityService.summarize(search.toSpatialSearch());
+        return new ResponseEntity<>(summary, OK);
     }
 
     @RequestMapping(method = GET, value = FACILITIES, produces = GEOJSON)

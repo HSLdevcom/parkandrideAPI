@@ -1,4 +1,4 @@
-<div class="panel panel-default" ng-show="capacities">
+<div class="panel panel-default" ng-show="thereAreCapacities()">
 	<table class="table table-bordered table-striped table-condensed">
 		<thead>
 		<tr>
@@ -8,8 +8,8 @@
 		</tr>
 		</thead>
 		<tbody>
-		<tr ng-repeat="capacity in capacities">
-			<td>{{'facilities.capacity.' + capacity.capacityType | translate}}</td>
+		<tr ng-repeat="(capacityType, capacity) in capacities">
+			<td>{{'facilities.capacity.' + capacityType | translate}}</td>
 			<td>
 				{{capacity.built}}
 			</td>

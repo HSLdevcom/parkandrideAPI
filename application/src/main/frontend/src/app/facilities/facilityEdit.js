@@ -46,10 +46,7 @@
     });
 
     m.controller('FacilityEditCtrl', function($state, FacilityResource, capacityTypes, facility) {
-
-        facility.capacities = _.map(capacityTypes, function(capacityType) {
-            return FacilityResource.getOrCreateCapacity(facility, capacityType);
-        });
+        this.capacityTypes = capacityTypes;
 
         facility.aliases = _.map(facility.aliases, function(a) { return { text: a }; });
 

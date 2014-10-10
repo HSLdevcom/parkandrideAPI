@@ -8,7 +8,12 @@
                 capacities: '='
             },
             templateUrl: 'facilities/capacitiesTable.tpl.html',
-            transclude: false
+            transclude: false,
+            link: function(scope) {
+                scope.thereAreCapacities = function() {
+                    return !_.isEmpty(scope.capacities);
+                };
+            }
         };
     });
 })();

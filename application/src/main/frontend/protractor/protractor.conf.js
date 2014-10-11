@@ -10,7 +10,7 @@ exports.config = {
 //      'phantomjs.binary.path':'../node_modules/phantomjs/lib/phantom/bin/phantomjs'
 //    },
     capabilities: {
-      'browserName': 'chrome'
+      'browserName': 'firefox'
     },
 
     jasmineNodeOpts: {

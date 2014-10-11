@@ -1,6 +1,18 @@
 #!/bin/bash
 
-SCRIPT_DIR="$(dirname $0)"
+fullpath() {
+  pth=$1
+  case $pth in
+    /*)
+      ;;
+    *)
+      pth=`pwd`/$pth
+      ;;
+  esac
+  echo $pth
+}
+
+SCRIPT_DIR="`fullpath \`dirname $0\``"
 PATH="$SCRIPT_DIR/../node:$PATH"
 JARFile=${APP_JAR:-"$SCRIPT_DIR/../../../../target/parkandride-application-0.0.1-SNAPSHOT.jar"}
 PIDFile="$SCRIPT_DIR/application.pid"

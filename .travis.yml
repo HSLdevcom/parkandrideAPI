@@ -7,7 +7,7 @@ before_install:
   - sh -e /etc/init.d/xvfb start
 install:
   - mvn install -DskipTests=true -Dmaven.javadoc.skip=true -B -V
-  - mvn test -D
+  - mvn test -B
   - cd $APP_MODULE && mvn clean test jacoco:report coveralls:jacoco
 before_script:
   - cd $APP_MODULE/src/main/frontend/protractor

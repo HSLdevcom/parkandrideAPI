@@ -1,6 +1,6 @@
 FROM dockerfile/java:oracle-java8
 MAINTAINER HSLdevcom/parkandrideAPI "https://github.com/HSLdevcom/parkandrideAPI"
-ENV REFRESHED_AT 2014-10-03
+ENV REFRESHED_AT 2014-10-11
 
 # Docker-in-Docker
 RUN apt-get update -qq
@@ -28,22 +28,21 @@ RUN tar xzvf ${M2_HOME}.tar.gz -C /usr/local > /dev/null
 ENV MAVEN_OPTS -Xms256m -Xmx512m
 ENV PATH $M2_HOME/bin:$PATH
 
-# Install phantomjs
-RUN apt-get -qqy install phantomjs > /dev/null
+# Install Xvfb
+# Xvfb is a headless X server that will allow Firefox, Chromium, etc, to run.
+# Note that there may be various dependencies that still need to be installed
+# on a server, such as font support.
+RUN apt-get install -qqy xvfb x11-xkb-utils xfonts-cyrillic xfonts-100dpi xfonts-75dpi xfonts-base xfonts-scalable xserver-xorg-core
+# Optional but nifty,  For capturing screenshots of Xvfb display:
+RUN apt-get install -qqy imagemagick x11-apps
 
-# Install Google Chrome
-RUN wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add -
-RUN echo "deb http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list
-RUN apt-get -qqy update
-RUN apt-get -qqy install libxpm4 libxrender1 libgtk2.0-0 libnss3 libgconf-2-4
-RUN apt-get -qqy install google-chrome-stable
-
-# Dependencies to make "headless" chrome/selenium work
-RUN apt-get -qqy install xvfb gtk2-engines-pixbuf
-RUN apt-get -qqy install xfonts-cyrillic xfonts-100dpi xfonts-75dpi xfonts-base xfonts-scalable
-
-# Optional but nifty: For capturing screenshots of Xvfb display:
-RUN apt-get -qqy install imagemagick x11-apps
+# Install Browsers
+# The dbus-x11 package prevents some errors from occurring when using Firefox.
+RUN apt-get install -qqy dbus-x11 firefox phantomjs
+# On a headless Ubuntu box there are some items needed by PhantomJS that
+# are not present. PhantomJS will silently fail if they aren't there - which is
+# a real pain to deal with. This is the crucial item:
+RUN apt-get install -qqy libfontconfig1-dev
 
 # Install Xvfb init script
 ENV DISPLAY :99
@@ -57,8 +56,6 @@ ADD m2.settings /var/go/.m2/settings.xml
 
 RUN chown -R go:go /var/go
 ENV HOME /var/go
-#RUN adduser go sudo
-#RUN echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
 USER go
 
 CMD /etc/init.d/go-agent start

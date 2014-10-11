@@ -5,16 +5,11 @@ set -eu
 : ${PWD:?}
 set -x
 
-function version() {
-  mvn -Dexec.executable="echo" \
-    -Dexec.args='${project.version}' \
-    -Dexec.outputFile="version" \
-    --update-snapshots \
-    --non-recursive \
-    --batch-mode \
-    org.codehaus.mojo:exec-maven-plugin:1.3.1:exec >/dev/null 2>&1 ||
-    { echo "Unable to determine version" 1>&2; exit 1; }
 
+
+function version() {
+  local version=`python -c 'import xml.etree.ElementTree as ET; print ET.parse("pom.xml").find("//{http://maven.apache.org/POM/4.0.0}parent/{http://maven.apache.org/POM/4.0.0}version").text'`
+  echo $version > version
   sed -i -e "s/SNAPSHOT$/$GO_PIPELINE_COUNTER/" version
   cat version
 }
@@ -26,6 +21,8 @@ function revision() {
 
 VERSION=`version`
 REVISION=`revision`
+
+exit 0
 
 mvn versions:set \
     --update-snapshots \

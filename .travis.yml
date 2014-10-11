@@ -6,7 +6,7 @@ env:
 before_install:
   - sh -e /etc/init.d/xvfb start
 install:
-  - mvn verify -DskipTests=true -Dmaven.javadoc.skip=true -B -V
+  - mvn verify -Dmaven.javadoc.skip=true -B -V
 before_script:
   - cd $APP_MODULE/src/main/frontend/protractor
   - bash protractor.sh start

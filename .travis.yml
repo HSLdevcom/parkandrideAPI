@@ -6,8 +6,7 @@ env:
 before_install:
   - sh -e /etc/init.d/xvfb start
 install:
-  - mvn install -DskipTests=true -Dmaven.javadoc.skip=true -B -V
-  - mvn test -B
+  - mvn verify -DskipTests=true -Dmaven.javadoc.skip=true -B -V
 before_script:
   - cd $APP_MODULE/src/main/frontend/protractor
   - bash protractor.sh start
@@ -15,8 +14,6 @@ before_script:
 script:
   - bash protractor.sh test
   - bash protractor.sh verify
-after_success:
-  - cd $APP_MODULE && mvn jacoco:report coveralls:jacoco
 notifications:
   flowdock:
     secure: h3OB+ZyOFh6m/43twXDTh15enuvALOVvCNe81+doFj5o0s9x+n1K06x02hU2ISkHt5MYGg5JNtyeDTg2DDDht3TsfJcM3U8P/auMaIB7jt6Cwwrp0WPbFwyMR5t+CHYK27teeaopPtXbk+PWdq7FMma1kzvgOZlC6yq6OOj4hwM=

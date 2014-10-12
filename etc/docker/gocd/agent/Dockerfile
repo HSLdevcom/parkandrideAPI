@@ -21,14 +21,14 @@ RUN sed -r -i "s/^(GO_SERVER)=(.*)/\1=\$GOSERVER_PORT_8153_TCP_ADDR/g" /etc/defa
 RUN sed -r -i "s/^(DAEMON)=(.*)/\1=N/g" /etc/default/go-agent
 RUN gpasswd -a go docker
 
-# Install maven
+# Install Maven
 ENV M2_HOME /usr/local/apache-maven-3.2.3
 RUN wget -nv -O ${M2_HOME}.tar.gz http://mirror.netinch.com/pub/apache/maven/maven-3/3.2.3/binaries/apache-maven-3.2.3-bin.tar.gz
 RUN tar xzvf ${M2_HOME}.tar.gz -C /usr/local > /dev/null
 ENV MAVEN_OPTS -Xms256m -Xmx512m
 ENV PATH $M2_HOME/bin:$PATH
 
-# Install Xvfb
+# Install Xvfb (adapted from https://github.com/exratione/protractor-selenium-server-cookbook)
 # Xvfb is a headless X server that will allow Firefox, Chromium, etc, to run.
 # Note that there may be various dependencies that still need to be installed
 # on a server, such as font support.

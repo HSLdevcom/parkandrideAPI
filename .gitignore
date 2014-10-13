@@ -14,4 +14,5 @@ QSpatialRefSys.java
 npm-debug.log
 phantomjsdriver.log
 application.log
+application.pid
 protractor-results.xml

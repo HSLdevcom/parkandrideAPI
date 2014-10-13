@@ -32,65 +32,37 @@ describe('Basic flow', function() {
             aliases: ["fac2"]
         };
 
-        describe('Create facility 1', function () {
-            it('to create view', function () {
-                facilityEditPage.get();
-                expect(facilityEditPage.isDisplayed()).toBe(true);
-            });
+        it('Create facility 1', function () {
+            facilityEditPage.get();
+            expect(facilityEditPage.isDisplayed()).toBe(true);
 
-            it('insert name', function () {
-                facilityEditPage.setName(facility1.name);
-                expect(facilityEditPage.getName()).toEqual(facility1.name);
-            });
+            facilityEditPage.setName(facility1.name);
+            expect(facilityEditPage.getName()).toEqual(facility1.name);
 
-            it('draw facility border', function () {
-                facilityEditPage.drawBorder({x: 60, y: 60}, 60, 60);
-            });
+            facilityEditPage.drawBorder({x: 60, y: 60}, 60, 60);
+            facilityEditPage.addAlias(facility1.aliases[0]);
+            facilityEditPage.addAlias(facility1.aliases[1]);
+            facilityEditPage.setCapacities(facility1.capacities);
 
-            it('should add aliases', function () {
-                facilityEditPage.addAlias(facility1.aliases[0]);
-                facilityEditPage.addAlias(facility1.aliases[1]);
-            });
-
-            it('should define all capacities', function () {
-                facilityEditPage.setCapacities(facility1.capacities);
-            });
-
-            it('saves facility', function () {
-                facilityEditPage.save();
-                expect(facilityViewPage.isDisplayed()).toBe(true);
-                facilityViewPage.assertCapacities(facility1.capacities);
-            });
+            facilityEditPage.save();
+            expect(facilityViewPage.isDisplayed()).toBe(true);
+            facilityViewPage.assertCapacities(facility1.capacities);
         });
 
-        describe('Create facility 2', function () {
-            it('to create view', function() {
-                facilityEditPage.get();
-                expect(facilityEditPage.isDisplayed()).toBe(true);
-            });
+        it('Create facility 2', function() {
+            facilityEditPage.get();
+            expect(facilityEditPage.isDisplayed()).toBe(true);
 
-            it('insert name', function () {
-                facilityEditPage.setName(facility2.name);
-                expect(facilityEditPage.getName()).toEqual(facility2.name);
-            });
+            facilityEditPage.setName(facility2.name);
+            expect(facilityEditPage.getName()).toEqual(facility2.name);
 
-            it('draw facility border', function () {
-                facilityEditPage.drawBorder({x: 150, y: 150}, 60, 60);
-            });
+            facilityEditPage.drawBorder({x: 150, y: 150}, 60, 60);
+            facilityEditPage.addAlias(facility2.aliases[0]);
+            facilityEditPage.setCapacities(facility2.capacities);
 
-            it('should add aliases', function () {
-                facilityEditPage.addAlias(facility2.aliases[0]);
-            });
-
-            it('should define all capacities', function () {
-                facilityEditPage.setCapacities(facility2.capacities);
-            });
-
-            it('saves facility', function () {
-                facilityEditPage.save();
-                expect(facilityViewPage.isDisplayed()).toBe(true);
-                facilityViewPage.assertCapacities(facility2.capacities);
-            });
+            facilityEditPage.save();
+            expect(facilityViewPage.isDisplayed()).toBe(true);
+            facilityViewPage.assertCapacities(facility2.capacities);
         });
     });
 });

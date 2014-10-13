@@ -4,10 +4,10 @@ var FacilityViewPage = (function() {
     var ptor = protractor.getInstance();
 
     function FacilityViewPage() {
-        this.view = element(by.css('.wdFacilityView'));
-        this.name = element(by.css('.wdName'));
-        this.aliases = element(by.css('.wdAliases'));
-        this.toListButton = element(by.linkUiSref('facility-list'));
+        this.view = $('.wdFacilityView');
+        this.name = $('.wdName');
+        this.aliases = $('.wdAliases');
+        this.toListButton = element.all(by.linkUiSref('facility-list')).first();
     }
 
     FacilityViewPage.prototype.isDisplayed = function() {
@@ -26,7 +26,7 @@ var FacilityViewPage = (function() {
         for (var capacityType in capacities) {
             var capacity = capacities[capacityType];
             for (var prop in capacity) {
-                expect(element(by.css('.wd' + capacityType + prop)).getText()).toEqual("" + capacity[prop]);
+                expect($('.wd' + capacityType + prop).getText()).toEqual("" + capacity[prop]);
             }
         }
     };

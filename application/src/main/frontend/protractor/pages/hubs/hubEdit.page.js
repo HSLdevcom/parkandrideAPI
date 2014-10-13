@@ -2,10 +2,10 @@ var HubEditPage = (function() {
     var ptor = protractor.getInstance();
 
     function HubEditPage() {
-        this.view = element(by.css('.wdHubEditView'));
+        this.view = $('.wdHubEditView');
         this.name = element(by.model('editCtrl.hub.name'));
-        this.map = element(by.css('.hub-map .ol-viewport'));
-        this.saveButton = element(by.css('.wdSave'));
+        this.map = $('.hub-map .ol-viewport');
+        this.saveButton = element.all(by.css('.wdSave')).first();
     }
 
     HubEditPage.prototype.isDisplayed = function() {

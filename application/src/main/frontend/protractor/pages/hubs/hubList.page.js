@@ -1,7 +1,7 @@
 var HubListPage = (function() {
     function HubListPage() {
         this.title = element(by.cssContainingText('h2', 'Alueet'));
-        this.createButton = element(by.linkUiSref('hub-create'));
+        this.createButton = element.all(by.linkUiSref('hub-create')).first();
     }
 
     HubListPage.prototype.get = function() {

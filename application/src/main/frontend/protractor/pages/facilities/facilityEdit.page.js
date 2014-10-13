@@ -4,11 +4,11 @@ var FacilityEditPage = (function() {
     var ptor = protractor.getInstance();
 
     function FacilityEditPage() {
-        this.view = element(by.css('.wdFacilityEditView'));
+        this.view = $('.wdFacilityEditView');
         this.name = element(by.model('editCtrl.facility.name'));
-        this.map = element(by.css('.facility-map .ol-viewport'));
-        this.saveButton = element(by.css('.wdSave'));
-        this.aliases = element(by.css('.wdAliases .tags'));
+        this.map = $('.facility-map .ol-viewport');
+        this.saveButton = element.all(by.css('.wdSave')).first();
+        this.aliases = $('.wdAliases .tags');
     }
 
     FacilityEditPage.prototype.isDisplayed = function() {

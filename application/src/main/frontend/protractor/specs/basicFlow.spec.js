@@ -3,10 +3,14 @@
 var Pages = require('../pages/pages.js');
 
 describe('Basic flow', function() {
+    var menu = new Pages.Menu();
     var indexPage = new Pages.IndexPage();
+
     var facilityListPage = new Pages.FacilityListPage();
     var facilityEditPage = new Pages.FacilityEditPage();
     var facilityViewPage = new Pages.FacilityViewPage();
+
+    var hubListPage = new Pages.HubListPage();
 
     function newFacilityName() {
         return 'Test Facility ' + new Date().getTime();
@@ -78,9 +82,8 @@ describe('Basic flow', function() {
         facilityViewPage.assertCapacities(facility2.capacities);
     });
 
-//    describe('Hub', function () {
-//        it('associate facilities', function() {
-//
-//        });
-//    });
+    it('Return to list and go to hubs list', function() {
+        menu.selectHubs();
+        expect(hubListPage.isDisplayed()).toBe(true);
+    });
 });

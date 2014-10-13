@@ -5,11 +5,16 @@ var FacilityViewPage = (function() {
 
     function FacilityViewPage() {
         this.view = element(by.css('.wdFacilityView'));
+        this.aliases = element(by.css('.wdAliases'));
     }
 
     FacilityViewPage.prototype.isDisplayed = function() {
         return this.view.isDisplayed();
     };
+
+    FacilityViewPage.prototype.assertAliases = function(aliases) {
+        expect(this.aliases.getText()).toEqual((aliases || []).join(', '));
+    }
 
     FacilityViewPage.prototype.assertCapacities = function(capacities) {
         for (var capacityType in capacities) {

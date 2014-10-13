@@ -11,6 +11,7 @@ describe('Basic flow', function() {
     var facilityViewPage = new Pages.FacilityViewPage();
 
     var hubListPage = new Pages.HubListPage();
+    var hubEditPage = new Pages.HubEditPage();
 
     function newFacilityName() {
         return 'Test Facility ' + new Date().getTime();
@@ -82,8 +83,10 @@ describe('Basic flow', function() {
         facilityViewPage.assertCapacities(facility2.capacities);
     });
 
-    it('Return to list and go to hubs list', function() {
+    it('Go to create hub via hub list', function() {
         menu.selectHubs();
         expect(hubListPage.isDisplayed()).toBe(true);
+        hubListPage.toCreateView();
+        expect(hubEditPage.isDisplayed()).toBe(true);
     });
 });

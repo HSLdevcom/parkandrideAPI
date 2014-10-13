@@ -21,7 +21,7 @@
 			<!--Aliakset-->
 			<div class="form-group">
 				<label for="inputAlias" class="col-sm-5 control-label">Aliakset</label>
-				<div class="col-sm-7">
+				<div class="col-sm-7 wdAliases">
 					<tags-input ng-model="editCtrl.facility.aliases" placeholder="Add an alias" replace-spaces-with-dashes="false"></tags-input>
 				</div>
 			</div>
@@ -41,10 +41,10 @@
 							<tr ng-repeat="capacityType in editCtrl.capacityTypes">
 								<td>{{'facilities.capacity.' + capacityType | translate}}</td>
 								<td>
-									<input type="number" class="form-control" ng-model="editCtrl.facility.capacities[capacityType].built" min="0">
+									<input type="number" class="form-control wd{{capacityType}}built" ng-model="editCtrl.facility.capacities[capacityType].built" min="0">
 								</td>
 								<td>
-									<input type="number" class="form-control" ng-model="editCtrl.facility.capacities[capacityType].unavailable" min="0">
+									<input type="number" class="form-control wd{{capacityType}}unavailable" ng-model="editCtrl.facility.capacities[capacityType].unavailable" min="0">
 								</td>
 							</tr>
 						</tbody>

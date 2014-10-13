@@ -10,10 +10,10 @@
 		<tbody>
 		<tr ng-repeat="(capacityType, capacity) in capacities">
 			<td>{{'facilities.capacity.' + capacityType | translate}}</td>
-			<td>
+			<td class="wd{{capacityType}}built">
 				{{capacity.built}}
 			</td>
-			<td>
+			<td class="wd{{capacityType}}unavailable">
 				{{capacity.unavailable}}
 			</td>
 		</tr>

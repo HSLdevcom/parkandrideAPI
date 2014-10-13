@@ -68,7 +68,7 @@ case "$CMD" in
       ;;
   debug)
       $NODE_MODULES/protractor/bin/webdriver-manager update
-      $NODE_MODULES/protractor/bin/protractor debug $SCRIPT_DIR/protractor.conf.js || fail "There are test failures"
+      $NODE_MODULES/protractor/bin/protractor debug $SCRIPT_DIR/protractor.conf.js "$@" || fail "There are test failures"
       ;;
   stop)
      kill -TERM $(print_process)

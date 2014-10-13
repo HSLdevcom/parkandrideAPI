@@ -54,7 +54,8 @@ is_server_up() {
   curl --output /dev/null --silent --head --fail $SERVER_URL
 }
 
-case "$1" in
+CMD="$1"; shift
+case "$CMD" in
   start)
       java -jar $JARFile 2>&1 > $LOGFile &
       ;;
@@ -63,7 +64,7 @@ case "$1" in
       ;;
   test)
       $NODE_MODULES/protractor/bin/webdriver-manager update
-      $NODE_MODULES/protractor/bin/protractor $SCRIPT_DIR/protractor.conf.js || fail "There are test failures"
+      $NODE_MODULES/protractor/bin/protractor $SCRIPT_DIR/protractor.conf.js "$@" || fail "There are test failures"
       ;;
   stop)
      kill -TERM $(print_process)

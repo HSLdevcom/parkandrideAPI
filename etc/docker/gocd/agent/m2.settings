@@ -1,0 +1,9 @@
+<settings xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 http://maven.apache.org/xsd/settings-1.0.0.xsd">
+  <mirrors>
+    <mirror>
+      <id>nexus</id>
+      <mirrorOf>*</mirrorOf>
+      <url>http://172.31.0.158:8081/content/groups/public</url>
+    </mirror>
+  </mirrors>
+</settings>

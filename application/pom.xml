@@ -14,16 +14,18 @@
   <packaging>jar</packaging>
 
   <properties>
-    <exec-maven-plugin.version>1.2.1</exec-maven-plugin.version>
-    <frontend-maven-plugin.version>0.0.16</frontend-maven-plugin.version>
-    <frontend-maven-plugin.node.version>v0.10.31</frontend-maven-plugin.node.version>
-    <frontend-maven-plugin.npm.version>1.4.26</frontend-maven-plugin.npm.version>
+    <maven-plugin.exec.version>1.3.2</maven-plugin.exec.version>
+    <maven-plugin.frontend.version>0.0.16</maven-plugin.frontend.version>
+    <maven-plugin.frontend.node.version>v0.10.31</maven-plugin.frontend.node.version>
+    <maven-plugin.frontend.npm.version>1.4.26</maven-plugin.frontend.npm.version>
     <hikaricp.version>2.0.1</hikaricp.version>
-    <querydsl.version>3.5.0.BUILD-SNAPSHOT</querydsl.version>
+    <querydsl.version>3.5.0</querydsl.version>
     <flyway.version>3.0</flyway.version>
     <h2.version>1.4.181</h2.version>
     <h2gis.version>1.1.0</h2gis.version>
     <postgis-jdbc.version>1.3.3</postgis-jdbc.version>
+    <hibernate-validator.version>5.1.2.Final</hibernate-validator.version>
+    <javax.el.version>2.2.4</javax.el.version>
   </properties>
 
   <dependencies>
@@ -111,6 +113,31 @@
       <artifactId>postgresql</artifactId>
       <version>9.3-1102-jdbc41</version>
     </dependency>
+
+
+    <dependency>
+      <groupId>org.hibernate</groupId>
+      <artifactId>hibernate-validator</artifactId>
+      <version>${hibernate-validator.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.hibernate</groupId>
+      <artifactId>hibernate-validator-cdi</artifactId>
+      <version>${hibernate-validator.version}</version>
+    </dependency>
+
+
+    <dependency>
+      <groupId>javax.el</groupId>
+      <artifactId>javax.el-api</artifactId>
+      <version>${javax.el.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.glassfish.web</groupId>
+      <artifactId>javax.el</artifactId>
+      <version>${javax.el.version}</version>
+    </dependency>
+
     <!--
     <dependency>
       <groupId>org.postgis</groupId>
@@ -173,7 +200,7 @@
       <plugin>
         <groupId>com.github.eirslett</groupId>
         <artifactId>frontend-maven-plugin</artifactId>
-        <version>${frontend-maven-plugin.version}</version>
+        <version>${maven-plugin.frontend.version}</version>
         <configuration>
           <workingDirectory>src/main/frontend</workingDirectory>
         </configuration>
@@ -184,9 +211,10 @@
             <goals>
               <goal>install-node-and-npm</goal>
             </goals>
+            <phase>generate-sources</phase>
             <configuration>
-              <nodeVersion>${frontend-maven-plugin.node.version}</nodeVersion>
-              <npmVersion>${frontend-maven-plugin.npm.version}</npmVersion>
+              <nodeVersion>${maven-plugin.frontend.node.version}</nodeVersion>
+              <npmVersion>${maven-plugin.frontend.npm.version}</npmVersion>
             </configuration>
           </execution>
 
@@ -195,6 +223,7 @@
             <goals>
               <goal>npm</goal>
             </goals>
+            <phase>generate-sources</phase>
           </execution>
 
           <execution>
@@ -202,7 +231,7 @@
             <goals>
               <goal>grunt</goal>
             </goals>
-            <phase>process-resources</phase>
+            <phase>generate-resources</phase>
             <configuration>
               <arguments>--no-color</arguments>
             </configuration>
@@ -226,11 +255,11 @@
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>exec-maven-plugin</artifactId>
-        <version>${exec-maven-plugin.version}</version>
+        <version>${maven-plugin.exec.version}</version>
         <executions>
           <execution>
             <id>bower install</id>
-            <phase>generate-resources</phase>
+            <phase>process-sources</phase>
             <goals>
               <goal>exec</goal>
             </goals>
@@ -251,4 +280,5 @@
       </plugin>
     </plugins>
   </build>
+
 </project>

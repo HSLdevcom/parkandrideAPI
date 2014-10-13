@@ -68,11 +68,14 @@ module.exports = {
       'vendor/angular-ui-router/release/angular-ui-router.js',
       'vendor/angular-ui-utils/modules/route/route.js',
       'vendor/lodash/dist/lodash.js',
-      'vendor/restangular/dist/restangular.js',
       'vendor/angular-translate/angular-translate.js',
-      'vendor/angular-translate-loader-static-files/angular-translate-loader-static-files.js'
+      'vendor/angular-translate-loader-static-files/angular-translate-loader-static-files.js',
+      'vendor/openlayers3/build/ol.js',
+      'vendor/ng-tags-input/ng-tags-input.js'
     ],
     css: [
+        'vendor/openlayers3/css/ol.css',
+        'vendor/ng-tags-input/ng-tags-input.css'
     ],
     assets: [
     ]

@@ -1,14 +1,16 @@
 package fi.hsl.parkandride.inbound;
 
+import static fi.hsl.parkandride.core.domain.Spatial.WGS84;
+import static fi.hsl.parkandride.core.domain.Spatial.pointSequenceOf;
+
 import org.geolatte.geom.DimensionalFlag;
 import org.geolatte.geom.PointSequence;
 import org.geolatte.geom.PointSequenceBuilders;
 import org.geolatte.geom.Polygon;
-import org.geolatte.geom.crs.CrsId;
+
+import fi.hsl.parkandride.core.domain.Spatial;
 
 public class BBox {
-
-    public static int WGS84 = 4326;
 
     private Point min = new Point();
 
@@ -31,13 +33,11 @@ public class BBox {
     }
 
     public Polygon toPolygon() {
-        PointSequence points = PointSequenceBuilders.fixedSized(5, DimensionalFlag.d2D, CrsId.valueOf(WGS84))
-                .add(min.getLon(), min.getLat())
-                .add(min.getLon(), max.getLat())
-                .add(max.getLon(), max.getLat())
-                .add(max.getLon(), min.getLat())
-                .add(min.getLon(), min.getLat())
-                .toPointSequence();
-        return new Polygon(points);
+        return new Polygon(pointSequenceOf(
+                min.getLon(), min.getLat(),
+                min.getLon(), max.getLat(),
+                max.getLon(), max.getLat(),
+                max.getLon(), min.getLat(),
+                min.getLon(), min.getLat()));
     }
 }

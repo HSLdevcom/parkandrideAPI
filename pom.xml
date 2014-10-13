@@ -7,7 +7,7 @@
     <groupId>fi.hsl.parkandride</groupId>
     <artifactId>parent</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <relativePath>parent/pom.xml</relativePath>
+    <relativePath>parent</relativePath>
   </parent>
 
   <artifactId>project</artifactId>
@@ -29,4 +29,5 @@
       </plugin>
     </plugins>
   </build>
+
 </project>

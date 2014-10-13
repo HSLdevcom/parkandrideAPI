@@ -6,16 +6,16 @@
         'templates-common',
 
         'ui.router',
-        'restangular',
 
         'filters',
 
-        'parkandride.facilities'
+        'parkandride.facilityList',
+
+        'parkandride.hubList'
     ]);
 
-    m.config(function myAppConfig($stateProvider, $urlRouterProvider, RestangularProvider) {
+    m.config(function myAppConfig($stateProvider, $urlRouterProvider) {
         $urlRouterProvider.otherwise('/facilities');
-        RestangularProvider.setBaseUrl('/api');
     });
 
     m.run(function run() {
@@ -31,5 +31,3 @@
         });
     });
 })();
-
-

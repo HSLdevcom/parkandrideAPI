@@ -167,6 +167,13 @@ module.exports = function ( grunt ) {
         ],
         dest: '<%= build_dir %>/assets/<%= pkg.name %>-<%= pkg.version %>.css'
       },
+      compile_css: {
+        src: [
+          '<%= vendor_files.css %>',
+          '<%= build_dir %>/assets/<%= pkg.name %>-<%= pkg.version %>.css'
+        ],
+        dest: '<%= compile_dir %>/assets/<%= pkg.name %>-<%= pkg.version %>.css'
+      },
       /**
        * The `compile_js` target is the concatenation of our application source
        * code and all specified vendor source code into a single file.
@@ -373,7 +380,6 @@ module.exports = function ( grunt ) {
           '<%= build_dir %>/src/**/*.js',
           '<%= html2js.common.dest %>',
           '<%= html2js.app.dest %>',
-          '<%= vendor_files.css %>',
           '<%= build_dir %>/assets/<%= pkg.name %>-<%= pkg.version %>.css'
         ]
       },
@@ -387,8 +393,7 @@ module.exports = function ( grunt ) {
         dir: '<%= compile_dir %>',
         src: [
           '<%= concat.compile_js.dest %>',
-          '<%= vendor_files.css %>',
-          '<%= build_dir %>/assets/<%= pkg.name %>-<%= pkg.version %>.css'
+          '<%= compile_dir %>/assets/<%= pkg.name %>-<%= pkg.version %>.css'
         ]
       }
     },
@@ -582,7 +587,7 @@ module.exports = function ( grunt ) {
    * minifying your code.
    */
   grunt.registerTask( 'compile', [
-    'sass:compile', 'copy:compile_assets', 'ngAnnotate', 'concat:compile_js', 'uglify', 'index:compile'
+    'sass:compile', 'copy:compile_assets', 'ngAnnotate', 'concat:compile_css', 'concat:compile_js', 'uglify', 'index:compile'
   ]);
 
   /**

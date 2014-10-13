@@ -1,23 +1,50 @@
 package fi.hsl.parkandride.core.domain;
 
-import static com.google.common.collect.Sets.newLinkedHashSet;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
-import java.util.*;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 
 import org.geolatte.geom.Geometry;
-
-import com.google.common.collect.Sets;
+import org.hibernate.validator.constraints.NotBlank;
 
 public class Facility {
 
     public Long id;
 
+    @NotBlank
     public String name;
 
+    @NotNull
     public Geometry border;
 
     public Set<String> aliases = new HashSet<>();
 
+    @Valid
     public Map<CapacityType, Capacity> capacities = new HashMap<>();
+
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public Geometry getBorder() {
+        return border;
+    }
+
+    public Set<String> getAliases() {
+        return aliases;
+    }
+
+    public Map<CapacityType, Capacity> getCapacities() {
+        return capacities;
+    }
 
 }

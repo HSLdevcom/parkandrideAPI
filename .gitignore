@@ -4,7 +4,7 @@ target
 node
 node_modules
 vendor
-build
+**/frontend/build
 bin
 QGeometryColumns.java
 QSchemaVersion.java
@@ -12,3 +12,6 @@ QSpatialRefSys.java
 .DS_Store
 .sass-cache
 npm-debug.log
+phantomjsdriver.log
+application.log
+protractor-results.xml

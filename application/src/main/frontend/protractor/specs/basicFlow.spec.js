@@ -3,6 +3,7 @@
 var Pages = require('../pages/pages.js');
 
 describe('Basic flow', function() {
+    var indexPage = new Pages.IndexPage();
     var facilityListPage = new Pages.FacilityListPage();
     var facilityEditPage = new Pages.FacilityEditPage();
     var facilityViewPage = new Pages.FacilityViewPage();
@@ -32,42 +33,54 @@ describe('Basic flow', function() {
         aliases: ["fac2"]
     };
 
-    describe('Create facilities', function () {
-        it('Create facility 1', function () {
-            facilityEditPage.get();
-            expect(facilityEditPage.isDisplayed()).toBe(true);
-
-            facilityEditPage.setName(facility1.name);
-            expect(facilityEditPage.getName()).toEqual(facility1.name);
-
-            facilityEditPage.drawBorder({x: 60, y: 60}, 60, 60);
-            facilityEditPage.addAlias(facility1.aliases[0]);
-            facilityEditPage.addAlias(facility1.aliases[1]);
-            facilityEditPage.setCapacities(facility1.capacities);
-
-            facilityEditPage.save();
-            expect(facilityViewPage.isDisplayed()).toBe(true);
-            expect(facilityViewPage.getName()).toBe(facility1.name);
-            facilityViewPage.assertAliases(facility1.aliases);
-            facilityViewPage.assertCapacities(facility1.capacities);
-        });
-
-        it('Create facility 2', function() {
-            facilityEditPage.get();
-            expect(facilityEditPage.isDisplayed()).toBe(true);
-
-            facilityEditPage.setName(facility2.name);
-            expect(facilityEditPage.getName()).toEqual(facility2.name);
-
-            facilityEditPage.drawBorder({x: 150, y: 150}, 60, 60);
-            facilityEditPage.addAlias(facility2.aliases[0]);
-            facilityEditPage.setCapacities(facility2.capacities);
-
-            facilityEditPage.save();
-            expect(facilityViewPage.isDisplayed()).toBe(true);
-            expect(facilityViewPage.getName()).toBe(facility2.name);
-            facilityViewPage.assertAliases(facility2.aliases);
-            facilityViewPage.assertCapacities(facility2.capacities);
-        });
+    it('Go to facility create', function() {
+        indexPage.get();
+        expect(facilityListPage.isDisplayed()).toBe(true);
+        facilityListPage.toCreateView();
+        expect(facilityEditPage.isDisplayed()).toBe(true);
     });
+
+    it('Create facility 1', function () {
+        facilityEditPage.setName(facility1.name);
+        expect(facilityEditPage.getName()).toEqual(facility1.name);
+
+        facilityEditPage.drawBorder({x: 60, y: 60}, 60, 60);
+        facilityEditPage.addAlias(facility1.aliases[0]);
+        facilityEditPage.addAlias(facility1.aliases[1]);
+        facilityEditPage.setCapacities(facility1.capacities);
+
+        facilityEditPage.save();
+        expect(facilityViewPage.isDisplayed()).toBe(true);
+        expect(facilityViewPage.getName()).toBe(facility1.name);
+        facilityViewPage.assertAliases(facility1.aliases);
+        facilityViewPage.assertCapacities(facility1.capacities);
+    });
+
+    it('Return to list and go to facility create', function() {
+        facilityViewPage.toListView();
+        expect(facilityListPage.isDisplayed()).toBe(true);
+        facilityListPage.toCreateView();
+        expect(facilityEditPage.isDisplayed()).toBe(true);
+    });
+
+    it('Create facility 2', function() {
+        facilityEditPage.setName(facility2.name);
+        expect(facilityEditPage.getName()).toEqual(facility2.name);
+
+        facilityEditPage.drawBorder({x: 150, y: 150}, 60, 60);
+        facilityEditPage.addAlias(facility2.aliases[0]);
+        facilityEditPage.setCapacities(facility2.capacities);
+
+        facilityEditPage.save();
+        expect(facilityViewPage.isDisplayed()).toBe(true);
+        expect(facilityViewPage.getName()).toBe(facility2.name);
+        facilityViewPage.assertAliases(facility2.aliases);
+        facilityViewPage.assertCapacities(facility2.capacities);
+    });
+
+//    describe('Hub', function () {
+//        it('associate facilities', function() {
+//
+//        });
+//    });
 });

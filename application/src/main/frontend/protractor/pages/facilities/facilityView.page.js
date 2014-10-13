@@ -7,6 +7,7 @@ var FacilityViewPage = (function() {
         this.view = element(by.css('.wdFacilityView'));
         this.name = element(by.css('.wdName'));
         this.aliases = element(by.css('.wdAliases'));
+        this.toListButton = element(by.linkUiSref('facility-list'));
     }
 
     FacilityViewPage.prototype.isDisplayed = function() {
@@ -28,6 +29,10 @@ var FacilityViewPage = (function() {
                 expect(element(by.css('.wd' + capacityType + prop)).getText()).toEqual("" + capacity[prop]);
             }
         }
+    };
+
+    FacilityViewPage.prototype.toListView = function() {
+      return this.toListButton.click();
     };
 
     return FacilityViewPage;

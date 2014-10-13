@@ -10,3 +10,6 @@ QGeometryColumns.java
 QSchemaVersion.java
 QSpatialRefSys.java
 .DS_Store
+phantomjsdriver.log
+application.log
+protractor-results.xml

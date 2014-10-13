@@ -6,7 +6,7 @@ var FacilityEditPage = (function() {
     function FacilityEditPage() {
         this.view = element(by.css('.wdFacilityEditView'));
         this.name = element(by.model('editCtrl.facility.name'));
-        this.map = element(by.css('.facility-map'));
+        this.map = element(by.css('.facility-map .ol-viewport'));
         this.saveButton = element(by.css('.wdSave'));
         this.aliases = element(by.css('.wdAliases .tags'));
     }

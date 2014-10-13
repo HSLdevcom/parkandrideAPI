@@ -24,10 +24,6 @@ describe('Create Facility', function() {
         expect(facilityEditPage.getName()).toEqual(testName);
     });
 
-    it ('draw facility border', function() {
-        facilityEditPage.drawBorder({x:60, y:60}, 60, 60);
-    });
-
     it ('should add aliases', function() {
         facilityEditPage.addAlias("Test alias");
         facilityEditPage.addAlias("Another alias");
@@ -37,9 +33,13 @@ describe('Create Facility', function() {
         facilityEditPage.setCapacities(capacities);
     });
 
+    it ('draw facility border', function() {
+        facilityEditPage.drawBorder({x:60, y:60}, 60, 60);
+    });
+
     it ('saves facility', function() {
         facilityEditPage.save();
-        facilityViewPage.isDisplayed();
+        expect(facilityViewPage.isDisplayed()).toBe(true);
         facilityViewPage.assertCapacities(capacities);
     });
 

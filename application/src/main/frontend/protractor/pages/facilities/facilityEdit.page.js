@@ -47,7 +47,6 @@ var FacilityEditPage = (function() {
 
     FacilityEditPage.prototype.addAlias = function(alias) {
         this.aliases.click();
-        browser.debugger();
         var tagsElement = browser.driver.switchTo().activeElement();
         tagsElement.sendKeys(alias);
         tagsElement.sendKeys(protractor.Key.ENTER);

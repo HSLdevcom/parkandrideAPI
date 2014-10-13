@@ -22,4 +22,13 @@ public class UrlSchema {
 
     public static final String HUB = HUBS + "/{" + HUB_ID + "}" ;
 
+    /**
+     * TESTING
+     */
+    public static final String TEST_API = "/test";
+
+    public static final String TEST_FACILITIES = TEST_API + "/facilities";
+
+    public static final String TEST_HUBS = TEST_API + "/hubs";
+
 }

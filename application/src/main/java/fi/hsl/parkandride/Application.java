@@ -89,7 +89,7 @@ public class Application {
                     }
                     try {
                         Resource devResource = Resource.newResource(projectDir + "/src/main/frontend/build");
-                        webAppContext.setBaseResource(new ResourceCollection(defaultResource, devResource));
+                        webAppContext.setBaseResource(new ResourceCollection(devResource, defaultResource));
                     } catch (IOException e) {
                         throw new RuntimeException(e);
                     }

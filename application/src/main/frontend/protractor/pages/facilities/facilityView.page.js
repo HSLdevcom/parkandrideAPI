@@ -5,6 +5,7 @@ var FacilityViewPage = (function() {
 
     function FacilityViewPage() {
         this.view = element(by.css('.wdFacilityView'));
+        this.name = element(by.css('.wdName'));
         this.aliases = element(by.css('.wdAliases'));
     }
 
@@ -12,9 +13,13 @@ var FacilityViewPage = (function() {
         return this.view.isDisplayed();
     };
 
+    FacilityViewPage.prototype.getName = function() {
+        return this.name.getText();
+    };
+
     FacilityViewPage.prototype.assertAliases = function(aliases) {
         expect(this.aliases.getText()).toEqual((aliases || []).join(', '));
-    }
+    };
 
     FacilityViewPage.prototype.assertCapacities = function(capacities) {
         for (var capacityType in capacities) {

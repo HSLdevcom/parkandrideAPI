@@ -47,6 +47,7 @@ describe('Basic flow', function() {
 
             facilityEditPage.save();
             expect(facilityViewPage.isDisplayed()).toBe(true);
+            expect(facilityViewPage.getName()).toBe(facility1.name);
             facilityViewPage.assertAliases(facility1.aliases);
             facilityViewPage.assertCapacities(facility1.capacities);
         });
@@ -64,6 +65,7 @@ describe('Basic flow', function() {
 
             facilityEditPage.save();
             expect(facilityViewPage.isDisplayed()).toBe(true);
+            expect(facilityViewPage.getName()).toBe(facility2.name);
             facilityViewPage.assertAliases(facility2.aliases);
             facilityViewPage.assertCapacities(facility2.capacities);
         });

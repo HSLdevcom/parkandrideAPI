@@ -6,26 +6,23 @@
 	<facility-edit-navi></facility-edit-navi>
 </div>
 
-
 <div class="row wdFacilityEditView">
 	<div class="col-md-6">
 
-		<h4>{{ editCtrl.facility.name || "Pysäköintilaitos" }}</h4>
+		<h4>{{ editCtrl.facility.name || 'facilities.name.placeholder' | translate }}</h4>
 			<div class="form-group">
-				<label for="inputName" class="col-sm-5 control-label">* Nimi</label>
+				<label for="inputName" class="col-sm-5 control-label">* {{ "facilities.name.label" | translate }}</label>
 				<div class="col-sm-7">
 					<input id="inputName" type="text" class="form-control" ng-model="editCtrl.facility.name" required />
 				</div>
 			</div>
-
-			<!--Aliakset-->
 			<div class="form-group">
-				<label for="inputAlias" class="col-sm-5 control-label">Aliakset</label>
+				<label for="inputAlias" class="col-sm-5 control-label">{{ "facilities.aliases.label" | translate }}</label>
 				<div class="col-sm-7 wdAliases">
-					<tags-input ng-model="editCtrl.facility.aliases" placeholder="Add an alias" replace-spaces-with-dashes="false"></tags-input>
+					<tags-input ng-model="editCtrl.facility.aliases" placeholder="{{ 'facilities.aliases.placeholder' | translate }}" repl
+					ace-spaces-with-dashes="false"></tags-input>
 				</div>
 			</div>
-
 			<div>
 				<h4>Kapasiteetti</h4>
 				<div class="panel panel-default">

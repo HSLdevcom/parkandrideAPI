@@ -8,6 +8,14 @@
         "action": {
             "new": "Lisää uusi fasiliteetti"
         },
+        "name" : {
+            "placeholder": "Pysäköintilaitos",
+            "label": "Nimi"
+        },
+        "aliases": {
+            "label": "Aliakset",
+            "placeholder": "Lisää alias"
+        },
         "capacity": {
             "CAR": "Henkilöauto",
             "PARK_AND_RIDE": "Liityntäpysäköinti",

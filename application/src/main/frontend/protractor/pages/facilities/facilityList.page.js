@@ -3,7 +3,7 @@
 var FacilityListPage = (function() {
     function FacilityListPage() {
         this.title = element(by.cssContainingText('h2', 'Fasiliteetit'));
-        this.createButton = element(by.linkUiSref('facility-create'));
+        this.createButton = element.all(by.linkUiSref('facility-create')).first();
     }
 
     FacilityListPage.prototype.get = function() {

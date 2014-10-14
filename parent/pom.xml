@@ -21,7 +21,7 @@
     <assertj.version>1.6.1</assertj.version>
     <guava.version>18.0</guava.version>
 
-    <maven-plugin.coveralls.version>2.2.0</maven-plugin.coveralls.version>
+    <maven-plugin.coveralls.version>3.0.0</maven-plugin.coveralls.version>
     <maven-plugin.jacoco.version>0.7.1.201405082137</maven-plugin.jacoco.version>
   </properties>
 

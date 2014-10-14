@@ -17,6 +17,13 @@
             "ELECTRIC_CAR": "Sähköauto"
         }
     },
+    "footer": {
+        "hslabbr": "HSL",
+        "contact": "Helsingin seudun liikenne, puh. 09 4766 4444, hsl@hsl.fi"
+    },
+    "header": {
+        "logodesc": "HSL Liityntäpysäköinti"
+    },
     "hubs": {
         "title": "Alueet",
         "list": {
@@ -31,7 +38,8 @@
             "back": "Takaisin listaukseen",
             "cancel": "Peruuta",
             "edit": "Muokkaa",
-            "save": "Tallenna muutokset"
+            "save": "Tallenna muutokset",
+            "logout": "Kirjaudu ulos"
         }
     }
 }

@@ -25,15 +25,14 @@
 			<div class="row">
 				<div class="col-md-8">
 					<ul class="nav nav-pills">
-						<li><img src="assets/hsl-liipi-logo2.png" alt="HSL-logo Liipiotsikko" style="width: 300px; float: left;"></li>
-						<li class="active"><a id="facilitiesLink" ui-sref="facility-list" style="margin-top: 2px">Fasiliteetit</a></li>
-						<li><a id="hubsLink" ui-sref="hub-list" style="margin-top: 2px">Alueet</a></li>
-						<li><a href="#" style="margin-top: 2px">2. navi</a></li>
+						<li><img src="assets/hsl-liipi-logo2.png" alt="{{ 'header.logodesc' | translate }}" style="width: 300px; float: left;"></li>
+						<li class="active"><a id="facilitiesLink" ui-sref="facility-list" style="margin-top: 2px" translate="facilities.title"></a></li>
+						<li><a id="hubsLink" ui-sref="hub-list" style="margin-top: 2px" translate="hubs.title"></a></li>
 					</ul>
 				</div>
 				<div class="col-md-4" style="padding-top: 10px">
 					<div class="pull-right">
-						<a href="index.html">Kirjaudu ulos</a>
+						<a href="index.html">{{ "common.action.logout" | translate }}</a>
 					</div>
 				</div>
 			</div>
@@ -43,11 +42,9 @@
 
 		<div class="page-footer">
 			<div class="col-md-6">
-				&copy HSL 2014
+				&copy {{ "footer.hslabbr" | translate }} 2014
 			</div>
-			<div class="col-md-6 text-right">
-				Helsingin seudun liikenne, puh. 09 4766 4444, hsl@hsl.fi
-			</div>
+			<div class="col-md-6 text-right" translate="footer.contact"></div>
 		</div>
 
 	</div>

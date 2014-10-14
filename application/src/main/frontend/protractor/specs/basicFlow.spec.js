@@ -102,7 +102,7 @@ describe('Basic flow', function() {
     });
 
     it('Go to create hub via hub list', function() {
-        menu.selectHubs();
+        menu.toHubs();
         expect(hubListPage.isDisplayed()).toBe(true);
         hubListPage.toCreateView();
         expect(hubEditPage.isDisplayed()).toBe(true);

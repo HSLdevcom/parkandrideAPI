@@ -10,7 +10,7 @@ var Menu = (function() {
         return this.facilities.click();
     };
 
-    Menu.prototype.selectHubs = function() {
+    Menu.prototype.toHubs = function() {
         return this.hubs.click();
     };
 

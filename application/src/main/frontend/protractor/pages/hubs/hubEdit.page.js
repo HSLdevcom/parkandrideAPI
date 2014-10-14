@@ -18,7 +18,7 @@ var HubEditPage = (function() {
 
     HubEditPage.prototype.setLocation = function(pos) {
         ptor.actions()
-            .mouseMove(this.map, {x: pos.x, y: pos.y}).doubleClick()
+            .mouseMove(this.map, {x: pos.x, y: pos.y}).click().click()
             .perform();
     };
 

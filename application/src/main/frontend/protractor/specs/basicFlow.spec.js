@@ -1,6 +1,9 @@
 'use strict';
 
+var _ = require('lodash');
+
 var Pages = require('../pages/pages.js');
+var FacilityFixture = require('../fixtures/fixtures.js').FacilityFixture;
 
 describe('Basic flow', function() {
     var menu = new Pages.Menu();
@@ -12,6 +15,7 @@ describe('Basic flow', function() {
 
     var hubListPage = new Pages.HubListPage();
     var hubEditPage = new Pages.HubEditPage();
+    var hubViewPage = new Pages.HubViewPage();
 
     function newFacilityName() {
         return 'Test Facility ' + new Date().getTime();
@@ -21,7 +25,7 @@ describe('Basic flow', function() {
         return 'Test Hub ' + new Date().getTime();
     }
 
-    var facility1 = {
+    var facility1 = new FacilityFixture({
         capacities: {
             "CAR": {"built": 10, "unavailable": 1},
             "BICYCLE": {"built": 20, "unavailable": 2},
@@ -36,9 +40,9 @@ describe('Basic flow', function() {
             w: 60,
             h: 60
         }
-    };
+    });
 
-    var facility2 = {
+    var facility2 = new FacilityFixture({
         capacities: {
             "CAR": {"built": 10, "unavailable": 1}
         },
@@ -48,7 +52,7 @@ describe('Basic flow', function() {
             w: 60,
             h: 60
         }
-    };
+    });
 
     it('Go to facility create', function() {
         indexPage.get();
@@ -110,6 +114,10 @@ describe('Basic flow', function() {
         hubEditPage.toggleFacility(facility1);
         hubEditPage.toggleFacility(facility2);
         hubEditPage.setLocation({x: 165, y: 165});
+
         hubEditPage.save();
+        expect(hubViewPage.isDisplayed()).toBe(true);
+        expect(hubViewPage.getName()).toBe(hubName);
+        hubViewPage.assertCapacities([facility1, facility2]);
     });
 });

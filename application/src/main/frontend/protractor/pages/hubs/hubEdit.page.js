@@ -1,5 +1,6 @@
 var HubEditPage = (function() {
     var ptor = protractor.getInstance();
+    var clickSleepMs = 200;
 
     function HubEditPage() {
         this.view = $('.wdHubEditView');
@@ -20,6 +21,7 @@ var HubEditPage = (function() {
         ptor.actions()
             .mouseMove(this.map, {x: pos.x, y: pos.y}).click().click()
             .perform();
+        ptor.sleep(clickSleepMs);
     };
 
     HubEditPage.prototype.toggleFacility = function(f) {
@@ -28,6 +30,7 @@ var HubEditPage = (function() {
         ptor.actions()
             .mouseMove(this.map, {x: offsetX, y: offsetY}).click()
             .perform();
+        ptor.sleep(clickSleepMs);
     };
 
     HubEditPage.prototype.save = function() {

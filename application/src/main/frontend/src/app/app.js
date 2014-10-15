@@ -1,7 +1,7 @@
 (function() {
     var m = angular.module('parkandride', [
         'ui.bootstrap',
-        
+
         'templates-app',
         'templates-common',
 
@@ -14,8 +14,17 @@
         'parkandride.hubList'
     ]);
 
-    m.config(function myAppConfig($stateProvider, $urlRouterProvider) {
+    m.config(function myAppConfig($stateProvider, $urlRouterProvider, $httpProvider) {
         $urlRouterProvider.otherwise('/facilities');
+
+        $httpProvider.interceptors.push(function($q) {
+            return {
+                responseError: function(rejection) {
+                    alert(rejection.data.message);
+                    return $q.reject(rejection);
+                }
+            };
+        });
     });
 
     m.run(function run() {

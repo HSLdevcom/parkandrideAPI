@@ -5,6 +5,7 @@ import static fi.hsl.parkandride.core.domain.CapacityType.CAR;
 import static fi.hsl.parkandride.core.domain.CapacityType.PARK_AND_RIDE;
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.SortedSet;
@@ -127,6 +128,15 @@ public class FacilityDaoTest {
         facility.aliases = ALIASES;
         facility.capacities = CAPACITIES;
         return facility;
+    }
+
+    @Test
+    public void summary_with_no_capacities() {
+        Facility facility = createFacility();
+        facility.capacities = ImmutableMap.of();
+        facilityDao.insertFacility(facility);
+        FacilitySummary summary = facilityDao.summarizeFacilities(new SpatialSearch());
+        assertThat(summary.capacities).isEmpty();
     }
 
     @Test(expected = NotFoundException.class)

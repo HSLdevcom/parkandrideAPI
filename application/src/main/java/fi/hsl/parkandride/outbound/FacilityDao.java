@@ -239,7 +239,7 @@ public class FacilityDao implements FacilityRepository {
 
         long count = qry.singleResult(SQLExpressions.countAll);
 
-        qry.leftJoin(qFacility._capacityFacilityIdFk, qCapacity);
+        qry.innerJoin(qFacility._capacityFacilityIdFk, qCapacity);
         qry.groupBy(qCapacity.capacityType);
 
         Map<CapacityType, Capacity> capacities = qry.map(qCapacity.capacityType, capacitySummaryMapping);

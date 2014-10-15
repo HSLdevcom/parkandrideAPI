@@ -1,8 +1,10 @@
 package fi.hsl.parkandride;
 
 import static fi.hsl.parkandride.inbound.UrlSchema.GEOJSON;
+import static org.springframework.core.Ordered.LOWEST_PRECEDENCE;
 
 import java.io.IOException;
+import java.util.List;
 
 import org.eclipse.jetty.util.resource.Resource;
 import org.eclipse.jetty.util.resource.ResourceCollection;
@@ -22,9 +24,13 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Profile;
+import org.springframework.core.Ordered;
 import org.springframework.http.MediaType;
+import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
+import org.springframework.web.servlet.mvc.method.annotation.ExceptionHandlerExceptionResolver;
+import org.springframework.web.servlet.mvc.support.DefaultHandlerExceptionResolver;
 
 import com.fasterxml.jackson.databind.Module;
 import com.fasterxml.jackson.databind.module.SimpleModule;
@@ -69,6 +75,24 @@ public class Application {
         public void configureContentNegotiation(ContentNegotiationConfigurer configurer) {
             configurer.defaultContentType(MediaType.APPLICATION_JSON);
             configurer.mediaType("geojson", MediaType.valueOf(GEOJSON));
+        }
+
+        @Bean
+        public ExceptionHandlerExceptionResolver exceptionHandlerExceptionResolver() {
+            return new ExceptionHandlerExceptionResolver();
+        }
+
+        @Bean
+        public DefaultHandlerExceptionResolver defaultHandlerExceptionResolver() {
+            DefaultHandlerExceptionResolver resolver = new DefaultHandlerExceptionResolver();
+            resolver.setWarnLogCategory("parkandride");
+            return resolver;
+        }
+
+        @Override
+        public void configureHandlerExceptionResolvers(List<HandlerExceptionResolver> exceptionResolvers) {
+            exceptionResolvers.add(exceptionHandlerExceptionResolver());
+            exceptionResolvers.add(defaultHandlerExceptionResolver());
         }
     }
 

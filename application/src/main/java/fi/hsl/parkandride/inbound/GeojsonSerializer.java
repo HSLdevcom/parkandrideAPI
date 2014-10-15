@@ -4,7 +4,6 @@ import java.io.IOException;
 
 import org.geolatte.common.dataformats.json.jackson.JsonException;
 import org.geolatte.common.dataformats.json.jackson.JsonMapper;
-import org.geolatte.geom.Geometry;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonProcessingException;

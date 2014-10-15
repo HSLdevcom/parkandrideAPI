@@ -1,7 +1,6 @@
 package fi.hsl.parkandride.outbound;
 
 import static com.mysema.query.types.Projections.fields;
-import static java.lang.String.format;
 
 import java.util.List;
 import java.util.Set;

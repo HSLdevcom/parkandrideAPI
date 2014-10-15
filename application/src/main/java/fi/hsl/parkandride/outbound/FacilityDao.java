@@ -4,7 +4,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.mysema.query.group.GroupBy.groupBy;
 import static com.mysema.query.group.GroupBy.map;
 import static com.mysema.query.group.GroupBy.set;
-import static java.lang.String.format;
 
 import java.util.*;
 
@@ -13,15 +12,11 @@ import com.google.common.collect.Sets;
 import com.mysema.query.ResultTransformer;
 import com.mysema.query.Tuple;
 import com.mysema.query.dml.StoreClause;
-import com.mysema.query.group.AbstractGroupExpression;
-import com.mysema.query.group.GroupBy;
-import com.mysema.query.group.GroupCollector;
 import com.mysema.query.sql.SQLExpressions;
 import com.mysema.query.sql.dml.SQLInsertClause;
 import com.mysema.query.sql.dml.SQLUpdateClause;
 import com.mysema.query.sql.postgres.PostgresQuery;
 import com.mysema.query.sql.postgres.PostgresQueryFactory;
-import com.mysema.query.types.ConstructorExpression;
 import com.mysema.query.types.MappingProjection;
 import com.mysema.query.types.QBean;
 import com.mysema.query.types.expr.NumberExpression;

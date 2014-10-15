@@ -4,14 +4,12 @@ import java.util.Set;
 
 import javax.annotation.Nullable;
 import javax.validation.ConstraintViolation;
-import javax.validation.ConstraintViolationException;
 import javax.validation.Validation;
 import javax.validation.Validator;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
 
-import fi.hsl.parkandride.core.domain.Facility;
 import fi.hsl.parkandride.core.domain.Violation;
 
 public class ValidationService {

@@ -1,7 +1,6 @@
 package fi.hsl.parkandride;
 
 import static fi.hsl.parkandride.inbound.UrlSchema.GEOJSON;
-import static org.springframework.core.Ordered.LOWEST_PRECEDENCE;
 
 import java.io.IOException;
 import java.util.List;
@@ -10,7 +9,6 @@ import org.eclipse.jetty.util.resource.Resource;
 import org.eclipse.jetty.util.resource.ResourceCollection;
 import org.eclipse.jetty.webapp.WebAppContext;
 import org.geolatte.common.Feature;
-import org.geolatte.common.dataformats.json.jackson.FeatureSerializer;
 import org.geolatte.common.dataformats.json.jackson.JsonMapper;
 import org.geolatte.geom.Geometry;
 import org.springframework.boot.SpringApplication;
@@ -24,7 +22,6 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Profile;
-import org.springframework.core.Ordered;
 import org.springframework.http.MediaType;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer;

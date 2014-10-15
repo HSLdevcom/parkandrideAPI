@@ -3,7 +3,6 @@ package fi.hsl.parkandride.inbound;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
-import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
@@ -15,11 +14,8 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.context.request.RequestAttributes;
-import org.springframework.web.context.request.ServletRequestAttributes;
 
 import fi.hsl.parkandride.core.domain.NotFoundException;
-import fi.hsl.parkandride.core.domain.Violation;
 import fi.hsl.parkandride.core.service.ValidationException;
 
 @ControllerAdvice

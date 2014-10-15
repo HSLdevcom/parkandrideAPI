@@ -1,6 +1,10 @@
 package fi.hsl.parkandride.core.domain;
 
-import org.geolatte.geom.*;
+import org.geolatte.geom.DimensionalFlag;
+import org.geolatte.geom.Geometry;
+import org.geolatte.geom.PointSequence;
+import org.geolatte.geom.PointSequenceBuilder;
+import org.geolatte.geom.PointSequenceBuilders;
 import org.geolatte.geom.codec.Wkt;
 import org.geolatte.geom.crs.CrsId;
 

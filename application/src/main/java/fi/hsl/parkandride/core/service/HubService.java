@@ -1,7 +1,5 @@
 package fi.hsl.parkandride.core.service;
 
-import java.util.List;
-
 import fi.hsl.parkandride.core.domain.Hub;
 import fi.hsl.parkandride.core.domain.SearchResults;
 import fi.hsl.parkandride.core.domain.SpatialSearch;

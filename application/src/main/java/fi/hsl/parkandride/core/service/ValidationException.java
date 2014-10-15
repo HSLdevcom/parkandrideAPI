@@ -1,7 +1,6 @@
 package fi.hsl.parkandride.core.service;
 
 import java.util.List;
-import java.util.Set;
 
 import com.google.common.collect.ImmutableList;
 

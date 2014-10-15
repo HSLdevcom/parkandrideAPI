@@ -3,9 +3,8 @@ package fi.hsl.parkandride.core.outbound;
 import fi.hsl.parkandride.core.domain.Facility;
 import fi.hsl.parkandride.core.domain.FacilitySummary;
 import fi.hsl.parkandride.core.domain.PageableSpatialSearch;
-import fi.hsl.parkandride.core.domain.SpatialSearch;
 import fi.hsl.parkandride.core.domain.SearchResults;
-import fi.hsl.parkandride.core.service.TransactionalRead;
+import fi.hsl.parkandride.core.domain.SpatialSearch;
 
 public interface FacilityRepository {
 

@@ -1,14 +1,8 @@
 package fi.hsl.parkandride.inbound;
 
-import static fi.hsl.parkandride.core.domain.Spatial.WGS84;
 import static fi.hsl.parkandride.core.domain.Spatial.pointSequenceOf;
 
-import org.geolatte.geom.DimensionalFlag;
-import org.geolatte.geom.PointSequence;
-import org.geolatte.geom.PointSequenceBuilders;
 import org.geolatte.geom.Polygon;
-
-import fi.hsl.parkandride.core.domain.Spatial;
 
 public class BBox {
 

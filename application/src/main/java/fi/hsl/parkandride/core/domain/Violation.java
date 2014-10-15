@@ -11,7 +11,6 @@ import javax.validation.ConstraintViolation;
 import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Maps;
 
 public class Violation {
 

@@ -2,12 +2,6 @@ package fi.hsl.parkandride.core.service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
-
-import javax.validation.ConstraintViolation;
-import javax.validation.ConstraintViolationException;
-import javax.validation.Validation;
-import javax.validation.Validator;
 
 import org.geolatte.geom.Polygon;
 import org.geolatte.geom.codec.Wkt;

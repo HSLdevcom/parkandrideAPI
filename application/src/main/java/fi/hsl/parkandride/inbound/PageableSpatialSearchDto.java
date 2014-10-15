@@ -1,9 +1,6 @@
 package fi.hsl.parkandride.inbound;
 
-import java.util.Set;
-
 import fi.hsl.parkandride.core.domain.PageableSpatialSearch;
-import fi.hsl.parkandride.core.domain.SpatialSearch;
 
 public class PageableSpatialSearchDto extends SpatialSearchDto {
 

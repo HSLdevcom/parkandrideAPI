@@ -24,19 +24,19 @@
 				</div>
 			</div>
 			<div>
-				<h4>Kapasiteetti</h4>
+				<h4>{{"facilities.capacity.heading" | translate}}</h4>
 				<div class="panel panel-default">
 					<table class="table table-bordered table-striped table-condensed">
 						<thead>
 							<tr>
-								<th>Tyyppi</th>
-								<th>Rakennettu kapasiteetti</th>
-								<th>Tilapäisesti pois käytöstä</th>
+								<th translate="facilities.capacity.type"></th>
+								<th translate="facilities.capacity.built"></th>
+								<th translate="facilities.capacity.unavailable"></th>
 							</tr>
 						</thead>
 						<tbody>
 							<tr ng-repeat="capacityType in editCtrl.capacityTypes">
-								<td>{{'facilities.capacity.' + capacityType | translate}}</td>
+								<td>{{'facilities.capacityType.' + capacityType | translate}}</td>
 								<td>
 									<input type="number" class="form-control wd{{capacityType}}built" ng-model="editCtrl.facility.capacities[capacityType].built" min="0">
 								</td>

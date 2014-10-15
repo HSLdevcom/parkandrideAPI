@@ -17,6 +17,12 @@
             "placeholder": "Lisää alias"
         },
         "capacity": {
+            "heading": "Kapasiteetti",
+            "type": "Tyyppi",
+            "built": "Rakennettu kapasiteetti",
+            "unavailable": "Tilapäisesti poissa käytöstä"
+        },
+        "capacityType": {
             "CAR": "Henkilöauto",
             "PARK_AND_RIDE": "Liityntäpysäköinti",
             "BICYCLE": "Polkupyörä",

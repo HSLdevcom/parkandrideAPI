@@ -23,14 +23,16 @@
 		<!--header-->
 		<div class="page-header">
 			<div class="row">
-				<div class="col-md-8">
-					<ul class="nav nav-pills">
-						<li><img src="assets/hsl-liipi-logo2.png" alt="{{ 'header.logodesc' | translate }}" style="width: 300px; float: left;"></li>
+				<div class="col-md-4">
+					<img src="assets/hsl-liipi-logo2.png" alt="{{ 'header.logodesc' | translate }}" style="width: 300px; float: left;">
+				</div>
+					<div class="col-md-6">
+					<ul class="nav nav-tabs">
 						<li class="active"><a id="facilitiesLink" ui-sref="facility-list" style="margin-top: 2px" translate="facilities.title"></a></li>
 						<li><a id="hubsLink" ui-sref="hub-list" style="margin-top: 2px" translate="hubs.title"></a></li>
 					</ul>
 				</div>
-				<div class="col-md-4" style="padding-top: 10px">
+				<div class="col-md-2" style="padding-top: 10px">
 					<div class="pull-right">
 						<a href="index.html">{{ "common.action.logout" | translate }}</a>
 					</div>

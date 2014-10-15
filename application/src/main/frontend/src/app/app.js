@@ -8,6 +8,7 @@
         'ui.router',
 
         'filters',
+        'featureToggle',
 
         'parkandride.facilityList',
 
@@ -15,6 +16,8 @@
 
         'parkandride.dev'
     ]);
+
+    m.constant('FEATURES_URL', 'assets/features.json');
 
     m.config(function myAppConfig($stateProvider, $urlRouterProvider, $httpProvider) {
         $urlRouterProvider.otherwise('/facilities');

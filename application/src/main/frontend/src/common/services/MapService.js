@@ -41,19 +41,39 @@
             })
         }),
 
-        createMap: function(ngElement, extraLayers) {
-            var layers = ([
+        createMap: function(ngElement, options) {
+            var layers = [
                     new ol.layer.Tile({
                         source: new ol.source.OSM()
                     })
-                ])
-                .concat(extraLayers);
+                ];
+
+            if (options.layers) {
+                layers = layers.concat(options.layers);
+            }
+
+            var interactions = new ol.Collection();
+            interactions.push(new ol.interaction.KeyboardZoom());
+
+            var controls = new ol.Collection();
+            controls.push(new ol.control.Attribution());
+            controls.push(new ol.control.Zoom());
+            controls.push(new ol.control.FullScreen());
+
+            if (!options.readOnly) {
+                interactions.push(new ol.interaction.DoubleClickZoom());
+                interactions.push(new ol.interaction.MouseWheelZoom());
+                interactions.push(new ol.interaction.DragZoom());
+                interactions.push(new ol.interaction.KeyboardPan());
+                interactions.push(new ol.interaction.DragPan({
+                    kinetic: new ol.Kinetic(-0.005, 0.05, 100)
+                }));
+            }
 
             return new ol.Map({
                 target: ngElement.children()[0],
-                controls: ol.control.defaults({ rotate:false }).extend([
-                    new ol.control.FullScreen()
-                ]),
+                controls: controls,
+                interactions: interactions,
                 layers: layers,
                 view: new ol.View({
                     center: ol.proj.transform([24.941025, 60.173324], 'EPSG:4326', 'EPSG:3857'),

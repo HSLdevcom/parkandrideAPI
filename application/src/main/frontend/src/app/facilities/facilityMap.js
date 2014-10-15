@@ -13,8 +13,9 @@
             template: '<div class="map facility-map"></div>',
             transclude: false,
             link: function(scope, element, attrs, ctrl) {
+                var editable = attrs.editable == "true";
 
-                var map = MapService.createMap(element, []);
+                var map = MapService.createMap(element, { readOnly: !editable });
                 var view = map.getView();
 
                 var featureOverlay = new ol.FeatureOverlay({
@@ -22,7 +23,7 @@
                 });
                 featureOverlay.setMap(map);
 
-                if (attrs.editable == "true") {
+                if (editable) {
                     var draw = new ol.interaction.Draw({
                         features: featureOverlay.getFeatures(),
                         type: "Polygon"

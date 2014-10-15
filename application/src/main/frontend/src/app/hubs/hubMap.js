@@ -23,8 +23,6 @@
             template: '<div class="map hub-map edit-hub-map"></div>',
             transclude: false,
             link: function(scope, element, attrs, ctrl) {
-                var editable = attrs.editable == "true";
-
                 var facilitiesLayer = new ol.layer.Vector({
                     source: new ol.source.Vector(),
                     style: MapService.facilityStyle
@@ -35,7 +33,7 @@
                     style: MapService.hubStyle
                 });
 
-                var map = MapService.createMap(element, [ facilitiesLayer, hubLayer ]);
+                var map = MapService.createMap(element, { layers: [ facilitiesLayer, hubLayer ], readOnly: false });
                 var view = map.getView();
 
                 if (scope.hub.location) {
@@ -106,8 +104,6 @@
             template: '<div class="map hub-map"></div>',
             transclude: false,
             link: function(scope, element, attrs, ctrl) {
-                var editable = attrs.editable == "true";
-
                 var facilitiesLayer = new ol.layer.Vector({
                     source: new ol.source.Vector(),
                     style: MapService.selectedFacilityStyle
@@ -119,7 +115,7 @@
                     style: MapService.hubStyle
                 });
 
-                var map = MapService.createMap(element, [ facilitiesLayer, hubLayer ]);
+                var map = MapService.createMap(element, { layers: [ facilitiesLayer, hubLayer ], readOnly: true });
                 var view = map.getView();
 
                 var point = new ol.format.GeoJSON().readGeometry(scope.hub.location);

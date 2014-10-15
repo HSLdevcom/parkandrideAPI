@@ -51,7 +51,7 @@
 
             return new ol.Map({
                 target: ngElement.children()[0],
-                controls: ol.control.defaults().extend([
+                controls: ol.control.defaults({ rotate:false }).extend([
                     new ol.control.FullScreen()
                 ]),
                 layers: layers,

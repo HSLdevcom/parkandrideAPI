@@ -7,7 +7,7 @@
                 color: 'rgba(255, 255, 255, 0.5)'
             }),
             stroke: new ol.style.Stroke({
-                color: '#ffcc33',
+                color: '#FF6319',
                 width: 2
             }),
             image: new ol.style.Circle({
@@ -23,7 +23,7 @@
                 color: [255, 255, 255, 0.5] // transparent white
             }),
             stroke: new ol.style.Stroke({
-                color: [0, 153, 255, 1],
+                color: "#007AC9",
                 width: 3
             })
         }),

@@ -12,7 +12,7 @@
                 url: '/hubs',
                 views: {
                     "main": {
-                        controller: 'HubsCtrl as fctrl',
+                        controller: 'HubsCtrl as hubsCtrl',
                         templateUrl: 'hubs/hubList.tpl.html'
                     }
                 },

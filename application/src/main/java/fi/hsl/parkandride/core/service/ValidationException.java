@@ -11,6 +11,7 @@ public class ValidationException extends RuntimeException {
     public final List<Violation> violations;
 
     public ValidationException(Iterable<Violation> violations) {
+        super("Invalid data. See violations for details.");
         this.violations = ImmutableList.copyOf(violations);
     }
 

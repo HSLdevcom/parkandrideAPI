@@ -20,7 +20,7 @@ public class PropertyPathTranslatorTest {
     }
 
     @Test
-    public void translated_multiple_keys_and_indices() {
+    public void translates_multiple_keys_and_indices() {
         assertThat(translator.translate("foo[1].bar.baz[KEY].qux")).isEqualTo("foo.1.bar.baz.KEY.qux");
         assertThat(translator.translate("foo[1].bar.baz[KEY]")).isEqualTo("foo.1.bar.baz.KEY");
     }

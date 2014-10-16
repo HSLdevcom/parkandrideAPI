@@ -7,7 +7,7 @@ import com.google.common.base.Strings;
 
 public class PropertyPathTranslator {
     private interface RegEx {
-        String HEAD = "[^\\[]+";     // everything up to a [
+        String HEAD = "[^\\[]+";        // everything up to a [
         String INDEX = "\\[(\\w*)\\]";
         String TAIL = "\\.(.*)";        // processed recursively
 

@@ -59,7 +59,7 @@ public class ValidationServiceTest {
             List<Violation> violations = e.violations;
             assertThat(violations).hasSize(1);
             Violation violation = violations.get(0);
-            assertMinViolation(violation, "map[KEY].");
+            assertMinViolation(violation, "map.KEY.");
         }
     }
 

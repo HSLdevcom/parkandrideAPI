@@ -87,21 +87,14 @@ public class Application {
         @Bean
         public ExceptionHandlerExceptionResolver exceptionHandlerExceptionResolver() {
             ExceptionHandlerExceptionResolver resolver = new ExceptionHandlerExceptionResolver();
-            resolver.setMessageConverters(messageConverters.getConverters());
-            return resolver;
-        }
-
-        @Bean
-        public DefaultHandlerExceptionResolver defaultHandlerExceptionResolver() {
-            DefaultHandlerExceptionResolver resolver = new DefaultHandlerExceptionResolver();
             resolver.setWarnLogCategory("parkandride");
+            resolver.setMessageConverters(messageConverters.getConverters());
             return resolver;
         }
 
         @Override
         public void configureHandlerExceptionResolvers(List<HandlerExceptionResolver> exceptionResolvers) {
             exceptionResolvers.add(exceptionHandlerExceptionResolver());
-            exceptionResolvers.add(defaultHandlerExceptionResolver());
         }
     }
 

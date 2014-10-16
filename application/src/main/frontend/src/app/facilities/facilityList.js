@@ -2,6 +2,7 @@
     var m = angular.module('parkandride.facilityList', [
         'ui.router',
         'parkandride.i18n',
+        'parkandride.capacities',
         'parkandride.FacilityResource',
         'parkandride.facilityEdit',
         'parkandride.facilityView'
@@ -21,7 +22,7 @@
         });
 
     m.controller('FacilitiesCtrl', FacilitiesController);
-    function FacilitiesController(FacilityResource, $translate) {
+    function FacilitiesController(FacilityResource, $translate, schema) {
         var origThis = this;
         this.list = [];
 
@@ -29,13 +30,6 @@
             origThis.list = data;
         });
 
-        // TODO this should be done in directive (as it qualifies to output formatting)?
-        this.translatedCapacities = function(facility) {
-            // FIXME: Refactor translate into i18n module!
-            return _.values($translate.instant(_.map(Object.keys(facility.capacities), function (capacityType) {
-                return "facilities.capacity." + capacityType;
-            })));
-        };
     }
 
     m.directive('facilityListNavi', function() {

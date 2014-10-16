@@ -8,13 +8,13 @@
 		</tr>
 		</thead>
 		<tbody>
-		<tr ng-repeat="(capacityType, capacity) in capacities">
+		<tr ng-repeat="capacityType in capacityTypes" ng-show="capacities[capacityType]">
 			<td>{{'facilities.capacity.' + capacityType | translate}}</td>
 			<td class="wd{{capacityType}}built">
-				{{capacity.built}}
+				{{capacities[capacityType].built}}
 			</td>
 			<td class="wd{{capacityType}}unavailable">
-				{{capacity.unavailable}}
+				{{capacities[capacityType].unavailable}}
 			</td>
 		</tr>
 		</tbody>

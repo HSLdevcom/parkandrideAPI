@@ -27,8 +27,13 @@
         });
     });
 
-    m.run(function run() {
+    m.value("schema", { capacityTypes:[] });
+
+    m.run(function run(schema, FacilityResource) {
         // Use the main applications run method to execute any code after services have been instantiated
+        FacilityResource.getCapacityTypes().then(function(types) {
+            schema.capacityTypes = types;
+        });
     });
 
     m.controller('AppCtrl', function AppCtrl($scope, $location) {

@@ -2,7 +2,7 @@
     var m = angular.module('parkandride.hubEdit', [
         'ui.router',
         'parkandride.hubMap',
-        'parkandride.capacitiesTable',
+        'parkandride.capacities',
         'parkandride.HubResource',
         'parkandride.FacilityResource',
         'ngTagsInput'

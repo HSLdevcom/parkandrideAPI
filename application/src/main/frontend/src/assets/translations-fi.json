@@ -46,7 +46,12 @@
         },
         "action": {
             "new": "Lisää uusi alue"
-        }
+        },
+        "name": {
+            "placeholder": "Alue",
+            "label": "Nimi"
+        },
+        "location": "Sijainti"
     },
     "common": {
         "action": {

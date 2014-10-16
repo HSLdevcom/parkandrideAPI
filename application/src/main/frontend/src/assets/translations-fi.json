@@ -51,7 +51,8 @@
             "placeholder": "Alue",
             "label": "Nimi"
         },
-        "location": "Sijainti"
+        "location": "Sijainti",
+        "facilitiesTotal": "Pysäköintilaitoksia yhteensä"
     },
     "common": {
         "action": {

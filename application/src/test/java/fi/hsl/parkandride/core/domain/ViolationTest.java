@@ -16,14 +16,14 @@ public class ViolationTest {
     private final Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
 
     @Test
-    public void capacityViolationIsTranslated() {
+    public void capacityViolation_is_translated() {
         for (CapacityType ct : CapacityType.values()) {
             assertThat(path(capacityViolation(ct))).isEqualTo("capacities." + ct.name() + ".built");
         }
     }
 
     @Test
-    public void nonCapacityViolationIsNotTranslated() {
+    public void nonCapacityViolation_is_not_translated() {
         assertThat(path(nameViolation(""))).isEqualTo("name");
     }
 

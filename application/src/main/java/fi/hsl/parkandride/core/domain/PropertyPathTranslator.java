@@ -3,6 +3,10 @@ package fi.hsl.parkandride.core.domain;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.springframework.util.StringUtils;
+
+import com.google.common.base.Strings;
+
 public class PropertyPathTranslator {
     private interface RegEx {
         String HEAD = "[^\\[\\.]+";     // everything up to a [ or .
@@ -19,14 +23,16 @@ public class PropertyPathTranslator {
     private static final Pattern PATH = Pattern.compile("(" + RegEx.HEAD + ")(" + RegEx.INDEX + ")(" + RegEx.TAIL + ")*");
 
     public String translate(String input) {
-        Matcher matcher = PATH.matcher(input);
-        if (matcher.matches()) {
-            return new StringBuilder(matcher.group(RegEx.Group.HEAD))
-                    .append(".")
-                    .append(matcher.group(RegEx.Group.INDEX))
-                    .append(".")
-                    .append(translate(matcher.group(RegEx.Group.TAIL)))
-                    .toString();
+        if (!Strings.isNullOrEmpty(input)) {
+            Matcher matcher = PATH.matcher(input);
+            if (matcher.matches()) {
+                return new StringBuilder(matcher.group(RegEx.Group.HEAD))
+                        .append(".")
+                        .append(matcher.group(RegEx.Group.INDEX))
+                        .append(".")
+                        .append(translate(matcher.group(RegEx.Group.TAIL)))
+                        .toString();
+            }
         }
         return input;
     }

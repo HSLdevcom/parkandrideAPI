@@ -15,18 +15,18 @@ public class PropertyPathTranslator {
             int TAIL = 5;
         }
     }
-    private static final Pattern PATH = Pattern.compile( "(" + RegEx.HEAD + ")(" + RegEx.INDEX + ")(" + RegEx.TAIL + ")*" );
+
+    private static final Pattern PATH = Pattern.compile("(" + RegEx.HEAD + ")(" + RegEx.INDEX + ")(" + RegEx.TAIL + ")*");
 
     public String translate(String input) {
         Matcher matcher = PATH.matcher(input);
-        StringBuilder sb = new StringBuilder("");
         if (matcher.matches()) {
-            sb.append(matcher.group(RegEx.Group.HEAD))
+            return new StringBuilder(matcher.group(RegEx.Group.HEAD))
                     .append(".")
                     .append(matcher.group(RegEx.Group.INDEX))
                     .append(".")
-                    .append(translate(matcher.group(RegEx.Group.TAIL)));
-            return sb.toString();
+                    .append(translate(matcher.group(RegEx.Group.TAIL)))
+                    .toString();
         }
         return input;
     }

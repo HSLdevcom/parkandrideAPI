@@ -14,37 +14,36 @@ import org.mockito.Mockito;
 
 public class ViolationTest {
     private final Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
-    private final PropertyPathTranslator translator = new PropertyPathTranslator();
 
     @Test
     public void capacityViolationIsTranslated() {
         for (CapacityType ct : CapacityType.values()) {
-            assertThat(violationPath(capacityBuiltViolationForType(ct))).isEqualTo("capacities." + ct.name() + ".built");
+            assertThat(path(capacityViolation(ct))).isEqualTo("capacities." + ct.name() + ".built");
         }
     }
 
     @Test
     public void nonCapacityViolationIsNotTranslated() {
-        assertThat(violationPath(nameViolation(""))).isEqualTo("name");
+        assertThat(path(nameViolation(""))).isEqualTo("name");
     }
 
-    private String violationPath(ConstraintViolation<Facility> cv) {
+    private String path(ConstraintViolation<Facility> cv) {
         return new Violation(cv).path;
     }
 
-    private ConstraintViolation<Facility> capacityBuiltViolationForType(CapacityType t) {
+    private ConstraintViolation<Facility> capacityViolation(CapacityType t) {
         Facility f = validFacility();
         f.capacities.put(t, new Capacity(-1));
-
-        Set<ConstraintViolation<Facility>> violations = validator.validate(f);
-        assertThat(violations).hasSize(1);
-        return violations.iterator().next();
+        return toFacilityConstraintViolation(f);
     }
 
     private ConstraintViolation<Facility> nameViolation(String name) {
         Facility f = validFacility();
         f.name = name;
+        return toFacilityConstraintViolation(f);
+    }
 
+    private ConstraintViolation<Facility> toFacilityConstraintViolation(Facility f) {
         Set<ConstraintViolation<Facility>> violations = validator.validate(f);
         assertThat(violations).hasSize(1);
         return violations.iterator().next();

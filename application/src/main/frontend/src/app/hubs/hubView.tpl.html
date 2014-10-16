@@ -9,14 +9,13 @@
 
 <div class="row">
 	<div class="col-md-6">
-		<div>Pysäköintilaitoksia yhteensä {{viewCtrl.summary.facilityCount}}</div>
+		<div>{{"hubs.facilitiesTotal" | translate}} {{viewCtrl.summary.facilityCount}}</div>
 		<capacities-table capacities="viewCtrl.summary.capacities"></capacities-table>
 	</div>
 	<div class="col-md-6 text-right">
 		<view-hub-map ng-model="viewCtrl.hub"></view-hub-map>
 	</div>
 </div>
-
 
 <div class="row">
 	<div class="col-md-6">

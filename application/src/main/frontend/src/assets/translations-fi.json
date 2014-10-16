@@ -29,7 +29,8 @@
             "DISABLED": "Invapaikka",
             "MOTORCYCLE": "Moottoripyörä",
             "ELECTRIC_CAR": "Sähköauto"
-        }
+        },
+        "location": "Sijainti"
     },
     "footer": {
         "hslabbr": "HSL",

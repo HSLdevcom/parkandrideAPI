@@ -50,7 +50,7 @@ public class Violation {
     }
 
     private static String getPath(ConstraintViolation cv) {
-        return new CapacityPropertyPathTranslator().translate(cv.getPropertyPath().toString());
+        return new PropertyPathTranslator().translate(cv.getPropertyPath().toString());
     }
 
     private static String getType(ConstraintViolation constraintViolation) {

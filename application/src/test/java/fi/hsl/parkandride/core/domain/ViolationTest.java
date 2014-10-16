@@ -14,7 +14,7 @@ import org.mockito.Mockito;
 
 public class ViolationTest {
     private final Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
-    private final CapacityPropertyPathTranslator translator = new CapacityPropertyPathTranslator();
+    private final PropertyPathTranslator translator = new PropertyPathTranslator();
 
     @Test
     public void capacityViolationIsTranslated() {

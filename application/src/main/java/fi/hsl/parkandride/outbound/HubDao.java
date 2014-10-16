@@ -48,8 +48,11 @@ public class HubDao implements HubRepository {
     @Override
     @TransactionalWrite
     public long insertHub(Hub hub) {
-        long hubId = queryFactory.query().singleResult(nextHubId);
+        return insertHub(hub, queryFactory.query().singleResult(nextHubId));
+    }
 
+    @TransactionalWrite
+    public long insertHub(Hub hub, long hubId) {
         SQLInsertClause insert = queryFactory.insert(qHub);
         insert.set(qHub.id, hubId);
         populate(hub, insert);

@@ -1,3 +1,3 @@
 <span ng-repeat="capacity in capacitiesList">
-	{{'facilities.capacity.' + capacity.capacityType | translate}}{{!$last ? ',' : ''}}
+	<span class="wdCapacityType">{{'facilities.capacity.' + capacity.capacityType | translate}}</span>{{!$last ? ',' : ''}}
 </span>

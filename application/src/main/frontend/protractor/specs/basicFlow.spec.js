@@ -54,6 +54,8 @@ describe('Basic flow', function() {
         }
     });
 
+    var allCapacityTypes = ["Liityntäpysäköinti", "Polkupyörä", "Henkilöauto", "Invapaikka", "Moottoripyörä", "Sähköauto"];
+
     it('Go to facility create', function() {
         indexPage.get();
         expect(facilityListPage.isDisplayed()).toBe(true);
@@ -71,16 +73,26 @@ describe('Basic flow', function() {
         facilityEditPage.addAlias(facility1.aliases[1]);
         facilityEditPage.setCapacities(facility1.capacities);
 
+        var capacityRows = element.all(by.css(".wdCapacityType"));
+        facilityViewPage.assertCapacityOrder(capacityRows, allCapacityTypes);
+
         facilityEditPage.save();
         expect(facilityViewPage.isDisplayed()).toBe(true);
         expect(facilityViewPage.getName()).toBe(facility1.name);
         facilityViewPage.assertAliases(facility1.aliases);
         facilityViewPage.assertCapacities(facility1.capacities);
+
+        var capacityRows = element.all(by.css(".wdCapacityType"));
+        facilityViewPage.assertCapacityOrder(capacityRows, allCapacityTypes);
     });
 
     it('Return to list and go to facility create', function() {
         facilityViewPage.toListView();
         expect(facilityListPage.isDisplayed()).toBe(true);
+
+        var capacityRows = element.all(by.css(".wdCapacityType"));
+        facilityViewPage.assertCapacityOrder(capacityRows, allCapacityTypes);
+
         facilityListPage.toCreateView();
         expect(facilityEditPage.isDisplayed()).toBe(true);
     });
@@ -99,6 +111,9 @@ describe('Basic flow', function() {
         expect(facilityViewPage.getName()).toBe(facility2.name);
         facilityViewPage.assertAliases(facility2.aliases);
         facilityViewPage.assertCapacities(facility2.capacities);
+
+        var capacityRows = element.all(by.css(".wdCapacityType"));
+        facilityViewPage.assertCapacityOrder(capacityRows, [null, null, "Henkilöauto", null, null, null]);
     });
 
     it('Go to create hub via hub list', function() {

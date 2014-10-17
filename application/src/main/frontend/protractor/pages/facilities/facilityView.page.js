@@ -31,6 +31,18 @@ var FacilityViewPage = (function() {
         }
     };
 
+    FacilityViewPage.prototype.assertCapacityOrder = function(typeElements, expectedCapacities) {
+        expect(typeElements.count()).toBe(expectedCapacities.length);
+        for (var i=0; i < expectedCapacities.length; i++) {
+            if (expectedCapacities[i]) {
+                expect(typeElements.get(i).isDisplayed()).toBe(true);
+                expect(typeElements.get(i).getText()).toBe(expectedCapacities[i]);
+            } else {
+                expect(typeElements.get(i).isDisplayed()).toBe(false);
+            }
+        }
+    }
+
     FacilityViewPage.prototype.toListView = function() {
       return this.toListButton.click();
     };

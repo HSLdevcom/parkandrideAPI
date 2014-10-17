@@ -1,5 +1,5 @@
 <div class="panel panel-default" ng-show="thereAreCapacities()">
-	<table class="table table-bordered table-striped table-condensed">
+	<table class="table table-bordered table-striped table-condensed wdCapacityTable">
 		<thead>
 		<tr>
 			<th>Tyyppi</th>
@@ -9,7 +9,7 @@
 		</thead>
 		<tbody>
 		<tr ng-repeat="capacityType in capacityTypes" ng-show="capacities[capacityType]">
-			<td>{{'facilities.capacity.' + capacityType | translate}}</td>
+			<td class="wdCapacityType">{{'facilities.capacity.' + capacityType | translate}}</td>
 			<td class="wd{{capacityType}}built">
 				{{capacities[capacityType].built}}
 			</td>

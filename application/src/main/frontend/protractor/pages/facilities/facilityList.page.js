@@ -6,8 +6,8 @@ var FacilityListPage = (function() {
         this.createButton = element.all(by.linkUiSref('facility-create')).first();
     }
 
-    FacilityListPage.prototype.get = function()
-        browser.get('/#/facilities'){
+    FacilityListPage.prototype.get = function() {
+        browser.get('/#/facilities');
     };
 
     FacilityListPage.prototype.isDisplayed = function() {

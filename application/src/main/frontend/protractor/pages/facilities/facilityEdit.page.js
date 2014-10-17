@@ -61,6 +61,10 @@ var FacilityEditPage = (function() {
         }
     }
 
+    FacilityEditPage.prototype.getCapacityTypeElements = function() {
+        return element.all(by.css(".wdCapacityType"));
+    };
+
     return FacilityEditPage;
 })();
 

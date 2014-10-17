@@ -14,8 +14,8 @@ var FacilityListPage = (function() {
         return this.title.isDisplayed();
     };
 
-    FacilityListPage.prototype.getCapacities = function(facilityId) {
-        return element(by.css(".wdFacility" + facilityId + " .wdCapacities")).getText();
+    FacilityListPage.prototype.getCapacityTypeElements = function(facilityId) {
+        return element.all(by.css(".wdFacility" + facilityId + " .wdCapacityType"));
     };
 
     FacilityListPage.prototype.toCreateView = function() {

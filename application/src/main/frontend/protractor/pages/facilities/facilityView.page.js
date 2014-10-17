@@ -43,6 +43,10 @@ var FacilityViewPage = (function() {
         }
     }
 
+    FacilityViewPage.prototype.getCapacityTypeElements = function() {
+        return element.all(by.css(".wdCapacityType"));
+    };
+
     FacilityViewPage.prototype.toListView = function() {
       return this.toListButton.click();
     };

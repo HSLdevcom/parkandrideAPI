@@ -73,8 +73,7 @@ describe('Basic flow', function() {
         facilityEditPage.addAlias(facility1.aliases[1]);
         facilityEditPage.setCapacities(facility1.capacities);
 
-        var capacityRows = element.all(by.css(".wdCapacityType"));
-        facilityViewPage.assertCapacityOrder(capacityRows, allCapacityTypes);
+        facilityViewPage.assertCapacityOrder(facilityEditPage.getCapacityTypeElements(), allCapacityTypes);
 
         facilityEditPage.save();
         expect(facilityViewPage.isDisplayed()).toBe(true);
@@ -82,16 +81,14 @@ describe('Basic flow', function() {
         facilityViewPage.assertAliases(facility1.aliases);
         facilityViewPage.assertCapacities(facility1.capacities);
 
-        var capacityRows = element.all(by.css(".wdCapacityType"));
-        facilityViewPage.assertCapacityOrder(capacityRows, allCapacityTypes);
+        facilityViewPage.assertCapacityOrder(facilityViewPage.getCapacityTypeElements(), allCapacityTypes);
     });
 
     it('Return to list and go to facility create', function() {
         facilityViewPage.toListView();
         expect(facilityListPage.isDisplayed()).toBe(true);
 
-        var capacityRows = element.all(by.css(".wdCapacityType"));
-        facilityViewPage.assertCapacityOrder(capacityRows, allCapacityTypes);
+        facilityViewPage.assertCapacityOrder(facilityListPage.getCapacityTypeElements(1), allCapacityTypes);
 
         facilityListPage.toCreateView();
         expect(facilityEditPage.isDisplayed()).toBe(true);

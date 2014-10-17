@@ -11,7 +11,8 @@
     "angular-translate-loader-static-files": "2.4.0",
     "lodash": "2.4.1",
     "openlayers3": "~3.0.0",
-    "ng-tags-input": "~2.1.1"
+    "ng-tags-input": "~2.1.1",
+    "sweetalert": "0.2.0"
   },
   "dependencies": {}
 }

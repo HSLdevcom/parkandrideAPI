@@ -9,18 +9,22 @@
 
         'filters',
 
+        'parkandride.i18n',
         'parkandride.facilityList',
-
         'parkandride.hubList'
     ]);
 
     m.config(function myAppConfig($stateProvider, $urlRouterProvider, $httpProvider) {
         $urlRouterProvider.otherwise('/facilities');
 
-        $httpProvider.interceptors.push(function($q) {
+        $httpProvider.interceptors.push(function($q, $translate) {
             return {
                 responseError: function(rejection) {
-                    alert(rejection.data.message);
+                    swal({
+                        title: $translate.instant('error.unexpected.title'),
+                        text: rejection.data.message,
+                        confirmButtonText: $translate.instant('error.unexpected.buttonText')
+                    });
                     return $q.reject(rejection);
                 }
             };

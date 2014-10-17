@@ -62,5 +62,11 @@
             "save": "Tallenna muutokset",
             "logout": "Kirjaudu ulos"
         }
+    },
+    "error": {
+        "unexpected": {
+            "title": "Oops, nyt tuli virhe!",
+            "buttonText": "Voi veljet!"
+        }
     }
 }

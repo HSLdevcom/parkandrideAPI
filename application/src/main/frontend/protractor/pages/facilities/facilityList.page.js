@@ -6,12 +6,16 @@ var FacilityListPage = (function() {
         this.createButton = element.all(by.linkUiSref('facility-create')).first();
     }
 
-    FacilityListPage.prototype.get = function() {
-        browser.get('/#/facilities')
+    FacilityListPage.prototype.get = function()
+        browser.get('/#/facilities'){
     };
 
     FacilityListPage.prototype.isDisplayed = function() {
         return this.title.isDisplayed();
+    };
+
+    FacilityListPage.prototype.getCapacities = function(facilityId) {
+        return element(by.css(".wdFacility" + facilityId + " .wdCapacities")).getText();
     };
 
     FacilityListPage.prototype.toCreateView = function() {

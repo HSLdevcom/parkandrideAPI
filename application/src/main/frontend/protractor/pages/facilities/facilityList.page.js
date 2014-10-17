@@ -14,8 +14,16 @@ var FacilityListPage = (function() {
         return this.title.isDisplayed();
     };
 
-    FacilityListPage.prototype.getCapacityTypeElements = function(facilityId) {
-        return element.all(by.css(".wdFacility" + facilityId + " .wdCapacityType"));
+    FacilityListPage.prototype.assertCapacityOrder = function(expectedTypeOrder, facilityId) {
+        var capacityTypes = element.all(by.css(".wdFacility" + facilityId + " .wdCapacityType"));
+        for (var i=0; i < expectedTypeOrder.length; i++) {
+            if (expectedTypeOrder[i]) {
+                expect(capacityTypes.get(i).isDisplayed()).toBe(true);
+                expect(capacityTypes.get(i).getText()).toBe(expectedTypeOrder[i]);
+            } else {
+                expect(capacityTypes.get(i).isDisplayed()).toBe(false);
+            }
+        }
     };
 
     FacilityListPage.prototype.toCreateView = function() {

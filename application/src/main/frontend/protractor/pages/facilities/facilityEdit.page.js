@@ -9,6 +9,7 @@ var FacilityEditPage = (function() {
         this.map = $('.facility-map .ol-viewport');
         this.saveButton = element.all(by.css('.wdSave')).first();
         this.aliases = $('.wdAliases .tags');
+        this.capacityTypes = element.all(by.css(".wdCapacityType"));
     }
 
     FacilityEditPage.prototype.isDisplayed = function() {
@@ -60,9 +61,12 @@ var FacilityEditPage = (function() {
             }
         }
     }
-
-    FacilityEditPage.prototype.getCapacityTypeElements = function() {
-        return element.all(by.css(".wdCapacityType"));
+    FacilityEditPage.prototype.assertCapacityOrder = function (expectedTypeOrder) {
+        expect(this.capacityTypes.count()).toBe(expectedTypeOrder.length);
+        for (var i=0; i < expectedTypeOrder.length; i++) {
+            expect(this.capacityTypes.get(i).isDisplayed()).toBe(true);
+            expect(this.capacityTypes.get(i).getText()).toBe(expectedTypeOrder[i]);
+        }
     };
 
     return FacilityEditPage;

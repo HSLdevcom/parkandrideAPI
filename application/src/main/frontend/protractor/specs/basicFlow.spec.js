@@ -54,7 +54,7 @@ describe('Basic flow', function() {
         }
     });
 
-    var allCapacityTypes = ["Liityntäpysäköinti", "Polkupyörä", "Henkilöauto", "Invapaikka", "Moottoripyörä", "Sähköauto"];
+    var capacityTypeOrder = ["Liityntäpysäköinti", "Polkupyörä", "Henkilöauto", "Invapaikka", "Moottoripyörä", "Sähköauto"];
 
     it('Go to facility create', function() {
         indexPage.get();
@@ -72,23 +72,20 @@ describe('Basic flow', function() {
         facilityEditPage.addAlias(facility1.aliases[0]);
         facilityEditPage.addAlias(facility1.aliases[1]);
         facilityEditPage.setCapacities(facility1.capacities);
-
-        facilityViewPage.assertCapacityOrder(facilityEditPage.getCapacityTypeElements(), allCapacityTypes);
+        facilityEditPage.assertCapacityOrder(capacityTypeOrder);
 
         facilityEditPage.save();
         expect(facilityViewPage.isDisplayed()).toBe(true);
         expect(facilityViewPage.getName()).toBe(facility1.name);
         facilityViewPage.assertAliases(facility1.aliases);
         facilityViewPage.assertCapacities(facility1.capacities);
-
-        facilityViewPage.assertCapacityOrder(facilityViewPage.getCapacityTypeElements(), allCapacityTypes);
+        facilityViewPage.assertCapacityOrder(capacityTypeOrder);
     });
 
     it('Return to list and go to facility create', function() {
         facilityViewPage.toListView();
         expect(facilityListPage.isDisplayed()).toBe(true);
-
-        facilityViewPage.assertCapacityOrder(facilityListPage.getCapacityTypeElements(1), allCapacityTypes);
+        facilityListPage.assertCapacityOrder(capacityTypeOrder, 1)
 
         facilityListPage.toCreateView();
         expect(facilityEditPage.isDisplayed()).toBe(true);

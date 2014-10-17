@@ -8,6 +8,7 @@ var FacilityViewPage = (function() {
         this.name = $('.wdName');
         this.aliases = $('.wdAliases');
         this.toListButton = element.all(by.linkUiSref('facility-list')).first();
+        this.capacityTypes = element.all(by.css(".wdCapacityType"));
     }
 
     FacilityViewPage.prototype.isDisplayed = function() {
@@ -31,20 +32,15 @@ var FacilityViewPage = (function() {
         }
     };
 
-    FacilityViewPage.prototype.assertCapacityOrder = function(typeElements, expectedCapacities) {
-        expect(typeElements.count()).toBe(expectedCapacities.length);
-        for (var i=0; i < expectedCapacities.length; i++) {
-            if (expectedCapacities[i]) {
-                expect(typeElements.get(i).isDisplayed()).toBe(true);
-                expect(typeElements.get(i).getText()).toBe(expectedCapacities[i]);
+    FacilityViewPage.prototype.assertCapacityOrder = function(expectedTypeOrder) {
+        for (var i=0; i < expectedTypeOrder.length; i++) {
+            if (expectedTypeOrder[i]) {
+                expect(this.capacityTypes.get(i).isDisplayed()).toBe(true);
+                expect(this.capacityTypes.get(i).getText()).toBe(expectedTypeOrder[i]);
             } else {
-                expect(typeElements.get(i).isDisplayed()).toBe(false);
+                expect(this.capacityTypes.get(i).isDisplayed()).toBe(false);
             }
         }
-    }
-
-    FacilityViewPage.prototype.getCapacityTypeElements = function() {
-        return element.all(by.css(".wdCapacityType"));
     };
 
     FacilityViewPage.prototype.toListView = function() {

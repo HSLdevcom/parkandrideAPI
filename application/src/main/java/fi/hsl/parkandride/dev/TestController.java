@@ -63,7 +63,7 @@ public class TestController {
     @TransactionalWrite
     public ResponseEntity<Void> deleteFacilities() {
         clear(QFacilityAlias.facilityAlias, QCapacity.capacity, QFacility.facility);
-        resetSequence(FACILITY_ID_SEQ, 1l);
+        resetSequence(FACILITY_ID_SEQ, 0l);
         return new ResponseEntity<Void>(OK);
     }
 
@@ -71,7 +71,7 @@ public class TestController {
     @TransactionalWrite
     public ResponseEntity<Void> deleteHubs() {
         clear(QHubFacility.hubFacility, QHub.hub);
-        resetSequence(HUB_ID_SEQ, 1l);
+        resetSequence(HUB_ID_SEQ, 0l);
         return new ResponseEntity<Void>(OK);
     }
 
@@ -88,7 +88,7 @@ public class TestController {
                 results.add(facilityService.createFacility(facility));
             }
         }
-        resetSequence(FACILITY_ID_SEQ, queryFactory.from(qFacility).singleResult(qFacility.id.max()) + 1);
+        resetSequence(FACILITY_ID_SEQ, queryFactory.from(qFacility).singleResult(qFacility.id.max()));
         return new ResponseEntity<List<Facility>>(results, OK);
     }
 
@@ -105,7 +105,7 @@ public class TestController {
                 results.add(hubService.createHub(hub));
             }
         }
-        resetSequence(HUB_ID_SEQ, queryFactory.from(qHub).singleResult(qHub.id.max()) + 1);
+        resetSequence(HUB_ID_SEQ, queryFactory.from(qHub).singleResult(qHub.id.max()));
         return new ResponseEntity<List<Hub>>(results, OK);
     }
 
@@ -117,10 +117,10 @@ public class TestController {
 
     private void resetSequence(String sequence, Long first) {
         if (first == null) {
-            first = 1l;
+            first = 0l;
         }
         jdbcTemplate.execute(format("drop sequence %s", sequence));
-        jdbcTemplate.execute(format("create sequence %s increment by 1 start with %s", sequence, first));
+        jdbcTemplate.execute(format("create sequence %s increment by 1 start with %s", sequence, first+1));
     }
 
 }

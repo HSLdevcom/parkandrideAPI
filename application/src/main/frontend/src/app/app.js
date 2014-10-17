@@ -11,7 +11,9 @@
 
         'parkandride.facilityList',
 
-        'parkandride.hubList'
+        'parkandride.hubList',
+
+        'parkandride.dev'
     ]);
 
     m.config(function myAppConfig($stateProvider, $urlRouterProvider, $httpProvider) {

@@ -1,0 +1,14 @@
+<form name="devForm" class="form-horizontal" role="form" novalidate>
+	<a class="btn btn-xs btn-primary wdDevResetAll" role="button" style="margin-top: 30px; margin-left: 10px"
+	   ng-click="devForm.$valid && devCtrl.resetAll()">
+		Reset All
+	</a>
+	<a class="btn btn-xs btn-primary wdDevSaveCurrentState" role="button" style="margin-top: 30px; margin-left: 10px"
+	   ng-click="devForm.$valid && devCtrl.saveCurrentState()">
+		Save current state
+	</a>
+	<a class="btn btn-xs btn-primary wdDevRevertToSavedState" role="button" style="margin-top: 30px; margin-left: 10px"
+	   ng-click="devForm.$valid && devCtrl.revertToSavedState()">
+		Revert to saved state
+	</a>
+</form>

@@ -10,8 +10,8 @@
             url: '/dev',
             views: {
                 "main": {
-                    controller: 'DevPageCtrl as devCtrl',
-                    templateUrl: 'dev/devPage.tpl.html'
+                    controller: 'DevCtrl as devCtrl',
+                    templateUrl: 'dev/dev.tpl.html'
                 }
             },
             data: { pageTitle: 'Development Atom Bomb' }
@@ -51,17 +51,17 @@
         return api;
     });
 
-    m.controller('DevPageCtrl', function(DevService, FacilityResource, HubResource, $q) {
+    m.controller('DevCtrl', function(DevService, FacilityResource, HubResource, $q, $scope) {
         this.resetAll = function() {
             DevService.resetAll().then(function() {
-                alert("Reset all OK!");
+                $scope.successMessage = "Reset all OK!";
             });
         };
         this.saveCurrentState = function() {
             $q.all([FacilityResource.listFacilities(), HubResource.listHubs()]).then(function(allResults) {
                 localStorage.setItem("facilities", angular.toJson(allResults[0]));
                 localStorage.setItem("hubs", angular.toJson(allResults[1]));
-                alert("Current facilities and hubs saved!");
+                $scope.successMessage = "Current facilities and hubs saved!";
             });
         };
         this.revertToSavedState = function() {
@@ -74,7 +74,7 @@
                 hubs = angular.fromJson(hubs);
             }
             DevService.resetAll(facilities, hubs).then(function() {
-                alert("Reset to previous state OK!");
+                $scope.successMessage = "Reset to previous state OK!";
             });
         };
     });

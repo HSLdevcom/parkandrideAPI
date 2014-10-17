@@ -38,10 +38,17 @@
         };
     }
 
-    m.directive('facilityListNavi', function() {
+    m.directive('facilityListNaviAbove', function() {
         return {
             restrict: 'E',
-            templateUrl: 'facilities/facilityListNavi.tpl.html'
+            templateUrl: 'facilities/facilityListNaviAbove.tpl.html'
+        };
+    });
+
+    m.directive('facilityListNaviBelow', function() {
+        return {
+            restrict: 'E',
+            templateUrl: 'facilities/facilityListNaviBelow.tpl.html'
         };
     });
 

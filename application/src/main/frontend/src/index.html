@@ -18,37 +18,43 @@
 </head>
 
 <body>
-	<div class="container">
 
-		<!--header-->
-		<div class="page-header">
+
+	<!--header-->
+	<div class="page-header navbar-static-top" role="navigation">
+		<div class="container">
 			<div class="row">
-				<div class="col-md-4">
+				<div class="col-lg-4 col-md-4 first-column">
 					<img src="assets/hsl-liipi-logo2.png" alt="{{ 'header.logodesc' | translate }}" style="width: 300px; float: left;">
 				</div>
-					<div class="col-md-6">
+				<div class="col-lg-6 col-md-6">
 					<ul class="nav nav-tabs">
-						<li class="active"><a id="facilitiesLink" ui-sref="facility-list" style="margin-top: 2px" translate="facilities.title"></a></li>
-						<li><a id="hubsLink" ui-sref="hub-list" style="margin-top: 2px" translate="hubs.title"></a></li>
+						<li class="active"><a id="facilitiesLink" ui-sref="facility-list" translate="facilities.title"></a></li>
+						<li><a id="hubsLink" ui-sref="hub-list" translate="hubs.title"></a></li>
 					</ul>
 				</div>
-				<div class="col-md-2" style="padding-top: 10px">
+				<div class="col-lg-2 col-md-2" style="padding-top: 20px;">
 					<div class="pull-right">
 						<a href="index.html">{{ "common.action.logout" | translate }}</a>
 					</div>
 				</div>
 			</div>
 		</div>
+	</div>
 
-		<div class="container" ui-view="main"></div>
+	<!--main-->
+	<!--<div class="container">-->
+		<div ui-view="main"></div>
+	<!--</div>-->
 
-		<div class="page-footer">
-			<div class="col-md-6">
+	<!--footer-->
+	<div class="navbar-static-top page-footer">
+		<div class="container">
+			<div class="col-lg-6 col-md-6 first-column">
 				&copy {{ "footer.hslabbr" | translate }} 2014
 			</div>
-			<div class="col-md-6 text-right" translate="footer.contact"></div>
+			<div class="col-lg-6 col-md-6 text-right" translate="footer.contact"></div>
 		</div>
-
 	</div>
 
 </body>

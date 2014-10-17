@@ -1,0 +1,106 @@
+//body
+body {
+  color: $k80;
+  font-size: $basic-font-size;
+}
+
+//header & footer
+.page-header {
+  border: 0;
+  padding-top: 50px;
+  padding-bottom: 0px;
+  margin: 0px 0px 0px;
+}
+
+.page-footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: 40px;
+  color: #fff;
+  background-color: $k60;
+  padding-top: 10px;
+}
+
+//header nav
+.nav-tabs {
+  height: $tab-height;
+  border-radius: $border-radius;
+  border-bottom: 0px;
+  margin-left: -50px;
+  margin-top: 10px;
+  > li {
+    margin-bottom: 0px;
+    > a {
+      height: $tab-height;
+      color: #fff;
+      background-color: $primarycolor;
+      border-radius: $border-radius;
+      border: 0;
+    }
+    > a:hover {
+      height: $tab-height;
+      color: #fff;
+      background-color: $primarycolor;
+      border-radius: $border-radius;
+      border: 0px;
+    }
+  }
+  > li.active {
+    > a {
+      height: $tab-height;
+      border-radius: $border-radius;
+      background-color: $secondarycolor;
+      border: 0;
+    }
+    > a:hover {
+      height: $tab-height;
+      border-radius: $border-radius;
+      background-color: $secondarycolor;
+      text-decoration: underline;
+      border: 0;
+    }
+  }
+}
+
+//colorful navibars
+.navi-above {
+  background-color: $secondarycolor;
+}
+
+.navi-below {
+  background-color: $secondarycolor;
+  position: absolute;
+  bottom: 40px;
+  width: 100%;
+}
+
+//colorful navibars btn-navi layout
+.btn-navi-above {
+  margin-top: 40px;
+  margin-bottom: 40px;
+}
+
+.btn-navi-below {
+  margin-top: 30px;
+  margin-bottom: 30px;
+}
+
+//rows
+.row {
+  margin: 0 0 0 0;
+}
+
+//columns
+.first-column {
+  padding-left: 0px;
+}
+
+.last-column {
+  padding-right: 0px;
+}
+
+//panel
+.panel {
+  margin-top:40px;
+}

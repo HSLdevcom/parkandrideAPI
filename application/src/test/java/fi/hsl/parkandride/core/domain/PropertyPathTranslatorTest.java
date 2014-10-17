@@ -14,15 +14,15 @@ public class PropertyPathTranslatorTest {
     }
 
     @Test
-    public void translates_indices() {
-        assertThat(translator.translate("foo[1].bar")).isEqualTo("foo.1.bar");
-        assertThat(translator.translate("foo[1]")).isEqualTo("foo.1");
+    public void translates_multiple_keys() {
+        assertThat(translator.translate("foo[1].bar.baz[KEY].qux")).isEqualTo("foo[1].bar.baz.KEY.qux");
+        assertThat(translator.translate("foo[1].bar.baz[KEY]")).isEqualTo("foo[1].bar.baz.KEY");
     }
 
     @Test
-    public void translates_multiple_keys_and_indices() {
-        assertThat(translator.translate("foo[1].bar.baz[KEY].qux")).isEqualTo("foo.1.bar.baz.KEY.qux");
-        assertThat(translator.translate("foo[1].bar.baz[KEY]")).isEqualTo("foo.1.bar.baz.KEY");
+    public void no_translation_for_indices() {
+        assertThat(translator.translate("foo[1].bar")).isEqualTo("foo[1].bar");
+        assertThat(translator.translate("foo[1]")).isEqualTo("foo[1]");
     }
 
     @Test
@@ -32,9 +32,30 @@ public class PropertyPathTranslatorTest {
     }
 
     @Test
-    public void no_translation_when_blank() {
-        assertThat(translator.translate(null)).isNull();
+    public void no_translation_when_empty() {
         assertThat(translator.translate("")).isEqualTo("");
-        assertThat(translator.translate("  ")).isEqualTo("  ");
+    }
+
+    @Test
+    public void no_translation_when_empty_() {
+        assertThat(translator.translate("foo[.].bar")).isEqualTo("foo...bar");
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void nullInputIsIllegal() {
+        translator.translate(null);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void whitespaceInputIsIllegal() {
+        translator.translate("  ");
+    }
+
+    @Test
+    public void knownIssues() {
+        assertThat(translator.translate("foo[.].bar")).isEqualTo("foo...bar");
+        assertThat(translator.translate("foo[..].bar")).isEqualTo("foo[..].bar");
+        assertThat(translator.translate("foo[]].bar")).isEqualTo("foo.].bar");
+        assertThat(translator.translate("foo[[].bar")).isEqualTo("foo.[.bar");
     }
 }

@@ -1,4 +1,4 @@
-<div style="background-color: yellow; border: 1p solid black">{{successMessage}}</div>
+<div ng-hide="!successMessage" style="background-color: yellow; border: 1px solid black">{{successMessage}}</div>
 <form name="devForm" class="form-horizontal" role="form" novalidate>
 	<a id="wdDevResetAll" class="btn btn-xs btn-primary" role="button" style="margin-top: 30px; margin-left: 10px"
 	   ng-click="devForm.$valid && devCtrl.resetAll()">

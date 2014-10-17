@@ -7,6 +7,7 @@
     "bootstrap-sass-official": "3.2.0",
     "angular-bootstrap": "~0.11.0",
     "angular-ui-router": "~0.2",
+    "angular-ui-utils": "src0.1.1",
     "angular-translate": "2.4.0",
     "angular-translate-loader-static-files": "2.4.0",
     "lodash": "2.4.1",

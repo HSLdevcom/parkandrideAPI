@@ -4,8 +4,11 @@ import java.util.regex.Pattern;
 
 import com.google.common.base.Preconditions;
 
-public class PropertyPathTranslator {
+public final class PropertyPathTranslator {
+
     private static final Pattern PATTERN = Pattern.compile("\\[(\\D\\w*)\\]");
+
+    private PropertyPathTranslator() {}
 
     public static String translate(String input) {
         Preconditions.checkArgument(input != null);

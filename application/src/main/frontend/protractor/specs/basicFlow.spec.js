@@ -2,20 +2,20 @@
 
 var _ = require('lodash');
 
-var Pages = require('../pages/pages.js');
+var po = require('../pageobjects/pageobjects.js');
 var FacilityFixture = require('../fixtures/fixtures.js').FacilityFixture;
 
 describe('Basic flow', function() {
-    var menu = Pages.menu();
-    var indexPage = Pages.indexPage();
+    var menu = po.menu();
+    var indexPage = po.indexPage();
 
-    var facilityListPage = Pages.facilityListPage();
-    var facilityEditPage = Pages.facilityEditPage();
-    var facilityViewPage = Pages.facilityViewPage();
+    var facilityListPage = po.facilityListPage();
+    var facilityEditPage = po.facilityEditPage();
+    var facilityViewPage = po.facilityViewPage();
 
-    var hubListPage = Pages.hubListPage();
-    var hubEditPage = Pages.hubEditPage();
-    var hubViewPage = Pages.hubViewPage();
+    var hubListPage = po.hubListPage();
+    var hubEditPage = po.hubEditPage();
+    var hubViewPage = po.hubViewPage();
 
     function newFacilityName() {
         return 'Test Facility ' + new Date().getTime();

@@ -1,8 +1,10 @@
 'use strict';
 
+
 module.exports = function() {
     var api = {};
     var self = {};
+    var capacityAssert = require('./capacityAssert')();
 
     self.title = element(by.cssContainingText('h2', 'Fasiliteetit'));
     self.createButton = element.all(by.linkUiSref('facility-create')).first();
@@ -16,15 +18,9 @@ module.exports = function() {
     };
 
     api.assertCapacityOrder = function (expectedTypeOrder, facilityId) {
-        var capacityTypes = element.all(by.css(".wdFacility" + facilityId + " .wdCapacityType"));
-        for (var i = 0; i < expectedTypeOrder.length; i++) {
-            if (expectedTypeOrder[i]) {
-                expect(capacityTypes.get(i).isDisplayed()).toBe(true);
-                expect(capacityTypes.get(i).getText()).toBe(expectedTypeOrder[i]);
-            } else {
-                expect(capacityTypes.get(i).isDisplayed()).toBe(false);
-            }
-        }
+        capacityAssert.assertInOrderIfDisplayed(
+            element.all(by.css(".wdFacility" + facilityId + " .wdCapacityType")),
+            expectedTypeOrder);
     };
 
     api.toCreateView = function () {

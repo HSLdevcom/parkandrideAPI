@@ -4,6 +4,7 @@ module.exports = function() {
     var api = {};
     var self = {};
     var ptor = protractor.getInstance();
+    var capacityAssert = require('./capacityAssert')();
 
     self.view = $('.wdFacilityView');
     self.name = $('.wdName');
@@ -33,14 +34,7 @@ module.exports = function() {
     };
 
     api.assertCapacityOrder = function (expectedTypeOrder) {
-        for (var i = 0; i < expectedTypeOrder.length; i++) {
-            if (expectedTypeOrder[i]) {
-                expect(self.capacityTypes.get(i).isDisplayed()).toBe(true);
-                expect(self.capacityTypes.get(i).getText()).toBe(expectedTypeOrder[i]);
-            } else {
-                expect(self.capacityTypes.get(i).isDisplayed()).toBe(false);
-            }
-        }
+        capacityAssert.assertInOrderIfDisplayed(self.capacityTypes, expectedTypeOrder);
     };
 
     api.toListView = function () {

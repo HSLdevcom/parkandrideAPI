@@ -1,22 +1,24 @@
-var HubViewPage = (function() {
+'use strict';
+
+module.exports = function() {
     var _ = require('lodash');
-    var FacilityFixture = require('../../fixtures/fixtures.js').FacilityFixture;
 
-    function HubViewPage() {
-        this.view = $('.wdHubView');
-        this.name = $('.wdName');
-    }
+    var api = {};
+    var self = {};
 
-    HubViewPage.prototype.isDisplayed = function() {
-        return this.view.isDisplayed();
+    self.view = $('.wdHubView');
+    self.name = $('.wdName');
+
+    api.isDisplayed = function () {
+        return self.view.isDisplayed();
     };
 
-    HubViewPage.prototype.getName = function() {
-        return this.name.getText();
+    api.getName = function () {
+        return self.name.getText();
     };
 
-    HubViewPage.prototype.assertCapacities = function(facilities) {
-        var sum = _.reduce(facilities, function(acc, facility) {
+    api.assertCapacities = function (facilities) {
+        var sum = _.reduce(facilities, function (acc, facility) {
             return acc.incCapacity(facility);
         });
 
@@ -28,7 +30,5 @@ var HubViewPage = (function() {
         }
     };
 
-    return HubViewPage;
-})();
-
-module.exports = HubViewPage;
+    return api;
+};

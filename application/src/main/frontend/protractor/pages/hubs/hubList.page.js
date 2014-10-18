@@ -1,22 +1,23 @@
-var HubListPage = (function() {
-    function HubListPage() {
-        this.title = element(by.cssContainingText('h2', 'Alueet'));
-        this.createButton = element.all(by.linkUiSref('hub-create')).first();
-    }
+'use strict';
 
-    HubListPage.prototype.get = function() {
+module.exports = function() {
+    var api = {};
+    var self = {};
+
+    self.title = element(by.cssContainingText('h2', 'Alueet'));
+    self.createButton = element.all(by.linkUiSref('hub-create')).first();
+
+    api.get = function () {
         browser.get('/#/hubs')
     };
 
-    HubListPage.prototype.isDisplayed = function() {
-        return this.title.isDisplayed();
+    api.isDisplayed = function () {
+        return self.title.isDisplayed();
     };
 
-    HubListPage.prototype.toCreateView = function() {
-        return this.createButton.click();
+    api.toCreateView = function () {
+        return self.createButton.click();
     };
 
-    return HubListPage;
-})();
-
-module.exports = HubListPage;
+    return api;
+};

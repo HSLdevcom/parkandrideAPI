@@ -6,16 +6,16 @@ var Pages = require('../pages/pages.js');
 var FacilityFixture = require('../fixtures/fixtures.js').FacilityFixture;
 
 describe('Basic flow', function() {
-    var menu = new Pages.Menu();
-    var indexPage = new Pages.IndexPage();
+    var menu = Pages.menu();
+    var indexPage = Pages.indexPage();
 
-    var facilityListPage = new Pages.FacilityListPage();
-    var facilityEditPage = new Pages.FacilityEditPage();
-    var facilityViewPage = new Pages.FacilityViewPage();
+    var facilityListPage = Pages.facilityListPage();
+    var facilityEditPage = Pages.facilityEditPage();
+    var facilityViewPage = Pages.facilityViewPage();
 
-    var hubListPage = new Pages.HubListPage();
-    var hubEditPage = new Pages.HubEditPage();
-    var hubViewPage = new Pages.HubViewPage();
+    var hubListPage = Pages.hubListPage();
+    var hubEditPage = Pages.hubEditPage();
+    var hubViewPage = Pages.hubViewPage();
 
     function newFacilityName() {
         return 'Test Facility ' + new Date().getTime();

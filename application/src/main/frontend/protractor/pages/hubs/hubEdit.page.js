@@ -1,43 +1,43 @@
-var HubEditPage = (function() {
+'use strict';
+
+module.exports = function() {
+    var api = {};
+    var self = {};
     var ptor = protractor.getInstance();
     var clickSleepMs = 200;
 
-    function HubEditPage() {
-        this.view = $('.wdHubEditView');
-        this.name = element(by.model('editCtrl.hub.name'));
-        this.map = $('.hub-map .ol-viewport');
-        this.saveButton = element.all(by.css('.wdSave')).first();
-    }
+    self.view = $('.wdHubEditView');
+    self.name = element(by.model('editCtrl.hub.name'));
+    self.map = $('.hub-map .ol-viewport');
+    self.saveButton = element.all(by.css('.wdSave')).first();
 
-    HubEditPage.prototype.isDisplayed = function() {
-        return this.view.isDisplayed();
+    api.isDisplayed = function () {
+        return self.view.isDisplayed();
     };
 
-    HubEditPage.prototype.setName = function(newName) {
-        return this.name.sendKeys(newName);
+    api.setName = function (name) {
+        return self.name.sendKeys(name);
     };
 
-    HubEditPage.prototype.setLocation = function(pos) {
+    api.setLocation = function (pos) {
         ptor.actions()
-            .mouseMove(this.map, {x: pos.x, y: pos.y}).click().click()
+            .mouseMove(self.map, {x: pos.x, y: pos.y}).click().click()
             .perform();
         ptor.sleep(clickSleepMs);
     };
 
-    HubEditPage.prototype.toggleFacility = function(f) {
-        var offsetX = f.border.offset.x + f.border.w/2;
-        var offsetY = f.border.offset.y + f.border.h/2;
+    api.toggleFacility = function (f) {
+        var offsetX = f.border.offset.x + f.border.w / 2;
+        var offsetY = f.border.offset.y + f.border.h / 2;
         ptor.actions()
-            .mouseMove(this.map, {x: offsetX, y: offsetY}).click()
+            .mouseMove(self.map, {x: offsetX, y: offsetY}).click()
             .perform();
         ptor.sleep(clickSleepMs);
     };
 
-    HubEditPage.prototype.save = function() {
-        this.saveButton.click();
+    api.save = function () {
+        self.saveButton.click();
     };
 
-    return HubEditPage;
-})();
-
-module.exports = HubEditPage;
+    return api;
+};

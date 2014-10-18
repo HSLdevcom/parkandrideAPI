@@ -1,29 +1,29 @@
 'use strict';
 
-var FacilityViewPage = (function() {
+module.exports = function() {
+    var api = {};
+    var self = {};
     var ptor = protractor.getInstance();
 
-    function FacilityViewPage() {
-        this.view = $('.wdFacilityView');
-        this.name = $('.wdName');
-        this.aliases = $('.wdAliases');
-        this.toListButton = element.all(by.linkUiSref('facility-list')).first();
-        this.capacityTypes = element.all(by.css(".wdCapacityType"));
-    }
+    self.view = $('.wdFacilityView');
+    self.name = $('.wdName');
+    self.aliases = $('.wdAliases');
+    self.toListButton = element.all(by.linkUiSref('facility-list')).first();
+    self.capacityTypes = element.all(by.css(".wdCapacityType"));
 
-    FacilityViewPage.prototype.isDisplayed = function() {
-        return this.view.isDisplayed();
+    api.isDisplayed = function () {
+        return self.view.isDisplayed();
     };
 
-    FacilityViewPage.prototype.getName = function() {
-        return this.name.getText();
+    api.getName = function () {
+        return self.name.getText();
     };
 
-    FacilityViewPage.prototype.assertAliases = function(aliases) {
-        expect(this.aliases.getText()).toEqual((aliases || []).join(', '));
+    api.assertAliases = function (aliases) {
+        expect(self.aliases.getText()).toEqual((aliases || []).join(', '));
     };
 
-    FacilityViewPage.prototype.assertCapacities = function(capacities) {
+    api.assertCapacities = function (capacities) {
         for (var capacityType in capacities) {
             var capacity = capacities[capacityType];
             for (var prop in capacity) {
@@ -32,22 +32,20 @@ var FacilityViewPage = (function() {
         }
     };
 
-    FacilityViewPage.prototype.assertCapacityOrder = function(expectedTypeOrder) {
-        for (var i=0; i < expectedTypeOrder.length; i++) {
+    api.assertCapacityOrder = function (expectedTypeOrder) {
+        for (var i = 0; i < expectedTypeOrder.length; i++) {
             if (expectedTypeOrder[i]) {
-                expect(this.capacityTypes.get(i).isDisplayed()).toBe(true);
-                expect(this.capacityTypes.get(i).getText()).toBe(expectedTypeOrder[i]);
+                expect(self.capacityTypes.get(i).isDisplayed()).toBe(true);
+                expect(self.capacityTypes.get(i).getText()).toBe(expectedTypeOrder[i]);
             } else {
-                expect(this.capacityTypes.get(i).isDisplayed()).toBe(false);
+                expect(self.capacityTypes.get(i).isDisplayed()).toBe(false);
             }
         }
     };
 
-    FacilityViewPage.prototype.toListView = function() {
-      return this.toListButton.click();
+    api.toListView = function () {
+        return self.toListButton.click();
     };
 
-    return FacilityViewPage;
-})();
-
-module.exports = FacilityViewPage;
+    return api;
+};

@@ -1,13 +1,11 @@
 'use strict';
 
-var IndexPage = (function(){
-    function IndexPage() {}
+module.exports = function() {
+    var api = {};
 
-    IndexPage.prototype.get = function() {
-      browser.get('/');
+    api.get = function () {
+        browser.get('/');
     };
 
-    return IndexPage;
-})();
-
-module.exports = IndexPage;
+    return api;
+};

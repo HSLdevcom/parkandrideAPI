@@ -1,20 +1,19 @@
 'use strict';
 
-var Menu = (function() {
-    function Menu() {
-        this.facilities = element(by.linkUiSref('facility-list'));
-        this.hubs = element(by.linkUiSref('hub-list'));
-    }
+module.exports = function() {
+    var api = {};
+    var self = {};
 
-    Menu.prototype.selectFacilities = function() {
-        return this.facilities.click();
+    self.facilities = element(by.linkUiSref('facility-list'));
+    self.hubs = element(by.linkUiSref('hub-list'));
+
+    api.selectFacilities = function () {
+        return self.facilities.click();
     };
 
-    Menu.prototype.toHubs = function() {
-        return this.hubs.click();
+    api.toHubs = function () {
+        return self.hubs.click();
     };
 
-    return Menu;
-})();
-
-module.exports = Menu;
+    return api;
+};

@@ -1,23 +1,17 @@
 'use strict';
 
-module.exports = function() {
-    var api = {};
-    var self = {};
-    var ptor = protractor.getInstance();
+module.exports = function(spec) {
+    var that = require('../base')(spec);
     var capacityAssert = require('./capacityAssert')();
 
-    self.view = $('.wdFacilityEditView');
-    self.name = element(by.model('editCtrl.facility.name'));
-    self.map = $('.facility-map .ol-viewport');
-    self.saveButton = element.all(by.css('.wdSave')).first();
-    self.aliases = $('.wdAliases .tags');
-    self.capacityTypes = element.all(by.css(".wdCapacityType"));
+    spec.view = $('.wdFacilityEditView');
+    spec.name = element(by.model('editCtrl.facility.name'));
+    spec.map = $('.facility-map .ol-viewport');
+    spec.saveButton = element.all(by.css('.wdSave')).first();
+    spec.aliases = $('.wdAliases .tags');
+    spec.capacityTypes = element.all(by.css(".wdCapacityType"));
 
-    api.isDisplayed = function () {
-        return self.view.isDisplayed();
-    };
-
-    api.get = function (id) {
+    that.get = function (id) {
         if (id) {
             browser.get('/#/facilities/edit/' + id);
         } else {
@@ -25,36 +19,36 @@ module.exports = function() {
         }
     };
 
-    api.getName = function () {
-        return self.name.getAttribute('value');
+    that.getName = function () {
+        return spec.name.getAttribute('value');
     };
 
-    api.setName = function (name) {
-        return self.name.sendKeys(name);
+    that.setName = function (name) {
+        return spec.name.sendKeys(name);
     };
 
-    api.drawBorder = function (topLeft, w, h) {
-        ptor.actions()
-            .mouseMove(self.map, topLeft).click()
-            .mouseMove(self.map, {x: topLeft.x, y: topLeft.y + h}).click()
-            .mouseMove(self.map, {x: topLeft.x + w, y: topLeft.y + h}).click()
-            .mouseMove(self.map, {x: topLeft.x + w, y: topLeft.y}).click()
-            .mouseMove(self.map, topLeft).click()
+    that.drawBorder = function (topLeft, w, h) {
+        spec.ptor.actions()
+            .mouseMove(spec.map, topLeft).click()
+            .mouseMove(spec.map, {x: topLeft.x, y: topLeft.y + h}).click()
+            .mouseMove(spec.map, {x: topLeft.x + w, y: topLeft.y + h}).click()
+            .mouseMove(spec.map, {x: topLeft.x + w, y: topLeft.y}).click()
+            .mouseMove(spec.map, topLeft).click()
             .perform();
     };
 
-    api.save = function () {
-        self.saveButton.click();
+    that.save = function () {
+        spec.saveButton.click();
     };
 
-    api.addAlias = function (alias) {
-        self.aliases.click();
+    that.addAlias = function (alias) {
+        spec.aliases.click();
         var tagsElement = browser.driver.switchTo().activeElement();
         tagsElement.sendKeys(alias);
         tagsElement.sendKeys(protractor.Key.ENTER);
     };
 
-    api.setCapacities = function (capacities) {
+    that.setCapacities = function (capacities) {
         for (var capacityType in capacities) {
             var capacity = capacities[capacityType];
             for (var prop in capacity) {
@@ -63,9 +57,9 @@ module.exports = function() {
         }
     };
 
-    api.assertCapacityOrder = function (expectedTypeOrder) {
-        capacityAssert.assertInOrder(self.capacityTypes, expectedTypeOrder);
+    that.assertCapacityOrder = function (expectedTypeOrder) {
+        capacityAssert.assertInOrder(spec.capacityTypes, expectedTypeOrder);
     };
 
-    return api;
+    return that;
 };

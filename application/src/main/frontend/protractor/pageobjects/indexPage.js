@@ -1,11 +1,11 @@
 'use strict';
 
-module.exports = function() {
-    var api = {};
+module.exports = function(spec) {
+    var that = require('./base')(spec);
 
-    api.get = function () {
+    that.get = function () {
         browser.get('/');
     };
 
-    return api;
+    return that;
 };

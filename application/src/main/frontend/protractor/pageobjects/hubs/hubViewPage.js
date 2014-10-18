@@ -1,23 +1,18 @@
 'use strict';
 
-module.exports = function() {
+module.exports = function(spec) {
     var _ = require('lodash');
 
-    var api = {};
-    var self = {};
+    var that = require('../base')(spec);
 
-    self.view = $('.wdHubView');
-    self.name = $('.wdName');
+    spec.view = $('.wdHubView');
+    spec.name = $('.wdName');
 
-    api.isDisplayed = function () {
-        return self.view.isDisplayed();
+    that.getName = function () {
+        return spec.name.getText();
     };
 
-    api.getName = function () {
-        return self.name.getText();
-    };
-
-    api.assertCapacities = function (facilities) {
+    that.assertCapacities = function (facilities) {
         var sum = _.reduce(facilities, function (acc, facility) {
             return acc.incCapacity(facility);
         });
@@ -30,5 +25,5 @@ module.exports = function() {
         }
     };
 
-    return api;
+    return that;
 };

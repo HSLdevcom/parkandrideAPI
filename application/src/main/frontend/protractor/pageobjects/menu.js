@@ -1,19 +1,18 @@
 'use strict';
 
-module.exports = function() {
-    var api = {};
-    var self = {};
+module.exports = function(spec) {
+    var that = require('./base')(spec);
 
-    self.facilities = element(by.linkUiSref('facility-list'));
-    self.hubs = element(by.linkUiSref('hub-list'));
+    spec.facilities = element(by.linkUiSref('facility-list'));
+    spec.hubs = element(by.linkUiSref('hub-list'));
 
-    api.selectFacilities = function () {
-        return self.facilities.click();
+    that.selectFacilities = function () {
+        return spec.facilities.click();
     };
 
-    api.toHubs = function () {
-        return self.hubs.click();
+    that.toHubs = function () {
+        return spec.hubs.click();
     };
 
-    return api;
+    return that;
 };

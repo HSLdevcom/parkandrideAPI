@@ -1,31 +1,26 @@
 'use strict';
 
 
-module.exports = function() {
-    var api = {};
-    var self = {};
+module.exports = function(spec) {
+    var that = require('../base')(spec);
     var capacityAssert = require('./capacityAssert')();
 
-    self.title = element(by.cssContainingText('h2', 'Fasiliteetit'));
-    self.createButton = element.all(by.linkUiSref('facility-create')).first();
+    spec.view = spec.title = element(by.cssContainingText('h2', 'Fasiliteetit'));
+    spec.createButton = element.all(by.linkUiSref('facility-create')).first();
 
-    api.get = function () {
+    that.get = function () {
         browser.get('/#/facilities');
     };
 
-    api.isDisplayed = function () {
-        return self.title.isDisplayed();
-    };
-
-    api.assertCapacityOrder = function (expectedTypeOrder, facilityId) {
+    that.assertCapacityOrder = function (expectedTypeOrder, facilityId) {
         capacityAssert.assertInOrderIfDisplayed(
             element.all(by.css(".wdFacility" + facilityId + " .wdCapacityType")),
             expectedTypeOrder);
     };
 
-    api.toCreateView = function () {
-        return self.createButton.click();
+    that.toCreateView = function () {
+        return spec.createButton.click();
     };
 
-    return api;
+    return that;
 };

@@ -1,23 +1,18 @@
 'use strict';
 
-module.exports = function() {
-    var api = {};
-    var self = {};
+module.exports = function(spec) {
+    var that = require('../base')(spec);
 
-    self.title = element(by.cssContainingText('h2', 'Alueet'));
-    self.createButton = element.all(by.linkUiSref('hub-create')).first();
+    spec.view = spec.title = element(by.cssContainingText('h2', 'Alueet'));
+    spec.createButton = element.all(by.linkUiSref('hub-create')).first();
 
-    api.get = function () {
+    that.get = function () {
         browser.get('/#/hubs')
     };
 
-    api.isDisplayed = function () {
-        return self.title.isDisplayed();
+    that.toCreateView = function () {
+        return spec.createButton.click();
     };
 
-    api.toCreateView = function () {
-        return self.createButton.click();
-    };
-
-    return api;
+    return that;
 };

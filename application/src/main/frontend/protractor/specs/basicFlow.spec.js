@@ -6,16 +6,16 @@ var po = require('../pageobjects/pageobjects.js');
 var fixture = require('../fixtures/fixtures.js');
 
 describe('Basic flow', function() {
-    var menu = po.menu();
-    var indexPage = po.indexPage();
+    var menu = po.menu({});
+    var indexPage = po.indexPage({});
 
-    var facilityListPage = po.facilityListPage();
-    var facilityEditPage = po.facilityEditPage();
-    var facilityViewPage = po.facilityViewPage();
+    var facilityListPage = po.facilityListPage({});
+    var facilityEditPage = po.facilityEditPage({});
+    var facilityViewPage = po.facilityViewPage({});
 
-    var hubListPage = po.hubListPage();
-    var hubEditPage = po.hubEditPage();
-    var hubViewPage = po.hubViewPage();
+    var hubListPage = po.hubListPage({});
+    var hubEditPage = po.hubEditPage({});
+    var hubViewPage = po.hubViewPage({});
 
     function newFacilityName() {
         return 'Test Facility ' + new Date().getTime();

@@ -1,30 +1,24 @@
 'use strict';
 
-module.exports = function() {
-    var api = {};
-    var self = {};
-    var ptor = protractor.getInstance();
+module.exports = function(spec) {
+    var that = require('../base')(spec);
     var capacityAssert = require('./capacityAssert')();
 
-    self.view = $('.wdFacilityView');
-    self.name = $('.wdName');
-    self.aliases = $('.wdAliases');
-    self.toListButton = element.all(by.linkUiSref('facility-list')).first();
-    self.capacityTypes = element.all(by.css(".wdCapacityType"));
+    spec.view = $('.wdFacilityView');
+    spec.name = $('.wdName');
+    spec.aliases = $('.wdAliases');
+    spec.toListButton = element.all(by.linkUiSref('facility-list')).first();
+    spec.capacityTypes = element.all(by.css(".wdCapacityType"));
 
-    api.isDisplayed = function () {
-        return self.view.isDisplayed();
+    that.getName = function () {
+        return spec.name.getText();
     };
 
-    api.getName = function () {
-        return self.name.getText();
+    that.assertAliases = function (aliases) {
+        expect(spec.aliases.getText()).toEqual((aliases || []).join(', '));
     };
 
-    api.assertAliases = function (aliases) {
-        expect(self.aliases.getText()).toEqual((aliases || []).join(', '));
-    };
-
-    api.assertCapacities = function (capacities) {
+    that.assertCapacities = function (capacities) {
         for (var capacityType in capacities) {
             var capacity = capacities[capacityType];
             for (var prop in capacity) {
@@ -33,13 +27,13 @@ module.exports = function() {
         }
     };
 
-    api.assertCapacityOrder = function (expectedTypeOrder) {
-        capacityAssert.assertInOrderIfDisplayed(self.capacityTypes, expectedTypeOrder);
+    that.assertCapacityOrder = function (expectedTypeOrder) {
+        capacityAssert.assertInOrderIfDisplayed(spec.capacityTypes, expectedTypeOrder);
     };
 
-    api.toListView = function () {
-        return self.toListButton.click();
+    that.toListView = function () {
+        return spec.toListButton.click();
     };
 
-    return api;
+    return that;
 };

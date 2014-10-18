@@ -1,43 +1,37 @@
 'use strict';
 
-module.exports = function() {
-    var api = {};
-    var self = {};
-    var ptor = protractor.getInstance();
+module.exports = function(spec) {
+    var that = require('../base')(spec);
     var clickSleepMs = 200;
 
-    self.view = $('.wdHubEditView');
-    self.name = element(by.model('editCtrl.hub.name'));
-    self.map = $('.hub-map .ol-viewport');
-    self.saveButton = element.all(by.css('.wdSave')).first();
+    spec.view = $('.wdHubEditView');
+    spec.name = element(by.model('editCtrl.hub.name'));
+    spec.map = $('.hub-map .ol-viewport');
+    spec.saveButton = element.all(by.css('.wdSave')).first();
 
-    api.isDisplayed = function () {
-        return self.view.isDisplayed();
+    that.setName = function (name) {
+        return spec.name.sendKeys(name);
     };
 
-    api.setName = function (name) {
-        return self.name.sendKeys(name);
-    };
-
-    api.setLocation = function (pos) {
-        ptor.actions()
-            .mouseMove(self.map, {x: pos.x, y: pos.y}).click().click()
+    that.setLocation = function (pos) {
+        spec.ptor.actions()
+            .mouseMove(spec.map, {x: pos.x, y: pos.y}).click().click()
             .perform();
-        ptor.sleep(clickSleepMs);
+        spec.ptor.sleep(clickSleepMs);
     };
 
-    api.toggleFacility = function (f) {
+    that.toggleFacility = function (f) {
         var offsetX = f.border.offset.x + f.border.w / 2;
         var offsetY = f.border.offset.y + f.border.h / 2;
-        ptor.actions()
-            .mouseMove(self.map, {x: offsetX, y: offsetY}).click()
+        spec.ptor.actions()
+            .mouseMove(spec.map, {x: offsetX, y: offsetY}).click()
             .perform();
-        ptor.sleep(clickSleepMs);
+        spec.ptor.sleep(clickSleepMs);
     };
 
-    api.save = function () {
-        self.saveButton.click();
+    that.save = function () {
+        spec.saveButton.click();
     };
 
-    return api;
+    return that;
 };

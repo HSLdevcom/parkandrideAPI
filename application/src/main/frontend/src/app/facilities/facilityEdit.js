@@ -74,11 +74,18 @@
         };
     });
 
-    m.directive('facilityEditNavi', function() {
+    m.directive('facilityEditNaviAbove', function() {
         return {
             restrict: 'E',
-            templateUrl: 'facilities/facilityEditNavi.tpl.html'
+            templateUrl: 'facilities/facilityEditNaviAbove.tpl.html'
         };
     });
-})();
 
+    m.directive('facilityEditNaviBelow', function() {
+        return {
+            restrict: 'E',
+            templateUrl: 'facilities/facilityEditNaviBelow.tpl.html'
+        };
+    });
+
+})();

@@ -31,10 +31,17 @@
 
     }
 
-    m.directive('hubListNavi', function() {
+    m.directive('hubListNaviAbove', function() {
         return {
             restrict: 'E',
-            templateUrl: 'hubs/hubListNavi.tpl.html'
+            templateUrl: 'hubs/hubListNaviAbove.tpl.html'
+        };
+    });
+
+    m.directive('hubListNaviBelow', function() {
+        return {
+            restrict: 'E',
+            templateUrl: 'hubs/hubListNaviBelow.tpl.html'
         };
     });
 

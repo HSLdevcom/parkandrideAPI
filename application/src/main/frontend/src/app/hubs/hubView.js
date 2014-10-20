@@ -33,10 +33,17 @@
         this.summary = summary;
     });
 
-    m.directive('hubViewNavi', function() {
+    m.directive('hubViewNaviAbove', function() {
         return {
             restrict: 'E',
-            templateUrl: 'hubs/hubViewNavi.tpl.html'
+            templateUrl: 'hubs/hubViewNaviAbove.tpl.html'
+        };
+    });
+
+    m.directive('hubViewNaviBelow', function() {
+        return {
+            restrict: 'E',
+            templateUrl: 'hubs/hubViewNaviBelow.tpl.html'
         };
     });
 })();

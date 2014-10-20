@@ -1,34 +1,39 @@
-<div class="row">
-	<div class="col-lg-6 col-md-6">
-		<h2 translate="hubs.title"></h2>
+<div class="row navi-above">
+	<div class="container">
+		<div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 first-column">
+			<h2 translate="hubs.title"></h2>
+		</div>
+		<div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 text-right last-column">
+			<hub-list-navi-above></hub-list-navi-above>
+		</div>
 	</div>
-	<div class="col-lg-6 col-md-6 text-right">
-	<hub-list-navi></hub-list-navi>
-</div>
 </div>
 
+<div class="container content">
+	<div class="panel panel-default">
 
-<div class="panel panel-default" style="margin-top: 20px">
+		<table class="table table-bordered table-striped table-condensed">
+			<thead>
+				<tr>
+					<th translate="hubs.list.name"></th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr ng-repeat="h in hubsCtrl.list">
+					<td><a ui-sref="hub-view({id: h.id})">{{h.name}}</a></td>
+				</tr>
+			</tbody>
+		</table>
 
-	<table class="table table-bordered table-striped table-condensed">
-		<thead>
-		<tr>
-			<th translate="hubs.list.name"></th>
-		</tr>
-		</thead>
-		<tbody>
-		<tr ng-repeat="h in hubsCtrl.list">
-			<td><a ui-sref="hub-view({id: h.id})">{{h.name}}</a></td>
-		</tr>
-		</tbody>
-	</table>
-
-</div>
-
-<div class="row">
-	<div class="col-lg-6 col-md-6">
 	</div>
-	<div class="col-lg-6 col-md-6 text-right">
-	<hub-list-navi></hub-list-navi>
 </div>
+
+<div class="row navi-below">
+	<div class="container">
+		<div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 first-column">
+		</div>
+		<div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 text-right last-column">
+			<hub-list-navi-below></hub-list-navi-below>
+		</div>
+	</div>
 </div>

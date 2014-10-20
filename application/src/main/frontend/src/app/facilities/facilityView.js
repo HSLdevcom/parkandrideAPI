@@ -29,10 +29,18 @@
         this.facility = facility;
     }
 
-    m.directive('facilityViewNavi', function() {
+    m.directive('facilityViewNaviAbove', function() {
         return {
             restrict: 'E',
-            templateUrl: 'facilities/facilityViewNavi.tpl.html'
+            templateUrl: 'facilities/facilityViewNaviAbove.tpl.html'
         };
     });
+
+    m.directive('facilityViewNaviBelow', function() {
+        return {
+            restrict: 'E',
+            templateUrl: 'facilities/facilityViewNaviBelow.tpl.html'
+        };
+    });
+
 })();

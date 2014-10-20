@@ -1,25 +1,48 @@
 //body
-body {
+html, body {
+  height: 100%;
   color: $k80;
   font-size: $basic-font-size;
+}
+
+//wrap for footer
+#wrap {
+  min-height: 100%;
+}
+
+//main for footer
+#main {
+  overflow:auto;
+  padding-bottom:40px;
 }
 
 //header & footer
 .page-header {
   border: 0;
-  padding-top: 50px;
+  padding-top: 40px;
   padding-bottom: 0px;
   margin: 0px 0px 0px;
 }
 
 .page-footer {
-  position: absolute;
-  bottom: 0;
+  position: relative;
+  margin-top: -40px;
   width: 100%;
+  clear: both;
   height: 40px;
   color: #fff;
   background-color: $k60;
   padding-top: 10px;
+}
+
+//header logo
+.logo {
+  margin-top: -15px;
+}
+
+//header nav column
+.navi-col {
+  padding-left: 20px;
 }
 
 //header nav
@@ -27,7 +50,6 @@ body {
   height: $tab-height;
   border-radius: $border-radius;
   border-bottom: 0px;
-  margin-left: -50px;
   margin-top: 10px;
   > li {
     margin-bottom: 0px;
@@ -63,22 +85,40 @@ body {
   }
 }
 
+//header logout link
+.logout {
+  padding-top: 20px;
+}
+
 //colorful navibars
 .navi-above {
   background-color: $secondarycolor;
 }
 
+.content {
+  padding-top:20px;
+  padding-bottom: 40px;
+}
+
+//REMOVE THIS!
 .navi-below {
   background-color: $secondarycolor;
-  position: absolute;
-  bottom: 40px;
   width: 100%;
+}
+
+//REMOVE THIS!
+.navi-below-example {
+  background-color: $secondarycolor;
+  width: 100%;
+  position: relative;
+  padding-bottom: 40px;
+  clear: both;
 }
 
 //colorful navibars btn-navi layout
 .btn-navi-above {
-  margin-top: 40px;
-  margin-bottom: 40px;
+  margin-top: 30px;
+  margin-bottom: 30px;
 }
 
 .btn-navi-below {
@@ -89,6 +129,11 @@ body {
 //rows
 .row {
   margin: 0 0 0 0;
+}
+
+//
+.navi-row {
+  margin-top: -140px;
 }
 
 //columns

@@ -2,7 +2,7 @@
     var m = angular.module('parkandride.hubView', [
         'ui.router',
         'parkandride.hubMap',
-        'parkandride.capacitiesTable',
+        'parkandride.capacities',
         'parkandride.FacilityResource',
         'parkandride.HubResource'
     ]);

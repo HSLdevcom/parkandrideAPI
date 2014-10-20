@@ -36,7 +36,7 @@
 						</thead>
 						<tbody>
 							<tr ng-repeat="capacityType in editCtrl.capacityTypes">
-								<td>{{'facilities.capacityType.' + capacityType | translate}}</td>
+								<td class="wdCapacityType">{{'facilities.capacityType.' + capacityType | translate}}</td>
 								<td>
 									<input type="number" class="form-control wd{{capacityType}}built" ng-model="editCtrl.facility.capacities[capacityType].built" min="0">
 								</td>

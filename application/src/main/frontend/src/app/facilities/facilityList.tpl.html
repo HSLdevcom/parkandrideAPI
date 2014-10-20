@@ -5,25 +5,7 @@
 	<facility-list-navi></facility-list-navi>
 </div>
 
-
-<div class="panel panel-default" style="margin-top: 20px">
-
-	<table class="table table-bordered table-striped table-condensed">
-		<thead>
-		<tr>
-			<th translate="facilities.list.name"></th>
-			<th translate="facilities.list.types"></th>
-		</tr>
-		</thead>
-		<tbody>
-		<tr ng-repeat="f in fctrl.list">
-			<td><a ui-sref="facility-view({id: f.id})">{{f.name}}</a></td>
-			<td>{{fctrl.translatedCapacities(f) | joinBy: ", "}}</span></td>
-		</tr>
-		</tbody>
-	</table>
-
-</div>
+<facilities-table facilities="fctrl.list"></facilities-table>
 
 <div class="row">
 	<div class="col-md-6">

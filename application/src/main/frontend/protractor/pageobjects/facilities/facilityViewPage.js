@@ -2,7 +2,6 @@
 
 module.exports = function(spec) {
     var that = require('../base')(spec);
-    var capacityAssert = require('./capacityAssert')();
 
     spec.view = $('.wdFacilityView');
     spec.name = $('.wdName');
@@ -27,8 +26,8 @@ module.exports = function(spec) {
         }
     };
 
-    that.assertCapacityOrder = function (expectedTypeOrder) {
-        capacityAssert.assertInOrderIfDisplayed(spec.capacityTypes, expectedTypeOrder);
+    that.getCapacityTypes = function() {
+        return spec.capacityTypes.filter(function(el) { return el.isDisplayed(); }).getText();
     };
 
     that.toListView = function () {

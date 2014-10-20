@@ -2,8 +2,9 @@
 
 var _ = require('lodash');
 
-var po = require('../pageobjects/pageobjects.js');
-var fixture = require('../fixtures/fixtures.js');
+var po = require('../pageobjects/pageobjects');
+var fixture = require('../fixtures/fixtures');
+var arrayAssert = require('./arrayAssert')();
 
 describe('Basic flow', function() {
     var menu = po.menu({});
@@ -72,20 +73,20 @@ describe('Basic flow', function() {
         facilityEditPage.addAlias(facility1.aliases[0]);
         facilityEditPage.addAlias(facility1.aliases[1]);
         facilityEditPage.setCapacities(facility1.capacities);
-        facilityEditPage.assertCapacityOrder(capacityTypeOrder);
+        arrayAssert.assertInOrder(facilityEditPage.getCapacityTypes(), capacityTypeOrder);
 
         facilityEditPage.save();
         expect(facilityViewPage.isDisplayed()).toBe(true);
         expect(facilityViewPage.getName()).toBe(facility1.name);
         facilityViewPage.assertAliases(facility1.aliases);
         facilityViewPage.assertCapacities(facility1.capacities);
-        facilityViewPage.assertCapacityOrder(capacityTypeOrder);
+        arrayAssert.assertInOrder(facilityViewPage.getCapacityTypes(), capacityTypeOrder, { allowSkip: true });
     });
 
     it('Return to list and go to facility create', function() {
         facilityViewPage.toListView();
         expect(facilityListPage.isDisplayed()).toBe(true);
-        facilityListPage.assertCapacityOrder(capacityTypeOrder, 1)
+        arrayAssert.assertInOrder(facilityListPage.getCapacityTypes(1), capacityTypeOrder, { allowSkip: true });
 
         facilityListPage.toCreateView();
         expect(facilityEditPage.isDisplayed()).toBe(true);
@@ -105,9 +106,7 @@ describe('Basic flow', function() {
         expect(facilityViewPage.getName()).toBe(facility2.name);
         facilityViewPage.assertAliases(facility2.aliases);
         facilityViewPage.assertCapacities(facility2.capacities);
-
-        var capacityRows = element.all(by.css(".wdCapacityType"));
-        facilityViewPage.assertCapacityOrder(capacityRows, [null, null, "Henkilöauto", null, null, null]);
+        arrayAssert.assertInOrder(facilityViewPage.getCapacityTypes(), capacityTypeOrder, { allowSkip: true });
     });
 
     it('Go to create hub via hub list', function() {

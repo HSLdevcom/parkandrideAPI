@@ -2,6 +2,7 @@
 
 module.exports.menu = require('./menu.js');
 module.exports.indexPage = require('./indexPage.js');
+module.exports.devPage = require('./devPage.js');
 
 module.exports.facilityListPage = require('./facilities/facilityListPage.js');
 module.exports.facilityEditPage = require('./facilities/facilityEditPage.js');

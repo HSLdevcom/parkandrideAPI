@@ -1,6 +1,7 @@
 package fi.hsl.parkandride.core.domain;
 
 import static com.google.common.collect.Maps.filterKeys;
+import static fi.hsl.parkandride.core.domain.PropertyPathTranslator.translate;
 
 import java.util.Map;
 import java.util.Set;
@@ -50,7 +51,7 @@ public class Violation {
     }
 
     private static String getPath(ConstraintViolation cv) {
-        return cv.getPropertyPath().toString();
+        return translate(cv.getPropertyPath().toString());
     }
 
     private static String getType(ConstraintViolation constraintViolation) {

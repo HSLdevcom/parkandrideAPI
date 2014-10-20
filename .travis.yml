@@ -15,7 +15,7 @@ script:
   - bash protractor.sh test
   - bash protractor.sh verify
 after_success:
-  - cd $APP_MODULE && mvn clean test jacoco:report coveralls:jacoco
+  - cd $APP_MODULE && mvn clean test jacoco:report coveralls:report
 notifications:
   flowdock:
     secure: h3OB+ZyOFh6m/43twXDTh15enuvALOVvCNe81+doFj5o0s9x+n1K06x02hU2ISkHt5MYGg5JNtyeDTg2DDDht3TsfJcM3U8P/auMaIB7jt6Cwwrp0WPbFwyMR5t+CHYK27teeaopPtXbk+PWdq7FMma1kzvgOZlC6yq6OOj4hwM=

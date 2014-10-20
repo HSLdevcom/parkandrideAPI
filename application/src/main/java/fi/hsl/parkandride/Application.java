@@ -11,9 +11,11 @@ import org.eclipse.jetty.webapp.WebAppContext;
 import org.geolatte.common.Feature;
 import org.geolatte.common.dataformats.json.jackson.JsonMapper;
 import org.geolatte.geom.Geometry;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.actuate.system.ApplicationPidListener;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.autoconfigure.web.HttpMessageConverters;
 import org.springframework.boot.autoconfigure.web.WebMvcAutoConfiguration;
 import org.springframework.boot.context.embedded.EmbeddedServletContainerFactory;
 import org.springframework.boot.context.embedded.jetty.JettyEmbeddedServletContainerFactory;
@@ -41,6 +43,7 @@ import fi.hsl.parkandride.inbound.GeojsonSerializer;
 @ComponentScan
 @Import(Application.UiConfig.class)
 public class Application {
+
     public static void main(String[] args) {
         SpringApplication app = new SpringApplication(Application.class);
         app.addListeners(new ApplicationPidListener());
@@ -52,10 +55,8 @@ public class Application {
     @Import({ WebMvcAutoConfiguration.class, DevUIConfig.class })
     public static class UiConfig extends WebMvcAutoConfiguration.WebMvcAutoConfigurationAdapter {
 
-        @Override
-        public void addResourceHandlers(final ResourceHandlerRegistry registry) {
-            super.addResourceHandlers(registry);
-        }
+        @Autowired
+        private HttpMessageConverters messageConverters;
 
         @Bean
         public Module facilityModule() {
@@ -85,20 +86,15 @@ public class Application {
 
         @Bean
         public ExceptionHandlerExceptionResolver exceptionHandlerExceptionResolver() {
-            return new ExceptionHandlerExceptionResolver();
-        }
-
-        @Bean
-        public DefaultHandlerExceptionResolver defaultHandlerExceptionResolver() {
-            DefaultHandlerExceptionResolver resolver = new DefaultHandlerExceptionResolver();
+            ExceptionHandlerExceptionResolver resolver = new ExceptionHandlerExceptionResolver();
             resolver.setWarnLogCategory("parkandride");
+            resolver.setMessageConverters(messageConverters.getConverters());
             return resolver;
         }
 
         @Override
         public void configureHandlerExceptionResolvers(List<HandlerExceptionResolver> exceptionResolvers) {
             exceptionResolvers.add(exceptionHandlerExceptionResolver());
-            exceptionResolvers.add(defaultHandlerExceptionResolver());
         }
     }
 

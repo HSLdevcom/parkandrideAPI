@@ -29,7 +29,6 @@
         FacilityResource.listFacilities().then(function(data){
             origThis.list = data;
         });
-
     }
 
     m.directive('facilityListNavi', function() {

@@ -9,6 +9,7 @@ var arrayAssert = require('./arrayAssert')();
 describe('Basic flow', function() {
     var menu = po.menu({});
     var indexPage = po.indexPage({});
+    var devPage = po.devPage();
 
     var facilityListPage = po.facilityListPage({});
     var facilityEditPage = po.facilityEditPage({});
@@ -56,6 +57,10 @@ describe('Basic flow', function() {
     });
 
     var capacityTypeOrder = ["Liityntäpysäköinti", "Polkupyörä", "Henkilöauto", "Invapaikka", "Moottoripyörä", "Sähköauto"];
+
+    it('should reset all', function() {
+        devPage.resetAll();
+    });
 
     it('Go to facility create', function() {
         indexPage.get();

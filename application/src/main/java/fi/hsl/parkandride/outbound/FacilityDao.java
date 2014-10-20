@@ -73,7 +73,9 @@ public class FacilityDao implements FacilityRepository {
 
     private static final QBean<Facility> facilityMapping = new QBean<>(Facility.class, true, qFacility.all());
 
-    private static final SimpleExpression<Long> nextFacilityId = SQLExpressions.nextval("facility_id_seq");
+    public static final String FACILITY_ID_SEQ = "facility_id_seq";
+
+    private static final SimpleExpression<Long> nextFacilityId = SQLExpressions.nextval(FACILITY_ID_SEQ);
 
 
     private final PostgresQueryFactory queryFactory;

@@ -8,6 +8,7 @@ var FacilityFixture = require('../fixtures/fixtures.js').FacilityFixture;
 describe('Basic flow', function() {
     var menu = new Pages.Menu();
     var indexPage = new Pages.IndexPage();
+    var devPage = new Pages.DevPage();
 
     var facilityListPage = new Pages.FacilityListPage();
     var facilityEditPage = new Pages.FacilityEditPage();
@@ -52,6 +53,10 @@ describe('Basic flow', function() {
             w: 60,
             h: 60
         }
+    });
+
+    it('should reset all', function() {
+        devPage.resetAll();
     });
 
     it('Go to facility create', function() {

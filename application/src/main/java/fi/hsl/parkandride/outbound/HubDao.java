@@ -28,7 +28,9 @@ import fi.hsl.parkandride.outbound.sql.QHubFacility;
 
 public class HubDao implements HubRepository {
 
-    private static final SimpleExpression<Long> nextHubId = SQLExpressions.nextval("hub_id_seq");
+    public static final String HUB_ID_SEQ = "hub_id_seq";
+
+    private static final SimpleExpression<Long> nextHubId = SQLExpressions.nextval(HUB_ID_SEQ);
 
     private static final QHub qHub = QHub.hub;
 

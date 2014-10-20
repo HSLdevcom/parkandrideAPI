@@ -2,6 +2,8 @@ package fi.hsl.parkandride.dev;
 
 import static fi.hsl.parkandride.inbound.UrlSchema.TEST_FACILITIES;
 import static fi.hsl.parkandride.inbound.UrlSchema.TEST_HUBS;
+import static fi.hsl.parkandride.outbound.FacilityDao.FACILITY_ID_SEQ;
+import static fi.hsl.parkandride.outbound.HubDao.HUB_ID_SEQ;
 import static java.lang.String.format;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
@@ -61,6 +63,7 @@ public class TestController {
     @TransactionalWrite
     public ResponseEntity<Void> deleteFacilities() {
         clear(QFacilityAlias.facilityAlias, QCapacity.capacity, QFacility.facility);
+        resetSequence(FACILITY_ID_SEQ);
         return new ResponseEntity<Void>(OK);
     }
 
@@ -68,6 +71,7 @@ public class TestController {
     @TransactionalWrite
     public ResponseEntity<Void> deleteHubs() {
         clear(QHubFacility.hubFacility, QHub.hub);
+        resetSequence(HUB_ID_SEQ);
         return new ResponseEntity<Void>(OK);
     }
 
@@ -84,7 +88,7 @@ public class TestController {
                 results.add(facilityService.createFacility(facility));
             }
         }
-        resetSequence("facility_id_seq", queryFactory.from(qFacility).singleResult(qFacility.id.max()) + 1);
+        resetSequence(FACILITY_ID_SEQ, queryFactory.from(qFacility).singleResult(qFacility.id.max()));
         return new ResponseEntity<List<Facility>>(results, OK);
     }
 
@@ -101,7 +105,7 @@ public class TestController {
                 results.add(hubService.createHub(hub));
             }
         }
-        resetSequence("hub_id_seq", queryFactory.from(qHub).singleResult(qHub.id.max()) + 1);
+        resetSequence(HUB_ID_SEQ, queryFactory.from(qHub).singleResult(qHub.id.max()));
         return new ResponseEntity<List<Hub>>(results, OK);
     }
 
@@ -111,9 +115,15 @@ public class TestController {
         }
     }
 
-    private void resetSequence(String sequence, long first) {
+    private void resetSequence(String sequence) {
+        resetSequence(sequence, 0l);
+    }
+    private void resetSequence(String sequence, Long currentMax) {
+        if (currentMax == null) {
+            currentMax = 0l;
+        }
         jdbcTemplate.execute(format("drop sequence %s", sequence));
-        jdbcTemplate.execute(format("create sequence %s increment by 1 start with %s", sequence, first));
+        jdbcTemplate.execute(format("create sequence %s increment by 1 start with %s", sequence, currentMax+1));
     }
 
 }

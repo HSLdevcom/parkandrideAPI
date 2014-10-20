@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html ng-app="parkandride" ng-controller="AppCtrl">
+<html ng-app="parkandride" ng-controller="AppCtrl as appCtrl">
 <head>
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta charset="utf-8">
@@ -31,6 +31,7 @@
 						<ul class="nav nav-tabs">
 							<li class="active"><a id="facilitiesLink" ui-sref="facility-list" translate="facilities.title"></a></li>
 							<li><a id="hubsLink" ui-sref="hub-list" translate="hubs.title"></a></li>
+							<li toggle feature="dev"><a ui-sref="dev-page">Dev</a></li>
 						</ul>
 					</div>
 					<div class="col-lg-2 col-md-2 col-sm-3 col-xs-4 logout last-column">

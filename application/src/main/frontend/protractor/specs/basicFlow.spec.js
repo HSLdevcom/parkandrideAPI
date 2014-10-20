@@ -2,20 +2,22 @@
 
 var _ = require('lodash');
 
-var Pages = require('../pages/pages.js');
-var FacilityFixture = require('../fixtures/fixtures.js').FacilityFixture;
+var po = require('../pageobjects/pageobjects');
+var fixture = require('../fixtures/fixtures');
+var arrayAssert = require('./arrayAssert')();
 
 describe('Basic flow', function() {
-    var menu = new Pages.Menu();
-    var indexPage = new Pages.IndexPage();
+    var menu = po.menu({});
+    var indexPage = po.indexPage({});
+    var devPage = po.devPage();
 
-    var facilityListPage = new Pages.FacilityListPage();
-    var facilityEditPage = new Pages.FacilityEditPage();
-    var facilityViewPage = new Pages.FacilityViewPage();
+    var facilityListPage = po.facilityListPage({});
+    var facilityEditPage = po.facilityEditPage({});
+    var facilityViewPage = po.facilityViewPage({});
 
-    var hubListPage = new Pages.HubListPage();
-    var hubEditPage = new Pages.HubEditPage();
-    var hubViewPage = new Pages.HubViewPage();
+    var hubListPage = po.hubListPage({});
+    var hubEditPage = po.hubEditPage({});
+    var hubViewPage = po.hubViewPage({});
 
     function newFacilityName() {
         return 'Test Facility ' + new Date().getTime();
@@ -25,7 +27,7 @@ describe('Basic flow', function() {
         return 'Test Hub ' + new Date().getTime();
     }
 
-    var facility1 = new FacilityFixture({
+    var facility1 = fixture.facilityFixture({
         capacities: {
             "CAR": {"built": 10, "unavailable": 1},
             "BICYCLE": {"built": 20, "unavailable": 2},
@@ -42,7 +44,7 @@ describe('Basic flow', function() {
         }
     });
 
-    var facility2 = new FacilityFixture({
+    var facility2 = fixture.facilityFixture({
         capacities: {
             "CAR": {"built": 10, "unavailable": 1}
         },
@@ -52,6 +54,12 @@ describe('Basic flow', function() {
             w: 60,
             h: 60
         }
+    });
+
+    var capacityTypeOrder = ["Liityntäpysäköinti", "Polkupyörä", "Henkilöauto", "Invapaikka", "Moottoripyörä", "Sähköauto"];
+
+    it('should reset all', function() {
+        devPage.resetAll();
     });
 
     it('Go to facility create', function() {
@@ -70,17 +78,21 @@ describe('Basic flow', function() {
         facilityEditPage.addAlias(facility1.aliases[0]);
         facilityEditPage.addAlias(facility1.aliases[1]);
         facilityEditPage.setCapacities(facility1.capacities);
+        arrayAssert.assertInOrder(facilityEditPage.getCapacityTypes(), capacityTypeOrder);
 
         facilityEditPage.save();
         expect(facilityViewPage.isDisplayed()).toBe(true);
         expect(facilityViewPage.getName()).toBe(facility1.name);
         facilityViewPage.assertAliases(facility1.aliases);
         facilityViewPage.assertCapacities(facility1.capacities);
+        arrayAssert.assertInOrder(facilityViewPage.getCapacityTypes(), capacityTypeOrder, { allowSkip: true });
     });
 
     it('Return to list and go to facility create', function() {
         facilityViewPage.toListView();
         expect(facilityListPage.isDisplayed()).toBe(true);
+        arrayAssert.assertInOrder(facilityListPage.getCapacityTypes(1), capacityTypeOrder, { allowSkip: true });
+
         facilityListPage.toCreateView();
         expect(facilityEditPage.isDisplayed()).toBe(true);
     });
@@ -99,6 +111,7 @@ describe('Basic flow', function() {
         expect(facilityViewPage.getName()).toBe(facility2.name);
         facilityViewPage.assertAliases(facility2.aliases);
         facilityViewPage.assertCapacities(facility2.capacities);
+        arrayAssert.assertInOrder(facilityViewPage.getCapacityTypes(), capacityTypeOrder, { allowSkip: true });
     });
 
     it('Go to create hub via hub list', function() {

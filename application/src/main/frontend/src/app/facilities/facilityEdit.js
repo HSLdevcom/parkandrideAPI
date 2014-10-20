@@ -17,9 +17,6 @@
             },
             data: { pageTitle: 'Create Facility' },
             resolve: {
-                capacityTypes: function(FacilityResource) {
-                    return FacilityResource.getCapacityTypes();
-                },
                 facility: function(FacilityResource) {
                     return FacilityResource.newFacility();
                 }
@@ -35,9 +32,6 @@
             },
             data: { pageTitle: 'Edit Facility' },
             resolve: {
-                capacityTypes: function(FacilityResource) {
-                    return FacilityResource.getCapacityTypes();
-                },
                 facility: function($stateParams, FacilityResource) {
                     return FacilityResource.getFacility($stateParams.id);
                 }
@@ -45,8 +39,8 @@
         });
     });
 
-    m.controller('FacilityEditCtrl', function($state, FacilityResource, capacityTypes, facility) {
-        this.capacityTypes = capacityTypes;
+    m.controller('FacilityEditCtrl', function($state, schema, FacilityResource, facility) {
+        this.capacityTypes = schema.capacityTypes;
 
         facility.aliases = _.map(facility.aliases, function(a) { return { text: a }; });
 

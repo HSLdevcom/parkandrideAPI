@@ -57,7 +57,7 @@ is_server_up() {
 CMD="$1"; shift
 case "$CMD" in
   start)
-      java -jar $JARFile 2>&1 > $LOGFile &
+      java -jar $JARFile --spring.profiles.active=e2e 2>&1 > $LOGFile &
       ;;
   wait_until_started)
       retryable_condition 'is_server_up' 60 || fail "Failed to start application"

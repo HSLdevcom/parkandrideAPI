@@ -13,8 +13,10 @@ module.exports = function(spec) {
         return spec.name.getText();
     };
 
-    that.assertAliases = function (aliases) {
-        expect(spec.aliases.getText()).toEqual((aliases || []).join(', '));
+    that.getAliases = function () {
+        return spec.aliases.getText().then(function(joined){
+            return joined.split(", ");
+        });
     };
 
     that.assertCapacities = function (capacities) {

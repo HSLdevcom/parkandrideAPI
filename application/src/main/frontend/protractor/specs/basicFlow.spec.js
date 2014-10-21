@@ -83,7 +83,7 @@ describe('Basic flow', function() {
         facilityEditPage.save();
         expect(facilityViewPage.isDisplayed()).toBe(true);
         expect(facilityViewPage.getName()).toBe(facility1.name);
-        facilityViewPage.assertAliases(facility1.aliases);
+        expect(facilityViewPage.getAliases()).toEqual(facility1.aliases);
         facilityViewPage.assertCapacities(facility1.capacities);
         arrayAssert.assertInOrder(facilityViewPage.getCapacityTypes(), capacityTypeOrder, { allowSkip: true });
     });
@@ -109,7 +109,7 @@ describe('Basic flow', function() {
         facilityEditPage.save();
         expect(facilityViewPage.isDisplayed()).toBe(true);
         expect(facilityViewPage.getName()).toBe(facility2.name);
-        facilityViewPage.assertAliases(facility2.aliases);
+        expect(facilityViewPage.getAliases()).toEqual(facility2.aliases);
         facilityViewPage.assertCapacities(facility2.capacities);
         arrayAssert.assertInOrder(facilityViewPage.getCapacityTypes(), capacityTypeOrder, { allowSkip: true });
     });

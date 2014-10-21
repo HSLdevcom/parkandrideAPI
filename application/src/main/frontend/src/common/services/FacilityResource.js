@@ -70,7 +70,8 @@
 
         api.getCapacityTypes = function() {
             return $http.get("/api/capacity-types").then(function(response) {
-                return response.data.results;
+                capacityTypesCached = response.data.results;
+                return capacityTypesCached;
             });
         };
 

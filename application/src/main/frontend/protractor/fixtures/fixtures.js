@@ -1,3 +1,3 @@
 'use strict';
 
-module.exports['FacilityFixture'] = require('./facility.fixture.js');
+module.exports.facilityFixture = require('./facility.fixture.js');

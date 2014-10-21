@@ -3,7 +3,7 @@
         'ui.router',
         'parkandride.hubMap',
         'parkandride.facilitiesTable',
-        'parkandride.capacitiesTable',
+        'parkandride.capacities',
         'parkandride.FacilityResource',
         'parkandride.HubResource'
     ]);

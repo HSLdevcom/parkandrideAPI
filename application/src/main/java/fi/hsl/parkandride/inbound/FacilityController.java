@@ -87,12 +87,4 @@ public class FacilityController {
         return new ResponseEntity<>(SearchResults.of(types), OK);
     }
 
-
-    // TODO: REMOVE - this method is only for demo/testing in the beginning of the project
-    @RequestMapping(method = POST, value = API + "/generate-test-facilities")
-    public ResponseEntity<SearchResults<Facility>> generateTestFacilities() {
-        SearchResults<Facility> results = facilityService.generateTestData();
-        return new ResponseEntity<>(results, OK);
-    }
-
 }

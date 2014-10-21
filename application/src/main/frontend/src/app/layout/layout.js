@@ -15,9 +15,9 @@
             templateUrl: 'layout/mainLayout.tpl.html',
             transclude: true,
             compile: function() {
-                var transcluded;
                 return {
                     post: function (scope, element, attributes, controller, transcludeFn) {
+                        var transcluded;
                         transcludeFn(scope, function(clone) {
                             transcluded = clone;
                             element.find('headline').replaceWith(findElement(transcluded, 'headline'));

@@ -12,7 +12,7 @@ module.exports = function(spec) {
 
     that.getCapacityTypes = function(facilityId) {
         return element.all(by.css(".wdFacility" + facilityId + " .wdCapacityType")).filter(function(el) { return el.isDisplayed(); }).getText();
-    }
+    };
 
     that.toCreateView = function () {
         return spec.createButton.click();

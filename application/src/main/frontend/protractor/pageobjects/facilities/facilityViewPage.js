@@ -2,6 +2,7 @@
 
 module.exports = function(spec) {
     var that = require('../base')(spec);
+    var capacitiesTable = require('../capacitiesTable')();
 
     spec.view = $('.wdFacilityView');
     spec.name = $('.wdName');
@@ -29,7 +30,7 @@ module.exports = function(spec) {
     };
 
     that.getCapacityTypes = function() {
-        return spec.capacityTypes.filter(function(el) { return el.isDisplayed(); }).getText();
+        return capacitiesTable.getTypes();
     };
 
     that.toListView = function () {

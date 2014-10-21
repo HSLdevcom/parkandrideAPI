@@ -4,6 +4,7 @@ module.exports = function(spec) {
     var _ = require('lodash');
 
     var that = require('../base')(spec);
+    var capacitiesTable = require('../capacitiesTable')();
 
     spec.view = $('.wdHubView');
     spec.name = $('.wdName');
@@ -27,7 +28,7 @@ module.exports = function(spec) {
     };
 
     that.getCapacityTypes = function() {
-        return spec.capacityTypes.filter(function(el) { return el.isDisplayed(); }).getText();
+        return capacitiesTable.getTypes();
     };
 
     return that;

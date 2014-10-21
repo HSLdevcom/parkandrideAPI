@@ -8,7 +8,6 @@ module.exports = function(spec) {
     spec.name = $('.wdName');
     spec.aliases = $('.wdAliases');
     spec.toListButton = element.all(by.linkUiSref('facility-list')).first();
-    spec.capacityTypes = element.all(by.css(".wdCapacityType"));
 
     that.getName = function () {
         return spec.name.getText();
@@ -20,22 +19,11 @@ module.exports = function(spec) {
         });
     };
 
-    that.assertCapacities = function (capacities) {
-        for (var capacityType in capacities) {
-            var capacity = capacities[capacityType];
-            for (var prop in capacity) {
-                expect($('.wd' + capacityType + prop).getText()).toEqual("" + capacity[prop]);
-            }
-        }
-    };
-
-    that.getCapacityTypes = function() {
-        return capacitiesTable.getTypes();
-    };
-
     that.toListView = function () {
         return spec.toListButton.click();
     };
+
+    that.capacitiesTable = capacitiesTable;
 
     return that;
 };

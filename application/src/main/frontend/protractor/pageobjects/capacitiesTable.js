@@ -6,16 +6,12 @@ module.exports = function () {
 
     spec.capacityTypes = element.all(by.css(".wdCapacityType"));
 
-    spec.getVisibleText = function(el) {
-        return el.filter(function(e) { return e.isDisplayed(); }).getText();
-    };
-
     spec.getTypeProperty = function(type, property) {
-        return spec.getVisibleText($('.wd' + type + property));
+        return $('.wd' + type + property).getText();
     };
 
     that.getTypes = function() {
-        return spec.getVisibleText(spec.capacityTypes);
+        return spec.capacityTypes.filter(function(e) { return e.isDisplayed(); }).getText();
     };
 
     that.getBuilt = function(type) {

@@ -26,7 +26,10 @@
                             element.find('headline').replaceWith(heading[0]);
                             element.find('actions-top').replaceWith(actions[0]);
                             element.find('content').replaceWith(body[0]);
-                            element.find('actions-bottom').replaceWith(actions[1]);
+                        });
+                        transcludeFn(scope, function(clone) {
+                            var actions = findElements(clone, 'actions');
+                            element.find('actions-bottom').replaceWith(actions[0]);
                         });
                     }
                 };

@@ -1,42 +1,21 @@
-<div class="row navi-above">
-	<div class="container">
-		<div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 first-column">
-			<h2 translate="facilities.title"></h2>
-		</div>
-		<div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 text-right last-column">
-			<facility-list-navi-above></facility-list-navi-above>
-		</div>
-	</div>
-</div>
-
-<div class="container">
-	<div class="panel panel-default">
-
+<main-layout>
+	<headline>{{'facilities.title' | translate}}</headline>
+	<actions><facility-list-navi></facility-list-navi></actions>
+	<content>
 		<table class="table table-bordered table-striped table-condensed">
 			<thead>
-				<tr>
-					<th translate="facilities.list.name"></th>
-					<th translate="facilities.list.types"></th>
-				</tr>
+			<tr>
+				<th translate="facilities.list.name"></th>
+				<th translate="facilities.list.types"></th>
+			</tr>
 			</thead>
 			<tbody>
-				<tr ng-repeat="f in fctrl.list" class="wdFacility{{f.id}}">
-					<td class="wdName"><a ui-sref="facility-view({id: f.id})">{{f.name}}</a></td>
-					<td class="wdCapacities"><capacities-list capacities="f.capacities"></capacities-list></td>
-				</tr>
+			<tr ng-repeat="f in fctrl.list" class="wdFacility{{f.id}}">
+				<td class="wdName"><a ui-sref="facility-view({id: f.id})">{{f.name}}</a></td>
+				<td class="wdCapacities"><capacities-list capacities="f.capacities"></capacities-list></td>
+			</tr>
 			</tbody>
 		</table>
-	</div>
-</div>
-
-<!--
-<div class="row navi-below">
-	<div class="container">
-		<div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 first-column">
-		</div>
-		<div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 text-right last-column">
-			<facility-list-navi-below></facility-list-navi-below>
-		</div>
-	</div>
-</div>
--->
+	</content>
+	<actions><facility-list-navi></facility-list-navi></actions>
+</main-layout>

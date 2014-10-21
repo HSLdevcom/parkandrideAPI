@@ -3,6 +3,7 @@
         'ui.router',
         'parkandride.FacilityResource',
         'parkandride.facilityMap',
+        'parkandride.layout',
         'ngTagsInput'
     ]);
 
@@ -68,17 +69,10 @@
         };
     });
 
-    m.directive('facilityEditNaviAbove', function() {
+    m.directive('facilityEditNavi', function() {
         return {
             restrict: 'E',
-            templateUrl: 'facilities/facilityEditNaviAbove.tpl.html'
-        };
-    });
-
-    m.directive('facilityEditNaviBelow', function() {
-        return {
-            restrict: 'E',
-            templateUrl: 'facilities/facilityEditNaviBelow.tpl.html'
+            templateUrl: 'facilities/facilityEditNavi.tpl.html'
         };
     });
 

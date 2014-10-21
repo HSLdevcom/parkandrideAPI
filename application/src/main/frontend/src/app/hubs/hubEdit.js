@@ -3,6 +3,7 @@
         'ui.router',
         'parkandride.hubMap',
         'parkandride.capacities',
+        'parkandride.layout',
         'parkandride.HubResource',
         'parkandride.FacilityResource',
         'ngTagsInput'
@@ -50,17 +51,10 @@
         };
     });
 
-    m.directive('hubEditNaviAbove', function () {
+    m.directive('hubEditNavi', function () {
         return {
             restrict: 'E',
-            templateUrl: 'hubs/hubEditNaviAbove.tpl.html'
-        };
-    });
-
-    m.directive('hubEditNaviBelow', function () {
-        return {
-            restrict: 'E',
-            templateUrl: 'hubs/hubEditNaviBelow.tpl.html'
+            templateUrl: 'hubs/hubEditNavi.tpl.html'
         };
     });
 

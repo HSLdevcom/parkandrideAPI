@@ -3,6 +3,7 @@
         'ui.router',
         'parkandride.i18n',
         'parkandride.capacities',
+        'parkandride.layout',
         'parkandride.FacilityResource',
         'parkandride.facilityEdit',
         'parkandride.facilityView'
@@ -31,17 +32,10 @@
         });
     }
 
-    m.directive('facilityListNaviAbove', function() {
+    m.directive('facilityListNavi', function() {
         return {
             restrict: 'E',
-            templateUrl: 'facilities/facilityListNaviAbove.tpl.html'
-        };
-    });
-
-    m.directive('facilityListNaviBelow', function() {
-        return {
-            restrict: 'E',
-            templateUrl: 'facilities/facilityListNaviBelow.tpl.html'
+            templateUrl: 'facilities/facilityListNavi.tpl.html'
         };
     });
 

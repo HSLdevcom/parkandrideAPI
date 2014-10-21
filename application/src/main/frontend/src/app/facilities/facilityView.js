@@ -3,7 +3,9 @@
         'ui.router',
         'parkandride.facilityMap',
         'parkandride.capacities',
-        'parkandride.FacilityResource'
+        'parkandride.layout',
+        'parkandride.FacilityResource',
+        'parkandride.layout'
     ]);
 
     m.config(function config($stateProvider) {
@@ -29,18 +31,22 @@
         this.facility = facility;
     }
 
-    m.directive('facilityViewNaviAbove', function() {
+    m.directive('facilityViewNavi', function() {
         return {
             restrict: 'E',
-            templateUrl: 'facilities/facilityViewNaviAbove.tpl.html'
+            templateUrl: 'facilities/facilityViewNavi.tpl.html'
         };
     });
 
-    m.directive('facilityViewNaviBelow', function() {
-        return {
-            restrict: 'E',
-            templateUrl: 'facilities/facilityViewNaviBelow.tpl.html'
-        };
-    });
-
+//    m.directive('myLink', function(){
+//        return {
+//            restrict: 'E',
+//            transclude: true,
+//            scope: {},
+//            template: '<a ng-transclude></a>',
+//            compile: function(element, attrs) {
+//                element.find("a").attr("ui-sref", attrs.uiSref);
+//            }
+//        };
+//    });
 })();

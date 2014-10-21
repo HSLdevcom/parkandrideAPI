@@ -1,9 +1,0 @@
-<a class="btn btn-s btn-navi-below" role="button" ng-show="!editCtrl.facility.id" ui-sref="facility-list">
-	{{'common.action.cancel' | translate }}
-</a>
-<a class="btn btn-s btn-navi-below" role="button" ng-show="editCtrl.facility.id" ui-sref="facility-view({ id: editCtrl.facility.id })">
-	{{'common.action.cancel' | translate }}
-</a>
-<a class="btn btn-s btn-navi-below wdSave" role="button" ng-click="editFacilityForm.$valid && editCtrl.saveFacility()">
-{{'common.action.save' | translate }}
-</a>

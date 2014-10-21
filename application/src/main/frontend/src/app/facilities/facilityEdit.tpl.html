@@ -1,48 +1,43 @@
 <form name="editFacilityForm" class="form-horizontal" role="form" novalidate>
+	<main-layout>
+		<headline>
+			{{ editCtrl.facility.name || 'facilities.name.placeholder' | translate }}
+		</headline>
+		<actions>
+			<facility-edit-navi></facility-edit-navi>
+		</actions>
+		<content>
+			<div class="row wdFacilityEditView">
+				<div class="col-md-6">
 
-	<div class="row navi-above">
-		<div class="container">
-			<div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 first-column">
-				<h2>{{ editCtrl.facility.name || 'facilities.name.placeholder' | translate }}</h2>
-			</div>
-			<div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 text-right first-column">
-				<facility-edit-navi-above></facility-edit-navi-above>
-			</div>
-		</div>
-	</div>
-
-	<div class="container content">
-		<div class="row wdFacilityEditView">
-			<div class="col-md-6">
-
-				<h3>Nimitiedot</h3>
-				<div class="form-group">
-					<label for="inputName" class="col-sm-5 control-label">* {{ "facilities.name.label" | translate }}</label>
-					<div class="col-sm-7">
-						<input id="inputName" type="text" class="form-control" ng-model="editCtrl.facility.name" required />
+					<h3>Nimitiedot</h3>
+					<div class="form-group">
+						<label for="inputName" class="col-sm-5 control-label">* {{ "facilities.name.label" | translate }}</label>
+						<div class="col-sm-7">
+							<input id="inputName" type="text" class="form-control" ng-model="editCtrl.facility.name" required />
+						</div>
 					</div>
-				</div>
-				<div class="form-group">
-					<label for="inputAlias" class="col-sm-5 control-label">{{ "facilities.aliases.label" | translate }}</label>
-					<div class="col-sm-7 wdAliases">
-						<tags-input ng-model="editCtrl.facility.aliases" placeholder="{{ 'facilities.aliases.placeholder' | translate }}" repl
-						ace-spaces-with-dashes="false"></tags-input>
+					<div class="form-group">
+						<label for="inputAlias" class="col-sm-5 control-label">{{ "facilities.aliases.label" | translate }}</label>
+						<div class="col-sm-7 wdAliases">
+							<tags-input ng-model="editCtrl.facility.aliases" placeholder="{{ 'facilities.aliases.placeholder' | translate }}" repl
+										ace-spaces-with-dashes="false"></tags-input>
+						</div>
 					</div>
-				</div>
-				<div>
+					<div>
 
-					<h3>{{"facilities.capacity.heading" | translate}}</h3>
+						<h3>{{"facilities.capacity.heading" | translate}}</h3>
 
-					<div class="panel panel-default">
-						<table class="table table-bordered table-striped table-condensed">
-							<thead>
+						<div class="panel panel-default">
+							<table class="table table-bordered table-striped table-condensed">
+								<thead>
 								<tr>
 									<th translate="facilities.capacity.type"></th>
 									<th translate="facilities.capacity.built"></th>
 									<th translate="facilities.capacity.unavailable"></th>
 								</tr>
-							</thead>
-							<tbody>
+								</thead>
+								<tbody>
 								<tr ng-repeat="capacityType in editCtrl.capacityTypes">
 									<td class="wdCapacityType">{{'facilities.capacityType.' + capacityType | translate}}</td>
 									<td>
@@ -52,25 +47,20 @@
 										<input type="number" class="form-control wd{{capacityType}}unavailable" ng-model="editCtrl.facility.capacities[capacityType].unavailable" min="0">
 									</td>
 								</tr>
-							</tbody>
-						</table>
+								</tbody>
+							</table>
+						</div>
 					</div>
 				</div>
+				<div class="col-md-6">
+					<h3>* {{"facilities.location" | translate}}</h3>
+					<facility-map ng-model="editCtrl.facility.border" editable="true" required></facility-map>
+				</div>
 			</div>
-			<div class="col-md-6">
-				<h3>* {{"facilities.location" | translate}}</h3>
-				<facility-map ng-model="editCtrl.facility.border" editable="true" required></facility-map>
-			</div>
-		</div>
-	</div>
-
-	<div class="row navi-below">
-		<div class="container">
-		<div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 first-column">
-		</div>
-		<div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 text-right last-column">
-		<facility-edit-navi-below></facility-edit-navi-below>
-	</div>
-</div>
+		</content>
+		<actions>
+			<facility-edit-navi></facility-edit-navi>
+		</actions>
+	</main-layout>
 
 </form>

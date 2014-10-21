@@ -132,5 +132,6 @@ describe('Basic flow', function() {
         expect(hubViewPage.isDisplayed()).toBe(true);
         expect(hubViewPage.getName()).toBe(hubName);
         hubViewPage.assertCapacities([facility1, facility2]);
+        arrayAssert.assertInOrder(hubViewPage.getCapacityTypes(), capacityTypeOrder);
     });
 });

@@ -7,6 +7,7 @@ module.exports = function(spec) {
 
     spec.view = $('.wdHubView');
     spec.name = $('.wdName');
+    spec.capacityTypes = element.all(by.css(".wdCapacityType"));
 
     that.getName = function () {
         return spec.name.getText();
@@ -23,6 +24,10 @@ module.exports = function(spec) {
                 expect($('.wd' + capacityType + prop).getText()).toEqual("" + capacity[prop]);
             }
         }
+    };
+
+    that.getCapacityTypes = function() {
+        return spec.capacityTypes.filter(function(el) { return el.isDisplayed(); }).getText();
     };
 
     return that;

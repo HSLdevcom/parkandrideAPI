@@ -85,13 +85,13 @@ describe('Basic flow', function() {
         expect(facilityViewPage.getName()).toBe(facility1.name);
         expect(facilityViewPage.getAliases()).toEqual(facility1.aliases);
         facilityViewPage.assertCapacities(facility1.capacities);
-        arrayAssert.assertInOrder(facilityViewPage.getCapacityTypes(), capacityTypeOrder, { allowSkip: true });
+        arrayAssert.assertInOrder(facilityViewPage.getCapacityTypes(), capacityTypeOrder);
     });
 
     it('Return to list and go to facility create', function() {
         facilityViewPage.toListView();
         expect(facilityListPage.isDisplayed()).toBe(true);
-        arrayAssert.assertInOrder(facilityListPage.getCapacityTypes(1), capacityTypeOrder, { allowSkip: true });
+        arrayAssert.assertInOrder(facilityListPage.getCapacityTypes(1), capacityTypeOrder);
 
         facilityListPage.toCreateView();
         expect(facilityEditPage.isDisplayed()).toBe(true);

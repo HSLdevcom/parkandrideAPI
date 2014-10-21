@@ -1,38 +1,51 @@
 (function() {
     var m = angular.module('parkandride.layout', []);
 
-    function findElements(clone, tag) {
+    function findElement(elements, tag, index) {
         tag = tag.toUpperCase();
-        var results = [];
-        for (var i=0; i < clone.length; i++) {
-            if (clone[i].tagName === tag) {
-                results.push(clone[i]);
+        for (var i=0; i < elements.length; i++) {
+            if (elements[i].tagName === tag) {
+                return elements[i];
             }
         }
-        return results;
     }
-    m.directive('mainLayout', function (MapService, schema, $compile) {
+    m.directive('mainLayout', function () {
         return {
             restrict: 'E',
             templateUrl: 'layout/mainLayout.tpl.html',
             transclude: true,
-            compile: function(element, attributes) {
+            compile: function() {
+                var transcluded;
                 return {
                     post: function (scope, element, attributes, controller, transcludeFn) {
                         transcludeFn(scope, function(clone) {
-                            var heading = findElements(clone, 'headline');
-                            var actions = findElements(clone, 'actions');
-                            var body = findElements(clone, 'content');
-                            element.find('headline').replaceWith(heading[0]);
-                            element.find('actions-top').replaceWith(actions[0]);
-                            element.find('content').replaceWith(body[0]);
+                            transcluded = clone;
+                            element.find('headline').replaceWith(findElement(transcluded, 'headline'));
+                            // map.link is called after this transclude and it needs to be attached before linking
+                            element.find('content').replaceWith(findElement(transcluded, 'content'));
+                            // actions.link has not been called yet. It's empty and cannot be attached yet
                         });
-                        transcludeFn(scope, function(clone) {
-                            var actions = findElements(clone, 'actions');
-                            element.find('actions-bottom').replaceWith(actions[0]);
-                        });
+                        // actions.link is done and can be attached
+                        var actions = findElement(transcluded, 'actions').children[0].children;
+                        element.find('actions-top').replaceWith(findElement(actions, 'actions-top'));
+                        element.find('actions-bottom').replaceWith(findElement(actions, 'actions-bottom'));
                     }
                 };
+            }
+        };
+    });
+    m.directive('actions', function() {
+        return {
+            restrict: 'E',
+            transclude: true,
+            template: "<div><actions-top></actions-top><actions-bottom></actions-bottom></div>",
+            link: function (scope, element, attributes, controller, transcludeFn) {
+                transcludeFn(scope, function(clone) {
+                    element.find('actions-top').append(clone);
+                });
+                transcludeFn(scope, function(clone) {
+                    element.find('actions-bottom').append(clone);
+                });
             }
         };
     });

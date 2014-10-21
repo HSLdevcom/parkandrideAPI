@@ -3,9 +3,11 @@
 		<span class="wdName">{{viewCtrl.facility.name}}</span>
 		<small class="wdAliases">{{viewCtrl.facility.aliases | joinBy: ", "}}</small>
 	</headline>
-	<actions><facility-view-navi></facility-view-navi></actions>
+	<actions>
+		<facility-view-navi></facility-view-navi>
+	</actions>
 	<content>
-		<div class="row">
+		<div class="row wdFacilityView">
 			<div class="col-md-6 col-lg-6">
 				<capacities-table capacities="viewCtrl.facility.capacities"></capacities-table>
 			</div>

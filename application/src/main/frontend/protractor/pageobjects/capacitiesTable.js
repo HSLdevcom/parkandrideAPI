@@ -30,31 +30,29 @@ module.exports = function () {
         return spec.getTypeProperty(type, 'unavailable');
     };
 
-    that.getCapacity = function (type, result) {
-        result = result || {};
-        return that.getBuilt(type)
-            .then(function (value) {
-                result.built = spec.parseInt(value);
-                return that.getUnavailable(type);
-            })
-            .then(function (value) {
-                result.unavailable = spec.parseInt(value);
-                return result;
-            });
+    that.getCapacity = function (type) {
+        var p1 = that.getBuilt(type).then(function (value) { return spec.parseInt(value); });
+        var p2 = that.getUnavailable(type).then(function (value) { return spec.parseInt(value); });
+        return protractor.promise.all([p1, p2]).then(function (value) { return  {built: value[0], unavailable: value[1]} });
     };
 
     that.getCapacities = function(types) {
+        function getCapacityWithType(type) {
+            return that.getCapacity(type).then(function (value) {
+                var result = {};
+                result[type] = value;
+                return result;
+            });
+        }
+
         var capacityPromises = [];
         for (var i = 0; i < types.length; i++) {
-            capacityPromises.push(that.getCapacity(types[i], { type: types[i]}));
+            capacityPromises.push(getCapacityWithType(types[i]));
         }
-        return protractor.promise.all(capacityPromises).then(function(capacities) {
-            return _.reduce(capacities, function(result, capacity) {
-                var copy = _.clone(capacity);
-                delete copy.type;
-                result[capacity.type] = copy;
-                return result;
-            }, {});
+        return protractor.promise.all(capacityPromises).then(function(capacitiesWithType){
+            return _.reduce(capacitiesWithType, function(acc, capacityWithType){
+                return _.merge(acc, capacityWithType);
+            });
         });
     };
 

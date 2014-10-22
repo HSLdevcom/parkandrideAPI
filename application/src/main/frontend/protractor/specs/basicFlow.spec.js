@@ -56,13 +56,6 @@ describe('Basic flow', function() {
         }
     });
 
-    function assertCapacities(context, capacities) {
-        for (var ctype in capacities) {
-            expect(context.getBuilt(ctype)).toEqual("" + capacities[ctype].built);
-            expect(context.getUnavailable(ctype)).toEqual("" + capacities[ctype].unavailable);
-        }
-    }
-
     var capacityTypeOrder = ["Liityntäpysäköinti", "Polkupyörä", "Henkilöauto", "Invapaikka", "Moottoripyörä", "Sähköauto"];
 
     it('should reset all', function() {
@@ -92,7 +85,7 @@ describe('Basic flow', function() {
         expect(facilityViewPage.getName()).toBe(facility1.name);
         expect(facilityViewPage.getAliases()).toEqual(facility1.aliases);
         arrayAssert.assertInOrder(facilityViewPage.capacitiesTable.getTypes(), capacityTypeOrder);
-        assertCapacities(facilityViewPage.capacitiesTable, facility1.capacities);
+        expect(facilityViewPage.capacitiesTable.getCapacities(_.keys(facility1.capacities))).toEqual(facility1.capacities);
     });
 
     it('Return to list and go to facility create', function() {
@@ -118,7 +111,7 @@ describe('Basic flow', function() {
         expect(facilityViewPage.getName()).toBe(facility2.name);
         expect(facilityViewPage.getAliases()).toEqual(facility2.aliases);
         arrayAssert.assertInOrder(facilityViewPage.capacitiesTable.getTypes(), capacityTypeOrder, { allowSkip: true });
-        assertCapacities(facilityViewPage.capacitiesTable, facility2.capacities);
+        expect(facilityViewPage.capacitiesTable.getCapacities(_.keys(facility2.capacities))).toEqual(facility2.capacities);
     });
 
     it('Go to create hub via hub list', function() {

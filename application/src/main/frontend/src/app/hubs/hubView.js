@@ -23,7 +23,7 @@
                             return FacilityResource.summarizeFacilities(hub.facilityIds);
                         },
                         facilities: function(hub, FacilityResource) {
-                            return FacilityResource.listFacilities({ ids: hub.facilityIds });
+                            return FacilityResource.loadFacilities(hub.facilityIds);
                         }
                     }
                 }

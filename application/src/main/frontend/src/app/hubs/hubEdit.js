@@ -44,6 +44,7 @@
 
     m.controller('HubEditCtrl', function ($scope, $state, HubResource, FacilityResource, hub) {
         this.hub = hub;
+        this.facilities = [];
         this.saveHub = function () {
             HubResource.save(this.hub).then(function (id) {
                 $state.go('hub-view', { "id": id });

@@ -3,6 +3,7 @@
         'ui.router',
         'parkandride.i18n',
         'parkandride.capacities',
+        'parkandride.layout',
         'parkandride.FacilityResource',
         'parkandride.facilityEdit',
         'parkandride.facilityView'

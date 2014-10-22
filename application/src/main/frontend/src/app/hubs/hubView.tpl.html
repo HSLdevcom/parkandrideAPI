@@ -1,6 +1,6 @@
 <main-layout>
 	<headline>
-		<span class="wdName">{{viewCtrl.hub.name}}</span>
+		<span class="wdHubName">{{viewCtrl.hub.name}}</span>
 		<small>{{viewCtrl.hub.aliases | joinBy: ", "}}</small>
 	</headline>
 	<actions>
@@ -9,7 +9,6 @@
 	<content>
 		<div class="row wdHubView">
 			<div class="col-md-6">
-				<div>{{"hubs.facilitiesTotal" | translate}} {{viewCtrl.summary.facilityCount}}</div>
 				<capacities-table capacities="viewCtrl.summary.capacities"></capacities-table>
 				<facilities-table facilities="viewCtrl.facilities"></facilities-table>
 			</div>

@@ -6,7 +6,7 @@ module.exports = function(spec) {
     var that = require('../base')(spec);
 
     spec.view = $('.wdHubView');
-    spec.name = $('.wdName');
+    spec.name = $('.wdHubName');
 
     that.getName = function () {
         return spec.name.getText();

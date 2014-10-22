@@ -1,34 +1,20 @@
-<div class="row navi-above wdHubView">
-	<div class="container">
-		<div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 first-column">
-			<h2><span class="wdName">{{viewCtrl.hub.name}}</span>
-				<small>{{viewCtrl.hub.aliases | joinBy: ", "}}</small>
-			</h2>
+<main-layout>
+	<headline>
+		<span class="wdName">{{viewCtrl.hub.name}}</span>
+		<small>{{viewCtrl.hub.aliases | joinBy: ", "}}</small>
+	</headline>
+	<actions>
+		<hub-view-navi></hub-view-navi>
+	</actions>
+	<content>
+		<div class="row">
+			<div class="col-md-6">
+				<div>{{"hubs.facilitiesTotal" | translate}} {{viewCtrl.summary.facilityCount}}</div>
+				<capacities-table capacities="viewCtrl.summary.capacities"></capacities-table>
+			</div>
+			<div class="col-md-6 text-right">
+				<view-hub-map ng-model="viewCtrl.hub"></view-hub-map>
+			</div>
 		</div>
-		<div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 text-right first-column">
-			<hub-view-navi-above></hub-view-navi-above>
-		</div>
-	</div>
-</div>
-
-<div class="container content">
-	<div class="row">
-		<div class="col-md-6">
-			<div>{{"hubs.facilitiesTotal" | translate}} {{viewCtrl.summary.facilityCount}}</div>
-			<capacities-table capacities="viewCtrl.summary.capacities"></capacities-table>
-		</div>
-		<div class="col-md-6 text-right">
-			<view-hub-map ng-model="viewCtrl.hub"></view-hub-map>
-		</div>
-	</div>
-</div>
-
-<div class="row navi-below">
-	<div class="container">
-		<div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 first-column">
-		</div>
-		<div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 text-right last-column">
-			<hub-view-navi-below></hub-view-navi-below>
-		</div>
-	</div>
-</div>
+	</content>
+</main-layout>

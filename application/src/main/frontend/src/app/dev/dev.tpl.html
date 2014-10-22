@@ -1,17 +1,19 @@
-<div toggle feature="dev">
-	<div ng-hide="!successMessage" style="background-color: yellow; border: 1px solid black">{{successMessage}}</div>
-	<form name="devForm" class="form-horizontal" role="form" novalidate>
-		<a id="wdDevResetAll" class="btn btn-xs btn-primary" role="button" style="margin-top: 30px; margin-left: 10px"
-		   ng-click="devForm.$valid && devCtrl.resetAll()">
+<div class="container">
+	<div toggle feature="dev">
+		<div ng-hide="!successMessage" style="background-color: yellow; border: 1px solid black">{{successMessage}}</div>
+		<form name="devForm" class="form-horizontal" role="form" novalidate>
+			<a id="wdDevResetAll" class="btn btn-xs btn-primary" role="button" style="margin-top: 30px; margin-left: 10px"
+			ng-click="devForm.$valid && devCtrl.resetAll()">
 			Reset All
 		</a>
 		<a id="wdDevSaveCurrentState" class="btn btn-xs btn-primary" role="button" style="margin-top: 30px; margin-left: 10px"
-		   ng-click="devForm.$valid && devCtrl.saveCurrentState()">
-			Save current state
-		</a>
-		<a id="wdDevRevertToSavedState" class="btn btn-xs btn-primary" role="button" style="margin-top: 30px; margin-left: 10px"
-		   ng-click="devForm.$valid && devCtrl.revertToSavedState()">
-			Revert to saved state
-		</a>
-	</form>
+		ng-click="devForm.$valid && devCtrl.saveCurrentState()">
+		Save current state
+	</a>
+	<a id="wdDevRevertToSavedState" class="btn btn-xs btn-primary" role="button" style="margin-top: 30px; margin-left: 10px"
+	ng-click="devForm.$valid && devCtrl.revertToSavedState()">
+	Revert to saved state
+</a>
+</form>
+</div>
 </div>

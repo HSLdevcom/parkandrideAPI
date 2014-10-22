@@ -44,4 +44,5 @@
             templateUrl: 'hubs/hubViewNavi.tpl.html'
         };
     });
+
 })();

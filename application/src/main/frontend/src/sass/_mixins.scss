@@ -1,6 +1,6 @@
 @mixin button($radius, $font-size, $height) {
   //colors
-  background-color: $basecolor;
+  background-color: $primarycolor;
 
   //borders
   border: none;
@@ -13,4 +13,10 @@
 
   //size and position
   height: $height;
+}
+
+@mixin font($font-size){
+  font-size: $font-size;
+  line-height: 1em;
+  color: $primarycolor;
 }

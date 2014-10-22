@@ -2,6 +2,7 @@
     var m = angular.module('parkandride.facilityList', [
         'ui.router',
         'parkandride.facilitiesTable',
+        'parkandride.layout',
         'parkandride.FacilityResource',
         'parkandride.facilityEdit',
         'parkandride.facilityView'

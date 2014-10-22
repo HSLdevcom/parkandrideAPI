@@ -55,6 +55,7 @@ describe('Basic flow', function() {
             h: 60
         }
     });
+    var totalCapacities = _.reduce([facility1, facility2], function (acc, facility) { return acc.incCapacity(facility); });
 
     var capacityTypeOrder = ["Liityntäpysäköinti", "Polkupyörä", "Henkilöauto", "Invapaikka", "Moottoripyörä", "Sähköauto"];
 
@@ -131,7 +132,7 @@ describe('Basic flow', function() {
         hubEditPage.save();
         expect(hubViewPage.isDisplayed()).toBe(true);
         expect(hubViewPage.getName()).toBe(hubName);
-        arrayAssert.assertInOrder(hubViewPage.getCapacityTypes(), capacityTypeOrder);
-        hubViewPage.assertCapacities([facility1, facility2]);
+        arrayAssert.assertInOrder(hubViewPage.capacitiesTable.getTypes(), capacityTypeOrder);
+        expect(hubViewPage.capacitiesTable.getCapacities(_.keys(totalCapacities.capacities))).toEqual(totalCapacities.capacities);
     });
 });

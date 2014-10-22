@@ -19,8 +19,10 @@
             };
         };
 
-        api.listFacilities = function() {
-            return $http.get("/api/facilities").then(function(response) {
+        api.listFacilities = function(search) {
+            return $http.get("/api/facilities", {
+                params: search
+            }).then(function(response) {
                 return response.data.results;
             });
         };

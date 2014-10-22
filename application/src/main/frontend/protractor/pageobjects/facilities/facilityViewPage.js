@@ -4,7 +4,7 @@ module.exports = function(spec) {
     var that = require('../base')(spec);
 
     spec.view = $('.wdFacilityView');
-    spec.name = $('.wdName');
+    spec.name = $('.wdFacilityName');
     spec.aliases = $('.wdAliases');
     spec.toListButton = element.all(by.linkUiSref('facility-list')).first();
     spec.capacityTypes = element.all(by.css(".wdCapacityType"));

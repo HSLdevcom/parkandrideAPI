@@ -25,7 +25,7 @@ public class UrlSchema {
     /**
      * TESTING
      */
-    public static final String TEST_API = "/test";
+    public static final String TEST_API = "/dev-api";
 
     public static final String TEST_FACILITIES = TEST_API + "/facilities";
 

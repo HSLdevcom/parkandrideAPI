@@ -1,7 +1,7 @@
 (function() {
     var m = angular.module('parkandride.hubList', [
         'ui.router',
-        'parkandride.i18n',
+        'parkandride.capacities',
         'parkandride.HubResource',
         'parkandride.hubEdit',
         'parkandride.hubView'
@@ -16,19 +16,25 @@
                         templateUrl: 'hubs/hubList.tpl.html'
                     }
                 },
-                data: { pageTitle: 'Hubs' }
+                data: { pageTitle: 'Hubs' },
+                resolve: {
+                    hubs: function(HubResource) {
+                        return HubResource.listHubs();
+                    },
+                    facilities: function(FacilityResource, hubs) {
+                        var facilityIds = _.flatten(hubs, "facilityIds");
+                        return FacilityResource.loadFacilities(facilityIds).then(function(facilities) {
+                            return _.indexBy(facilities, "id");
+                        });
+                    }
+                }
             });
         });
 
     m.controller('HubsCtrl', HubsController);
-    function HubsController(HubResource, $translate) {
-        var self = this;
-        self.list = [];
-
-        HubResource.listHubs().then(function(data){
-            self.list = data;
-        });
-
+    function HubsController(HubResource, hubs, facilities) {
+        this.hubs = hubs;
+        this.facilities = facilities;
     }
 
     m.directive('hubListNavi', function() {

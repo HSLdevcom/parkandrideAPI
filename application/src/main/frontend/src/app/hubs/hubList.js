@@ -33,12 +33,15 @@
     m.controller('HubsCtrl', HubsController);
     function HubsController(HubResource, hubs, facilities) {
         this.hubs = hubs;
-        var attachedFacilityIds = _.sortBy(_.flatten(hubs, "facilityIds"));
+
+        // XXX: Refactor hub+facilities grouping into HubService if it's needed some elsewhere
         this.getFacilities = function(hub) {
             return _.map(hub.facilityIds, function(facilityId) {
                return facilities[facilityId];
             });
         };
+
+        var attachedFacilityIds = _.sortBy(_.flatten(hubs, "facilityIds"));
         this.getUnattachedFacilities = function() {
             return _.filter(facilities, function(facility) {
                 return _.indexOf(attachedFacilityIds, facility.id, true) < 0;

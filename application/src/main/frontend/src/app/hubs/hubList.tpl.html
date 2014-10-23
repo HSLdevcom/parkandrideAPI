@@ -4,19 +4,13 @@
 	<content>
 		<div class="panel panel-default">
 			<table class="table table-bordered table-striped table-condensed">
-				<thead>
-					<tr>
-						<th translate="hubs.list.name"></th>
-						<th translate="facilities.capacity.type"></th>
-					</tr>
-				</thead>
 				<tbody>
-					<tr ng-repeat-start="h in hubsCtrl.hubs">
+					<tr ng-repeat-start="h in hubsCtrl.hubs" class="hubRow">
 						<th colspan="2"><a ui-sref="hub-view({id: h.id})">{{h.name}}</a></th>
 					</tr>
-					<tr ng-repeat="facilityId in h.facilityIds" ng-repeat-end>
-						<td>{{hubsCtrl.facilities[facilityId].name}}</td>
-						<td><capacities-list capacities="hubsCtrl.facilities[facilityId].capacities"></capacities-list></td>
+					<tr ng-repeat="facility in hubsCtrl.getFacilities(h)" class="facilityRow" ng-repeat-end>
+						<td><a ui-sref="facility-view({id: facility.id})">{{facility.name}}</a></td>
+						<td><capacities-list capacities="facility.capacities"></capacities-list></td>
 					</tr>
 				</tbody>
 			</table>

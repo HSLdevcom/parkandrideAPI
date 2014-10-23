@@ -34,7 +34,11 @@
     m.controller('HubsCtrl', HubsController);
     function HubsController(HubResource, hubs, facilities) {
         this.hubs = hubs;
-        this.facilities = facilities;
+        this.getFacilities = function(hub) {
+            return _.map(hub.facilityIds, function(facilityId) {
+               return facilities[facilityId];
+            });
+        };
     }
 
     m.directive('hubListNavi', function() {

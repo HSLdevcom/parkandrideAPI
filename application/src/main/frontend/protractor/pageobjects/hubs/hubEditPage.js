@@ -9,6 +9,8 @@ module.exports = function(spec) {
     spec.map = $('.hub-map .ol-viewport');
     spec.saveButton = element.all(by.css('.wdSave')).first();
 
+    that.facilitiesTable = require('../facilitiesTable')({});
+
     that.setName = function (name) {
         return spec.name.sendKeys(name);
     };

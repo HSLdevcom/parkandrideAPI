@@ -16,10 +16,12 @@
 							<input id="inputName" type="text" class="form-control" ng-model="editCtrl.hub.name" required />
 						</div>
 					</div>
+					<facilities-table facilities="editCtrl.facilities"></facilities-table>
 				</div>
 				<div class="col-md-6">
 					<h3>* {{"hubs.location" | translate}}</h3>
-					<edit-hub-map ng-model="editCtrl.hub"></edit-hub-map>
+
+					<edit-hub-map ng-model="editCtrl.hub" facilities="editCtrl.facilities"></edit-hub-map>
 				</div>
 			</div>
 		</content>

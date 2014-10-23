@@ -125,14 +125,22 @@ describe('Basic flow', function() {
     it('Create hub', function() {
         var hubName = newHubName();
         hubEditPage.setName(hubName);
+        expect(hubEditPage.facilitiesTable.isDisplayed()).toBe(false);
+
         hubEditPage.toggleFacility(facility1);
+        expect(hubEditPage.facilitiesTable.isDisplayed()).toBe(true);
+
         hubEditPage.toggleFacility(facility2);
         hubEditPage.setLocation({x: 165, y: 165});
+
+        expect(hubEditPage.facilitiesTable.getFacilityNames()).toEqual([facility1.name, facility2.name]);
 
         hubEditPage.save();
         expect(hubViewPage.isDisplayed()).toBe(true);
         expect(hubViewPage.getName()).toBe(hubName);
         arrayAssert.assertInOrder(hubViewPage.capacitiesTable.getTypes(), capacityTypeOrder);
         expect(hubViewPage.capacitiesTable.getCapacities(_.keys(totalCapacities.capacities))).toEqual(totalCapacities.capacities);
+        expect(hubEditPage.facilitiesTable.isDisplayed()).toBe(true);
+        expect(hubEditPage.facilitiesTable.getFacilityNames()).toEqual([facility1.name, facility2.name]);
     });
 });

@@ -7,6 +7,8 @@ module.exports = function(spec) {
     spec.view = $('.wdHubView');
     spec.name = $('.wdHubName');
 
+    that.facilitiesTable = require('../facilitiesTable')({});
+
     that.getName = function () {
         return spec.name.getText();
     };

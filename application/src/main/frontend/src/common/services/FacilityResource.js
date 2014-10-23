@@ -54,6 +54,15 @@
             });
         };
 
+        api.loadFacilities = function(facilityIds) {
+            if (_.isEmpty(facilityIds)){
+                var deferred = $q.defer();
+                deferred.resolve([]);
+                return deferred.promise;
+            }
+            return api.listFacilities({ ids: facilityIds });
+        };
+
         api.summarizeFacilities = function(facilityIds) {
             if (_.isEmpty(facilityIds)){
                 var deferred = $q.defer();

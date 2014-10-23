@@ -1,8 +1,8 @@
 (function() {
     var m = angular.module('parkandride.facilityList', [
         'ui.router',
-        'parkandride.i18n',
-        'parkandride.capacities',
+        'parkandride.facilitiesTable',
+        'parkandride.layout',
         'parkandride.FacilityResource',
         'parkandride.facilityEdit',
         'parkandride.facilityView'
@@ -22,7 +22,7 @@
         });
 
     m.controller('FacilitiesCtrl', FacilitiesController);
-    function FacilitiesController(FacilityResource, $translate, schema) {
+    function FacilitiesController(FacilityResource) {
         var origThis = this;
         this.list = [];
 

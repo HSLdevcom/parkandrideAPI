@@ -1,0 +1,141 @@
+//body
+html, body {
+  height: 100%;
+  color: $k80;
+  font-size: $basic-font-size;
+}
+
+//wrap for footer
+#wrap {
+  min-height: 100%;
+}
+
+//main for footer
+#main {
+  overflow:auto;
+  padding-bottom:40px;
+}
+
+//header & footer
+.page-header {
+  border: 0;
+  padding-top: 40px;
+  padding-bottom: 0px;
+  margin: 0px 0px 0px;
+}
+
+.page-footer {
+  position: relative;
+  margin-top: -40px;
+  width: 100%;
+  clear: both;
+  height: 40px;
+  color: #fff;
+  background-color: $k60;
+  padding-top: 10px;
+}
+
+//header logo
+.logo {
+  margin-top: -15px;
+}
+
+//header nav column
+.navi-col {
+  padding-left: 20px;
+}
+
+//header nav
+.nav-tabs {
+  height: $tab-height;
+  border-radius: $border-radius;
+  border-bottom: 0px;
+  margin-top: 10px;
+  > li {
+    margin-bottom: 0px;
+    > a {
+      height: $tab-height;
+      color: #fff;
+      background-color: $primarycolor;
+      border-radius: $border-radius;
+      border: 0;
+    }
+    > a:hover {
+      height: $tab-height;
+      color: #fff;
+      background-color: $primarycolor;
+      border-radius: $border-radius;
+      border: 0px;
+    }
+  }
+  > li.active {
+    > a {
+      height: $tab-height;
+      border-radius: $border-radius;
+      background-color: $secondarycolor;
+      border: 0;
+    }
+    > a:hover {
+      height: $tab-height;
+      border-radius: $border-radius;
+      background-color: $secondarycolor;
+      text-decoration: underline;
+      border: 0;
+    }
+  }
+}
+
+//header logout link
+.logout {
+  padding-top: 20px;
+}
+
+//colorful secondary navi above
+.navi-above {
+  background-color: $secondarycolor;
+  .btn {
+    margin-top: 30px;
+    margin-bottom: 30px;
+  }
+}
+
+.content {
+  padding-top:20px;
+  padding-bottom: 40px;
+}
+
+//secondary navi below
+.navi-below {
+  //background-color: $secondarycolor;
+  position: relative;
+  clear: both;
+  margin-top: -40px;
+  .btn {
+    margin-top: 30px;
+    margin-bottom: 30px;
+  }
+}
+
+//rows
+.row {
+  margin: 0 0 0 0;
+}
+
+//
+.navi-row {
+  margin-top: -140px;
+}
+
+//columns
+.first-column {
+  padding-left: 0px;
+}
+
+.last-column {
+  padding-right: 0px;
+}
+
+//panel
+.panel {
+  margin-top:40px;
+}

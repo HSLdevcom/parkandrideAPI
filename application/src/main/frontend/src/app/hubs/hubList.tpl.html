@@ -1,30 +1,20 @@
-<div class="row">
-	<div class="col-md-6">
-		<h2 translate="hubs.title"></h2>
-	</div>
-	<hub-list-navi></hub-list-navi>
-</div>
-
-
-<div class="panel panel-default" style="margin-top: 20px">
-
-	<table class="table table-bordered table-striped table-condensed">
-		<thead>
-		<tr>
-			<th translate="hubs.list.name"></th>
-		</tr>
-		</thead>
-		<tbody>
-		<tr ng-repeat="h in hubsCtrl.list">
-			<td><a ui-sref="hub-view({id: h.id})">{{h.name}}</a></td>
-		</tr>
-		</tbody>
-	</table>
-
-</div>
-
-<div class="row">
-	<div class="col-md-6">
-	</div>
-	<hub-list-navi></hub-list-navi>
-</div>
+<main-layout>
+	<headline>{{ "hubs.title" | translate }}</h2></headline>
+	<actions><hub-list-navi></hub-list-navi></actions>
+	<content>
+		<div class="panel panel-default">
+			<table class="table table-bordered table-striped table-condensed">
+				<thead>
+					<tr>
+						<th translate="hubs.list.name"></th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr ng-repeat="h in hubsCtrl.list">
+						<td><a ui-sref="hub-view({id: h.id})">{{h.name}}</a></td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</content>
+</main-layout>

@@ -1,24 +1,20 @@
-<div class="row wdHubView">
-	<div class="col-md-6">
-		<h2><span class="wdName">{{viewCtrl.hub.name}}</span>
-			<small>{{viewCtrl.hub.aliases | joinBy: ", "}}</small>
-		</h2>
-	</div>
-	<hub-view-navi></hub-view-navi>
-</div>
-
-<div class="row">
-	<div class="col-md-6">
-		<div>{{"hubs.facilitiesTotal" | translate}} {{viewCtrl.summary.facilityCount}}</div>
-		<capacities-table capacities="viewCtrl.summary.capacities"></capacities-table>
-	</div>
-	<div class="col-md-6 text-right">
-		<view-hub-map ng-model="viewCtrl.hub"></view-hub-map>
-	</div>
-</div>
-
-<div class="row">
-	<div class="col-md-6">
-	</div>
-	<hub-view-navi></hub-view-navi>
-</div>
+<main-layout>
+	<headline>
+		<span class="wdHubName">{{viewCtrl.hub.name}}</span>
+		<small>{{viewCtrl.hub.aliases | joinBy: ", "}}</small>
+	</headline>
+	<actions>
+		<hub-view-navi></hub-view-navi>
+	</actions>
+	<content>
+		<div class="row wdHubView">
+			<div class="col-md-6">
+				<capacities-table capacities="viewCtrl.summary.capacities"></capacities-table>
+				<facilities-table facilities="viewCtrl.facilities"></facilities-table>
+			</div>
+			<div class="col-md-6 text-right">
+				<view-hub-map ng-model="viewCtrl.hub"></view-hub-map>
+			</div>
+		</div>
+	</content>
+</main-layout>

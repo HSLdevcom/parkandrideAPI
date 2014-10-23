@@ -1,12 +1,9 @@
-<div class="col-md-6 text-right">
-	<a class="btn btn-xs btn-primary" role="button" style="margin-top: 30px" ng-show="!editCtrl.facility.id" ui-sref="facility-list">
-		{{'common.action.cancel' | translate }}
-	</a>
-	<a class="btn btn-xs btn-primary" role="button" style="margin-top: 30px" ng-show="editCtrl.facility.id" ui-sref="facility-view({ id: editCtrl.facility.id })">
-		{{'common.action.cancel' | translate }}
-	</a>
-	<a class="btn btn-xs btn-primary wdSave" role="button" style="margin-top: 30px; margin-left: 10px"
-	   ng-click="editFacilityForm.$valid && editCtrl.saveFacility()">
-		{{'common.action.save' | translate }}
-	</a>
-</div>
+<a class="btn btn-s btn-navi" role="button" ng-show="!editCtrl.facility.id" ui-sref="facility-list">
+	{{'common.action.cancel' | translate }}
+</a>
+<a class="btn btn-s btn-navi" role="button" ng-show="editCtrl.facility.id" ui-sref="facility-view({ id: editCtrl.facility.id })">
+	{{'common.action.cancel' | translate }}
+</a>
+<a class="btn btn-s btn-navi wdSave" role="button" ng-click="editFacilityForm.$valid && editCtrl.saveFacility()">
+{{'common.action.save' | translate }}
+</a>

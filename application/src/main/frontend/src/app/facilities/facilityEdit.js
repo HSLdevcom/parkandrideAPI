@@ -3,6 +3,7 @@
         'ui.router',
         'parkandride.FacilityResource',
         'parkandride.facilityMap',
+        'parkandride.layout',
         'ngTagsInput'
     ]);
 
@@ -74,5 +75,5 @@
             templateUrl: 'facilities/facilityEditNavi.tpl.html'
         };
     });
-})();
 
+})();

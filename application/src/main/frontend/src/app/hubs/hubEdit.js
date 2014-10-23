@@ -3,6 +3,7 @@
         'ui.router',
         'parkandride.hubMap',
         'parkandride.capacities',
+        'parkandride.layout',
         'parkandride.HubResource',
         'parkandride.FacilityResource',
         'ngTagsInput'
@@ -41,22 +42,20 @@
         });
     });
 
-    m.controller('HubEditCtrl', function($scope, $state, HubResource, FacilityResource, hub) {
-
+    m.controller('HubEditCtrl', function ($scope, $state, HubResource, FacilityResource, hub) {
         this.hub = hub;
-
-        this.saveHub = function() {
-            HubResource.save(this.hub).then(function(id){
+        this.saveHub = function () {
+            HubResource.save(this.hub).then(function (id) {
                 $state.go('hub-view', { "id": id });
             });
         };
     });
 
-    m.directive('hubEditNavi', function() {
+    m.directive('hubEditNavi', function () {
         return {
             restrict: 'E',
             templateUrl: 'hubs/hubEditNavi.tpl.html'
         };
     });
-})();
 
+})();

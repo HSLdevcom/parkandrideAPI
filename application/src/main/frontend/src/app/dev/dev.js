@@ -21,10 +21,10 @@
     m.factory('DevService', function($http, $q) {
         var api = {
             resetFacilities: function(facilities) {
-                var promise = $http['delete']('/test/facilities');
+                var promise = $http['delete']('/dev-api/facilities');
                 if (facilities) {
                     return promise.then(function() {
-                        return $http.put('/test/facilities', facilities).then(function(response){
+                        return $http.put('/dev-api/facilities', facilities).then(function(response){
                             return response.data;
                         });
                     });
@@ -33,10 +33,10 @@
                 }
             },
             resetHubs: function(hubs) {
-                var promise = $http['delete']('/test/hubs');
+                var promise = $http['delete']('/dev-api/hubs');
                 if (hubs) {
                     return promise.then(function() {
-                        return $http.put('/test/hubs', hubs).then(function(response){
+                        return $http.put('/dev-api/hubs', hubs).then(function(response){
                             return response.data;
                         });
                     });

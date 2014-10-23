@@ -55,6 +55,7 @@ describe('Basic flow', function() {
             h: 60
         }
     });
+    var totalCapacities = _.reduce([facility1, facility2], function (acc, facility) { return acc.incCapacity(facility); });
 
     var capacityTypeOrder = ["Liityntäpysäköinti", "Polkupyörä", "Henkilöauto", "Invapaikka", "Moottoripyörä", "Sähköauto"];
 
@@ -83,15 +84,15 @@ describe('Basic flow', function() {
         facilityEditPage.save();
         expect(facilityViewPage.isDisplayed()).toBe(true);
         expect(facilityViewPage.getName()).toBe(facility1.name);
-        facilityViewPage.assertAliases(facility1.aliases);
-        facilityViewPage.assertCapacities(facility1.capacities);
-        arrayAssert.assertInOrder(facilityViewPage.getCapacityTypes(), capacityTypeOrder, { allowSkip: true });
+        expect(facilityViewPage.getAliases()).toEqual(facility1.aliases);
+        arrayAssert.assertInOrder(facilityViewPage.capacitiesTable.getTypes(), capacityTypeOrder);
+        expect(facilityViewPage.capacitiesTable.getCapacities(_.keys(facility1.capacities))).toEqual(facility1.capacities);
     });
 
     it('Return to list and go to facility create', function() {
         facilityViewPage.toListView();
         expect(facilityListPage.isDisplayed()).toBe(true);
-        arrayAssert.assertInOrder(facilityListPage.getCapacityTypes(1), capacityTypeOrder, { allowSkip: true });
+        arrayAssert.assertInOrder(facilityListPage.getCapacityTypes(1), capacityTypeOrder);
 
         facilityListPage.toCreateView();
         expect(facilityEditPage.isDisplayed()).toBe(true);
@@ -109,9 +110,9 @@ describe('Basic flow', function() {
         facilityEditPage.save();
         expect(facilityViewPage.isDisplayed()).toBe(true);
         expect(facilityViewPage.getName()).toBe(facility2.name);
-        facilityViewPage.assertAliases(facility2.aliases);
-        facilityViewPage.assertCapacities(facility2.capacities);
-        arrayAssert.assertInOrder(facilityViewPage.getCapacityTypes(), capacityTypeOrder, { allowSkip: true });
+        expect(facilityViewPage.getAliases()).toEqual(facility2.aliases);
+        arrayAssert.assertInOrder(facilityViewPage.capacitiesTable.getTypes(), capacityTypeOrder, { allowSkip: true });
+        expect(facilityViewPage.capacitiesTable.getCapacities(_.keys(facility2.capacities))).toEqual(facility2.capacities);
     });
 
     it('Go to create hub via hub list', function() {
@@ -131,6 +132,7 @@ describe('Basic flow', function() {
         hubEditPage.save();
         expect(hubViewPage.isDisplayed()).toBe(true);
         expect(hubViewPage.getName()).toBe(hubName);
-        hubViewPage.assertCapacities([facility1, facility2]);
+        arrayAssert.assertInOrder(hubViewPage.capacitiesTable.getTypes(), capacityTypeOrder);
+        expect(hubViewPage.capacitiesTable.getCapacities(_.keys(totalCapacities.capacities))).toEqual(totalCapacities.capacities);
     });
 });

@@ -5,7 +5,7 @@ module.exports = function () {
     var that = {};
 
     var _ = require('lodash');
-    spec.capacityTypes = element.all(by.css(".wdCapacityType"));
+    spec.capacityTypes = element.all(by.css(".wdCapacityTable .wdCapacityType"));
 
     spec.getTypeProperty = function(type, property) {
         return $('.wd' + type + property).getText();

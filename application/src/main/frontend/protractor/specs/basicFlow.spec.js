@@ -36,7 +36,7 @@ describe('Basic flow', function() {
             "MOTORCYCLE": {"built": 50, "unavailable": 5},
             "ELECTRIC_CAR": {"built": 60, "unavailable": 6}
         },
-        aliases: ["fac1", "facility1"],
+        aliases: ["alias with spaces", "facility1"],
         border: {
             offset: {x: 90, y: 90},
             w: 60,

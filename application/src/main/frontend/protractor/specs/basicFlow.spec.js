@@ -121,6 +121,7 @@ describe('Basic flow', function() {
         menu.toHubs();
         expect(hubListPage.isDisplayed()).toBe(true);
         expect(hubListPage.getHubAndFacilityNames()).toEqual([facility1.name, facility2.name]);
+
         hubListPage.toCreateView();
         expect(hubEditPage.isDisplayed()).toBe(true);
     });
@@ -146,7 +147,7 @@ describe('Basic flow', function() {
         expect(hubEditPage.facilitiesTable.getFacilityNames()).toEqual([facility1.name, facility2.name]);
     });
 
-    if('List facilities grouped by hubs', function() {
+    it('List facilities grouped by hubs', function() {
         menu.toHubs();
         expect(hubListPage.isDisplayed()).toBe(true);
         expect(hubListPage.getHubAndFacilityNames()).toEqual([hubName, facility1.name, facility2.name]);

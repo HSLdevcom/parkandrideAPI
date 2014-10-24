@@ -6,7 +6,7 @@ set -x
 
 export SERVER_URL=$TARGET_SERVER_URL
 
-PROTRACTOR_DIR="application/src/main/frontend/protractor"
+PROTRACTOR_DIR="protractor"
 cd $PROTRACTOR_DIR
 
 /etc/init.d/xvfb start

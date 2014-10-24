@@ -1,23 +1,43 @@
 <html ng-app="liipiRadiator" ng-controller="BranchesCtrl">
 	<head>
 		<title>HSL Liipi Information Radiator</title>
+		<meta http-equiv="refresh" content="60" />
+		<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootswatch/3.2.0/darkly/bootstrap.min.css" />
+		<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" />
+		<style>
+			.container-fluid {
+				padding-top: 15px;
+			}
+			p img {
+				height: 30px;
+			}
+		</style>
 	</head>
 	<body>
-		<div>
-			<img ng-src="https://travis-ci.org/HSLdevcom/parkandrideAPI.svg?branch=master" style="height:100px;"/>
-			<img ng-src="https://img.shields.io/coveralls/HSLdevcom/parkandrideAPI.svg?branch=master" style="height:100px;"/>
-		</div>
-		<div style="padding-left: 10px;">
-			<table>
-				<tr ng-repeat="b in data.branches | filter:branchFilter">
-					<td>{{b.name}}</td>
-					<td><img ng-src="https://travis-ci.org/HSLdevcom/parkandrideAPI.svg?branch={{b.name}}"/></td>
-					<td><img ng-src="https://img.shields.io/coveralls/HSLdevcom/parkandrideAPI.svg?branch={{b.name}}"/></td>
-				</tr>
-			</table>
-		</div>
-		<div>
-			<iframe src="https://hsl-liipi-ci:8154/go/home" style="height: 768px; width: 1024px; border: 1px solid black;"></iframe>
+		<div class="container-fluid">
+			<div class=row>
+				<div class="col-lg-4">
+					<div class="panel panel-default" ng-repeat="b in data.branches | filter:branchFilter">
+						<div class="panel-body">
+							<h1>{{b.name}}</h1>
+							<p class="text-muted">{{b.commit.sha}}</p>
+							<p>
+								<img ng-src="https://travis-ci.org/HSLdevcom/parkandrideAPI.svg?branch={{b.name}}" />
+								<img ng-src="https://img.shields.io/coveralls/HSLdevcom/parkandrideAPI.svg?branch={{b.name}}" />
+							</p>
+						</div>
+					</div>
+				</div>
+				<div class="col-lg-8">
+					<div class="panel panel-default">
+						<div class="panel-body">
+							<div class="embed-responsive embed-responsive-4by3">
+								<iframe class="embed-responsive-item" src="https://hsl-liipi-ci:8154"></iframe>
+							</div>
+						</div>
+	 				</div>
+				</div>
+			</div>
 		</div>
 
 		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.26/angular.min.js"></script>
@@ -33,12 +53,21 @@
 				$scope.data = {};
 
 				$scope.branchFilter = function (b) {
-					var skip = ['master', 'stack-spike', 'stack-spike-ui'];
+					var skip = ['stack-spike', 'stack-spike-ui'];
 					return skip.indexOf(b.name) === -1;
 				};
 
 				Branches.query(function (response) {
-					$scope.data.branches = response;
+					var bs = [];
+					for (var i = 0; i< response.length; i++) {
+						var b = response[i];
+						if (b.name === 'master') {
+							bs.unshift(b);
+						} else {
+							bs.push(b);
+						}
+					}
+					$scope.data.branches = bs;
 				});
 			});
 		</script>

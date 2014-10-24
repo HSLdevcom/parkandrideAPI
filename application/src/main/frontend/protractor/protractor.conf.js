@@ -1,5 +1,5 @@
 exports.config = {
-    baseUrl:'http://localhost:8080',
+    baseUrl: process.env.SERVER_URL,
     chromeDriver: '../node_modules/protractor/selenium/chromedriver',
     chromeOnly: false,
     rootElement: 'html',

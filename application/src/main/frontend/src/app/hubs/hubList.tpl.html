@@ -6,15 +6,15 @@
 			<table class="table table-bordered table-striped table-condensed">
 				<tbody>
 					<!-- Unattached facilities -->
-					<tr ng-repeat="facility in hubsCtrl.getUnattachedFacilities()" class="facilityRow">
+					<tr ng-repeat="facility in hubsCtrl.getUnattachedFacilities()" class="facilityRow wdFacility{{facility.id}}">
 						<td class="wdName"><a ui-sref="facility-view({id: facility.id})">{{facility.name}}</a></td>
 						<td><capacities-list capacities="facility.capacities"></capacities-list></td>
 					</tr>
 					<!-- Facilities by hubs -->
-					<tr ng-repeat-start="h in hubsCtrl.hubs" class="hubRow">
+					<tr ng-repeat-start="h in hubsCtrl.hubs" class="hubRow wdHub{{facility.id}}">
 						<th class="wdName" colspan="2"><a ui-sref="hub-view({id: h.id})">{{h.name}}</a></th>
 					</tr>
-					<tr ng-repeat="facility in hubsCtrl.getFacilities(h)" class="facilityRow" ng-repeat-end>
+					<tr ng-repeat="facility in hubsCtrl.getFacilities(h)" class="facilityRow wdFacility{{facility.id}}" ng-repeat-end>
 						<td class="wdName"><a ui-sref="facility-view({id: facility.id})">{{facility.name}}</a></td>
 						<td><capacities-list capacities="facility.capacities"></capacities-list></td>
 					</tr>

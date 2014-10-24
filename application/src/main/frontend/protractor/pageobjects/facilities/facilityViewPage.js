@@ -7,7 +7,7 @@ module.exports = function(spec) {
     spec.view = $('.wdFacilityView');
     spec.name = $('.wdFacilityName');
     spec.aliases = $('.wdAliases');
-    spec.toListButton = element.all(by.linkUiSref('facility-list')).first();
+    spec.toListButton = element.all(by.linkUiSref('hub-list')).first();
 
     that.getName = function () {
         return spec.name.getText();

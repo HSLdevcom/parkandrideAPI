@@ -4,7 +4,9 @@
         'parkandride.capacities',
         'parkandride.HubResource',
         'parkandride.hubEdit',
-        'parkandride.hubView'
+        'parkandride.hubView',
+        'parkandride.facilityEdit',
+        'parkandride.facilityView'
     ]);
 
     m.config(function config($stateProvider) {

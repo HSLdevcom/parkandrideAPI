@@ -11,7 +11,6 @@ describe('Basic flow', function() {
     var indexPage = po.indexPage({});
     var devPage = po.devPage();
 
-    var facilityListPage = po.facilityListPage({});
     var facilityEditPage = po.facilityEditPage({});
     var facilityViewPage = po.facilityViewPage({});
 
@@ -67,8 +66,8 @@ describe('Basic flow', function() {
 
     it('Go to facility create', function() {
         indexPage.get();
-        expect(facilityListPage.isDisplayed()).toBe(true);
-        facilityListPage.toCreateView();
+        expect(hubListPage.isDisplayed()).toBe(true);
+        hubListPage.toFacilityCreateView();
         expect(facilityEditPage.isDisplayed()).toBe(true);
     });
 
@@ -93,10 +92,10 @@ describe('Basic flow', function() {
 
     it('Return to list and go to facility create', function() {
         facilityViewPage.toListView();
-        expect(facilityListPage.isDisplayed()).toBe(true);
-        arrayAssert.assertInOrder(facilityListPage.getCapacityTypes(1), capacityTypeOrder);
+        expect(hubListPage.isDisplayed()).toBe(true);
+        arrayAssert.assertInOrder(hubListPage.getCapacityTypes(1), capacityTypeOrder);
 
-        facilityListPage.toCreateView();
+        hubListPage.toFacilityCreateView();
         expect(facilityEditPage.isDisplayed()).toBe(true);
     });
 
@@ -122,7 +121,7 @@ describe('Basic flow', function() {
         expect(hubListPage.isDisplayed()).toBe(true);
         expect(hubListPage.getHubAndFacilityNames()).toEqual([facility1.name, facility2.name]);
 
-        hubListPage.toCreateView();
+        hubListPage.toHubCreateView();
         expect(hubEditPage.isDisplayed()).toBe(true);
     });
 

@@ -37,6 +37,10 @@
             },
             data: { pageTitle: 'Edit Facility' },
             resolve: {
+                // This is a hack, but I found no other way to ensure that tags-input placeholder translation works on page reload
+                aliasesPlaceholder: function($translate) {
+                    return $translate("facilities.aliases.placeholder");
+                },
                 facility: function($stateParams, FacilityResource) {
                     return FacilityResource.getFacility($stateParams.id);
                 }
@@ -44,7 +48,8 @@
         });
     });
 
-    m.controller('FacilityEditCtrl', function($state, schema, FacilityResource, facility, aliasesPlaceholder) {
+    m.controller('FacilityEditCtrl', function($scope, $state, schema, FacilityResource, facility, aliasesPlaceholder) {
+        $scope.common.translationPrefix = "facilities.";
         this.capacityTypes = schema.capacityTypes;
         this.aliasesPlaceholder = aliasesPlaceholder;
 

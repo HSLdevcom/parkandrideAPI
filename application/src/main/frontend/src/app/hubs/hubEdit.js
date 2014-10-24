@@ -43,6 +43,7 @@
     });
 
     m.controller('HubEditCtrl', function ($scope, $state, HubResource, FacilityResource, hub) {
+        $scope.common.translationPrefix = "hubs.";
         this.hub = hub;
         this.facilities = [];
         this.saveHub = function () {

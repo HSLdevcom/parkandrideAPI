@@ -57,6 +57,8 @@ describe('Basic flow', function() {
     });
     var totalCapacities = _.reduce([facility1, facility2], function (acc, facility) { return acc.incCapacity(facility); });
 
+    var hubName = newHubName();
+
     var capacityTypeOrder = ["Liityntäpysäköinti", "Polkupyörä", "Henkilöauto", "Invapaikka", "Moottoripyörä", "Sähköauto"];
 
     it('should reset all', function() {
@@ -118,12 +120,13 @@ describe('Basic flow', function() {
     it('Go to create hub via hub list', function() {
         menu.toHubs();
         expect(hubListPage.isDisplayed()).toBe(true);
+        expect(hubListPage.getHubAndFacilityNames()).toEqual([facility1.name, facility2.name]);
+
         hubListPage.toCreateView();
         expect(hubEditPage.isDisplayed()).toBe(true);
     });
 
     it('Create hub', function() {
-        var hubName = newHubName();
         hubEditPage.setName(hubName);
         expect(hubEditPage.facilitiesTable.isDisplayed()).toBe(false);
 
@@ -142,5 +145,11 @@ describe('Basic flow', function() {
         expect(hubViewPage.capacitiesTable.getCapacities(_.keys(totalCapacities.capacities))).toEqual(totalCapacities.capacities);
         expect(hubEditPage.facilitiesTable.isDisplayed()).toBe(true);
         expect(hubEditPage.facilitiesTable.getFacilityNames()).toEqual([facility1.name, facility2.name]);
+    });
+
+    it('List facilities grouped by hubs', function() {
+        menu.toHubs();
+        expect(hubListPage.isDisplayed()).toBe(true);
+        expect(hubListPage.getHubAndFacilityNames()).toEqual([hubName, facility1.name, facility2.name]);
     });
 });

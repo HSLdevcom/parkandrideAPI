@@ -3,8 +3,8 @@
 module.exports = function(spec) {
     var that = require('./base')(spec);
 
-    spec.facilities = element(by.linkUiSref('facility-list'));
-    spec.hubs = element(by.linkUiSref('hub-list'));
+    spec.facilities = element.all(by.linkUiSref('facility-list')).first();
+    spec.hubs = element.all(by.linkUiSref('hub-list')).first();
 
     that.selectFacilities = function () {
         return spec.facilities.click();

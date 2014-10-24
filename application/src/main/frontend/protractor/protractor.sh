@@ -18,7 +18,9 @@ JARFile=${APP_JAR:-"$SCRIPT_DIR/../../../../target/parkandride-application-0.0.1
 PIDFile="$SCRIPT_DIR/application.pid"
 LOGFile="$SCRIPT_DIR/application.log"
 NODE_MODULES="$SCRIPT_DIR/../node_modules"
-: ${SERVER_URL:=localhost:8080}
+: ${SERVER_URL:=http://localhost:8080}
+
+export SERVER_URL
 
 log() {
   echo "$@"

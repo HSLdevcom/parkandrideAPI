@@ -18,7 +18,7 @@ JARFile=${APP_JAR:-"$SCRIPT_DIR/../../../../target/parkandride-application-0.0.1
 PIDFile="$SCRIPT_DIR/application.pid"
 LOGFile="$SCRIPT_DIR/application.log"
 NODE_MODULES="$SCRIPT_DIR/../node_modules"
-SERVER_URL=localhost:8080
+: ${SERVER_URL:=localhost:8080}
 
 log() {
   echo "$@"
@@ -51,13 +51,14 @@ retryable_condition() {
 }
 
 is_server_up() {
-  curl --output /dev/null --silent --head --fail $SERVER_URL
+  log "Polling for server at $SERVER_URL..."
+  curl --output /dev/null --silent --head --fail --insecure $SERVER_URL
 }
 
 CMD="$1"; shift
 case "$CMD" in
   start)
-      java -jar $JARFile 2>&1 > $LOGFile &
+      java -jar $JARFile --spring.profiles.active=e2e 2>&1 > $LOGFile &
       ;;
   wait_until_started)
       retryable_condition 'is_server_up' 60 || fail "Failed to start application"

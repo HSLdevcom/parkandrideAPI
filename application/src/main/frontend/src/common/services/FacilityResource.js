@@ -19,8 +19,10 @@
             };
         };
 
-        api.listFacilities = function() {
-            return $http.get("/api/facilities").then(function(response) {
+        api.listFacilities = function(search) {
+            return $http.get("/api/facilities", {
+                params: search
+            }).then(function(response) {
                 return response.data.results;
             });
         };
@@ -52,6 +54,15 @@
             });
         };
 
+        api.loadFacilities = function(facilityIds) {
+            if (_.isEmpty(facilityIds)){
+                var deferred = $q.defer();
+                deferred.resolve([]);
+                return deferred.promise;
+            }
+            return api.listFacilities({ ids: facilityIds });
+        };
+
         api.summarizeFacilities = function(facilityIds) {
             if (_.isEmpty(facilityIds)){
                 var deferred = $q.defer();
@@ -68,7 +79,8 @@
 
         api.getCapacityTypes = function() {
             return $http.get("/api/capacity-types").then(function(response) {
-                return response.data.results;
+                capacityTypesCached = response.data.results;
+                return capacityTypesCached;
             });
         };
 

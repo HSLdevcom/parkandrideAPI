@@ -8,14 +8,17 @@
         'ui.router',
 
         'filters',
+        'featureToggle',
 
-        'parkandride.i18n',
-        'parkandride.facilityList',
-        'parkandride.hubList'
+        'parkandride.hubList',
+
+        'parkandride.dev'
     ]);
 
+    m.constant('FEATURES_URL', 'assets/features.json');
+
     m.config(function myAppConfig($stateProvider, $urlRouterProvider, $httpProvider) {
-        $urlRouterProvider.otherwise('/facilities');
+        $urlRouterProvider.otherwise('/hubs');
 
         $httpProvider.interceptors.push(function($q, $translate) {
             return {
@@ -31,8 +34,13 @@
         });
     });
 
-    m.run(function run() {
+    m.value("schema", { capacityTypes:[] });
+
+    m.run(function run(schema, FacilityResource) {
         // Use the main applications run method to execute any code after services have been instantiated
+        FacilityResource.getCapacityTypes().then(function(types) {
+            schema.capacityTypes = types;
+        });
     });
 
     m.controller('AppCtrl', function AppCtrl($scope, $location) {

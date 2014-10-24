@@ -28,7 +28,9 @@ import fi.hsl.parkandride.outbound.sql.QHubFacility;
 
 public class HubDao implements HubRepository {
 
-    private static final SimpleExpression<Long> nextHubId = SQLExpressions.nextval("hub_id_seq");
+    public static final String HUB_ID_SEQ = "hub_id_seq";
+
+    private static final SimpleExpression<Long> nextHubId = SQLExpressions.nextval(HUB_ID_SEQ);
 
     private static final QHub qHub = QHub.hub;
 
@@ -48,8 +50,11 @@ public class HubDao implements HubRepository {
     @Override
     @TransactionalWrite
     public long insertHub(Hub hub) {
-        long hubId = queryFactory.query().singleResult(nextHubId);
+        return insertHub(hub, queryFactory.query().singleResult(nextHubId));
+    }
 
+    @TransactionalWrite
+    public long insertHub(Hub hub, long hubId) {
         SQLInsertClause insert = queryFactory.insert(qHub);
         insert.set(qHub.id, hubId);
         populate(hub, insert);

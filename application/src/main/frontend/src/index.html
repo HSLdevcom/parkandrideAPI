@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html ng-app="parkandride" ng-controller="AppCtrl">
+<html ng-app="parkandride" ng-controller="AppCtrl as appCtrl">
 <head>
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta charset="utf-8">
@@ -18,37 +18,45 @@
 </head>
 
 <body>
-	<div class="container">
+
+
+	<div id="wrap">
 
 		<!--header-->
-		<div class="page-header">
-			<div class="row">
-				<div class="col-md-4">
-					<img src="assets/hsl-liipi-logo2.png" alt="{{ 'header.logodesc' | translate }}" style="width: 300px; float: left;">
-				</div>
-					<div class="col-md-6">
-					<ul class="nav nav-tabs">
-						<li class="active"><a id="facilitiesLink" ui-sref="facility-list" style="margin-top: 2px" translate="facilities.title"></a></li>
-						<li><a id="hubsLink" ui-sref="hub-list" style="margin-top: 2px" translate="hubs.title"></a></li>
-					</ul>
-				</div>
-				<div class="col-md-2" style="padding-top: 10px">
-					<div class="pull-right">
-						<a href="index.html">{{ "common.action.logout" | translate }}</a>
+		<div class="page-header navbar-static-top" role="navigation">
+			<div class="container">
+				<div class="row">
+					<div class="col-lg-4 col-md-5 col-sm-5 col-xs-12 first-column">
+						<img class="img-responsive logo" src="assets/hsl-liipi-logo2.png" alt="{{ 'header.logodesc' | translate }}">
+					</div>
+					<div class="col-lg-6 col-md-5 col-sm-4 col-xs-8 navi-col">
+						<ul class="nav nav-tabs">
+							<li class="active"><a id="hubsLink" ui-sref="hub-list" translate="hubs.title"></a></li>
+							<li toggle feature="dev"><a ui-sref="dev-page">Dev</a></li>
+						</ul>
+					</div>
+					<div class="col-lg-2 col-md-2 col-sm-3 col-xs-4 logout last-column">
+						<div class="pull-right">
+							<a href="index.html">{{ "common.action.logout" | translate }}</a>
+						</div>
 					</div>
 				</div>
 			</div>
 		</div>
 
-		<div class="container" ui-view="main"></div>
+		<!--main-->
+		<div class="clear-top" id="main" ui-view="main"></div>
 
-		<div class="page-footer">
-			<div class="col-md-6">
+	</div>
+
+	<!--footer-->
+	<div class="page-footer">
+		<div class="container">
+			<div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 first-column">
 				&copy {{ "footer.hslabbr" | translate }} 2014
 			</div>
-			<div class="col-md-6 text-right" translate="footer.contact"></div>
+			<div class="col-lg-8 col-md-8 col-sm-8 col-xs-12 text-right last-column" translate="footer.contact"></div>
 		</div>
-
 	</div>
 
 </body>

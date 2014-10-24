@@ -1,26 +1,19 @@
-<div class="row wdFacilityView">
-	<div class="col-md-6 col-lg-6">
-		<h2><span class="wdName">{{viewCtrl.facility.name}}</span>
-			<small class="wdAliases">{{viewCtrl.facility.aliases | joinBy: ", "}}</small>
-		</h2>
-	</div>
-	<div class="col-md-6 col-lg-6 text-right">
-	<facility-view-navi></facility-view-navi>
-</div>
-</div>
-
-<div class="row">
-	<div class="col-md-6 col-lg-6">
-		<capacities-table capacities="viewCtrl.facility.capacities"></capacities-table>
-	</div>
-	<div class="col-md-6 col-lg-6 text-right">
-		<facility-map ng-model="viewCtrl.facility.border"></facility-map>
-	</div>
-</div>
-
-
-<div class="row">
-	<div class="col-md-12 col-lg-12 text-right">
+<main-layout>
+	<headline>
+		<span class="wdFacilityName">{{viewCtrl.facility.name}}</span>
+		<small class="wdAliases">{{viewCtrl.facility.aliases | joinBy: ", "}}</small>
+	</headline>
+	<actions>
 		<facility-view-navi></facility-view-navi>
-	</div>
-</div>
+	</actions>
+	<content>
+		<div class="row wdFacilityView">
+			<div class="col-md-6 col-lg-6">
+				<capacities-table capacities="viewCtrl.facility.capacities"></capacities-table>
+			</div>
+			<div class="col-md-6 col-lg-6 text-right">
+				<facility-map ng-model="viewCtrl.facility.border"></facility-map>
+			</div>
+		</div>
+	</content>
+</main-layout>

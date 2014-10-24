@@ -1,0 +1,46 @@
+<html ng-app="liipiRadiator" ng-controller="BranchesCtrl">
+	<head>
+		<title>HSL Liipi Information Radiator</title>
+	</head>
+	<body>
+		<div>
+			<img ng-src="https://travis-ci.org/HSLdevcom/parkandrideAPI.svg?branch=master" style="height:100px;"/>
+			<img ng-src="https://img.shields.io/coveralls/HSLdevcom/parkandrideAPI.svg?branch=master" style="height:100px;"/>
+		</div>
+		<div style="padding-left: 10px;">
+			<table>
+				<tr ng-repeat="b in data.branches | filter:branchFilter">
+					<td>{{b.name}}</td>
+					<td><img ng-src="https://travis-ci.org/HSLdevcom/parkandrideAPI.svg?branch={{b.name}}"/></td>
+					<td><img ng-src="https://img.shields.io/coveralls/HSLdevcom/parkandrideAPI.svg?branch={{b.name}}"/></td>
+				</tr>
+			</table>
+		</div>
+		<div>
+			<iframe src="https://hsl-liipi-ci:8154/go/home" style="height: 768px; width: 1024px; border: 1px solid black;"></iframe>
+		</div>
+
+		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.26/angular.min.js"></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.26/angular-resource.min.js"></script>
+		<script>
+			var app = angular.module('liipiRadiator', ['ngResource']);
+
+			app.factory('Branches', function ($resource) {
+				return $resource('https://api.github.com/repos/HSLdevcom/parkandrideAPI/branches', {});
+			});
+
+			app.controller('BranchesCtrl', function ($scope, Branches) {
+				$scope.data = {};
+
+				$scope.branchFilter = function (b) {
+					var skip = ['master', 'stack-spike', 'stack-spike-ui'];
+					return skip.indexOf(b.name) === -1;
+				};
+
+				Branches.query(function (response) {
+					$scope.data.branches = response;
+				});
+			});
+		</script>
+	</body>
+</html>

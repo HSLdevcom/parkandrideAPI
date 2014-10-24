@@ -1,6 +1,7 @@
 package fi.hsl.parkandride.inbound;
 
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 import java.util.Map;
@@ -34,10 +35,18 @@ public class ExceptionHandlers {
     @ExceptionHandler(ValidationException.class)
     @ResponseBody
     public ResponseEntity<Map<String, Object>> validationException(HttpServletRequest request, ValidationException ex) {
+        // NOTE: ResponseEntity.statusCode is immutable and overrides e.g. @ResponseStatus. BasicErrorController uses this attribute.
         request.setAttribute("javax.servlet.error.status_code", BAD_REQUEST.value());
         ResponseEntity<Map<String, Object>> responseEntity = errorController.error(request);
         responseEntity.getBody().put("violations", ex.violations);
         return responseEntity;
+    }
+
+    @ExceptionHandler(RuntimeException.class)
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> runtimeException(HttpServletRequest request, RuntimeException ex) {
+        request.setAttribute("javax.servlet.error.status_code", INTERNAL_SERVER_ERROR.value());
+        return errorController.error(request);
     }
 
 }

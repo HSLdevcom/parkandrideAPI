@@ -7,6 +7,8 @@ set -eu
 : ${TARGET_ENV_PORT:?}
 set -x
 
+WORKDIR=`pwd`
+
 VERSION=`cat version`
 AWS_TEST=ubuntu@54.171.6.108
 IDENTITY_FILE=/var/go/hsl-liipi.pem
@@ -40,3 +42,5 @@ function restart_container() {
 build_image
 push_image
 restart_container
+
+cd $WORKDIR

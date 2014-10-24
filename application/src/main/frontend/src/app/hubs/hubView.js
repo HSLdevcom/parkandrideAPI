@@ -2,7 +2,8 @@
     var m = angular.module('parkandride.hubView', [
         'ui.router',
         'parkandride.hubMap',
-        'parkandride.capacitiesTable',
+        'parkandride.facilitiesTable',
+        'parkandride.capacities',
         'parkandride.FacilityResource',
         'parkandride.HubResource'
     ]);
@@ -20,6 +21,9 @@
                         },
                         summary: function(hub, FacilityResource) {
                             return FacilityResource.summarizeFacilities(hub.facilityIds);
+                        },
+                        facilities: function(hub, FacilityResource) {
+                            return FacilityResource.loadFacilities(hub.facilityIds);
                         }
                     }
                 }
@@ -28,9 +32,10 @@
         });
     });
 
-    m.controller('HubViewCtrl', function($scope, hub, summary, FacilityResource) {
+    m.controller('HubViewCtrl', function($scope, hub, summary, facilities) {
         this.hub = hub;
         this.summary = summary;
+        this.facilities = facilities;
     });
 
     m.directive('hubViewNavi', function() {
@@ -39,4 +44,5 @@
             templateUrl: 'hubs/hubViewNavi.tpl.html'
         };
     });
+
 })();

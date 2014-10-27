@@ -28,9 +28,9 @@
                         return $q.reject(rejection);
                     } else {
                         swal({
-                            title: $translate.instant('error.unexpected.title'),
+                            title: $translate.instant('error.' + rejection.status + '.title'),
                             text: rejection.data.message,
-                            confirmButtonText: $translate.instant('error.unexpected.buttonText')
+                            confirmButtonText: $translate.instant('error.buttonText')
                         });
                         return $q.reject(rejection);
                     }
@@ -70,5 +70,12 @@
                 $scope.pageTitle = toState.data.pageTitle + ' | parkandride';
             }
         });
-    });
+
+        this.validateAndSubmit = function(form, submitFn) {
+        form.$setDirty();
+        if (form.$valid) {
+            submitFn();
+        }
+    };
+});
 })();

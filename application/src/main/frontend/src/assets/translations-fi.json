@@ -114,10 +114,13 @@
         }
     },
     "error": {
-        "unexpected": {
-            "title": "Oops, nyt tuli virhe!",
-            "buttonText": "Voi veljet!"
-        }
+        "404": {
+            "title": "Sivua ei löytynyt. Tarkista osoite."
+        },
+        "500": {
+            "title": "Oops, nyt tuli virhe!"
+        },
+        "buttonText": "Voi veljet!"
     },
     "violation": {
         "Min": "pitää olla vähintään {{value}}",

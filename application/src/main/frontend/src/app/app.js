@@ -60,7 +60,7 @@
         $scope.common = {};
         $scope.$on("validationErrors", function(event, violations) {
                 $scope.common.violations = _.map(violations, function(violation) {
-                    violation.path = violation.path.replace(/\[\d+\\]/, "");
+                    violation.path = violation.path.replace(/\[\d+\]/, "");
                     return violation;
                 });
             });

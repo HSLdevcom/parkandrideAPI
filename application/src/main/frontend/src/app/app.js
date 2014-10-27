@@ -59,7 +59,10 @@
     m.controller('AppCtrl', function AppCtrl($scope, $location) {
         $scope.common = {};
         $scope.$on("validationErrors", function(event, violations) {
-                $scope.common.violations = violations;
+                $scope.common.violations = _.map(violations, function(violation) {
+                    violation.path = violation.path.replace(/\[\d+\\]/, "");
+                    return violation;
+                });
             });
         this.hasValidationErrors = function() {
             return !_.isEmpty($scope.violations);
@@ -72,10 +75,10 @@
         });
 
         this.validateAndSubmit = function(form, submitFn) {
-        form.$setDirty();
-        if (form.$valid) {
-            submitFn();
-        }
-    };
+            form.$setDirty();
+            if (form.$valid) {
+                submitFn();
+            }
+        };
 });
 })();

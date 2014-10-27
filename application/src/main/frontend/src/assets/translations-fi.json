@@ -124,6 +124,8 @@
     },
     "violation": {
         "Min": "pitää olla vähintään {{value}}",
-        "NotBlank": "ei saa olla tyhjä"
+        "NotBlank": "ei saa olla tyhjä",
+        "Length": "saa olla korkeintaan {{max}} merkkiä pitkä",
+        "ElementLength": "saa olla korkeintaan {{max}} merkkiä pitkä"
     }
 }

@@ -9,6 +9,7 @@ module.exports = function(spec) {
     spec.saveButton = element.all(by.css('.wdSave')).first();
     spec.aliases = $('.wdAliases .tags');
     spec.capacityTypes = element.all(by.css(".wdCapacityType"));
+    spec.form = $('form');
 
     that.get = function (id) {
         if (id) {

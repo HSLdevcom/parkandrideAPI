@@ -8,6 +8,7 @@ module.exports = function(spec) {
     spec.name = element(by.model('editCtrl.hub.name'));
     spec.map = $('.hub-map .ol-viewport');
     spec.saveButton = element.all(by.css('.wdSave')).first();
+    spec.form = $('form');
 
     that.facilitiesTable = require('../facilitiesTable')({});
 

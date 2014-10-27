@@ -5,11 +5,11 @@ var _ = require('lodash');
 var po = require('../pageobjects/pageobjects');
 var fixture = require('../fixtures/fixtures');
 var arrayAssert = require('./arrayAssert')();
+var devApi = require('./devApi')();
 
 describe('Basic flow', function() {
     var menu = po.menu({});
     var indexPage = po.indexPage({});
-    var devPage = po.devPage();
 
     var facilityEditPage = po.facilityEditPage({});
     var facilityViewPage = po.facilityViewPage({});
@@ -61,7 +61,7 @@ describe('Basic flow', function() {
     var capacityTypeOrder = ["Liityntäpysäköinti", "Polkupyörä", "Henkilöauto", "Invapaikka", "Moottoripyörä", "Sähköauto"];
 
     it('should reset all', function() {
-        devPage.resetAll();
+        devApi.resetAll();
     });
 
     it('Go to facility create', function() {

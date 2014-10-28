@@ -21,7 +21,7 @@ describe('edit hub view', function () {
 
             hubEditPage.toggleFacility(hubWithTwoFacilities.facilities[1]);
 
-            expect(hubEditPage.facilitiesTable.isDisplayed()).toBe(true);
+            browser.waitForAngular();
             expect(hubEditPage.facilitiesTable.getSize()).toEqual(1);
 
             hubEditPage.save();

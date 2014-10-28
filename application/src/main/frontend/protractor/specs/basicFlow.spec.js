@@ -79,17 +79,19 @@ describe('Basic flow', function() {
         expect(facilityEditPage.isDisplayed()).toBe(true);
         expect(facilityEditPage.isDirty()).toBe(true);
 
+        facility1.name = newFacilityName();
         facilityEditPage.drawBorder(facility1.border.offset, facility1.border.w, facility1.border.h);
-        facilityEditPage.setName(tooLongValue);
+        facilityEditPage.setNameFi(tooLongValue);
+        facilityEditPage.setNameSv(facility1.name);
+        facilityEditPage.setNameEn(facility1.name);
+
         facilityEditPage.save();
 
-        expect(facilityEditPage.getViolations()).toEqual([{path:"Nimi", message:"saa olla korkeintaan 255 merkkiä pitkä"}]);
+        expect(facilityEditPage.getViolations()).toEqual([{path:"Nimi (fi)", message:"saa olla korkeintaan 255 merkkiä pitkä"}]);
     });
 
     it('Create facility 1', function () {
-//        facilityEditPage.get();
-        facility1.name = newFacilityName();
-        facilityEditPage.setName(facility1.name);
+        facilityEditPage.setNameFi(facility1.name);
         facilityEditPage.addAlias(facility1.aliases[0]);
         facilityEditPage.addAlias(facility1.aliases[1]);
         facilityEditPage.setCapacities(facility1.capacities);
@@ -144,11 +146,13 @@ describe('Basic flow', function() {
         expect(hubEditPage.isDirty()).toBe(true);
 
         // Too long name
-        hubEditPage.setName(tooLongValue);
+        hubEditPage.setNameFi(tooLongValue);
+        hubEditPage.setNameSv(hubName);
+        hubEditPage.setNameEn(hubName);
         hubEditPage.setLocation({x: 165, y: 165});
         hubEditPage.save();
 
-        expect(facilityEditPage.getViolations()).toEqual([{path:"Nimi", message:"saa olla korkeintaan 255 merkkiä pitkä"}]);
+        expect(facilityEditPage.getViolations()).toEqual([{path:"Nimi (fi)", message:"saa olla korkeintaan 255 merkkiä pitkä"}]);
     });
 
     it('Create hub', function() {

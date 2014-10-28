@@ -31,7 +31,7 @@ import fi.hsl.parkandride.outbound.sql.QFacilityAlias;
 @SpringApplicationConfiguration(classes = TestConfiguration.class)
 public class FacilityDaoTest {
 
-    public static final String NAME = "Facility";
+    public static final MultilingualString NAME = new MultilingualString("Facility");
 
     private static final Polygon BORDER = (Polygon) Spatial.fromWkt("POLYGON((" +
             "25.010827 60.25055, " +
@@ -84,7 +84,7 @@ public class FacilityDaoTest {
         assertThat(facility.capacities).isEqualTo(CAPACITIES);
 
         // Update
-        final String newName = "changed name";
+        final MultilingualString newName = new MultilingualString("changed name");
         final SortedSet<String> newAliases = ImmutableSortedSet.of("clias");
         final Map<CapacityType, Capacity> newCapacities = ImmutableMap.of(CAR, new Capacity(100, 50), PARK_AND_RIDE, new Capacity(5, 0));
 
@@ -94,7 +94,7 @@ public class FacilityDaoTest {
 
         facilityDao.updateFacility(id, facility);
         facility = facilityDao.getFacility(id);
-        assertThat(facility.name).isEqualTo("changed name");
+        assertThat(facility.name).isEqualTo(newName);
         assertThat(facility.aliases).isEqualTo(newAliases);
         assertThat(facility.capacities).isEqualTo(newCapacities);
 

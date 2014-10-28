@@ -16,9 +16,9 @@ public class Facility {
 
     public Long id;
 
-    @NotBlank
-    @Length(min=0, max=255)
-    public String name;
+    @NotNull
+    @Valid
+    public MultilingualString name;
 
     @NotNull
     public Geometry border;
@@ -35,7 +35,7 @@ public class Facility {
         return id;
     }
 
-    public String getName() {
+    public MultilingualString getName() {
         return name;
     }
 

@@ -1,7 +1,7 @@
 <form name="editHubForm" class="form-horizontal" role="form" novalidate>
 	<main-layout>
 		<headline>
-			{{editCtrl.hub.name || "hubs.name.placeholder" | translate}}
+			{{editCtrl.hub.name.fi || "hubs.name.placeholder" | translate}}
 		</headline>
 		<actions>
 			<hub-edit-navi></hub-edit-navi>
@@ -11,9 +11,21 @@
 				<div class="col-md-6">
 					<h3>Nimitiedot</h3>
 					<div class="form-group">
-						<label for="inputName" class="col-sm-5 control-label">* Nimi</label>
+						<label for="inputNameFi" class="col-sm-5 control-label">* {{ "hubs.name.fi.label" | translate }}</label>
 						<div class="col-sm-7">
-							<input id="inputName" type="text" class="form-control" ng-model="editCtrl.hub.name" required />
+							<input id="inputNameFi" type="text" class="form-control" ng-model="editCtrl.hub.name.fi" required />
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="inputNameSv" class="col-sm-5 control-label">* {{ "hubs.name.sv.label" | translate }}</label>
+						<div class="col-sm-7">
+							<input id="inputNameSv" type="text" class="form-control" ng-model="editCtrl.hub.name.sv" required />
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="inputNameEn" class="col-sm-5 control-label">* {{ "hubs.name.en.label" | translate }}</label>
+						<div class="col-sm-7">
+							<input id="inputNameEn" type="text" class="form-control" ng-model="editCtrl.hub.name.en" required />
 						</div>
 					</div>
 					<facilities-table facilities="editCtrl.facilities"></facilities-table>

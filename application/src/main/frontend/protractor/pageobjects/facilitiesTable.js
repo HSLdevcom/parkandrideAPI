@@ -7,7 +7,7 @@ module.exports = function (spec) {
     spec.view = element(by.css(".wdFacilitiesTable"));
 
     that.getFacilityNames = function() {
-        return element.all(by.css(".wdFacilitiesTable .wdFacilityName")).getText();
+        return element.all(by.css(".wdFacilitiesTable .wdFacilityNameFi")).getText();
     }
 
     return that;

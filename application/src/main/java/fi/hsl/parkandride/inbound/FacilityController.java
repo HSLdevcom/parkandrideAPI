@@ -1,6 +1,6 @@
 package fi.hsl.parkandride.inbound;
 
-import static fi.hsl.parkandride.inbound.FeatureResults.TO_FEATURE;
+import static fi.hsl.parkandride.inbound.FeatureCollection.FACILITY_TO_FEATURE;
 import static fi.hsl.parkandride.inbound.UrlSchema.*;
 import static java.util.Arrays.asList;
 import static org.springframework.http.HttpStatus.CREATED;
@@ -14,7 +14,6 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import org.geolatte.common.Feature;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -53,7 +52,7 @@ public class FacilityController {
     @RequestMapping(method = GET, value = FACILITY, produces = GEOJSON)
     public ResponseEntity<Feature> getFacilityAsFeature(@PathVariable(FACILITY_ID) long facilityId) {
         Facility facility = facilityService.getFacility(facilityId);
-        return new ResponseEntity<Feature>(TO_FEATURE.apply(facility), OK);
+        return new ResponseEntity<Feature>(FACILITY_TO_FEATURE.apply(facility), OK);
     }
 
     @RequestMapping(method = PUT, value = FACILITY, produces = APPLICATION_JSON_VALUE)
@@ -76,9 +75,9 @@ public class FacilityController {
     }
 
     @RequestMapping(method = GET, value = FACILITIES, produces = GEOJSON)
-    public ResponseEntity<FeatureResults> findFacilitiesAsFeatureCollection(PageableSpatialSearchDto search) {
+    public ResponseEntity<FeatureCollection> findFacilitiesAsFeatureCollection(PageableSpatialSearchDto search) {
         SearchResults<Facility> results = facilityService.search(search.toSpatialSearch());
-        return new ResponseEntity<>(FeatureResults.of(results), OK);
+        return new ResponseEntity<>(FeatureCollection.ofFacilities(results), OK);
     }
 
     @RequestMapping(method = GET, value = CAPACITY_TYPES)

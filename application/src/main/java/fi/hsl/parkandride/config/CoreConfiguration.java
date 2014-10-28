@@ -46,6 +46,6 @@ public class CoreConfiguration {
 
     @Bean
     public HubService hubService() {
-        return new HubService(hubRepository());
+        return new HubService(hubRepository(), validationService());
     }
 }

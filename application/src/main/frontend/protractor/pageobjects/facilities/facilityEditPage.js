@@ -20,11 +20,12 @@ module.exports = function(spec) {
     };
 
     that.getName = function () {
-        return spec.name.getAttribute('value');
+        spec.name.getAttribute('value');
     };
 
     that.setName = function (name) {
-        return spec.name.sendKeys(name);
+        spec.name.clear();
+        spec.name.sendKeys(name);
     };
 
     that.drawBorder = function (topLeft, w, h) {

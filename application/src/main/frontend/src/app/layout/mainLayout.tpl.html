@@ -11,9 +11,9 @@
 
 <div class="container content">
 	<div class="row">
-		<div ng-repeat="violation in common.violations">
-			{{common.translationPrefix + violation.path + '.label' | translate}}:
-			<span translate="violation.{{violation.type}}" translate-values="{{violation.args}}"></span>
+		<div ng-repeat="violation in common.violations" class="wdViolation">
+			<span class="wdViolationPath">{{common.translationPrefix + violation.path + '.label' | translate}}</span>:
+			<span class="wdViolationMessage" translate="violation.{{violation.type}}" translate-values="{{violation.args}}"></span>
 		</div>
 	</div>
 

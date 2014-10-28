@@ -21,7 +21,8 @@ module.exports = function(spec) {
     };
 
     that.setName = function (name) {
-        return spec.name.sendKeys(name);
+        spec.name.clear();
+        spec.name.sendKeys(name);
     };
 
     that.setLocation = function (pos) {

@@ -12,7 +12,6 @@ describe('edit hub view', function () {
         var hubWithTwoFacilities = fixtures.hubsFixture.westend;
 
         beforeEach(function () {
-
             devApi.resetAll(hubWithTwoFacilities.facilities, [hubWithTwoFacilities]);
         });
 
@@ -20,7 +19,7 @@ describe('edit hub view', function () {
             hubEditPage.get(hubWithTwoFacilities.id);
             expect(hubEditPage.facilitiesTable.getSize()).toEqual(2);
 
-            hubEditPage.toggleFacility({ borderInput: { offset: { x: 419, y: 232 }, w: 34,h: 59 } });
+            hubEditPage.toggleFacility(hubWithTwoFacilities.facilities[1]);
 
             expect(hubEditPage.facilitiesTable.isDisplayed()).toBe(true);
             expect(hubEditPage.facilitiesTable.getSize()).toEqual(1);

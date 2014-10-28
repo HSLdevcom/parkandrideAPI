@@ -1,7 +1,7 @@
 <form name="editFacilityForm" class="form-horizontal" role="form" novalidate>
 	<main-layout>
 		<headline>
-			{{ editCtrl.facility.name || 'facilities.name.placeholder' | translate }}
+			{{ editCtrl.facility.name || ('facilities.name.placeholder' | translate) }}
 		</headline>
 		<actions>
 			<facility-edit-navi></facility-edit-navi>
@@ -36,12 +36,13 @@
 								</thead>
 								<tbody>
 								<tr ng-repeat="capacityType in editCtrl.capacityTypes">
-									<td class="wdCapacityType">{{'facilities.capacityType.' + capacityType | translate}}</td>
+									<td class="wdCapacityType">{{'facilities.capacities.' + capacityType + '.label' | translate}}</td>
 									<td>
 										<input type="number" class="form-control wd{{capacityType}}built" ng-model="editCtrl.facility.capacities[capacityType].built" min="0">
 									</td>
 									<td>
-										<input type="number" class="form-control wd{{capacityType}}unavailable" ng-model="editCtrl.facility.capacities[capacityType].unavailable" min="0">
+										<input type="number" class="form-control wd{{capacityType}}unavailable"
+											   ng-model="editCtrl.facility.capacities[capacityType].unavailable" min="0">
 									</td>
 								</tr>
 								</tbody>

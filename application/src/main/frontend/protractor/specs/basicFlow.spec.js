@@ -72,6 +72,11 @@ describe('Basic flow', function() {
     });
 
     it('Create facility 1', function () {
+        expect(facilityEditPage.isDirty()).toBe(false);
+        facilityEditPage.save();
+        expect(facilityEditPage.isDisplayed()).toBe(true);
+        expect(facilityEditPage.isDirty()).toBe(true);
+
         facility1.name = newFacilityName();
         facilityEditPage.setName(facility1.name);
         expect(facilityEditPage.getName()).toEqual(facility1.name);
@@ -126,6 +131,11 @@ describe('Basic flow', function() {
     });
 
     it('Create hub', function() {
+        expect(hubEditPage.isDirty()).toBe(false);
+        hubEditPage.save();
+        expect(hubEditPage.isDisplayed()).toBe(true);
+        expect(hubEditPage.isDirty()).toBe(true);
+
         hubEditPage.setName(hubName);
         expect(hubEditPage.facilitiesTable.isDisplayed()).toBe(false);
 

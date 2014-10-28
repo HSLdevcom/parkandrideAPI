@@ -10,6 +10,13 @@
 </div>
 
 <div class="container content">
+	<div class="row">
+		<div ng-repeat="violation in common.violations">
+			{{common.translationPrefix + violation.path + '.label' | translate}}:
+			<span translate="violation.{{violation.type}}" translate-values="{{violation.args}}"></span>
+		</div>
+	</div>
+
 	<content></content>
 </div>
 

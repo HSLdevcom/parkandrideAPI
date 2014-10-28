@@ -7,8 +7,11 @@ module.exports = function (data) {
 
     var self = data || {};
 
+    var ids = {};
+    ids._1 = 1;
+
     self.westend = hub({
-        "id": 2,
+        "id": ids._1,
         "name": "Westend",
         "location": {
             "type": "Point",

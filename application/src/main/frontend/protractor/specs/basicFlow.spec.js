@@ -3,7 +3,7 @@
 var _ = require('lodash');
 
 var po = require('../pageobjects/pageobjects');
-var fixture = require('../fixtures/fixtures');
+var fixtures = require('../fixtures/fixtures');
 var arrayAssert = require('./arrayAssert')();
 var devApi = require('./devApi')();
 
@@ -26,7 +26,7 @@ describe('Basic flow', function() {
         return 'Test Hub ' + new Date().getTime();
     }
 
-    var facility1 = fixture.facilityFixture({
+    var facility1 = fixtures.facility({
         capacities: {
             "CAR": {"built": 10, "unavailable": 1},
             "BICYCLE": {"built": 20, "unavailable": 2},
@@ -43,7 +43,7 @@ describe('Basic flow', function() {
         }
     });
 
-    var facility2 = fixture.facilityFixture({
+    var facility2 = fixtures.facility({
         capacities: {
             "CAR": {"built": 10, "unavailable": 1}
         },

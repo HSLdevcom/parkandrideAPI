@@ -1,3 +1,5 @@
 'use strict';
 
-module.exports.facilityFixture = require('./facility.fixture.js');
+module.exports.facility = require('./facility.js');
+module.exports.facilitiesFixture = require('./facilities.fixture.js')();
+module.exports.hubsFixture = require('./hubs.fixture.js')();

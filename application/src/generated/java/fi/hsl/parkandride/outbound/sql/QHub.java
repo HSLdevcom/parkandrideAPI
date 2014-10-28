@@ -31,7 +31,11 @@ public class QHub extends RelationalPathSpatial<QHub> {
 
     public final GeometryPath<org.geolatte.geom.Geometry> location = createGeometry("location", org.geolatte.geom.Geometry.class);
 
-    public final StringPath name = createString("name");
+    public final StringPath nameEn = createString("nameEn");
+
+    public final StringPath nameFi = createString("nameFi");
+
+    public final StringPath nameSv = createString("nameSv");
 
     public final com.mysema.query.sql.PrimaryKey<QHub> constraint1 = createPrimaryKey(id);
 
@@ -59,8 +63,10 @@ public class QHub extends RelationalPathSpatial<QHub> {
 
     public void addMetadata() {
         addMetadata(id, ColumnMetadata.named("ID").withIndex(1).ofType(Types.BIGINT).withSize(19).notNull());
-        addMetadata(location, ColumnMetadata.named("LOCATION").withIndex(3).ofType(Types.OTHER).withSize(2147483647).notNull());
-        addMetadata(name, ColumnMetadata.named("NAME").withIndex(2).ofType(Types.VARCHAR).withSize(255).notNull());
+        addMetadata(location, ColumnMetadata.named("LOCATION").withIndex(5).ofType(Types.OTHER).withSize(2147483647).notNull());
+        addMetadata(nameEn, ColumnMetadata.named("NAME_EN").withIndex(4).ofType(Types.VARCHAR).withSize(255).notNull());
+        addMetadata(nameFi, ColumnMetadata.named("NAME_FI").withIndex(2).ofType(Types.VARCHAR).withSize(255).notNull());
+        addMetadata(nameSv, ColumnMetadata.named("NAME_SV").withIndex(3).ofType(Types.VARCHAR).withSize(255).notNull());
     }
 
 }

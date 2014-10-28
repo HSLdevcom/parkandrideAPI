@@ -7,11 +7,11 @@ module.exports = function (spec) {
     spec.view = element(by.css(".wdFacilitiesTable"));
 
     that.getFacilityNames = function() {
-        return element.all(by.css(".wdFacilitiesTable .wdFacilityName")).getText();
+        return element.all(by.css(".wdFacilitiesTable .wdFacilityNameFi")).getText();
     };
 
     that.getSize = function() {
-        return element.all(by.css(".wdFacilitiesTable .wdFacilityName")).count();
+        return element.all(by.css(".wdFacilitiesTable .wdFacilityNameFi")).count();
     };
 
     return that;

@@ -32,7 +32,32 @@ module.exports = function(spec) {
             }
             return protractor.promise.all(result);
         });
-    }
+    };
+
+    that.getName = function () {
+        spec.nameFi.getAttribute('value');
+    };
+
+    that.setNameFi = function (name) {
+        spec.nameFi.clear();
+        spec.nameFi.sendKeys(name);
+    };
+
+    that.setNameSv = function (name) {
+        spec.nameSv.clear();
+        spec.nameSv.sendKeys(name);
+    };
+
+    that.setNameEn = function (name) {
+        spec.nameEn.clear();
+        spec.nameEn.sendKeys(name);
+    };
+
+    that.setName = function (name) {
+        that.setNameFi(name);
+        that.setNameSv(name);
+        that.setNameEn(name);
+    };
 
     return that;
 };

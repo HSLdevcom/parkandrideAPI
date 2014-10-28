@@ -5,7 +5,9 @@ module.exports = function(spec) {
     var clickSleepMs = 200;
 
     spec.view = $('.wdHubEditView');
-    spec.name = element(by.model('editCtrl.hub.name'));
+    spec.nameFi = element(by.model('editCtrl.hub.name.fi'));
+    spec.nameSv = element(by.model('editCtrl.hub.name.sv'));
+    spec.nameEn = element(by.model('editCtrl.hub.name.en'));
     spec.map = $('.hub-map .ol-viewport');
     spec.saveButton = element.all(by.css('.wdSave')).first();
     spec.form = $('form');
@@ -18,11 +20,6 @@ module.exports = function(spec) {
         } else {
             browser.get('/#/hubs/create');
         }
-    };
-
-    that.setName = function (name) {
-        spec.name.clear();
-        spec.name.sendKeys(name);
     };
 
     that.setLocation = function (pos) {

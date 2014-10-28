@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Set;
 
 import com.mysema.query.BooleanBuilder;
+import com.mysema.query.Tuple;
 import com.mysema.query.dml.StoreClause;
 import com.mysema.query.group.GroupBy;
 import com.mysema.query.sql.SQLExpressions;
@@ -13,9 +14,13 @@ import com.mysema.query.sql.dml.SQLInsertClause;
 import com.mysema.query.sql.dml.SQLUpdateClause;
 import com.mysema.query.sql.postgres.PostgresQuery;
 import com.mysema.query.sql.postgres.PostgresQueryFactory;
+import com.mysema.query.types.Expression;
+import com.mysema.query.types.MappingProjection;
 import com.mysema.query.types.QBean;
+import com.mysema.query.types.expr.DslExpression;
 import com.mysema.query.types.expr.SimpleExpression;
 
+import fi.hsl.parkandride.core.domain.Facility;
 import fi.hsl.parkandride.core.domain.Hub;
 import fi.hsl.parkandride.core.domain.HubNotFoundException;
 import fi.hsl.parkandride.core.domain.SearchResults;
@@ -36,9 +41,25 @@ public class HubDao implements HubRepository {
 
     private static final QHubFacility qHubFacility = QHubFacility.hubFacility;
 
-    private static final QBean<Hub> hubMapping = fields(Hub.class,
-            qHub.id, qHub.name, qHub.location,
-            GroupBy.set(qHubFacility.facilityId).as("facilityIds"));
+    private static final Expression<Set<Long>> facilityIdsMapping = GroupBy.set(qHubFacility.facilityId);
+
+    private static final MappingProjection<Hub> hubMapping = new MappingProjection<Hub>(Hub.class, qHub.id, qHub.location, qHub.nameFi, qHub.nameSv,
+            qHub.nameEn, facilityIdsMapping) {
+        private final MultilingualStringMapping nameMapping = new MultilingualStringMapping(qHub.nameFi, qHub.nameSv, qHub.nameEn);
+        @Override
+        protected Hub map(Tuple row) {
+            Long id = row.get(qHub.id);
+            if (id == null) {
+                return null;
+            }
+            Hub hub = new Hub();
+            hub.id = id;
+            hub.location = row.get(qHub.location);
+            hub.name = nameMapping.map(row);
+            hub.facilityIds = row.get(facilityIdsMapping);
+            return hub;
+        }
+    };
 
 
     private final PostgresQueryFactory queryFactory;
@@ -65,7 +86,9 @@ public class HubDao implements HubRepository {
     }
 
     private void populate(Hub hub, StoreClause store) {
-        store.set(qHub.name, hub.name);
+        store.set(qHub.nameFi, hub.name.fi);
+        store.set(qHub.nameSv, hub.name.sv);
+        store.set(qHub.nameEn, hub.name.en);
         store.set(qHub.location, hub.location);
     }
 

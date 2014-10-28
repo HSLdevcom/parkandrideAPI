@@ -1,6 +1,7 @@
 "use strict";
 
 module.exports = function () {
+    var _ = require('lodash');
     var request = require('request');
     var devApiUrl = browser.baseUrl + '/dev-api',
         facilitiesUrl = devApiUrl + '/facilities',
@@ -25,17 +26,21 @@ module.exports = function () {
         return defer.promise;
     }
 
+    function asPayload(coll) {
+        return _.map(coll, function(item) { return item.toPayload(); });
+    }
+
     api.resetFacilities = function(facilities) {
         flow.execute(function() { return asPromise({ method: 'DELETE', url: facilitiesUrl }); });
         if (facilities) {
-            flow.execute(function() { return asPromise({ method: 'PUT', url: facilitiesUrl, json: true, body: facilities }); });
+            flow.execute(function() { return asPromise({ method: 'PUT', url: facilitiesUrl, json: true, body: asPayload(facilities) }); });
         }
     };
 
     api.resetHubs = function(hubs) {
         flow.execute(function() { return asPromise({ method: 'DELETE', url: hubsUrl }); });
         if (hubs) {
-            flow.execute(function(){ return asPromise({ method: 'PUT', url: hubsUrl, json: true, body: hubs }); });
+            flow.execute(function(){ return asPromise({ method: 'PUT', url: hubsUrl, json: true, body: asPayload(hubs) }); });
         }
     };
 

@@ -16,5 +16,12 @@ module.exports = function(data) {
         return copy;
     };
 
+    self.toPayload = function() {
+        var payload = _.cloneDeep(self);
+        var skipFields = ['borderInput'];
+        _.forEach(skipFields, function(field){ delete payload[field]; });
+        return payload;
+    };
+
     return self;
 };

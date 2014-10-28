@@ -12,6 +12,14 @@ module.exports = function(spec) {
 
     that.facilitiesTable = require('../facilitiesTable')({});
 
+    that.get = function (id) {
+        if (id) {
+            browser.get('/#/hubs/edit/' + id);
+        } else {
+            browser.get('/#/hubs/create');
+        }
+    };
+
     that.setName = function (name) {
         return spec.name.sendKeys(name);
     };

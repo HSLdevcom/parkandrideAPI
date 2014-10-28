@@ -36,7 +36,7 @@ describe('Basic flow', function() {
             "ELECTRIC_CAR": {"built": 60, "unavailable": 6}
         },
         aliases: ["alias with spaces", "facility1"],
-        border: {
+        borderInput: {
             offset: {x: 90, y: 90},
             w: 60,
             h: 60
@@ -48,7 +48,7 @@ describe('Basic flow', function() {
             "CAR": {"built": 10, "unavailable": 1}
         },
         aliases: ["fac2"],
-        border: {
+        borderInput: {
             offset: {x: 180, y: 180},
             w: 60,
             h: 60
@@ -81,7 +81,7 @@ describe('Basic flow', function() {
         facilityEditPage.setName(facility1.name);
         expect(facilityEditPage.getName()).toEqual(facility1.name);
 
-        facilityEditPage.drawBorder(facility1.border.offset, facility1.border.w, facility1.border.h);
+        facilityEditPage.drawBorder(facility1.borderInput.offset, facility1.borderInput.w, facility1.borderInput.h);
         facilityEditPage.addAlias(facility1.aliases[0]);
         facilityEditPage.addAlias(facility1.aliases[1]);
         facilityEditPage.setCapacities(facility1.capacities);
@@ -109,7 +109,7 @@ describe('Basic flow', function() {
         facilityEditPage.setName(facility2.name);
         expect(facilityEditPage.getName()).toEqual(facility2.name);
 
-        facilityEditPage.drawBorder(facility2.border.offset, facility2.border.w, facility2.border.h);
+        facilityEditPage.drawBorder(facility2.borderInput.offset, facility2.borderInput.w, facility2.borderInput.h);
         facilityEditPage.addAlias(facility2.aliases[0]);
         facilityEditPage.setCapacities(facility2.capacities);
 

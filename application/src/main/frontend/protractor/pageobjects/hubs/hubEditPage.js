@@ -24,8 +24,8 @@ module.exports = function(spec) {
     };
 
     that.toggleFacility = function (f) {
-        var offsetX = f.border.offset.x + f.border.w / 2;
-        var offsetY = f.border.offset.y + f.border.h / 2;
+        var offsetX = f.borderInput.offset.x + f.borderInput.w / 2;
+        var offsetY = f.borderInput.offset.y + f.borderInput.h / 2;
         spec.ptor.actions()
             .mouseMove(spec.map, {x: offsetX, y: offsetY}).click()
             .perform();

@@ -2,8 +2,9 @@
 
 module.exports = function () {
     var self = {};
+    var facility = require('./fixtures').facility;
 
-    self.westend1 = {
+    self.westend1 = facility({
         "id": 12,
         "name": "Westend CAR",
         "border": {
@@ -26,9 +27,9 @@ module.exports = function () {
                 "unavailable": 0
             }
         }
-    };
+    });
 
-    self.westend2 = {
+    self.westend2 = facility({
         "id": 13,
         "name": "Westend BICYCLE",
         "border": {
@@ -51,7 +52,7 @@ module.exports = function () {
                 "unavailable": 0
             }
         }
-    };
+    });
 
     self.all = [
         self.westend1,

@@ -3,6 +3,10 @@
   border-color: #78FA89;
 }
 
-.ng-invalid.ng-dirty {
-  border-color: #FA787E;
+.ng-pristine .map {
+  border: 1px solid transparent;
+}
+
+input.ng-invalid.ng-dirty, form.ng-dirty input.ng-invalid, form.ng-dirty .ng-invalid .map {
+  border: 1px solid #FA787E;
 }

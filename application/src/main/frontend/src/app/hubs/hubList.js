@@ -32,8 +32,7 @@
             });
         });
 
-    m.controller('HubsCtrl', HubsController);
-    function HubsController(HubResource, hubs, facilities) {
+    m.controller('HubsCtrl', function(HubResource, hubs, facilities) {
         this.hubs = hubs;
 
         // XXX: Refactor hub+facilities grouping into HubService if it's needed some elsewhere
@@ -49,7 +48,7 @@
                 return _.indexOf(attachedFacilityIds, facility.id, true) < 0;
             });
         };
-    }
+    });
 
     m.directive('hubListNavi', function() {
         return {

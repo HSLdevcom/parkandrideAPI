@@ -67,15 +67,18 @@ module.exports = {
       'vendor/placeholders/angular-placeholders-0.0.1-SNAPSHOT.min.js',
       'vendor/angular-ui-router/release/angular-ui-router.js',
       'vendor/angular-ui-utils/modules/route/route.js',
+      'vendor/angular-ui-utils/modules/validate/validate.js',
       'vendor/lodash/dist/lodash.js',
       'vendor/angular-translate/angular-translate.js',
       'vendor/angular-translate-loader-static-files/angular-translate-loader-static-files.js',
       'vendor/openlayers3/build/ol.js',
-      'vendor/ng-tags-input/ng-tags-input.js'
+      'vendor/ng-tags-input/ng-tags-input.js',
+      'vendor/sweetalert/lib/sweet-alert.js'
     ],
     css: [
         'vendor/openlayers3/css/ol.css',
-        'vendor/ng-tags-input/ng-tags-input.css'
+        'vendor/ng-tags-input/ng-tags-input.css',
+        'vendor/sweetalert/lib/sweet-alert.css'
     ],
     assets: [
     ]

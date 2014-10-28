@@ -1,7 +1,7 @@
 <form name="editFacilityForm" class="form-horizontal" role="form" novalidate>
 	<main-layout>
 		<headline>
-			{{ editCtrl.facility.name || ('facilities.name.placeholder' | translate) }}
+			{{ editCtrl.facility.name.fi || ('facilities.name.placeholder' | translate) }}
 		</headline>
 		<actions>
 			<facility-edit-navi></facility-edit-navi>
@@ -11,9 +11,21 @@
 				<div class="col-md-6">
 					<h3>Nimitiedot</h3>
 					<div class="form-group">
-						<label for="inputName" class="col-sm-5 control-label">* {{ "facilities.name.label" | translate }}</label>
+						<label for="inputNameFi" class="col-sm-5 control-label">* {{ "facilities.name.fi.label" | translate }}</label>
 						<div class="col-sm-7">
-							<input id="inputName" type="text" class="form-control" ng-model="editCtrl.facility.name" required />
+							<input id="inputNameFi" type="text" class="form-control" ng-model="editCtrl.facility.name.fi" required />
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="inputNameSv" class="col-sm-5 control-label">* {{ "facilities.name.sv.label" | translate }}</label>
+						<div class="col-sm-7">
+							<input id="inputNameSv" type="text" class="form-control" ng-model="editCtrl.facility.name.sv" required />
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="inputNameEn" class="col-sm-5 control-label">* {{ "facilities.name.en.label" | translate }}</label>
+						<div class="col-sm-7">
+							<input id="inputNameEn" type="text" class="form-control" ng-model="editCtrl.facility.name.en" required />
 						</div>
 					</div>
 					<div class="form-group">

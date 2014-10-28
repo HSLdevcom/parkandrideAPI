@@ -4,7 +4,9 @@ module.exports = function(spec) {
     var that = require('../base')(spec);
 
     spec.view = $('.wdFacilityEditView');
-    spec.name = element(by.model('editCtrl.facility.name'));
+    spec.nameFi = element(by.model('editCtrl.facility.name.fi'));
+    spec.nameSv = element(by.model('editCtrl.facility.name.sv'));
+    spec.nameEn = element(by.model('editCtrl.facility.name.en'));
     spec.map = $('.facility-map .ol-viewport');
     spec.saveButton = element.all(by.css('.wdSave')).first();
     spec.aliases = $('.wdAliases .tags');
@@ -17,15 +19,6 @@ module.exports = function(spec) {
         } else {
             browser.get('/#/facilities/create');
         }
-    };
-
-    that.getName = function () {
-        spec.name.getAttribute('value');
-    };
-
-    that.setName = function (name) {
-        spec.name.clear();
-        spec.name.sendKeys(name);
     };
 
     that.drawBorder = function (topLeft, w, h) {

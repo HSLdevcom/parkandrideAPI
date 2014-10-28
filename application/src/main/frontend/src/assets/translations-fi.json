@@ -10,7 +10,15 @@
         },
         "name" : {
             "placeholder": "Pysäköintilaitos",
-            "label": "Nimi"
+            "fi": {
+                "label": "Nimi (fi)"
+            },
+            "sv": {
+                "label": "Nimi (sv)"
+            },
+            "en": {
+                "label": "Nimi (en)"
+            }
         },
         "aliases": {
             "label": "Aliakset",
@@ -97,7 +105,15 @@
         },
         "name": {
             "placeholder": "Alue",
-            "label": "Nimi"
+            "fi": {
+                "label": "Nimi (fi)"
+            },
+            "sv": {
+                "label": "Nimi (sv)"
+            },
+            "en": {
+                "label": "Nimi (en)"
+            }
         },
         "location": {
             "label": "Sijainti"

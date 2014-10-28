@@ -6,7 +6,7 @@ module.exports = function(spec) {
     spec.view = spec.title = element(by.cssContainingText('h2', 'Alueet'));
     spec.createFacilityButton = element.all(by.linkUiSref('facility-create')).first();
     spec.createHubButton = element.all(by.linkUiSref('hub-create')).first();
-    spec.hubAndFacilityNames = element.all(by.css(".wdName"));
+    spec.hubAndFacilityNames = element.all(by.css(".wdNameFi"));
 
     that.get = function () {
         browser.get('/#/hubs')

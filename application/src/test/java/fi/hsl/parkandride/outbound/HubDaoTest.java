@@ -19,6 +19,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import com.google.common.collect.ImmutableSet;
 
 import fi.hsl.parkandride.core.domain.Hub;
+import fi.hsl.parkandride.core.domain.MultilingualString;
 import fi.hsl.parkandride.core.domain.NotFoundException;
 import fi.hsl.parkandride.core.domain.SearchResults;
 import fi.hsl.parkandride.core.domain.SpatialSearch;
@@ -30,8 +31,11 @@ import fi.hsl.parkandride.outbound.sql.QHubFacility;
 @SpringApplicationConfiguration(classes = TestConfiguration.class)
 public class HubDaoTest {
 
+    private static final MultilingualString NAME = new MultilingualString("Malmi");
+
     public static final Point LOCATION = (Point) fromWkt("POINT(25.010563 60.251022)");
     public static final ImmutableSet<Long> FACILITY_IDS = ImmutableSet.of(1l, 2l, 3l);
+
     @Inject
     TestHelper testHelper;
 
@@ -53,14 +57,15 @@ public class HubDaoTest {
 
         // Get
         hub = hubRepository.getHub(hubId);
-        assertThat(hub.name).isEqualTo("Malmi");
+        assertThat(hub.name).isEqualTo(NAME);
         assertThat(hub.location).isEqualTo(LOCATION);
         assertThat(hub.facilityIds).isEqualTo(FACILITY_IDS);
 
         // Update
         final Set<Long> newFacilityIds = ImmutableSet.of(5l, 6l);
         final Point newLocation = (Point) fromWkt("POINT(25.016392 60.254157)");
-        hub.name = "Malminkaari";
+        final MultilingualString newName = new MultilingualString("Malminkaari");
+        hub.name = newName;
         hub.location = newLocation;
         hub.facilityIds = newFacilityIds;
         hubRepository.updateHub(hubId, hub);
@@ -73,7 +78,7 @@ public class HubDaoTest {
                 "25.015955 60.254351))")).results;
         assertThat(hubs.size()).isEqualTo(1);
         hub = hubs.get(0);
-        assertThat(hub.name).isEqualTo("Malminkaari");
+        assertThat(hub.name).isEqualTo(newName);
         assertThat(hub.location).isEqualTo(newLocation);
         assertThat(hub.facilityIds).isEqualTo(newFacilityIds);
 
@@ -88,7 +93,7 @@ public class HubDaoTest {
 
     private Hub createHub() {
         Hub hub = new Hub();
-        hub.name = "Malmi";
+        hub.name = NAME;
         hub.location = LOCATION;
         hub.facilityIds = FACILITY_IDS;
         return hub;

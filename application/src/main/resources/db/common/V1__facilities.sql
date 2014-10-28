@@ -1,6 +1,8 @@
 create table facility (
   id bigint not null,
-  name varchar(255) not null,
+  name_fi varchar(255) not null,
+  name_sv varchar(255) not null,
+  name_en varchar(255) not null,
   border geometry not null,
 
   primary key (id)

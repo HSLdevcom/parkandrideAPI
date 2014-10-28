@@ -24,7 +24,7 @@ public class ViolationTest {
 
     @Test
     public void nonCapacityViolation_is_not_translated() {
-        assertThat(path(nameViolation(""))).isEqualTo("name");
+        assertThat(path(nameViolation())).isEqualTo("name.fi");
     }
 
     private String path(ConstraintViolation<Facility> cv) {
@@ -37,9 +37,9 @@ public class ViolationTest {
         return toFacilityConstraintViolation(f);
     }
 
-    private ConstraintViolation<Facility> nameViolation(String name) {
+    private ConstraintViolation<Facility> nameViolation() {
         Facility f = validFacility();
-        f.name = name;
+        f.name = new MultilingualString("", "Test", "Test");
         return toFacilityConstraintViolation(f);
     }
 
@@ -51,7 +51,7 @@ public class ViolationTest {
 
     private Facility validFacility() {
         Facility f = new Facility();
-        f.name = "Test";
+        f.name = new MultilingualString("Test", "Test", "Test");
         f.border = Mockito.mock(Geometry.class);
 
         Set<ConstraintViolation<Facility>> violations = validator.validate(f);

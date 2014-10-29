@@ -2,7 +2,7 @@
 	<main-layout>
 
 		<headline>
-			{{ editCtrl.facility.name || 'facilities.name.placeholder' | translate }}
+			{{ editCtrl.facility.name.fi || ('facilities.name.placeholder' | translate) }}
 		</headline>
 		<actions>
 			<facility-edit-navi></facility-edit-navi>
@@ -18,14 +18,14 @@
                 <div class="row">
                     <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 column first-column">
                         <div class="form-group">
-                            <label for="inputName">{{ "facilities.name.label_fi" | translate }} *</label>
+                            <label for="inputNameFi">{{ "facilities.name.fi.label" | translate }} *</label>
                             <div class="input-group">
-                                <input id="inputName" type="text" class="form-control" ng-model="editCtrl.facility.name" required />
+                                <input id="inputNameFi" type="text" class="form-control" ng-model="editCtrl.facility.name.fi" required />
                                 <span class="input-group-addon">fi</span>
                             </div>
                         </div>
                         <div class="form-group last-form-group">
-                            <label for="inputAlias">{{ "facilities.aliases.label" | translate }}</label>
+                            <label>{{ "facilities.aliases.label" | translate }}</label>
                             <div class="input-group">
                                 <div class="wdAliases">
                                     <tags-input ng-model="editCtrl.facility.aliases" placeholder="{{ 'facilities.aliases.placeholder' | translate }}" repl
@@ -37,14 +37,14 @@
                     </div>
                     <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 column">
                         <div class="form-group">
-                            <label for="inputName2">{{ "facilities.name.label_sv" | translate }} *</label>
+                            <label for="inputNameSv">{{ "facilities.name.sv.label" | translate }} *</label>
                             <div class="input-group">
-                                <input id="inputName2" type="text" class="form-control" ng-model="editCtrl.facility.name" required />
+                                <input id="inputNameSv" type="text" class="form-control" ng-model="editCtrl.facility.name.sv" required />
                                 <span class="input-group-addon">sv</span>
                             </div>
                         </div>
                         <div class="form-group last-form-group">
-                            <label for="inputAlias2">{{ "facilities.aliases.label" | translate }}</label>
+                            <label>{{ "facilities.aliases.label" | translate }}</label>
                             <div class="input-group">
                                 <div class="wdAliases">
                                     <tags-input id="inputAlias2" ng-model="editCtrl.facility.aliases" placeholder="{{ 'facilities.aliases.placeholder' | translate }}" repl
@@ -56,14 +56,14 @@
                     </div>
                     <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 column last-column">
                         <div class="form-group">
-                            <label for="inputName3">{{ "facilities.name.label_en" | translate }} *</label>
+                            <label for="inputNameEn">{{ "facilities.name.en.label" | translate }} *</label>
                             <div class="input-group">
-                                <input id="inputName3" type="text" class="form-control" ng-model="editCtrl.facility.name" required />
+                                <input id="inputNameEn" type="text" class="form-control" ng-model="editCtrl.facility.name.en" required />
                                 <span class="input-group-addon">en</span>
                             </div>
                         </div>
                         <div class="form-group last-form-group">
-                            <label for="inputAlias3">{{ "facilities.aliases.label" | translate }}</label>
+                            <label>{{ "facilities.aliases.label" | translate }}</label>
                             <div class="input-group">
                                 <div class="wdAliases">
                                     <tags-input id="inputAlias3" ng-model="editCtrl.facility.aliases" placeholder="{{ 'facilities.aliases.placeholder' | translate }}" repl
@@ -88,7 +88,7 @@
                             </thead>
                             <tbody>
                             <tr ng-repeat="capacityType in editCtrl.capacityTypes">
-                                <td class="wdCapacityType">{{'facilities.capacityType.' + capacityType | translate}}</td>
+                                <td class="wdCapacityType">{{'facilities.capacities.' + capacityType + '.label' | translate}}</td>
                                 <td>
                                     <input type="number" class="form-control wd{{capacityType}}built" ng-model="editCtrl.facility.capacities[capacityType].built" min="0">
                                 </td>
@@ -105,8 +105,7 @@
                     <h3>{{"facilities.location" | translate}} *</h3>
                     <facility-map ng-model="editCtrl.facility.border" editable="true" required></facility-map>
                 </div>
-</div>
-
+            </div>
 		</content>
 	</main-layout>
 </form>

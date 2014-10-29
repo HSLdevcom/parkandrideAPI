@@ -18,7 +18,8 @@
             restrict: 'E',
             require: 'ngModel',
             scope: {
-                hub: '=ngModel'
+                hub: '=ngModel',
+                facilities: '='
             },
             template: '<div class="map hub-map edit-hub-map"></div>',
             transclude: false,
@@ -61,6 +62,12 @@
                 });
                 map.addInteraction(selectFeatures);
 
+                function addFeatureAsFacility(feature) {
+                    var facility = feature.getProperties();
+                    facility.id = feature.getId();
+                    scope.facilities.push(facility);
+                }
+
                 var selectedFeatures = selectFeatures.getFeatures();
 
                 FacilityResource.findFacilitiesAsFeatureCollection().then(function(geojson) {
@@ -72,6 +79,7 @@
                         facilitiesLayer.getSource().addFeature(feature);
                         if (_.contains(scope.hub.facilityIds, feature.getId())) {
                             selectedFeatures.push(feature);
+                            addFeatureAsFacility(feature);
                             extent = ol.extent.extend(extent, feature.getGeometry().getExtent());
                         }
                     });
@@ -79,12 +87,19 @@
                         view.fitExtent(extent, map.getSize());
                     }
                     selectedFeatures.on("add", function (collectionEvent) {
-                        scope.hub.facilityIds.push(collectionEvent.element.getId());
+                        var feature = collectionEvent.element;
+                        scope.hub.facilityIds.push(feature.getId());
+                        addFeatureAsFacility(feature);
                         scope.$apply();
                         return true;
                     });
                     selectedFeatures.on("remove", function (collectionEvent) {
-                        scope.hub.facilityIds = _.without(scope.hub.facilityIds, collectionEvent.element.getId());
+                        var facilityId = collectionEvent.element.getId();
+                        scope.hub.facilityIds = _.without(scope.hub.facilityIds, facilityId);
+                        var index = _.findIndex(scope.facilities, function(facility) { return facility.id === facilityId; });
+                        if (index >= 0) {
+                            scope.facilities.splice(index, 1);
+                        }
                         scope.$apply();
                         return true;
                     });
@@ -134,6 +149,12 @@
                         if (!ol.extent.isEmpty(extent)) {
                             view.fitExtent(extent, map.getSize());
                         }
+                    });
+                }
+                if (console.log) {
+                    map.on('dblclick', function(event) {
+                        console.log("{x: "+ event.pixel[0] + ", y: " + event.pixel[1] + "}");
+                        return true;
                     });
                 }
             }

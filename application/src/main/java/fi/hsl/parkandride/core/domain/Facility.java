@@ -9,18 +9,22 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import org.geolatte.geom.Geometry;
+import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
 
 public class Facility {
 
     public Long id;
 
-    @NotBlank
-    public String name;
+    @NotNull
+    @Valid
+    public MultilingualString name;
 
     @NotNull
     public Geometry border;
 
+    @ElementNotBlank
+    @ElementLength(min=0, max=255)
     public Set<String> aliases = new HashSet<>();
 
     @Valid
@@ -31,7 +35,7 @@ public class Facility {
         return id;
     }
 
-    public String getName() {
+    public MultilingualString getName() {
         return name;
     }
 

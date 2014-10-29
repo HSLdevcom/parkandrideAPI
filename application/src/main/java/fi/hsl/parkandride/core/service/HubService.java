@@ -9,18 +9,23 @@ public class HubService {
 
     private final HubRepository repository;
 
-    public HubService(HubRepository repository) {
+    private final ValidationService validationService;
+
+    public HubService(HubRepository repository, ValidationService validationService) {
         this.repository = repository;
+        this.validationService = validationService;
     }
 
     @TransactionalWrite
     public Hub createHub(Hub hub) {
+        validationService.validate(hub);
         hub.id = repository.insertHub(hub);
         return hub;
     }
 
     @TransactionalWrite
     public Hub updateHub(long hubId, Hub hub) {
+        validationService.validate(hub);
         repository.updateHub(hubId, hub);
         return hub;
     }

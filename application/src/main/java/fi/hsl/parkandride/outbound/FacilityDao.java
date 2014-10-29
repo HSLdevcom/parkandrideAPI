@@ -71,7 +71,21 @@ public class FacilityDao implements FacilityRepository {
     public static final ResultTransformer<Map<Long, Map<CapacityType, Capacity>>> capacitiesByFacilityIdMapping =
             groupBy(qCapacity.facilityId).as(map(qCapacity.capacityType, capacityMapping));
 
-    private static final QBean<Facility> facilityMapping = new QBean<>(Facility.class, true, qFacility.all());
+    private static final MappingProjection<Facility> facilityMapping = new MappingProjection<Facility>(Facility.class, qFacility.all()) {
+        private final MultilingualStringMapping nameMapping = new MultilingualStringMapping(qFacility.nameFi, qFacility.nameSv, qFacility.nameEn);
+        @Override
+        protected Facility map(Tuple row) {
+            Long id = row.get(qFacility.id);
+            if (id == null) {
+                return null;
+            }
+            Facility facility = new Facility();
+            facility.id = id;
+            facility.border = row.get(qFacility.border);
+            facility.name = nameMapping.map(row);
+            return facility;
+        }
+    };
 
     public static final String FACILITY_ID_SEQ = "facility_id_seq";
 
@@ -319,7 +333,9 @@ public class FacilityDao implements FacilityRepository {
     }
 
     private void populate(Facility facility, StoreClause store) {
-        store.set(qFacility.name, facility.name);
+        store.set(qFacility.nameFi, facility.name.fi);
+        store.set(qFacility.nameSv, facility.name.sv);
+        store.set(qFacility.nameEn, facility.name.en);
         store.set(qFacility.border, facility.border);
     }
 

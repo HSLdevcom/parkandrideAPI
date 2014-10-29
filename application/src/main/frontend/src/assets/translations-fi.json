@@ -10,9 +10,15 @@
         },
         "name" : {
             "placeholder": "Pysäköintilaitos",
-            "label_fi": "Nimi",
-            "label_sv": "Namn",
-            "label_en": "Name"
+            "fi": {
+                "label": "Nimi"
+            },
+            "sv": {
+                "label": "Namn"
+            },
+            "en": {
+                "label": "Name"
+            }
         },
         "aliases": {
             "label": "Aliakset",
@@ -24,13 +30,61 @@
             "built": "Rakennettu kapasiteetti",
             "unavailable": "Tilapäisesti poissa käytöstä"
         },
-        "capacityType": {
-            "CAR": "Henkilöauto",
-            "PARK_AND_RIDE": "Liityntäpysäköinti",
-            "BICYCLE": "Polkupyörä",
-            "DISABLED": "Invapaikka",
-            "MOTORCYCLE": "Moottoripyörä",
-            "ELECTRIC_CAR": "Sähköauto"
+        "capacities": {
+            "CAR": {
+                "built":  {
+                    "label": "Henkilöauto, rakennettu kapasiteetti"
+                },
+                "unavailable": {
+                    "label": "Henkilöauto, tilapäisesti poissa käytöstä"
+                },
+                "label": "Henkilöauto"
+            },
+            "PARK_AND_RIDE": {
+                "built":  {
+                    "label": "Liityntäpysäköinti, rakennettu kapasiteetti"
+                },
+                "unavailable": {
+                    "label": "Liityntäpysäköinti, tilapäisesti poissa käytöstä"
+                },
+                "label": "Liityntäpysäköinti"
+            },
+            "BICYCLE": {
+                "built":  {
+                    "label": "Polkupyörä, rakennettu kapasiteetti"
+                },
+                "unavailable": {
+                    "label": "Polkupyörä, tilapäisesti poissa käytöstä"
+                },
+                "label": "Polkupyörä"
+            },
+            "DISABLED": {
+                "built":  {
+                    "label": "Invapaikka, rakennettu kapasiteetti"
+                },
+                "unavailable": {
+                    "label": "Invapaikka, tilapäisesti poissa käytöstä"
+                },
+                "label": "Invapaikka"
+            },
+            "MOTORCYCLE": {
+                "built":  {
+                    "label": "Moottoripyörä, rakennettu kapasiteetti"
+                },
+                "unavailable": {
+                    "label": "Moottoripyörä, tilapäisesti poissa käytöstä"
+                },
+                "label": "Moottoripyörä"
+            },
+            "ELECTRIC_CAR": {
+                "built":  {
+                    "label": "Sähköauto, rakennettu kapasiteetti"
+                },
+                "unavailable": {
+                    "label": "Sähköauto, tilapäisesti poissa käytöstä"
+                },
+                "label": "Sähköauto"
+            }
         },
         "location": "Sijainti"
     },
@@ -42,7 +96,7 @@
         "logodesc": "HSL Liityntäpysäköinti"
     },
     "hubs": {
-        "title": "Alueet",
+        "title": "Alueet ja fasiliteetit",
         "list": {
             "name": "Nimi"
         },
@@ -51,9 +105,19 @@
         },
         "name": {
             "placeholder": "Alue",
-            "label": "Nimi"
+            "fi": {
+                "label": "Nimi (fi)"
+            },
+            "sv": {
+                "label": "Nimi (sv)"
+            },
+            "en": {
+                "label": "Nimi (en)"
+            }
         },
-        "location": "Sijainti",
+        "location": {
+            "label": "Sijainti"
+        },
         "facilitiesTotal": "Pysäköintilaitoksia yhteensä"
     },
     "common": {
@@ -64,5 +128,20 @@
             "save": "Tallenna muutokset",
             "logout": "Kirjaudu ulos"
         }
+    },
+    "error": {
+        "404": {
+            "title": "Sivua ei löytynyt. Tarkista osoite."
+        },
+        "500": {
+            "title": "Oops, nyt tuli virhe!"
+        },
+        "buttonText": "Voi veljet!"
+    },
+    "violation": {
+        "Min": "pitää olla vähintään {{value}}",
+        "NotBlank": "ei saa olla tyhjä",
+        "Length": "saa olla korkeintaan {{max}} merkkiä pitkä",
+        "ElementLength": "saa olla korkeintaan {{max}} merkkiä pitkä"
     }
 }

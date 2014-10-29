@@ -18,7 +18,9 @@ JARFile=${APP_JAR:-"$SCRIPT_DIR/../../../../target/parkandride-application-0.0.1
 PIDFile="$SCRIPT_DIR/application.pid"
 LOGFile="$SCRIPT_DIR/application.log"
 NODE_MODULES="$SCRIPT_DIR/../node_modules"
-SERVER_URL=localhost:8080
+: ${SERVER_URL:=http://localhost:8080}
+
+export SERVER_URL
 
 log() {
   echo "$@"
@@ -51,7 +53,8 @@ retryable_condition() {
 }
 
 is_server_up() {
-  curl --output /dev/null --silent --head --fail $SERVER_URL
+  log "Polling for server at $SERVER_URL..."
+  curl --output /dev/null --silent --head --fail --insecure $SERVER_URL
 }
 
 CMD="$1"; shift
@@ -60,7 +63,7 @@ case "$CMD" in
       java -jar $JARFile --spring.profiles.active=e2e 2>&1 > $LOGFile &
       ;;
   wait_until_started)
-      retryable_condition 'is_server_up' 60 || fail "Failed to start application"
+      retryable_condition 'is_server_up' 120 || fail "Failed to start application"
       ;;
   test)
       $NODE_MODULES/protractor/bin/webdriver-manager update

@@ -4,6 +4,7 @@
   border-color: $lightgray;
 }
 
+
 .ng-invalid.ng-dirty {
   border-color: $errorcolor;
 }
@@ -12,6 +13,14 @@
   border-color: $secondarycolor;
   -webkit-box-shadow: none;
   box-shadow: none;
+}
+
+.ng-pristine .map {
+  border: 1px solid transparent;
+}
+
+input.ng-invalid.ng-dirty, form.ng-dirty input.ng-invalid, form.ng-dirty .ng-invalid .map {
+  border: 1px solid $errorcolor;
 }
 
 :focus {

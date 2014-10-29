@@ -151,6 +151,12 @@
                         }
                     });
                 }
+                if (console.log) {
+                    map.on('dblclick', function(event) {
+                        console.log("{x: "+ event.pixel[0] + ", y: " + event.pixel[1] + "}");
+                        return true;
+                    });
+                }
             }
         };
     });

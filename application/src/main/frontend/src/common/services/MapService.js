@@ -4,27 +4,27 @@
     m.value('MapService', {
         facilityStyle: new ol.style.Style({
             fill: new ol.style.Fill({
-                color: 'rgba(255, 255, 255, 0.5)'
+                color: 'rgba(255, 99, 25, 0.3)' //HSL orange, transparent
             }),
             stroke: new ol.style.Stroke({
-                color: '#FF6319',
+                color: '#FF6319', //HSL orange
                 width: 2
             }),
             image: new ol.style.Circle({
                 radius: 7,
                 fill: new ol.style.Fill({
-                    color: '#ffcc33'
+                    color: '#FF6319' //HSL orange
                 })
             })
         }),
 
         selectedFacilityStyle: new ol.style.Style({
             fill: new ol.style.Fill({
-                color: [255, 255, 255, 0.5] // transparent white
+                color: 'rgba(0, 122, 201, 0.3)' //HSL blue, transparent
             }),
             stroke: new ol.style.Stroke({
-                color: "#007AC9",
-                width: 3
+                color: '#007AC9', //HSL blue
+                width: 2
             })
         }),
 
@@ -32,11 +32,11 @@
             image: new ol.style.Circle({
                 radius: 8,
                 fill: new ol.style.Fill({
-                    color: [255, 255, 255, 1] // white
+                    color: '#007AC9' //HSL blue
                 }),
                 stroke: new ol.style.Stroke({
-                    color: [0, 0, 0, 1], // blue
-                    width: 3
+                    color: '#007AC9', //not used
+                    width: 0
                 })
             })
         }),

@@ -1,8 +1,19 @@
 //angular styles
+
 .ng-valid.ng-dirty {
-  border-color: #78FA89;
+  border-color: $lightgray;
 }
 
 .ng-invalid.ng-dirty {
-  border-color: #FA787E;
+  border-color: $errorcolor;
+}
+
+.form-control:focus {
+  border-color: $secondarycolor;
+  -webkit-box-shadow: none;
+  box-shadow: none;
+}
+
+:focus {
+  outline: none;
 }

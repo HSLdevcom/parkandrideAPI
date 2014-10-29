@@ -10,7 +10,9 @@
         },
         "name" : {
             "placeholder": "Pysäköintilaitos",
-            "label": "Nimi"
+            "label_fi": "Nimi",
+            "label_sv": "Namn",
+            "label_en": "Name"
         },
         "aliases": {
             "label": "Aliakset",

@@ -1,40 +1,96 @@
 <form name="editFacilityForm" class="form-horizontal" role="form" novalidate>
 	<main-layout>
+
 		<headline>
 			{{ editCtrl.facility.name || 'facilities.name.placeholder' | translate }}
 		</headline>
 		<actions>
 			<facility-edit-navi></facility-edit-navi>
 		</actions>
+
 		<content>
-			<div class="row wdFacilityEditView">
-				<div class="col-md-6">
-					<h3>Nimitiedot</h3>
+			<div class="wdFacilityEditView">
+
+				<div class="row">
+                    <h3 class="h3-first">Nimitiedot</h3>
+                    </div>
+                <div class="row">
+                    <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 column first-column">
 					<div class="form-group">
-						<label for="inputName" class="col-sm-5 control-label">* {{ "facilities.name.label" | translate }}</label>
-						<div class="col-sm-7">
-							<input id="inputName" type="text" class="form-control" ng-model="editCtrl.facility.name" required />
-						</div>
-					</div>
-					<div class="form-group">
-						<label for="inputAlias" class="col-sm-5 control-label">{{ "facilities.aliases.label" | translate }}</label>
-						<div class="col-sm-7 wdAliases">
+						<label for="inputName">{{ "facilities.name.label_fi" | translate }} *</label>
+                        <div class="input-group">
+						<input id="inputName" type="text" class="form-control" ng-model="editCtrl.facility.name" required />
+					    <span class="input-group-addon">fi</span>
+                        </div>
+                    </div>
+					<div class="form-group last-form-group">
+						<label for="inputAlias">{{ "facilities.aliases.label" | translate }}</label>
+                        <div class="input-group">
+                        <div class="wdAliases">
 							<tags-input ng-model="editCtrl.facility.aliases" placeholder="{{ 'facilities.aliases.placeholder' | translate }}" repl
-										ace-spaces-with-dashes="false"></tags-input>
-						</div>
+							ace-spaces-with-dashes="false"></tags-input>
+                        </div>
+                            <span class="input-group-addon">fi</span>
 					</div>
-					<div>
-						<h3>{{"facilities.capacity.heading" | translate}}</h3>
-						<div class="panel panel-default">
-							<table class="table table-bordered table-striped table-condensed">
-								<thead>
+                    </div>
+                        </div>
+                        <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 column">
+                            <div class="form-group">
+                                <label for="inputName2">{{ "facilities.name.label_sv" | translate }} *</label>
+                                <div class="input-group">
+                                    <input id="inputName2" type="text" class="form-control" ng-model="editCtrl.facility.name" required />
+                                    <span class="input-group-addon">sv</span>
+                                </div>
+                            </div>
+                            <div class="form-group last-form-group">
+                                <label for="inputAlias2">{{ "facilities.aliases.label" | translate }}</label>
+                                <div class="input-group">
+                                    <div class="wdAliases">
+                                        <tags-input id="inputAlias2" ng-model="editCtrl.facility.aliases" placeholder="{{ 'facilities.aliases.placeholder' | translate }}" repl
+                                                    ace-spaces-with-dashes="false"></tags-input>
+                                    </div>
+                                    <span class="input-group-addon">sv</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 column last-column">
+                            <div class="form-group">
+                                <label for="inputName3">{{ "facilities.name.label_en" | translate }} *</label>
+                                <div class="input-group">
+                                    <input id="inputName3" type="text" class="form-control" ng-model="editCtrl.facility.name" required />
+                                    <span class="input-group-addon">en</span>
+                                </div>
+                            </div>
+                            <div class="form-group last-form-group">
+                                <label for="inputAlias3">{{ "facilities.aliases.label" | translate }}</label>
+                                <div class="input-group">
+                                    <div class="wdAliases">
+                                        <tags-input id="inputAlias3" ng-model="editCtrl.facility.aliases" placeholder="{{ 'facilities.aliases.placeholder' | translate }}" repl
+                                                    ace-spaces-with-dashes="false"></tags-input>
+                                    </div>
+                                    <span class="input-group-addon">en</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                <div class="row">
+                    <h3>* {{"facilities.location" | translate}}</h3>
+                    <facility-map ng-model="editCtrl.facility.border" editable="true" required></facility-map>
+                </div>
+
+				<div class="row">
+					<h3>{{"facilities.capacity.heading" | translate}}</h3>
+					<div class="panel panel-default">
+						<table class="table table-bordered table-striped table-condensed">
+							<thead>
 								<tr>
 									<th translate="facilities.capacity.type"></th>
 									<th translate="facilities.capacity.built"></th>
 									<th translate="facilities.capacity.unavailable"></th>
 								</tr>
-								</thead>
-								<tbody>
+							</thead>
+							<tbody>
 								<tr ng-repeat="capacityType in editCtrl.capacityTypes">
 									<td class="wdCapacityType">{{'facilities.capacityType.' + capacityType | translate}}</td>
 									<td>
@@ -44,15 +100,11 @@
 										<input type="number" class="form-control wd{{capacityType}}unavailable" ng-model="editCtrl.facility.capacities[capacityType].unavailable" min="0">
 									</td>
 								</tr>
-								</tbody>
-							</table>
-						</div>
+							</tbody>
+						</table>
 					</div>
 				</div>
-				<div class="col-md-6">
-					<h3>* {{"facilities.location" | translate}}</h3>
-					<facility-map ng-model="editCtrl.facility.border" editable="true" required></facility-map>
-				</div>
+
 			</div>
 		</content>
 	</main-layout>

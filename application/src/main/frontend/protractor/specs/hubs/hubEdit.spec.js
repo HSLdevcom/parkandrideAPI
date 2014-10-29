@@ -8,7 +8,36 @@ describe('edit hub view', function () {
     var hubEditPage = po.hubEditPage({});
     var hubViewPage = po.hubViewPage({});
 
-    describe('hub with 2 facilities', function () {
+    describe('new hub', function () {
+        beforeEach(function () {
+            devApi.resetAll();
+            hubEditPage.get();
+        });
+
+        describe('required fields', function () {
+            it('name is required in all languages', function () {
+                hubEditPage.setName("Hub name");
+                hubEditPage.setNameFi("");
+                expect(hubEditPage.isNameFiRequiredError()).toBe(true);
+                expect(hubEditPage.isNameSvRequiredError()).toBe(false);
+                expect(hubEditPage.isNameEnRequiredError()).toBe(false);
+
+                hubEditPage.setName("Hub name");
+                hubEditPage.setNameSv("");
+                expect(hubEditPage.isNameFiRequiredError()).toBe(false);
+                expect(hubEditPage.isNameSvRequiredError()).toBe(true);
+                expect(hubEditPage.isNameEnRequiredError()).toBe(false);
+
+                hubEditPage.setName("Hub name");
+                hubEditPage.setNameEn("");
+                expect(hubEditPage.isNameFiRequiredError()).toBe(false);
+                expect(hubEditPage.isNameSvRequiredError()).toBe(false);
+                expect(hubEditPage.isNameEnRequiredError()).toBe(true);
+            });
+        });
+    });
+
+    xdescribe('hub with 2 facilities', function () {
         var hubWithTwoFacilities = fixtures.hubsFixture.westend;
 
         beforeEach(function () {

@@ -9,6 +9,10 @@ module.exports = function(spec) {
         });
     };
 
+    spec.isRequiredError = function(element) {
+        return spec.hasClass(element, "ng-invalid-required");
+    };
+
     var that = {};
 
     that.isDisplayed = function() {
@@ -57,6 +61,18 @@ module.exports = function(spec) {
         that.setNameFi(name);
         that.setNameSv(name);
         that.setNameEn(name);
+    };
+
+    that.isNameFiRequiredError = function () {
+        return spec.isRequiredError(spec.nameFi);
+    };
+
+    that.isNameSvRequiredError = function () {
+        return spec.isRequiredError(spec.nameSv);
+    };
+
+    that.isNameEnRequiredError = function () {
+        return spec.isRequiredError(spec.nameEn);
     };
 
     return that;

@@ -1,19 +1,45 @@
 <main-layout>
 	<headline>
 		<span class="wdFacilityName">{{viewCtrl.facility.name}}</span>
-		<small class="wdAliases">{{viewCtrl.facility.aliases | joinBy: ", "}}</small>
 	</headline>
 	<actions>
 		<facility-view-navi></facility-view-navi>
 	</actions>
 	<content>
+
+        <div class="row wdFacilityView">
+            <h3 class="h3-first">Kapasiteetti</h3>
+            <capacities-table capacities="viewCtrl.facility.capacities"></capacities-table>
+        </div>
+
+        <div class="row wdFacilityView">
+            <h3>Sijainti</h3>
+            <facility-map ng-model="viewCtrl.facility.border"></facility-map>
+        </div>
+        </div>
+
+        <div class="row">
+            <h3>Nimitiedot</h3>
+        </div>
 		<div class="row wdFacilityView">
-			<div class="col-md-6 col-lg-6">
-				<capacities-table capacities="viewCtrl.facility.capacities"></capacities-table>
-			</div>
-			<div class="col-md-6 col-lg-6 text-right">
-				<facility-map ng-model="viewCtrl.facility.border"></facility-map>
-			</div>
-		</div>
+            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 column first-column">
+                <p><label>Nimi</label></p>
+                <p>{{viewCtrl.facility.name}}</p>
+                <p><label>Aliakset</label></p>
+                <p>{{viewCtrl.facility.aliases | joinBy: ", "}}</p>
+            </div>
+            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 column first-column">
+                <p><label>Namn</label></p>
+                <p>asdfasdf</p>
+                <p><label>Aliakserna</label></p>
+                <p>asdf</p>
+                </div>
+            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 column first-column">
+                <p><label>Name</label></p>
+                <p>asdfsdaf</p>
+                <p><label>Aliases</label></p>
+                <p>asdfasdf</p>
+            </div>
+        </div>
 	</content>
 </main-layout>

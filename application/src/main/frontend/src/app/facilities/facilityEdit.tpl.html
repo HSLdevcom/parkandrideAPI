@@ -11,9 +11,41 @@
 		<content>
 			<div class="wdFacilityEditView">
 
-				<div class="row">
-                    <h3 class="h3-first">Nimitiedot</h3>
+                <div class="row">
+                    <h3 class="h3-first">{{"facilities.capacity.heading" | translate}}</h3>
+                    <div class="panel panel-default">
+                        <table class="table table-bordered table-striped table-condensed">
+                            <thead>
+                            <tr>
+                                <th translate="facilities.capacity.type"></th>
+                                <th translate="facilities.capacity.built"></th>
+                                <th translate="facilities.capacity.unavailable"></th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr ng-repeat="capacityType in editCtrl.capacityTypes">
+                                <td class="wdCapacityType">{{'facilities.capacityType.' + capacityType | translate}}</td>
+                                <td>
+                                    <input type="number" class="form-control wd{{capacityType}}built" ng-model="editCtrl.facility.capacities[capacityType].built" min="0">
+                                </td>
+                                <td>
+                                    <input type="number" class="form-control wd{{capacityType}}unavailable" ng-model="editCtrl.facility.capacities[capacityType].unavailable" min="0">
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
                     </div>
+                </div>
+
+                <div class="row">
+                    <h3>{{"facilities.location" | translate}} *</h3>
+                    <facility-map ng-model="editCtrl.facility.border" editable="true" required></facility-map>
+                </div>
+
+		<div class="row">
+             <h3>Nimitiedot</h3>
+        </div>
+
                 <div class="row">
                     <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 column first-column">
 					<div class="form-group">
@@ -73,37 +105,6 @@
                             </div>
                         </div>
                     </div>
-
-                <div class="row">
-                    <h3>* {{"facilities.location" | translate}}</h3>
-                    <facility-map ng-model="editCtrl.facility.border" editable="true" required></facility-map>
-                </div>
-
-				<div class="row">
-					<h3>{{"facilities.capacity.heading" | translate}}</h3>
-					<div class="panel panel-default">
-						<table class="table table-bordered table-striped table-condensed">
-							<thead>
-								<tr>
-									<th translate="facilities.capacity.type"></th>
-									<th translate="facilities.capacity.built"></th>
-									<th translate="facilities.capacity.unavailable"></th>
-								</tr>
-							</thead>
-							<tbody>
-								<tr ng-repeat="capacityType in editCtrl.capacityTypes">
-									<td class="wdCapacityType">{{'facilities.capacityType.' + capacityType | translate}}</td>
-									<td>
-										<input type="number" class="form-control wd{{capacityType}}built" ng-model="editCtrl.facility.capacities[capacityType].built" min="0">
-									</td>
-									<td>
-										<input type="number" class="form-control wd{{capacityType}}unavailable" ng-model="editCtrl.facility.capacities[capacityType].unavailable" min="0">
-									</td>
-								</tr>
-							</tbody>
-						</table>
-					</div>
-				</div>
 
 			</div>
 		</content>

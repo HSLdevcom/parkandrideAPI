@@ -1,7 +1,8 @@
 "use strict";
 
 module.exports = function(spec) {
-    spec.ptor = protractor.getInstance();
+    var _ = require('lodash');
+    spec.ptor = protractor.getInstance(); // TODO use browser directly instead of this
 
     spec.hasClass = function (element, cls) {
         return element.getAttribute('class').then(function (classes) {
@@ -9,8 +10,16 @@ module.exports = function(spec) {
         });
     };
 
+    spec.hasClasses = function(element, classes) {
+        var promises = [];
+        _.forEach(classes, function(cls) { promises.push(spec.hasClass(element, cls)); } );
+        return protractor.promise.all(promises).then(function (results) {
+            return _.every(results, function(r) { return r === true; });
+        });
+    };
+
     spec.isRequiredError = function(element) {
-        return spec.hasClass(element, "ng-invalid-required");
+        return spec.hasClasses(element, ["ng-invalid-required", "formdirty"]);
     };
 
     spec.getValue = function(element) {

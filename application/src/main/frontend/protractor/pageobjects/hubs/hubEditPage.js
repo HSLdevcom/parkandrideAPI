@@ -42,5 +42,9 @@ module.exports = function(spec) {
         spec.saveButton.click();
     };
 
+    that.isLocationRequiredError = function() {
+        return spec.isRequiredError($('edit-hub-map'));
+    };
+
     return that;
 };

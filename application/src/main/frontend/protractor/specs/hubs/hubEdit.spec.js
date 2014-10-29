@@ -14,6 +14,13 @@ describe('edit hub view', function () {
             hubEditPage.get();
         });
 
+        it('initially no errors exist', function () {
+            expect(hubEditPage.isNameFiRequiredError()).toBe(false);
+            expect(hubEditPage.isNameSvRequiredError()).toBe(false);
+            expect(hubEditPage.isNameEnRequiredError()).toBe(false);
+            expect(hubEditPage.isLocationRequiredError()).toBe(false);
+        });
+
         describe('name', function () {
             it('is required in all languages', function () {
                 hubEditPage.setName("Hub name");
@@ -33,10 +40,11 @@ describe('edit hub view', function () {
                 expect(hubEditPage.isNameFiRequiredError()).toBe(false);
                 expect(hubEditPage.isNameSvRequiredError()).toBe(false);
                 expect(hubEditPage.isNameEnRequiredError()).toBe(true);
+
             });
 
             it('max length is 255', function () {
-                var max = new Array(255+1).join("x")
+                var max = new Array(255+1).join("x");
                 var tooLong = max + "y";
                 hubEditPage.setName(tooLong);
                 expect(hubEditPage.getNameFi()).toEqual(max);
@@ -44,9 +52,16 @@ describe('edit hub view', function () {
                 expect(hubEditPage.getNameEn()).toEqual(max);
             });
         });
+
+        describe('location', function () {
+            it('is required', function () {
+                hubEditPage.setName("Hub name");
+                expect(hubEditPage.isLocationRequiredError()).toBe(true);
+            });
+        });
     });
 
-    xdescribe('hub with 2 facilities', function () {
+    describe('hub with 2 facilities', function () {
         var hubWithTwoFacilities = fixtures.hubsFixture.westend;
 
         beforeEach(function () {

@@ -139,30 +139,14 @@ describe('Basic flow', function() {
         expect(hubEditPage.isDisplayed()).toBe(true);
     });
 
-    it('Try to create invalid hub', function () {
-        expect(hubEditPage.isDirty()).toBe(false);
-        hubEditPage.save();
-        expect(hubEditPage.isDisplayed()).toBe(true);
-        expect(hubEditPage.isDirty()).toBe(true);
-
-        // Too long name
-        hubEditPage.setNameFi(tooLongValue);
-        hubEditPage.setNameSv(hubName);
-        hubEditPage.setNameEn(hubName);
-        hubEditPage.setLocation({x: 165, y: 165});
-        hubEditPage.save();
-
-        expect(facilityEditPage.getViolations()).toEqual([{path:"Nimi (fi)", message:"saa olla korkeintaan 255 merkkiä pitkä"}]);
-    });
-
     it('Create hub', function() {
         hubEditPage.setName(hubName);
         expect(hubEditPage.facilitiesTable.isDisplayed()).toBe(false);
 
         hubEditPage.toggleFacility(facility1);
-            hubEditPage.toggleFacility(facility2);
+        hubEditPage.toggleFacility(facility2);
+        hubEditPage.setLocation({x: 165, y: 165});
         // NOTE: It takes some time until toggleFacility is reflected facilitiesTable - asserting getFacilityNames directly after toggle fails.
-
         expect(hubEditPage.facilitiesTable.isDisplayed()).toBe(true);
         expect(hubEditPage.facilitiesTable.getFacilityNames()).toEqual([facility1.name, facility2.name]);
 
@@ -171,8 +155,8 @@ describe('Basic flow', function() {
         expect(hubViewPage.getName()).toBe(hubName);
         arrayAssert.assertInOrder(hubViewPage.capacitiesTable.getTypes(), capacityTypeOrder);
         expect(hubViewPage.capacitiesTable.getCapacities(_.keys(totalCapacities.capacities))).toEqual(totalCapacities.capacities);
-        expect(hubEditPage.facilitiesTable.isDisplayed()).toBe(true);
-        expect(hubEditPage.facilitiesTable.getFacilityNames()).toEqual([facility1.name, facility2.name]);
+        expect(hubViewPage.facilitiesTable.isDisplayed()).toBe(true);
+        expect(hubViewPage.facilitiesTable.getFacilityNames()).toEqual([facility1.name, facility2.name]);
     });
 
     it('List facilities grouped by hubs', function() {

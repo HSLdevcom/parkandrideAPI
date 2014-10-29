@@ -14,8 +14,8 @@ describe('edit hub view', function () {
             hubEditPage.get();
         });
 
-        describe('required fields', function () {
-            it('name is required in all languages', function () {
+        describe('name', function () {
+            it('is required in all languages', function () {
                 hubEditPage.setName("Hub name");
                 hubEditPage.setNameFi("");
                 expect(hubEditPage.isNameFiRequiredError()).toBe(true);
@@ -33,6 +33,15 @@ describe('edit hub view', function () {
                 expect(hubEditPage.isNameFiRequiredError()).toBe(false);
                 expect(hubEditPage.isNameSvRequiredError()).toBe(false);
                 expect(hubEditPage.isNameEnRequiredError()).toBe(true);
+            });
+
+            it('max length is 255', function () {
+                var max = new Array(255+1).join("x")
+                var tooLong = max + "y";
+                hubEditPage.setName(tooLong);
+                expect(hubEditPage.getNameFi()).toEqual(max);
+                expect(hubEditPage.getNameSv()).toEqual(max);
+                expect(hubEditPage.getNameEn()).toEqual(max);
             });
         });
     });

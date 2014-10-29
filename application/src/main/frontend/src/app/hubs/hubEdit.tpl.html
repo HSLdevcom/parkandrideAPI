@@ -13,19 +13,19 @@
 					<div class="form-group">
 						<label for="inputNameFi" class="col-sm-5 control-label">* {{ "hubs.name.fi.label" | translate }}</label>
 						<div class="col-sm-7">
-							<input id="inputNameFi" type="text" class="form-control" ng-model="editCtrl.hub.name.fi" required />
+							<input id="inputNameFi" type="text" class="form-control" ng-model="editCtrl.hub.name.fi" maxlength="255" required  />
 						</div>
 					</div>
 					<div class="form-group">
 						<label for="inputNameSv" class="col-sm-5 control-label">* {{ "hubs.name.sv.label" | translate }}</label>
 						<div class="col-sm-7">
-							<input id="inputNameSv" type="text" class="form-control" ng-model="editCtrl.hub.name.sv" required />
+							<input id="inputNameSv" type="text" class="form-control" ng-model="editCtrl.hub.name.sv" maxlength="255" required />
 						</div>
 					</div>
 					<div class="form-group">
 						<label for="inputNameEn" class="col-sm-5 control-label">* {{ "hubs.name.en.label" | translate }}</label>
 						<div class="col-sm-7">
-							<input id="inputNameEn" type="text" class="form-control" ng-model="editCtrl.hub.name.en" required />
+							<input id="inputNameEn" type="text" class="form-control" ng-model="editCtrl.hub.name.en" maxlength="255" required />
 						</div>
 					</div>
 					<facilities-table facilities="editCtrl.facilities"></facilities-table>

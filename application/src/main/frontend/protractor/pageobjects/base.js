@@ -13,6 +13,14 @@ module.exports = function(spec) {
         return spec.hasClass(element, "ng-invalid-required");
     };
 
+    spec.getValue = function(element) {
+        return element.getAttribute("value");
+    };
+
+    spec.sendKeys = function(element, input) {
+        element.clear().sendKeys(input);
+    };
+
     var that = {};
 
     that.isDisplayed = function() {
@@ -39,22 +47,31 @@ module.exports = function(spec) {
     };
 
     that.getName = function () {
-        spec.nameFi.getAttribute('value');
+        return getNameFi();
+    };
+
+    that.getNameFi = function () {
+        return spec.getValue(spec.nameFi);
+    };
+
+    that.getNameSv = function () {
+        return spec.getValue(spec.nameSv);
+    };
+
+    that.getNameEn = function () {
+        return spec.getValue(spec.nameEn);
     };
 
     that.setNameFi = function (name) {
-        spec.nameFi.clear();
-        spec.nameFi.sendKeys(name);
+        spec.sendKeys(spec.nameFi, name);
     };
 
     that.setNameSv = function (name) {
-        spec.nameSv.clear();
-        spec.nameSv.sendKeys(name);
+        spec.sendKeys(spec.nameSv, name);
     };
 
     that.setNameEn = function (name) {
-        spec.nameEn.clear();
-        spec.nameEn.sendKeys(name);
+        spec.sendKeys(spec.nameEn, name);
     };
 
     that.setName = function (name) {

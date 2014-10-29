@@ -8,13 +8,16 @@
 	</actions>
 	<content>
 		<div class="row wdHubView">
-			<div class="col-md-6">
-				<capacities-table capacities="viewCtrl.summary.capacities"></capacities-table>
-				<facilities-table facilities="viewCtrl.facilities"></facilities-table>
-			</div>
-			<div class="col-md-6 text-right">
+            <h3 class="h3-first">Kapasiteetti</h3>
+                <capacities-table capacities="viewCtrl.summary.capacities"></capacities-table>
+            </div>
+		<div class="row wdHubView">
+            <h3>Sijainti</h3>
 				<view-hub-map ng-model="viewCtrl.hub"></view-hub-map>
-			</div>
 		</div>
+        <div class="row wdHubView">
+            <h3>Alueen fasiliteetit</h3>
+            <facilities-table facilities="viewCtrl.facilities"></facilities-table>
+        </div>
 	</content>
 </main-layout>

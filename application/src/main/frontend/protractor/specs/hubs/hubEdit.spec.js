@@ -22,7 +22,7 @@ describe('edit hub view', function () {
             hubEditPage.toggleFacility(hubWithTwoFacilities.facilities[1]);
 
             // SMELL: the below makes test pass in travis env, find a better way to do this
-            browser.sleep(500);
+            browser.sleep(2000);
             expect(hubEditPage.facilitiesTable.getSize()).toEqual(1);
 
             hubEditPage.save();

@@ -21,8 +21,10 @@ describe('edit hub view', function () {
 
             hubEditPage.toggleFacility(hubWithTwoFacilities.facilities[1]);
 
-            // SMELL: the below makes test pass in travis env, find a better way to do this
-            browser.sleep(2000);
+            /*
+             * NOTE the asserts below occasionally fail on firefox; current best guess is that this is due to not all tiles loading.
+             */
+            expect(hubEditPage.facilitiesTable.isDisplayed()).toBe(true);
             expect(hubEditPage.facilitiesTable.getSize()).toEqual(1);
 
             hubEditPage.save();

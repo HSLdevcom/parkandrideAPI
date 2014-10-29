@@ -63,7 +63,7 @@ case "$CMD" in
       java -jar $JARFile --spring.profiles.active=e2e 2>&1 > $LOGFile &
       ;;
   wait_until_started)
-      retryable_condition 'is_server_up' 60 || fail "Failed to start application"
+      retryable_condition 'is_server_up' 120 || fail "Failed to start application"
       ;;
   test)
       $NODE_MODULES/protractor/bin/webdriver-manager update

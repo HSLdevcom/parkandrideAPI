@@ -3,17 +3,10 @@
 module.exports = function(spec) {
     var _ = require('lodash');
 
-    spec.hasClass = function (element, cls) {
-        return element.getAttribute('class').then(function (classes) {
-            return classes.split(' ').indexOf(cls) !== -1;
-        });
-    };
-
-    spec.hasClasses = function(element, classes) {
-        var promises = [];
-        _.forEach(classes, function(cls) { promises.push(spec.hasClass(element, cls)); } );
-        return protractor.promise.all(promises).then(function (results) {
-            return _.every(results, function(r) { return r === true; });
+    spec.hasClasses = function(element, expected) {
+        return element.getAttribute('class').then(function (classAttr) {
+            var actual = classAttr.split(' ');
+            return _.every(expected, function(cls) { return _.contains(actual, cls); } );
         });
     };
 

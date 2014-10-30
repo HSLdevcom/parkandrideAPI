@@ -9,6 +9,7 @@
 
     m.config(function($stateProvider) {
         $stateProvider.state('facility-create', { // dot notation in ui-router indicates nested ui-view
+            parent: 'root',
             url: '/facilities/create', // TODO set facilities base path on upper level and say here /create ?
             views: {
                 "main": {
@@ -28,6 +29,7 @@
             }
         });
         $stateProvider.state('facility-edit', { // dot notation in ui-router indicates nested ui-view
+            parent: 'root',
             url: '/facilities/edit/:id',
             views: {
                 "main": {

@@ -20,6 +20,11 @@
     m.config(function myAppConfig($stateProvider, $urlRouterProvider, $httpProvider) {
         $urlRouterProvider.otherwise('/hubs');
 
+        $stateProvider.state('root', {
+            abstract: true,
+            template: '<div ui-view="main"></div>'
+        });
+
         $httpProvider.interceptors.push(function($q, $translate, $rootScope) {
             return {
                 responseError: function(rejection) {

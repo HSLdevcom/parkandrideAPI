@@ -20,6 +20,19 @@
     m.config(function myAppConfig($stateProvider, $urlRouterProvider, $httpProvider) {
         $urlRouterProvider.otherwise('/hubs');
 
+        $stateProvider.state('root', {
+            abstract: true,
+            template: '<div ui-view="main"></div>',
+            controller: function($scope, features) {
+                $scope.features = features;
+            },
+            resolve: {
+                features: function(FeatureResource) {
+                    return FeatureResource.getFeatures();
+                }
+             }
+        });
+
         $httpProvider.interceptors.push(function($q, $translate, $rootScope) {
             return {
                 responseError: function(rejection) {
@@ -80,5 +93,6 @@
                 submitFn();
             }
         };
-});
+
+    });
 })();

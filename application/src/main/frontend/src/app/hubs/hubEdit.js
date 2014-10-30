@@ -10,7 +10,7 @@
     ]);
 
     m.config(function($stateProvider) {
-        $stateProvider.state('hub-create', { // dot notation in ui-router indicates nested ui-view
+        $stateProvider.state('root.hub-create', { // dot notation in ui-router indicates nested ui-view
             url: '/hubs/create',
             views: {
                 "main": {
@@ -25,7 +25,7 @@
                 }
             }
         });
-        $stateProvider.state('hub-edit', { // dot notation in ui-router indicates nested ui-view
+        $stateProvider.state('root.hub-edit', { // dot notation in ui-router indicates nested ui-view
             url: '/hubs/edit/:id',
             views: {
                 "main": {
@@ -49,7 +49,7 @@
         self.facilities = [];
         self.saveHub = function () {
             HubResource.save(self.hub).then(function (id) {
-                $state.go('hub-view', { "id": id });
+                $state.go('root.hub-view', { "id": id });
             });
         };
     });

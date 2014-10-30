@@ -8,14 +8,15 @@
             restrict: 'E',
             scope: {
                 polygon: '=ngModel',
-                editable: '='
+                editable: '@',
+                noTiles: '@'
             },
             template: '<div class="map facility-map"></div>',
             transclude: false,
             link: function(scope, element, attrs, ctrl) {
-                var editable = attrs.editable == "true";
+                var editable = attrs.editable === "true";
 
-                var map = MapService.createMap(element, { readOnly: !editable });
+                var map = MapService.createMap(element, { readOnly: !editable, noTiles: attrs.noTiles === "true" });
                 var view = map.getView();
 
                 var featureOverlay = new ol.FeatureOverlay({

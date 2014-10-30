@@ -22,7 +22,7 @@ module.exports = function(spec) {
 
     that.getHubAndFacilityNames = function() {
         return spec.hubAndFacilityNames.getText();
-    }
+    };
 
     that.getCapacityTypes = function(facilityId) {
         return element.all(by.css(".wdFacility" + facilityId + " .wdCapacityType")).filter(function(el) { return el.isDisplayed(); }).getText();

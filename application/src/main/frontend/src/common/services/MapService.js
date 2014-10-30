@@ -43,9 +43,9 @@
 
         createMap: function(ngElement, options) {
             var layers = [
-//                    new ol.layer.Tile({
-//                        source: new ol.source.OSM()
-//                    })
+                    new ol.layer.Tile({
+                        source: new ol.source.OSM()
+                    })
                 ];
 
             if (options.layers) {

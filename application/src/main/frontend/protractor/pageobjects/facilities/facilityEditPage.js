@@ -55,5 +55,9 @@ module.exports = function(spec) {
       return spec.capacityTypes.filter(function(el) { return el.isDisplayed(); }).getText();
     };
 
+    that.isFacilityRequiredError = function() {
+        return spec.isRequiredError($('facility-map'));
+    };
+
     return that;
 };

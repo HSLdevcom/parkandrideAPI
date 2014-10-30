@@ -35,10 +35,6 @@ module.exports = function(spec) {
         return spec.view.isDisplayed();
     };
 
-    that.isDirty = function() {
-        return spec.hasClass(spec.form, "ng-dirty");
-    };
-
     that.getViolations = function() {
         return $$('.wdViolation').then(function(violations) {
             var result = [];
@@ -52,10 +48,6 @@ module.exports = function(spec) {
             }
             return protractor.promise.all(result);
         });
-    };
-
-    that.getName = function () {
-        return getNameFi();
     };
 
     that.getNameFi = function () {

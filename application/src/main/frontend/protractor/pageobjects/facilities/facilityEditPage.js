@@ -22,7 +22,7 @@ module.exports = function(spec) {
     };
 
     that.drawBorder = function (topLeft, w, h) {
-        spec.ptor.actions()
+        browser.actions()
             .mouseMove(spec.map, topLeft).click()
             .mouseMove(spec.map, {x: topLeft.x, y: topLeft.y + h}).click()
             .mouseMove(spec.map, {x: topLeft.x + w, y: topLeft.y + h}).click()

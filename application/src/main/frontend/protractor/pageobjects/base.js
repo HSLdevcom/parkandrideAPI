@@ -2,7 +2,6 @@
 
 module.exports = function(spec) {
     var _ = require('lodash');
-    spec.ptor = protractor.getInstance(); // TODO use browser directly instead of this
 
     spec.hasClass = function (element, cls) {
         return element.getAttribute('class').then(function (classes) {

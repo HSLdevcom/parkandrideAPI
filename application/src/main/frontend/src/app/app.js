@@ -22,7 +22,15 @@
 
         $stateProvider.state('root', {
             abstract: true,
-            template: '<div ui-view="main"></div>'
+            template: '<div ui-view="main"></div>',
+            resolve: {
+                features: function(FeatureResource) {
+                    return FeatureResource.getFeatures();
+                }
+            },
+            controller: function($scope, features) {
+                $scope.features = features;
+            }
         });
 
         $httpProvider.interceptors.push(function($q, $translate, $rootScope) {

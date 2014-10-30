@@ -64,7 +64,7 @@
 				</div>
 				<div class="col-md-6">
 					<h3>* {{"facilities.location" | translate}}</h3>
-					<facility-map ng-model="editCtrl.facility.border" editable="true" required></facility-map>
+					<facility-map ng-model="editCtrl.facility.border" editable="true" no-tiles="{{features['map.no-tiles']}}" required></facility-map>
 				</div>
 			</div>
 		</content>

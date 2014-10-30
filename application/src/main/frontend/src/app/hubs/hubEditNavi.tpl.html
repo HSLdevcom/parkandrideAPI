@@ -1,7 +1,7 @@
-<a class="btn btn-s btn-navi" role="button" ng-show="!editCtrl.hub.id" ui-sref="hub-list">
+<a class="btn btn-s btn-navi" role="button" ng-show="!editCtrl.hub.id" ui-sref="root.hub-list">
 	{{'common.action.cancel' | translate }}
 </a>
-<a class="btn btn-s btn-navi" role="button" ng-show="editCtrl.hub.id" ui-sref="hub-view({ id: editCtrl.hub.id })">
+<a class="btn btn-s btn-navi" role="button" ng-show="editCtrl.hub.id" ui-sref="root.hub-view({ id: editCtrl.hub.id })">
 	{{'common.action.cancel' | translate }}
 </a>
 <a class="btn btn-s btn-navi wdSave" role="button" ng-click="appCtrl.validateAndSubmit(editHubForm,  editCtrl.saveHub)">

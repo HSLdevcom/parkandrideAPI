@@ -19,7 +19,8 @@
             require: 'ngModel',
             scope: {
                 hub: '=ngModel',
-                facilities: '='
+                facilities: '@',
+                noTiles: '@'
             },
             template: '<div class="map hub-map edit-hub-map"></div>',
             transclude: false,
@@ -34,7 +35,7 @@
                     style: MapService.hubStyle
                 });
 
-                var map = MapService.createMap(element, { layers: [ facilitiesLayer, hubLayer ], readOnly: false });
+                var map = MapService.createMap(element, { layers: [ facilitiesLayer, hubLayer ], readOnly: false, noTiles: attrs.noTiles === "true" });
                 var view = map.getView();
 
                 if (scope.hub.location) {
@@ -114,7 +115,8 @@
             require: 'ngModel',
             scope: {
                 hub: '=ngModel',
-                editable: '='
+                editable: '=',
+                noTiles: '@'
             },
             template: '<div class="map hub-map"></div>',
             transclude: false,
@@ -130,7 +132,7 @@
                     style: MapService.hubStyle
                 });
 
-                var map = MapService.createMap(element, { layers: [ facilitiesLayer, hubLayer ], readOnly: true });
+                var map = MapService.createMap(element, { layers: [ facilitiesLayer, hubLayer ], readOnly: true, noTiles: attrs.noTiles === "true"});
                 var view = map.getView();
 
                 var point = new ol.format.GeoJSON().readGeometry(scope.hub.location);

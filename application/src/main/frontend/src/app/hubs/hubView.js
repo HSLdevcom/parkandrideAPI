@@ -9,7 +9,7 @@
     ]);
 
     m.config(function config($stateProvider) {
-        $stateProvider.state('hub-view', { // dot notation in ui-router indicates nested ui-view
+        $stateProvider.state('root.hub-view', { // dot notation in ui-router indicates nested ui-view
             url: '/hubs/view/:id',
             views: {
                 "main": {

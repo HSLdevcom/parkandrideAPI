@@ -10,7 +10,7 @@
     ]);
 
     m.config(function config($stateProvider) {
-            $stateProvider.state('hub-list', {
+            $stateProvider.state('root.hub-list', {
                 url: '/hubs',
                 views: {
                     "main": {

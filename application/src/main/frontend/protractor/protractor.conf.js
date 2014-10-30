@@ -18,7 +18,7 @@ exports.config = {
         isVerbose: true,
         showColors: false,
         includeStackTrace: true,
-        defaultTimeoutInterval: 30000
+        defaultTimeoutInterval: 60000
     },
 
     onPrepare: function(){

@@ -7,6 +7,7 @@
 
     m.config(function config($stateProvider) {
         $stateProvider.state('dev-page', {
+            parent: 'root',
             url: '/dev',
             views: {
                 "main": {

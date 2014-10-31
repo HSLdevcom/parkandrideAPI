@@ -29,11 +29,15 @@
     });
 
     m.factory('FeatureResource', function($http, $q, FEATURES_URL) {
-        return {
+        var api = {
+            getFeatures: function() {
+                return $http.get(FEATURES_URL).then(function (response) {
+                    return response.data;
+                });
+            },
             isOn: function(name) {
                 var defer = $q.defer();
-                $http.get(FEATURES_URL).then(function(response) {
-                    var features = response.data;
+                api.getFeatures().then(function(features) {
                     if (features[name] === true) {
                         defer.resolve();
                     } else {
@@ -43,5 +47,6 @@
                return defer.promise;
             }
         };
+        return api;
     });
 })();

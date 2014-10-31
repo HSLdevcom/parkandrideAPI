@@ -1,3 +1,4 @@
 {
-  "dev": true
+  "dev": true,
+  "map.no-tiles": false
 }

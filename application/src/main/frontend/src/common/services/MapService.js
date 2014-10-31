@@ -42,11 +42,10 @@
         }),
 
         createMap: function(ngElement, options) {
-            var layers = [
-                    new ol.layer.Tile({
-                        source: new ol.source.OSM()
-                    })
-                ];
+            var layers = [];
+            if (!options.noTiles) {
+                layers.push(new ol.layer.Tile({ source: new ol.source.OSM() }));
+            }
 
             if (options.layers) {
                 layers = layers.concat(options.layers);

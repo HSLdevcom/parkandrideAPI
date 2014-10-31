@@ -12,6 +12,7 @@
 			<div class="row">
 				<h3 class="h3-first">{{ "hubs.name.title" | translate }}</h3>
 			</div>
+<<<<<<< HEAD
 			<div class="row">
 				<div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 column first-column">
 					<p>{{viewCtrl.hub.name.fi}} ({{ "hubs.name.fi.inputLabel" | translate }})</p>
@@ -28,6 +29,10 @@
 			<div class="row">
 				<h3>{{"hubs.location.label" | translate}}</h3>
 				<view-hub-map ng-model="viewCtrl.hub"></view-hub-map>
+=======
+			<div class="col-md-6 text-right">
+				<view-hub-map ng-model="viewCtrl.hub" no-tiles="{{features['map.no-tiles']}}"></view-hub-map>
+>>>>>>> d7af744898bee4bb1ce711ec6712eae940067c08
 			</div>
 
 			<div class="row">

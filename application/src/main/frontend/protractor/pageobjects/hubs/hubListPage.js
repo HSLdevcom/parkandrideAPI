@@ -3,7 +3,7 @@
 module.exports = function(spec) {
     var that = require('../base')(spec);
 
-    spec.view = spec.title = element(by.cssContainingText('h2', 'Alueet'));
+    spec.view = spec.title = element(by.cssContainingText('h2', 'Pysäköintipaikat'));
     spec.createFacilityButton = element.all(by.linkUiSref('facility-create')).first();
     spec.createHubButton = element.all(by.linkUiSref('hub-create')).first();
     spec.hubAndFacilityNames = element.all(by.css(".wdNameFi"));

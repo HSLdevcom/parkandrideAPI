@@ -10,7 +10,7 @@ module.exports = function () {
         } else {
             fn(actual)();
         }
-    }
+    };
 
     api.assertInOrder = function(actual, expected, opts) {
         unwrap(actual, function(a) {

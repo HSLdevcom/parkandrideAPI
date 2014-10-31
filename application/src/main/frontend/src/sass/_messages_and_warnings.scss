@@ -18,7 +18,7 @@
   border: 1px solid transparent;
 }
 
-input.ng-invalid.formdirty, edit-hub-map.ng-invalid.formdirty .map {
+input.ng-invalid.formdirty, edit-hub-map.ng-invalid.formdirty .map, facility-map.ng-invalid.formdirty .map {
   border: 1px solid $errorcolor;
 }
 

@@ -22,7 +22,7 @@ module.exports = function(spec) {
     };
 
     that.drawBorder = function (topLeft, w, h) {
-        spec.ptor.actions()
+        browser.actions()
             .mouseMove(spec.map, topLeft).click()
             .mouseMove(spec.map, {x: topLeft.x, y: topLeft.y + h}).click()
             .mouseMove(spec.map, {x: topLeft.x + w, y: topLeft.y + h}).click()
@@ -53,6 +53,10 @@ module.exports = function(spec) {
 
     that.getCapacityTypes = function() {
       return spec.capacityTypes.filter(function(el) { return el.isDisplayed(); }).getText();
+    };
+
+    that.isFacilityRequiredError = function() {
+        return spec.isRequiredError($('facility-map'));
     };
 
     return that;

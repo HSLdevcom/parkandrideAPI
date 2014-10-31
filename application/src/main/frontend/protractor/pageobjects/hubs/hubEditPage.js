@@ -23,19 +23,19 @@ module.exports = function(spec) {
     };
 
     that.setLocation = function (pos) {
-        spec.ptor.actions()
+        browser.actions()
             .mouseMove(spec.map, {x: pos.x, y: pos.y}).click().click()
             .perform();
-        spec.ptor.sleep(clickSleepMs);
+        browser.sleep(clickSleepMs);
     };
 
     that.toggleFacility = function (f) {
         var offsetX = f.borderInput.offset.x + f.borderInput.w / 2;
         var offsetY = f.borderInput.offset.y + f.borderInput.h / 2;
-        spec.ptor.actions()
+        browser.actions()
             .mouseMove(spec.map, {x: offsetX, y: offsetY}).click()
             .perform();
-        spec.ptor.sleep(clickSleepMs);
+        browser.sleep(clickSleepMs);
     };
 
     that.save = function () {

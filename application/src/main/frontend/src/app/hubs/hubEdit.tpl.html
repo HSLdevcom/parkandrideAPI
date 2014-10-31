@@ -7,50 +7,57 @@
 			<hub-edit-navi></hub-edit-navi>
 		</actions>
 		<content>
-            <div class="row">
-                <h3 class="h3-first">Nimitiedot</h3>
-            </div>
-            <div class="row wdHubEditView">
-                <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 column first-column">
-					<div class="form-group">
+			<div class="wdHubEditView">
+
+				<div class="row wdFacilityView">
+					<h3 class="h3-first">{{ "hubs.name.title" | translate }}</h3>
+				</div>
+
+				<div class="row wdFacilityView">
+					<div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 column first-column">
 						<label for="inputNameFi"">{{ "hubs.name.fi.label" | translate }} *</label>
-						<div class="input-group">
-							<input id="inputNameFi" type="text" class="form-control" ng-model="editCtrl.hub.name.fi" required />
-                            <span class="input-group-addon">fi</span>
-                        </div>
 					</div>
-                    <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 column">
-					<div class="form-group">
-						<label for="inputNameSv">{{ "hubs.name.sv.label" | translate }} *</label>
-                        <div class="input-group">
-							<input id="inputNameSv" type="text" class="form-control" ng-model="editCtrl.hub.name.sv" required />
-                            <span class="input-group-addon">sv</span>
-                        </div>
+				</div>
+
+				<div class="row wdFacilityView">
+					<div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 column first-column">
+						<div class="form-group">
+							<div class="input-group">
+								<input id="inputNameFi" type="text" class="form-control" ng-model="editCtrl.hub.name.fi" required/>
+								<span class="input-group-addon">{{ "hubs.name.fi.inputLabel" | translate }}&nbsp;</span>
+							</div>
+						</div>
 					</div>
-                        </div>
-                    <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 column">
-					<div class="form-group">
-						<label for="inputNameEn">{{ "hubs.name.en.label" | translate }} *</label>
-                        <div class="input-group">
-							<input id="inputNameEn" type="text" class="form-control" ng-model="editCtrl.hub.name.en" required />
-                            <span class="input-group-addon">en</span>
-                        </div>
+					<div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 column first-column">
+						<div class="form-group">
+							<div class="input-group">
+								<input type="text" class="form-control" ng-model="editCtrl.hub.name.sv" required/>
+								<span class="input-group-addon">{{ "hubs.name.sv.inputLabel" | translate }}</span>
+							</div>
+						</div>
 					</div>
-                        </div>
+					<div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 column first-column">
+						<div class="form-group">
+							<div class="input-group">
+								<input type="text" class="form-control" ng-model="editCtrl.hub.name.en" required/>
+								<span class="input-group-addon">{{ "hubs.name.en.inputLabel" | translate }}</span>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="row">
+					<h3>{{"hubs.location.label" | translate}} *</h3>
+					<edit-hub-map ng-model="editCtrl.hub" facilities="editCtrl.facilities"></edit-hub-map>
+				</div>
+
+				<div class="row">
+					<h3>{{"hubs.associatedFacilities" | translate}}</h3>
+					<p ng-hide="editCtrl.hasFacilities()">{{"hubs.noAssociatedFacilities" | translate}}</p>
 					<facilities-table facilities="editCtrl.facilities"></facilities-table>
 				</div>
 
-            <div class="row wdHubEditView">
-					<h3>{{"hubs.location" | translate}} *</h3>
-					<edit-hub-map ng-model="editCtrl.hub"></edit-hub-map>
-
-				<div class="col-md-6">
-					<h3>{{"hubs.location.label" | translate}} *</h3>
-
-					<edit-hub-map ng-model="editCtrl.hub" facilities="editCtrl.facilities"></edit-hub-map>
-				</div>
 			</div>
-                </div>
 		</content>
 	</main-layout>
 </form>

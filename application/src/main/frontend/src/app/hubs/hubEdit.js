@@ -47,6 +47,9 @@
         $scope.common.translationPrefix = "hubs.";
         self.hub = hub;
         self.facilities = [];
+        self.hasFacilities = function() {
+          return _.keys(self.facilities).length !== 0;
+        };
         self.saveHub = function () {
             HubResource.save(self.hub).then(function (id) {
                 $state.go('hub-view', { "id": id });

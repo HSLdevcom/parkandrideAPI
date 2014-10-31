@@ -1,16 +1,15 @@
 //angular styles
 
-.ng-valid.ng-dirty {
-  border-color: $lightgray;
-}
-
+//.ng-valid.ng-dirty {
+//  border: none;
+//}
 
 .ng-invalid.ng-dirty {
   border-color: $errorcolor;
 }
 
 .form-control:focus {
-  border-color: $secondarycolor;
+  border: 1px solid $secondarycolor;
   -webkit-box-shadow: none;
   box-shadow: none;
 }

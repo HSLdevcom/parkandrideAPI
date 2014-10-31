@@ -29,6 +29,9 @@
     m.controller('FacilityViewCtrl', ViewController);
     function ViewController(facility) {
         this.facility = facility;
+        this.hasCapacities = function() {
+          return _.keys(facility.capacities).length !== 0;
+        };
     }
 
     m.directive('facilityViewNavi', function() {

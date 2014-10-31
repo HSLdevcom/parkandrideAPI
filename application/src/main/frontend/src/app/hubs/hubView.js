@@ -36,6 +36,12 @@
         this.hub = hub;
         this.summary = summary;
         this.facilities = facilities;
+        this.hasFacilities = function() {
+          return _.keys(facilities).length !== 0;
+        };
+        this.hasCapacities = function() {
+          return _.keys(summary.capacities).length !== 0;
+        };
     });
 
     m.directive('hubViewNavi', function() {

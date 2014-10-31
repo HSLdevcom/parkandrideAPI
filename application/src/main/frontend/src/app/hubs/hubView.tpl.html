@@ -7,34 +7,40 @@
 		<hub-view-navi></hub-view-navi>
 	</actions>
 	<content>
-		<div class="row wdHubView">
-            <h3 class="h3-first">Kapasiteetti</h3>
-                <capacities-table capacities="viewCtrl.summary.capacities"></capacities-table>
-            </div>
-		<div class="row wdHubView">
-            <h3>Sijainti</h3>
+		<div class="wdHubView">
+
+			<div class="row">
+				<h3 class="h3-first">{{ "hubs.name.title" | translate }}</h3>
+			</div>
+			<div class="row">
+				<div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 column first-column">
+					<p>{{viewCtrl.hub.name.fi}} ({{ "hubs.name.fi.inputLabel" | translate }})</p>
+				</div>
+				<div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 column first-column">
+					<p>{{viewCtrl.hub.name.sv}} ({{ "hubs.name.sv.inputLabel" | translate }})</p>
+				</div>
+				<div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 column first-column">
+					<p>{{viewCtrl.hub.name.en}} ({{ "hubs.name.en.inputLabel" | translate }})</p>
+				</div>
+			</div>
+
+
+			<div class="row">
+				<h3>{{"hubs.location.label" | translate}}</h3>
 				<view-hub-map ng-model="viewCtrl.hub"></view-hub-map>
+			</div>
+
+			<div class="row">
+				<h3>{{"hubs.associatedFacilities" | translate}}</h3>
+				<p ng-hide="viewCtrl.hasFacilities()">{{"hubs.noAssociatedFacilities" | translate}}</p>
+				<facilities-table facilities="viewCtrl.facilities"></facilities-table>
+			</div>
+
+			<div class="row">
+				<h3 ng-show="viewCtrl.hasCapacities()">{{"hubs.facilitiesTotal" | translate}}</h3>
+				<capacities-table capacities="viewCtrl.summary.capacities"></capacities-table>
+			</div>
+
 		</div>
-        <div class="row wdHubView">
-            <h3>Alueen fasiliteetit</h3>
-            <facilities-table facilities="viewCtrl.facilities"></facilities-table>
-        </div>
-    <div class="row">
-            <h3>Nimitiedot</h3>
-        </div>
-        <div class="row wdFacilityView">
-            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 column first-column">
-                <p><label>Nimi</label></p>
-                <p>{{viewCtrl.hub.name}}</p>
-            </div>
-            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 column first-column">
-                <p><label>Namn</label></p>
-                <p>{{viewCtrl.hub.name}}</p>
-            </div>
-            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 column first-column">
-                <p><label>Name</label></p>
-                <p>{{viewCtrl.hub.name}}</p>
-            </div>
-        </div>
 	</content>
 </main-layout>

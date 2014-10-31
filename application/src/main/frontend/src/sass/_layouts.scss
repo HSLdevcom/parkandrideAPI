@@ -54,6 +54,7 @@ html, body {
   > li {
     margin-bottom: 0px;
     > a {
+      font-weight: bold;
       height: $tab-height;
       color: #fff;
       background-color: $primarycolor;
@@ -61,21 +62,25 @@ html, body {
       border: 0;
     }
     > a:hover {
+      font-weight: bold;
       height: $tab-height;
       color: #fff;
       background-color: $primarycolor;
       border-radius: $border-radius;
+      text-decoration: underline;
       border: 0px;
     }
   }
   > li.active {
     > a {
+      font-weight: bold;
       height: $tab-height;
       border-radius: $border-radius;
       background-color: $secondarycolor;
       border: 0;
     }
     > a:hover {
+      font-weight: bold;
       height: $tab-height;
       border-radius: $border-radius;
       background-color: $secondarycolor;
@@ -96,23 +101,20 @@ html, body {
   .btn {
     margin-top: 30px;
     margin-bottom: 30px;
+    margin-left: 5px;
   }
 }
 
 .content {
-  padding-top:20px;
+  padding-top:40px;
   padding-bottom: 40px;
 }
 
 //secondary navi below
 .navi-below {
-  //background-color: $secondarycolor;
-  position: relative;
-  clear: both;
-  margin-top: -40px;
   .btn {
-    margin-top: 30px;
-    margin-bottom: 30px;
+    margin-bottom: 40px;
+    margin-left: 5px;
   }
 }
 
@@ -127,6 +129,11 @@ html, body {
 }
 
 //columns
+.column {
+  padding-right: 20px;
+  padding-left: 20px;
+}
+
 .first-column {
   padding-left: 0px;
 }
@@ -137,5 +144,22 @@ html, body {
 
 //panel
 .panel {
-  margin-top:40px;
+  margin-bottom:0px;
+}
+
+//form controls
+.form-horizontal .form-group {
+  margin-left: 0px;
+  margin-right: 0px; }
+
+.last-form-group {
+  margin-bottom: 0px;
+}
+
+.divider {
+  border-bottom: 2px solid #BEE4F8;
+  margin-top: 40px;
+  margin-bottom: 10px;
+  margin-left: -40px;
+  margin-right: -40px;
 }

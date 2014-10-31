@@ -1,24 +1,26 @@
 {
     "facilities": {
-        "title": "Fasiliteetit",
+        "title": "Pysäköintipaikat",
         "list": {
             "name": "Nimi",
             "types": "Tyypit"
         },
         "action": {
-            "new": "Lisää uusi fasiliteetti"
+            "new": "Lisää uusi pysäköintipaikka"
         },
         "name" : {
-            "placeholder": "Pysäköintilaitos",
+            "title": "Nimitiedot",
+            "placeholder": "Pysäköintipaikka",
             "fi": {
-                "label": "Nimi (fi)"
+                "label": "Nimi",
+                "inputLabel": "fi"
             },
-            "sv": {
-                "label": "Nimi (sv)"
-            },
-            "en": {
-                "label": "Nimi (en)"
-            }
+          "sv": {
+            "inputLabel": "sv"
+          },
+          "en": {
+            "inputLabel": "en"
+          }
         },
         "aliases": {
             "label": "Aliakset",
@@ -96,7 +98,7 @@
         "logodesc": "HSL Liityntäpysäköinti"
     },
     "hubs": {
-        "title": "Alueet ja fasiliteetit",
+        "title": "Pysäköintipaikat",
         "list": {
             "name": "Nimi"
         },
@@ -104,21 +106,25 @@
             "new": "Lisää uusi alue"
         },
         "name": {
+            "title": "Nimitiedot",
             "placeholder": "Alue",
             "fi": {
-                "label": "Nimi (fi)"
+                "label": "Nimi",
+              "inputLabel": "fi"
             },
-            "sv": {
-                "label": "Nimi (sv)"
-            },
-            "en": {
-                "label": "Nimi (en)"
-            }
+          "sv": {
+            "inputLabel": "sv"
+          },
+          "en": {
+            "inputLabel": "en"
+          }
         },
         "location": {
             "label": "Sijainti"
         },
-        "facilitiesTotal": "Pysäköintilaitoksia yhteensä"
+        "associatedFacilities": "Alueen pysäköintipaikat",
+        "noAssociatedFacilities": "Alueeseen ei ole lisätty pysäköintipaikkoja",
+        "facilitiesTotal": "Pysäköintipaikkoja yhteensä"
     },
     "common": {
         "action": {

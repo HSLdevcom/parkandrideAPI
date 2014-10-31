@@ -56,8 +56,6 @@ describe('Basic flow', function() {
     });
     var totalCapacities = _.reduce([facility1, facility2], function (acc, facility) { return acc.incCapacity(facility); });
 
-    var tooLongValue = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
-
     var hubName = newHubName();
 
     var capacityTypeOrder = ["Liityntäpysäköinti", "Polkupyörä", "Henkilöauto", "Invapaikka", "Moottoripyörä", "Sähköauto"];
@@ -73,25 +71,10 @@ describe('Basic flow', function() {
         expect(facilityEditPage.isDisplayed()).toBe(true);
     });
 
-    it('Try to create invalid facility', function () {
-        expect(facilityEditPage.isDirty()).toBe(false);
-        facilityEditPage.save();
-        expect(facilityEditPage.isDisplayed()).toBe(true);
-        expect(facilityEditPage.isDirty()).toBe(true);
-
-        facility1.name = newFacilityName();
-        facilityEditPage.drawBorder(facility1.borderInput.offset, facility1.borderInput.w, facility1.borderInput.h);
-        facilityEditPage.setNameFi(tooLongValue);
-        facilityEditPage.setNameSv(facility1.name);
-        facilityEditPage.setNameEn(facility1.name);
-
-        facilityEditPage.save();
-
-        expect(facilityEditPage.getViolations()).toEqual([{path:"Nimi (fi)", message:"saa olla korkeintaan 255 merkkiä pitkä"}]);
-    });
-
     it('Create facility 1', function () {
-        facilityEditPage.setNameFi(facility1.name);
+        facility1.name = newFacilityName();
+        facilityEditPage.setName(facility1.name);
+        facilityEditPage.drawBorder(facility1.borderInput.offset, facility1.borderInput.w, facility1.borderInput.h);
         facilityEditPage.addAlias(facility1.aliases[0]);
         facilityEditPage.addAlias(facility1.aliases[1]);
         facilityEditPage.setCapacities(facility1.capacities);

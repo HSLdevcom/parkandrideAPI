@@ -6,15 +6,8 @@
 @import 'fonts_and_links';
 @import 'messages_and_warnings';
 @import 'responsive';
-
-//maps
-.facility-map {
-  height: 500px;
-}
-
-.hub-map {
-  height: 500px;
-}
+@import 'map';
+@import 'tags';
 
 //buttons
 .btn-xs {
@@ -48,7 +41,27 @@
   color: #fff;
 }
 
-//tables
-th {
-  font-weight: normal;
+//form controls
+.form-control {
+  font-size: 16px;
+}
+
+//table
+.hubRow {
+  background-color: #f9f9f9;
+  font-size: 20px;
+}
+
+//capacity table inputs
+.capacityInput {
+  border: none;
+  background-color: transparent;
+  -webkit-box-shadow: none;
+  box-shadow: none;
+}
+
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
 }

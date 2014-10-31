@@ -3,7 +3,7 @@
 module.exports = function(spec) {
     var that = require('../base')(spec);
 
-    spec.view = spec.title = element(by.cssContainingText('h2', 'Alueet'));
+    spec.view = spec.title = element(by.cssContainingText('h2', 'Pysäköintipaikat'));
     spec.createFacilityButton = element.all(by.linkUiSref('facility-create')).first();
     spec.createHubButton = element.all(by.linkUiSref('hub-create')).first();
     spec.hubAndFacilityNames = element.all(by.css(".wdNameFi"));
@@ -22,7 +22,7 @@ module.exports = function(spec) {
 
     that.getHubAndFacilityNames = function() {
         return spec.hubAndFacilityNames.getText();
-    }
+    };
 
     that.getCapacityTypes = function(facilityId) {
         return element.all(by.css(".wdFacility" + facilityId + " .wdCapacityType")).filter(function(el) { return el.isDisplayed(); }).getText();

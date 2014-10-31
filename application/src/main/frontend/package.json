@@ -42,6 +42,7 @@
     "protractor-linkuisref-locator": "1.0.0",
     "phantomjs": "1.9.10",
     "jasmine-reporters": "1.0.1",
-    "lodash": "2.4.1"
+    "lodash": "2.4.1",
+    "request": "2.47.0"
   }
 }

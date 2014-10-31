@@ -18,7 +18,7 @@
   border: 1px solid transparent;
 }
 
-input.ng-invalid.ng-dirty, form.ng-dirty input.ng-invalid, form.ng-dirty .ng-invalid .map {
+input.ng-invalid.formdirty, edit-hub-map.ng-invalid.formdirty .map {
   border: 1px solid $errorcolor;
 }
 

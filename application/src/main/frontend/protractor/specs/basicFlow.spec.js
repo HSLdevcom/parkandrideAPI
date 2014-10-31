@@ -3,13 +3,13 @@
 var _ = require('lodash');
 
 var po = require('../pageobjects/pageobjects');
-var fixture = require('../fixtures/fixtures');
+var fixtures = require('../fixtures/fixtures');
 var arrayAssert = require('./arrayAssert')();
+var devApi = require('./devApi')();
 
 describe('Basic flow', function() {
     var menu = po.menu({});
     var indexPage = po.indexPage({});
-    var devPage = po.devPage();
 
     var facilityEditPage = po.facilityEditPage({});
     var facilityViewPage = po.facilityViewPage({});
@@ -26,7 +26,7 @@ describe('Basic flow', function() {
         return 'Test Hub ' + new Date().getTime();
     }
 
-    var facility1 = fixture.facilityFixture({
+    var facility1 = fixtures.facility({
         capacities: {
             "CAR": {"built": 10, "unavailable": 1},
             "BICYCLE": {"built": 20, "unavailable": 2},
@@ -36,19 +36,19 @@ describe('Basic flow', function() {
             "ELECTRIC_CAR": {"built": 60, "unavailable": 6}
         },
         aliases: ["alias with spaces", "facility1"],
-        border: {
+        borderInput: {
             offset: {x: 90, y: 90},
             w: 60,
             h: 60
         }
     });
 
-    var facility2 = fixture.facilityFixture({
+    var facility2 = fixtures.facility({
         capacities: {
             "CAR": {"built": 10, "unavailable": 1}
         },
         aliases: ["fac2"],
-        border: {
+        borderInput: {
             offset: {x: 180, y: 180},
             w: 60,
             h: 60
@@ -63,7 +63,7 @@ describe('Basic flow', function() {
     var capacityTypeOrder = ["Liityntäpysäköinti", "Polkupyörä", "Henkilöauto", "Invapaikka", "Moottoripyörä", "Sähköauto"];
 
     it('should reset all', function() {
-        devPage.resetAll();
+        devApi.resetAll();
     });
 
     it('Go to facility create', function() {
@@ -80,7 +80,7 @@ describe('Basic flow', function() {
         expect(facilityEditPage.isDirty()).toBe(true);
 
         facility1.name = newFacilityName();
-        facilityEditPage.drawBorder(facility1.border.offset, facility1.border.w, facility1.border.h);
+        facilityEditPage.drawBorder(facility1.borderInput.offset, facility1.borderInput.w, facility1.borderInput.h);
         facilityEditPage.setNameFi(tooLongValue);
         facilityEditPage.setNameSv(facility1.name);
         facilityEditPage.setNameEn(facility1.name);
@@ -118,7 +118,7 @@ describe('Basic flow', function() {
         facility2.name = newFacilityName();
         facilityEditPage.setName(facility2.name);
 
-        facilityEditPage.drawBorder(facility2.border.offset, facility2.border.w, facility2.border.h);
+        facilityEditPage.drawBorder(facility2.borderInput.offset, facility2.borderInput.w, facility2.borderInput.h);
         facilityEditPage.addAlias(facility2.aliases[0]);
         facilityEditPage.setCapacities(facility2.capacities);
 
@@ -139,30 +139,14 @@ describe('Basic flow', function() {
         expect(hubEditPage.isDisplayed()).toBe(true);
     });
 
-    it('Try to create invalid hub', function () {
-        expect(hubEditPage.isDirty()).toBe(false);
-        hubEditPage.save();
-        expect(hubEditPage.isDisplayed()).toBe(true);
-        expect(hubEditPage.isDirty()).toBe(true);
-
-        // Too long name
-        hubEditPage.setNameFi(tooLongValue);
-        hubEditPage.setNameSv(hubName);
-        hubEditPage.setNameEn(hubName);
-        hubEditPage.setLocation({x: 165, y: 165});
-        hubEditPage.save();
-
-        expect(facilityEditPage.getViolations()).toEqual([{path:"Nimi (fi)", message:"saa olla korkeintaan 255 merkkiä pitkä"}]);
-    });
-
     it('Create hub', function() {
         hubEditPage.setName(hubName);
         expect(hubEditPage.facilitiesTable.isDisplayed()).toBe(false);
 
         hubEditPage.toggleFacility(facility1);
-            hubEditPage.toggleFacility(facility2);
+        hubEditPage.toggleFacility(facility2);
+        hubEditPage.setLocation({x: 165, y: 165});
         // NOTE: It takes some time until toggleFacility is reflected facilitiesTable - asserting getFacilityNames directly after toggle fails.
-
         expect(hubEditPage.facilitiesTable.isDisplayed()).toBe(true);
         expect(hubEditPage.facilitiesTable.getFacilityNames()).toEqual([facility1.name, facility2.name]);
 
@@ -171,8 +155,8 @@ describe('Basic flow', function() {
         expect(hubViewPage.getName()).toBe(hubName);
         arrayAssert.assertInOrder(hubViewPage.capacitiesTable.getTypes(), capacityTypeOrder);
         expect(hubViewPage.capacitiesTable.getCapacities(_.keys(totalCapacities.capacities))).toEqual(totalCapacities.capacities);
-        expect(hubEditPage.facilitiesTable.isDisplayed()).toBe(true);
-        expect(hubEditPage.facilitiesTable.getFacilityNames()).toEqual([facility1.name, facility2.name]);
+        expect(hubViewPage.facilitiesTable.isDisplayed()).toBe(true);
+        expect(hubViewPage.facilitiesTable.getFacilityNames()).toEqual([facility1.name, facility2.name]);
     });
 
     it('List facilities grouped by hubs', function() {

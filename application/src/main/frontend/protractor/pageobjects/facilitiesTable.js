@@ -8,7 +8,11 @@ module.exports = function (spec) {
 
     that.getFacilityNames = function() {
         return element.all(by.css(".wdFacilitiesTable .wdFacilityNameFi")).getText();
-    }
+    };
+
+    that.getSize = function() {
+        return element.all(by.css(".wdFacilitiesTable .wdFacilityNameFi")).count();
+    };
 
     return that;
 };

@@ -15,7 +15,7 @@
 
 				<div class="row wdFacilityView">
 					<div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 column first-column">
-						<label for="inputNameFi"">{{ "hubs.name.fi.label" | translate }} *</label>
+						<label>{{ "hubs.name.fi.label" | translate }} *</label>
 					</div>
 				</div>
 
@@ -23,7 +23,8 @@
 					<div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 column first-column">
 						<div class="form-group">
 							<div class="input-group">
-								<input id="inputNameFi" type="text" class="form-control" ng-model="editCtrl.hub.name.fi" required/>
+								<input id="inputNameFi" type="text" ng-class="{ formdirty: editHubForm.$dirty }" class="form-control"
+									   ng-model="editCtrl.hub.name.fi" maxlength="255" required/>
 								<span class="input-group-addon">{{ "hubs.name.fi.inputLabel" | translate }}&nbsp;</span>
 							</div>
 						</div>
@@ -31,7 +32,7 @@
 					<div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 column first-column">
 						<div class="form-group">
 							<div class="input-group">
-								<input type="text" class="form-control" ng-model="editCtrl.hub.name.sv" required/>
+								<input type="text" ng-class="{ formdirty: editHubForm.$dirty }" class="form-control" ng-model="editCtrl.hub.name.sv" maxlength="255" required/>
 								<span class="input-group-addon">{{ "hubs.name.sv.inputLabel" | translate }}</span>
 							</div>
 						</div>
@@ -39,7 +40,7 @@
 					<div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 column first-column">
 						<div class="form-group">
 							<div class="input-group">
-								<input type="text" class="form-control" ng-model="editCtrl.hub.name.en" required/>
+								<input type="text" ng-class="{ formdirty: editHubForm.$dirty }" class="form-control" ng-model="editCtrl.hub.name.en" maxlength="255" required/>
 								<span class="input-group-addon">{{ "hubs.name.en.inputLabel" | translate }}</span>
 							</div>
 						</div>
@@ -48,7 +49,7 @@
 
 				<div class="row">
 					<h3>{{"hubs.location.label" | translate}} *</h3>
-					<edit-hub-map ng-model="editCtrl.hub" facilities="editCtrl.facilities"></edit-hub-map>
+					<edit-hub-map ng-class="{formdirty: editHubForm.$dirty }" ng-model="editCtrl.hub" facilities="editCtrl.facilities"></edit-hub-map>
 				</div>
 
 				<div class="row">

@@ -6,4 +6,6 @@ public class PageableSpatialSearch extends SpatialSearch {
 
     public long offset = 0l;
 
+    public Sort sort;
+
 }

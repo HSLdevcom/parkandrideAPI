@@ -3,6 +3,8 @@ package fi.hsl.parkandride.outbound;
 import static fi.hsl.parkandride.core.domain.CapacityType.BICYCLE;
 import static fi.hsl.parkandride.core.domain.CapacityType.CAR;
 import static fi.hsl.parkandride.core.domain.CapacityType.PARK_AND_RIDE;
+import static fi.hsl.parkandride.core.domain.Sort.Dir.ASC;
+import static fi.hsl.parkandride.core.domain.Sort.Dir.DESC;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
@@ -13,6 +15,7 @@ import javax.inject.Inject;
 
 import org.geolatte.geom.Polygon;
 import org.junit.After;
+import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.SpringApplicationConfiguration;
@@ -23,6 +26,7 @@ import com.google.common.collect.ImmutableSortedSet;
 
 import fi.hsl.parkandride.core.domain.*;
 import fi.hsl.parkandride.core.outbound.FacilityRepository;
+import fi.hsl.parkandride.core.service.ValidationException;
 import fi.hsl.parkandride.outbound.sql.QCapacity;
 import fi.hsl.parkandride.outbound.sql.QFacility;
 import fi.hsl.parkandride.outbound.sql.QFacilityAlias;
@@ -136,6 +140,50 @@ public class FacilityDaoTest {
         facilityDao.insertFacility(facility);
         FacilitySummary summary = facilityDao.summarizeFacilities(new SpatialSearch());
         assertThat(summary.capacities).isEmpty();
+    }
+
+    @Test
+    public void sorting() {
+        Facility f1 = new Facility();
+        f1.name = new MultilingualString("A", "B", "C");
+        f1.border = BORDER;
+        f1.id = facilityDao.insertFacility(f1);
+
+        Facility f2 = new Facility();
+        f2.name = new MultilingualString("D", "E", "F");
+        f2.border = BORDER;
+        f2.id = facilityDao.insertFacility(f2);
+
+        // Default sort
+        PageableSpatialSearch search = new PageableSpatialSearch();
+        assertResultOrder(facilityDao.findFacilities(search), f1.id, f2.id);
+
+        // name.fi desc
+        search.sort = new Sort("name.fi", DESC);
+        assertResultOrder(facilityDao.findFacilities(search), f2.id, f1.id);
+
+
+        // name.sv desc
+        search.sort = new Sort("name.sv", DESC);
+        assertResultOrder(facilityDao.findFacilities(search), f2.id, f1.id);
+
+        // name.fi desc
+        search.sort = new Sort("name.en", ASC);
+        SearchResults<Facility> results = facilityDao.findFacilities(search);
+        assertResultOrder(facilityDao.findFacilities(search), f1.id, f2.id);
+    }
+
+    @Test(expected = ValidationException.class)
+    public void illegal_sort_by() {
+        PageableSpatialSearch search = new PageableSpatialSearch();
+        search.sort = new Sort("foobar");
+        facilityDao.findFacilities(search);
+    }
+
+    private void assertResultOrder(SearchResults<Facility> results, long id1, long id2) {
+        assertThat(results.size()).isEqualTo(2);
+        assertThat(results.get(0).id).isEqualTo(id1);
+        assertThat(results.get(1).id).isEqualTo(id2);
     }
 
     @Test(expected = NotFoundException.class)

@@ -1,12 +1,16 @@
 package fi.hsl.parkandride.outbound;
 
+import static com.google.common.base.MoreObjects.firstNonNull;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.mysema.query.group.GroupBy.groupBy;
 import static com.mysema.query.group.GroupBy.map;
 import static com.mysema.query.group.GroupBy.set;
+import static fi.hsl.parkandride.core.domain.Sort.Dir.ASC;
+import static fi.hsl.parkandride.core.domain.Sort.Dir.DESC;
 
 import java.util.*;
 
+import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Sets;
 import com.mysema.query.ResultTransformer;
@@ -18,7 +22,9 @@ import com.mysema.query.sql.dml.SQLUpdateClause;
 import com.mysema.query.sql.postgres.PostgresQuery;
 import com.mysema.query.sql.postgres.PostgresQueryFactory;
 import com.mysema.query.types.MappingProjection;
+import com.mysema.query.types.Path;
 import com.mysema.query.types.QBean;
+import com.mysema.query.types.expr.ComparableExpression;
 import com.mysema.query.types.expr.NumberExpression;
 import com.mysema.query.types.expr.SimpleExpression;
 
@@ -26,11 +32,14 @@ import fi.hsl.parkandride.core.domain.*;
 import fi.hsl.parkandride.core.outbound.FacilityRepository;
 import fi.hsl.parkandride.core.service.TransactionalRead;
 import fi.hsl.parkandride.core.service.TransactionalWrite;
+import fi.hsl.parkandride.core.service.ValidationException;
 import fi.hsl.parkandride.outbound.sql.QCapacity;
 import fi.hsl.parkandride.outbound.sql.QFacility;
 import fi.hsl.parkandride.outbound.sql.QFacilityAlias;
 
 public class FacilityDao implements FacilityRepository {
+
+    private static final Sort DEFAULT_SORT = new Sort("name.fi", ASC);
 
     private static final QFacility qFacility = QFacility.facility;
 
@@ -90,7 +99,6 @@ public class FacilityDao implements FacilityRepository {
     public static final String FACILITY_ID_SEQ = "facility_id_seq";
 
     private static final SimpleExpression<Long> nextFacilityId = SQLExpressions.nextval(FACILITY_ID_SEQ);
-
 
     private final PostgresQueryFactory queryFactory;
 
@@ -236,12 +244,34 @@ public class FacilityDao implements FacilityRepository {
         qry.offset(search.offset);
 
         buildWhere(search, qry);
+        orderBy(search.sort, qry);
 
         Map<Long, Facility> facilities = qry.map(qFacility.id, facilityMapping);
         fetchAliases(facilities);
         fetchCapacities(facilities);
 
         return SearchResults.of(new ArrayList<>(facilities.values()), search.limit);
+    }
+
+    private void orderBy(Sort sort, PostgresQuery qry) {
+        sort = firstNonNull(sort, DEFAULT_SORT);
+        ComparableExpression<String> sortField;
+        switch (firstNonNull(sort.by, DEFAULT_SORT.by)) {
+            case "name.fi": sortField = qFacility.nameFi; break;
+            case "name.sv": sortField = qFacility.nameSv; break;
+            case "name.en": sortField = qFacility.nameEn; break;
+            default: throw invalidSortBy();
+        }
+        if (DESC.equals(sort.dir)) {
+            qry.orderBy(sortField.desc(), qFacility.id.desc());
+        } else {
+            qry.orderBy(sortField.asc(), qFacility.id.asc());
+        }
+
+    }
+
+    private ValidationException invalidSortBy() {
+        return new ValidationException(new Violation("SortBy", "sort.by", "Expected one of 'name.fi', 'name.sv' or 'name.en'"));
     }
 
     @TransactionalRead

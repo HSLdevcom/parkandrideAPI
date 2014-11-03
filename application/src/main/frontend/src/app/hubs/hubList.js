@@ -25,9 +25,7 @@
                         return HubResource.listHubs();
                     },
                     facilities: function(FacilityResource) {
-                        return FacilityResource.listFacilities().then(function(facilities) {
-                            return _.indexBy(facilities, "id");
-                        });
+                        return FacilityResource.listFacilities();
                     }
                 }
             });
@@ -36,10 +34,12 @@
     m.controller('HubsCtrl', function(HubResource, hubs, facilities) {
         this.hubs = hubs;
 
+        var facilitiesById = _.indexBy(facilities, "id");
+
         // XXX: Refactor hub+facilities grouping into HubService if it's needed some elsewhere
         this.getFacilities = function(hub) {
             return _.map(hub.facilityIds, function(facilityId) {
-               return facilities[facilityId];
+               return facilitiesById[facilityId];
             });
         };
 

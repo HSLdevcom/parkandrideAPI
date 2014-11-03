@@ -55,7 +55,7 @@
 				<div class="row">
 					<h3>{{"hubs.associatedFacilities" | translate}}</h3>
 					<p ng-hide="editCtrl.hasFacilities()">{{"hubs.noAssociatedFacilities" | translate}}</p>
-					<facilities-table facilities="editCtrl.facilities"></facilities-table>
+					<facilities-table facilities="editCtrl.facilities | orderBy:'name.fi'"></facilities-table>
 				</div>
 
 			</div>

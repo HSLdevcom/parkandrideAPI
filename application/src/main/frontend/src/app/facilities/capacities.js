@@ -11,6 +11,9 @@
             transclude: false,
             link: function(scope) {
                 scope.capacityTypes = schema.capacityTypes;
+                scope.hasCapacity = function(capacityType) {
+                    return scope.capacities[capacityType];
+                };
                 scope.thereAreCapacities = function() {
                     return !_.isEmpty(scope.capacities);
                 };

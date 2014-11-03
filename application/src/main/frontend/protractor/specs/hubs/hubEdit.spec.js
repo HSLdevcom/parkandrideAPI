@@ -21,6 +21,25 @@ describe('edit hub view', function () {
             expect(hubEditPage.isLocationRequiredError()).toBe(false);
         });
 
+        it('required error is shown only for edited fields', function () {
+            hubEditPage.setNameFi("foo");
+            hubEditPage.setNameFi("");
+            hubEditPage.setNameEn("bar");
+            hubEditPage.setNameEn("");
+            expect(hubEditPage.isNameFiRequiredError()).toBe(true);
+            expect(hubEditPage.isNameSvRequiredError()).toBe(false);
+            expect(hubEditPage.isNameEnRequiredError()).toBe(true);
+            expect(hubEditPage.isLocationRequiredError()).toBe(false);
+        });
+
+        it('required errors are shown for all required fields if user submits empty form without editing', function() {
+            hubEditPage.save();
+            expect(hubEditPage.isNameFiRequiredError()).toBe(true);
+            expect(hubEditPage.isNameSvRequiredError()).toBe(true);
+            expect(hubEditPage.isNameEnRequiredError()).toBe(true);
+            expect(hubEditPage.isLocationRequiredError()).toBe(true);
+        });
+
         describe('name', function () {
             it('is required in all languages', function () {
                 hubEditPage.setName("Hub name");
@@ -56,6 +75,7 @@ describe('edit hub view', function () {
         describe('location', function () {
             it('is required', function () {
                 hubEditPage.setName("Hub name");
+                hubEditPage.save();
                 expect(hubEditPage.isLocationRequiredError()).toBe(true);
             });
         });

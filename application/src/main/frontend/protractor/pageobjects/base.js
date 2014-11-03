@@ -11,7 +11,10 @@ module.exports = function(spec) {
     };
 
     spec.isRequiredError = function(element) {
-        return spec.hasClasses(element, ["ng-invalid-required", "formdirty"]);
+        return element.getAttribute('class').then(function (classAttr) {
+            var actual = classAttr.split(' ');
+            return _.contains(actual, 'ng-invalid-required') && (_.contains(actual, 'formsubmitted') || _.contains(actual, 'ng-dirty'));
+        });
     };
 
     spec.getValue = function(element) {

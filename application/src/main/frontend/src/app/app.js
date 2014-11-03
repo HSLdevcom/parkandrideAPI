@@ -88,7 +88,7 @@
         });
 
         this.validateAndSubmit = function(form, submitFn) {
-            form.$setDirty();
+            form.isFormSubmitted = true;
             if (form.$valid) {
                 submitFn();
             }

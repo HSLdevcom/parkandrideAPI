@@ -1,13 +1,5 @@
 //angular styles
 
-//.ng-valid.ng-dirty {
-//  border: none;
-//}
-
-.ng-invalid.ng-dirty {
-  border-color: $errorcolor;
-}
-
 .form-control:focus {
   border: 1px solid $secondarycolor;
   -webkit-box-shadow: none;
@@ -18,8 +10,11 @@
   border: 1px solid transparent;
 }
 
-input.ng-invalid.formdirty, edit-hub-map.ng-invalid.formdirty .map, facility-map.ng-invalid.formdirty .map {
-  border: 1px solid $errorcolor;
+.ng-invalid.ng-dirty,
+input.ng-invalid.formsubmitted,
+edit-hub-map.ng-invalid.formsubmitted .map,
+facility-map.ng-invalid.formsubmitted .map {
+  border-color: $errorcolor;
 }
 
 :focus {

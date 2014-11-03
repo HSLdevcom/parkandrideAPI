@@ -83,14 +83,14 @@
 							<tr ng-repeat="capacityType in editCtrl.capacityTypes">
 								<td class="wdCapacityType">{{'facilities.capacities.' + capacityType + '.label' | translate}}</td>
 								<td>
-									<input name="{{capacityType}}built" type="number"
-										   class="form-control capacityInput  wd{{capacityType}}built"
-										   ng-model="editCtrl.facility.capacities[capacityType].built" min="0" >
+									<input name="{{capacityType}}built" type="number" class="form-control capacityInput"
+										   ng-model="editCtrl.facility.capacities[capacityType].built"
+										   min="0" show-errors>
 								</td>
 								<td>
-									<input name="{{capacityType}}unavailable" type="number"
-										   class="form-control capacityInput wd{{capacityType}}unavailable"
-										   ng-model="editCtrl.facility.capacities[capacityType].unavailable" min="0">
+									<input name="{{capacityType}}unavailable" type="number" class="form-control capacityInput"
+										   ng-model="editCtrl.facility.capacities[capacityType].unavailable"
+										   min="0" show-errors>
 								</td>
 							</tr>
 							</tbody>

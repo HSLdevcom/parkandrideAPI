@@ -3,7 +3,7 @@
 
     showErrorsModule = angular.module('showErrors', []);
 
-    showErrorsModule.directive('showErrors', function($timeout, showErrorsConfig) {
+    showErrorsModule.directive('showErrors', function($timeout, $interpolate, showErrorsConfig) {
         var getShowSuccess, getTrigger, linkFn;
         var errorClass = "validation-error";
         getTrigger = function(options) {
@@ -28,7 +28,7 @@
             options = scope.$eval(attrs.showErrors);
             showSuccess = getShowSuccess(options);
             trigger = getTrigger(options);
-            elName = el.attr('name');
+            elName = $interpolate(el.attr('name'))(scope);
             if (!elName) {
                 throw "show-errors element has no 'name' attribute";
             }

@@ -46,7 +46,7 @@ module.exports = function(spec) {
         for (var capacityType in capacities) {
             var capacity = capacities[capacityType];
             for (var prop in capacity) {
-                element(by.css('.wd' + capacityType + prop)).sendKeys(capacity[prop]);
+                $("input[name='" + capacityType + prop + "']").sendKeys(capacity[prop]);
             }
         }
     };

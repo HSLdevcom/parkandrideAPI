@@ -10,9 +10,9 @@
   border: 1px solid transparent;
 }
 
-.validation-error,
+.form-control.validation-error,
 .validation-error .map {
-  border-color: $errorcolor;
+  border: 1px solid $errorcolor;
 }
 
 :focus {

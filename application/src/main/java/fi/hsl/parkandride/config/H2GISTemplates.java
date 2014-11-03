@@ -3,7 +3,7 @@ package fi.hsl.parkandride.config;
 import com.mysema.query.sql.H2Templates;
 import com.mysema.query.sql.spatial.SpatialTemplatesSupport;
 
-import fi.hsl.parkandride.outbound.H2GeometryWktType;
+import fi.hsl.parkandride.back.H2GeometryWktType;
 
 public class H2GISTemplates extends H2Templates {
 

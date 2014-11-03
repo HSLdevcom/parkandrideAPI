@@ -1,13 +1,7 @@
 package fi.hsl.parkandride.core.service;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.geolatte.geom.Polygon;
-import org.geolatte.geom.codec.Wkt;
-
 import fi.hsl.parkandride.core.domain.*;
-import fi.hsl.parkandride.core.outbound.FacilityRepository;
+import fi.hsl.parkandride.core.back.FacilityRepository;
 
 public class FacilityService {
 

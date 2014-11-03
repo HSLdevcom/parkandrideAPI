@@ -10,10 +10,8 @@
   border: 1px solid transparent;
 }
 
-.ng-invalid.ng-dirty,
-input.ng-invalid.formsubmitted,
-edit-hub-map.ng-invalid.formsubmitted .map,
-facility-map.ng-invalid.formsubmitted .map {
+.validation-error,
+.validation-error .map {
   border-color: $errorcolor;
 }
 

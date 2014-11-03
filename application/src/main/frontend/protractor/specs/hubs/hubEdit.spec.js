@@ -24,11 +24,10 @@ describe('edit hub view', function () {
         it('required error is shown only for edited fields', function () {
             hubEditPage.setNameFi("foo");
             hubEditPage.setNameFi("");
-            hubEditPage.setNameEn("bar");
-            hubEditPage.setNameEn("");
+            hubEditPage.setNameEn("bar"); // to focus out from name fi, TODO refactor
             expect(hubEditPage.isNameFiRequiredError()).toBe(true);
             expect(hubEditPage.isNameSvRequiredError()).toBe(false);
-            expect(hubEditPage.isNameEnRequiredError()).toBe(true);
+            expect(hubEditPage.isNameEnRequiredError()).toBe(false);
             expect(hubEditPage.isLocationRequiredError()).toBe(false);
         });
 

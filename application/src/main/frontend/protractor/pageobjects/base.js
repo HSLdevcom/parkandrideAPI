@@ -13,7 +13,8 @@ module.exports = function(spec) {
     spec.isRequiredError = function(element) {
         return element.getAttribute('class').then(function (classAttr) {
             var actual = classAttr.split(' ');
-            return _.contains(actual, 'ng-invalid-required') && (_.contains(actual, 'formsubmitted') || _.contains(actual, 'ng-dirty'));
+//            return _.contains(actual, 'ng-invalid-required') && (_.contains(actual, 'formsubmitted') || _.contains(actual, 'ng-dirty'));
+            return _.contains(actual, 'validation-error');
         });
     };
 

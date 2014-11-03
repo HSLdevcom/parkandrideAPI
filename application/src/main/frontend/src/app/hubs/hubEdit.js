@@ -6,7 +6,8 @@
         'parkandride.layout',
         'parkandride.HubResource',
         'parkandride.FacilityResource',
-        'ngTagsInput'
+        'ngTagsInput',
+        'showErrors'
     ]);
 
     m.config(function($stateProvider) {

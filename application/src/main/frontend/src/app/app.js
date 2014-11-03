@@ -88,10 +88,10 @@
         });
 
         this.validateAndSubmit = function(form, submitFn) {
-            form.isFormSubmitted = true;
+            $scope.$broadcast('show-errors-check-validity');
             if (form.$valid) {
                 submitFn();
             }
         };
-});
+    });
 })();

@@ -23,8 +23,8 @@
 					<div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 column first-column">
 						<div class="form-group">
 							<div class="input-group">
-								<input id="inputNameFi" type="text" ng-class="{ formsubmitted: editHubForm.isFormSubmitted }" class="form-control"
-									   ng-model="editCtrl.hub.name.fi" maxlength="255" required/>
+								<input name="nameFi" id="inputNameFi" type="text" class="form-control" ng-model="editCtrl.hub.name.fi" maxlength="255"
+									   show-errors required />
 								<span class="input-group-addon">{{ "hubs.name.fi.inputLabel" | translate }}&nbsp;</span>
 							</div>
 						</div>
@@ -32,7 +32,8 @@
 					<div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 column first-column">
 						<div class="form-group">
 							<div class="input-group">
-								<input type="text" ng-class="{ formsubmitted: editHubForm.isFormSubmitted }" class="form-control" ng-model="editCtrl.hub.name.sv" maxlength="255" required/>
+								<input name="nameSv" type="text" class="form-control" ng-model="editCtrl.hub.name.sv" maxlength="255"
+									   show-errors required />
 								<span class="input-group-addon">{{ "hubs.name.sv.inputLabel" | translate }}</span>
 							</div>
 						</div>
@@ -40,7 +41,8 @@
 					<div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 column first-column">
 						<div class="form-group">
 							<div class="input-group">
-								<input type="text" ng-class="{ formsubmitted: editHubForm.isFormSubmitted }" class="form-control" ng-model="editCtrl.hub.name.en" maxlength="255" required/>
+								<input name="nameEn" type="text" class="form-control" ng-model="editCtrl.hub.name.en" maxlength="255"
+									   show-errors required />
 								<span class="input-group-addon">{{ "hubs.name.en.inputLabel" | translate }}</span>
 							</div>
 						</div>
@@ -49,7 +51,8 @@
 
 				<div class="row">
 					<h3>{{"hubs.location.label" | translate}} *</h3>
-					<edit-hub-map ng-class="{ formsubmitted: editHubForm.isFormSubmitted }" ng-model="editCtrl.hub" facilities="editCtrl.facilities" no-tiles="{{features['map.no-tiles']}}"></edit-hub-map>
+					<edit-hub-map show-errors name="editHubMap" ng-model="editCtrl.hub"
+								  facilities="editCtrl.facilities" no-tiles="{{features['map.no-tiles']}}"></edit-hub-map>
 				</div>
 
 				<div class="row">

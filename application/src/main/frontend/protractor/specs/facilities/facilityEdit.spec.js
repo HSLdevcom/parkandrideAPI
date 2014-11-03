@@ -24,10 +24,9 @@ describe('edit facility view', function () {
             editPage.setNameFi("foo");
             editPage.setNameFi("");
             editPage.setNameEn("bar");
-            editPage.setNameEn("");
             expect(editPage.isNameFiRequiredError()).toBe(true);
             expect(editPage.isNameSvRequiredError()).toBe(false);
-            expect(editPage.isNameEnRequiredError()).toBe(true);
+            expect(editPage.isNameEnRequiredError()).toBe(false);
             expect(editPage.isFacilityRequiredError()).toBe(false);
         });
 

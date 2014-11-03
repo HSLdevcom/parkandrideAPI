@@ -1,5 +1,7 @@
 package fi.hsl.parkandride.outbound;
 
+import static fi.hsl.parkandride.core.domain.Sort.Dir.ASC;
+import static fi.hsl.parkandride.core.domain.Sort.Dir.DESC;
 import static fi.hsl.parkandride.core.domain.Spatial.fromWkt;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -18,11 +20,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.google.common.collect.ImmutableSet;
 
-import fi.hsl.parkandride.core.domain.Hub;
-import fi.hsl.parkandride.core.domain.MultilingualString;
-import fi.hsl.parkandride.core.domain.NotFoundException;
-import fi.hsl.parkandride.core.domain.SearchResults;
-import fi.hsl.parkandride.core.domain.SpatialSearch;
+import fi.hsl.parkandride.core.domain.*;
 import fi.hsl.parkandride.core.outbound.HubRepository;
 import fi.hsl.parkandride.outbound.sql.QHub;
 import fi.hsl.parkandride.outbound.sql.QHubFacility;
@@ -91,12 +89,34 @@ public class HubDaoTest {
 
     }
 
-    private Hub createHub() {
-        Hub hub = new Hub();
-        hub.name = NAME;
-        hub.location = LOCATION;
-        hub.facilityIds = FACILITY_IDS;
-        return hub;
+    @Test
+    public void sorting() {
+        Hub h1 = new Hub();
+        h1.name = new MultilingualString("A", "B", "C");
+        h1.location = LOCATION;
+        h1.id = hubRepository.insertHub(h1);
+
+        Hub h2 = new Hub();
+        h2.name = new MultilingualString("D", "E", "F");
+        h2.location = LOCATION;
+        h2.id = hubRepository.insertHub(h2);
+
+        // Default sort
+        PageableSpatialSearch search = new PageableSpatialSearch();
+        assertResultOrder(hubRepository.findHubs(search), h1.id, h2.id);
+
+        // name.fi desc
+        search.sort = new Sort("name.fi", DESC);
+        assertResultOrder(hubRepository.findHubs(search), h2.id, h1.id);
+
+
+        // name.sv desc
+        search.sort = new Sort("name.sv", DESC);
+        assertResultOrder(hubRepository.findHubs(search), h2.id, h1.id);
+
+        // name.en asc
+        search.sort = new Sort("name.en", ASC);
+        assertResultOrder(hubRepository.findHubs(search), h1.id, h2.id);
     }
 
     @Test(expected = NotFoundException.class)
@@ -107,6 +127,20 @@ public class HubDaoTest {
     @Test(expected = NotFoundException.class)
     public void update_throws_an_exception_if_not_found() {
         hubRepository.updateHub(0, createHub());
+    }
+
+    private Hub createHub() {
+        Hub hub = new Hub();
+        hub.name = NAME;
+        hub.location = LOCATION;
+        hub.facilityIds = FACILITY_IDS;
+        return hub;
+    }
+
+    private void assertResultOrder(SearchResults<Hub> results, long id1, long id2) {
+        assertThat(results.size()).isEqualTo(2);
+        assertThat(results.get(0).id).isEqualTo(id1);
+        assertThat(results.get(1).id).isEqualTo(id2);
     }
 
     private SearchResults<Hub> findByGeometry(Geometry geometry) {

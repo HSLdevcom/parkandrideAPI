@@ -267,7 +267,6 @@ public class FacilityDao implements FacilityRepository {
         } else {
             qry.orderBy(sortField.asc(), qFacility.id.asc());
         }
-
     }
 
     private ValidationException invalidSortBy() {

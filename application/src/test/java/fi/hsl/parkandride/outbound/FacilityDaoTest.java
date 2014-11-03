@@ -167,9 +167,8 @@ public class FacilityDaoTest {
         search.sort = new Sort("name.sv", DESC);
         assertResultOrder(facilityDao.findFacilities(search), f2.id, f1.id);
 
-        // name.fi desc
+        // name.en asc
         search.sort = new Sort("name.en", ASC);
-        SearchResults<Facility> results = facilityDao.findFacilities(search);
         assertResultOrder(facilityDao.findFacilities(search), f1.id, f2.id);
     }
 

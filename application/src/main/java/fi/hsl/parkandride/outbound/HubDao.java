@@ -1,6 +1,9 @@
 package fi.hsl.parkandride.outbound;
 
+import static com.google.common.base.MoreObjects.firstNonNull;
 import static com.mysema.query.types.Projections.fields;
+import static fi.hsl.parkandride.core.domain.Sort.Dir.ASC;
+import static fi.hsl.parkandride.core.domain.Sort.Dir.DESC;
 
 import java.util.List;
 import java.util.Set;
@@ -17,21 +20,21 @@ import com.mysema.query.sql.postgres.PostgresQueryFactory;
 import com.mysema.query.types.Expression;
 import com.mysema.query.types.MappingProjection;
 import com.mysema.query.types.QBean;
+import com.mysema.query.types.expr.ComparableExpression;
 import com.mysema.query.types.expr.DslExpression;
 import com.mysema.query.types.expr.SimpleExpression;
 
-import fi.hsl.parkandride.core.domain.Facility;
-import fi.hsl.parkandride.core.domain.Hub;
-import fi.hsl.parkandride.core.domain.HubNotFoundException;
-import fi.hsl.parkandride.core.domain.SearchResults;
-import fi.hsl.parkandride.core.domain.SpatialSearch;
+import fi.hsl.parkandride.core.domain.*;
 import fi.hsl.parkandride.core.outbound.HubRepository;
 import fi.hsl.parkandride.core.service.TransactionalRead;
 import fi.hsl.parkandride.core.service.TransactionalWrite;
+import fi.hsl.parkandride.core.service.ValidationException;
 import fi.hsl.parkandride.outbound.sql.QHub;
 import fi.hsl.parkandride.outbound.sql.QHubFacility;
 
 public class HubDao implements HubRepository {
+
+    private static final Sort DEFAULT_SORT = new Sort("name.fi", ASC);
 
     public static final String HUB_ID_SEQ = "hub_id_seq";
 
@@ -125,22 +128,11 @@ public class HubDao implements HubRepository {
     @Override
     @TransactionalRead
     public Hub getHub(long hubId) {
-        List<Hub> results = findAll(new BooleanBuilder(qHub.id.eq(hubId)));
+        List<Hub> results = findAll(new BooleanBuilder(qHub.id.eq(hubId)), null);
         if (results.isEmpty()) {
             throw new HubNotFoundException(hubId);
         }
         return results.get(0);
-    }
-
-    private List<Hub> findAll(BooleanBuilder where) {
-        PostgresQuery qry = queryFactory.from(qHub)
-                .leftJoin(qHub._hubFacilityHubIdFk, qHubFacility);
-
-        if (where.hasValue()) {
-            qry.where(where);
-        }
-
-        return qry.transform(GroupBy.groupBy(qHub.id).list(hubMapping));
     }
 
     @Override
@@ -150,6 +142,38 @@ public class HubDao implements HubRepository {
         if (search.intersecting != null) {
             where.and(qHub.location.intersects(search.intersecting));
         }
-        return SearchResults.of(findAll(where));
+        return SearchResults.of(findAll(where, search.sort));
+    }
+
+    private List<Hub> findAll(BooleanBuilder where, Sort sort) {
+        PostgresQuery qry = queryFactory.from(qHub)
+                .leftJoin(qHub._hubFacilityHubIdFk, qHubFacility);
+
+        if (where.hasValue()) {
+            qry.where(where);
+        }
+        orderBy(sort, qry);
+
+        return qry.transform(GroupBy.groupBy(qHub.id).list(hubMapping));
+    }
+
+    private void orderBy(Sort sort, PostgresQuery qry) {
+        sort = firstNonNull(sort, DEFAULT_SORT);
+        ComparableExpression<String> sortField;
+        switch (firstNonNull(sort.by, DEFAULT_SORT.by)) {
+            case "name.fi": sortField = qHub.nameFi; break;
+            case "name.sv": sortField = qHub.nameSv; break;
+            case "name.en": sortField = qHub.nameEn; break;
+            default: throw invalidSortBy();
+        }
+        if (DESC.equals(sort.dir)) {
+            qry.orderBy(sortField.desc(), qHub.id.desc());
+        } else {
+            qry.orderBy(sortField.asc(), qHub.id.asc());
+        }
+    }
+
+    private ValidationException invalidSortBy() {
+        return new ValidationException(new Violation("SortBy", "sort.by", "Expected one of 'name.fi', 'name.sv' or 'name.en'"));
     }
 }

@@ -20,6 +20,25 @@ describe('edit facility view', function () {
             expect(editPage.isFacilityRequiredError()).toBe(false);
         });
 
+        it('required error is shown only for edited fields', function () {
+            editPage.setNameFi("foo");
+            editPage.setNameFi("");
+            editPage.setNameEn("bar");
+            editPage.setNameEn("");
+            expect(editPage.isNameFiRequiredError()).toBe(true);
+            expect(editPage.isNameSvRequiredError()).toBe(false);
+            expect(editPage.isNameEnRequiredError()).toBe(true);
+            expect(editPage.isFacilityRequiredError()).toBe(false);
+        });
+
+        it('required errors are shown for all required fields if user submits empty form without editing', function() {
+            editPage.save();
+            expect(editPage.isNameFiRequiredError()).toBe(true);
+            expect(editPage.isNameSvRequiredError()).toBe(true);
+            expect(editPage.isNameEnRequiredError()).toBe(true);
+            expect(editPage.isFacilityRequiredError()).toBe(true);
+        });
+
         describe('name', function () {
             it('is required in all languages', function () {
                 editPage.setName("facility name");
@@ -54,6 +73,7 @@ describe('edit facility view', function () {
         describe('facility', function () {
             it('is required', function () {
                 editPage.setName("Hub name");
+                editPage.save();
                 expect(editPage.isFacilityRequiredError()).toBe(true);
             });
         });

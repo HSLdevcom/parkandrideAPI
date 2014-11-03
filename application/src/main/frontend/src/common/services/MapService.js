@@ -55,9 +55,9 @@
             interactions.push(new ol.interaction.KeyboardZoom());
 
             var controls = new ol.Collection();
-            controls.push(new ol.control.Attribution());
-            controls.push(new ol.control.Zoom());
-            controls.push(new ol.control.FullScreen());
+            controls.push(new ol.control.Attribution({tipLabel: "Tietoa kartasta"}));
+            controls.push(new ol.control.Zoom({zoomOutTipLabel: "Zoomaa", zoomInTipLabel: "Zoomaa"}));
+            controls.push(new ol.control.FullScreen({tipLabel: "Koko näyttö"}));
 
             if (!options.readOnly) {
                 interactions.push(new ol.interaction.DoubleClickZoom());

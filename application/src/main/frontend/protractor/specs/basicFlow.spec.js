@@ -126,8 +126,8 @@ describe('Basic flow', function() {
         hubEditPage.setName(hubName);
         expect(hubEditPage.facilitiesTable.isDisplayed()).toBe(false);
 
-        hubEditPage.toggleFacility(facility1);
         hubEditPage.toggleFacility(facility2);
+        hubEditPage.toggleFacility(facility1);
         hubEditPage.setLocation({x: 165, y: 165});
         // NOTE: It takes some time until toggleFacility is reflected facilitiesTable - asserting getFacilityNames directly after toggle fails.
         expect(hubEditPage.facilitiesTable.isDisplayed()).toBe(true);

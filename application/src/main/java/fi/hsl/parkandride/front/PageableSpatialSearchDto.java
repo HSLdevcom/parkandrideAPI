@@ -26,11 +26,9 @@ public class PageableSpatialSearchDto extends SpatialSearchDto {
 
     @Override
     public PageableSpatialSearch toSpatialSearch() {
-        PageableSpatialSearch search = new PageableSpatialSearch();
+        PageableSpatialSearch search = toSpatialSearch(new PageableSpatialSearch());
         search.limit = limit;
         search.offset = offset;
-        search.intersecting = bbox != null ? bbox.toPolygon() : null;
-        search.ids = ids;
         return search;
     }
 }

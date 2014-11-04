@@ -11,7 +11,7 @@ module.exports = function () {
     self.westend1 = facility({
         "id": ids._1,
         "name": "Westend CAR",
-        "border": {
+        "location": {
             "bbox": [24.807768741075638, 60.16837631366566, 24.80811206382954, 60.16868052638392],
             "type": "Polygon",
             "coordinates": [
@@ -36,7 +36,7 @@ module.exports = function () {
     self.westend2 = facility({
         "id": ids._2,
         "name": "Westend BICYCLE",
-        "border": {
+        "location": {
             "bbox": [24.805209586446352, 60.16861541831023, 24.805365154569223, 60.16873283322467],
             "type": "Polygon",
             "coordinates": [

@@ -21,7 +21,7 @@ module.exports = function(spec) {
         }
     };
 
-    that.drawBorder = function (topLeft, w, h) {
+    that.drawLocation = function (topLeft, w, h) {
         browser.actions()
             .mouseMove(spec.map, topLeft).click()
             .mouseMove(spec.map, {x: topLeft.x, y: topLeft.y + h}).click()

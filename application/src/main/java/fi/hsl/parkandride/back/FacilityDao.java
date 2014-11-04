@@ -87,7 +87,7 @@ public class FacilityDao implements FacilityRepository {
             }
             Facility facility = new Facility();
             facility.id = id;
-            facility.border = row.get(qFacility.border);
+            facility.location = row.get(qFacility.location);
             facility.name = nameMapping.map(row);
             return facility;
         }
@@ -289,7 +289,7 @@ public class FacilityDao implements FacilityRepository {
 
     private void buildWhere(SpatialSearch search, PostgresQuery qry) {
         if (search.intersecting != null) {
-            qry.where(qFacility.border.intersects(search.intersecting));
+            qry.where(qFacility.location.intersects(search.intersecting));
         }
 
         if (search.ids != null && !search.ids.isEmpty()) {
@@ -362,7 +362,7 @@ public class FacilityDao implements FacilityRepository {
         store.set(qFacility.nameFi, facility.name.fi);
         store.set(qFacility.nameSv, facility.name.sv);
         store.set(qFacility.nameEn, facility.name.en);
-        store.set(qFacility.border, facility.border);
+        store.set(qFacility.location, facility.location);
     }
 
     private SQLInsertClause insertFacility() {

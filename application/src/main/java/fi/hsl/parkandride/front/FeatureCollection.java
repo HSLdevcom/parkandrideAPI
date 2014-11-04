@@ -19,7 +19,7 @@ public class FeatureCollection {
         @Override
         public Feature apply(@Nullable Facility facility) {
             Feature feature = new Feature();
-            feature.geometry = facility.border;
+            feature.geometry = facility.location;
             feature.id = facility.id;
             feature.properties = ImmutableMap.of(
                     "name", facility.name,

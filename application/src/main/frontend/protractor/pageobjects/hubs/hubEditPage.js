@@ -30,8 +30,8 @@ module.exports = function(spec) {
     };
 
     that.toggleFacility = function (f) {
-        var offsetX = f.borderInput.offset.x + f.borderInput.w / 2;
-        var offsetY = f.borderInput.offset.y + f.borderInput.h / 2;
+        var offsetX = f.locationInput.offset.x + f.locationInput.w / 2;
+        var offsetY = f.locationInput.offset.y + f.locationInput.h / 2;
         browser.actions()
             .mouseMove(spec.map, {x: offsetX, y: offsetY}).click()
             .perform();

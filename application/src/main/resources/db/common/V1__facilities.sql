@@ -3,7 +3,7 @@ create table facility (
   name_fi varchar(255) not null,
   name_sv varchar(255) not null,
   name_en varchar(255) not null,
-  border geometry not null,
+  location geometry not null,
 
   primary key (id)
 );

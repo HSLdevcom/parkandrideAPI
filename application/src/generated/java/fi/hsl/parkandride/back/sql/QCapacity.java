@@ -13,6 +13,9 @@ import java.sql.Types;
 
 import com.mysema.query.sql.spatial.RelationalPathSpatial;
 
+import com.mysema.query.spatial.path.*;
+
+
 
 /**
  * QCapacity is a Querydsl query type for QCapacity
@@ -20,7 +23,7 @@ import com.mysema.query.sql.spatial.RelationalPathSpatial;
 @Generated("com.mysema.query.sql.codegen.MetaDataSerializer")
 public class QCapacity extends RelationalPathSpatial<QCapacity> {
 
-    private static final long serialVersionUID = -112554674;
+    private static final long serialVersionUID = 2046522245;
 
     public static final QCapacity capacity = new QCapacity("CAPACITY");
 

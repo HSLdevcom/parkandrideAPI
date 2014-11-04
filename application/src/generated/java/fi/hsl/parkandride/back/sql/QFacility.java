@@ -23,13 +23,13 @@ import com.mysema.query.spatial.path.*;
 @Generated("com.mysema.query.sql.codegen.MetaDataSerializer")
 public class QFacility extends RelationalPathSpatial<QFacility> {
 
-    private static final long serialVersionUID = 456386359;
+    private static final long serialVersionUID = -1679504018;
 
     public static final QFacility facility = new QFacility("FACILITY");
 
-    public final GeometryPath<org.geolatte.geom.Geometry> border = createGeometry("border", org.geolatte.geom.Geometry.class);
-
     public final NumberPath<Long> id = createNumber("id", Long.class);
+
+    public final GeometryPath<org.geolatte.geom.Geometry> location = createGeometry("location", org.geolatte.geom.Geometry.class);
 
     public final StringPath nameEn = createString("nameEn");
 
@@ -64,8 +64,8 @@ public class QFacility extends RelationalPathSpatial<QFacility> {
     }
 
     public void addMetadata() {
-        addMetadata(border, ColumnMetadata.named("BORDER").withIndex(5).ofType(Types.OTHER).withSize(2147483647).notNull());
         addMetadata(id, ColumnMetadata.named("ID").withIndex(1).ofType(Types.BIGINT).withSize(19).notNull());
+        addMetadata(location, ColumnMetadata.named("LOCATION").withIndex(5).ofType(Types.OTHER).withSize(2147483647).notNull());
         addMetadata(nameEn, ColumnMetadata.named("NAME_EN").withIndex(4).ofType(Types.VARCHAR).withSize(255).notNull());
         addMetadata(nameFi, ColumnMetadata.named("NAME_FI").withIndex(2).ofType(Types.VARCHAR).withSize(255).notNull());
         addMetadata(nameSv, ColumnMetadata.named("NAME_SV").withIndex(3).ofType(Types.VARCHAR).withSize(255).notNull());

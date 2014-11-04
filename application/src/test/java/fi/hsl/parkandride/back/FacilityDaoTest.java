@@ -36,7 +36,7 @@ public class FacilityDaoTest {
 
     public static final MultilingualString NAME = new MultilingualString("Facility");
 
-    private static final Polygon BORDER = (Polygon) Spatial.fromWkt("POLYGON((" +
+    private static final Polygon LOCATION = (Polygon) Spatial.fromWkt("POLYGON((" +
             "25.010827 60.25055, " +
             "25.011867 60.250023, " +
             "25.012479 60.250337, " +
@@ -126,7 +126,7 @@ public class FacilityDaoTest {
         Facility facility = new Facility();
         facility.id = 0l;
         facility.name = NAME;
-        facility.border = BORDER;
+        facility.location = LOCATION;
         facility.aliases = ALIASES;
         facility.capacities = CAPACITIES;
         return facility;
@@ -145,12 +145,12 @@ public class FacilityDaoTest {
     public void sorting() {
         Facility f1 = new Facility();
         f1.name = new MultilingualString("A", "B", "C");
-        f1.border = BORDER;
+        f1.location = LOCATION;
         f1.id = facilityDao.insertFacility(f1);
 
         Facility f2 = new Facility();
         f2.name = new MultilingualString("D", "E", "F");
-        f2.border = BORDER;
+        f2.location = LOCATION;
         f2.id = facilityDao.insertFacility(f2);
 
         // Default sort

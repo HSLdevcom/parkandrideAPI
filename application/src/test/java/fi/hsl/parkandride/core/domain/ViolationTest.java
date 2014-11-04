@@ -52,7 +52,7 @@ public class ViolationTest {
     private Facility validFacility() {
         Facility f = new Facility();
         f.name = new MultilingualString("Test", "Test", "Test");
-        f.border = Mockito.mock(Geometry.class);
+        f.location = Mockito.mock(Geometry.class);
 
         Set<ConstraintViolation<Facility>> violations = validator.validate(f);
         assertThat(violations).isEmpty();

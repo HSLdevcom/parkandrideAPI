@@ -13,6 +13,9 @@ import java.sql.Types;
 
 import com.mysema.query.sql.spatial.RelationalPathSpatial;
 
+import com.mysema.query.spatial.path.*;
+
+
 
 /**
  * QFacilityAlias is a Querydsl query type for QFacilityAlias
@@ -20,7 +23,7 @@ import com.mysema.query.sql.spatial.RelationalPathSpatial;
 @Generated("com.mysema.query.sql.codegen.MetaDataSerializer")
 public class QFacilityAlias extends RelationalPathSpatial<QFacilityAlias> {
 
-    private static final long serialVersionUID = 2110105945;
+    private static final long serialVersionUID = -1014035070;
 
     public static final QFacilityAlias facilityAlias = new QFacilityAlias("FACILITY_ALIAS");
 

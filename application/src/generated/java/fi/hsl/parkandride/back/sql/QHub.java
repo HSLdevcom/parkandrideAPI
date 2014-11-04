@@ -23,7 +23,7 @@ import com.mysema.query.spatial.path.*;
 @Generated("com.mysema.query.sql.codegen.MetaDataSerializer")
 public class QHub extends RelationalPathSpatial<QHub> {
 
-    private static final long serialVersionUID = -1352658975;
+    private static final long serialVersionUID = -1194859702;
 
     public static final QHub hub = new QHub("HUB");
 

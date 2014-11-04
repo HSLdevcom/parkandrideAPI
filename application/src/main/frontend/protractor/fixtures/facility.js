@@ -18,7 +18,7 @@ module.exports = function(data) {
 
     self.toPayload = function() {
         var payload = _.cloneDeep(self);
-        var skipFields = ['borderInput'];
+        var skipFields = ['locationInput'];
         _.forEach(skipFields, function(field){ delete payload[field]; });
         return payload;
     };

@@ -33,7 +33,7 @@ public class ExportQTypes {
 
     public static final String NAME_PREFIX = "Q";
     public static final String TARGET_FOLDER = "src/generated/java";
-    public static final String PACKAGE_NAME = "fi.hsl.parkandride.outbound.sql";
+    public static final String PACKAGE_NAME = "fi.hsl.parkandride.back.sql";
 
     public static void main(String[] args) {
         SpringApplication application = new SpringApplication(ExportQTypes.class);

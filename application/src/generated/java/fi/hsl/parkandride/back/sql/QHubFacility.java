@@ -13,6 +13,9 @@ import java.sql.Types;
 
 import com.mysema.query.sql.spatial.RelationalPathSpatial;
 
+import com.mysema.query.spatial.path.*;
+
+
 
 /**
  * QHubFacility is a Querydsl query type for QHubFacility
@@ -20,7 +23,7 @@ import com.mysema.query.sql.spatial.RelationalPathSpatial;
 @Generated("com.mysema.query.sql.codegen.MetaDataSerializer")
 public class QHubFacility extends RelationalPathSpatial<QHubFacility> {
 
-    private static final long serialVersionUID = -1010863708;
+    private static final long serialVersionUID = -1380594675;
 
     public static final QHubFacility hubFacility = new QHubFacility("HUB_FACILITY");
 

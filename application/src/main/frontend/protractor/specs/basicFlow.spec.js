@@ -18,10 +18,6 @@ describe('Basic flow', function() {
     var hubEditPage = po.hubEditPage({});
     var hubViewPage = po.hubViewPage({});
 
-    function newFacilityName() {
-        return 'Test Facility ' + new Date().getTime();
-    }
-
     function newHubName() {
         return 'Test Hub ' + new Date().getTime();
     }
@@ -56,7 +52,7 @@ describe('Basic flow', function() {
     });
     var totalCapacities = _.reduce([facility1, facility2], function (acc, facility) { return acc.incCapacity(facility); });
 
-    var hubName = newHubName();
+    var hubName = "Test Hub 1";
 
     var capacityTypeOrder = ["Liityntäpysäköinti", "Polkupyörä", "Henkilöauto", "Invapaikka", "Moottoripyörä", "Sähköauto"];
 
@@ -72,7 +68,7 @@ describe('Basic flow', function() {
     });
 
     it('Create facility 1', function () {
-        facility1.name = newFacilityName();
+        facility1.name = "Test Facility B";
         facilityEditPage.setName(facility1.name);
         facilityEditPage.drawBorder(facility1.borderInput.offset, facility1.borderInput.w, facility1.borderInput.h);
         facilityEditPage.addAlias(facility1.aliases[0]);
@@ -98,7 +94,7 @@ describe('Basic flow', function() {
     });
 
     it('Create facility 2', function() {
-        facility2.name = newFacilityName();
+        facility2.name = "Test Facility A";
         facilityEditPage.setName(facility2.name);
 
         facilityEditPage.drawBorder(facility2.borderInput.offset, facility2.borderInput.w, facility2.borderInput.h);
@@ -116,7 +112,7 @@ describe('Basic flow', function() {
     it('Go to create hub via hub list', function() {
         menu.toHubs();
         expect(hubListPage.isDisplayed()).toBe(true);
-        expect(hubListPage.getHubAndFacilityNames()).toEqual([facility1.name, facility2.name]);
+        expect(hubListPage.getHubAndFacilityNames()).toEqual([facility2.name, facility1.name]);
 
         hubListPage.toHubCreateView();
         expect(hubEditPage.isDisplayed()).toBe(true);
@@ -126,12 +122,13 @@ describe('Basic flow', function() {
         hubEditPage.setName(hubName);
         expect(hubEditPage.facilitiesTable.isDisplayed()).toBe(false);
 
-        hubEditPage.toggleFacility(facility2);
         hubEditPage.toggleFacility(facility1);
+        hubEditPage.toggleFacility(facility2);
         hubEditPage.setLocation({x: 165, y: 165});
         // NOTE: It takes some time until toggleFacility is reflected facilitiesTable - asserting getFacilityNames directly after toggle fails.
         expect(hubEditPage.facilitiesTable.isDisplayed()).toBe(true);
-        expect(hubEditPage.facilitiesTable.getFacilityNames()).toEqual([facility1.name, facility2.name]);
+        browser.debugger();
+        expect(hubEditPage.facilitiesTable.getFacilityNames()).toEqual([facility2.name, facility1.name]);
 
         hubEditPage.save();
         expect(hubViewPage.isDisplayed()).toBe(true);
@@ -139,12 +136,12 @@ describe('Basic flow', function() {
         arrayAssert.assertInOrder(hubViewPage.capacitiesTable.getTypes(), capacityTypeOrder);
         expect(hubViewPage.capacitiesTable.getCapacities(_.keys(totalCapacities.capacities))).toEqual(totalCapacities.capacities);
         expect(hubViewPage.facilitiesTable.isDisplayed()).toBe(true);
-        expect(hubViewPage.facilitiesTable.getFacilityNames()).toEqual([facility1.name, facility2.name]);
+        expect(hubViewPage.facilitiesTable.getFacilityNames()).toEqual([facility2.name, facility1.name]);
     });
 
     it('List facilities grouped by hubs', function() {
         menu.toHubs();
         expect(hubListPage.isDisplayed()).toBe(true);
-        expect(hubListPage.getHubAndFacilityNames()).toEqual([hubName, facility1.name, facility2.name]);
+        expect(hubListPage.getHubAndFacilityNames()).toEqual([hubName, facility2.name, facility1.name]);
     });
 });

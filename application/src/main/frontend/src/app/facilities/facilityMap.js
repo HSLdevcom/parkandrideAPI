@@ -28,7 +28,7 @@
                 if (editable) {
                     var draw = new ol.interaction.Draw({
                         features: featureOverlay.getFeatures(),
-                        style: MapService.facilityStyle,
+                        style: MapService.facilityDrawStyle,
                         type: "Polygon"
                     });
                     draw.on("drawstart", function(drawEvent) {

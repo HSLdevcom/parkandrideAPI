@@ -10,4 +10,6 @@ public class SpatialSearch {
 
     public Set<Long> ids;
 
+    public Sort sort;
+
 }

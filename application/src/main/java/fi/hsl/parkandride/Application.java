@@ -1,6 +1,6 @@
 package fi.hsl.parkandride;
 
-import static fi.hsl.parkandride.inbound.UrlSchema.GEOJSON;
+import static fi.hsl.parkandride.front.UrlSchema.GEOJSON;
 
 import java.io.IOException;
 import java.util.List;
@@ -28,15 +28,13 @@ import org.springframework.http.MediaType;
 import org.springframework.web.filter.CharacterEncodingFilter;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer;
-import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.mvc.method.annotation.ExceptionHandlerExceptionResolver;
-import org.springframework.web.servlet.mvc.support.DefaultHandlerExceptionResolver;
 
 import com.fasterxml.jackson.databind.Module;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 
-import fi.hsl.parkandride.inbound.GeojsonDeserializer;
-import fi.hsl.parkandride.inbound.GeojsonSerializer;
+import fi.hsl.parkandride.front.GeojsonDeserializer;
+import fi.hsl.parkandride.front.GeojsonSerializer;
 
 @Configuration
 @EnableAutoConfiguration

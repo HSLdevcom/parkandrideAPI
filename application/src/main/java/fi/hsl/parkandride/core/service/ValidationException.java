@@ -6,9 +6,13 @@ import com.google.common.collect.ImmutableList;
 
 import fi.hsl.parkandride.core.domain.Violation;
 
-public class ValidationException extends RuntimeException {
+public class ValidationException extends IllegalArgumentException {
 
     public final List<Violation> violations;
+
+    public ValidationException(Violation violation) {
+        this(ImmutableList.of(violation));
+    }
 
     public ValidationException(Iterable<Violation> violations) {
         super("Invalid data. See violations for details.");

@@ -51,7 +51,7 @@
 
 				<div class="row">
 					<h3>{{"hubs.location.label" | translate}} *</h3>
-					<edit-hub-map show-errors name="editHubMap" ng-model="editCtrl.hub"
+					<edit-hub-map show-errors="{ instant: true }" name="editHubMap" ng-model="editCtrl.hub"
 								  facilities="editCtrl.facilities" no-tiles="{{features['map.no-tiles']}}"></edit-hub-map>
 				</div>
 

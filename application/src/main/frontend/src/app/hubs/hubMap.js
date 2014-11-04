@@ -51,6 +51,7 @@
                     var point = new ol.geom.Point(event.coordinate).transform('EPSG:3857', 'EPSG:4326');
                     scope.hub.location = new ol.format.GeoJSON().writeGeometry(point);
                     ctrl.$setValidity("required", true);
+                    ctrl.$setTouched();
                     scope.$apply();
                     setPoint(point, hubLayer);
                     return false;

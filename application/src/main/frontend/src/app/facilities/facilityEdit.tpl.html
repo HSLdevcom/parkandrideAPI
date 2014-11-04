@@ -64,7 +64,7 @@
 				<div class="row">
 						<h3>{{"facilities.location" | translate}} *</h3>
 						<facility-map name="facilityMap" ng-model="editCtrl.facility.border" editable="true" no-tiles="{{features['map.no-tiles']}}"
-									  show-errors required></facility-map>
+									  show-errors="{ instant: true }" required></facility-map>
 				</div>
 
 				<div class="row">

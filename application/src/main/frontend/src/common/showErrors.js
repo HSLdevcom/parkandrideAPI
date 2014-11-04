@@ -6,6 +6,7 @@
 
         function linkFn(scope, el, attrs, formCtrl) {
             var blurred = false;
+            var options = scope.$eval(attrs.showErrors) || {};
 
             function toggleClasses(invalid) {
                 el.toggleClass(errorClass, invalid);
@@ -24,6 +25,13 @@
             scope.$watch(function() {
                 return formCtrl[elName] && formCtrl[elName].$invalid;
             }, function(invalid) {
+                if (options.instant) {
+                    if (!formCtrl[elName].$touched) {
+                        return;
+                    }
+                    return toggleClasses(invalid);
+                }
+
                 if (!blurred) {
                     return;
                 }

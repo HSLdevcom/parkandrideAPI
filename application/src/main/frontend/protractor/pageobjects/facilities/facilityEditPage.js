@@ -59,5 +59,9 @@ module.exports = function(spec) {
         return spec.isRequiredError($('facility-map'));
     };
 
+    that.isNoFacilityError = function() {
+        return spec.isNoValidationError($('facility-map'));
+    };
+
     return that;
 };

@@ -70,10 +70,13 @@ describe('edit facility view', function () {
         });
 
         describe('facility', function () {
-            it('is required', function () {
-                editPage.setName("Hub name");
+            it('is required, error is cleared after facility is set', function () {
                 editPage.save();
                 expect(editPage.isFacilityRequiredError()).toBe(true);
+
+                editPage.drawBorder({ offset: {x: 180, y: 180}, w: 60, h: 60 });
+                expect(editPage.isNoFacilityError()).toBe(true);
+                editPage.save();
             });
         });
     });

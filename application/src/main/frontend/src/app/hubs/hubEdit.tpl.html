@@ -49,7 +49,9 @@
 
 				<div class="row">
 					<h3>{{"hubs.location.label" | translate}} *</h3>
-					<edit-hub-map ng-class="{formdirty: editHubForm.$dirty }" ng-model="editCtrl.hub" facilities="editCtrl.facilities" no-tiles="{{features['map.no-tiles']}}"></edit-hub-map>
+					<div class="map-container">
+						<edit-hub-map ng-class="{formdirty: editHubForm.$dirty }" ng-model="editCtrl.hub" facilities="editCtrl.facilities" no-tiles="{{features['map.no-tiles']}}"></edit-hub-map>
+					</div>
 				</div>
 
 				<div class="row">

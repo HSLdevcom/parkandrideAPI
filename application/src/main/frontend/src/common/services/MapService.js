@@ -42,8 +42,6 @@
         }),
 
         createMap: function(ngElement, options) {
-            var target = ngElement.children()[0];
-            var ngTarget = angular.element(target);
             var layers = [];
             if (!options.noTiles) {
                 layers.push(new ol.layer.Tile({ source: new ol.source.OSM() }));
@@ -73,7 +71,7 @@
             }
 
             return new ol.Map({
-                target: target,
+                target: ngElement.children()[0],
                 controls: controls,
                 interactions: interactions,
                 layers: layers,

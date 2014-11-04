@@ -11,7 +11,7 @@ module.exports = function(spec) {
     };
 
     spec.isRequiredError = function(element) {
-        return spec.hasClasses(element, ["ng-invalid-required", "formdirty"]);
+        return spec.hasClasses(element, ['validation-error', 'ng-invalid-required']);
     };
 
     spec.getValue = function(element) {

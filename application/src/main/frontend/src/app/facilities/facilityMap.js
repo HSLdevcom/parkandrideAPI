@@ -6,6 +6,7 @@
     m.directive('facilityMap', function(MapService) {
         return {
             restrict: 'E',
+            require: 'ngModel',
             scope: {
                 polygon: '=ngModel',
                 editable: '@',
@@ -39,6 +40,7 @@
                     draw.on("drawend", function(drawEvent) {
                         var polygon = drawEvent.feature.getGeometry().clone().transform('EPSG:3857', 'EPSG:4326');
                         scope.polygon = new ol.format.GeoJSON().writeGeometry(polygon);
+                        ctrl.$setTouched();
                         scope.$apply();
                     });
                     map.addInteraction(draw);

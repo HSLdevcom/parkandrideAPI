@@ -254,9 +254,9 @@ public class FacilityDao implements FacilityRepository {
         sort = firstNonNull(sort, DEFAULT_SORT);
         ComparableExpression<String> sortField;
         switch (firstNonNull(sort.by, DEFAULT_SORT.by)) {
-            case "name.fi": sortField = qFacility.nameFi; break;
-            case "name.sv": sortField = qFacility.nameSv; break;
-            case "name.en": sortField = qFacility.nameEn; break;
+            case "name.fi": sortField = qFacility.nameFi.toUpperCase(); break;
+            case "name.sv": sortField = qFacility.nameSv.toUpperCase(); break;
+            case "name.en": sortField = qFacility.nameEn.toUpperCase(); break;
             default: throw invalidSortBy();
         }
         if (DESC.equals(sort.dir)) {

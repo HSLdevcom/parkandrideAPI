@@ -94,7 +94,7 @@ describe('Basic flow', function() {
     });
 
     it('Create facility 2', function() {
-        facility2.name = "Test Facility A";
+        facility2.name = "Test Facility a";
         facilityEditPage.setName(facility2.name);
 
         facilityEditPage.drawLocation(facility2.locationInput.offset, facility2.locationInput.w, facility2.locationInput.h);

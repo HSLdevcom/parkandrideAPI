@@ -144,7 +144,7 @@ public class FacilityDaoTest {
     @Test
     public void sorting() {
         Facility f1 = new Facility();
-        f1.name = new MultilingualString("A", "B", "C");
+        f1.name = new MultilingualString("A", "b", "C");
         f1.location = LOCATION;
         f1.id = facilityDao.insertFacility(f1);
 

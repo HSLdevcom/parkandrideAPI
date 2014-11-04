@@ -67,7 +67,7 @@
                 function addFeatureAsFacility(feature) {
                     var facility = feature.getProperties();
                     facility.id = feature.getId();
-                    var indx = _.sortedIndex(scope.facilities, facility, function(f) { return f.name.fi; });
+                    var indx = _.sortedIndex(scope.facilities, facility, function(f) { return f.name.fi.toUpperCase(); });
                     scope.facilities.splice(indx, 0, facility);
                 }
 

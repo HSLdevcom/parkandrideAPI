@@ -92,7 +92,7 @@ public class HubDaoTest {
     @Test
     public void sorting() {
         Hub h1 = new Hub();
-        h1.name = new MultilingualString("A", "B", "C");
+        h1.name = new MultilingualString("A", "b", "C");
         h1.location = LOCATION;
         h1.id = hubRepository.insertHub(h1);
 

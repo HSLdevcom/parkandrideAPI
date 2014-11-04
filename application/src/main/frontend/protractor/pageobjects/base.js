@@ -2,6 +2,7 @@
 
 module.exports = function(spec) {
     var _ = require('lodash');
+    var validationErrorClass = "validation-error";
 
     spec.hasClasses = function(element, expected) {
         return element.getAttribute('class').then(function (classAttr) {
@@ -10,8 +11,19 @@ module.exports = function(spec) {
         });
     };
 
+    spec.hasNoClasses = function(element, expected) {
+        return element.getAttribute('class').then(function (classAttr) {
+            var actual = classAttr.split(' ');
+            return _.every(expected, function(cls) { return !_.contains(actual, cls); } );
+        });
+    };
+
     spec.isRequiredError = function(element) {
-        return spec.hasClasses(element, ['validation-error', 'ng-invalid-required']);
+        return spec.hasClasses(element, [validationErrorClass, 'ng-invalid-required']);
+    };
+
+    spec.isNoValidationError = function(element) {
+        return spec.hasNoClasses(element, [validationErrorClass]);
     };
 
     spec.getValue = function(element) {

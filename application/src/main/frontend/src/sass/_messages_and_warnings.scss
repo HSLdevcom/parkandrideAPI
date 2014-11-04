@@ -10,8 +10,8 @@
   border: 1px solid transparent;
 }
 
-.form-control.validation-error,
-.validation-error .map {
+.form-control.validation-error.ng-invalid,
+.validation-error.ng-invalid > .map {
   border: 1px solid $errorcolor;
 }
 

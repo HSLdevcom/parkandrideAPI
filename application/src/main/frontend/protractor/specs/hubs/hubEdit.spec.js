@@ -72,10 +72,12 @@ describe('edit hub view', function () {
         });
 
         describe('location', function () {
-            it('is required', function () {
-                hubEditPage.setName("Hub name");
+            it('is required, error is cleared after location is selected', function () {
                 hubEditPage.save();
                 expect(hubEditPage.isLocationRequiredError()).toBe(true);
+
+                hubEditPage.setLocation({ x: 165, y: 165 });
+                expect(hubEditPage.isNoLocationError()).toBe(true);
             });
         });
     });

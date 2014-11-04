@@ -29,6 +29,10 @@ public class Violation {
         this(type, ImmutableMap.of(), null, type);
     }
 
+    public Violation(String type, String path, String message) {
+        this(type, ImmutableMap.of(), path, type);
+    }
+
     public Violation(String type, Map<String, Object> args, String path, String message) {
         this.type = type;
         this.args = args;

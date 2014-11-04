@@ -30,4 +30,12 @@ public class SearchResults<T> {
         this.results = results;
         this.hasMore = hasMore;
     }
+
+    public T get(int index) {
+        return results.get(index);
+    }
+
+    public int size() {
+        return results.size();
+    }
 }

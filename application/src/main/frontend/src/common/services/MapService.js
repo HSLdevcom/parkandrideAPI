@@ -42,6 +42,8 @@
         }),
 
         createMap: function(ngElement, options) {
+            var target = ngElement.children()[0];
+            var ngTarget = angular.element(target);
             var layers = [];
             if (!options.noTiles) {
                 layers.push(new ol.layer.Tile({ source: new ol.source.OSM() }));
@@ -63,6 +65,7 @@
                 interactions.push(new ol.interaction.DoubleClickZoom());
                 interactions.push(new ol.interaction.MouseWheelZoom());
                 interactions.push(new ol.interaction.DragZoom());
+                interactions.push(new ol.interaction.PinchZoom());
                 interactions.push(new ol.interaction.KeyboardPan());
                 interactions.push(new ol.interaction.DragPan({
                     kinetic: new ol.Kinetic(-0.005, 0.05, 100)
@@ -70,7 +73,7 @@
             }
 
             return new ol.Map({
-                target: ngElement.children()[0],
+                target: target,
                 controls: controls,
                 interactions: interactions,
                 layers: layers,

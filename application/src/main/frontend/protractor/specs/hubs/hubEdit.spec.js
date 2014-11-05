@@ -6,6 +6,7 @@ var po = require('../../pageobjects/pageobjects.js');
 var fixtures = require('../../fixtures/fixtures');
 var arrayAssert = require('../arrayAssert')();
 var devApi = require('../devApi')();
+var common = require('../common');
 
 describe('edit hub view', function () {
     var hubEditPage = po.hubEditPage({});
@@ -13,8 +14,6 @@ describe('edit hub view', function () {
 
     var facFull = fixtures.facilitiesFixture.dummies.facFull;
     var facCar = fixtures.facilitiesFixture.dummies.facCar;
-
-    var capacityTypeOrder = ["Liityntäpysäköinti", "Polkupyörä", "Henkilöauto", "Invapaikka", "Moottoripyörä", "Sähköauto"];
 
     function assertFacilityNamesInAnyOrder(facilitiesTable, expected) {
         expect(facilitiesTable.isDisplayed()).toBe(true);
@@ -26,7 +25,7 @@ describe('edit hub view', function () {
     }
 
     function assertCapacities(capacitiesTable, facilities) {
-        arrayAssert.assertInOrder(capacitiesTable.getTypes(), capacityTypeOrder);
+        arrayAssert.assertInOrder(capacitiesTable.getTypes(), common.capacityTypeOrder);
         var total = totalCapacities(facilities);
         expect(capacitiesTable.getCapacities(_.keys(total.capacities))).toEqual(total.capacities);
     }

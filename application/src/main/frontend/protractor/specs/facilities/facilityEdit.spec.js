@@ -6,6 +6,7 @@ var po = require('../../pageobjects/pageobjects.js');
 var fixtures = require('../../fixtures/fixtures');
 var arrayAssert = require('../arrayAssert')();
 var devApi = require('../devApi')();
+var common = require('../common');
 
 describe('edit facility view', function () {
     var editPage = po.facilityEditPage({});
@@ -14,8 +15,6 @@ describe('edit facility view', function () {
 
     var facFull = fixtures.facilitiesFixture.dummies.facFull;
     var facCar = fixtures.facilitiesFixture.dummies.facCar;
-
-    var capacityTypeOrder = ["Liityntäpysäköinti", "Polkupyörä", "Henkilöauto", "Invapaikka", "Moottoripyörä", "Sähköauto"];
 
     describe('new facility', function () {
         beforeEach(function () {
@@ -94,13 +93,13 @@ describe('edit facility view', function () {
             editPage.addAlias(facFull.aliases[0]);
             editPage.addAlias(facFull.aliases[1]);
             editPage.setCapacities(facFull.capacities);
-            arrayAssert.assertInOrder(editPage.getCapacityTypes(), capacityTypeOrder);
+            arrayAssert.assertInOrder(editPage.getCapacityTypes(), common.capacityTypeOrder);
 
             editPage.save();
             expect(viewPage.isDisplayed()).toBe(true);
             expect(viewPage.getName()).toBe(facFull.name);
             expect(viewPage.getAliases()).toEqual(facFull.aliases);
-            arrayAssert.assertInOrder(viewPage.capacitiesTable.getTypes(), capacityTypeOrder);
+            arrayAssert.assertInOrder(viewPage.capacitiesTable.getTypes(), common.capacityTypeOrder);
             expect(viewPage.capacitiesTable.getCapacities(_.keys(facFull.capacities))).toEqual(facFull.capacities);
         });
 
@@ -108,13 +107,13 @@ describe('edit facility view', function () {
             editPage.setName(facCar.name);
             editPage.drawLocation(facCar.locationInput.offset, facCar.locationInput.w, facCar.locationInput.h);
             editPage.setCapacities(facCar.capacities);
-            arrayAssert.assertInOrder(editPage.getCapacityTypes(), capacityTypeOrder);
+            arrayAssert.assertInOrder(editPage.getCapacityTypes(), common.capacityTypeOrder);
 
             editPage.save();
             expect(viewPage.isDisplayed()).toBe(true);
             expect(viewPage.getName()).toBe(facCar.name);
             expect(viewPage.getAliases()).toEqual([ '' ]);
-            arrayAssert.assertInOrder(viewPage.capacitiesTable.getTypes(), capacityTypeOrder, { allowSkip: true });
+            arrayAssert.assertInOrder(viewPage.capacitiesTable.getTypes(), common.capacityTypeOrder, { allowSkip: true });
             expect(viewPage.capacitiesTable.getCapacities(_.keys(facCar.capacities))).toEqual(facCar.capacities);
         });
 

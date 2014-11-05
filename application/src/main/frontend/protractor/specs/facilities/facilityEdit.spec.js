@@ -1,11 +1,45 @@
 'use strict';
 
+var _ = require('lodash');
+
 var po = require('../../pageobjects/pageobjects.js');
 var fixtures = require('../../fixtures/fixtures');
+var arrayAssert = require('../arrayAssert')();
 var devApi = require('../devApi')();
 
 describe('edit facility view', function () {
     var editPage = po.facilityEditPage({});
+    var viewPage = po.facilityViewPage({});
+
+    var facFull = fixtures.facility({
+        capacities: {
+            "CAR": {"built": 10, "unavailable": 1},
+            "BICYCLE": {"built": 20, "unavailable": 2},
+            "PARK_AND_RIDE": {"built": 30, "unavailable": 3},
+            "DISABLED": {"built": 40, "unavailable": 4},
+            "MOTORCYCLE": {"built": 50, "unavailable": 5},
+            "ELECTRIC_CAR": {"built": 60, "unavailable": 6}
+        },
+        aliases: ["alias with spaces", "facility1"],
+        locationInput: {
+            offset: {x: 90, y: 90},
+            w: 60,
+            h: 60
+        }
+    });
+    var facCar = fixtures.facility({
+        capacities: {
+            "CAR": {"built": 10, "unavailable": 1}
+        },
+        aliases: ["fac2"],
+        locationInput: {
+            offset: {x: 180, y: 180},
+            w: 60,
+            h: 60
+        }
+    });
+
+    var capacityTypeOrder = ["Liityntäpysäköinti", "Polkupyörä", "Henkilöauto", "Invapaikka", "Moottoripyörä", "Sähköauto"];
 
     describe('new facility', function () {
         beforeEach(function () {
@@ -76,6 +110,38 @@ describe('edit facility view', function () {
                 expect(editPage.hasNoValidationErrors()).toBe(true);
                 editPage.save();
             });
+        });
+
+        it('create full', function () {
+            facFull.name = "Facility with all capacities";
+            editPage.setName(facFull.name);
+            editPage.drawLocation(facFull.locationInput.offset, facFull.locationInput.w, facFull.locationInput.h);
+            editPage.addAlias(facFull.aliases[0]);
+            editPage.addAlias(facFull.aliases[1]);
+            editPage.setCapacities(facFull.capacities);
+            arrayAssert.assertInOrder(editPage.getCapacityTypes(), capacityTypeOrder);
+
+            editPage.save();
+            expect(viewPage.isDisplayed()).toBe(true);
+            expect(viewPage.getName()).toBe(facFull.name);
+            expect(viewPage.getAliases()).toEqual(facFull.aliases);
+            arrayAssert.assertInOrder(viewPage.capacitiesTable.getTypes(), capacityTypeOrder);
+            expect(viewPage.capacitiesTable.getCapacities(_.keys(facFull.capacities))).toEqual(facFull.capacities);
+        });
+
+        it('create without aliases', function () {
+            facCar.name = "Facility without aliases";
+            editPage.setName(facCar.name);
+            editPage.drawLocation(facCar.locationInput.offset, facCar.locationInput.w, facCar.locationInput.h);
+            editPage.setCapacities(facCar.capacities);
+            arrayAssert.assertInOrder(editPage.getCapacityTypes(), capacityTypeOrder);
+
+            editPage.save();
+            expect(viewPage.isDisplayed()).toBe(true);
+            expect(viewPage.getName()).toBe(facCar.name);
+            expect(viewPage.getAliases()).toEqual([ '' ]);
+            arrayAssert.assertInOrder(viewPage.capacitiesTable.getTypes(), capacityTypeOrder, { allowSkip: true });
+            expect(viewPage.capacitiesTable.getCapacities(_.keys(facCar.capacities))).toEqual(facCar.capacities);
         });
     });
 });

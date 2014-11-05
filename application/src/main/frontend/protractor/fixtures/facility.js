@@ -5,7 +5,7 @@ module.exports = function(data) {
     var self = data || {};
 
     self.incCapacity = function (that) {
-        var copy = _.cloneDeep(self);
+        var copy = _.cloneDeep(this);
         for (var capacityType in that.capacities) {
             var c1 = copy.capacities[capacityType] || {"built": 0, "unavailable": 0};
             var c2 = that.capacities[capacityType];
@@ -17,7 +17,7 @@ module.exports = function(data) {
     };
 
     self.toPayload = function() {
-        var payload = _.cloneDeep(self);
+        var payload = _.cloneDeep(this);
         var skipFields = ['locationInput'];
         _.forEach(skipFields, function(field){ delete payload[field]; });
         return payload;

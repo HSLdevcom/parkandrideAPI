@@ -32,6 +32,7 @@ module.exports = function () {
                 w: 60,
                 h: 60
             },
+            aliases: ["alias with spaces", "facFull"],
             capacities: {
                 "CAR": {"built": 10, "unavailable": 1},
                 "BICYCLE": {"built": 20, "unavailable": 2},
@@ -39,8 +40,7 @@ module.exports = function () {
                 "DISABLED": {"built": 40, "unavailable": 4},
                 "MOTORCYCLE": {"built": 50, "unavailable": 5},
                 "ELECTRIC_CAR": {"built": 60, "unavailable": 6}
-            },
-            aliases: ["alias with spaces", "facFull"],
+            }
         }),
         facCar: facility({
             "id": ids._4,

@@ -4,11 +4,32 @@ var _ = require('lodash');
 
 var po = require('../../pageobjects/pageobjects.js');
 var fixtures = require('../../fixtures/fixtures');
+var arrayAssert = require('../arrayAssert')();
 var devApi = require('../devApi')();
 
 describe('edit hub view', function () {
     var hubEditPage = po.hubEditPage({});
     var hubViewPage = po.hubViewPage({});
+
+    var facFull = fixtures.facilitiesFixture.dummies.facFull;
+    var facCar = fixtures.facilitiesFixture.dummies.facCar;
+
+    var capacityTypeOrder = ["Liityntäpysäköinti", "Polkupyörä", "Henkilöauto", "Invapaikka", "Moottoripyörä", "Sähköauto"];
+
+    function assertFacilityNamesInAnyOrder(facilitiesTable, expected) {
+        expect(facilitiesTable.isDisplayed()).toBe(true);
+        arrayAssert.assertInAnyOrder(facilitiesTable.getFacilityNames(), expected);
+    }
+
+    function totalCapacities(facilities) {
+        return _.reduce(facilities, function (acc, facility) { return acc.incCapacity(facility); });
+    }
+
+    function assertCapacities(capacitiesTable, facilities) {
+        arrayAssert.assertInOrder(capacitiesTable.getTypes(), capacityTypeOrder);
+        var total = totalCapacities(facilities);
+        expect(capacitiesTable.getCapacities(_.keys(total.capacities))).toEqual(total.capacities);
+    }
 
     describe('new hub', function () {
         beforeEach(function () {
@@ -91,6 +112,29 @@ describe('edit hub view', function () {
             expect(hubViewPage.getNoFacilitiesMessage()).toEqual("Alueeseen ei ole lisätty pysäköintipaikkoja");
             expect(hubViewPage.facilitiesTable.isDisplayed()).toBe(false);
             expect(hubViewPage.capacitiesTable.isDisplayed()).toBe(false);
+        });
+
+        describe('with facilities', function() {
+            beforeEach(function () {
+                devApi.resetFacilities([facFull, facCar]);
+                hubEditPage.get();
+            });
+
+            it('create', function () {
+                hubEditPage.setName("Hub name");
+                expect(hubEditPage.facilitiesTable.isDisplayed()).toBe(false);
+
+                hubEditPage.toggleFacility(facFull);
+                hubEditPage.toggleFacility(facCar);
+                hubEditPage.setLocation({x: 165, y: 165});
+                assertFacilityNamesInAnyOrder(hubEditPage.facilitiesTable, [facFull.name, facCar.name]);
+
+                hubEditPage.save();
+                expect(hubViewPage.isDisplayed()).toBe(true);
+                expect(hubViewPage.getName()).toBe("Hub name");
+                assertCapacities(hubViewPage.capacitiesTable, [facFull, facCar]);
+                assertFacilityNamesInAnyOrder(hubViewPage.facilitiesTable, [facFull.name, facCar.name]);
+            });
         });
     });
 

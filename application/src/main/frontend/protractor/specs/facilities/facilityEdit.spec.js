@@ -12,33 +12,8 @@ describe('edit facility view', function () {
     var viewPage = po.facilityViewPage({});
     var hubListPage = po.hubListPage({});
 
-    var facFull = fixtures.facility({
-        capacities: {
-            "CAR": {"built": 10, "unavailable": 1},
-            "BICYCLE": {"built": 20, "unavailable": 2},
-            "PARK_AND_RIDE": {"built": 30, "unavailable": 3},
-            "DISABLED": {"built": 40, "unavailable": 4},
-            "MOTORCYCLE": {"built": 50, "unavailable": 5},
-            "ELECTRIC_CAR": {"built": 60, "unavailable": 6}
-        },
-        aliases: ["alias with spaces", "facility1"],
-        locationInput: {
-            offset: {x: 90, y: 90},
-            w: 60,
-            h: 60
-        }
-    });
-    var facCar = fixtures.facility({
-        capacities: {
-            "CAR": {"built": 10, "unavailable": 1}
-        },
-        aliases: ["fac2"],
-        locationInput: {
-            offset: {x: 180, y: 180},
-            w: 60,
-            h: 60
-        }
-    });
+    var facFull = fixtures.facilitiesFixture.dummies.facFull;
+    var facCar = fixtures.facilitiesFixture.dummies.facCar;
 
     var capacityTypeOrder = ["Liityntäpysäköinti", "Polkupyörä", "Henkilöauto", "Invapaikka", "Moottoripyörä", "Sähköauto"];
 
@@ -114,7 +89,6 @@ describe('edit facility view', function () {
         });
 
         it('create full', function () {
-            facFull.name = "Facility with all capacities";
             editPage.setName(facFull.name);
             editPage.drawLocation(facFull.locationInput.offset, facFull.locationInput.w, facFull.locationInput.h);
             editPage.addAlias(facFull.aliases[0]);
@@ -131,7 +105,6 @@ describe('edit facility view', function () {
         });
 
         it('create without aliases', function () {
-            facCar.name = "Facility without aliases";
             editPage.setName(facCar.name);
             editPage.drawLocation(facCar.locationInput.offset, facCar.locationInput.w, facCar.locationInput.h);
             editPage.setCapacities(facCar.capacities);

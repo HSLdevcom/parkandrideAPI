@@ -7,6 +7,68 @@ module.exports = function () {
     var ids = {};
     ids._1 = 1;
     ids._2 = 2;
+    ids._3 = 3;
+    ids._4 = 4;
+
+    var dummies = {
+        facFull: facility({
+            "id": ids._3,
+            "name": "Dummy full",
+            "location": {
+                "bbox": [24.77640173950195, 60.18169023118941, 24.797001104736328, 60.191931693737104],
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [24.77640173950195, 60.191931693737104],
+                        [24.77640173950195, 60.18169023118941],
+                        [24.797001104736328, 60.18169023118941],
+                        [24.797001104736328, 60.191931693737104],
+                        [24.77640173950195, 60.191931693737104]
+                    ]
+                ]
+            },
+            locationInput: {
+                offset: {x: 90, y: 90},
+                w: 60,
+                h: 60
+            },
+            capacities: {
+                "CAR": {"built": 10, "unavailable": 1},
+                "BICYCLE": {"built": 20, "unavailable": 2},
+                "PARK_AND_RIDE": {"built": 30, "unavailable": 3},
+                "DISABLED": {"built": 40, "unavailable": 4},
+                "MOTORCYCLE": {"built": 50, "unavailable": 5},
+                "ELECTRIC_CAR": {"built": 60, "unavailable": 6}
+            },
+            aliases: ["alias with spaces", "facFull"],
+        }),
+        facCar: facility({
+            "id": ids._4,
+            "name": "Dummy CAR",
+            "location": {
+                "bbox": [24.807300787353515, 60.166322046355866, 24.82790015258789, 60.176568301796806],
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [24.807300787353515, 60.176568301796806],
+                        [24.807300787353515, 60.166322046355866],
+                        [24.82790015258789, 60.166322046355866],
+                        [24.82790015258789, 60.176568301796806],
+                        [24.807300787353515, 60.176568301796806]
+                    ]
+                ]
+            },
+            locationInput: {
+                offset: {x: 180, y: 180},
+                w: 60,
+                h: 60
+            },
+            aliases: ["facCar"],
+            capacities: {
+                "CAR": {"built": 10, "unavailable": 1}
+            }
+        })
+    };
 
     self.westend1 = facility({
         "id": ids._1,
@@ -62,6 +124,8 @@ module.exports = function () {
         self.westend1,
         self.westend2
     ];
+
+    self.dummies = dummies;
 
     return self;
 };

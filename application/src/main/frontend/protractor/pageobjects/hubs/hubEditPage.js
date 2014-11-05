@@ -46,9 +46,5 @@ module.exports = function(spec) {
         return spec.isRequiredError($('edit-hub-map'));
     };
 
-    that.isNoLocationError = function() {
-        return spec.isNoValidationError($('edit-hub-map'));
-    };
-
     return that;
 };

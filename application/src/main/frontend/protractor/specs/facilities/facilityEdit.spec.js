@@ -14,10 +14,7 @@ describe('edit facility view', function () {
         });
 
         it('initially no errors exist', function () {
-            expect(editPage.isNameFiRequiredError()).toBe(false);
-            expect(editPage.isNameSvRequiredError()).toBe(false);
-            expect(editPage.isNameEnRequiredError()).toBe(false);
-            expect(editPage.isFacilityRequiredError()).toBe(false);
+            expect(editPage.hasNoValidationErrors()).toBe(true);
         });
 
         it('required error is shown only for edited fields', function () {
@@ -71,11 +68,12 @@ describe('edit facility view', function () {
 
         describe('facility', function () {
             it('is required, error is cleared after facility is set', function () {
+                editPage.setName("Facility name");
                 editPage.save();
                 expect(editPage.isFacilityRequiredError()).toBe(true);
 
-                editPage.drawBorder({ offset: {x: 180, y: 180}, w: 60, h: 60 });
-                expect(editPage.isNoFacilityError()).toBe(true);
+                editPage.drawLocation({ offset: {x: 180, y: 180}, w: 60, h: 60 });
+                expect(editPage.hasNoValidationErrors()).toBe(true);
                 editPage.save();
             });
         });

@@ -22,10 +22,6 @@ module.exports = function(spec) {
         return spec.hasClasses(element, [validationErrorClass, 'ng-invalid-required']);
     };
 
-    spec.isNoValidationError = function(element) {
-        return spec.hasNoClasses(element, [validationErrorClass]);
-    };
-
     spec.getValue = function(element) {
         return element.getAttribute("value");
     };
@@ -83,6 +79,12 @@ module.exports = function(spec) {
         that.setNameFi(name);
         that.setNameSv(name);
         that.setNameEn(name);
+    };
+
+    that.hasNoValidationErrors = function() {
+        return $('.' + validationErrorClass).isPresent().then(function(isValidationErrorPresent) {
+            return !isValidationErrorPresent;
+        });
     };
 
     that.isNameFiRequiredError = function () {

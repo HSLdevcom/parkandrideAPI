@@ -15,10 +15,7 @@ describe('edit hub view', function () {
         });
 
         it('initially no errors exist', function () {
-            expect(hubEditPage.isNameFiRequiredError()).toBe(false);
-            expect(hubEditPage.isNameSvRequiredError()).toBe(false);
-            expect(hubEditPage.isNameEnRequiredError()).toBe(false);
-            expect(hubEditPage.isLocationRequiredError()).toBe(false);
+            expect(hubEditPage.hasNoValidationErrors()).toBe(true);
         });
 
         it('required error is shown only for edited fields', function () {
@@ -58,7 +55,6 @@ describe('edit hub view', function () {
                 expect(hubEditPage.isNameFiRequiredError()).toBe(false);
                 expect(hubEditPage.isNameSvRequiredError()).toBe(false);
                 expect(hubEditPage.isNameEnRequiredError()).toBe(true);
-
             });
 
             it('max length is 255', function () {
@@ -73,11 +69,12 @@ describe('edit hub view', function () {
 
         describe('location', function () {
             it('is required, error is cleared after location is selected', function () {
+                hubEditPage.setName("Hub name");
                 hubEditPage.save();
                 expect(hubEditPage.isLocationRequiredError()).toBe(true);
 
                 hubEditPage.setLocation({ x: 165, y: 165 });
-                expect(hubEditPage.isNoLocationError()).toBe(true);
+                expect(hubEditPage.hasNoValidationErrors()).toBe(true);
             });
         });
     });

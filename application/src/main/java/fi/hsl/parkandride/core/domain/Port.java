@@ -6,7 +6,7 @@ import org.geolatte.geom.Geometry;
 
 import com.google.common.base.MoreObjects;
 
-public class Gate {
+public class Port {
 
     @NotNull
     public Geometry location;
@@ -17,9 +17,9 @@ public class Gate {
 
     public boolean pedestrian;
 
-    public Gate() {}
+    public Port() {}
 
-    public Gate(Geometry location, boolean entry, boolean exit, boolean pedestrian) {
+    public Port(Geometry location, boolean entry, boolean exit, boolean pedestrian) {
         this.location = location;
         this.entry = entry;
         this.exit = exit;
@@ -30,8 +30,8 @@ public class Gate {
     public boolean equals(Object obj) {
         if (obj == this) {
             return true;
-        } else if (obj instanceof Gate) {
-            Gate other = (Gate) obj;
+        } else if (obj instanceof Port) {
+            Port other = (Port) obj;
             return this.entry == other.entry
                     && this.exit == other.exit
                     && this.pedestrian == other.pedestrian
@@ -66,7 +66,7 @@ public class Gate {
     }
 
     public String toString() {
-        return MoreObjects.toStringHelper(Gate.class)
+        return MoreObjects.toStringHelper(Port.class)
                 .add("location", location)
                 .add("entry", entry)
                 .add("exit", exit)

@@ -18,14 +18,14 @@ import com.mysema.query.spatial.path.*;
 
 
 /**
- * QGate is a Querydsl query type for QGate
+ * QPort is a Querydsl query type for QPort
  */
 @Generated("com.mysema.query.sql.codegen.MetaDataSerializer")
-public class QGate extends RelationalPathSpatial<QGate> {
+public class QPort extends RelationalPathSpatial<QPort> {
 
-    private static final long serialVersionUID = 1614006550;
+    private static final long serialVersionUID = 1614288076;
 
-    public static final QGate gate = new QGate("GATE");
+    public static final QPort port = new QPort("PORT");
 
     public final BooleanPath entry = createBoolean("entry");
 
@@ -33,33 +33,33 @@ public class QGate extends RelationalPathSpatial<QGate> {
 
     public final NumberPath<Long> facilityId = createNumber("facilityId", Long.class);
 
-    public final NumberPath<Integer> gateIndex = createNumber("gateIndex", Integer.class);
-
     public final GeometryPath<org.geolatte.geom.Geometry> location = createGeometry("location", org.geolatte.geom.Geometry.class);
 
     public final BooleanPath pedestrian = createBoolean("pedestrian");
 
-    public final com.mysema.query.sql.PrimaryKey<QGate> constraint21 = createPrimaryKey(facilityId, gateIndex);
+    public final NumberPath<Integer> portIndex = createNumber("portIndex", Integer.class);
 
-    public final com.mysema.query.sql.ForeignKey<QFacility> gateFacilityIdFk = createForeignKey(facilityId, "ID");
+    public final com.mysema.query.sql.PrimaryKey<QPort> constraint25 = createPrimaryKey(facilityId, portIndex);
 
-    public QGate(String variable) {
-        super(QGate.class, forVariable(variable), "PUBLIC", "GATE");
+    public final com.mysema.query.sql.ForeignKey<QFacility> portFacilityIdFk = createForeignKey(facilityId, "ID");
+
+    public QPort(String variable) {
+        super(QPort.class, forVariable(variable), "PUBLIC", "PORT");
         addMetadata();
     }
 
-    public QGate(String variable, String schema, String table) {
-        super(QGate.class, forVariable(variable), schema, table);
+    public QPort(String variable, String schema, String table) {
+        super(QPort.class, forVariable(variable), schema, table);
         addMetadata();
     }
 
-    public QGate(Path<? extends QGate> path) {
-        super(path.getType(), path.getMetadata(), "PUBLIC", "GATE");
+    public QPort(Path<? extends QPort> path) {
+        super(path.getType(), path.getMetadata(), "PUBLIC", "PORT");
         addMetadata();
     }
 
-    public QGate(PathMetadata<?> metadata) {
-        super(QGate.class, metadata, "PUBLIC", "GATE");
+    public QPort(PathMetadata<?> metadata) {
+        super(QPort.class, metadata, "PUBLIC", "PORT");
         addMetadata();
     }
 
@@ -67,9 +67,9 @@ public class QGate extends RelationalPathSpatial<QGate> {
         addMetadata(entry, ColumnMetadata.named("ENTRY").withIndex(3).ofType(Types.BOOLEAN).withSize(1).notNull());
         addMetadata(exit, ColumnMetadata.named("EXIT").withIndex(4).ofType(Types.BOOLEAN).withSize(1).notNull());
         addMetadata(facilityId, ColumnMetadata.named("FACILITY_ID").withIndex(1).ofType(Types.BIGINT).withSize(19).notNull());
-        addMetadata(gateIndex, ColumnMetadata.named("GATE_INDEX").withIndex(2).ofType(Types.INTEGER).withSize(10).notNull());
         addMetadata(location, ColumnMetadata.named("LOCATION").withIndex(6).ofType(Types.OTHER).withSize(2147483647).notNull());
         addMetadata(pedestrian, ColumnMetadata.named("PEDESTRIAN").withIndex(5).ofType(Types.BOOLEAN).withSize(1).notNull());
+        addMetadata(portIndex, ColumnMetadata.named("PORT_INDEX").withIndex(2).ofType(Types.INTEGER).withSize(10).notNull());
     }
 
 }

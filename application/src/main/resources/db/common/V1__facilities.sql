@@ -51,16 +51,16 @@ create table capacity (
     references capacity_type (name)
 );
 
-create table gate (
+create table port (
   facility_id bigint not null,
-  gate_index int not null,
+  port_index int not null,
   entry boolean not null,
   exit boolean not null,
   pedestrian boolean not null,
   location geometry not null,
 
-  primary key (facility_id, gate_index),
+  primary key (facility_id, port_index),
 
-  constraint gate_facility_id_fk foreign key (facility_id)
+  constraint port_facility_id_fk foreign key (facility_id)
     references facility (id)
 );

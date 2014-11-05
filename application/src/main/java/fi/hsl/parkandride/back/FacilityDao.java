@@ -13,14 +13,12 @@ import java.util.*;
 
 import org.geolatte.geom.Geometry;
 
-import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Sets;
 import com.mysema.query.ResultTransformer;
 import com.mysema.query.Tuple;
 import com.mysema.query.dml.StoreClause;
 import com.mysema.query.sql.SQLExpressions;
-import com.mysema.query.sql.dml.SQLDeleteClause;
 import com.mysema.query.sql.dml.SQLInsertClause;
 import com.mysema.query.sql.dml.SQLUpdateClause;
 import com.mysema.query.sql.postgres.PostgresQuery;
@@ -30,15 +28,15 @@ import com.mysema.query.types.expr.ComparableExpression;
 import com.mysema.query.types.expr.NumberExpression;
 import com.mysema.query.types.expr.SimpleExpression;
 
-import fi.hsl.parkandride.back.sql.QGate;
-import fi.hsl.parkandride.core.domain.*;
-import fi.hsl.parkandride.core.back.FacilityRepository;
-import fi.hsl.parkandride.core.service.TransactionalRead;
-import fi.hsl.parkandride.core.service.TransactionalWrite;
-import fi.hsl.parkandride.core.service.ValidationException;
 import fi.hsl.parkandride.back.sql.QCapacity;
 import fi.hsl.parkandride.back.sql.QFacility;
 import fi.hsl.parkandride.back.sql.QFacilityAlias;
+import fi.hsl.parkandride.back.sql.QPort;
+import fi.hsl.parkandride.core.back.FacilityRepository;
+import fi.hsl.parkandride.core.domain.*;
+import fi.hsl.parkandride.core.service.TransactionalRead;
+import fi.hsl.parkandride.core.service.TransactionalWrite;
+import fi.hsl.parkandride.core.service.ValidationException;
 
 public class FacilityDao implements FacilityRepository {
 
@@ -50,7 +48,7 @@ public class FacilityDao implements FacilityRepository {
 
     private static final QCapacity qCapacity = QCapacity.capacity;
 
-    private static final QGate qGate = QGate.gate;
+    private static final QPort qPort = QPort.port;
 
     private static final MappingProjection<Capacity> capacityMapping = new MappingProjection<Capacity>(Capacity.class, qCapacity.built, qCapacity.unavailable) {
         @Override
@@ -63,17 +61,17 @@ public class FacilityDao implements FacilityRepository {
         }
     };
 
-    private static final MappingProjection<Gate> gateMapping = new MappingProjection<Gate>(Gate.class, qGate.all()) {
+    private static final MappingProjection<Port> portMapping = new MappingProjection<Port>(Port.class, qPort.all()) {
         @Override
-        protected Gate map(Tuple row) {
-            Boolean entry = row.get(qGate.entry);
+        protected Port map(Tuple row) {
+            Boolean entry = row.get(qPort.entry);
             if (entry == null) {
                 return null;
             }
-            Geometry location = row.get(qGate.location);
-            boolean exit = row.get(qGate.exit);
-            boolean pedestrian = row.get(qGate.pedestrian);
-            return new Gate(location, entry, exit, pedestrian);
+            Geometry location = row.get(qPort.location);
+            boolean exit = row.get(qPort.exit);
+            boolean pedestrian = row.get(qPort.pedestrian);
+            return new Port(location, entry, exit, pedestrian);
         }
     };
 
@@ -99,8 +97,8 @@ public class FacilityDao implements FacilityRepository {
     public static final ResultTransformer<Map<Long, Map<CapacityType, Capacity>>> capacitiesByFacilityIdMapping =
             groupBy(qCapacity.facilityId).as(map(qCapacity.capacityType, capacityMapping));
 
-    public static final ResultTransformer<Map<Long, List<Gate>>> gatesByFacilityIdMapping =
-            groupBy(qGate.facilityId).as(list(gateMapping));
+    public static final ResultTransformer<Map<Long, List<Port>>> portsByFacilityIdMapping =
+            groupBy(qPort.facilityId).as(list(portMapping));
 
     private static final MappingProjection<Facility> facilityMapping = new MappingProjection<Facility>(Facility.class, qFacility.all()) {
         private final MultilingualStringMapping nameMapping = new MultilingualStringMapping(qFacility.nameFi, qFacility.nameSv, qFacility.nameEn);
@@ -143,7 +141,7 @@ public class FacilityDao implements FacilityRepository {
 
         insertAliases(facilityId, facility.aliases);
         insertCapacities(facilityId, facility.capacities);
-        insertGates(facilityId, facility.gates);
+        insertPorts(facilityId, facility.ports);
 
         return facilityId;
     }
@@ -166,7 +164,7 @@ public class FacilityDao implements FacilityRepository {
 
         updateAliases(facilityId, newFacility.aliases, oldFacility.aliases);
         updateCapacities(facilityId, newFacility.capacities, oldFacility.capacities);
-        updateGates(facilityId, newFacility.gates, oldFacility.gates);
+        updatePorts(facilityId, newFacility.ports, oldFacility.ports);
     }
 
     @TransactionalRead
@@ -193,7 +191,7 @@ public class FacilityDao implements FacilityRepository {
         ImmutableMap<Long, Facility> facilityMap = ImmutableMap.of(facilityId, facility);
         fetchAliases(facilityMap);
         fetchCapacities(facilityMap);
-        fetchGates(facilityMap);
+        fetchPorts(facilityMap);
         return facility;
     }
 
@@ -210,7 +208,7 @@ public class FacilityDao implements FacilityRepository {
         Map<Long, Facility> facilities = qry.map(qFacility.id, facilityMapping);
         fetchAliases(facilities);
         fetchCapacities(facilities);
-        fetchGates(facilities);
+        fetchPorts(facilities);
 
         return SearchResults.of(new ArrayList<>(facilities.values()), search.limit);
     }
@@ -299,57 +297,57 @@ public class FacilityDao implements FacilityRepository {
         }
     }
 
-    private void updateGates(long facilityId, List<Gate> newGates, List<Gate> oldGates) {
-        newGates = firstNonNull(newGates, new ArrayList<Gate>());
-        oldGates = firstNonNull(oldGates, new ArrayList<Gate>());
+    private void updatePorts(long facilityId, List<Port> newPorts, List<Port> oldPorts) {
+        newPorts = firstNonNull(newPorts, new ArrayList<Port>());
+        oldPorts = firstNonNull(oldPorts, new ArrayList<Port>());
 
-        Map<Integer, Gate> addedGates = new HashMap<>();
-        Map<Integer, Gate> updatedGates = new HashMap<>();
+        Map<Integer, Port> addedPorts = new HashMap<>();
+        Map<Integer, Port> updatedPorts = new HashMap<>();
 
-        for (int i=0; i < newGates.size(); i++) {
-            Gate newGate = newGates.get(i);
-            Gate oldGate = i < oldGates.size() ? oldGates.get(i) : null;
-            if (oldGate == null) {
-                addedGates.put(i, newGate);
-            } else if (!newGate.equals(oldGate)) {
-                updatedGates.put(i, newGate);
+        for (int i=0; i < newPorts.size(); i++) {
+            Port newPort = newPorts.get(i);
+            Port oldPort = i < oldPorts.size() ? oldPorts.get(i) : null;
+            if (oldPort == null) {
+                addedPorts.put(i, newPort);
+            } else if (!newPort.equals(oldPort)) {
+                updatedPorts.put(i, newPort);
             }
         }
 
-        insertGates(facilityId, addedGates);
-        updateGates(facilityId, updatedGates);
-        if (oldGates.size() > newGates.size()) {
-            deleteGates(facilityId, newGates.size());
+        insertPorts(facilityId, addedPorts);
+        updatePorts(facilityId, updatedPorts);
+        if (oldPorts.size() > newPorts.size()) {
+            deletePorts(facilityId, newPorts.size());
         }
     }
 
-    private void updateGates(long facilityId, Map<Integer, Gate> updatedGates) {
-        if (updatedGates != null && !updatedGates.isEmpty()) {
-            SQLUpdateClause update = queryFactory.update(qGate);
-            for (Map.Entry<Integer, Gate> entry : updatedGates.entrySet()) {
-                Integer gateIndex = entry.getKey();
-                populate(facilityId, gateIndex, entry.getValue(), update);
-                update.where(qGate.facilityId.eq(facilityId), qGate.gateIndex.eq(gateIndex));
+    private void updatePorts(long facilityId, Map<Integer, Port> updatedPorts) {
+        if (updatedPorts != null && !updatedPorts.isEmpty()) {
+            SQLUpdateClause update = queryFactory.update(qPort);
+            for (Map.Entry<Integer, Port> entry : updatedPorts.entrySet()) {
+                Integer portIndex = entry.getKey();
+                populate(facilityId, portIndex, entry.getValue(), update);
+                update.where(qPort.facilityId.eq(facilityId), qPort.portIndex.eq(portIndex));
                 update.addBatch();
             }
             update.execute();
         }
     }
 
-    private void insertGates(long facilityId, List<Gate> gates) {
-        if (gates != null && !gates.isEmpty()) {
-            Map<Integer, Gate> addedGates = new HashMap<>();
-            for (int i = 0; i < gates.size(); i++) {
-                addedGates.put(i, gates.get(i));
+    private void insertPorts(long facilityId, List<Port> ports) {
+        if (ports != null && !ports.isEmpty()) {
+            Map<Integer, Port> addedPorts = new HashMap<>();
+            for (int i = 0; i < ports.size(); i++) {
+                addedPorts.put(i, ports.get(i));
             }
-            insertGates(facilityId, addedGates);
+            insertPorts(facilityId, addedPorts);
         }
     }
 
-    private void insertGates(long facilityId, Map<Integer, Gate> addedGates) {
-        if (addedGates != null && !addedGates.isEmpty()) {
-            SQLInsertClause insert = queryFactory.insert(qGate);
-            for (Map.Entry<Integer, Gate> entry : addedGates.entrySet()) {
+    private void insertPorts(long facilityId, Map<Integer, Port> addedPorts) {
+        if (addedPorts != null && !addedPorts.isEmpty()) {
+            SQLInsertClause insert = queryFactory.insert(qPort);
+            for (Map.Entry<Integer, Port> entry : addedPorts.entrySet()) {
                 populate(facilityId, entry.getKey(), entry.getValue(), insert);
                 insert.addBatch();
             }
@@ -357,17 +355,17 @@ public class FacilityDao implements FacilityRepository {
         }
     }
 
-    private void populate(long facilityId, Integer index, Gate gate, StoreClause update) {
-        update.set(qGate.facilityId, facilityId)
-                .set(qGate.gateIndex, index)
-                .set(qGate.location, gate.location)
-                .set(qGate.entry, gate.entry)
-                .set(qGate.exit, gate.exit)
-                .set(qGate.pedestrian, gate.pedestrian);
+    private void populate(long facilityId, Integer index, Port port, StoreClause update) {
+        update.set(qPort.facilityId, facilityId)
+                .set(qPort.portIndex, index)
+                .set(qPort.location, port.location)
+                .set(qPort.entry, port.entry)
+                .set(qPort.exit, port.exit)
+                .set(qPort.pedestrian, port.pedestrian);
     }
 
-    private void deleteGates(long facilityId, int fromIndex) {
-        queryFactory.delete(qGate).where(qGate.facilityId.eq(facilityId), qGate.gateIndex.goe(fromIndex)).execute();
+    private void deletePorts(long facilityId, int fromIndex) {
+        queryFactory.delete(qPort).where(qPort.facilityId.eq(facilityId), qPort.portIndex.goe(fromIndex)).execute();
     }
 
     private void orderBy(Sort sort, PostgresQuery qry) {
@@ -427,12 +425,12 @@ public class FacilityDao implements FacilityRepository {
         }
     }
 
-    private Map<Long, Facility> fetchGates(Map<Long, Facility> facilitiesById) {
+    private Map<Long, Facility> fetchPorts(Map<Long, Facility> facilitiesById) {
         if (!facilitiesById.isEmpty()) {
-            Map<Long, List<Gate>> gates = findGates(facilitiesById.keySet());
+            Map<Long, List<Port>> ports = findPorts(facilitiesById.keySet());
 
-            for (Map.Entry<Long, List<Gate>> entry : gates.entrySet()) {
-                facilitiesById.get(entry.getKey()).gates = entry.getValue();
+            for (Map.Entry<Long, List<Port>> entry : ports.entrySet()) {
+                facilitiesById.get(entry.getKey()).ports = entry.getValue();
             }
         }
         return facilitiesById;
@@ -472,10 +470,10 @@ public class FacilityDao implements FacilityRepository {
                 .transform(capacitiesByFacilityIdMapping);
     }
 
-    private Map<Long, List<Gate>> findGates(Set<Long> facilitiesById) {
-        return queryFactory.from(qGate)
-                .where(qGate.facilityId.in(facilitiesById))
-                .transform(gatesByFacilityIdMapping);
+    private Map<Long, List<Port>> findPorts(Set<Long> facilitiesById) {
+        return queryFactory.from(qPort)
+                .where(qPort.facilityId.in(facilitiesById))
+                .transform(portsByFacilityIdMapping);
     }
 
     private void populate(Facility facility, StoreClause store) {

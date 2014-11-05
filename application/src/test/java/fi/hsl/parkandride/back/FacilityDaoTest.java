@@ -25,7 +25,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSortedSet;
 
-import fi.hsl.parkandride.back.sql.QGate;
+import fi.hsl.parkandride.back.sql.QPort;
 import fi.hsl.parkandride.core.domain.*;
 import fi.hsl.parkandride.core.back.FacilityRepository;
 import fi.hsl.parkandride.core.service.ValidationException;
@@ -39,9 +39,9 @@ public class FacilityDaoTest {
 
     public static final MultilingualString NAME = new MultilingualString("Facility");
 
-    private static final Point GATE_LOCATION1 = (Point) Spatial.fromWkt("POINT(25.010822 60.25054)");
+    private static final Point PORT_LOCATION1 = (Point) Spatial.fromWkt("POINT(25.010822 60.25054)");
 
-    private static final Point GATE_LOCATION2 = (Point) Spatial.fromWkt("POINT(25.012479 60.250337)");
+    private static final Point PORT_LOCATION2 = (Point) Spatial.fromWkt("POINT(25.012479 60.250337)");
 
     private static final Polygon LOCATION = (Polygon) Spatial.fromWkt("POLYGON((" +
             "25.010822 60.25054, " +
@@ -64,7 +64,7 @@ public class FacilityDaoTest {
 
     public static final SortedSet<String> ALIASES = ImmutableSortedSet.of("alias", "blias");
 
-    public static final List<Gate> GATES = ImmutableList.of(new Gate(GATE_LOCATION1, true, false, true));
+    public static final List<Port> PORTS = ImmutableList.of(new Port(PORT_LOCATION1, true, false, true));
 
     public static final Map<CapacityType, Capacity> CAPACITIES = ImmutableMap.of(CAR, new Capacity(100, 1), BICYCLE, new Capacity(10, 0));
 
@@ -76,7 +76,7 @@ public class FacilityDaoTest {
 
     @After
     public void cleanup() {
-        testHelper.clear(QFacilityAlias.facilityAlias, QCapacity.capacity, QGate.gate, QFacility.facility);
+        testHelper.clear(QFacilityAlias.facilityAlias, QCapacity.capacity, QPort.port, QFacility.facility);
     }
 
     @Test
@@ -95,30 +95,30 @@ public class FacilityDaoTest {
         assertThat(facility.name).isEqualTo(NAME);
         assertThat(facility.aliases).isEqualTo(ALIASES);
         assertThat(facility.capacities).isEqualTo(CAPACITIES);
-        assertThat(facility.gates).isEqualTo(GATES);
+        assertThat(facility.ports).isEqualTo(PORTS);
 
         // Update
         final MultilingualString newName = new MultilingualString("changed name");
         final SortedSet<String> newAliases = ImmutableSortedSet.of("clias");
         final Map<CapacityType, Capacity> newCapacities = ImmutableMap.of(CAR, new Capacity(100, 50), PARK_AND_RIDE, new Capacity(5, 0));
-        final List<Gate> newGates = ImmutableList.of(new Gate(GATE_LOCATION2, true, true, true), new Gate(GATE_LOCATION1, false, false, false));
+        final List<Port> newPorts = ImmutableList.of(new Port(PORT_LOCATION2, true, true, true), new Port(PORT_LOCATION1, false, false, false));
 
         facility.name = newName;
         facility.aliases = newAliases;
         facility.capacities = newCapacities;
-        facility.gates = newGates;
+        facility.ports = newPorts;
 
         facilityDao.updateFacility(id, facility);
         facility = facilityDao.getFacility(id);
         assertThat(facility.name).isEqualTo(newName);
         assertThat(facility.aliases).isEqualTo(newAliases);
         assertThat(facility.capacities).isEqualTo(newCapacities);
-        assertThat(facility.gates).isEqualTo(newGates);
+        assertThat(facility.ports).isEqualTo(newPorts);
 
-        // Remove aliases, capacities and gates
+        // Remove aliases, capacities and ports
         facility.aliases = null;
         facility.capacities = null;
-        facility.gates = null;
+        facility.ports = null;
         facilityDao.updateFacility(id, facility);
 
         // Find by geometry
@@ -126,7 +126,7 @@ public class FacilityDaoTest {
         assertThat(facilities).hasSize(1);
         assertThat(facilities.get(0).aliases).isEmpty();
         assertThat(facilities.get(0).capacities).isEmpty();
-        assertThat(facilities.get(0).gates).isEmpty();
+        assertThat(facilities.get(0).ports).isEmpty();
 
         // Not found by geometry
         assertThat(findByGeometry(NON_OVERLAPPING_AREA)).isEmpty();
@@ -145,7 +145,7 @@ public class FacilityDaoTest {
         facility.location = LOCATION;
         facility.aliases = ALIASES;
         facility.capacities = CAPACITIES;
-        facility.gates = GATES;
+        facility.ports = PORTS;
         return facility;
     }
 

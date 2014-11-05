@@ -26,7 +26,7 @@ public class Facility {
     public Map<CapacityType, Capacity> capacities = new HashMap<>();
 
     @Valid
-    public List<Gate> gates = new ArrayList<>();
+    public List<Port> ports = new ArrayList<>();
 
     public Long getId() {
         return id;
@@ -48,8 +48,8 @@ public class Facility {
         return capacities;
     }
 
-    public List<Gate> getGates() {
-        return gates;
+    public List<Port> getPorts() {
+        return ports;
     }
 
 }

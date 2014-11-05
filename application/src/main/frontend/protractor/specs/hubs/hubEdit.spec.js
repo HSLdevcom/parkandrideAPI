@@ -1,5 +1,7 @@
 'use strict';
 
+var _ = require('lodash');
+
 var po = require('../../pageobjects/pageobjects.js');
 var fixtures = require('../../fixtures/fixtures');
 var devApi = require('../devApi')();
@@ -76,6 +78,19 @@ describe('edit hub view', function () {
                 hubEditPage.setLocation({ x: 165, y: 165 });
                 expect(hubEditPage.hasNoValidationErrors()).toBe(true);
             });
+        });
+
+        it('without facilities', function() {
+            hubEditPage.setName("Hub name");
+            hubEditPage.setLocation({x: 165, y: 165});
+            expect(hubEditPage.facilitiesTable.isDisplayed()).toBe(false);
+
+            hubEditPage.save();
+            expect(hubViewPage.isDisplayed()).toBe(true);
+            expect(hubViewPage.getName()).toBe("Hub name");
+            expect(hubViewPage.getNoFacilitiesMessage()).toEqual("Alueeseen ei ole lisätty pysäköintipaikkoja");
+            expect(hubViewPage.facilitiesTable.isDisplayed()).toBe(false);
+            expect(hubViewPage.capacitiesTable.isDisplayed()).toBe(false);
         });
     });
 

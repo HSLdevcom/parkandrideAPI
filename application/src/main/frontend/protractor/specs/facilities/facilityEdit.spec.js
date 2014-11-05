@@ -10,6 +10,7 @@ var devApi = require('../devApi')();
 describe('edit facility view', function () {
     var editPage = po.facilityEditPage({});
     var viewPage = po.facilityViewPage({});
+    var hubListPage = po.hubListPage({});
 
     var facFull = fixtures.facility({
         capacities: {
@@ -142,6 +143,11 @@ describe('edit facility view', function () {
             expect(viewPage.getAliases()).toEqual([ '' ]);
             arrayAssert.assertInOrder(viewPage.capacitiesTable.getTypes(), capacityTypeOrder, { allowSkip: true });
             expect(viewPage.capacitiesTable.getCapacities(_.keys(facCar.capacities))).toEqual(facCar.capacities);
+        });
+
+        it('provides navigation back to hub list', function () {
+            editPage.toListView();
+            expect(hubListPage.isDisplayed()).toBe(true);
         });
     });
 });

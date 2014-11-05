@@ -22,34 +22,9 @@ describe('Basic flow', function() {
         return 'Test Hub ' + new Date().getTime();
     }
 
-    var facility1 = fixtures.facility({
-        capacities: {
-            "CAR": {"built": 10, "unavailable": 1},
-            "BICYCLE": {"built": 20, "unavailable": 2},
-            "PARK_AND_RIDE": {"built": 30, "unavailable": 3},
-            "DISABLED": {"built": 40, "unavailable": 4},
-            "MOTORCYCLE": {"built": 50, "unavailable": 5},
-            "ELECTRIC_CAR": {"built": 60, "unavailable": 6}
-        },
-        aliases: ["alias with spaces", "facility1"],
-        locationInput: {
-            offset: {x: 90, y: 90},
-            w: 60,
-            h: 60
-        }
-    });
+    var facility1 = fixtures.facilitiesFixture.dummies.facFull;
+    var facility2 = fixtures.facilitiesFixture.dummies.facCar;
 
-    var facility2 = fixtures.facility({
-        capacities: {
-            "CAR": {"built": 10, "unavailable": 1}
-        },
-        aliases: ["fac2"],
-        locationInput: {
-            offset: {x: 180, y: 180},
-            w: 60,
-            h: 60
-        }
-    });
     var totalCapacities = _.reduce([facility1, facility2], function (acc, facility) { return acc.incCapacity(facility); });
 
     var hubName = "Test Hub 1";

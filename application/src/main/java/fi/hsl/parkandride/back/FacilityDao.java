@@ -3,6 +3,7 @@ package fi.hsl.parkandride.back;
 import static com.google.common.base.MoreObjects.firstNonNull;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.mysema.query.group.GroupBy.groupBy;
+import static com.mysema.query.group.GroupBy.list;
 import static com.mysema.query.group.GroupBy.map;
 import static com.mysema.query.group.GroupBy.set;
 import static fi.hsl.parkandride.core.domain.Sort.Dir.ASC;
@@ -10,12 +11,16 @@ import static fi.hsl.parkandride.core.domain.Sort.Dir.DESC;
 
 import java.util.*;
 
+import org.geolatte.geom.Geometry;
+
+import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Sets;
 import com.mysema.query.ResultTransformer;
 import com.mysema.query.Tuple;
 import com.mysema.query.dml.StoreClause;
 import com.mysema.query.sql.SQLExpressions;
+import com.mysema.query.sql.dml.SQLDeleteClause;
 import com.mysema.query.sql.dml.SQLInsertClause;
 import com.mysema.query.sql.dml.SQLUpdateClause;
 import com.mysema.query.sql.postgres.PostgresQuery;
@@ -25,6 +30,7 @@ import com.mysema.query.types.expr.ComparableExpression;
 import com.mysema.query.types.expr.NumberExpression;
 import com.mysema.query.types.expr.SimpleExpression;
 
+import fi.hsl.parkandride.back.sql.QGate;
 import fi.hsl.parkandride.core.domain.*;
 import fi.hsl.parkandride.core.back.FacilityRepository;
 import fi.hsl.parkandride.core.service.TransactionalRead;
@@ -44,6 +50,8 @@ public class FacilityDao implements FacilityRepository {
 
     private static final QCapacity qCapacity = QCapacity.capacity;
 
+    private static final QGate qGate = QGate.gate;
+
     private static final MappingProjection<Capacity> capacityMapping = new MappingProjection<Capacity>(Capacity.class, qCapacity.built, qCapacity.unavailable) {
         @Override
         protected Capacity map(Tuple row) {
@@ -52,6 +60,20 @@ public class FacilityDao implements FacilityRepository {
                 return null;
             }
             return new Capacity(built, row.get(qCapacity.unavailable));
+        }
+    };
+
+    private static final MappingProjection<Gate> gateMapping = new MappingProjection<Gate>(Gate.class, qGate.all()) {
+        @Override
+        protected Gate map(Tuple row) {
+            Boolean entry = row.get(qGate.entry);
+            if (entry == null) {
+                return null;
+            }
+            Geometry location = row.get(qGate.location);
+            boolean exit = row.get(qGate.exit);
+            boolean pedestrian = row.get(qGate.pedestrian);
+            return new Gate(location, entry, exit, pedestrian);
         }
     };
 
@@ -76,6 +98,9 @@ public class FacilityDao implements FacilityRepository {
 
     public static final ResultTransformer<Map<Long, Map<CapacityType, Capacity>>> capacitiesByFacilityIdMapping =
             groupBy(qCapacity.facilityId).as(map(qCapacity.capacityType, capacityMapping));
+
+    public static final ResultTransformer<Map<Long, List<Gate>>> gatesByFacilityIdMapping =
+            groupBy(qGate.facilityId).as(list(gateMapping));
 
     private static final MappingProjection<Facility> facilityMapping = new MappingProjection<Facility>(Facility.class, qFacility.all()) {
         private final MultilingualStringMapping nameMapping = new MultilingualStringMapping(qFacility.nameFi, qFacility.nameSv, qFacility.nameEn);
@@ -118,6 +143,7 @@ public class FacilityDao implements FacilityRepository {
 
         insertAliases(facilityId, facility.aliases);
         insertCapacities(facilityId, facility.capacities);
+        insertGates(facilityId, facility.gates);
 
         return facilityId;
     }
@@ -140,6 +166,70 @@ public class FacilityDao implements FacilityRepository {
 
         updateAliases(facilityId, newFacility.aliases, oldFacility.aliases);
         updateCapacities(facilityId, newFacility.capacities, oldFacility.capacities);
+        updateGates(facilityId, newFacility.gates, oldFacility.gates);
+    }
+
+    @TransactionalRead
+    @Override
+    public Facility getFacility(long id) {
+        return getFacility(id, false);
+    }
+
+    @TransactionalWrite
+    @Override
+    public Facility getFacilityForUpdate(long facilityId) {
+        return getFacility(facilityId, true);
+    }
+
+    private Facility getFacility(long facilityId, boolean forUpdate) {
+        PostgresQuery qry = fromFacility().where(qFacility.id.eq(facilityId));
+        if (forUpdate) {
+            qry.forUpdate();
+        }
+        Facility facility = qry.singleResult(facilityMapping);
+        if (facility == null) {
+            throw new FacilityNotFoundException(facilityId);
+        }
+        ImmutableMap<Long, Facility> facilityMap = ImmutableMap.of(facilityId, facility);
+        fetchAliases(facilityMap);
+        fetchCapacities(facilityMap);
+        fetchGates(facilityMap);
+        return facility;
+    }
+
+    @TransactionalRead
+    @Override
+    public SearchResults<Facility> findFacilities(PageableSpatialSearch search) {
+        PostgresQuery qry = fromFacility();
+        qry.limit(search.limit + 1);
+        qry.offset(search.offset);
+
+        buildWhere(search, qry);
+        orderBy(search.sort, qry);
+
+        Map<Long, Facility> facilities = qry.map(qFacility.id, facilityMapping);
+        fetchAliases(facilities);
+        fetchCapacities(facilities);
+        fetchGates(facilities);
+
+        return SearchResults.of(new ArrayList<>(facilities.values()), search.limit);
+    }
+
+    @TransactionalRead
+    @Override
+    public FacilitySummary summarizeFacilities(SpatialSearch search) {
+        PostgresQuery qry = fromFacility();
+
+        buildWhere(search, qry);
+
+        long count = qry.singleResult(SQLExpressions.countAll);
+
+        qry.innerJoin(qFacility._capacityFacilityIdFk, qCapacity);
+        qry.groupBy(qCapacity.capacityType);
+
+        Map<CapacityType, Capacity> capacities = qry.map(qCapacity.capacityType, capacitySummaryMapping);
+
+        return new FacilitySummary(count, capacities);
     }
 
     private void updateCapacities(long facilityId, Map<CapacityType, Capacity> newCapacities, Map<CapacityType, Capacity> oldCapacities) {
@@ -166,12 +256,15 @@ public class FacilityDao implements FacilityRepository {
     }
 
     private void updateCapacities(long facilityId, Map<CapacityType, Capacity> updatedCapacities) {
-        for (Map.Entry<CapacityType, Capacity> entry : updatedCapacities.entrySet()) {
-            Capacity capacity = entry.getValue();
-            SQLUpdateClause update = queryFactory.update(qCapacity)
-                    .where(qCapacity.facilityId.eq(facilityId), qCapacity.capacityType.eq(entry.getKey()));
-            update.set(qCapacity.built, capacity.built);
-            update.set(qCapacity.unavailable, capacity.unavailable);
+        if (!updatedCapacities.isEmpty()) {
+            SQLUpdateClause update = queryFactory.update(qCapacity);
+            for (Map.Entry<CapacityType, Capacity> entry : updatedCapacities.entrySet()) {
+                Capacity capacity = entry.getValue();
+                update.where(qCapacity.facilityId.eq(facilityId), qCapacity.capacityType.eq(entry.getKey()));
+                update.set(qCapacity.built, capacity.built);
+                update.set(qCapacity.unavailable, capacity.unavailable);
+                update.addBatch();
+            }
             update.execute();
         }
     }
@@ -206,48 +299,75 @@ public class FacilityDao implements FacilityRepository {
         }
     }
 
-    @TransactionalRead
-    @Override
-    public Facility getFacility(long id) {
-        return getFacility(id, false);
-    }
+    private void updateGates(long facilityId, List<Gate> newGates, List<Gate> oldGates) {
+        newGates = firstNonNull(newGates, new ArrayList<Gate>());
+        oldGates = firstNonNull(oldGates, new ArrayList<Gate>());
 
-    @TransactionalWrite
-    @Override
-    public Facility getFacilityForUpdate(long facilityId) {
-        return getFacility(facilityId, true);
-    }
+        Map<Integer, Gate> addedGates = new HashMap<>();
+        Map<Integer, Gate> updatedGates = new HashMap<>();
 
-    private Facility getFacility(long facilityId, boolean forUpdate) {
-        PostgresQuery qry = fromFacility().where(qFacility.id.eq(facilityId));
-        if (forUpdate) {
-            qry.forUpdate();
+        for (int i=0; i < newGates.size(); i++) {
+            Gate newGate = newGates.get(i);
+            Gate oldGate = i < oldGates.size() ? oldGates.get(i) : null;
+            if (oldGate == null) {
+                addedGates.put(i, newGate);
+            } else if (!newGate.equals(oldGate)) {
+                updatedGates.put(i, newGate);
+            }
         }
-        Facility facility = qry.singleResult(facilityMapping);
-        if (facility == null) {
-            throw new FacilityNotFoundException(facilityId);
+
+        insertGates(facilityId, addedGates);
+        updateGates(facilityId, updatedGates);
+        if (oldGates.size() > newGates.size()) {
+            deleteGates(facilityId, newGates.size());
         }
-        ImmutableMap<Long, Facility> facilityMap = ImmutableMap.of(facilityId, facility);
-        fetchAliases(facilityMap);
-        fetchCapacities(facilityMap);
-        return facility;
     }
 
-    @TransactionalRead
-    @Override
-    public SearchResults<Facility> findFacilities(PageableSpatialSearch search) {
-        PostgresQuery qry = fromFacility();
-        qry.limit(search.limit + 1);
-        qry.offset(search.offset);
+    private void updateGates(long facilityId, Map<Integer, Gate> updatedGates) {
+        if (updatedGates != null && !updatedGates.isEmpty()) {
+            SQLUpdateClause update = queryFactory.update(qGate);
+            for (Map.Entry<Integer, Gate> entry : updatedGates.entrySet()) {
+                Integer gateIndex = entry.getKey();
+                populate(facilityId, gateIndex, entry.getValue(), update);
+                update.where(qGate.facilityId.eq(facilityId), qGate.gateIndex.eq(gateIndex));
+                update.addBatch();
+            }
+            update.execute();
+        }
+    }
 
-        buildWhere(search, qry);
-        orderBy(search.sort, qry);
+    private void insertGates(long facilityId, List<Gate> gates) {
+        if (gates != null && !gates.isEmpty()) {
+            Map<Integer, Gate> addedGates = new HashMap<>();
+            for (int i = 0; i < gates.size(); i++) {
+                addedGates.put(i, gates.get(i));
+            }
+            insertGates(facilityId, addedGates);
+        }
+    }
 
-        Map<Long, Facility> facilities = qry.map(qFacility.id, facilityMapping);
-        fetchAliases(facilities);
-        fetchCapacities(facilities);
+    private void insertGates(long facilityId, Map<Integer, Gate> addedGates) {
+        if (addedGates != null && !addedGates.isEmpty()) {
+            SQLInsertClause insert = queryFactory.insert(qGate);
+            for (Map.Entry<Integer, Gate> entry : addedGates.entrySet()) {
+                populate(facilityId, entry.getKey(), entry.getValue(), insert);
+                insert.addBatch();
+            }
+            insert.execute();
+        }
+    }
 
-        return SearchResults.of(new ArrayList<>(facilities.values()), search.limit);
+    private void populate(long facilityId, Integer index, Gate gate, StoreClause update) {
+        update.set(qGate.facilityId, facilityId)
+                .set(qGate.gateIndex, index)
+                .set(qGate.location, gate.location)
+                .set(qGate.entry, gate.entry)
+                .set(qGate.exit, gate.exit)
+                .set(qGate.pedestrian, gate.pedestrian);
+    }
+
+    private void deleteGates(long facilityId, int fromIndex) {
+        queryFactory.delete(qGate).where(qGate.facilityId.eq(facilityId), qGate.gateIndex.goe(fromIndex)).execute();
     }
 
     private void orderBy(Sort sort, PostgresQuery qry) {
@@ -268,23 +388,6 @@ public class FacilityDao implements FacilityRepository {
 
     private ValidationException invalidSortBy() {
         return new ValidationException(new Violation("SortBy", "sort.by", "Expected one of 'name.fi', 'name.sv' or 'name.en'"));
-    }
-
-    @TransactionalRead
-    @Override
-    public FacilitySummary summarizeFacilities(SpatialSearch search) {
-        PostgresQuery qry = fromFacility();
-
-        buildWhere(search, qry);
-
-        long count = qry.singleResult(SQLExpressions.countAll);
-
-        qry.innerJoin(qFacility._capacityFacilityIdFk, qCapacity);
-        qry.groupBy(qCapacity.capacityType);
-
-        Map<CapacityType, Capacity> capacities = qry.map(qCapacity.capacityType, capacitySummaryMapping);
-
-        return new FacilitySummary(count, capacities);
     }
 
     private void buildWhere(SpatialSearch search, PostgresQuery qry) {
@@ -324,6 +427,17 @@ public class FacilityDao implements FacilityRepository {
         }
     }
 
+    private Map<Long, Facility> fetchGates(Map<Long, Facility> facilitiesById) {
+        if (!facilitiesById.isEmpty()) {
+            Map<Long, List<Gate>> gates = findGates(facilitiesById.keySet());
+
+            for (Map.Entry<Long, List<Gate>> entry : gates.entrySet()) {
+                facilitiesById.get(entry.getKey()).gates = entry.getValue();
+            }
+        }
+        return facilitiesById;
+    }
+
     private Map<Long, Facility> fetchAliases(Map<Long, Facility> facilitiesById) {
         if (!facilitiesById.isEmpty()) {
             Map<Long, Set<String>> aliasesByFacilityId = findAliases(facilitiesById.keySet());
@@ -356,6 +470,12 @@ public class FacilityDao implements FacilityRepository {
         return queryFactory.from(qCapacity)
                 .where(qCapacity.facilityId.in(facilitiesById))
                 .transform(capacitiesByFacilityIdMapping);
+    }
+
+    private Map<Long, List<Gate>> findGates(Set<Long> facilitiesById) {
+        return queryFactory.from(qGate)
+                .where(qGate.facilityId.in(facilitiesById))
+                .transform(gatesByFacilityIdMapping);
     }
 
     private void populate(Facility facility, StoreClause store) {

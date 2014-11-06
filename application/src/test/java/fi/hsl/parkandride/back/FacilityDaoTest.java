@@ -144,12 +144,12 @@ public class FacilityDaoTest {
     @Test
     public void sorting() {
         Facility f1 = new Facility();
-        f1.name = new MultilingualString("A", "b", "C");
+        f1.name = new MultilingualString("a", "å", "C");
         f1.location = LOCATION;
         f1.id = facilityDao.insertFacility(f1);
 
         Facility f2 = new Facility();
-        f2.name = new MultilingualString("D", "E", "F");
+        f2.name = new MultilingualString("D", "Ä", "F");
         f2.location = LOCATION;
         f2.id = facilityDao.insertFacility(f2);
 

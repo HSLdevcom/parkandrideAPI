@@ -1,11 +1,15 @@
 "use strict";
 
-module.exports = function (data) {
+function hub(data) {
     var _ = require('lodash');
     var self = data || {};
 
+    self.copy = function() {
+        return hub(_.cloneDeep(self));
+    };
+
     self.toPayload = function() {
-        var payload = _.cloneDeep(this);
+        var payload = self.copy();
         var skipFields = ['facilities'];
         _.forEach(skipFields, function(field) { delete payload[field]; });
         return payload;
@@ -13,3 +17,5 @@ module.exports = function (data) {
 
     return self;
 };
+
+module.exports = hub;

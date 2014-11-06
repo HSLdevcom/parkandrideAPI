@@ -36,9 +36,9 @@ describe('hub list', function () {
     describe('with hubs and facilities', function () {
         beforeEach(function () {
             var idGen = 100;
-            function rename(named) {
+            function rename(proto) {
                 return function(name) {
-                    var o  = _.cloneDeep(named);
+                    var o  = proto.copy();
                     o.name = name;
                     o.id = idGen++;
                     return o;

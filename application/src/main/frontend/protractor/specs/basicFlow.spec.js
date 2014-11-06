@@ -68,7 +68,7 @@ describe('Basic flow', function() {
     });
 
     it('Create facility 1', function () {
-        facility1.name = "Test Facility B";
+        facility1.name = "Test Facility Ä";
         facilityEditPage.setName(facility1.name);
         facilityEditPage.drawLocation(facility1.locationInput.offset, facility1.locationInput.w, facility1.locationInput.h);
         facilityEditPage.addAlias(facility1.aliases[0]);
@@ -94,7 +94,7 @@ describe('Basic flow', function() {
     });
 
     it('Create facility 2', function() {
-        facility2.name = "Test Facility a";
+        facility2.name = "Test Facility å";
         facilityEditPage.setName(facility2.name);
 
         facilityEditPage.drawLocation(facility2.locationInput.offset, facility2.locationInput.w, facility2.locationInput.h);

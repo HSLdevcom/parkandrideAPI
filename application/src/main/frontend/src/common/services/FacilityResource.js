@@ -9,6 +9,13 @@
         }
     }
 
+    function addFacilityIndexes(facilities) {
+        _.forEach(facilities, function(f, index) {
+            f._index = index;
+        });
+        return facilities;
+    }
+
     m.factory('FacilityResource', function($http, $q) {
         var api = {};
 
@@ -23,7 +30,7 @@
             return $http.get("/api/facilities", {
                 params: search
             }).then(function(response) {
-                return response.data.results;
+                return addFacilityIndexes(response.data.results);
             });
         };
 

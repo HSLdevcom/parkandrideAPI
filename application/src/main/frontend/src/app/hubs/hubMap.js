@@ -35,7 +35,11 @@
                     style: MapService.hubStyle
                 });
 
-                var map = MapService.createMap(element, { layers: [ facilitiesLayer, hubLayer ], readOnly: false, noTiles: attrs.noTiles === "true" });
+                var map = MapService.createMap(element, {
+                    layers: [ facilitiesLayer, hubLayer ],
+                    readOnly: false,
+                    noTiles: attrs.noTiles === "true" });
+
                 var view = map.getView();
 
                 if (scope.hub.location) {

@@ -1,5 +1,6 @@
 (function() {
     var m = angular.module('parkandride.facilityMap', [
+        'parkandride.Sequence',
         'parkandride.MapService'
     ]);
 
@@ -14,7 +15,7 @@
         };
     });
 
-    m.directive('facilityMap', function(MapService, $modal) {
+    m.directive('facilityMap', function(MapService, $modal, Sequence) {
         return {
             restrict: 'E',
             require: 'ngModel',
@@ -41,7 +42,7 @@
                 });
 
                 var map = MapService.createMap(element, {
-                    layers: [ portsLayer, locationLayer],
+                    layers: [ locationLayer, portsLayer],
                     readOnly: !editable,
                     noTiles: attrs.noTiles === "true" });
 
@@ -77,11 +78,15 @@
                     var drawPortCondition = function(mapBrowserEvent) {
                         return scope.editMode == 'ports' && ol.events.condition.noModifierKeys(mapBrowserEvent);
                     };
-                    var addPortAsFeature = function(port) {
-                        var geometry = new ol.format.GeoJSON().readGeometry(port.location).transform('EPSG:4326', 'EPSG:3857');
-                        var feature = new ol.Feature(geometry);
+                    var setPortAsFeature = function(port) {
+                        var feature = portsSource.getFeatureById(port._id);
+                        if (feature == null) {
+                            var geometry = new ol.format.GeoJSON().readGeometry(port.location).transform('EPSG:4326', 'EPSG:3857');
+                            feature = new ol.Feature(geometry);
+                            feature.setId(port._id);
+                            portsSource.addFeature(feature);
+                        }
                         feature.setProperties(port);
-                        portsSource.addFeature(feature);
                     };
                     var editPort = function(port) {
                         var modalInstance = $modal.open({
@@ -97,19 +102,28 @@
                     };
                     map.on('dblclick', function(event) {
                         if (drawPortCondition(event)) {
-                            var point = new ol.geom.Point(event.coordinate).transform('EPSG:3857', 'EPSG:4326');
-                            var port = {
-                                location: new ol.format.GeoJSON().writeGeometry(point),
-                                entry: true,
-                                exit: true,
-                                pedestrian: false
-                            };
-                            var index = portsSource.getFeatures().length;
-                            addPortAsFeature(port);
+                            var port = map.forEachFeatureAtPixel(event.pixel,
+                                function(feature, layer) {
+                                    if (layer != null) {
+                                        return feature.getProperties();
+                                    }
+                                },
+                                undefined,
+                                function(layer) {
+                                    return layer === portsLayer;
+                                });
+                            if (!port) {
+                                var point = new ol.geom.Point(event.coordinate).transform('EPSG:3857', 'EPSG:4326');
+                                port = {
+                                    _id: Sequence.nextval(),
+                                    location: new ol.format.GeoJSON().writeGeometry(point),
+                                    entry: true,
+                                    exit: true,
+                                    pedestrian: false
+                                };
+                            }
                             editPort(port).then(function (port) {
-                                var features = portsSource.getFeatures();
-                                var feature = features[index];
-                                feature.setProperties(port);
+                                setPortAsFeature(port);
                             });
                             return false;
                         }

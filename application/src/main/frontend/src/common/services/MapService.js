@@ -65,15 +65,29 @@
             },
 
             portsStyle: function(feature, resolution) {
-                var properties = feature.getProperties();
-                var entry = properties.entry ? "entry" : "noentry";
-                var exit = properties.exit ? "exit" : "noexit";
-                var pedestrian = properties.pedestrian ? "pedestrian" : "nopedestrian";
-                return [new ol.style.Style({
-                    image: new ol.style.Icon({
-                        src: 'assets/ports/' + entry + "-" + exit + "-" + pedestrian + ".gif"
-                    })
-                })];
+                if (resolution >= 5) {
+                    return [new ol.style.Style({
+                        image: new ol.style.Circle({
+                            radius: 5,
+                            fill: new ol.style.Fill({
+                                color: '#007AC9' //HSL blue
+                            })
+                        })
+                    })];
+                } else {
+                    var properties = feature.getProperties();
+                    var entry = properties.entry ? "entry" : "noentry";
+                    var exit = properties.exit ? "exit" : "noexit";
+                    var pedestrian = properties.pedestrian ? "pedestrian" : "nopedestrian";
+                    return [new ol.style.Style({
+                        image: new ol.style.Icon({
+                            anchor: [0.5, 1],
+                            anchorXUnits: 'fraction',
+                            anchorYUnits: 'fraction',
+                            src: 'assets/ports/' + entry + "-" + exit + "-" + pedestrian + ".gif"
+                        })
+                    })];
+                }
             },
 
             hubStyle: new ol.style.Style({

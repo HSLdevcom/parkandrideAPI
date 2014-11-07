@@ -1,5 +1,7 @@
 (function() {
-    var m = angular.module('parkandride.FacilityResource', []);
+    var m = angular.module('parkandride.FacilityResource', [
+        'parkandride.Sequence'
+    ]);
 
     function cleanupCapacities(capacities) {
         for (var capacityType in capacities) {
@@ -9,7 +11,14 @@
         }
     }
 
-    m.factory('FacilityResource', function($http, $q) {
+    m.factory('FacilityResource', function($http, $q, Sequence) {
+
+        function assignPortIds(facility) {
+            for (var i = 0; i < facility.ports.length; i++) {
+                facility.ports[i]._id = Sequence.nextval();
+            }
+            return facility;
+        }
         var api = {};
 
         api.newFacility = function() {
@@ -29,7 +38,7 @@
 
         api.getFacility = function(id) {
             return $http.get("/api/facilities/" + id).then(function(response){
-                return response.data;
+                return assignPortIds(response.data);
             });
         };
 

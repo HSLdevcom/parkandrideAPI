@@ -163,24 +163,32 @@ describe('edit hub view', function () {
             devApi.resetAll(hub.facilities, [hub]);
         });
 
-        it('facility can be removed from hub, order in facility list is maintained', function () {
+        it('facility can be removed from hub', function () {
+            hubEditPage.get(hub.id);
+            expect(hubEditPage.facilitiesTable.getSize()).toEqual(9);
+
+            hubEditPage.toggleFacility(hub.facilities[0]);
+            expect(hubEditPage.facilitiesTable.isDisplayed()).toBe(true);
+            expect(hubEditPage.facilitiesTable.getSize()).toEqual(8);
+
+            hubEditPage.save();
+            expect(hubViewPage.isDisplayed()).toBe(true);
+            expect(hubViewPage.facilitiesTable.getSize()).toBe(8);
+        });
+
+        it('when removing facilities, facility table is updated and is maintained', function () {
             var expectedOrder = [ "_foo_", "b@z", "Bar", "bär", "foo", "fov", "fow", "fåå", "föö" ];
 
             hubEditPage.get(hub.id);
             expect(hubEditPage.facilitiesTable.getSize()).toEqual(9);
 
-            _.forEach(hub.facilities, function(f){
+            _.forEach(hub.facilities, function(f, idx){
                 hubEditPage.toggleFacility(f);
-                expect(hubEditPage.facilitiesTable.isDisplayed()).toBe(true);
-                arrayAssert.assertInOrder(hubEditPage.facilitiesTable.getFacilityNames(), expectedOrder, { allowSkip: true });
-             });
-
-            expect(hubEditPage.facilitiesTable.isDisplayed()).toBe(true);
-            expect(hubEditPage.facilitiesTable.getSize()).toEqual(0);
-
-            hubEditPage.save();
-            expect(hubViewPage.isDisplayed()).toBe(true);
-            expect(hubViewPage.facilitiesTable.getSize()).toEqual(0);
+                if (idx < hub.facilities.length - 1) {
+                    expect(hubEditPage.facilitiesTable.isDisplayed()).toBe(true);
+                    arrayAssert.assertInOrder(hubEditPage.facilitiesTable.getFacilityNames(), expectedOrder, { allowSkip: true });
+                }
+            });
         });
     });
 });

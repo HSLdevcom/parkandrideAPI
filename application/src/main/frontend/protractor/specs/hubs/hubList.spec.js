@@ -12,6 +12,9 @@ describe('hub list', function () {
     var hubEditPage = po.hubEditPage({});
     var facilityEditPage = po.facilityEditPage({});
 
+    var hubFactory = fixtures.hubFactory;
+    var facilityFactory = fixtures.facilityFactory;
+
     it('is the default view', function () {
         indexPage.get();
         expect(hubListPage.isDisplayed()).toBe(true);
@@ -34,34 +37,19 @@ describe('hub list', function () {
     });
 
     describe('with hubs and facilities', function () {
+        var hnames = [ "guX", "NORF"];
         var facilityNameOrder = [ "b@z", "Bar", "bär", "foo", "fov", "fow", "fåå", "föö" ];
 
         beforeEach(function () {
-            var idGen = 100;
-            function rename(proto) {
-                return function(name) {
-                    var o  = proto.copy();
-                    o.name = name;
-                    o.id = idGen++;
-                    return o;
-                }
-            }
+            var facilitiesFn  = _.partial(facilityFactory.facilitiesFromProto, fixtures.facilitiesFixture.dummies.facFull, facilityNameOrder);
 
-            var hproto = fixtures.hubsFixture.westend;
-            var fproto = fixtures.facilitiesFixture.dummies.facFull;
-
-            var hnames = [ "guX", "NORF"];
-            var fnames = _.shuffle(facilityNameOrder);
-
-            var h = _.map(hnames, rename(hproto));
-            _.forEach(h, function(hub) {
+            var hubs = hubFactory.hubsFromProto(fixtures.hubsFixture.westend, hnames);
+            _.forEach(hubs, function(hub) {
                 var prependHubName = function (f) { f.name = hub.name + '_' + f.name; return f; };
-                hub.setFacilities(_.map(_.map(fnames, rename(fproto)),  prependHubName));
+                hub.setFacilities(_.map(facilitiesFn(), prependHubName));
             });
 
-            var f = _.map(fnames, rename(fproto));
-
-            devApi.resetAll(_.union(f, h[0].facilities, h[1].facilities), h);
+            devApi.resetAll(_.union(facilitiesFn(), hubs[0].facilities, hubs[1].facilities), hubs);
             hubListPage.get();
         });
 

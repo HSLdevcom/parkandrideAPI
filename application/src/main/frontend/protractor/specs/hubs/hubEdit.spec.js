@@ -15,6 +15,8 @@ describe('edit hub view', function () {
     var facFull = fixtures.facilitiesFixture.dummies.facFull;
     var facCar = fixtures.facilitiesFixture.dummies.facCar;
 
+    var facilityFactory = fixtures.facilityFactory;
+
     function assertFacilityNamesInAnyOrder(facilitiesTable, expected) {
         expect(facilitiesTable.isDisplayed()).toBe(true);
         arrayAssert.assertInAnyOrder(facilitiesTable.getFacilityNames(), expected);
@@ -142,25 +144,17 @@ describe('edit hub view', function () {
         var facilityNameOrder = [ "_foo_", "b@z", "Bar", "bär", "foo", "fov", "fow", "fåå", "föö" ];
 
         beforeEach(function () {
-            var idGen = 100;
-            var n = 0;
-            function buildFacility(proto) {
-                return function(name) {
-                    var o  = proto.copyHorizontallyInDefaultZoom(n++ * 65);
-                    o.name = name;
-                    o.id = idGen++;
-                    return o;
-                }
-            }
             var fproto = fixtures.facilitiesFixture.dummies.facFull;
-            var fnames = _.shuffle(facilityNameOrder);
-            var f = _.map(fnames, buildFacility(fproto));
-            var offset = [280, 155];
-            n = 0;
-            _.forEach(f, function(fac){ fac.locationInput.offset = { x: offset[0] + (n++ * 65), y: offset[1] } });
+            var xdelta = fproto.locationInput.w + 5;
+            var n = 0;
+            var facilityCreator = function() { return fproto.copyHorizontallyInDefaultZoom(n++ * xdelta); };
+            var facilities = facilityFactory.facilitiesFromCreator(facilityCreator, facilityNameOrder);
 
-            hub.location.coordinates = f[0].coordinatesFromTopLeft({ x: 30, y: 30 });
-            hub.setFacilities(f);
+            var f1LeftTop = [280, 155];
+            _.forEach(facilities, function(f, idx){ f.locationInput.offset = { x: f1LeftTop[0] + idx*xdelta, y: f1LeftTop[1] } });
+
+            hub.location.coordinates = facilities[0].coordinatesFromTopLeft({ x: 30, y: 30 });
+            hub.setFacilities(facilities);
             devApi.resetAll(hub.facilities, [hub]);
         });
 

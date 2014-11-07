@@ -137,7 +137,7 @@ describe('edit hub view', function () {
         });
     });
 
-    xdescribe('hub with 2 facilities', function () {
+    describe('hub with facilities', function () {
         var hubWithTwoFacilities = fixtures.hubsFixture.westend;
 
         beforeEach(function () {

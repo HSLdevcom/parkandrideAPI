@@ -16,6 +16,13 @@
         return facilities;
     }
 
+    function addFacilityIndexesToFeatures(featureCollection) {
+        _.forEach(featureCollection.features, function(f, index) {
+            f.properties._index = index;
+        });
+        return featureCollection;
+    }
+
     m.factory('FacilityResource', function($http, $q) {
         var api = {};
 
@@ -57,7 +64,7 @@
             return $http.get("/api/facilities.geojson", {
                 params: search
             }).then(function(response) {
-                return response.data;
+                return addFacilityIndexesToFeatures(response.data);
             });
         };
 

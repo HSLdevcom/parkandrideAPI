@@ -32,7 +32,7 @@ describe('edit hub view', function () {
         expect(capacitiesTable.getCapacities(_.keys(total.capacities))).toEqual(total.capacities);
     }
 
-    xdescribe('new hub', function () {
+    describe('new hub', function () {
         beforeEach(function () {
             devApi.resetAll();
             hubEditPage.get();

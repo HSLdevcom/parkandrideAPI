@@ -65,7 +65,9 @@
             },
 
             portsStyle: function(feature, resolution) {
-                if (resolution >= 5) {
+                if (resolution >= 10) {
+                    return [];
+                } else if (resolution >= 4) {
                     return [new ol.style.Style({
                         image: new ol.style.Circle({
                             radius: 5,

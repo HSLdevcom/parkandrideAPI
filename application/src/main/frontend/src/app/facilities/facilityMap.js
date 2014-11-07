@@ -3,6 +3,17 @@
         'parkandride.MapService'
     ]);
 
+    m.controller("PortEditCtrl", function ($scope, $modalInstance, port) {
+        $scope.port = port;
+        $scope.ok = function () {
+            $modalInstance.close($scope.port);
+        };
+
+        $scope.cancel = function () {
+            $modalInstance.dismiss('cancel');
+        };
+    });
+
     m.directive('facilityMap', function(MapService, $modal) {
         return {
             restrict: 'E',
@@ -72,6 +83,18 @@
                         feature.setProperties(port);
                         portsSource.addFeature(feature);
                     };
+                    var editPort = function(port) {
+                        var modalInstance = $modal.open({
+                            templateUrl: 'facilities/portEdit.tpl.html',
+                            controller: 'PortEditCtrl',
+                            resolve: {
+                                port: function () {
+                                    return _.clone(port);
+                                }
+                            }
+                        });
+                        return modalInstance.result;
+                    };
                     map.on('dblclick', function(event) {
                         if (drawPortCondition(event)) {
                             var point = new ol.geom.Point(event.coordinate).transform('EPSG:3857', 'EPSG:4326');
@@ -81,7 +104,13 @@
                                 exit: true,
                                 pedestrian: false
                             };
+                            var index = portsSource.getFeatures().length;
                             addPortAsFeature(port);
+                            editPort(port).then(function (port) {
+                                var features = portsSource.getFeatures();
+                                var feature = features[index];
+                                feature.setProperties(port);
+                            });
                             return false;
                         }
                     });

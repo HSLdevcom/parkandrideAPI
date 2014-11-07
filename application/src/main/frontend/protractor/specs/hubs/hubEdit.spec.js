@@ -139,6 +139,7 @@ describe('edit hub view', function () {
 
     describe('hub with facilities', function () {
         var hub = fixtures.hubsFixture.westend;
+        var facilityNameOrder = [ "_foo_", "b@z", "Bar", "bär", "foo", "fov", "fow", "fåå", "föö" ];
 
         beforeEach(function () {
             var idGen = 100;
@@ -152,7 +153,7 @@ describe('edit hub view', function () {
                 }
             }
             var fproto = fixtures.facilitiesFixture.dummies.facFull;
-            var fnames = [ "foo", "Bar", "b@z", "_foo_", "fåå", "bär", "föö", "fow", "fov"];
+            var fnames = _.shuffle(facilityNameOrder);
             var f = _.map(fnames, buildFacility(fproto));
             var offset = [280, 155];
             n = 0;
@@ -177,8 +178,6 @@ describe('edit hub view', function () {
         });
 
         it('when removing facilities, facility table is updated and order is maintained', function () {
-            var expectedOrder = [ "_foo_", "b@z", "Bar", "bär", "foo", "fov", "fow", "fåå", "föö" ];
-
             hubEditPage.get(hub.id);
             expect(hubEditPage.facilitiesTable.getSize()).toEqual(9);
 
@@ -186,7 +185,7 @@ describe('edit hub view', function () {
                 hubEditPage.toggleFacility(f);
                 if (idx < hub.facilities.length - 1) {
                     expect(hubEditPage.facilitiesTable.isDisplayed()).toBe(true);
-                    arrayAssert.assertInOrder(hubEditPage.facilitiesTable.getFacilityNames(), expectedOrder, { allowSkip: true });
+                    arrayAssert.assertInOrder(hubEditPage.facilitiesTable.getFacilityNames(), facilityNameOrder, { allowSkip: true });
                 }
             });
         });

@@ -34,6 +34,8 @@ describe('hub list', function () {
     });
 
     describe('with hubs and facilities', function () {
+        var facilityNameOrder = [ "b@z", "Bar", "bär", "foo", "fov", "fow", "fåå", "föö" ];
+
         beforeEach(function () {
             var idGen = 100;
             function rename(proto) {
@@ -49,7 +51,7 @@ describe('hub list', function () {
             var fproto = fixtures.facilitiesFixture.dummies.facFull;
 
             var hnames = [ "guX", "NORF"];
-            var fnames = [ "foo", "Bar", "b@z", "fåå", "bär", "föö", "fow", "fov"];
+            var fnames = _.shuffle(facilityNameOrder);
 
             var h = _.map(hnames, rename(hproto));
             _.forEach(h, function(hub) {
@@ -64,11 +66,10 @@ describe('hub list', function () {
         });
 
         it('facilities without hubs are followed by facilities grouped into hubs', function () {
-            var expectedOrder = [ "b@z", "Bar", "bär", "foo", "fov", "fow", "fåå", "föö" ];
-            var expectedOrderHub = function(hubName) { return [hubName].concat(_.map(expectedOrder, function(name) { return hubName + "_" + name;  })); };
+            var expectedOrderHub = function(hubName) { return [hubName].concat(_.map(facilityNameOrder, function(name) { return hubName + "_" + name;  })); };
 
             expect(hubListPage.getHubAndFacilityNames()).toEqual(
-                expectedOrder.concat(expectedOrderHub("guX")).concat(expectedOrderHub("NORF"))
+                facilityNameOrder.concat(expectedOrderHub("guX")).concat(expectedOrderHub("NORF"))
             );
         });
     });

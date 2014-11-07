@@ -176,7 +176,7 @@ describe('edit hub view', function () {
             expect(hubViewPage.facilitiesTable.getSize()).toBe(8);
         });
 
-        it('when removing facilities, facility table is updated and is maintained', function () {
+        it('when removing facilities, facility table is updated and order is maintained', function () {
             var expectedOrder = [ "_foo_", "b@z", "Bar", "bär", "foo", "fov", "fow", "fåå", "föö" ];
 
             hubEditPage.get(hub.id);

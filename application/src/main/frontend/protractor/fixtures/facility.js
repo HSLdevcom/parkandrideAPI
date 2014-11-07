@@ -27,6 +27,18 @@ function facility(data) {
         return payload;
     };
 
+    self.moveLeftInDefaultZoom = function(pixels) {
+        var copy = self.copy();
+        var coords = copy.location.coordinates[0];
+        var xpixelfactor = (coords[2][0] - coords[0][0]) / copy.locationInput.w;
+        var xdelta = pixels * xpixelfactor;
+        var bbox = copy.location.bbox;
+        bbox[0] += xdelta;
+        bbox[2] += xdelta;
+        _.forEach(coords, function(coord) { coord[0] +=  xdelta; });
+        return copy;
+    };
+
     return self;
 };
 

@@ -5,6 +5,7 @@ var _ = require('lodash');
 var po = require('../../pageobjects/pageobjects.js');
 var fixtures = require('../../fixtures/fixtures');
 var devApi = require('../devApi')();
+var common = require('../common');
 
 describe('hub list', function () {
     var indexPage = po.indexPage({});
@@ -38,7 +39,7 @@ describe('hub list', function () {
 
     describe('with hubs and facilities', function () {
         var hnames = [ "guX", "NORF"];
-        var facilityNameOrder = [ "b@z", "Bar", "bär", "foo", "fov", "fow", "fåå", "föö" ];
+        var facilityNameOrder = common.facilityNameOrder;
 
         beforeEach(function () {
             var facilitiesFn  = _.partial(facilityFactory.facilitiesFromProto, fixtures.facilitiesFixture.dummies.facFull, facilityNameOrder);

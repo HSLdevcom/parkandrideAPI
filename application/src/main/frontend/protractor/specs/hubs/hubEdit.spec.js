@@ -141,7 +141,7 @@ describe('edit hub view', function () {
 
     describe('hub with facilities', function () {
         var hub = fixtures.hubsFixture.westend;
-        var facilityNameOrder = [ "_foo_", "b@z", "Bar", "bär", "foo", "fov", "fow", "fåå", "föö" ];
+        var facilityNameOrder = common.facilityNameOrder;
 
         beforeEach(function () {
             var fproto = fixtures.facilitiesFixture.dummies.facFull;

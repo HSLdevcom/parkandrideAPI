@@ -5,7 +5,14 @@ function hub(data) {
     var self = data || {};
 
     self.copy = function() {
-        return hub(_.cloneDeep(self));
+        var copy = hub(_.cloneDeep(self));
+        copy.setFacilities(_.map(copy.facilities, function(facility) { return facility.copy(); }));
+        return copy;
+    };
+
+    self.setFacilities = function(facilities) {
+        self.facilities = facilities;
+        self.facilityIds = _.map(facilities, function (f) { return f.id; })
     };
 
     self.toPayload = function() {

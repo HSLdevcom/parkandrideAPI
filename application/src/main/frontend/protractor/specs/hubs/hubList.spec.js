@@ -53,8 +53,8 @@ describe('hub list', function () {
 
             var h = _.map(hnames, rename(hproto));
             _.forEach(h, function(hub) {
-                hub.facilities = _.map(fnames, rename(fproto));
-                hub.facilityIds = _.map(hub.facilities, function (f) { return f.id; });
+                var prependHubName = function (f) { f.name = hub.name + '_' + f.name; return f; };
+                hub.setFacilities(_.map(_.map(fnames, rename(fproto)),  prependHubName));
             });
 
             var f = _.map(fnames, rename(fproto));
@@ -66,8 +66,8 @@ describe('hub list', function () {
         it('facilities without hubs are followed by facilities grouped into hubs', function () {
             expect(hubListPage.getHubAndFacilityNames()).toEqual([
                 "b@z", "Bar", "foo",
-                "guX", "b@z", "Bar", "foo",
-                "NORF", "b@z", "Bar", "foo"
+                "guX", "guX_b@z", "guX_Bar", "guX_foo",
+                "NORF", "NORF_b@z", "NORF_Bar", "NORF_foo"
             ]);
         });
     });

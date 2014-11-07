@@ -6,8 +6,7 @@
 
     function setPoint(point, layer) {
         point.transform('EPSG:4326', 'EPSG:3857');
-        var feature = new ol.Feature({});
-        feature.setGeometry(point);
+        var feature = new ol.Feature(point);
         var source = layer.getSource();
         source.clear();
         source.addFeature(feature);

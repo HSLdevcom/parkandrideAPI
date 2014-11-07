@@ -26,7 +26,7 @@
                 var portsSource = new ol.source.Vector();
                 var portsLayer = new ol.layer.Vector({
                     source: portsSource,
-                    style: MapService.facilityStyle
+                    style: MapService.portsStyle
                 });
 
                 var map = MapService.createMap(element, {
@@ -66,12 +66,22 @@
                     var drawPortCondition = function(mapBrowserEvent) {
                         return scope.editMode == 'ports' && ol.events.condition.noModifierKeys(mapBrowserEvent);
                     };
+                    var addPortAsFeature = function(port) {
+                        var geometry = new ol.format.GeoJSON().readGeometry(port.location).transform('EPSG:4326', 'EPSG:3857');
+                        var feature = new ol.Feature(geometry);
+                        feature.setProperties(port);
+                        portsSource.addFeature(feature);
+                    };
                     map.on('dblclick', function(event) {
                         if (drawPortCondition(event)) {
                             var point = new ol.geom.Point(event.coordinate).transform('EPSG:3857', 'EPSG:4326');
-                            var feature = new ol.Feature({});
-                            feature.setGeometry(new ol.geom.Point(event.coordinate));
-                            portsSource.addFeature(feature);
+                            var port = {
+                                location: new ol.format.GeoJSON().writeGeometry(point),
+                                entry: true,
+                                exit: true,
+                                pedestrian: false
+                            };
+                            addPortAsFeature(port);
                             return false;
                         }
                     });

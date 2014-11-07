@@ -64,6 +64,18 @@
                 }
             },
 
+            portsStyle: function(feature, resolution) {
+                var properties = feature.getProperties();
+                var entry = properties.entry ? "entry" : "noentry";
+                var exit = properties.exit ? "exit" : "noexit";
+                var pedestrian = properties.pedestrian ? "pedestrian" : "nopedestrian";
+                return [new ol.style.Style({
+                    image: new ol.style.Icon({
+                        src: 'assets/ports/' + entry + "-" + exit + "-" + pedestrian + ".gif"
+                    })
+                })];
+            },
+
             hubStyle: new ol.style.Style({
                 image: new ol.style.Circle({
                     radius: 8,

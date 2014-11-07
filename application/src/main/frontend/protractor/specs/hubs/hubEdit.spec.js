@@ -30,7 +30,7 @@ describe('edit hub view', function () {
         expect(capacitiesTable.getCapacities(_.keys(total.capacities))).toEqual(total.capacities);
     }
 
-    describe('new hub', function () {
+    xdescribe('new hub', function () {
         beforeEach(function () {
             devApi.resetAll();
             hubEditPage.get();
@@ -138,27 +138,49 @@ describe('edit hub view', function () {
     });
 
     describe('hub with facilities', function () {
-        var hubWithTwoFacilities = fixtures.hubsFixture.westend;
+        var hub = fixtures.hubsFixture.westend;
 
         beforeEach(function () {
-            devApi.resetAll(hubWithTwoFacilities.facilities, [hubWithTwoFacilities]);
+            var idGen = 100;
+            var n = 0;
+            function buildFacility(proto) {
+                return function(name) {
+                    var o  = proto.copyHorizontallyInDefaultZoom(n++ * 65);
+                    o.name = name;
+                    o.id = idGen++;
+                    return o;
+                }
+            }
+            var fproto = fixtures.facilitiesFixture.dummies.facFull;
+            var fnames = [ "foo", "Bar", "b@z", "_foo_", "fåå", "bär", "föö", "fow", "fov"];
+            var f = _.map(fnames, buildFacility(fproto));
+            var offset = [280, 155];
+            n = 0;
+            _.forEach(f, function(fac){ fac.locationInput.offset = { x: offset[0] + (n++ * 65), y: offset[1] } });
+
+            hub.location.coordinates = f[0].coordinatesFromTopLeft({ x: 30, y: 30 });
+            hub.setFacilities(f);
+            devApi.resetAll(hub.facilities, [hub]);
         });
 
-        it('facility can be removed from hub', function () {
-            hubEditPage.get(hubWithTwoFacilities.id);
-            expect(hubEditPage.facilitiesTable.getSize()).toEqual(2);
+        it('facility can be removed from hub, order in facility list is maintained', function () {
+            var expectedOrder = [ "_foo_", "b@z", "Bar", "bär", "foo", "fov", "fow", "fåå", "föö" ];
 
-            hubEditPage.toggleFacility(hubWithTwoFacilities.facilities[1]);
+            hubEditPage.get(hub.id);
+            expect(hubEditPage.facilitiesTable.getSize()).toEqual(9);
 
-            /*
-             * NOTE the asserts below occasionally fail on firefox; current best guess is that this is due to not all tiles loading.
-             */
+            _.forEach(hub.facilities, function(f){
+                hubEditPage.toggleFacility(f);
+                expect(hubEditPage.facilitiesTable.isDisplayed()).toBe(true);
+                arrayAssert.assertInOrder(hubEditPage.facilitiesTable.getFacilityNames(), expectedOrder, { allowSkip: true });
+             });
+
             expect(hubEditPage.facilitiesTable.isDisplayed()).toBe(true);
-            expect(hubEditPage.facilitiesTable.getSize()).toEqual(1);
+            expect(hubEditPage.facilitiesTable.getSize()).toEqual(0);
 
             hubEditPage.save();
             expect(hubViewPage.isDisplayed()).toBe(true);
-            expect(hubViewPage.facilitiesTable.getSize()).toEqual(1);
+            expect(hubViewPage.facilitiesTable.getSize()).toEqual(0);
         });
     });
 });

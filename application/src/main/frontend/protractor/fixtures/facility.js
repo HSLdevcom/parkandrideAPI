@@ -8,6 +8,29 @@ function facility(data) {
         return facility(_.cloneDeep(self));
     };
 
+    self.copyHorizontallyInDefaultZoom = function(pixels) {
+        var copy = self.copy();
+        copy.locationInput.offset.x += pixels;
+        var coords = copy.location.coordinates[0];
+        var xpixelfactor = (coords[2][0] - coords[0][0]) / copy.locationInput.w;
+        var xdelta = pixels * xpixelfactor;
+        var bbox = copy.location.bbox;
+        bbox[0] += xdelta;
+        bbox[2] += xdelta;
+        _.forEach(coords, function(coord) { coord[0] +=  xdelta; });
+        return copy;
+    };
+
+    self.coordinatesFromTopLeft = function(offset) {
+        var coords = self.location.coordinates[0];
+        var xpixelfactor = (coords[2][0] - coords[0][0]) / self.locationInput.w;
+        var ypixelfactor = (coords[1][1] - coords[0][1]) / self.locationInput.h;
+        var xdelta = offset.x * xpixelfactor;
+        var ydelta = offset.y * ypixelfactor;
+        var bbox = self.location.bbox;
+        return [ bbox[0] + xdelta, bbox[1] + ydelta ];
+    };
+
     self.incCapacity = function (that) {
         var copy = self.copy();
         for (var capacityType in that.capacities) {
@@ -25,18 +48,6 @@ function facility(data) {
         var skipFields = ['locationInput'];
         _.forEach(skipFields, function(field){ delete payload[field]; });
         return payload;
-    };
-
-    self.moveLeftInDefaultZoom = function(pixels) {
-        var copy = self.copy();
-        var coords = copy.location.coordinates[0];
-        var xpixelfactor = (coords[2][0] - coords[0][0]) / copy.locationInput.w;
-        var xdelta = pixels * xpixelfactor;
-        var bbox = copy.location.bbox;
-        bbox[0] += xdelta;
-        bbox[2] += xdelta;
-        _.forEach(coords, function(coord) { coord[0] +=  xdelta; });
-        return copy;
     };
 
     return self;

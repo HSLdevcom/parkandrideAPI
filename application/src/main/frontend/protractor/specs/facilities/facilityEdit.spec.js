@@ -83,7 +83,6 @@ describe('edit facility view', function () {
 
                 editPage.drawLocation({ offset: {x: 180, y: 180}, w: 60, h: 60 });
                 expect(editPage.hasNoValidationErrors()).toBe(true);
-                editPage.save();
             });
         });
 

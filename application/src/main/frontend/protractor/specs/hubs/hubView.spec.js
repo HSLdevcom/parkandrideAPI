@@ -50,9 +50,6 @@ describe('hub view', function () {
             expect(viewPage.isFacilitiesTotalDisplayed()).toBe(true);
             assertCapacities(viewPage.capacitiesTable, h.facilities);
         });
-
-        // TODO verify facility link
-        // TODO verify facility types
     });
 
     describe('without facilities', function () {
@@ -86,5 +83,25 @@ describe('hub view', function () {
         });
     });
 
-    // TODO facility name order tests
+    describe('facility list', function () {
+        var facilityNameOrder = common.facilityNameOrder;
+        var facilityFactory = fixtures.facilityFactory;
+
+        beforeEach(function () {
+            var facilitiesFn  = _.partial(facilityFactory.facilitiesFromProto, fixtures.facilitiesFixture.dummies.facFull, facilityNameOrder);
+
+            westend.copy();
+            h.setFacilities(facilitiesFn());
+            toView(h);
+        });
+
+        it('is ordered', function () {
+            expect(viewPage.facilitiesTable.getFacilityNames()).toEqual(facilityNameOrder);
+        });
+
+
+        // TODO verify facility link
+        // TODO verify facility types
+
+    });
 });

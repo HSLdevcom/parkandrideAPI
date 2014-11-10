@@ -4,8 +4,9 @@
         'parkandride.MapService'
     ]);
 
-    m.controller("PortEditCtrl", function ($scope, $modalInstance, port) {
+    m.controller("PortEditCtrl", function ($scope, $modalInstance, port, create) {
         $scope.port = port;
+        $scope.titleKey = 'facilities.ports.' + (create ? 'create' : 'edit');
         $scope.ok = function () {
             $modalInstance.close($scope.port);
         };
@@ -28,6 +29,8 @@
             transclude: false,
             link: function(scope, element, attrs, ctrl) {
                 var editable = scope.editMode == 'location' || scope.editMode == 'ports';
+                var mapCRS = MapService.mapCRS;
+                var targetCRS = MapService.targetCRS;
 
                 var locationSource = new ol.source.Vector();
                 var locationLayer = new ol.layer.Vector({
@@ -49,6 +52,7 @@
                 var view = map.getView();
 
                 if (editable) {
+                    // LOCATION
                     var drawLocationCondition = function(mapBrowserEvent) {
                         return scope.editMode == 'location' && ol.events.condition.noModifierKeys(mapBrowserEvent);
                     };
@@ -67,34 +71,37 @@
                     });
                     drawLocation.on("drawend", function(drawEvent) {
                         console.log("drawend");
-                        var polygon = drawEvent.feature.getGeometry().clone().transform('EPSG:3857', 'EPSG:4326');
+                        var polygon = drawEvent.feature.getGeometry().clone().transform(mapCRS, targetCRS);
                         scope.polygon = new ol.format.GeoJSON().writeGeometry(polygon);
                         ctrl.$setTouched();
                         scope.$apply();
                     });
                     map.addInteraction(drawLocation);
 
-
+                    // PORTS
                     var drawPortCondition = function(mapBrowserEvent) {
                         return scope.editMode == 'ports' && ol.events.condition.noModifierKeys(mapBrowserEvent);
                     };
                     var setPortAsFeature = function(port) {
                         var feature = portsSource.getFeatureById(port._id);
                         if (feature == null) {
-                            var geometry = new ol.format.GeoJSON().readGeometry(port.location).transform('EPSG:4326', 'EPSG:3857');
+                            var geometry = new ol.format.GeoJSON().readGeometry(port.location).transform(targetCRS, mapCRS);
                             feature = new ol.Feature(geometry);
                             feature.setId(port._id);
                             portsSource.addFeature(feature);
                         }
                         feature.setProperties(port);
                     };
-                    var editPort = function(port) {
+                    var editPort = function(port, create) {
                         var modalInstance = $modal.open({
                             templateUrl: 'facilities/portEdit.tpl.html',
                             controller: 'PortEditCtrl',
                             resolve: {
                                 port: function () {
                                     return _.clone(port);
+                                },
+                                create: function() {
+                                    return create;
                                 }
                             }
                         });
@@ -102,6 +109,8 @@
                     };
                     map.on('dblclick', function(event) {
                         if (drawPortCondition(event)) {
+                            // Edit existing port
+                            var create = false;
                             var port = map.forEachFeatureAtPixel(event.pixel,
                                 function(feature, layer) {
                                     if (layer != null) {
@@ -113,7 +122,9 @@
                                     return layer === portsLayer;
                                 });
                             if (!port) {
-                                var point = new ol.geom.Point(event.coordinate).transform('EPSG:3857', 'EPSG:4326');
+                                // Create new port
+                                create = true;
+                                var point = new ol.geom.Point(event.coordinate).transform(mapCRS, targetCRS);
                                 port = {
                                     _id: Sequence.nextval(),
                                     location: new ol.format.GeoJSON().writeGeometry(point),
@@ -122,7 +133,7 @@
                                     pedestrian: false
                                 };
                             }
-                            editPort(port).then(function (port) {
+                            editPort(port, create).then(function (port) {
                                 setPortAsFeature(port);
                             });
                             return false;
@@ -131,7 +142,7 @@
                 }
 
                 if (scope.polygon) {
-                    var polygon = new ol.format.GeoJSON().readGeometry(scope.polygon).transform('EPSG:4326', 'EPSG:3857');
+                    var polygon = new ol.format.GeoJSON().readGeometry(scope.polygon).transform(targetCRS, mapCRS);
                     var feature = new ol.Feature({});
                     feature.setGeometry(polygon);
                     locationSource.getFeatures().clear();

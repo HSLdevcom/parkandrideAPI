@@ -105,6 +105,10 @@
                 })
             }),
 
+            mapCRS: 'EPSG:3857',
+
+            targetCRS: 'EPSG:4326',
+
             createMap: function(ngElement, options) {
                 var layers = [];
                 if (!options.noTiles) {

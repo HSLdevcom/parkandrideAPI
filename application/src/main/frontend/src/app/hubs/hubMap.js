@@ -5,7 +5,7 @@
     ]);
 
     function setPoint(point, layer) {
-        point.transform('EPSG:4326', 'EPSG:3857');
+        point.transform(targetCRS, mapCRS);
         var feature = new ol.Feature(point);
         var source = layer.getSource();
         source.clear();
@@ -24,6 +24,9 @@
             template: '<div class="map hub-map edit-hub-map"></div>',
             transclude: false,
             link: function(scope, element, attrs, ctrl) {
+                var mapCRS = MapService.mapCRS;
+                var targetCRS = MapService.targetCRS;
+
                 var facilitiesLayer = new ol.layer.Vector({
                     source: new ol.source.Vector(),
                     style: MapService.facilityStyle
@@ -51,7 +54,7 @@
                 }
 
                 map.on('dblclick', function(event) {
-                    var point = new ol.geom.Point(event.coordinate).transform('EPSG:3857', 'EPSG:4326');
+                    var point = new ol.geom.Point(event.coordinate).transform(mapCRS, targetCRS);
                     scope.hub.location = new ol.format.GeoJSON().writeGeometry(point);
                     ctrl.$setValidity("required", true);
                     ctrl.$setTouched();
@@ -81,7 +84,7 @@
                     var extent = hubLayer.getSource().getExtent();
 
                     _.forEach(features, function (feature) {
-                        feature.getGeometry().transform('EPSG:4326', 'EPSG:3857');
+                        feature.getGeometry().transform(targetCRS, mapCRS);
                         facilitiesLayer.getSource().addFeature(feature);
                         if (_.contains(scope.hub.facilityIds, feature.getId())) {
                             selectedFeatures.push(feature);
@@ -149,7 +152,7 @@
                     FacilityResource.findFacilitiesAsFeatureCollection({ ids: scope.hub.facilityIds }).then(function(geojson) {
                         var features = new ol.format.GeoJSON().readFeatures(geojson);
                         _.forEach(features, function (feature) {
-                            feature.getGeometry().transform('EPSG:4326', 'EPSG:3857');
+                            feature.getGeometry().transform(targetCRS, mapCRS);
                             facilitiesLayer.getSource().addFeature(feature);
                         });
                         var extent = ol.extent.extend(hubLayer.getSource().getExtent(), facilitiesLayer.getSource().getExtent());

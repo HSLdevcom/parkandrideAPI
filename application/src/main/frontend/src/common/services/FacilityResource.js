@@ -35,6 +35,15 @@
             };
         };
 
+        api.newPort = function(location) {
+            return {
+                location: location,
+                entry: true,
+                exit: true,
+                pedestrian: false
+            };
+        };
+
         api.listFacilities = function(search) {
             return $http.get("/api/facilities", {
                 params: search

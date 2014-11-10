@@ -1,7 +1,8 @@
 (function() {
     var m = angular.module('parkandride.facilityMap', [
         'parkandride.Sequence',
-        'parkandride.MapService'
+        'parkandride.MapService',
+        'parkandride.FacilityResource'
     ]);
 
     m.controller("PortEditCtrl", function ($scope, $modalInstance, port, create) {
@@ -51,7 +52,7 @@
     ol.inherits(CancelControl, ol.control.Control);
 
 
-    m.directive('facilityMap', function(MapService, $modal, Sequence) {
+    m.directive('facilityMap', function(MapService, $modal, Sequence, FacilityResource) {
         return {
             restrict: 'E',
             require: 'ngModel',
@@ -198,21 +199,16 @@
                                 // Create new port
                                 create = true;
                                 var point = new ol.geom.Point(event.coordinate).transform(mapCRS, targetCRS);
-                                port = {
-                                    location: new ol.format.GeoJSON().writeGeometry(point),
-                                    entry: true,
-                                    exit: true,
-                                    pedestrian: false
-                                };
+                                port = FacilityResource.newPort(new ol.format.GeoJSON().writeGeometry(point));
                             }
                             editPort(port, create).then(function (port) {
-                                setPortAsFeature(port);
                                 if (port._id) {
                                     facility.ports[findPortIndex(port._id)] = port;
                                 } else {
                                     port._id = Sequence.nextval();
                                     facility.ports.push(port);
                                 }
+                                setPortAsFeature(port);
                             });
                             return false;
                         }

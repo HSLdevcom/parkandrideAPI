@@ -35,7 +35,7 @@
 
 			<div class="row">
 				<h3>{{"hubs.associatedFacilities" | translate}}</h3>
-				<p ng-hide="viewCtrl.hasFacilities()">{{"hubs.noAssociatedFacilities" | translate}}</p>
+				<p ng-hide="viewCtrl.hasFacilities()" class="wdNoFacilitiesMsg">{{"hubs.noAssociatedFacilities" | translate}}</p>
 				<facilities-table facilities="viewCtrl.facilities"></facilities-table>
 			</div>
 

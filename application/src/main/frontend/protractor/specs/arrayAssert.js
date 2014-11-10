@@ -8,7 +8,7 @@ module.exports = function () {
         if (actual instanceof protractor.promise.Promise) {
             actual.then(function (a) { fn(a); });
         } else {
-            fn(actual)();
+            fn(actual);
         }
     };
 
@@ -23,6 +23,10 @@ module.exports = function () {
 
             expect(a).toEqual(_.difference(expected, toSkip));
         });
+    };
+
+    api.assertInAnyOrder = function(actual, expected) {
+        unwrap(actual, function(a) { api.assertInOrder(a.sort(), expected.sort()); });
     };
 
     return api;

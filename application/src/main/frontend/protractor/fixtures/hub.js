@@ -1,11 +1,22 @@
 "use strict";
 
-module.exports = function (data) {
+function hub(data) {
     var _ = require('lodash');
     var self = data || {};
 
+    self.copy = function() {
+        var copy = hub(_.cloneDeep(self));
+        copy.setFacilities(_.map(copy.facilities, function(facility) { return facility.copy(); }));
+        return copy;
+    };
+
+    self.setFacilities = function(facilities) {
+        self.facilities = facilities;
+        self.facilityIds = _.map(facilities, function (f) { return f.id; })
+    };
+
     self.toPayload = function() {
-        var payload = _.cloneDeep(self);
+        var payload = self.copy();
         var skipFields = ['facilities'];
         _.forEach(skipFields, function(field) { delete payload[field]; });
         return payload;
@@ -13,3 +24,5 @@ module.exports = function (data) {
 
     return self;
 };
+
+module.exports = hub;

@@ -19,7 +19,7 @@ module.exports = function (data) {
         },
         "facilities": [
             facilitiesFixture.westend1,
-            _.assign(facilitiesFixture.westend2, { locationInput: { offset: { x: 419, y: 232 }, w: 34, h: 59 } })
+            _.assign(facilitiesFixture.westend2, { locationInput: { offset: { x: 380, y: 135 }, w: 30, h: 40 } })
         ]
     });
     self.westend.facilityIds = _.map(self.westend.facilities, function(f) { return f.id; });

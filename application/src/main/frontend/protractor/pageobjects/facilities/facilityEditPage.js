@@ -12,6 +12,7 @@ module.exports = function(spec) {
     spec.aliases = $('.wdAliases .tags');
     spec.capacityTypes = element.all(by.css(".wdCapacityType"));
     spec.form = $('form');
+    spec.toListButton = element.all(by.linkUiSref('hub-list')).first();
 
     that.get = function (id) {
         if (id) {
@@ -57,6 +58,10 @@ module.exports = function(spec) {
 
     that.isFacilityRequiredError = function() {
         return spec.isRequiredError($('facility-map'));
+    };
+
+    that.toListView = function () {
+        return spec.toListButton.click();
     };
 
     return that;

@@ -1,10 +1,10 @@
 "use strict";
 
-module.exports = function () {
-    var spec = {};
-    var that = {};
+module.exports = function (spec) {
+    var that = require('./base')(spec);
 
     var _ = require('lodash');
+    spec.view = $('.wdCapacityTable');
     spec.capacityTypes = element.all(by.css(".wdCapacityTable .wdCapacityType"));
 
     spec.getTypeProperty = function(type, property) {

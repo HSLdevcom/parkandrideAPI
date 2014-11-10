@@ -2,7 +2,7 @@
 
 module.exports = function(spec) {
     var that = require('../base')(spec);
-    var capacitiesTable = require('../capacitiesTable')();
+    var capacitiesTable = require('../capacitiesTable')({});
 
     spec.view = $('.wdFacilityView');
     spec.name = $('.wdFacilityNameFi');

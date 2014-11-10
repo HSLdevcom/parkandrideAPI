@@ -144,10 +144,12 @@
                         var polygon = drawEvent.feature.getGeometry().clone().transform(mapCRS, targetCRS);
                         facility.location = new ol.format.GeoJSON().writeGeometry(polygon);
                         setLocation(facility.location);
+
                         changeMode = true;
                         scope.editMode = 'ports';
                         locationLayer.setOpacity(1);
                         map.removeControl(cancelControl);
+                        ctrl.$setValidity("required", true);
                         ctrl.$setTouched();
                         scope.$apply();
                     });
@@ -238,6 +240,8 @@
                     if (!ol.extent.isEmpty(extent)) {
                         view.fitExtent(extent, map.getSize());
                     }
+                } else {
+                    ctrl.$setValidity("required", false);
                 }
             }
         };

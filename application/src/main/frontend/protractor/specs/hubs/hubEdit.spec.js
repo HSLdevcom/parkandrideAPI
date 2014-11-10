@@ -1,12 +1,36 @@
 'use strict';
 
+var _ = require('lodash');
+
 var po = require('../../pageobjects/pageobjects.js');
 var fixtures = require('../../fixtures/fixtures');
+var arrayAssert = require('../arrayAssert')();
 var devApi = require('../devApi')();
+var common = require('../common');
 
 describe('edit hub view', function () {
     var hubEditPage = po.hubEditPage({});
     var hubViewPage = po.hubViewPage({});
+
+    var facFull = fixtures.facilitiesFixture.dummies.facFull;
+    var facCar = fixtures.facilitiesFixture.dummies.facCar;
+
+    var facilityFactory = fixtures.facilityFactory;
+
+    function assertFacilityNamesInAnyOrder(facilitiesTable, expected) {
+        expect(facilitiesTable.isDisplayed()).toBe(true);
+        arrayAssert.assertInAnyOrder(facilitiesTable.getFacilityNames(), expected);
+    }
+
+    function totalCapacities(facilities) {
+        return _.reduce(facilities, function (acc, facility) { return acc.incCapacity(facility); });
+    }
+
+    function assertCapacities(capacitiesTable, facilities) {
+        arrayAssert.assertInOrder(capacitiesTable.getTypes(), common.capacityTypeOrder);
+        var total = totalCapacities(facilities);
+        expect(capacitiesTable.getCapacities(_.keys(total.capacities))).toEqual(total.capacities);
+    }
 
     describe('new hub', function () {
         beforeEach(function () {
@@ -15,10 +39,7 @@ describe('edit hub view', function () {
         });
 
         it('initially no errors exist', function () {
-            expect(hubEditPage.isNameFiRequiredError()).toBe(false);
-            expect(hubEditPage.isNameSvRequiredError()).toBe(false);
-            expect(hubEditPage.isNameEnRequiredError()).toBe(false);
-            expect(hubEditPage.isLocationRequiredError()).toBe(false);
+            expect(hubEditPage.hasNoValidationErrors()).toBe(true);
         });
 
         it('required error is shown only for edited fields', function () {
@@ -58,7 +79,6 @@ describe('edit hub view', function () {
                 expect(hubEditPage.isNameFiRequiredError()).toBe(false);
                 expect(hubEditPage.isNameSvRequiredError()).toBe(false);
                 expect(hubEditPage.isNameEnRequiredError()).toBe(true);
-
             });
 
             it('max length is 255', function () {
@@ -72,36 +92,96 @@ describe('edit hub view', function () {
         });
 
         describe('location', function () {
-            it('is required', function () {
+            it('is required, error is cleared after location is selected', function () {
                 hubEditPage.setName("Hub name");
                 hubEditPage.save();
                 expect(hubEditPage.isLocationRequiredError()).toBe(true);
+
+                hubEditPage.setLocation({ x: 165, y: 165 });
+                expect(hubEditPage.hasNoValidationErrors()).toBe(true);
+            });
+        });
+
+        it('without facilities', function() {
+            hubEditPage.setName("Hub name");
+            hubEditPage.setLocation({x: 165, y: 165});
+            expect(hubEditPage.facilitiesTable.isDisplayed()).toBe(false);
+
+            hubEditPage.save();
+            expect(hubViewPage.isDisplayed()).toBe(true);
+            expect(hubViewPage.getName()).toBe("Hub name");
+            expect(hubViewPage.getNoFacilitiesMessage()).toEqual("Alueeseen ei ole lisätty pysäköintipaikkoja");
+            expect(hubViewPage.facilitiesTable.isDisplayed()).toBe(false);
+            expect(hubViewPage.capacitiesTable.isDisplayed()).toBe(false);
+        });
+
+        describe('with facilities', function() {
+            beforeEach(function () {
+                devApi.resetFacilities([facFull, facCar]);
+                hubEditPage.get();
+            });
+
+            it('create', function () {
+                hubEditPage.setName("Hub name");
+                expect(hubEditPage.facilitiesTable.isDisplayed()).toBe(false);
+
+                hubEditPage.toggleFacility(facFull);
+                hubEditPage.toggleFacility(facCar);
+                hubEditPage.setLocation({x: 165, y: 165});
+                assertFacilityNamesInAnyOrder(hubEditPage.facilitiesTable, [facFull.name, facCar.name]);
+
+                hubEditPage.save();
+                expect(hubViewPage.isDisplayed()).toBe(true);
+                expect(hubViewPage.getName()).toBe("Hub name");
+                assertCapacities(hubViewPage.capacitiesTable, [facFull, facCar]);
+                assertFacilityNamesInAnyOrder(hubViewPage.facilitiesTable, [facFull.name, facCar.name]);
             });
         });
     });
 
-    xdescribe('hub with 2 facilities', function () {
-        var hubWithTwoFacilities = fixtures.hubsFixture.westend;
+    describe('hub with facilities', function () {
+        var hub = fixtures.hubsFixture.westend;
+        var facilityNameOrder = common.facilityNameOrder;
 
         beforeEach(function () {
-            devApi.resetAll(hubWithTwoFacilities.facilities, [hubWithTwoFacilities]);
+            var fproto = fixtures.facilitiesFixture.dummies.facFull;
+            var xdelta = fproto.locationInput.w + 5;
+            var n = 0;
+            var facilityCreator = function() { return fproto.copyHorizontallyInDefaultZoom(n++ * xdelta); };
+            var facilities = facilityFactory.facilitiesFromCreator(facilityCreator, facilityNameOrder);
+
+            var f1LeftTop = [280, 155];
+            _.forEach(facilities, function(f, idx){ f.locationInput.offset = { x: f1LeftTop[0] + idx*xdelta, y: f1LeftTop[1] } });
+
+            hub.location.coordinates = facilities[0].coordinatesFromTopLeft({ x: 30, y: 30 });
+            hub.setFacilities(facilities);
+            devApi.resetAll(hub.facilities, [hub]);
         });
 
         it('facility can be removed from hub', function () {
-            hubEditPage.get(hubWithTwoFacilities.id);
-            expect(hubEditPage.facilitiesTable.getSize()).toEqual(2);
+            hubEditPage.get(hub.id);
+            expect(hubEditPage.facilitiesTable.getSize()).toEqual(9);
 
-            hubEditPage.toggleFacility(hubWithTwoFacilities.facilities[1]);
-
-            /*
-             * NOTE the asserts below occasionally fail on firefox; current best guess is that this is due to not all tiles loading.
-             */
+            hubEditPage.toggleFacility(hub.facilities[0]);
             expect(hubEditPage.facilitiesTable.isDisplayed()).toBe(true);
-            expect(hubEditPage.facilitiesTable.getSize()).toEqual(1);
+            expect(hubEditPage.facilitiesTable.getSize()).toEqual(8);
 
             hubEditPage.save();
             expect(hubViewPage.isDisplayed()).toBe(true);
-            expect(hubViewPage.facilitiesTable.getSize()).toEqual(1);
+            expect(hubViewPage.facilitiesTable.getSize()).toBe(8);
+        });
+
+        it('when removing facilities, facility table is updated and order is maintained', function () {
+            hubEditPage.get(hub.id);
+            expect(hubEditPage.facilitiesTable.getSize()).toEqual(9);
+
+            _.forEach(hub.facilities, function(f, idx){
+                hubEditPage.toggleFacility(f);
+                if (idx < hub.facilities.length - 1) {
+                    expect(hubEditPage.facilitiesTable.isDisplayed()).toBe(true);
+                    arrayAssert.assertInOrder(hubEditPage.facilitiesTable.getFacilityNames(), facilityNameOrder, { allowSkip: true });
+                }
+            });
         });
     });
 });

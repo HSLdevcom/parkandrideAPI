@@ -3,21 +3,21 @@
         'parkandride.Sequence'
     ]);
 
-    function cleanupCapacities(capacities) {
-        for (var capacityType in capacities) {
-            if (!(capacities[capacityType] &&  capacities[capacityType].built && capacities[capacityType].built >= 1)) {
-                delete capacities[capacityType];
+    m.factory('FacilityResource', function($http, $q, Sequence) {
+
+        function cleanupCapacities(capacities) {
+            for (var capacityType in capacities) {
+                if (!(capacities[capacityType] &&  capacities[capacityType].built && capacities[capacityType].built >= 1)) {
+                    delete capacities[capacityType];
+                }
             }
         }
-    }
 
-    function cleanupPorts(ports) {
-        for (var i=0; i < ports.length; i++) {
-            delete ports[i]._id;
+        function cleanupPorts(ports) {
+            for (var i=0; i < ports.length; i++) {
+                delete ports[i]._id;
+            }
         }
-    }
-
-    m.factory('FacilityResource', function($http, $q, Sequence) {
 
         function assignPortIds(facility) {
             for (var i = 0; i < facility.ports.length; i++) {
@@ -25,6 +25,20 @@
             }
             return facility;
         }
+        function addFacilityIndexes(facilities) {
+            _.forEach(facilities, function(f, index) {
+                f._index = index;
+            });
+            return facilities;
+        }
+
+        function addFacilityIndexesToFeatures(featureCollection) {
+            _.forEach(featureCollection.features, function(f, index) {
+                f.properties._index = index;
+            });
+            return featureCollection;
+        }
+
         var api = {};
 
         api.newFacility = function() {
@@ -48,7 +62,7 @@
             return $http.get("/api/facilities", {
                 params: search
             }).then(function(response) {
-                return response.data.results;
+                return addFacilityIndexes(response.data.results);
             });
         };
 
@@ -76,7 +90,7 @@
             return $http.get("/api/facilities.geojson", {
                 params: search
             }).then(function(response) {
-                return response.data;
+                return addFacilityIndexesToFeatures(response.data);
             });
         };
 

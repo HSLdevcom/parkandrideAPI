@@ -96,10 +96,6 @@ describe('edit facility view', function () {
 
             editPage.save();
             expect(viewPage.isDisplayed()).toBe(true);
-            expect(viewPage.getName()).toBe(facFull.name);
-            expect(viewPage.getAliases()).toEqual(facFull.aliases);
-            arrayAssert.assertInOrder(viewPage.capacitiesTable.getTypes(), common.capacityTypeOrder);
-            expect(viewPage.capacitiesTable.getCapacities(_.keys(facFull.capacities))).toEqual(facFull.capacities);
         });
 
         it('create without aliases', function () {
@@ -110,10 +106,6 @@ describe('edit facility view', function () {
 
             editPage.save();
             expect(viewPage.isDisplayed()).toBe(true);
-            expect(viewPage.getName()).toBe(facCar.name);
-            expect(viewPage.getAliases()).toEqual([ '' ]);
-            arrayAssert.assertInOrder(viewPage.capacitiesTable.getTypes(), common.capacityTypeOrder, { allowSkip: true });
-            expect(viewPage.capacitiesTable.getCapacities(_.keys(facCar.capacities))).toEqual(facCar.capacities);
         });
 
         it('provides navigation back to hub list', function () {

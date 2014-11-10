@@ -127,16 +127,14 @@
                 controls.push(new ol.control.Zoom({zoomOutTipLabel: "Zoomaa", zoomInTipLabel: "Zoomaa"}));
                 controls.push(new ol.control.FullScreen({tipLabel: "Koko näyttö"}));
 
-                if (!options.readOnly) {
-                    interactions.push(new ol.interaction.DoubleClickZoom());
-                    interactions.push(new ol.interaction.MouseWheelZoom());
-                    interactions.push(new ol.interaction.DragZoom());
-                    interactions.push(new ol.interaction.PinchZoom());
-                    interactions.push(new ol.interaction.KeyboardPan());
-                    interactions.push(new ol.interaction.DragPan({
-                        kinetic: new ol.Kinetic(-0.005, 0.05, 100)
-                    }));
-                }
+                interactions.push(new ol.interaction.DoubleClickZoom());
+                interactions.push(new ol.interaction.MouseWheelZoom());
+                interactions.push(new ol.interaction.DragZoom());
+                interactions.push(new ol.interaction.PinchZoom());
+                interactions.push(new ol.interaction.KeyboardPan());
+                interactions.push(new ol.interaction.DragPan({
+                    kinetic: new ol.Kinetic(-0.005, 0.05, 100)
+                }));
 
                 return new ol.Map({
                     target: ngElement.children()[0],

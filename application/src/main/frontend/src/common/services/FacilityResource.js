@@ -11,6 +11,12 @@
         }
     }
 
+    function cleanupPorts(ports) {
+        for (var i=0; i < ports.length; i++) {
+            delete ports[i]._id;
+        }
+    }
+
     m.factory('FacilityResource', function($http, $q, Sequence) {
 
         function assignPortIds(facility) {
@@ -24,7 +30,8 @@
         api.newFacility = function() {
             return {
                 aliases: [],
-                capacities: {}
+                capacities: {},
+                ports: []
             };
         };
 
@@ -44,6 +51,7 @@
 
         api.save = function(facility) {
             cleanupCapacities(facility.capacities);
+            cleanupPorts(facility.ports);
             if (facility.id) {
                 return $http.put("/api/facilities/" + facility.id, facility).then(function(response){
                     return response.data.id;

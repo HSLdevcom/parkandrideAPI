@@ -44,6 +44,13 @@ module.exports = function(spec) {
     };
 
     that.setCapacities = function (capacities) {
+        // DEBUG: setting capacities occasionally fail in travis environment with
+        //   NoSuchElementError: No element found using locator: By.cssSelector("input[name='CARbuilt']")
+        // Let's print the inputs with name attribute in order to troubleshoot the problem
+        element.all(by.css("input[name]")).getAttribute('name').then(function(names){
+            console.log(names);
+        });
+        
         for (var capacityType in capacities) {
             var capacity = capacities[capacityType];
             for (var prop in capacity) {

@@ -12,6 +12,7 @@ describe('hub view', function () {
     var westend = fixtures.hubsFixture.westend;
 
     var viewPage = po.hubViewPage({});
+    var facilityViewPage = po.facilityViewPage({});
 
     var h;
 
@@ -99,8 +100,11 @@ describe('hub view', function () {
             expect(viewPage.facilitiesTable.getFacilityNames()).toEqual(facilityNameOrder);
         });
 
+        it('facility name is link to facility view', function () {
+            viewPage.facilitiesTable.clickRow(0);
+            expect(facilityViewPage.isDisplayed()).toBe(true);
+        });
 
-        // TODO verify facility link
         // TODO verify facility types
 
     });

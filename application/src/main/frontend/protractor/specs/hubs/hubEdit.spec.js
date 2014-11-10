@@ -22,16 +22,6 @@ describe('edit hub view', function () {
         arrayAssert.assertInAnyOrder(facilitiesTable.getFacilityNames(), expected);
     }
 
-    function totalCapacities(facilities) {
-        return _.reduce(facilities, function (acc, facility) { return acc.incCapacity(facility); });
-    }
-
-    function assertCapacities(capacitiesTable, facilities) {
-        arrayAssert.assertInOrder(capacitiesTable.getTypes(), common.capacityTypeOrder);
-        var total = totalCapacities(facilities);
-        expect(capacitiesTable.getCapacities(_.keys(total.capacities))).toEqual(total.capacities);
-    }
-
     describe('new hub', function () {
         beforeEach(function () {
             devApi.resetAll();
@@ -109,10 +99,6 @@ describe('edit hub view', function () {
 
             hubEditPage.save();
             expect(hubViewPage.isDisplayed()).toBe(true);
-            expect(hubViewPage.getName()).toBe("Hub name");
-            expect(hubViewPage.getNoFacilitiesMessage()).toEqual("Alueeseen ei ole lisätty pysäköintipaikkoja");
-            expect(hubViewPage.facilitiesTable.isDisplayed()).toBe(false);
-            expect(hubViewPage.capacitiesTable.isDisplayed()).toBe(false);
         });
 
         describe('with facilities', function() {
@@ -132,15 +118,12 @@ describe('edit hub view', function () {
 
                 hubEditPage.save();
                 expect(hubViewPage.isDisplayed()).toBe(true);
-                expect(hubViewPage.getName()).toBe("Hub name");
-                assertCapacities(hubViewPage.capacitiesTable, [facFull, facCar]);
-                assertFacilityNamesInAnyOrder(hubViewPage.facilitiesTable, [facFull.name, facCar.name]);
             });
         });
     });
 
     describe('hub with facilities', function () {
-        var hub = fixtures.hubsFixture.westend;
+        var hub = fixtures.hubsFixture.westend.copy();
         var facilityNameOrder = common.facilityNameOrder;
 
         beforeEach(function () {

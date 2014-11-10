@@ -4,15 +4,19 @@
         'parkandride.FacilityResource'
     ]);
 
-    function setPoint(point, layer) {
-        point.transform(targetCRS, mapCRS);
-        var feature = new ol.Feature(point);
-        var source = layer.getSource();
-        source.clear();
-        source.addFeature(feature);
-    }
+    m.factory("HubMapCommon", function(MapService) {
+        return {
+            setPoint: function (point, layer) {
+                point.transform(MapService.targetCRS, MapService.mapCRS);
+                var feature = new ol.Feature(point);
+                var source = layer.getSource();
+                source.clear();
+                source.addFeature(feature);
+            }
+        };
+    });
 
-    m.directive('editHubMap', function(MapService, FacilityResource) {
+    m.directive('editHubMap', function(MapService, HubMapCommon, FacilityResource) {
         return {
             restrict: 'E',
             require: 'ngModel',
@@ -44,9 +48,16 @@
 
                 var view = map.getView();
 
+                function addFeatureAsFacility(feature) {
+                    var facility = feature.getProperties();
+                    facility.id = feature.getId();
+                    var indx = _.sortedIndex(scope.facilities, facility, function(f) { return f._index; });
+                    scope.facilities.splice(indx, 0, facility);
+                }
+
                 if (scope.hub.location) {
                     var point = new ol.format.GeoJSON().readGeometry(scope.hub.location);
-                    setPoint(point, hubLayer);
+                    HubMapCommon.setPoint(point, hubLayer);
                     view.setCenter(point.getCoordinates());
                     view.setZoom(14);
                 } else {
@@ -59,7 +70,7 @@
                     ctrl.$setValidity("required", true);
                     ctrl.$setTouched();
                     scope.$apply();
-                    setPoint(point, hubLayer);
+                    HubMapCommon.setPoint(point, hubLayer);
                     return false;
                 });
 
@@ -69,14 +80,6 @@
                     layers: [ facilitiesLayer ]
                 });
                 map.addInteraction(selectFeatures);
-
-                function addFeatureAsFacility(feature) {
-                    var facility = feature.getProperties();
-                    facility.id = feature.getId();
-                    var indx = _.sortedIndex(scope.facilities, facility, function(f) { return f._index; });
-                    scope.facilities.splice(indx, 0, facility);
-                }
-
                 var selectedFeatures = selectFeatures.getFeatures();
 
                 FacilityResource.findFacilitiesAsFeatureCollection().then(function(geojson) {
@@ -117,7 +120,7 @@
         };
     });
 
-    m.directive('viewHubMap', function(MapService, FacilityResource) {
+    m.directive('viewHubMap', function(MapService, HubMapCommon, FacilityResource) {
         return {
             restrict: 'E',
             require: 'ngModel',
@@ -129,6 +132,9 @@
             template: '<div class="map hub-map"></div>',
             transclude: false,
             link: function(scope, element, attrs, ctrl) {
+                var mapCRS = MapService.mapCRS;
+                var targetCRS = MapService.targetCRS;
+                
                 var facilitiesLayer = new ol.layer.Vector({
                     source: new ol.source.Vector(),
                     style: MapService.selectedFacilityStyle
@@ -144,7 +150,7 @@
                 var view = map.getView();
 
                 var point = new ol.format.GeoJSON().readGeometry(scope.hub.location);
-                setPoint(point, hubLayer);
+                HubMapCommon.setPoint(point, hubLayer);
                 view.setCenter(point.getCoordinates());
                 view.setZoom(14);
 

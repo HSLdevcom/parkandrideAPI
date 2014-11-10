@@ -12,9 +12,16 @@
 
 .form-control.validation-error.ng-invalid,
 .validation-error.ng-invalid > .map {
-  border: 1px solid $errorcolor;
+  border: 2px solid $errorcolor;
 }
 
 :focus {
   outline: none;
+}
+
+.errorRow {
+  border: 3px solid $warningcolor;
+  background-color: $warningbgcolor;
+  padding: 20px;
+  margin-bottom: 40px;
 }

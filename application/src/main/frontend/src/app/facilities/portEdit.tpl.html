@@ -2,11 +2,12 @@
 	<h3 class="modal-title">{{ titleKey | translate }}</h3>
 </div>
 <div class="modal-body">
-	<input type="checkbox" ng-model="port.entry"> Sisäänkäynti <br>
-	<input type="checkbox" ng-model="port.exit"> Uloskäynti <br>
-	<input type="checkbox" ng-model="port.pedestrian"> Jalankulku<br>
+	<label><input type="checkbox" ng-model="port.entry"> Sisäänkäynti </label><br>
+	<label><input type="checkbox" ng-model="port.exit"> Uloskäynti </label><br>
+	<label><input type="checkbox" ng-model="port.pedestrian"> Jalankulku </label>
 </div>
 <div class="modal-footer">
-	<button class="btn btn-primary" ng-click="ok()">OK</button>
 	<button class="btn btn-warning" ng-click="cancel()">Peru</button>
+	<button class="btn btn-danger" ng-click="remove()">Poista</button>
+	<button class="btn btn-primary" ng-click="ok()">Tallenna</button>
 </div>

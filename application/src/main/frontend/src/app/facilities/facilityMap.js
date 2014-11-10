@@ -11,7 +11,12 @@
         $scope.ok = function () {
             $modalInstance.close($scope.port);
         };
-
+        $scope.remove = function () {
+            $scope.port.entry = false;
+            $scope.port.exit = false;
+            $scope.port.pedestrian = false;
+            $modalInstance.close($scope.port);
+        };
         $scope.cancel = function () {
             $modalInstance.dismiss('cancel');
         };
@@ -203,12 +208,19 @@
                             }
                             editPort(port, create).then(function (port) {
                                 if (port._id) {
-                                    facility.ports[findPortIndex(port._id)] = port;
+                                    var portIndex = findPortIndex(port._id);
+                                    if (port.entry || port.exit || port.pedestrian) {
+                                        facility.ports[portIndex] = port;
+                                        setPortAsFeature(port);
+                                    } else {
+                                        facility.ports.splice(portIndex, 1);
+                                        portsSource.removeFeature(portsSource.getFeatureById(port._id));
+                                    }
                                 } else {
                                     port._id = Sequence.nextval();
                                     facility.ports.push(port);
+                                    setPortAsFeature(port);
                                 }
-                                setPortAsFeature(port);
                             });
                             return false;
                         }

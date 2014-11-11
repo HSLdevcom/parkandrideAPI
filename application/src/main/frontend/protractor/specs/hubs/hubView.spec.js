@@ -38,7 +38,7 @@ describe('hub view', function () {
         return h;
     }
 
-    xdescribe('with facilities and capacities', function () {
+    describe('with facilities and capacities', function () {
         beforeEach(function () {
             h = toView(westend);
         });
@@ -53,7 +53,7 @@ describe('hub view', function () {
         });
     });
 
-    xdescribe('without facilities', function () {
+    describe('without facilities', function () {
         beforeEach(function () {
             h = westend.copy();
             h.setFacilities([]);
@@ -69,7 +69,7 @@ describe('hub view', function () {
         });
     });
 
-    xdescribe('without capacities', function () {
+    describe('without capacities', function () {
         beforeEach(function () {
             h = westend.copy();
             _.forEach(h.facilities, function(f){ f.capacities = {}; });

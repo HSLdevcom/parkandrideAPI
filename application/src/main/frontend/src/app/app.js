@@ -17,6 +17,8 @@
 
     m.constant('FEATURES_URL', 'assets/features.json');
 
+    m.value("schema", { capacityTypes:[] });
+
     m.config(function myAppConfig($stateProvider, $urlRouterProvider, $httpProvider) {
         $urlRouterProvider.otherwise('/hubs');
 
@@ -26,6 +28,13 @@
             resolve: {
                 features: function(FeatureResource) {
                     return FeatureResource.getFeatures();
+                },
+                capacityTypes: function(schema, FacilityResource) {
+                    // Use the main applications run method to execute any code after services have been instantiated
+                    return FacilityResource.getCapacityTypes().then(function(types) {
+                        schema.capacityTypes = types;
+                        return types;
+                    });
                 }
             },
             controller: function($scope, features) {
@@ -57,15 +66,6 @@
                     return response;
                 }
             };
-        });
-    });
-
-    m.value("schema", { capacityTypes:[] });
-
-    m.run(function run(schema, FacilityResource) {
-        // Use the main applications run method to execute any code after services have been instantiated
-        FacilityResource.getCapacityTypes().then(function(types) {
-            schema.capacityTypes = types;
         });
     });
 

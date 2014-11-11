@@ -55,6 +55,13 @@
                     scope.facilities.splice(indx, 0, facility);
                 }
 
+                function removeFacility(facilityId) {
+                    var index = _.findIndex(scope.facilities, function(facility) { return facility.id === facilityId; });
+                    if (index >= 0) {
+                        scope.facilities.splice(index, 1);
+                    }
+                }
+
                 if (scope.hub.location) {
                     var point = new ol.format.GeoJSON().readGeometry(scope.hub.location);
                     HubMapCommon.setPoint(point, hubLayer);
@@ -108,10 +115,7 @@
                     selectedFeatures.on("remove", function (collectionEvent) {
                         var facilityId = collectionEvent.element.getId();
                         scope.hub.facilityIds = _.without(scope.hub.facilityIds, facilityId);
-                        var index = _.findIndex(scope.facilities, function(facility) { return facility.id === facilityId; });
-                        if (index >= 0) {
-                            scope.facilities.splice(index, 1);
-                        }
+                        removeFacility(facilityId);
                         scope.$apply();
                         return true;
                     });
@@ -134,7 +138,7 @@
             link: function(scope, element, attrs, ctrl) {
                 var mapCRS = MapService.mapCRS;
                 var targetCRS = MapService.targetCRS;
-                
+
                 var facilitiesLayer = new ol.layer.Vector({
                     source: new ol.source.Vector(),
                     style: MapService.selectedFacilityStyle

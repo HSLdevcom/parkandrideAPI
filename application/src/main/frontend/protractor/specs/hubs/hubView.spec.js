@@ -91,7 +91,7 @@ describe('hub view', function () {
         beforeEach(function () {
             var facilitiesFn  = _.partial(facilityFactory.facilitiesFromProto, fixtures.facilitiesFixture.dummies.facFull, facilityNameOrder);
 
-            westend.copy();
+            h = westend.copy();
             h.setFacilities(facilitiesFn());
             toView(h);
         });
@@ -105,7 +105,8 @@ describe('hub view', function () {
             expect(facilityViewPage.isDisplayed()).toBe(true);
         });
 
-        // TODO verify facility types
-
+        it('facility capacity types are listed in order', function () {
+            arrayAssert.assertInOrder(viewPage.facilitiesTable.getCapacityTypes(0), common.capacityTypeOrder);
+        });
     });
 });

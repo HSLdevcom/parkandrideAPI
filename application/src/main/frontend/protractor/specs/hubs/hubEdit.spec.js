@@ -123,11 +123,12 @@ describe('edit hub view', function () {
     });
 
     describe('hub with facilities', function () {
-        var hub = fixtures.hubsFixture.westend.copy();
+        var hub;
         var facilityNameOrder = common.facilityNameOrder;
 
         beforeEach(function () {
-            var fproto = fixtures.facilitiesFixture.dummies.facFull;
+            hub = fixtures.hubsFixture.westend.copy();
+            var fproto = facFull;
             var xdelta = fproto.locationInput.w + 5;
             var n = 0;
             var facilityCreator = function() { return fproto.copyHorizontallyInDefaultZoom(n++ * xdelta); };

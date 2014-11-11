@@ -4,10 +4,10 @@ module.exports = function (spec) {
     var that = require('./base')(spec);
 
     var _ = require('lodash');
-    spec.view = element(by.css(".wdFacilitiesTable"));
+    spec.view = $(".wdFacilitiesTable");
 
     spec.rows = function() {
-        return element.all(by.css(".wdFacilitiesTable .wdFacilityNameFi"));
+        return $('.wdFacilitiesTable').all(by.xpath(".//*[starts-with(@class, 'wdFacilityRow')]"));
     };
 
     spec.row = function(idx) {
@@ -15,7 +15,7 @@ module.exports = function (spec) {
     };
 
     that.getFacilityNames = function() {
-        return spec.rows().getText();
+        return spec.rows().$$('.wdFacilityNameFi').getText();
     };
 
     that.getSize = function() {
@@ -23,7 +23,15 @@ module.exports = function (spec) {
     };
 
     that.clickRow = function(row) {
-        return spec.row(row).click();
+        return spec.row(row).$('.wdFacilityNameFi').click();
+    };
+
+    that.getCapacityTypes = function(row) {
+        return spec.row(row).$$(".wdCapacityType").getText();
+    };
+
+    that.getCapacityTypesAsDisplayed = function(row) {
+        return spec.row(row).$(".wdCapacities").getText();
     };
 
     return that;

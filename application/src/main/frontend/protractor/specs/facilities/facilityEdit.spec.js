@@ -86,6 +86,22 @@ describe('edit facility view', function () {
             });
         });
 
+        describe('capacities', function () {
+            function testCapacityMustBePositive(c) {
+                expect(editPage.hasNoValidationErrors()).toBe(true);
+                editPage.setCapacities(c, true);
+                expect(editPage.hasNoValidationErrors()).toBe(false);
+            }
+
+            it('build value must be positive', function () {
+                testCapacityMustBePositive({ "CAR": {"built": -1 }});
+            });
+
+            it('unavailable value must be positive', function () {
+                testCapacityMustBePositive({ "CAR": {"unavailable": -1 }});
+            });
+        });
+
         it('create full', function () {
             editPage.setName(facFull.name);
             editPage.drawLocation(facFull.locationInput.offset, facFull.locationInput.w, facFull.locationInput.h);

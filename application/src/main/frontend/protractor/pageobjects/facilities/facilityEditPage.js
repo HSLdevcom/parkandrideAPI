@@ -43,20 +43,17 @@ module.exports = function(spec) {
         tagsElement.sendKeys(protractor.Key.ENTER);
     };
 
-    that.setCapacities = function (capacities) {
-        // DEBUG: setting capacities occasionally fail in travis environment with
-        //   NoSuchElementError: No element found using locator: By.cssSelector("input[name='CARbuilt']")
-        // Let's print the inputs with name attribute in order to troubleshoot the problem
-        element.all(by.css("input[name]")).getAttribute('name').then(function(names){
-            console.log(names);
-        });
-        
+    that.setCapacities = function (capacities, doBlur) {
         for (var capacityType in capacities) {
             var capacity = capacities[capacityType];
             for (var prop in capacity) {
                 $("input[name='" + capacityType + prop + "']").sendKeys(capacity[prop]);
             }
         }
+
+        if (doBlur) {
+            spec.nameFi.click();
+        } 
     };
 
     that.getCapacityTypes = function() {

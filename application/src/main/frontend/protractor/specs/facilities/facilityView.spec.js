@@ -13,15 +13,33 @@ describe('facility view', function () {
     var facCar = fixtures.facilitiesFixture.dummies.facCar;
 
     var viewPage = po.facilityViewPage({});
+    var editPage = po.facilityEditPage({});
+    var listPage = po.hubListPage({});
 
     var f;
 
     function toView(f) {
-        devApi.resetFacilities([f]);
+        devApi.resetAll([f], []);
         viewPage.get(f.id);
         expect(viewPage.isDisplayed()).toBe(true);
         return f;
     }
+
+    describe('navigation', function () {
+        beforeEach(function () {
+            f = toView(facFull);
+        });
+
+        it('to edit view', function () {
+            viewPage.toEditView();
+            expect(editPage.isDisplayed()).toBe(true);
+        });
+
+        it('to hub list', function () {
+            viewPage.toListView();
+            expect(listPage.isDisplayed()).toBe(true);
+        });
+    });
 
     describe('with aliases and capacities', function () {
         beforeEach(function () {

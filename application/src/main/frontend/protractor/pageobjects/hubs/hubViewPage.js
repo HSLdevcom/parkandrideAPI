@@ -8,6 +8,8 @@ module.exports = function(spec) {
     spec.name = $('.wdHubNameFi');
     spec.noFacilitiesMsg = $('.wdNoFacilitiesMsg');
     spec.facilitiesTotal = $('.wdFacilitiesTotal');
+    spec.editViewButton = $$('.wdEditViewButton').first();
+    spec.hubListButton = element.all(by.linkUiSref('hub-list')).first();
 
     that.facilitiesTable = require('../facilitiesTable')({});
 
@@ -27,6 +29,14 @@ module.exports = function(spec) {
 
     that.isFacilitiesTotalDisplayed = function() {
         return spec.facilitiesTotal.isDisplayed();
+    };
+
+    that.toEditView = function() {
+        spec.editViewButton.click();
+    };
+
+    that.toListView = function() {
+        spec.hubListButton.click();
     };
 
     return that;

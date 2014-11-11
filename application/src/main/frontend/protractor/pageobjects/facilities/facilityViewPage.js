@@ -8,6 +8,7 @@ module.exports = function(spec) {
     spec.name = $('.wdFacilityNameFi');
     spec.aliases = $('.wdAliases');
     spec.aliasesBlock = $('.wdAliasesBlock');
+    spec.editViewButton = $$('.wdEditViewButton').first();
     spec.toListButton = element.all(by.linkUiSref('hub-list')).first();
 
     that.get = function (id) {
@@ -29,7 +30,11 @@ module.exports = function(spec) {
     };
 
     that.toListView = function () {
-        return spec.toListButton.click();
+        spec.toListButton.click();
+    };
+
+    that.toEditView = function () {
+        spec.editViewButton.click();
     };
 
     that.capacitiesTable = capacitiesTable;

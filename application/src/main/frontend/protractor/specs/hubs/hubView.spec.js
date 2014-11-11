@@ -12,6 +12,8 @@ describe('hub view', function () {
     var westend = fixtures.hubsFixture.westend;
 
     var viewPage = po.hubViewPage({});
+    var editPage = po.hubEditPage({});
+    var listPage = po.hubListPage({});
     var facilityViewPage = po.facilityViewPage({});
 
     var h;
@@ -37,6 +39,22 @@ describe('hub view', function () {
         expect(viewPage.isDisplayed()).toBe(true);
         return h;
     }
+
+    describe('navigation', function () {
+        beforeEach(function () {
+            h = toView(westend);
+        });
+
+        it('to edit view', function () {
+            viewPage.toEditView();
+            expect(editPage.isDisplayed()).toBe(true);
+        });
+
+        it('to hub list', function () {
+            viewPage.toListView();
+            expect(listPage.isDisplayed()).toBe(true);
+        });
+    });
 
     describe('with facilities and capacities', function () {
         beforeEach(function () {

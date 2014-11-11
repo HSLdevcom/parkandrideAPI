@@ -16,4 +16,3 @@ phantomjsdriver.log
 application.log
 application.pid
 protractor-results.xml
-**/protractor/screenshots

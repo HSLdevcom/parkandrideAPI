@@ -28,6 +28,6 @@ exports.config = {
         jasmine.getEnv().addReporter(new jasmine.JUnitXmlReporter(
             '.', true, true, 'protractor-results', true));
 
-        browser.driver.manage().window().setSize(1280, 2048);
+        browser.driver.manage().window().setSize(1280, 1024);
     }
 };

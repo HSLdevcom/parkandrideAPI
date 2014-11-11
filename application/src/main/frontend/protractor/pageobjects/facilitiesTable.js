@@ -14,16 +14,15 @@ module.exports = function (spec) {
         return spec.rows().get(idx);
     };
 
-    that.getFacilityNames = function() {
-        return spec.rows().$$('.wdFacilityNameFi').getText();
-    };
-
     that.getSize = function() {
         return spec.rows().count();
     };
 
-    that.clickRow = function(row) {
-        return spec.row(row).$('.wdFacilityNameFi').click();
+    that.getNames = function() {
+        return spec.rows().$$('.wdFacilityNameFi').getText();
+    };
+    that.clickName = function(row) {
+        return spec.row(row).$('.wdFacilityNameFi a').click();
     };
 
     that.getCapacityTypes = function(row) {

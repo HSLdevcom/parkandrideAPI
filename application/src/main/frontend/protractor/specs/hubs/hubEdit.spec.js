@@ -19,7 +19,7 @@ describe('edit hub view', function () {
 
     function assertFacilityNamesInAnyOrder(facilitiesTable, expected) {
         expect(facilitiesTable.isDisplayed()).toBe(true);
-        arrayAssert.assertInAnyOrder(facilitiesTable.getFacilityNames(), expected);
+        arrayAssert.assertInAnyOrder(facilitiesTable.getNames(), expected);
     }
 
     describe('new hub', function () {
@@ -163,7 +163,7 @@ describe('edit hub view', function () {
                 hubEditPage.toggleFacility(f);
                 if (idx < hub.facilities.length - 1) {
                     expect(hubEditPage.facilitiesTable.isDisplayed()).toBe(true);
-                    arrayAssert.assertInOrder(hubEditPage.facilitiesTable.getFacilityNames(), facilityNameOrder, { allowSkip: true });
+                    arrayAssert.assertInOrder(hubEditPage.facilitiesTable.getNames(), facilityNameOrder, { allowSkip: true });
                 }
             });
         });

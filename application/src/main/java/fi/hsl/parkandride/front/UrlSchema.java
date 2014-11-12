@@ -22,6 +22,9 @@ public class UrlSchema {
 
     public static final String HUB = HUBS + "/{" + HUB_ID + "}" ;
 
+
+    public static final String FEATURES = API + "/features" ;
+
     /**
      * TESTING
      */

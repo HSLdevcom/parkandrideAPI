@@ -33,6 +33,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ExceptionHandlerExc
 import com.fasterxml.jackson.databind.Module;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 
+import fi.hsl.parkandride.front.Features;
 import fi.hsl.parkandride.front.GeojsonDeserializer;
 import fi.hsl.parkandride.front.GeojsonSerializer;
 
@@ -74,6 +75,11 @@ public class Application {
             filter.setEncoding("UTF-8");
             filter.setForceEncoding(true);
             return filter;
+        }
+
+        @Bean
+        public Features features() {
+            return new Features();
         }
 
         @Override

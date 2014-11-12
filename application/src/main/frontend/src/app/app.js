@@ -30,7 +30,6 @@
                     return FeatureResource.getFeatures();
                 },
                 capacityTypes: function(schema, FacilityResource) {
-                    // Use the main applications run method to execute any code after services have been instantiated
                     return FacilityResource.getCapacityTypes().then(function(types) {
                         schema.capacityTypes = types;
                         return types;
@@ -77,10 +76,11 @@
                     return violation;
                 });
             });
+
         this.hasValidationErrors = function() {
             return !_.isEmpty($scope.violations);
         };
-        // This is a good place for logic not specific to the template or route, such as menu logic or page title wiring
+
         $scope.$on('$stateChangeSuccess', function (event, toState, toParams, fromState, fromParams) {
             if (angular.isDefined(toState.data.pageTitle)) {
                 $scope.pageTitle = toState.data.pageTitle + ' | parkandride';

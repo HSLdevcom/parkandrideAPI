@@ -19,17 +19,7 @@ describe('edit hub view', function () {
 
     function assertFacilityNamesInAnyOrder(facilitiesTable, expected) {
         expect(facilitiesTable.isDisplayed()).toBe(true);
-        arrayAssert.assertInAnyOrder(facilitiesTable.getFacilityNames(), expected);
-    }
-
-    function totalCapacities(facilities) {
-        return _.reduce(facilities, function (acc, facility) { return acc.incCapacity(facility); });
-    }
-
-    function assertCapacities(capacitiesTable, facilities) {
-        arrayAssert.assertInOrder(capacitiesTable.getTypes(), common.capacityTypeOrder);
-        var total = totalCapacities(facilities);
-        expect(capacitiesTable.getCapacities(_.keys(total.capacities))).toEqual(total.capacities);
+        arrayAssert.assertInAnyOrder(facilitiesTable.getNames(), expected);
     }
 
     describe('new hub', function () {
@@ -109,10 +99,6 @@ describe('edit hub view', function () {
 
             hubEditPage.save();
             expect(hubViewPage.isDisplayed()).toBe(true);
-            expect(hubViewPage.getName()).toBe("Hub name");
-            expect(hubViewPage.getNoFacilitiesMessage()).toEqual("Alueeseen ei ole lisätty pysäköintipaikkoja");
-            expect(hubViewPage.facilitiesTable.isDisplayed()).toBe(false);
-            expect(hubViewPage.capacitiesTable.isDisplayed()).toBe(false);
         });
 
         describe('with facilities', function() {
@@ -132,19 +118,17 @@ describe('edit hub view', function () {
 
                 hubEditPage.save();
                 expect(hubViewPage.isDisplayed()).toBe(true);
-                expect(hubViewPage.getName()).toBe("Hub name");
-                assertCapacities(hubViewPage.capacitiesTable, [facFull, facCar]);
-                assertFacilityNamesInAnyOrder(hubViewPage.facilitiesTable, [facFull.name, facCar.name]);
             });
         });
     });
 
     describe('hub with facilities', function () {
-        var hub = fixtures.hubsFixture.westend;
+        var hub;
         var facilityNameOrder = common.facilityNameOrder;
 
         beforeEach(function () {
-            var fproto = fixtures.facilitiesFixture.dummies.facFull;
+            hub = fixtures.hubsFixture.westend.copy();
+            var fproto = facFull;
             var xdelta = fproto.locationInput.w + 5;
             var n = 0;
             var facilityCreator = function() { return fproto.copyHorizontallyInDefaultZoom(n++ * xdelta); };
@@ -179,7 +163,7 @@ describe('edit hub view', function () {
                 hubEditPage.toggleFacility(f);
                 if (idx < hub.facilities.length - 1) {
                     expect(hubEditPage.facilitiesTable.isDisplayed()).toBe(true);
-                    arrayAssert.assertInOrder(hubEditPage.facilitiesTable.getFacilityNames(), facilityNameOrder, { allowSkip: true });
+                    arrayAssert.assertInOrder(hubEditPage.facilitiesTable.getNames(), facilityNameOrder, { allowSkip: true });
                 }
             });
         });

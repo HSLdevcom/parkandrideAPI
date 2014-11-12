@@ -25,7 +25,15 @@ module.exports = function(spec) {
     };
 
     that.getCapacityTypes = function(facilityId) {
-        return element.all(by.css(".wdFacility" + facilityId + " .wdCapacityType")).filter(function(el) { return el.isDisplayed(); }).getText();
+        return $$(".wdFacility" + facilityId + " .wdCapacityType").filter(function(el) { return el.isDisplayed(); }).getText();
+    };
+
+    that.clickFacilityName = function(facilityId) {
+        $(".wdFacility" + facilityId + " .wdNameFi a").click();
+    };
+
+    that.clickHubName = function(hubId) {
+        $(".wdHub" + hubId + " .wdNameFi a").click();
     };
 
     return that;

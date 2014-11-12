@@ -86,6 +86,22 @@ describe('edit facility view', function () {
             });
         });
 
+        describe('capacities', function () {
+            function testCapacityMustBePositive(c) {
+                expect(editPage.hasNoValidationErrors()).toBe(true);
+                editPage.setCapacities(c, true);
+                expect(editPage.hasNoValidationErrors()).toBe(false);
+            }
+
+            it('build value must be positive', function () {
+                testCapacityMustBePositive({ "CAR": {"built": -1 }});
+            });
+
+            it('unavailable value must be positive', function () {
+                testCapacityMustBePositive({ "CAR": {"unavailable": -1 }});
+            });
+        });
+
         it('create full', function () {
             editPage.setName(facFull.name);
             editPage.drawLocation(facFull.locationInput.offset, facFull.locationInput.w, facFull.locationInput.h);
@@ -96,10 +112,6 @@ describe('edit facility view', function () {
 
             editPage.save();
             expect(viewPage.isDisplayed()).toBe(true);
-            expect(viewPage.getName()).toBe(facFull.name);
-            expect(viewPage.getAliases()).toEqual(facFull.aliases);
-            arrayAssert.assertInOrder(viewPage.capacitiesTable.getTypes(), common.capacityTypeOrder);
-            expect(viewPage.capacitiesTable.getCapacities(_.keys(facFull.capacities))).toEqual(facFull.capacities);
         });
 
         it('create without aliases', function () {
@@ -110,10 +122,6 @@ describe('edit facility view', function () {
 
             editPage.save();
             expect(viewPage.isDisplayed()).toBe(true);
-            expect(viewPage.getName()).toBe(facCar.name);
-            expect(viewPage.getAliases()).toEqual([ '' ]);
-            arrayAssert.assertInOrder(viewPage.capacitiesTable.getTypes(), common.capacityTypeOrder, { allowSkip: true });
-            expect(viewPage.capacitiesTable.getCapacities(_.keys(facCar.capacities))).toEqual(facCar.capacities);
         });
 
         it('provides navigation back to hub list', function () {

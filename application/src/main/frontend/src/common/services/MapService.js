@@ -64,6 +64,34 @@
                 }
             },
 
+            portsStyle: function(feature, resolution) {
+                if (resolution >= 10) {
+                    return [];
+                } else if (resolution >= 4) {
+                    return [new ol.style.Style({
+                        image: new ol.style.Circle({
+                            radius: 5,
+                            fill: new ol.style.Fill({
+                                color: '#007AC9' //HSL blue
+                            })
+                        })
+                    })];
+                } else {
+                    var properties = feature.getProperties();
+                    var entry = properties.entry ? "entry" : "noentry";
+                    var exit = properties.exit ? "exit" : "noexit";
+                    var pedestrian = properties.pedestrian ? "pedestrian" : "nopedestrian";
+                    return [new ol.style.Style({
+                        image: new ol.style.Icon({
+                            anchor: [0.5, 1],
+                            anchorXUnits: 'fraction',
+                            anchorYUnits: 'fraction',
+                            src: 'assets/ports/' + entry + "-" + exit + "-" + pedestrian + ".gif"
+                        })
+                    })];
+                }
+            },
+
             hubStyle: new ol.style.Style({
                 image: new ol.style.Circle({
                     radius: 8,
@@ -76,6 +104,10 @@
                     })
                 })
             }),
+
+            mapCRS: 'EPSG:3857',
+
+            targetCRS: 'EPSG:4326',
 
             createMap: function(ngElement, options) {
                 var layers = [];
@@ -95,16 +127,14 @@
                 controls.push(new ol.control.Zoom({zoomOutTipLabel: "Zoomaa", zoomInTipLabel: "Zoomaa"}));
                 controls.push(new ol.control.FullScreen({tipLabel: "Koko näyttö"}));
 
-                if (!options.readOnly) {
-                    interactions.push(new ol.interaction.DoubleClickZoom());
-                    interactions.push(new ol.interaction.MouseWheelZoom());
-                    interactions.push(new ol.interaction.DragZoom());
-                    interactions.push(new ol.interaction.PinchZoom());
-                    interactions.push(new ol.interaction.KeyboardPan());
-                    interactions.push(new ol.interaction.DragPan({
-                        kinetic: new ol.Kinetic(-0.005, 0.05, 100)
-                    }));
-                }
+                interactions.push(new ol.interaction.DoubleClickZoom());
+                interactions.push(new ol.interaction.MouseWheelZoom());
+                interactions.push(new ol.interaction.DragZoom());
+                interactions.push(new ol.interaction.PinchZoom());
+                interactions.push(new ol.interaction.KeyboardPan());
+                interactions.push(new ol.interaction.DragPan({
+                    kinetic: new ol.Kinetic(-0.005, 0.05, 100)
+                }));
 
                 return new ol.Map({
                     target: ngElement.children()[0],

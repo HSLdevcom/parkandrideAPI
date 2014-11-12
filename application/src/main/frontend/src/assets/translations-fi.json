@@ -26,6 +26,10 @@
             "label": "Aliakset",
             "placeholder": "Lisää alias"
         },
+        "ports": {
+            "create": "Lisää uusi käyntiosoite",
+            "edit": "Muokkaa käyntiosoitetta"
+        },
         "capacity": {
             "heading": "Kapasiteetti",
             "type": "Tyyppi",

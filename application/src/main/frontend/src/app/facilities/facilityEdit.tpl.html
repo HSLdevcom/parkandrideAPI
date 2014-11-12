@@ -64,8 +64,14 @@
 				<div class="row">
 					<h3>{{"facilities.location" | translate}} *</h3>
 					<div class="map-container">
-						<facility-map name="facilityMap" ng-model="editCtrl.facility.location" editable="true" no-tiles="{{features['map.no-tiles']}}"
-									  show-errors="{ instant: true }" required></facility-map>
+						<input id="editModeLocation" type="radio" ng-model="editCtrl.editMode" value="location">
+						<label for="editModeLocation">Määritä sijainti/alue</label>
+
+						<input id="editModePorts" type="radio" ng-model="editCtrl.editMode" value="ports">
+						<label for="editModePorts">Määritä sisään- ja uloskäynnit</label>
+
+						<facility-map name="facilityMap" ng-model="editCtrl.facility" edit-mode="editCtrl.editMode"
+									  no-tiles="{{features['map.no-tiles']}}" show-errors="{ instant: true }"></facility-map>
 					</div>
 				</div>
 

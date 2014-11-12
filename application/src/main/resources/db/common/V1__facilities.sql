@@ -50,3 +50,17 @@ create table capacity (
   constraint capacity_capacity_type_fk foreign key (capacity_type)
     references capacity_type (name)
 );
+
+create table port (
+  facility_id bigint not null,
+  port_index int not null,
+  entry boolean not null,
+  exit boolean not null,
+  pedestrian boolean not null,
+  location geometry not null,
+
+  primary key (facility_id, port_index),
+
+  constraint port_facility_id_fk foreign key (facility_id)
+    references facility (id)
+);

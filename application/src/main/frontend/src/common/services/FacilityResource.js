@@ -1,35 +1,60 @@
 (function() {
-    var m = angular.module('parkandride.FacilityResource', []);
+    var m = angular.module('parkandride.FacilityResource', [
+        'parkandride.Sequence'
+    ]);
 
-    function cleanupCapacities(capacities) {
-        for (var capacityType in capacities) {
-            if (!(capacities[capacityType] &&  capacities[capacityType].built && capacities[capacityType].built >= 1)) {
-                delete capacities[capacityType];
+    m.factory('FacilityResource', function($http, $q, Sequence) {
+
+        function cleanupCapacities(capacities) {
+            for (var capacityType in capacities) {
+                if (!(capacities[capacityType] &&  capacities[capacityType].built && capacities[capacityType].built >= 1)) {
+                    delete capacities[capacityType];
+                }
             }
         }
-    }
 
-    function addFacilityIndexes(facilities) {
-        _.forEach(facilities, function(f, index) {
-            f._index = index;
-        });
-        return facilities;
-    }
+        function cleanupPorts(ports) {
+            for (var i=0; i < ports.length; i++) {
+                delete ports[i]._id;
+            }
+        }
 
-    function addFacilityIndexesToFeatures(featureCollection) {
-        _.forEach(featureCollection.features, function(f, index) {
-            f.properties._index = index;
-        });
-        return featureCollection;
-    }
+        function assignPortIds(facility) {
+            for (var i = 0; i < facility.ports.length; i++) {
+                facility.ports[i]._id = Sequence.nextval();
+            }
+            return facility;
+        }
+        function addFacilityIndexes(facilities) {
+            _.forEach(facilities, function(f, index) {
+                f._index = index;
+            });
+            return facilities;
+        }
 
-    m.factory('FacilityResource', function($http, $q) {
+        function addFacilityIndexesToFeatures(featureCollection) {
+            _.forEach(featureCollection.features, function(f, index) {
+                f.properties._index = index;
+            });
+            return featureCollection;
+        }
+
         var api = {};
 
         api.newFacility = function() {
             return {
                 aliases: [],
-                capacities: {}
+                capacities: {},
+                ports: []
+            };
+        };
+
+        api.newPort = function(location) {
+            return {
+                location: location,
+                entry: true,
+                exit: true,
+                pedestrian: false
             };
         };
 
@@ -43,12 +68,13 @@
 
         api.getFacility = function(id) {
             return $http.get("/api/facilities/" + id).then(function(response){
-                return response.data;
+                return assignPortIds(response.data);
             });
         };
 
         api.save = function(facility) {
             cleanupCapacities(facility.capacities);
+            cleanupPorts(facility.ports);
             if (facility.id) {
                 return $http.put("/api/facilities/" + facility.id, facility).then(function(response){
                     return response.data.id;

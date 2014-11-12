@@ -1,6 +1,6 @@
 FROM dockerfile/java:oracle-java8
 MAINTAINER HSLdevcom/parkandrideAPI "https://github.com/HSLdevcom/parkandrideAPI"
-ENV REFRESHED_AT 2014-10-11
+ENV REFRESHED_AT 2014-11-12
 
 # Docker-in-Docker
 RUN apt-get update -qq
@@ -53,6 +53,7 @@ RUN chmod u+s `which Xvfb`
 ADD hsl-liipi.pem /var/go/
 RUN mkdir -p /var/go/.m2
 ADD m2.settings /var/go/.m2/settings.xml
+ADD npmrc /var/go/.npmrc
 
 RUN chown -R go:go /var/go
 ENV HOME /var/go

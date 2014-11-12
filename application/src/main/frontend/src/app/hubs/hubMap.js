@@ -67,6 +67,7 @@
                     return false;
                 });
 
+                // https://github.com/openlayers/ol3/pull/2936
                 var selectFeatures = new ol.interaction.Select({
                     toggleCondition: function() { return true; },
                     style: MapService.selectedFacilityStyle,

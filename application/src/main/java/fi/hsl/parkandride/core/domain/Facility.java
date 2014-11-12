@@ -1,9 +1,6 @@
 package fi.hsl.parkandride.core.domain;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -28,6 +25,8 @@ public class Facility {
     @Valid
     public Map<CapacityType, Capacity> capacities = new HashMap<>();
 
+    @Valid
+    public List<Port> ports = new ArrayList<>();
 
     public Long getId() {
         return id;
@@ -47,6 +46,10 @@ public class Facility {
 
     public Map<CapacityType, Capacity> getCapacities() {
         return capacities;
+    }
+
+    public List<Port> getPorts() {
+        return ports;
     }
 
 }

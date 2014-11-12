@@ -4,16 +4,19 @@
         'parkandride.FacilityResource'
     ]);
 
-    function setPoint(point, layer) {
-        point.transform('EPSG:4326', 'EPSG:3857');
-        var feature = new ol.Feature({});
-        feature.setGeometry(point);
-        var source = layer.getSource();
-        source.clear();
-        source.addFeature(feature);
-    }
+    m.factory("HubMapCommon", function(MapService) {
+        return {
+            setPoint: function (point, layer) {
+                point.transform(MapService.targetCRS, MapService.mapCRS);
+                var feature = new ol.Feature(point);
+                var source = layer.getSource();
+                source.clear();
+                source.addFeature(feature);
+            }
+        };
+    });
 
-    m.directive('editHubMap', function(MapService, FacilityResource) {
+    m.directive('editHubMap', function(MapService, HubMapCommon, FacilityResource) {
         return {
             restrict: 'E',
             require: 'ngModel',
@@ -25,6 +28,9 @@
             template: '<div class="map hub-map edit-hub-map"></div>',
             transclude: false,
             link: function(scope, element, attrs, ctrl) {
+                var mapCRS = MapService.mapCRS;
+                var targetCRS = MapService.targetCRS;
+
                 var facilitiesLayer = new ol.layer.Vector({
                     source: new ol.source.Vector(),
                     style: MapService.facilityStyle
@@ -35,12 +41,16 @@
                     style: MapService.hubStyle
                 });
 
-                var map = MapService.createMap(element, { layers: [ facilitiesLayer, hubLayer ], readOnly: false, noTiles: attrs.noTiles === "true" });
+                var map = MapService.createMap(element, {
+                    layers: [ facilitiesLayer, hubLayer ],
+                    readOnly: false,
+                    noTiles: attrs.noTiles === "true" });
+
                 var view = map.getView();
 
                 if (scope.hub.location) {
                     var point = new ol.format.GeoJSON().readGeometry(scope.hub.location);
-                    setPoint(point, hubLayer);
+                    HubMapCommon.setPoint(point, hubLayer);
                     view.setCenter(point.getCoordinates());
                     view.setZoom(14);
                 } else {
@@ -48,12 +58,12 @@
                 }
 
                 map.on('dblclick', function(event) {
-                    var point = new ol.geom.Point(event.coordinate).transform('EPSG:3857', 'EPSG:4326');
+                    var point = new ol.geom.Point(event.coordinate).transform(mapCRS, targetCRS);
                     scope.hub.location = new ol.format.GeoJSON().writeGeometry(point);
                     ctrl.$setValidity("required", true);
                     ctrl.$setTouched();
                     scope.$apply();
-                    setPoint(point, hubLayer);
+                    HubMapCommon.setPoint(point, hubLayer);
                     return false;
                 });
 
@@ -64,6 +74,7 @@
                     layers: [ facilitiesLayer ]
                 });
                 map.addInteraction(selectFeatures);
+                var selectedFeatures = selectFeatures.getFeatures();
 
                 function addFeatureAsFacility(feature) {
                     var facility = feature.getProperties();
@@ -72,14 +83,35 @@
                     scope.facilities.splice(indx, 0, facility);
                 }
 
-                var selectedFeatures = selectFeatures.getFeatures();
+                function removeFacility(facilityId) {
+                    var index = _.findIndex(scope.facilities, function(facility) { return facility.id === facilityId; });
+                    if (index >= 0) {
+                        scope.facilities.splice(index, 1);
+                    }
+                }
+
+                function addFeatureListener(collectionEvent) {
+                    var feature = collectionEvent.element;
+                    scope.hub.facilityIds.push(feature.getId());
+                    addFeatureAsFacility(feature);
+                    scope.$apply();
+                    return true;
+                }
+
+                function removeFeatureListener(collectionEvent) {
+                    var facilityId = collectionEvent.element.getId();
+                    scope.hub.facilityIds = _.without(scope.hub.facilityIds, facilityId);
+                    removeFacility(facilityId);
+                    scope.$apply();
+                    return true;
+                }
 
                 FacilityResource.findFacilitiesAsFeatureCollection().then(function(geojson) {
                     var features = new ol.format.GeoJSON().readFeatures(geojson);
                     var extent = hubLayer.getSource().getExtent();
 
                     _.forEach(features, function (feature) {
-                        feature.getGeometry().transform('EPSG:4326', 'EPSG:3857');
+                        feature.getGeometry().transform(targetCRS, mapCRS);
                         facilitiesLayer.getSource().addFeature(feature);
                         if (_.contains(scope.hub.facilityIds, feature.getId())) {
                             selectedFeatures.push(feature);
@@ -90,29 +122,14 @@
                     if (!_.isEmpty(scope.hub.facilityIds)) {
                         view.fitExtent(extent, map.getSize());
                     }
-                    selectedFeatures.on("add", function (collectionEvent) {
-                        var feature = collectionEvent.element;
-                        scope.hub.facilityIds.push(feature.getId());
-                        addFeatureAsFacility(feature);
-                        scope.$apply();
-                        return true;
-                    });
-                    selectedFeatures.on("remove", function (collectionEvent) {
-                        var facilityId = collectionEvent.element.getId();
-                        scope.hub.facilityIds = _.without(scope.hub.facilityIds, facilityId);
-                        var index = _.findIndex(scope.facilities, function(facility) { return facility.id === facilityId; });
-                        if (index >= 0) {
-                            scope.facilities.splice(index, 1);
-                        }
-                        scope.$apply();
-                        return true;
-                    });
+                    selectedFeatures.on("add", addFeatureListener);
+                    selectedFeatures.on("remove", removeFeatureListener);
                 });
             }
         };
     });
 
-    m.directive('viewHubMap', function(MapService, FacilityResource) {
+    m.directive('viewHubMap', function(MapService, HubMapCommon, FacilityResource) {
         return {
             restrict: 'E',
             require: 'ngModel',
@@ -124,6 +141,9 @@
             template: '<div class="map hub-map"></div>',
             transclude: false,
             link: function(scope, element, attrs, ctrl) {
+                var mapCRS = MapService.mapCRS;
+                var targetCRS = MapService.targetCRS;
+
                 var facilitiesLayer = new ol.layer.Vector({
                     source: new ol.source.Vector(),
                     style: MapService.selectedFacilityStyle
@@ -139,7 +159,7 @@
                 var view = map.getView();
 
                 var point = new ol.format.GeoJSON().readGeometry(scope.hub.location);
-                setPoint(point, hubLayer);
+                HubMapCommon.setPoint(point, hubLayer);
                 view.setCenter(point.getCoordinates());
                 view.setZoom(14);
 
@@ -147,7 +167,7 @@
                     FacilityResource.findFacilitiesAsFeatureCollection({ ids: scope.hub.facilityIds }).then(function(geojson) {
                         var features = new ol.format.GeoJSON().readFeatures(geojson);
                         _.forEach(features, function (feature) {
-                            feature.getGeometry().transform('EPSG:4326', 'EPSG:3857');
+                            feature.getGeometry().transform(targetCRS, mapCRS);
                             facilitiesLayer.getSource().addFeature(feature);
                         });
                         var extent = ol.extent.extend(hubLayer.getSource().getExtent(), facilitiesLayer.getSource().getExtent());

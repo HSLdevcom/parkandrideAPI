@@ -15,7 +15,7 @@
         'parkandride.dev'
     ]);
 
-    m.constant('FEATURES_URL', 'assets/features.json');
+    m.constant('FEATURES_URL', 'api/features');
 
     m.value("schema", { capacityTypes:[] });
 

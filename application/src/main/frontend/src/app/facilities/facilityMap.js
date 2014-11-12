@@ -227,6 +227,15 @@
                             return false;
                         }
                     });
+                    // FIXME: Moving ports around by dragging won't work until
+                    // https://github.com/openlayers/ol3/issues/2940 is fixed
+//                    var selectInteraction = new ol.interaction.Select({
+//                        layers: [ portsLayer ]
+//                    });
+//                    map.addInteraction(selectInteraction);
+//                    map.addInteraction(new ol.interaction.Modify({
+//                        features: selectInteraction.getFeatures()
+//                    }));
                 }
 
                 if (facility.location) {

@@ -22,6 +22,10 @@ module.exports = function (spec) {
         return spec.capacityTypes.filter(function(e) { return e.isDisplayed(); }).getText();
     };
 
+    that.getSize = function() {
+        return that.getTypes().count();
+    };
+
     that.getBuilt = function(type) {
         return spec.getTypeProperty(type, 'built');
     };

@@ -11,7 +11,9 @@ describe('hub list', function () {
     var indexPage = po.indexPage({});
     var hubListPage = po.hubListPage({});
     var hubEditPage = po.hubEditPage({});
+    var hubViewPage = po.hubViewPage({});
     var facilityEditPage = po.facilityEditPage({});
+    var facilityViewPage = po.facilityViewPage({});
 
     var hubFactory = fixtures.hubFactory;
     var facilityFactory = fixtures.facilityFactory;
@@ -22,7 +24,11 @@ describe('hub list', function () {
     });
 
     describe('navigation', function () {
+        var f = fixtures.facilitiesFixture.dummies.facFull;
+        var h = fixtures.hubsFixture.westend;
+
         beforeEach(function () {
+            devApi.resetAll([f], [h]);
             hubListPage.get();
         });
 
@@ -34,6 +40,16 @@ describe('hub list', function () {
         it('to create hub', function () {
             hubListPage.toHubCreateView();
             expect(hubEditPage.isDisplayed()).toBe(true);
+        });
+
+        it('to facility view', function () {
+            hubListPage.clickFacilityName(f.id);
+            expect(facilityViewPage.isDisplayed()).toBe(true);
+        });
+
+        it('to hub view', function () {
+            hubListPage.clickHubName(h.id);
+            expect(hubViewPage.isDisplayed()).toBe(true);
         });
     });
 

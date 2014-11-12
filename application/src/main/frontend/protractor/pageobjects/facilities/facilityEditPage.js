@@ -43,13 +43,17 @@ module.exports = function(spec) {
         tagsElement.sendKeys(protractor.Key.ENTER);
     };
 
-    that.setCapacities = function (capacities) {
+    that.setCapacities = function (capacities, doBlur) {
         for (var capacityType in capacities) {
             var capacity = capacities[capacityType];
             for (var prop in capacity) {
                 $("input[name='" + capacityType + prop + "']").sendKeys(capacity[prop]);
             }
         }
+
+        if (doBlur) {
+            spec.nameFi.click();
+        } 
     };
 
     that.getCapacityTypes = function() {

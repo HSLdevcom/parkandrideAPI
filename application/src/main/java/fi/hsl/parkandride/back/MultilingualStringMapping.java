@@ -1,6 +1,7 @@
 package fi.hsl.parkandride.back;
 
 import com.mysema.query.Tuple;
+import com.mysema.query.dml.StoreClause;
 import com.mysema.query.types.MappingProjection;
 import com.mysema.query.types.path.StringPath;
 
@@ -30,4 +31,13 @@ public class MultilingualStringMapping extends MappingProjection<MultilingualStr
         return null;
     }
 
+    protected void populate(MultilingualString string, StoreClause<?> store) {
+        if (string != null) {
+            store.set(fiPath, string.fi)
+                    .set(svPath, string.sv)
+                    .set(enPath, string.en);
+        } else {
+            store.setNull(fiPath).setNull(svPath).setNull(enPath);
+        }
+    }
 }

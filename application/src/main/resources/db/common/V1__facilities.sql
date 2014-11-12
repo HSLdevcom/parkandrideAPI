@@ -59,10 +59,19 @@ create table port (
   pedestrian boolean not null,
   location geometry not null,
 
-  street_address varchar(255),
+  street_address_fi varchar(255),
+  street_address_sv varchar(255),
+  street_address_en varchar(255),
+
   postal_code varchar(5),
-  city varchar(255),
-  info varchar(255),
+
+  city_fi varchar(255),
+  city_sv varchar(255),
+  city_en varchar(255),
+
+  info_fi varchar(255),
+  info_sv varchar(255),
+  info_en varchar(255),
 
   primary key (facility_id, port_index),
 

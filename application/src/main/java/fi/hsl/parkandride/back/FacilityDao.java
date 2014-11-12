@@ -61,7 +61,17 @@ public class FacilityDao implements FacilityRepository {
         }
     };
 
+    private static final MultilingualStringMapping portStreetAddressMapping =
+            new MultilingualStringMapping(qPort.streetAddressFi, qPort.streetAddressSv, qPort.streetAddressEn);
+
+    private static final MultilingualStringMapping portCityMapping =
+            new MultilingualStringMapping(qPort.cityFi, qPort.citySv, qPort.cityEn);
+
+    private static final MultilingualStringMapping portInfoMapping =
+            new MultilingualStringMapping(qPort.infoFi, qPort.infoSv, qPort.infoEn);
+
     private static final MappingProjection<Port> portMapping = new MappingProjection<Port>(Port.class, qPort.all()) {
+
         @Override
         protected Port map(Tuple row) {
             Boolean entry = row.get(qPort.entry);
@@ -72,10 +82,10 @@ public class FacilityDao implements FacilityRepository {
             boolean exit = row.get(qPort.exit);
             boolean pedestrian = row.get(qPort.pedestrian);
             Port port =new Port(location, entry, exit, pedestrian);
-            port.streetAddress = row.get(qPort.streetAddress);
+            port.streetAddress = portStreetAddressMapping.map(row);
             port.postalCode = row.get(qPort.postalCode);
-            port.city = row.get(qPort.city);
-            port.info = row.get(qPort.info);
+            port.city = portCityMapping.map(row);
+            port.info = portInfoMapping.map(row);
             return port;
         }
     };
@@ -367,10 +377,10 @@ public class FacilityDao implements FacilityRepository {
                 .set(qPort.entry, port.entry)
                 .set(qPort.exit, port.exit)
                 .set(qPort.pedestrian, port.pedestrian)
-                .set(qPort.streetAddress, port.streetAddress)
-                .set(qPort.postalCode, port.postalCode)
-                .set(qPort.city, port.city)
-                .set(qPort.info, port.info);
+                .set(qPort.postalCode, port.postalCode);
+        portStreetAddressMapping.populate(port.streetAddress, update);
+        portCityMapping.populate(port.city, update);
+        portInfoMapping.populate(port.info, update);
     }
 
     private void deletePorts(long facilityId, int fromIndex) {

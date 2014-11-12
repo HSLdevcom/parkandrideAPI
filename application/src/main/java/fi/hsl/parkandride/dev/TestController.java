@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import com.mysema.query.sql.RelationalPath;
 import com.mysema.query.sql.postgres.PostgresQueryFactory;
 
+import fi.hsl.parkandride.back.sql.*;
 import fi.hsl.parkandride.core.domain.Facility;
 import fi.hsl.parkandride.core.domain.Hub;
 import fi.hsl.parkandride.core.back.FacilityRepository;
@@ -33,11 +34,6 @@ import fi.hsl.parkandride.core.service.HubService;
 import fi.hsl.parkandride.core.service.TransactionalWrite;
 import fi.hsl.parkandride.back.FacilityDao;
 import fi.hsl.parkandride.back.HubDao;
-import fi.hsl.parkandride.back.sql.QCapacity;
-import fi.hsl.parkandride.back.sql.QFacility;
-import fi.hsl.parkandride.back.sql.QFacilityAlias;
-import fi.hsl.parkandride.back.sql.QHub;
-import fi.hsl.parkandride.back.sql.QHubFacility;
 
 @Controller
 @Profile("e2e")
@@ -62,7 +58,7 @@ public class TestController {
     @RequestMapping(method = DELETE, value = TEST_FACILITIES)
     @TransactionalWrite
     public ResponseEntity<Void> deleteFacilities() {
-        clear(QFacilityAlias.facilityAlias, QCapacity.capacity, QFacility.facility);
+        clear(QPort.port, QFacilityAlias.facilityAlias, QCapacity.capacity, QFacility.facility);
         resetSequence(FACILITY_ID_SEQ);
         return new ResponseEntity<Void>(OK);
     }

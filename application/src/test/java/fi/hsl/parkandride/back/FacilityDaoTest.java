@@ -64,7 +64,7 @@ public class FacilityDaoTest {
 
     public static final SortedSet<String> ALIASES = ImmutableSortedSet.of("alias", "blias");
 
-    public static final List<Port> PORTS = ImmutableList.of(new Port(PORT_LOCATION1, true, false, true));
+    public static final List<Port> PORTS = ImmutableList.of(new Port(PORT_LOCATION1, true, false, true, "street", "00100", "city", "info"));
 
     public static final Map<CapacityType, Capacity> CAPACITIES = ImmutableMap.of(CAR, new Capacity(100, 1), BICYCLE, new Capacity(10, 0));
 

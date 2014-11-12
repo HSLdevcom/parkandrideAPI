@@ -71,7 +71,12 @@ public class FacilityDao implements FacilityRepository {
             Geometry location = row.get(qPort.location);
             boolean exit = row.get(qPort.exit);
             boolean pedestrian = row.get(qPort.pedestrian);
-            return new Port(location, entry, exit, pedestrian);
+            Port port =new Port(location, entry, exit, pedestrian);
+            port.streetAddress = row.get(qPort.streetAddress);
+            port.postalCode = row.get(qPort.postalCode);
+            port.city = row.get(qPort.city);
+            port.info = row.get(qPort.info);
+            return port;
         }
     };
 
@@ -336,7 +341,7 @@ public class FacilityDao implements FacilityRepository {
 
     private void insertPorts(long facilityId, List<Port> ports) {
         if (ports != null && !ports.isEmpty()) {
-            Map<Integer, Port> addedPorts = new HashMap<>();
+            Map<Integer, Port> addedPorts = new HashMap<Integer, Port>();
             for (int i = 0; i < ports.size(); i++) {
                 addedPorts.put(i, ports.get(i));
             }
@@ -361,7 +366,11 @@ public class FacilityDao implements FacilityRepository {
                 .set(qPort.location, port.location)
                 .set(qPort.entry, port.entry)
                 .set(qPort.exit, port.exit)
-                .set(qPort.pedestrian, port.pedestrian);
+                .set(qPort.pedestrian, port.pedestrian)
+                .set(qPort.streetAddress, port.streetAddress)
+                .set(qPort.postalCode, port.postalCode)
+                .set(qPort.city, port.city)
+                .set(qPort.info, port.info);
     }
 
     private void deletePorts(long facilityId, int fromIndex) {

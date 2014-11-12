@@ -36,7 +36,7 @@ function restart_container() {
   ssh -i $IDENTITY_FILE -oStrictHostKeyChecking=no $AWS_TEST "docker stop $CONTAINER_NAME"
   ssh -i $IDENTITY_FILE $AWS_TEST "docker rm $CONTAINER_NAME"
   ssh -i $IDENTITY_FILE $AWS_TEST "docker pull $REGISTRY_IMAGE"
-  ssh -i $IDENTITY_FILE $AWS_TEST "docker run -e SPRING_PROFILES_ACTIVE=e2e -d -p $TARGET_ENV_PORT:8080 --name $CONTAINER_NAME $REGISTRY_IMAGE"
+  ssh -i $IDENTITY_FILE $AWS_TEST "docker run -e SPRING_PROFILES_ACTIVE=dev -d -p $TARGET_ENV_PORT:8080 --name $CONTAINER_NAME $REGISTRY_IMAGE"
 }
 
 build_image

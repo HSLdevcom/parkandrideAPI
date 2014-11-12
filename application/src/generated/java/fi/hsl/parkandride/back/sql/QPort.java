@@ -27,17 +27,25 @@ public class QPort extends RelationalPathSpatial<QPort> {
 
     public static final QPort port = new QPort("PORT");
 
+    public final StringPath city = createString("city");
+
     public final BooleanPath entry = createBoolean("entry");
 
     public final BooleanPath exit = createBoolean("exit");
 
     public final NumberPath<Long> facilityId = createNumber("facilityId", Long.class);
 
+    public final StringPath info = createString("info");
+
     public final GeometryPath<org.geolatte.geom.Geometry> location = createGeometry("location", org.geolatte.geom.Geometry.class);
 
     public final BooleanPath pedestrian = createBoolean("pedestrian");
 
     public final NumberPath<Integer> portIndex = createNumber("portIndex", Integer.class);
+
+    public final StringPath postalCode = createString("postalCode");
+
+    public final StringPath streetAddress = createString("streetAddress");
 
     public final com.mysema.query.sql.PrimaryKey<QPort> constraint25 = createPrimaryKey(facilityId, portIndex);
 
@@ -64,12 +72,16 @@ public class QPort extends RelationalPathSpatial<QPort> {
     }
 
     public void addMetadata() {
+        addMetadata(city, ColumnMetadata.named("CITY").withIndex(9).ofType(Types.VARCHAR).withSize(255));
         addMetadata(entry, ColumnMetadata.named("ENTRY").withIndex(3).ofType(Types.BOOLEAN).withSize(1).notNull());
         addMetadata(exit, ColumnMetadata.named("EXIT").withIndex(4).ofType(Types.BOOLEAN).withSize(1).notNull());
         addMetadata(facilityId, ColumnMetadata.named("FACILITY_ID").withIndex(1).ofType(Types.BIGINT).withSize(19).notNull());
+        addMetadata(info, ColumnMetadata.named("INFO").withIndex(10).ofType(Types.VARCHAR).withSize(255));
         addMetadata(location, ColumnMetadata.named("LOCATION").withIndex(6).ofType(Types.OTHER).withSize(2147483647).notNull());
         addMetadata(pedestrian, ColumnMetadata.named("PEDESTRIAN").withIndex(5).ofType(Types.BOOLEAN).withSize(1).notNull());
         addMetadata(portIndex, ColumnMetadata.named("PORT_INDEX").withIndex(2).ofType(Types.INTEGER).withSize(10).notNull());
+        addMetadata(postalCode, ColumnMetadata.named("POSTAL_CODE").withIndex(8).ofType(Types.VARCHAR).withSize(5));
+        addMetadata(streetAddress, ColumnMetadata.named("STREET_ADDRESS").withIndex(7).ofType(Types.VARCHAR).withSize(255));
     }
 
 }

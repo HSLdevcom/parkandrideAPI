@@ -59,6 +59,11 @@ create table port (
   pedestrian boolean not null,
   location geometry not null,
 
+  street_address varchar(255),
+  postal_code varchar(5),
+  city varchar(255),
+  info varchar(255),
+
   primary key (facility_id, port_index),
 
   constraint port_facility_id_fk foreign key (facility_id)

@@ -28,7 +28,29 @@
         },
         "ports": {
             "create": "Lisää uusi käyntiosoite",
-            "edit": "Muokkaa käyntiosoitetta"
+            "edit": "Muokkaa käyntiosoitetta",
+            "label": "Käyntiosoitteet",
+            "entry": {
+                "label": "Sisäänkäynti"
+            },
+            "exit": {
+                "label": "Uloskäynti"
+            },
+            "pedestrian": {
+                "label": "Jalankulku"
+            },
+            "streetAddress": {
+                "label": "Katuosoite"
+            },
+            "postalCode":  {
+                "label": "Postinumero"
+            },
+            "city":  {
+                "label": "Kaupunki"
+            },
+            "info":  {
+                "label": "Lisätietoa"
+            }
         },
         "capacity": {
             "heading": "Kapasiteetti",
@@ -152,6 +174,7 @@
         "Min": "pitää olla vähintään {{value}}",
         "NotBlank": "ei saa olla tyhjä",
         "Length": "saa olla korkeintaan {{max}} merkkiä pitkä",
-        "ElementLength": "saa olla korkeintaan {{max}} merkkiä pitkä"
+        "ElementLength": "saa olla korkeintaan {{max}} merkkiä pitkä",
+        "Pattern": "väärän muotoinen"
     }
 }

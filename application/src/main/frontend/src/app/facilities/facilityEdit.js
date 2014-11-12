@@ -60,7 +60,7 @@
         facility.aliases = _.map(facility.aliases, function(a) { return { text: a }; });
 
         self.facility = facility;
-        self.editMode = "location";
+        self.editMode = (facility.id ? "ports" : "location");
 
         self.saveFacility = function() {
             var facility = _.cloneDeep(self.facility);

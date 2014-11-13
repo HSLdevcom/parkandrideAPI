@@ -7,8 +7,7 @@ function init() {
   : ${TARGET_ENV:?}
   : ${TARGET_ENV_PORT:?}
 
-  local repo_checkout="$SCRIPT_DIR/../../../.."
-  ROOT_DIR="$repo_checkout/.."
+  ROOT_DIR="$SCRIPT_DIR/../../../.."
 
   VERSION=`cat $ROOT_DIR/version`
   AWS_TEST=ubuntu@54.171.6.108
@@ -18,7 +17,7 @@ function init() {
   LOCAL_IMAGE="parkandrideapi/server:$TARGET_ENV"
   REGISTRY_IMAGE="$DOCKER_REGISTRY/$LOCAL_IMAGE"
   CONTAINER_NAME="parkandrideapi-server-$TARGET_ENV"
-  DOCKERFILE_DIR="$repo_checkout/etc/docker/app"
+  DOCKERFILE_DIR="$ROOT_DIR/etc/docker/app"
   APP_LATEST="parkandride-application-latest.jar"
   APP_NEW="parkandride-application-$VERSION.jar"
 }

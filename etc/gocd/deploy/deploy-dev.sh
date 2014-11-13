@@ -10,7 +10,8 @@ set -x
 WORKDIR=`pwd`
 
 VERSION=`cat version`
-AWS_TEST=ubuntu@54.171.6.108
+AWS_TEST=ubuntu@54.76.115.155
+
 IDENTITY_FILE=/var/go/hsl-liipi.pem
 
 DOCKER_REGISTRY="172.31.0.27:5000"

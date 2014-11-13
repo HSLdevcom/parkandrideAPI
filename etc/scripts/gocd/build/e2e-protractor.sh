@@ -8,6 +8,8 @@ function init() {
 
   local protractor_dir="$ROOT_DIR/etc/protractor"
   cd $protractor_dir
+
+  npm install
 }
 
 function run() {

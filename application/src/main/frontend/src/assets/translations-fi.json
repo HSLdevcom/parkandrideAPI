@@ -11,16 +11,16 @@
         "name" : {
             "title": "Nimitiedot",
             "placeholder": "Pysäköintipaikka",
+            "label": "Nimi",
             "fi": {
-                "label": "Nimi",
-                "inputLabel": "fi"
+                "label": "Nimi (fi)"
             },
-          "sv": {
-            "inputLabel": "sv"
-          },
-          "en": {
-            "inputLabel": "en"
-          }
+            "sv": {
+                "label": "Nimi (sv)"
+            },
+            "en": {
+                "label": "Nimi (en)"
+            }
         },
         "aliases": {
             "label": "Aliakset",
@@ -40,16 +40,43 @@
                 "label": "Jalankulku"
             },
             "streetAddress": {
-                "label": "Katuosoite"
+                "label": "Katuosoite",
+                "fi": {
+                    "label": "Katuosoite (fi)"
+                },
+                "sv": {
+                    "label": "Katuosoite (sv)"
+                },
+                "en": {
+                    "label": "Katuosoite (en)"
+                }
             },
             "postalCode":  {
                 "label": "Postinumero"
             },
             "city":  {
-                "label": "Kaupunki"
+                "label": "Kaupunki",
+                "fi": {
+                    "label": "Kaupunki (fi)"
+                },
+                "sv": {
+                    "label": "Kaupunki (sv)"
+                },
+                "en": {
+                    "label": "Kaupunki (en)"
+                }
             },
             "info":  {
-                "label": "Lisätietoa"
+                "label": "Lisätietoa",
+                "fi": {
+                    "label": "Lisätietoa (fi)"
+                },
+                "sv": {
+                    "label": "Lisätietoa (sv)"
+                },
+                "en": {
+                    "label": "Lisätietoa (en)"
+                }
             }
         },
         "capacity": {
@@ -134,19 +161,49 @@
         "name": {
             "title": "Nimitiedot",
             "placeholder": "Alue",
+            "label": "Nimi",
             "fi": {
-                "label": "Nimi",
-              "inputLabel": "fi"
+                "label": "Nimi (fi)"
             },
-          "sv": {
-            "inputLabel": "sv"
-          },
-          "en": {
-            "inputLabel": "en"
-          }
+            "sv": {
+                "label": "Nimi (sv)"
+            },
+            "en": {
+                "label": "Nimi (en)"
+            }
         },
         "location": {
             "label": "Sijainti"
+        },
+        "address": {
+            "label": "Osoite"
+        },
+        "streetAddress": {
+            "label": "Katuosoite",
+            "fi": {
+                "label": "Katuosoite (fi)"
+            },
+            "sv": {
+                "label": "Katuosoite (sv)"
+            },
+            "en": {
+                "label": "Katuosoite (en)"
+            }
+        },
+        "postalCode":  {
+            "label": "Postinumero"
+        },
+        "city":  {
+            "label": "Kaupunki",
+            "fi": {
+                "label": "Kaupunki (fi)"
+            },
+            "sv": {
+                "label": "Kaupunki (sv)"
+            },
+            "en": {
+                "label": "Kaupunki (en)"
+            }
         },
         "associatedFacilities": "Alueen pysäköintipaikat",
         "noAssociatedFacilities": "Alueeseen ei ole lisätty pysäköintipaikkoja",
@@ -159,6 +216,11 @@
             "edit": "Muokkaa",
             "save": "Tallenna muutokset",
             "logout": "Kirjaudu ulos"
+        },
+        "lang": {
+            "fi": "fi",
+            "sv": "sv",
+            "en": "en"
         }
     },
     "error": {

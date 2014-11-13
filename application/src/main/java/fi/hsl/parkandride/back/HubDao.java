@@ -52,8 +52,9 @@ public class HubDao implements HubRepository {
     private static final MultilingualStringMapping cityMapping =
             new MultilingualStringMapping(qHub.cityFi, qHub.citySv, qHub.cityEn);
 
-    private static final MappingProjection<Hub> hubMapping = new MappingProjection<Hub>(Hub.class, qHub.id, qHub.location, qHub.nameFi, qHub.nameSv,
-            qHub.nameEn, facilityIdsMapping) {
+
+
+    private static final MappingProjection<Hub> hubMapping = new MappingProjection<Hub>(Hub.class, qHub.all(), new Expression<?>[] { facilityIdsMapping }) {
 
         @Override
         protected Hub map(Tuple row) {
@@ -97,26 +98,6 @@ public class HubDao implements HubRepository {
         return hubId;
     }
 
-    private void populate(Hub hub, StoreClause store) {
-        store.set(qHub.location, hub.location);
-
-        nameMapping.populate(hub.name, store);
-        streetAddressMapping.populate(hub.streetAddress, store);
-        cityMapping.populate(hub.city, store);
-    }
-
-    private void insertHubFacilities(long hubId, Set<Long> facilityIds) {
-        if (facilityIds != null && !facilityIds.isEmpty()) {
-            SQLInsertClause insertBatch = queryFactory.insert(qHubFacility);
-            for (Long facilityId : facilityIds) {
-                insertBatch.set(qHubFacility.hubId, hubId);
-                insertBatch.set(qHubFacility.facilityId, facilityId);
-                insertBatch.addBatch();
-            }
-            insertBatch.execute();
-        }
-    }
-
     @Override
     @TransactionalWrite
     public void updateHub(long hubId, Hub hub) {
@@ -153,6 +134,27 @@ public class HubDao implements HubRepository {
             where.and(qHub.location.intersects(search.intersecting));
         }
         return SearchResults.of(findAll(where, search.sort));
+    }
+
+    private void populate(Hub hub, StoreClause store) {
+        store.set(qHub.location, hub.location)
+            .set(qHub.postalCode, hub.postalCode);
+
+        nameMapping.populate(hub.name, store);
+        streetAddressMapping.populate(hub.streetAddress, store);
+        cityMapping.populate(hub.city, store);
+    }
+
+    private void insertHubFacilities(long hubId, Set<Long> facilityIds) {
+        if (facilityIds != null && !facilityIds.isEmpty()) {
+            SQLInsertClause insertBatch = queryFactory.insert(qHubFacility);
+            for (Long facilityId : facilityIds) {
+                insertBatch.set(qHubFacility.hubId, hubId);
+                insertBatch.set(qHubFacility.facilityId, facilityId);
+                insertBatch.addBatch();
+            }
+            insertBatch.execute();
+        }
     }
 
     private List<Hub> findAll(BooleanBuilder where, Sort sort) {

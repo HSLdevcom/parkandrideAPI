@@ -5,7 +5,8 @@
         'parkandride.facilitiesTable',
         'parkandride.capacities',
         'parkandride.FacilityResource',
-        'parkandride.HubResource'
+        'parkandride.HubResource',
+        'parkandride.multilingual'
     ]);
 
     m.config(function config($stateProvider) {

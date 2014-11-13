@@ -1,8 +1,11 @@
 #!/bin/bash
 
+function init() {
+  ROOT_DIR=$SCRIPT_DIR/../../..
+}
+
 function run() {
-  # assume workdir is repo root
-  local frontend_dir="application/src/main/frontend"
+  local frontend_dir="$ROOT_DIR/application/src/main/frontend"
   rm -rf $frontend_dir/bin
   rm -rf $frontend_dir/build
   rm -rf $frontend_dir/vendor

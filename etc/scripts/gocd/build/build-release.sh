@@ -4,6 +4,9 @@ function init() {
   set -eu
   : ${GO_PIPELINE_COUNTER:?}
   : ${PWD:?}
+
+  ROOT_DIR="$SCRIPT_DIR/../../../.."
+  cd $ROOT_DIR
 }
 
 function version() {

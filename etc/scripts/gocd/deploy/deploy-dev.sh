@@ -7,7 +7,10 @@ function init() {
   : ${TARGET_ENV:?}
   : ${TARGET_ENV_PORT:?}
 
-  VERSION=`cat version`
+  local repo_checkout="$SCRIPT_DIR/../../../.."
+  ROOT_DIR="$repo_checkout/.."
+
+  VERSION=`cat $ROOT_DIR/version`
   AWS_TEST=ubuntu@54.171.6.108
   IDENTITY_FILE=/var/go/hsl-liipi.pem
 
@@ -15,7 +18,7 @@ function init() {
   LOCAL_IMAGE="parkandrideapi/server:$TARGET_ENV"
   REGISTRY_IMAGE="$DOCKER_REGISTRY/$LOCAL_IMAGE"
   CONTAINER_NAME="parkandrideapi-server-$TARGET_ENV"
-  DOCKERFILE_DIR="etc/docker/app"
+  DOCKERFILE_DIR="$repo_checkout/etc/docker/app"
   APP_LATEST="parkandride-application-latest.jar"
   APP_NEW="parkandride-application-$VERSION.jar"
 }
@@ -23,7 +26,7 @@ function init() {
 function build_image() {
   local workdir=`pwd`
 
-  cp staging/fi/hsl/parkandride/parkandride-application/$VERSION/$APP_NEW $DOCKERFILE_DIR/$APP_LATEST
+  cp $ROOT_DIR/staging/fi/hsl/parkandride/parkandride-application/$VERSION/$APP_NEW $DOCKERFILE_DIR/$APP_LATEST
   cd $DOCKERFILE_DIR
   docker build -t $LOCAL_IMAGE .
 

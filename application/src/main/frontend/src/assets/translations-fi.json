@@ -214,8 +214,10 @@
             "back": "Takaisin listaukseen",
             "cancel": "Peruuta",
             "edit": "Muokkaa",
-            "save": "Tallenna muutokset",
-            "logout": "Kirjaudu ulos"
+            "logout": "Kirjaudu ulos",
+            "ok": "Hyväksy",
+            "remove": "Poista",
+            "save": "Tallenna muutokset"
         },
         "lang": {
             "fi": "fi",

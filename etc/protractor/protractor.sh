@@ -13,11 +13,10 @@ fullpath() {
 }
 
 SCRIPT_DIR="`fullpath \`dirname $0\``"
-PATH="$SCRIPT_DIR/../node:$PATH"
-JARFile=${APP_JAR:-"$SCRIPT_DIR/../../../../target/parkandride-application-0.0.1-SNAPSHOT.jar"}
+JARFile=${APP_JAR:-"$SCRIPT_DIR/../../application/target/parkandride-application-0.0.1-SNAPSHOT.jar"}
 PIDFile="$SCRIPT_DIR/application.pid"
 LOGFile="$SCRIPT_DIR/application.log"
-NODE_MODULES="$SCRIPT_DIR/../node_modules"
+NODE_MODULES="$SCRIPT_DIR/node_modules"
 : ${SERVER_URL:=http://localhost:8080}
 
 export SERVER_URL

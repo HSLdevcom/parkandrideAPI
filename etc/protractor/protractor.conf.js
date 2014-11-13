@@ -1,14 +1,10 @@
 exports.config = {
     baseUrl: process.env.SERVER_URL,
-    chromeDriver: '../node_modules/protractor/selenium/chromedriver',
+    chromeDriver: 'node_modules/protractor/selenium/chromedriver',
     directConnect: true,
     rootElement: 'html',
     specs: [ 'specs/**/*.spec.js'],
 
-//    capabilities: {
-//      'browserName': 'phantomjs',
-//      'phantomjs.binary.path':'../node_modules/phantomjs/lib/phantom/bin/phantomjs'
-//    },
     capabilities: {
       'browserName': 'firefox'
     },
@@ -18,7 +14,8 @@ exports.config = {
         isVerbose: true,
         showColors: false,
         includeStackTrace: true,
-        defaultTimeoutInterval: 60000
+        defaultTimeoutInterval: 60000,
+        showTiming: true
     },
 
     onPrepare: function(){

@@ -38,7 +38,10 @@ RUN apt-get install -qqy imagemagick x11-apps
 
 # Install Browsers
 # The dbus-x11 package prevents some errors from occurring when using Firefox.
-RUN apt-get install -qqy dbus-x11 firefox phantomjs
+RUN apt-get install -qqy dbus-x11 firefox
+ENV PHANTOMJS_VERSION 1.9.7
+RUN wget --no-check-certificate -q -O - https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-$PHANTOMJS_VERSION-linux-x86_64.tar.bz2 | tar xjC /opt
+RUN ln -s /opt/phantomjs-$PHANTOMJS_VERSION-linux-x86_64/bin/phantomjs /usr/bin/phantomjs
 # On a headless Ubuntu box there are some items needed by PhantomJS that
 # are not present. PhantomJS will silently fail if they aren't there - which is
 # a real pain to deal with. This is the crucial item:
@@ -49,6 +52,22 @@ ENV DISPLAY :99
 ADD etc-init.d-xvfb /etc/init.d/xvfb
 RUN chmod a+x /etc/init.d/xvfb
 RUN chmod u+s `which Xvfb`
+
+# Install node, npm, grunt, bower, karma
+RUN apt-get install -qqy python python-dev python-pip python-virtualenv
+RUN \
+  cd /tmp && \
+  wget http://nodejs.org/dist/node-latest.tar.gz && \
+  tar xvzf node-latest.tar.gz && \
+  rm -f node-latest.tar.gz && \
+  cd node-v* && \
+  ./configure && \
+  CXX="g++ -Wno-unused-local-typedefs" make && \
+  CXX="g++ -Wno-unused-local-typedefs" make install && \
+  cd /tmp && \
+  rm -rf /tmp/node-v* && \
+  echo '\n# Node.js\nexport PATH="node_modules/.bin:$PATH"' >> /root/.bashrc
+RUN npm install -g bower grunt-cli karma karma-cli
 
 ADD hsl-liipi.pem /var/go/
 RUN mkdir -p /var/go/.m2

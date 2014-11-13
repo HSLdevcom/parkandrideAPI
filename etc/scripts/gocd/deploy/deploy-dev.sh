@@ -10,7 +10,7 @@ function init() {
   ROOT_DIR="$SCRIPT_DIR/../../../.."
 
   VERSION=`cat $ROOT_DIR/version`
-  AWS_TEST=ubuntu@54.171.6.108
+  AWS_TEST=ubuntu@54.76.115.155
   IDENTITY_FILE=/var/go/hsl-liipi.pem
 
   DOCKER_REGISTRY="172.31.0.27:5000"

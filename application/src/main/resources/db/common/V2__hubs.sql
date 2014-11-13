@@ -5,6 +5,16 @@ create table hub (
   name_en varchar(255) not null,
   location geometry not null,
 
+  street_address_fi varchar(255),
+  street_address_sv varchar(255),
+  street_address_en varchar(255),
+
+  postal_code varchar(5),
+
+  city_fi varchar(255),
+  city_sv varchar(255),
+  city_en varchar(255),
+
   primary key (id)
 );
 

@@ -13,19 +13,11 @@
 			</div>
 
 			<div class="row">
-				<h4>{{ "facilities.name.fi.label" | translate }}</h4>
+				<h4>{{ "facilities.name.label" | translate }}</h4>
 			</div>
 
 			<div class="row">
-				<div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 column first-column">
-					<p>{{viewCtrl.facility.name.fi}} ({{ "facilities.name.fi.inputLabel" | translate }})</p>
-				</div>
-				<div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 column first-column">
-					<p>{{viewCtrl.facility.name.sv}} ({{ "facilities.name.sv.inputLabel" | translate }})</p>
-				</div>
-				<div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 column first-column">
-					<p>{{viewCtrl.facility.name.en}} ({{ "facilities.name.en.inputLabel" | translate }})</p>
-				</div>
+				<multilingual-view value="viewCtrl.facility.name"></multilingual-view>
 			</div>
 
 			<div class="row">

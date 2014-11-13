@@ -12,17 +12,23 @@
 			<div class="row">
 				<h3 class="h3-first">{{ "hubs.name.title" | translate }}</h3>
 			</div>
+			<div class="row">
+				<multilingual-view value="viewCtrl.hub.name"></multilingual-view>
+			</div>
 
 			<div class="row">
+				<h3 class="h3-first">{{ "hubs.address.label" | translate }}</h3>
+			</div>
+			<div class="row">
+				<multilingual-view value="viewCtrl.hub.streetAddress"></multilingual-view>
+			</div>
+			<div class="row">
 				<div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 column first-column">
-					<p>{{viewCtrl.hub.name.fi}} ({{ "hubs.name.fi.inputLabel" | translate }})</p>
+					<p>{{viewCtrl.hub.postalCode}}</p>
 				</div>
-				<div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 column first-column">
-					<p>{{viewCtrl.hub.name.sv}} ({{ "hubs.name.sv.inputLabel" | translate }})</p>
-				</div>
-				<div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 column first-column">
-					<p>{{viewCtrl.hub.name.en}} ({{ "hubs.name.en.inputLabel" | translate }})</p>
-				</div>
+			</div>
+			<div class="row">
+				<multilingual-view value="viewCtrl.hub.city"></multilingual-view>
 			</div>
 
 

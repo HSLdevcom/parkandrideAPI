@@ -5,9 +5,9 @@ module.exports = function(spec) {
     var clickSleepMs = 200;
 
     spec.view = $('.wdHubEditView');
-    spec.nameFi = element(by.model('editCtrl.hub.name.fi'));
-    spec.nameSv = element(by.model('editCtrl.hub.name.sv'));
-    spec.nameEn = element(by.model('editCtrl.hub.name.en'));
+    spec.nameFi = element(by.name('nameFi'));
+    spec.nameSv = element(by.name('nameSv'));
+    spec.nameEn = element(by.name('nameEn'));
     spec.map = $('.hub-map .ol-viewport');
     spec.saveButton = element.all(by.css('.wdSave')).first();
     spec.form = $('form');

@@ -16,37 +16,11 @@
 				</div>
 
 				<div class="row">
-					<label>{{ "facilities.name.fi.label" | translate }} *</label>
+					<label>{{ "facilities.name.label" | translate }} *</label>
 				</div>
 
 				<div class="row">
-					<div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 column first-column">
-						<div class="form-group">
-							<div class="input-group">
-								<input name="nameFi" id="inputNameFi" type="text" class="form-control" ng-model="editCtrl.facility.name.fi" maxlength="255"
-									   show-errors required/>
-								<span class="input-group-addon">{{ "facilities.name.fi.inputLabel" | translate }}&nbsp;</span>
-							</div>
-						</div>
-					</div>
-					<div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 column first-column">
-						<div class="form-group">
-							<div class="input-group">
-								<input name="nameSv" type="text" class="form-control" ng-model="editCtrl.facility.name.sv" maxlength="255"
-									   show-errors required/>
-								<span class="input-group-addon">{{ "facilities.name.sv.inputLabel" | translate }}</span>
-							</div>
-						</div>
-					</div>
-					<div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 column first-column">
-						<div class="form-group">
-							<div class="input-group">
-								<input name="nameEn" type="text" class="form-control" ng-model="editCtrl.facility.name.en" maxlength="255"
-									   show-errors required/>
-								<span class="input-group-addon">{{ "facilities.name.en.inputLabel" | translate }}</span>
-							</div>
-						</div>
-					</div>
+					<multilingual-edit name="name" ng-model="editCtrl.facility.name" mandatory="true"></multilingual-edit>
 				</div>
 
 				<div class="row">

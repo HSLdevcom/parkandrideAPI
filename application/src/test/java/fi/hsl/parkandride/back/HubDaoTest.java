@@ -33,6 +33,9 @@ public class HubDaoTest {
 
     public static final Point LOCATION = (Point) fromWkt("POINT(25.010563 60.251022)");
     public static final ImmutableSet<Long> FACILITY_IDS = ImmutableSet.of(1l, 2l, 3l);
+    public static final String POSTAL_CODE = "00100";
+    public static final MultilingualString STREET_ADDRESS = new MultilingualString("street");
+    public static final MultilingualString CITY = new MultilingualString("city");
 
     @Inject
     TestHelper testHelper;
@@ -56,6 +59,9 @@ public class HubDaoTest {
         // Get
         hub = hubRepository.getHub(hubId);
         assertThat(hub.name).isEqualTo(NAME);
+        assertThat(hub.streetAddress).isEqualTo(STREET_ADDRESS);
+        assertThat(hub.city).isEqualTo(CITY);
+        assertThat(hub.postalCode).isEqualTo(POSTAL_CODE);
         assertThat(hub.location).isEqualTo(LOCATION);
         assertThat(hub.facilityIds).isEqualTo(FACILITY_IDS);
 
@@ -63,7 +69,13 @@ public class HubDaoTest {
         final Set<Long> newFacilityIds = ImmutableSet.of(5l, 6l);
         final Point newLocation = (Point) fromWkt("POINT(25.016392 60.254157)");
         final MultilingualString newName = new MultilingualString("Malminkaari");
+        final MultilingualString newStreetAddress = new MultilingualString("new street");
+        final MultilingualString newCity = new MultilingualString("new city");
+        final String newPostalCode = "00200";
         hub.name = newName;
+        hub.streetAddress = newStreetAddress;
+        hub.city = newCity;
+        hub.postalCode = newPostalCode;
         hub.location = newLocation;
         hub.facilityIds = newFacilityIds;
         hubRepository.updateHub(hubId, hub);
@@ -77,6 +89,9 @@ public class HubDaoTest {
         assertThat(hubs.size()).isEqualTo(1);
         hub = hubs.get(0);
         assertThat(hub.name).isEqualTo(newName);
+        assertThat(hub.streetAddress).isEqualTo(newStreetAddress);
+        assertThat(hub.city).isEqualTo(newCity);
+        assertThat(hub.postalCode).isEqualTo(newPostalCode);
         assertThat(hub.location).isEqualTo(newLocation);
         assertThat(hub.facilityIds).isEqualTo(newFacilityIds);
 
@@ -134,6 +149,9 @@ public class HubDaoTest {
         hub.name = NAME;
         hub.location = LOCATION;
         hub.facilityIds = FACILITY_IDS;
+        hub.streetAddress = STREET_ADDRESS;
+        hub.city = CITY;
+        hub.postalCode = POSTAL_CODE;
         return hub;
     }
 

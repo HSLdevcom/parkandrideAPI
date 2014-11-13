@@ -2,6 +2,7 @@ package fi.hsl.parkandride.core.domain;
 
 import java.util.Objects;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
@@ -21,17 +22,17 @@ public class Port {
 
     public boolean pedestrian;
 
-    @Length(max=255)
-    public String streetAddress;
+    @Valid
+    public MultilingualString streetAddress;
 
     @Pattern(regexp="\\d{5}")
     public String postalCode;
 
-    @Length(max=255)
-    public String city;
+    @Valid
+    public MultilingualString city;
 
-    @Length(max=255)
-    public String info;
+    @Valid
+    public MultilingualString info;
 
     public Port() {}
 
@@ -44,10 +45,10 @@ public class Port {
         this.entry = entry;
         this.exit = exit;
         this.pedestrian = pedestrian;
-        this.streetAddress = streetAddress;
+        this.streetAddress = streetAddress != null ? new MultilingualString(streetAddress, streetAddress, streetAddress) : null;
         this.postalCode = postalCode;
-        this.city = city;
-        this.info = info;
+        this.city = city != null ? new MultilingualString(city, city, city) : null;
+        this.info = info != null ? new MultilingualString(info, info, info) : null;
     }
 
     @Override
@@ -97,19 +98,19 @@ public class Port {
         return location;
     }
 
-    public String getStreetAddress() {
-        return streetAddress;
-    }
-
     public String getPostalCode() {
         return postalCode;
     }
 
-    public String getCity() {
+    public MultilingualString getStreetAddress() {
+        return streetAddress;
+    }
+
+    public MultilingualString getCity() {
         return city;
     }
 
-    public String getInfo() {
+    public MultilingualString getInfo() {
         return info;
     }
 
@@ -119,6 +120,10 @@ public class Port {
                 .add("entry", entry)
                 .add("exit", exit)
                 .add("pedestrian", pedestrian)
+                .add("streetAddress", streetAddress)
+                .add("postalCode", postalCode)
+                .add("city", city)
+                .add("info", info)
                 .toString();
     }
 }

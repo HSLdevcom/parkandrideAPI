@@ -4,9 +4,9 @@ module.exports = function(spec) {
     var that = require('../base')(spec);
 
     spec.view = $('.wdFacilityEditView');
-    spec.nameFi = element(by.model('editCtrl.facility.name.fi'));
-    spec.nameSv = element(by.model('editCtrl.facility.name.sv'));
-    spec.nameEn = element(by.model('editCtrl.facility.name.en'));
+    spec.nameFi = element(by.name('nameFi'));
+    spec.nameSv = element(by.name('nameSv'));
+    spec.nameEn = element(by.name('nameEn'));
     spec.map = $('.facility-map .ol-viewport');
     spec.saveButton = element.all(by.css('.wdSave')).first();
     spec.aliases = $('.wdAliases .tags');

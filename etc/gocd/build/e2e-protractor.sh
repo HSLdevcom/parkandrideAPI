@@ -4,9 +4,9 @@ set -x
 
 VERSION=`cat version`
 
-PROTRACTOR_DIR="application/src/main/frontend/protractor"
+PROTRACTOR_DIR="etc/protractor"
 cd $PROTRACTOR_DIR
-APP_JAR="../../../../../staging/fi/hsl/parkandride/parkandride-application/$VERSION/parkandride-application-$VERSION.jar"
+APP_JAR="../../staging/fi/hsl/parkandride/parkandride-application/$VERSION/parkandride-application-$VERSION.jar"
 export APP_JAR
 
 [ -n "$WITH_XVFB" ] && /etc/init.d/xvfb start

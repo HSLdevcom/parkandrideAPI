@@ -1,13 +1,12 @@
 #!/bin/bash
 
 function init() {
-  local repo_checkout="$SCRIPT_DIR/../../../.."
-  ROOT_DIR="$repo_checkout/.."
+  ROOT_DIR="$SCRIPT_DIR/../../../.."
 
   local v=`cat $ROOT_DIR/version`
   export APP_JAR="$ROOT_DIR/staging/fi/hsl/parkandride/parkandride-application/$v/parkandride-application-$v.jar"
 
-  local protractor_dir="$repo_checkout/etc/protractor"
+  local protractor_dir="$ROOT_DIR/etc/protractor"
   cd $protractor_dir
 }
 

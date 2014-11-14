@@ -1,6 +1,6 @@
 FROM dockerfile/java:oracle-java8
 MAINTAINER HSLdevcom/parkandrideAPI "https://github.com/HSLdevcom/parkandrideAPI"
-ENV REFRESHED_AT 2014-11-12
+ENV REFRESHED_AT 2014-11-14
 
 # Docker-in-Docker
 RUN apt-get update -qq
@@ -54,19 +54,9 @@ RUN chmod a+x /etc/init.d/xvfb
 RUN chmod u+s `which Xvfb`
 
 # Install node, npm, grunt, bower, karma
-RUN apt-get install -qqy python python-dev python-pip python-virtualenv
-RUN \
-  cd /tmp && \
-  wget http://nodejs.org/dist/node-latest.tar.gz && \
-  tar xvzf node-latest.tar.gz && \
-  rm -f node-latest.tar.gz && \
-  cd node-v* && \
-  ./configure && \
-  CXX="g++ -Wno-unused-local-typedefs" make && \
-  CXX="g++ -Wno-unused-local-typedefs" make install && \
-  cd /tmp && \
-  rm -rf /tmp/node-v* && \
-  echo '\n# Node.js\nexport PATH="node_modules/.bin:$PATH"' >> /root/.bashrc
+RUN add-apt-repository ppa:chris-lea/node.js
+RUN apt-get update -qqy
+RUN apt-get install -qqy nodejs
 RUN npm install -g bower grunt-cli karma karma-cli
 
 ADD hsl-liipi.pem /var/go/

@@ -1,7 +1,7 @@
 exports.config = {
     baseUrl: process.env.SERVER_URL,
     chromeDriver: 'node_modules/protractor/selenium/chromedriver',
-    directConnect: true,
+    chromeOnly: false,
     rootElement: 'html',
     specs: [ 'specs/**/*.spec.js'],
 

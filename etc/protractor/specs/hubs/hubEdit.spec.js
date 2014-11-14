@@ -94,9 +94,9 @@ describe('edit hub view', function () {
 
         it('with address and without facilities', function() {
             hubEditPage.setName("Hub name");
-            hubEditPage.setStreetAddress("address");
+            hubEditPage.setStreetAddress(["katu", "gata", "street"]);
             hubEditPage.setPostalCode("00100");
-            hubEditPage.setCity("city");
+            hubEditPage.setCity(["kaupunki", "stad", "city"]);
             hubEditPage.setLocation({x: 165, y: 165});
             expect(hubEditPage.facilitiesTable.isDisplayed()).toBe(false);
 
@@ -104,9 +104,9 @@ describe('edit hub view', function () {
             expect(hubViewPage.isDisplayed()).toBe(true);
             hubViewPage.toEditView();
             expect(hubEditPage.getName()).toEqual(["Hub name", "Hub name", "Hub name"]);
-            expect(hubEditPage.getStreetAddress()).toEqual(["address", "address", "address"]);
+            expect(hubEditPage.getStreetAddress()).toEqual(["katu", "gata", "street"]);
             expect(hubEditPage.getPostalCode()).toBe("00100");
-            expect(hubEditPage.getCity()).toEqual(["city", "city", "city"]);
+            expect(hubEditPage.getCity()).toEqual(["kaupunki", "stad", "city"]);
         });
 
         describe('with facilities', function() {

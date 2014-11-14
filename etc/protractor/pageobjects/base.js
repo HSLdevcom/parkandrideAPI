@@ -57,9 +57,12 @@ module.exports = function(spec) {
 
         var capitalisedName = capitaliseFirstLetter(fieldBaseName);
         that["set" + capitalisedName] = function(value) {
-            that["set" + capitalisedName + "Fi"](value);
-            that["set" + capitalisedName + "Sv"](value);
-            that["set" + capitalisedName + "En"](value);
+            if (typeof value === 'string') {
+                value = [value, value, value];
+            }
+            that["set" + capitalisedName + "Fi"](value[0]);
+            that["set" + capitalisedName + "Sv"](value[1]);
+            that["set" + capitalisedName + "En"](value[2]);
         };
         that["get" + capitalisedName] = function(value) {
             return protractor.promise.all([

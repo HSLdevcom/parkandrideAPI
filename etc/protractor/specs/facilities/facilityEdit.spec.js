@@ -115,9 +115,9 @@ describe('edit facility view', function () {
                 editPage.portEditModal.toggleEntry();
                 editPage.portEditModal.toggleExit();
                 editPage.portEditModal.togglePedestrian();
-                editPage.portEditModal.setStreetAddress("katu");
+                editPage.portEditModal.setStreetAddress(["katu", "gata", "street"]);
                 editPage.portEditModal.setPostalCode("00100");
-                editPage.portEditModal.setCity("kaupunki");
+                editPage.portEditModal.setCity(["kaupunki", "stad", "city"]);
                 editPage.portEditModal.setInfo("info");
                 editPage.portEditModal.ok();
                 expect(editPage.portEditModal.isDisplayed()).toBe(false);
@@ -130,9 +130,9 @@ describe('edit facility view', function () {
                 expect(editPage.portEditModal.exitIsSelected()).toBe(false);
                 expect(editPage.portEditModal.pedestrianIsSelected()).toBe(true);
 
-                expect(editPage.portEditModal.getStreetAddress()).toEqual(["katu", "katu", "katu"]);
+                expect(editPage.portEditModal.getStreetAddress()).toEqual(["katu", "gata", "street"]);
                 expect(editPage.portEditModal.getPostalCode()).toBe("00100");
-                expect(editPage.portEditModal.getCity()).toEqual(["kaupunki", "kaupunki", "kaupunki"]);
+                expect(editPage.portEditModal.getCity()).toEqual(["kaupunki", "stad", "city"]);
                 expect(editPage.portEditModal.getInfo()).toEqual(["info", "info", "info"]);
 
                 editPage.portEditModal.setCity("city");

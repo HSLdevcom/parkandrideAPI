@@ -8,7 +8,7 @@ function init() {
 }
 
 function run() {
-  for i in bin build vendor node_module; do
+  for i in bin build vendor node node_modules; do
     rm -rf $FRONTEND_DIR/$i
   done
 

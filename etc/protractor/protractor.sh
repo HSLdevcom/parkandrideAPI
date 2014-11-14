@@ -44,5 +44,4 @@ function run() {
   esac
 }
 
-VERBOSE="true"
 source $(dirname $0)/../scripts/main.inc

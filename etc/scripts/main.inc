@@ -15,6 +15,32 @@ function fullpath() {
   echo $pth
 }
 
+function log() {
+  echo "$@"
+}
+
+function fail() {
+  log "ERROR" "$@"
+  exit 1
+}
+
+function retryable_condition() {
+  local condition=$1
+  shift
+  local max_duration=$1
+  [ -z $max_duration ] && max_duration=30
+
+  i=0
+  while ! eval "$condition" ; do
+    i=$(($i + 5))
+    if [ $i -gt "$max_duration" ]; then
+      return 1
+    fi
+    sleep 5
+  done
+  true
+}
+
 # isFunction(name)
 # - to be used in an if, so return 0 if successful and 1 if not!
 function isFunction {

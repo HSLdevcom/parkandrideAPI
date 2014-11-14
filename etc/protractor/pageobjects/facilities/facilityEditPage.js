@@ -3,16 +3,21 @@
 module.exports = function(spec) {
     var that = require('../base')(spec);
 
+    that.portEditModal = require('./portEditModal')({});
+
     spec.view = $('.wdFacilityEditView');
-    spec.nameFi = element(by.name('nameFi'));
-    spec.nameSv = element(by.name('nameSv'));
-    spec.nameEn = element(by.name('nameEn'));
     spec.map = $('.facility-map .ol-viewport');
     spec.saveButton = element.all(by.css('.wdSave')).first();
     spec.aliases = $('.wdAliases .tags');
     spec.capacityTypes = element.all(by.css(".wdCapacityType"));
     spec.form = $('form');
     spec.toListButton = element.all(by.linkUiSref('hub-list')).first();
+    spec.zoomIn = element(by.css('button.ol-zoom-in'));
+    spec.zoomOut = element(by.css('button.ol-zoom-in'));
+    spec.editModePorts = element(by.id('editModePorts'));
+    spec.editModeLocation = element(by.id('editModeLocation'));
+
+    spec.defineMultilingualAccessors("name");
 
     that.get = function (id) {
         if (id) {
@@ -23,6 +28,7 @@ module.exports = function(spec) {
     };
 
     that.drawLocation = function (topLeft, w, h) {
+        spec.editModeLocation.click();
         browser.actions()
             .mouseMove(spec.map, topLeft).click()
             .mouseMove(spec.map, {x: topLeft.x, y: topLeft.y + h}).click()
@@ -30,6 +36,8 @@ module.exports = function(spec) {
             .mouseMove(spec.map, {x: topLeft.x + w, y: topLeft.y}).click()
             .mouseMove(spec.map, topLeft).click()
             .perform();
+        // Sleep to prevent interfering with other clicks
+        browser.sleep(200);
     };
 
     that.save = function () {
@@ -63,6 +71,26 @@ module.exports = function(spec) {
     that.isFacilityRequiredError = function() {
         return spec.isRequiredError($('facility-map'));
     };
+
+    that.zoom = function(level) {
+        if (level > 0) {
+            for (var i=0; i < level; i++) {
+                spec.zoomIn.click();
+            }
+        } else {
+            for (var i=0; i > level; i--) {
+                spec.zoomOut.click();
+            }
+        }
+    };
+
+    that.openPortAt = function(x, y) {
+        spec.editModePorts.click();
+        browser.actions()
+            .mouseMove(spec.map, {x: x, y: y}).click().click().perform();
+        // Sleep to prevent interfering with other clicks
+        browser.sleep(200);
+    }
 
     that.toListView = function () {
         return spec.toListButton.click();

@@ -113,7 +113,7 @@
                 };
 
                 if (editable) {
-                    var changeMode = false;
+                    var portsDisabled = false;
 
                     // LOCATION
                     var drawLocationCondition = function(mapBrowserEvent) {
@@ -145,21 +145,22 @@
                         facility.location = new ol.format.GeoJSON().writeGeometry(polygon);
                         setLocation(facility.location);
 
-                        changeMode = true;
                         scope.editMode = 'ports';
                         locationLayer.setOpacity(1);
                         map.removeControl(cancelControl);
                         ctrl.$setValidity("required", true);
                         ctrl.$setTouched();
                         scope.$apply();
+
+                        // Disable port editing for 1 ms to prevent dblclick/drawend adding a new port
+                        portsDisabled = true;
+                        setTimeout(function() { portsDisabled = false; }, 1);
                     });
                     map.addInteraction(drawLocation);
 
                     // PORTS
                     var drawPortCondition = function(mapBrowserEvent) {
-                        var change = changeMode;
-                        changeMode = false;
-                        return !change && scope.editMode == 'ports' && ol.events.condition.noModifierKeys(mapBrowserEvent);
+                        return !portsDisabled && scope.editMode == 'ports' && ol.events.condition.noModifierKeys(mapBrowserEvent);
                     };
                     var findPortIndex = function(portId) {
                         return _.findIndex(facility.ports, function(p) {
@@ -188,7 +189,7 @@
                             controller: 'PortEditCtrl',
                             resolve: {
                                 port: function () {
-                                    return _.clone(port);
+                                    return _.cloneDeep(port);
                                 },
                                 create: function() {
                                     return create;

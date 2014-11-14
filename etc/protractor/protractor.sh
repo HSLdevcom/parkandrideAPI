@@ -42,6 +42,8 @@ function run() {
     verify)
        grep --quiet '<failure' $SCRIPT_DIR/protractor-results.xml && fail "There are test failures"
   esac
+
+  exit 0
 }
 
 source $(dirname $0)/../scripts/main.inc

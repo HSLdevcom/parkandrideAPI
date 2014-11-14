@@ -37,14 +37,16 @@ module.exports = function(spec) {
     }
     function definedLocalizedAccessors(fieldBaseName, lang) {
         var name = fieldBaseName + lang;
-        var caplitalizedName = capitaliseFirstLetter(fieldBaseName);
+        var capitalisedName = capitaliseFirstLetter(fieldBaseName);
 
         spec[name] = spec.context ? spec.context.element(by.name(name)) : element(by.name(name));
 
-        that["get" + caplitalizedName + lang] = function() {
-            return spec.getValue(spec[name]);
+        that["get" + capitalisedName + lang] = function() {
+            return spec.getValue(spec[name]).then(function(value) {
+                return value;
+            });
         };
-        that["set" + caplitalizedName + lang] = function(value) {
+        that["set" + capitalisedName + lang] = function(value) {
             spec.sendKeys(spec[name], value);
         };
     }
@@ -53,12 +55,19 @@ module.exports = function(spec) {
         definedLocalizedAccessors(fieldBaseName, "Sv");
         definedLocalizedAccessors(fieldBaseName, "En");
 
-        var caplitalizedName = capitaliseFirstLetter(fieldBaseName);
-        that["set" + caplitalizedName] = function(value) {
-            that["set" + caplitalizedName + "Fi"](value);
-            that["set" + caplitalizedName + "Sv"](value);
-            that["set" + caplitalizedName + "En"](value);
-        }
+        var capitalisedName = capitaliseFirstLetter(fieldBaseName);
+        that["set" + capitalisedName] = function(value) {
+            that["set" + capitalisedName + "Fi"](value);
+            that["set" + capitalisedName + "Sv"](value);
+            that["set" + capitalisedName + "En"](value);
+        };
+        that["get" + capitalisedName] = function(value) {
+            return protractor.promise.all([
+                that["get" + capitalisedName + "Fi"](),
+                that["get" + capitalisedName + "Sv"](),
+                that["get" + capitalisedName + "En"]()
+            ]);
+        };
     }
 
     that.isDisplayed = function() {

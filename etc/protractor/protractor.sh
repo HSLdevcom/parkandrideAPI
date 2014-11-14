@@ -45,3 +45,5 @@ function run() {
 }
 
 source $(dirname $0)/../scripts/main.inc
+
+exit 0

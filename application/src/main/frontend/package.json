@@ -36,13 +36,6 @@
     "karma-jasmine": "^0.1.5",
     "grunt-karma": "^0.8.2",
     "karma-coffee-preprocessor": "^0.2.1",
-    "karma": "^0.12.9",
-
-    "protractor": "1.4.0",
-    "protractor-linkuisref-locator": "1.0.0",
-    "phantomjs": "1.9.10",
-    "jasmine-reporters": "1.0.1",
-    "lodash": "2.4.1",
-    "request": "2.47.0"
+    "karma": "^0.12.9"
   }
 }

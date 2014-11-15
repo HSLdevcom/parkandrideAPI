@@ -1,6 +1,6 @@
 FROM dockerfile/java:oracle-java8
 MAINTAINER HSLdevcom/parkandrideAPI "https://github.com/HSLdevcom/parkandrideAPI"
-ENV REFRESHED_AT 2014-11-14
+ENV REFRESHED_AT 2014-11-15
 
 # Docker-in-Docker
 RUN apt-get update -qq
@@ -28,36 +28,15 @@ RUN tar xzvf ${M2_HOME}.tar.gz -C /usr/local > /dev/null
 ENV MAVEN_OPTS -Xms256m -Xmx512m
 ENV PATH $M2_HOME/bin:$PATH
 
-# Install Xvfb (adapted from https://github.com/exratione/protractor-selenium-server-cookbook)
-# Xvfb is a headless X server that will allow Firefox, Chromium, etc, to run.
-# Note that there may be various dependencies that still need to be installed
-# on a server, such as font support.
-RUN apt-get install -qqy xvfb x11-xkb-utils xfonts-cyrillic xfonts-100dpi xfonts-75dpi xfonts-base xfonts-scalable xserver-xorg-core
-# Optional but nifty,  For capturing screenshots of Xvfb display:
-RUN apt-get install -qqy imagemagick x11-apps
-
-# Install Browsers
-# The dbus-x11 package prevents some errors from occurring when using Firefox.
-RUN apt-get install -qqy dbus-x11 firefox
-ENV PHANTOMJS_VERSION 1.9.7
-RUN wget --no-check-certificate -q -O - https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-$PHANTOMJS_VERSION-linux-x86_64.tar.bz2 | tar xjC /opt
-RUN ln -s /opt/phantomjs-$PHANTOMJS_VERSION-linux-x86_64/bin/phantomjs /usr/bin/phantomjs
-# On a headless Ubuntu box there are some items needed by PhantomJS that
-# are not present. PhantomJS will silently fail if they aren't there - which is
-# a real pain to deal with. This is the crucial item:
-RUN apt-get install -qqy libfontconfig1-dev
-
-# Install Xvfb init script
-ENV DISPLAY :99
-ADD etc-init.d-xvfb /etc/init.d/xvfb
-RUN chmod a+x /etc/init.d/xvfb
-RUN chmod u+s `which Xvfb`
-
-# Install node, npm, grunt, bower, karma
+# Install node, npm, grunt
 RUN add-apt-repository ppa:chris-lea/node.js
 RUN apt-get update -qqy
 RUN apt-get install -qqy nodejs
-RUN npm install -g bower grunt-cli karma karma-cli
+RUN npm install -g grunt-cli
+
+# Install packages required for headless testing
+RUN apt-get install vnc4server fvwm firefox
+RUN sed -r -i "s/^(VNC)=(.*)/\1=Y/g" /etc/default/go-agent
 
 ADD hsl-liipi.pem /var/go/
 RUN mkdir -p /var/go/.m2

@@ -35,7 +35,7 @@ RUN apt-get install -qqy nodejs
 RUN npm install -g grunt-cli
 
 # Install packages required for headless testing
-RUN apt-get install vnc4server fvwm firefox
+RUN apt-get install -qqy vnc4server fvwm firefox
 RUN sed -r -i "s/^(VNC)=(.*)/\1=Y/g" /etc/default/go-agent
 
 ADD hsl-liipi.pem /var/go/

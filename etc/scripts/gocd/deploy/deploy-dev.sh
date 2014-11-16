@@ -46,7 +46,6 @@ function restart_container() {
   ssh2test "docker rm $CONTAINER_NAME || true"
   ssh2test "docker pull $REGISTRY_IMAGE"
   ssh2test "docker run -e SPRING_PROFILES_ACTIVE=demo -d -p $TARGET_ENV_PORT:8080 --name $CONTAINER_NAME $REGISTRY_IMAGE"
-  ssh2test "docker images | grep '<none>' | awk '{print $3}' | xargs -r docker rmi"
 }
 
 function run() {

@@ -92,13 +92,21 @@ describe('edit hub view', function () {
             });
         });
 
-        it('without facilities', function() {
+        it('with address and without facilities', function() {
             hubEditPage.setName("Hub name");
+            hubEditPage.setStreetAddress(["katu", "gata", "street"]);
+            hubEditPage.setPostalCode("00100");
+            hubEditPage.setCity(["kaupunki", "stad", "city"]);
             hubEditPage.setLocation({x: 165, y: 165});
             expect(hubEditPage.facilitiesTable.isDisplayed()).toBe(false);
 
             hubEditPage.save();
             expect(hubViewPage.isDisplayed()).toBe(true);
+            hubViewPage.toEditView();
+            expect(hubEditPage.getName()).toEqual(["Hub name", "Hub name", "Hub name"]);
+            expect(hubEditPage.getStreetAddress()).toEqual(["katu", "gata", "street"]);
+            expect(hubEditPage.getPostalCode()).toBe("00100");
+            expect(hubEditPage.getCity()).toEqual(["kaupunki", "stad", "city"]);
         });
 
         describe('with facilities', function() {

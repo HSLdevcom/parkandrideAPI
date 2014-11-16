@@ -102,9 +102,74 @@ describe('edit facility view', function () {
             });
         });
 
+        describe('ports', function () {
+            it('add port', function() {
+                editPage.zoom(5);
+                // New port
+                editPage.openPortAt(200, 200);
+                expect(editPage.portEditModal.isDisplayed()).toBe(true);
+                expect(editPage.portEditModal.entryIsSelected()).toBe(true);
+                expect(editPage.portEditModal.exitIsSelected()).toBe(true);
+                expect(editPage.portEditModal.pedestrianIsSelected()).toBe(false);
+
+                editPage.portEditModal.toggleEntry();
+                editPage.portEditModal.toggleExit();
+                editPage.portEditModal.togglePedestrian();
+                editPage.portEditModal.setStreetAddress(["katu", "gata", "street"]);
+                editPage.portEditModal.setPostalCode("00100");
+                editPage.portEditModal.setCity(["kaupunki", "stad", "city"]);
+                editPage.portEditModal.setInfo("info");
+                editPage.portEditModal.ok();
+                expect(editPage.portEditModal.isDisplayed()).toBe(false);
+
+                // Edit port -> ok
+                editPage.openPortAt(200, 198);
+                expect(editPage.portEditModal.isDisplayed()).toBe(true);
+
+                expect(editPage.portEditModal.entryIsSelected()).toBe(false);
+                expect(editPage.portEditModal.exitIsSelected()).toBe(false);
+                expect(editPage.portEditModal.pedestrianIsSelected()).toBe(true);
+
+                expect(editPage.portEditModal.getStreetAddress()).toEqual(["katu", "gata", "street"]);
+                expect(editPage.portEditModal.getPostalCode()).toBe("00100");
+                expect(editPage.portEditModal.getCity()).toEqual(["kaupunki", "stad", "city"]);
+                expect(editPage.portEditModal.getInfo()).toEqual(["info", "info", "info"]);
+
+                editPage.portEditModal.setCity("city");
+                editPage.portEditModal.ok();
+                expect(editPage.portEditModal.isDisplayed()).toBe(false);
+
+                // Edit port -> cancel
+                editPage.openPortAt(200, 198);
+                expect(editPage.portEditModal.getCity()).toEqual(["city", "city", "city"]);
+                editPage.portEditModal.setCity("kaupunki");
+                editPage.portEditModal.togglePedestrian();
+                editPage.portEditModal.cancel();
+                expect(editPage.portEditModal.isDisplayed()).toBe(false);
+
+                // Remove port
+                editPage.openPortAt(200, 198);
+                expect(editPage.portEditModal.isDisplayed()).toBe(true);
+                expect(editPage.portEditModal.pedestrianIsSelected()).toBe(true);
+                expect(editPage.portEditModal.getCityFi()).toBe("city");
+                editPage.portEditModal.remove();
+                expect(editPage.portEditModal.isDisplayed()).toBe(false);
+
+                editPage.openPortAt(200, 198);
+                expect(editPage.portEditModal.isDisplayed()).toBe(true);
+                expect(editPage.portEditModal.pedestrianIsSelected()).toBe(false);
+                expect(editPage.portEditModal.getCityFi()).toBe("");
+            });
+        });
+
         it('create full', function () {
             editPage.setName(facFull.name);
             editPage.drawLocation(facFull.locationInput.offset, facFull.locationInput.w, facFull.locationInput.h);
+
+            editPage.openPortAt(200, 200);
+            editPage.portEditModal.ok();
+            expect(editPage.portEditModal.isDisplayed()).toBe(false);
+
             editPage.addAlias(facFull.aliases[0]);
             editPage.addAlias(facFull.aliases[1]);
             editPage.setCapacities(facFull.capacities);

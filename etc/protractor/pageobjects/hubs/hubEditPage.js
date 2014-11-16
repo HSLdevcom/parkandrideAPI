@@ -5,12 +5,14 @@ module.exports = function(spec) {
     var clickSleepMs = 200;
 
     spec.view = $('.wdHubEditView');
-    spec.nameFi = element(by.name('nameFi'));
-    spec.nameSv = element(by.name('nameSv'));
-    spec.nameEn = element(by.name('nameEn'));
     spec.map = $('.hub-map .ol-viewport');
     spec.saveButton = element.all(by.css('.wdSave')).first();
+    spec.postalCode = element(by.model('editCtrl.hub.postalCode'));
     spec.form = $('form');
+
+    spec.defineMultilingualAccessors("name");
+    spec.defineMultilingualAccessors("streetAddress");
+    spec.defineMultilingualAccessors("city");
 
     that.facilitiesTable = require('../facilitiesTable')({});
 
@@ -27,6 +29,13 @@ module.exports = function(spec) {
             .mouseMove(spec.map, {x: pos.x, y: pos.y}).click().click()
             .perform();
         browser.sleep(clickSleepMs);
+    };
+
+    that.getPostalCode = function() {
+        return spec.getValue(spec.postalCode);
+    }
+    that.setPostalCode = function(value) {
+        spec.postalCode.sendKeys(value);
     };
 
     that.toggleFacility = function (f) {

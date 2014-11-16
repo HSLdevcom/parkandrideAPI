@@ -32,8 +32,56 @@ module.exports = function(spec) {
 
     var that = {};
 
+    function capitaliseFirstLetter(string) {
+        return string.charAt(0).toUpperCase() + string.slice(1);
+    }
+    function definedLocalizedAccessors(fieldBaseName, lang) {
+        var name = fieldBaseName + lang;
+        var capitalisedName = capitaliseFirstLetter(fieldBaseName);
+
+        spec[name] = spec.context ? spec.context.element(by.name(name)) : element(by.name(name));
+
+        that["get" + capitalisedName + lang] = function() {
+            return spec.getValue(spec[name]).then(function(value) {
+                return value;
+            });
+        };
+        that["set" + capitalisedName + lang] = function(value) {
+            spec.sendKeys(spec[name], value);
+        };
+    }
+    spec.defineMultilingualAccessors = function(fieldBaseName) {
+        definedLocalizedAccessors(fieldBaseName, "Fi");
+        definedLocalizedAccessors(fieldBaseName, "Sv");
+        definedLocalizedAccessors(fieldBaseName, "En");
+
+        var capitalisedName = capitaliseFirstLetter(fieldBaseName);
+        that["set" + capitalisedName] = function(value) {
+            if (typeof value === 'string') {
+                value = [value, value, value];
+            }
+            that["set" + capitalisedName + "Fi"](value[0]);
+            that["set" + capitalisedName + "Sv"](value[1]);
+            that["set" + capitalisedName + "En"](value[2]);
+        };
+        that["get" + capitalisedName] = function(value) {
+            return protractor.promise.all([
+                that["get" + capitalisedName + "Fi"](),
+                that["get" + capitalisedName + "Sv"](),
+                that["get" + capitalisedName + "En"]()
+            ]);
+        };
+    }
+
     that.isDisplayed = function() {
-        return spec.view.isDisplayed();
+        return spec.view.then(
+            function(elem) {
+                return elem.isDisplayed();
+            },
+            function() {
+                return false;
+            }
+        );
     };
 
     that.getViolations = function() {
@@ -49,36 +97,6 @@ module.exports = function(spec) {
             }
             return protractor.promise.all(result);
         });
-    };
-
-    that.getNameFi = function () {
-        return spec.getValue(spec.nameFi);
-    };
-
-    that.getNameSv = function () {
-        return spec.getValue(spec.nameSv);
-    };
-
-    that.getNameEn = function () {
-        return spec.getValue(spec.nameEn);
-    };
-
-    that.setNameFi = function (name) {
-        spec.sendKeys(spec.nameFi, name);
-    };
-
-    that.setNameSv = function (name) {
-        spec.sendKeys(spec.nameSv, name);
-    };
-
-    that.setNameEn = function (name) {
-        spec.sendKeys(spec.nameEn, name);
-    };
-
-    that.setName = function (name) {
-        that.setNameFi(name);
-        that.setNameSv(name);
-        that.setNameEn(name);
     };
 
     that.hasNoValidationErrors = function() {

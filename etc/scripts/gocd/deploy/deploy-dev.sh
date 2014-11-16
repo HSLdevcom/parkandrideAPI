@@ -37,11 +37,16 @@ function push_image() {
   docker push $REGISTRY_IMAGE
 }
 
+function ssh2test() {
+  ssh -i $IDENTITY_FILE -oStrictHostKeyChecking=no $AWS_TEST "$@"
+}
+
 function restart_container() {
-  ssh -i $IDENTITY_FILE -oStrictHostKeyChecking=no $AWS_TEST "docker stop $CONTAINER_NAME"
-  ssh -i $IDENTITY_FILE $AWS_TEST "docker rm $CONTAINER_NAME"
-  ssh -i $IDENTITY_FILE $AWS_TEST "docker pull $REGISTRY_IMAGE"
-  ssh -i $IDENTITY_FILE $AWS_TEST "docker run -e SPRING_PROFILES_ACTIVE=demo -d -p $TARGET_ENV_PORT:8080 --name $CONTAINER_NAME $REGISTRY_IMAGE"
+  ssh2test "docker stop $CONTAINER_NAME || true"
+  ssh2test "docker rm $CONTAINER_NAME || true"
+  ssh2test "docker pull $REGISTRY_IMAGE"
+  ssh2test "docker run -e SPRING_PROFILES_ACTIVE=demo -d -p $TARGET_ENV_PORT:8080 --name $CONTAINER_NAME $REGISTRY_IMAGE"
+  ssh2test "docker images | grep '<none>' | awk '{print $3}' | xargs -r docker rmi"
 }
 
 function run() {

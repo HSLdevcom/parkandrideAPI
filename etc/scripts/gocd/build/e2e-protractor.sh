@@ -15,13 +15,11 @@ function init() {
 function cleanup() {
   set +e # don't fail on cleanup errors
   bash protractor.sh stop
-  [ -n "$WITH_XVFB" ] && /etc/init.d/xvfb stop
 }
 
 function run() {
   trap cleanup EXIT
 
-  [ -n "$WITH_XVFB" ] && /etc/init.d/xvfb start
   bash protractor.sh start
   bash protractor.sh wait_until_started
   bash protractor.sh test

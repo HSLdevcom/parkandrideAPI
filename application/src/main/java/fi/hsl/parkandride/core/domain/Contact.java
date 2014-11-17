@@ -5,6 +5,7 @@ import javax.validation.constraints.NotNull;
 
 import org.hibernate.validator.constraints.Email;
 
+@PhoneOrEmailRequired
 public class Contact {
 
     public Long id;
@@ -55,4 +56,5 @@ public class Contact {
     public MultilingualString getInfo() {
         return info;
     }
+
 }

@@ -22,6 +22,7 @@ import fi.hsl.parkandride.back.sql.QContact;
 import fi.hsl.parkandride.core.back.ContactRepository;
 import fi.hsl.parkandride.core.domain.Contact;
 import fi.hsl.parkandride.core.domain.ContactSearch;
+import fi.hsl.parkandride.core.domain.SearchResults;
 import fi.hsl.parkandride.core.domain.Sort;
 import fi.hsl.parkandride.core.domain.Violation;
 import fi.hsl.parkandride.core.service.TransactionalRead;
@@ -101,7 +102,7 @@ public class ContactDao implements ContactRepository {
 
     @Override
     @TransactionalRead
-    public List<Contact> findContacts(ContactSearch search) {
+    public SearchResults<Contact> findContacts(ContactSearch search) {
         PostgresQuery qry = queryFactory.from(qContact);
         qry.limit(search.limit + 1);
         qry.offset(search.offset);
@@ -120,7 +121,7 @@ public class ContactDao implements ContactRepository {
                 qry.where(qContact.nameEn.startsWith(search.name.en));
             }
         }
-        return qry.list(contactMapping);
+        return SearchResults.of(qry.list(contactMapping), search.limit);
     }
 
     private void populate(Contact contact, StoreClause<?> store) {

@@ -56,7 +56,7 @@ public class ContactDaoTest {
         contact = contactDao.getContact(id);
         assertDefault(contact);
 
-        List<Contact> contacts = contactDao.findContacts(new ContactSearch());
+        List<Contact> contacts = contactDao.findContacts(new ContactSearch()).results;
         assertThat(contacts).hasSize(1);
         assertDefault(contacts.get(0));
 

@@ -28,7 +28,7 @@ create table contact (
 
   primary key (id),
 
-  constraint contact_email_or_phone_chk check (email != null or phone != null)
+  constraint contact_email_or_phone_chk check (email <> null or phone <> null)
 );
 
 create sequence contact_id_seq increment by 1 start with 1;

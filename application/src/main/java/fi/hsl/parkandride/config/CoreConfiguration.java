@@ -13,6 +13,7 @@ import fi.hsl.parkandride.back.ContactDao;
 import fi.hsl.parkandride.core.back.ContactRepository;
 import fi.hsl.parkandride.core.back.FacilityRepository;
 import fi.hsl.parkandride.core.back.HubRepository;
+import fi.hsl.parkandride.core.service.ContactService;
 import fi.hsl.parkandride.core.service.FacilityService;
 import fi.hsl.parkandride.core.service.HubService;
 import fi.hsl.parkandride.core.service.ValidationService;
@@ -29,6 +30,11 @@ public class CoreConfiguration {
     @Bean
     public ContactRepository contactRepository() {
         return new ContactDao(queryFactory);
+    }
+
+    @Bean
+    public ContactService contactService() {
+        return new ContactService(contactRepository(), validationService());
     }
 
     @Bean

@@ -5,6 +5,7 @@
         'parkandride.facilityMap',
         'parkandride.layout',
         'parkandride.multilingual',
+        'parkandride.address',
         'ngTagsInput',
         'showErrors'
     ]);

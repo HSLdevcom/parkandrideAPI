@@ -4,6 +4,7 @@
         'parkandride.hubMap',
         'parkandride.facilitiesTable',
         'parkandride.capacities',
+        'parkandride.address',
         'parkandride.FacilityResource',
         'parkandride.HubResource',
         'parkandride.multilingual'

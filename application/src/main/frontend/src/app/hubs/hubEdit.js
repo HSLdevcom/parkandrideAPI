@@ -6,6 +6,7 @@
         'parkandride.layout',
         'parkandride.HubResource',
         'parkandride.FacilityResource',
+        'parkandride.address',
         'ngTagsInput',
         'showErrors'
     ]);

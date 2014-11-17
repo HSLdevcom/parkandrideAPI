@@ -61,11 +61,7 @@ public class FacilityDao implements FacilityRepository {
         }
     };
 
-    private static final MultilingualStringMapping portStreetAddressMapping =
-            new MultilingualStringMapping(qPort.streetAddressFi, qPort.streetAddressSv, qPort.streetAddressEn);
-
-    private static final MultilingualStringMapping portCityMapping =
-            new MultilingualStringMapping(qPort.cityFi, qPort.citySv, qPort.cityEn);
+    private static final AddressMapping addressMapping = new AddressMapping(qPort);
 
     private static final MultilingualStringMapping portInfoMapping =
             new MultilingualStringMapping(qPort.infoFi, qPort.infoSv, qPort.infoEn);
@@ -81,10 +77,8 @@ public class FacilityDao implements FacilityRepository {
             Geometry location = row.get(qPort.location);
             boolean exit = row.get(qPort.exit);
             boolean pedestrian = row.get(qPort.pedestrian);
-            Port port =new Port(location, entry, exit, pedestrian);
-            port.streetAddress = portStreetAddressMapping.map(row);
-            port.postalCode = row.get(qPort.postalCode);
-            port.city = portCityMapping.map(row);
+            Port port = new Port(location, entry, exit, pedestrian);
+            port.address = addressMapping.map(row);
             port.info = portInfoMapping.map(row);
             return port;
         }
@@ -370,17 +364,15 @@ public class FacilityDao implements FacilityRepository {
         }
     }
 
-    private void populate(long facilityId, Integer index, Port port, StoreClause update) {
-        update.set(qPort.facilityId, facilityId)
+    private void populate(long facilityId, Integer index, Port port, StoreClause store) {
+        store.set(qPort.facilityId, facilityId)
                 .set(qPort.portIndex, index)
                 .set(qPort.location, port.location)
                 .set(qPort.entry, port.entry)
                 .set(qPort.exit, port.exit)
-                .set(qPort.pedestrian, port.pedestrian)
-                .set(qPort.postalCode, port.postalCode);
-        portStreetAddressMapping.populate(port.streetAddress, update);
-        portCityMapping.populate(port.city, update);
-        portInfoMapping.populate(port.info, update);
+                .set(qPort.pedestrian, port.pedestrian);
+        addressMapping.populate(port.address, store);
+        portInfoMapping.populate(port.info, store);
     }
 
     private void deletePorts(long facilityId, int fromIndex) {

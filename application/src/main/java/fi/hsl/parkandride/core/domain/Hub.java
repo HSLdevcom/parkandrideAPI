@@ -24,13 +24,7 @@ public class Hub {
     public Set<Long> facilityIds;
 
     @Valid
-    public MultilingualString streetAddress;
-
-    @Pattern(regexp="\\d{5}")
-    public String postalCode;
-
-    @Valid
-    public MultilingualString city;
+    public Address address;
 
     public Long getId() {
         return id;
@@ -48,15 +42,7 @@ public class Hub {
         return facilityIds;
     }
 
-    public String getPostalCode() {
-        return postalCode;
-    }
-
-    public MultilingualString getStreetAddress() {
-        return streetAddress;
-    }
-
-    public MultilingualString getCity() {
-        return city;
+    public Address getAddress() {
+        return address;
     }
 }

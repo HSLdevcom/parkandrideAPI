@@ -121,6 +121,8 @@ public class ContactDao implements ContactRepository {
                 qry.where(qContact.nameEn.startsWith(search.name.en));
             }
         }
+
+        orderBy(search.sort, qry);
         return SearchResults.of(qry.list(contactMapping), search.limit);
     }
 

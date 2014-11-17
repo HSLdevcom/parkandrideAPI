@@ -1,4 +1,62 @@
 {
+    "contacts": {
+        "title": "Yhteystiedot",
+        "action": {
+            "new": "Lisää uusi yhteystieto",
+            "edit": "Muokkaa yhteystietoa"
+        },
+        "name" : {
+            "label": "Nimi",
+            "fi": {
+                "label": "Nimi (fi)"
+            },
+            "sv": {
+                "label": "Nimi (sv)"
+            },
+            "en": {
+                "label": "Nimi (en)"
+            }
+        },
+        "phone": {
+            "label": "Puhelinnumero"
+        },
+        "email": {
+            "label": "Sähköposti"
+        },
+        "openingHours": {
+            "label": "Asiakaspalvelun aukioloaika"
+        },
+        "info": {
+            "label": "Lisätiedot"
+        },
+        "streetAddress": {
+            "label": "Katuosoite",
+            "fi": {
+                "label": "Katuosoite (fi)"
+            },
+            "sv": {
+                "label": "Katuosoite (sv)"
+            },
+            "en": {
+                "label": "Katuosoite (en)"
+            }
+        },
+        "postalCode":  {
+            "label": "Postinumero"
+        },
+        "city":  {
+            "label": "Kaupunki",
+            "fi": {
+                "label": "Kaupunki (fi)"
+            },
+            "sv": {
+                "label": "Kaupunki (sv)"
+            },
+            "en": {
+                "label": "Kaupunki (en)"
+            }
+        }
+    },
     "facilities": {
         "title": "Pysäköintipaikat",
         "list": {

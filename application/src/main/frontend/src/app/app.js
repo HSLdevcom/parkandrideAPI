@@ -10,8 +10,8 @@
         'filters',
         'featureToggle',
 
+        'parkandride.contacts',
         'parkandride.hubList',
-
         'parkandride.dev'
     ]);
 

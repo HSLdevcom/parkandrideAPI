@@ -1,0 +1,58 @@
+<div id="contactEditModal">
+	<div class="modal-header">
+		<h3 class="modal-title">{{ titleKey | translate }}</h3>
+	</div>
+	<div class="modal-body">
+		<form name="editContactForm" class="form-horizontal" role="form" novalidate>
+			<div class="row">
+				<label>{{ "contacts.name.label" | translate }}</label>
+			</div>
+			<div class="row">
+				<multilingual-edit name="name" ng-model="contact.name" mandatory="true"></multilingual-edit>
+			</div>
+
+			<div class="row">
+				<div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 column first-column">
+					<div class="form-group">
+						<label>{{ "contacts.phone.label" | translate }}</label>
+						<div>
+							<input name="phone" type="input" ng-model="contact.phone">
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 column first-column">
+					<div class="form-group">
+						<label>{{ "contacts.email.label" | translate }}</label>
+						<div>
+							<input name="phone" type="input" ng-model="contact.email">
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<address-edit ng-model="contact.address" path="contacts"></address-edit>
+
+			<div class="row">
+				<label>{{ "contacts.openingHours.label" | translate }}</label>
+			</div>
+			<div class="row">
+				<multilingual-edit name="info" ng-model="contact.openingHours" mandatory="false"></multilingual-edit>
+			</div>
+
+			<div class="row">
+				<label>{{ "contacts.info.label" | translate }}</label>
+			</div>
+			<div class="row">
+				<multilingual-edit name="info" ng-model="contact.info" mandatory="false"></multilingual-edit>
+			</div>
+		</form>
+	</div>
+	<div class="modal-footer">
+		<button id="wdPortCancel" class="btn btn-warning" ng-click="cancel()">{{ "common.action.cancel" | translate }}</button>
+		<button id="wdPortRemove" class="btn btn-danger" ng-click="remove()" ng-show="port._id">{{ "common.action.remove" | translate }}</button>
+		<button id="wdPortOk" class="btn btn-primary" ng-click="ok()">{{ "common.action.ok" | translate }}</button>
+	</div>
+</div>

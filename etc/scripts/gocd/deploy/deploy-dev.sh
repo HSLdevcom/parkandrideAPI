@@ -4,7 +4,7 @@
 
 function init() {
   set -eu
-  : ${GO_ENVIRONMENT_NAME:?}
+  : ${DST_ENV:?}
   : ${PORT:?}
 
   ROOT_DIR="$SCRIPT_DIR/../../../.."
@@ -14,7 +14,6 @@ function init() {
   SSH_OPTS="-i /var/go/hsl-liipi.pem -oStrictHostKeyChecking=no"
 
   SRC_JAR="$ROOT_DIR/staging/fi/hsl/parkandride/parkandride-application/$VERSION/parkandride-application-$VERSION.jar"
-  DST_ENV="$GO_ENVIRONMENT_NAME"
   DST_JAR="parkandride-application-$DST_ENV-$VERSION.jar"
 }
 

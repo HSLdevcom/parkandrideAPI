@@ -23,10 +23,14 @@ function stop_and_delete() {
 
 function transfer() {
   scp $SSH_OPTS $SRC_JAR $AWS_TEST:$DST_ENV/$DST_JAR
+
+  echo "cd $DST_ENV; java -jar $DST_JAR --spring.profiles.active=demo --server.port=$PORT 2>&1 >application.log &" > start.sh
+  chmod +x start.sh
+  scp $SSH_OPTS start.sh $AWS_TEST:$DST_ENV/start.sh
 }
 
 function start() {
-  ssh $SSH_OPTS -f $AWS_TEST "cd $DST_ENV; java -jar $DST_JAR --spring.profiles.active=demo --server.port=$PORT 2>&1 >application.log &"
+  ssh $SSH_OPTS $AWS_TEST "cd $DST_ENV; ./start.sh"
 }
 
 function run() {

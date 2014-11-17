@@ -26,8 +26,7 @@ function transfer() {
 }
 
 function start() {
-  #ssh $SSH_OPTS $AWS_TEST "cd $DST_ENV; nohup java -jar $DST_JAR --spring.profiles.active=demo --server.port=$PORT > app.out 2> app.err < /dev/null &"
-  ssh $SSH_OPTS $AWS_TEST "cd $DST_ENV; nohup java -jar $DST_JAR --spring.profiles.active=demo --server.port=$PORT 2>&1 > app.out < /dev/null &"
+  ssh $SSH_OPTS -n $AWS_TEST "cd $DST_ENV; nohup java -jar $DST_JAR --spring.profiles.active=demo --server.port=$PORT > app.out 2> app.err &"
 }
 
 function run() {

@@ -30,7 +30,7 @@ function transfer() {
 }
 
 function start() {
-  ssh $SSH_OPTS -tt $AWS_TEST "cd $DST_ENV; ./start.sh &"
+  ssh $SSH_OPTS -tt $AWS_TEST "cd $DST_ENV; nohup ./start.sh &"
 }
 
 function run() {

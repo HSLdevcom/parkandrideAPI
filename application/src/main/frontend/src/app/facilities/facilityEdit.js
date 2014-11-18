@@ -55,7 +55,7 @@
 
     m.controller('FacilityEditCtrl', function($scope, $state, schema, FacilityResource, facility, aliasesPlaceholder) {
         var self = this;
-        $scope.common.translationPrefix = "facilities.";
+        $scope.common.translationPrefix = "facilities";
         self.capacityTypes = schema.capacityTypes;
         self.aliasesPlaceholder = aliasesPlaceholder;
 

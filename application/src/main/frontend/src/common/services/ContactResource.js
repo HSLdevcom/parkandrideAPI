@@ -13,12 +13,13 @@
         };
 
         api.save = function(data) {
+            var config = {"skipDefaultViolationsHandling": true};
             if (data.id) {
-                return $http.put('/api/contacts/' + data.id, data).then(function(response) {
+                return $http.put('/api/contacts/' + data.id, data, config).then(function(response) {
                     return response.data.id;
                 });
             } else {
-                return $http.post('/api/contacts', data).then(function(response) {
+                return $http.post('/api/contacts', data, config).then(function(response) {
                     return response.data.id;
                 });
             }

@@ -3,6 +3,14 @@
 		<h3 class="modal-title">{{ titleKey | translate }}</h3>
 	</div>
 	<div class="modal-body">
+		<div ng-show="violations.length > 0" class="row errorRow">
+			<div ng-repeat="violation in violations" class="wdViolation">
+				<span class="wdViolationPath">{{
+					(violation.path ? 'contacts.' + violation.path : 'contacts') + '.label' | translate
+				}}</span>:
+				<span class="wdViolationMessage" translate="violation.{{violation.type}}" translate-values="{{violation.args}}"></span>
+			</div>
+		</div>
 		<form name="editContactForm" class="form-horizontal" role="form" novalidate>
 			<div class="row">
 				<label>{{ "contacts.name.label" | translate }}</label>
@@ -33,7 +41,7 @@
 				</div>
 			</div>
 
-			<address-edit ng-model="contact.address" path="contacts"></address-edit>
+			<address-edit ng-model="contact.address" path="contacts.address"></address-edit>
 
 			<div class="row">
 				<label>{{ "contacts.openingHours.label" | translate }}</label>
@@ -51,8 +59,7 @@
 		</form>
 	</div>
 	<div class="modal-footer">
-		<button id="wdPortCancel" class="btn btn-warning" ng-click="cancel()">{{ "common.action.cancel" | translate }}</button>
-		<button id="wdPortRemove" class="btn btn-danger" ng-click="remove()" ng-show="port._id">{{ "common.action.remove" | translate }}</button>
-		<button id="wdPortOk" class="btn btn-primary" ng-click="ok()">{{ "common.action.ok" | translate }}</button>
+		<button id="wdContactCancel" class="btn btn-warning" ng-click="cancel()">{{ "common.action.cancel" | translate }}</button>
+		<button id="wdContactOk" class="btn btn-primary" ng-click="ok()">{{ "common.action.ok" | translate }}</button>
 	</div>
 </div>

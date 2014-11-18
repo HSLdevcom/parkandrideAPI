@@ -9,11 +9,20 @@
     ]);
 
 
-    m.controller("ContactEditCtrl", function ($scope, $modalInstance, contact, create) {
+    m.controller("ContactEditCtrl", function ($scope, $modalInstance, ContactResource, contact, create) {
         $scope.contact = contact;
         $scope.titleKey = 'contacts.action.' + (create ? 'new' : 'edit');
         $scope.ok = function () {
-            $modalInstance.close($scope.contact);
+            ContactResource.save(contact).then(
+                function() {
+                    $modalInstance.close($scope.contact);
+                },
+                function(rejection) {
+                    if (rejection.status == 400 && rejection.data.violations) {
+                        $scope.violations = rejection.data.violations;
+                    }
+                }
+            );
         };
         $scope.cancel = function () {
             $modalInstance.dismiss('cancel');
@@ -34,9 +43,7 @@
                     }
                 }
             });
-            return modalInstance.result.then(function(contact) {
-                return ContactResource.save(contact);
-            });
+            return modalInstance.result;
         };
     });
 
@@ -62,7 +69,7 @@
     m.controller('ContactListCtrl', function($scope, ContactResource, editContact, contacts) {
         var self = this;
         self.contacts = contacts.results;
-        $scope.common.translationPrefix = "contacts.";
+        $scope.common.translationPrefix = "contacts";
 
         self.create = function() {
             editContact({}, true).then(function() {

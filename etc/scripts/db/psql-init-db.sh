@@ -10,6 +10,7 @@ function init() {
   PSQL_OPTS=("-v" "ON_ERROR_STOP=1")
   for arg do
     case "$arg" in
+      --schema-only) SCHEMA_ONLY=1 ;;
       *) PSQL_OPTS+=("$arg") ;;
     esac
   done
@@ -47,8 +48,10 @@ EOF
 }
 
 function run() {
-  create_db
-  create_user
+  if [ -z "$SCHEMA_ONLY" ] ; then
+    create_db
+    create_user
+  fi
   create_schema
 }
 

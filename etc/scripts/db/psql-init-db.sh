@@ -6,29 +6,49 @@ function init() {
   : ${LIIPI_SCHEMA:="liipi"}
   : ${LIIPI_USER:="liipi"}
   : ${LIIPI_PASS:="liipipw"}
+
+  PSQL_OPTS=("-v" "ON_ERROR_STOP=1")
+  for arg do
+    case "$arg" in
+      *) PSQL_OPTS+=("$arg") ;;
+    esac
+  done
 }
 
-function run() {
-  psql -v ON_ERROR_STOP=1 "$@" <<EOF
+function create_db() {
+  psql "${PSQL_OPTS[@]}" <<EOF
 DROP DATABASE IF EXISTS $LIIPI_DB;
-DROP USER IF EXISTS $LIIPI_USER;
-
 CREATE DATABASE $LIIPI_DB ENCODING 'UTF8' LC_COLLATE 'fi_FI.UTF-8' LC_CTYPE 'fi_FI.UTF-8' TEMPLATE template0;
-CREATE USER $LIIPI_USER WITH PASSWORD '$PASS';
-GRANT CONNECT, TEMP ON DATABASE $LIIPI_DB TO $LIIPI_USER;
-
 \connect $LIIPI_DB
-
 CREATE EXTENSION postgis;
 CREATE EXTENSION postgis_topology;
 CREATE EXTENSION fuzzystrmatch;
 CREATE EXTENSION postgis_tiger_geocoder;
-CREATE SCHEMA $LIIPI_SCHEMA;
-
-GRANT ALL PRIVILEGES ON SCHEMA $LIIPI_SCHEMA TO $LIIPI_USER;
-
 \q
 EOF
+}
+
+function create_user() {
+  psql "${PSQL_OPTS[@]}" <<EOF
+DROP USER IF EXISTS $LIIPI_USER;
+CREATE USER $LIIPI_USER WITH PASSWORD '$PASS';
+GRANT CONNECT, TEMP ON DATABASE $LIIPI_DB TO $LIIPI_USER;
+EOF
+}
+
+function create_schema() {
+  psql "${PSQL_OPTS[@]}" <<EOF
+\connect $LIIPI_DB
+CREATE SCHEMA $LIIPI_SCHEMA;
+GRANT ALL PRIVILEGES ON SCHEMA $LIIPI_SCHEMA TO $LIIPI_USER;
+\q
+EOF
+}
+
+function run() {
+  create_db
+  create_user
+  create_schema
 }
 
 VERBOSE="true"

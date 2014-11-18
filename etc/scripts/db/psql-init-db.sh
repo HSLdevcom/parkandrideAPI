@@ -1,5 +1,15 @@
 #!/bin/bash
 
+# Usage examples
+#
+# - create local
+# bash etc/scripts/db/psql-init-db.sh -h localhost -U isto
+#
+# - create dev rds (requires tunneling via ec2 instances in development subnet)
+# LIIPI_SCHEMA=liipitest bash etc/scripts/db/psql-init-db.sh -h hsl-liipi-rds-dev -U devmaster postgres
+# LIIPI_SCHEMA=liipidemo bash etc/scripts/db/psql-init-db.sh -h hsl-liipi-rds-dev -U devmaster postgres --schema-only
+#
+
 function init() {
   export PGCLIENTENCODING="UTF8"
   : ${LIIPI_DB:="liipidb"}

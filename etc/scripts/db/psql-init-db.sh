@@ -1,25 +1,36 @@
-# NOTE: First install Postgresql 9.3 and PostGIS 2.1 (e.g. postgresql.app)
-# All parameters are passed to psql as such
+#!/bin/bash
 
-export PGCLIENTENCODING="UTF8"
+function init() {
+  export PGCLIENTENCODING="UTF8"
+  DB="liipidb"
+  SCHEMA="liipi"
+  USER="liipi"
+  PASS="liipipw"
+}
 
-psql -v ON_ERROR_STOP=1 "$@" <<EOF
-DROP DATABASE IF EXISTS liipidb;
-DROP USER IF EXISTS liipi;
+function run() {
+  psql -v ON_ERROR_STOP=1 "$@" <<EOF
+DROP DATABASE IF EXISTS $DB;
+DROP USER IF EXISTS $USER;
 
-CREATE DATABASE liipidb ENCODING 'UTF8' LC_COLLATE 'fi_FI' LC_CTYPE 'fi_FI' TEMPLATE template0;
-CREATE USER liipi WITH PASSWORD 'liipipwd';
-GRANT CONNECT, TEMP ON DATABASE liipidb TO liipi;
+CREATE DATABASE $DB ENCODING 'UTF8' LC_COLLATE 'fi_FI.UTF-8' LC_CTYPE 'fi_FI.UTF-8' TEMPLATE template0;
+CREATE USER $USER WITH PASSWORD '$PASS';
+GRANT CONNECT, TEMP ON DATABASE $DB TO $USER;
 
-\connect liipidb
+\connect $DB
 
 CREATE EXTENSION postgis;
 CREATE EXTENSION postgis_topology;
 CREATE EXTENSION fuzzystrmatch;
 CREATE EXTENSION postgis_tiger_geocoder;
-CREATE SCHEMA liipi;
+CREATE SCHEMA $SCHEMA;
 
-GRANT ALL PRIVILEGES ON SCHEMA liipi TO liipi;
+GRANT ALL PRIVILEGES ON SCHEMA $SCHEMA TO $USER;
 
 \q
 EOF
+}
+
+VERBOSE="true"
+source $(dirname $0)/../main.inc
+

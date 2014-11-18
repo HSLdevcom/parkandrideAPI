@@ -24,10 +24,6 @@ import com.mysema.query.sql.types.EnumByNameType;
 import fi.hsl.parkandride.core.domain.CapacityType;
 
 @Configuration
-@Import({
-        PropertyPlaceholderAutoConfiguration.class,
-        JdbcConfiguration.H2.class
-    })
 public class JdbcConfiguration {
 
     @Configuration

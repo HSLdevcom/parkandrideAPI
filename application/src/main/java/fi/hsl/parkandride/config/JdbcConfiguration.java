@@ -44,13 +44,7 @@ public class JdbcConfiguration {
         }
 
         @Bean
-        public String[] flywayLocations() {
-            return new String[] { "classpath:db/common", "classpath:db/h2" };
-        }
-
-        @Bean
         public SQLTemplates sqlTemplates() {
-            // TODO: use PostGISTemplates for Postgresql
             return new H2GISTemplates();
         }
 
@@ -65,13 +59,7 @@ public class JdbcConfiguration {
         }
 
         @Bean
-        public String[] flywayLocations() {
-            return new String[] { "classpath:db/common" };
-        }
-
-        @Bean
         public SQLTemplates sqlTemplates() {
-            // TODO: use PostGISTemplates for Postgresql
             return new PostGISTemplates();
         }
     }
@@ -87,8 +75,6 @@ public class JdbcConfiguration {
 
     @Value("${jdbc.driver}")
     String driverClassName;
-
-    @Resource String[] flywayLocations;
 
     @Inject SQLTemplates sqlTemplates;
 
@@ -134,14 +120,6 @@ public class JdbcConfiguration {
     @Bean
     public PlatformTransactionManager transactionManager() {
         return new DataSourceTransactionManager(dataSource());
-    }
-
-    @PostConstruct
-    public void dbMigration() {
-        Flyway flyway = new Flyway();
-        flyway.setDataSource(dataSource());
-        flyway.setLocations(flywayLocations);
-        flyway.migrate();
     }
 
     @Bean

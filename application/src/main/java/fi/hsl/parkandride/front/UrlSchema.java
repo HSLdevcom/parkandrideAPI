@@ -23,6 +23,13 @@ public class UrlSchema {
     public static final String HUB = HUBS + "/{" + HUB_ID + "}" ;
 
 
+    public static final String CONTACTS = API + "/contacts";
+
+    public static final String CONTACT_ID = "contactsId";
+
+    public static final String CONTACT = CONTACTS + "/{" + CONTACT_ID + "}" ;
+
+
     public static final String FEATURES = API + "/features" ;
 
     /**

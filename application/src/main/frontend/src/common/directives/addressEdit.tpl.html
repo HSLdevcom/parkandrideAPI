@@ -1,0 +1,24 @@
+<div class="row">
+	<label>{{ path + ".streetAddress.label" | translate }}</label>
+</div>
+<div class="row">
+	<multilingual-edit name="streetAddress" ng-model="address.streetAddress" mandatory="false"></multilingual-edit>
+</div>
+
+<div class="row">
+	<div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 column first-column">
+		<div class="form-group">
+			<label>{{ path + ".postalCode.label" | translate }}</label>
+			<div>
+				<input name="postalCode" type="input" ng-model="address.postalCode">
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="row">
+	<label>{{ path + ".city.label" | translate }}</label>
+</div>
+<div class="row">
+	<multilingual-edit name="city" ng-model="address.city" mandatory="false"></multilingual-edit>
+</div>

@@ -9,8 +9,11 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import com.mysema.query.sql.postgres.PostgresQueryFactory;
 
+import fi.hsl.parkandride.back.ContactDao;
+import fi.hsl.parkandride.core.back.ContactRepository;
 import fi.hsl.parkandride.core.back.FacilityRepository;
 import fi.hsl.parkandride.core.back.HubRepository;
+import fi.hsl.parkandride.core.service.ContactService;
 import fi.hsl.parkandride.core.service.FacilityService;
 import fi.hsl.parkandride.core.service.HubService;
 import fi.hsl.parkandride.core.service.ValidationService;
@@ -23,6 +26,16 @@ import fi.hsl.parkandride.back.HubDao;
 public class CoreConfiguration {
 
     @Inject PostgresQueryFactory queryFactory;
+
+    @Bean
+    public ContactRepository contactRepository() {
+        return new ContactDao(queryFactory);
+    }
+
+    @Bean
+    public ContactService contactService() {
+        return new ContactService(contactRepository(), validationService());
+    }
 
     @Bean
     public FacilityRepository facilityRepository() {

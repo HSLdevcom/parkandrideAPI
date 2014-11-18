@@ -23,13 +23,7 @@ public class Port {
     public boolean pedestrian;
 
     @Valid
-    public MultilingualString streetAddress;
-
-    @Pattern(regexp="\\d{5}")
-    public String postalCode;
-
-    @Valid
-    public MultilingualString city;
+    public Address address;
 
     @Valid
     public MultilingualString info;
@@ -45,9 +39,7 @@ public class Port {
         this.entry = entry;
         this.exit = exit;
         this.pedestrian = pedestrian;
-        this.streetAddress = streetAddress != null ? new MultilingualString(streetAddress, streetAddress, streetAddress) : null;
-        this.postalCode = postalCode;
-        this.city = city != null ? new MultilingualString(city, city, city) : null;
+        this.address = new Address(streetAddress, postalCode, city);
         this.info = info != null ? new MultilingualString(info, info, info) : null;
     }
 
@@ -61,9 +53,7 @@ public class Port {
                     && this.exit == other.exit
                     && this.pedestrian == other.pedestrian
                     && this.location.equals(other.location)
-                    && Objects.equals(this.streetAddress, other.streetAddress)
-                    && Objects.equals(this.postalCode, other.postalCode)
-                    && Objects.equals(this.city, other.city)
+                    && Objects.equals(this.address, other.address)
                     && Objects.equals(this.info, other.info);
         } else {
             return false;
@@ -75,9 +65,7 @@ public class Port {
         int hashCode = Boolean.hashCode(entry);
         hashCode = 31*hashCode + Boolean.hashCode(exit);
         hashCode = 31*hashCode + Boolean.hashCode(pedestrian);
-        hashCode = 31*hashCode + (streetAddress == null ? 0 : streetAddress.hashCode());
-        hashCode = 31*hashCode + (postalCode == null ? 0 : postalCode.hashCode());
-        hashCode = 31*hashCode + (city == null ? 0 : city.hashCode());
+        hashCode = 31*hashCode + (address == null ? 0 : address.hashCode());
         hashCode = 31*hashCode + (info == null ? 0 : info.hashCode());
         return 31*hashCode + location.hashCode();
     }
@@ -98,20 +86,8 @@ public class Port {
         return location;
     }
 
-    public String getPostalCode() {
-        return postalCode;
-    }
-
-    public MultilingualString getStreetAddress() {
-        return streetAddress;
-    }
-
-    public MultilingualString getCity() {
-        return city;
-    }
-
-    public MultilingualString getInfo() {
-        return info;
+    public Address getAddress() {
+        return address;
     }
 
     public String toString() {
@@ -120,9 +96,7 @@ public class Port {
                 .add("entry", entry)
                 .add("exit", exit)
                 .add("pedestrian", pedestrian)
-                .add("streetAddress", streetAddress)
-                .add("postalCode", postalCode)
-                .add("city", city)
+                .add("address", address)
                 .add("info", info)
                 .toString();
     }

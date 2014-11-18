@@ -6,6 +6,7 @@
         'parkandride.layout',
         'parkandride.HubResource',
         'parkandride.FacilityResource',
+        'parkandride.address',
         'ngTagsInput',
         'showErrors'
     ]);
@@ -47,7 +48,7 @@
 
     m.controller('HubEditCtrl', function ($scope, $state, HubResource, FacilityResource, hub) {
         var self = this;
-        $scope.common.translationPrefix = "hubs.";
+        $scope.common.translationPrefix = "hubs";
         self.hub = hub;
         self.facilities = [];
         self.hasFacilities = function() {

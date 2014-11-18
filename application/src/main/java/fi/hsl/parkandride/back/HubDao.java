@@ -46,13 +46,7 @@ public class HubDao implements HubRepository {
 
     private static final MultilingualStringMapping nameMapping = new MultilingualStringMapping(qHub.nameFi, qHub.nameSv, qHub.nameEn);
 
-    private static final MultilingualStringMapping streetAddressMapping =
-            new MultilingualStringMapping(qHub.streetAddressFi, qHub.streetAddressSv, qHub.streetAddressEn);
-
-    private static final MultilingualStringMapping cityMapping =
-            new MultilingualStringMapping(qHub.cityFi, qHub.citySv, qHub.cityEn);
-
-
+    private static final AddressMapping addressMapping = new AddressMapping(qHub);
 
     private static final MappingProjection<Hub> hubMapping = new MappingProjection<Hub>(Hub.class, qHub.all(), new Expression<?>[] { facilityIdsMapping }) {
 
@@ -67,9 +61,7 @@ public class HubDao implements HubRepository {
             hub.location = row.get(qHub.location);
             hub.name = nameMapping.map(row);
             hub.facilityIds = row.get(facilityIdsMapping);
-            hub.streetAddress = streetAddressMapping.map(row);
-            hub.postalCode = row.get(qHub.postalCode);
-            hub.city = cityMapping.map(row);
+            hub.address = addressMapping.map(row);
             return hub;
         }
     };
@@ -137,12 +129,9 @@ public class HubDao implements HubRepository {
     }
 
     private void populate(Hub hub, StoreClause store) {
-        store.set(qHub.location, hub.location)
-            .set(qHub.postalCode, hub.postalCode);
-
+        store.set(qHub.location, hub.location);
         nameMapping.populate(hub.name, store);
-        streetAddressMapping.populate(hub.streetAddress, store);
-        cityMapping.populate(hub.city, store);
+        addressMapping.populate(hub.address, store);
     }
 
     private void insertHubFacilities(long hubId, Set<Long> facilityIds) {

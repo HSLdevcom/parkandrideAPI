@@ -11,7 +11,7 @@ function init() {
 
   npm install
 
-  export SPRING_PROFILES_ACTIVES=psql,e2e
+  export SPRING_PROFILES_ACTIVE=psql,e2e
   export SPRING_DATASOURCE_URL=jdbc:postgresql_postGIS://dev.cvokarbgtqbl.eu-west-1.rds.amazonaws.com:5432/liipi?searchpath=liipi
 }
 

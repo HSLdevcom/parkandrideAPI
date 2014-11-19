@@ -5,6 +5,7 @@
         'parkandride.capacities',
         'parkandride.layout',
         'parkandride.FacilityResource',
+        'parkandride.ServiceResource',
         'parkandride.layout'
     ]);
 
@@ -19,6 +20,15 @@
                     resolve: {
                         facility: function($stateParams, FacilityResource) {
                             return FacilityResource.getFacility($stateParams.id);
+                        },
+                        services: function(ServiceResource, facility) {
+                            if (facility.serviceIds && facility.serviceIds.length > 0) {
+                                return ServiceResource.listServices({ids: facility.serviceIds}).then(function(results) {
+                                    return results.results;
+                                });
+                            } else {
+                                return [];
+                            }
                         }
                     }
                 }
@@ -28,10 +38,14 @@
     });
 
     m.controller('FacilityViewCtrl', ViewController);
-    function ViewController(facility) {
+    function ViewController(facility, services) {
         this.facility = facility;
+        this.services = services;
         this.hasCapacities = function() {
           return _.keys(facility.capacities).length !== 0;
+        };
+        this.hasServices = function() {
+            return services.length > 0;
         };
     }
 

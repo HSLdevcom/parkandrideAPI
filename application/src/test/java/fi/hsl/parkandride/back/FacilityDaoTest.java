@@ -15,7 +15,7 @@ import javax.inject.Inject;
 
 import org.geolatte.geom.Point;
 import org.geolatte.geom.Polygon;
-import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.SpringApplicationConfiguration;
@@ -25,13 +25,13 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSortedSet;
 
-import fi.hsl.parkandride.back.sql.QPort;
-import fi.hsl.parkandride.core.domain.*;
-import fi.hsl.parkandride.core.back.FacilityRepository;
-import fi.hsl.parkandride.core.service.ValidationException;
 import fi.hsl.parkandride.back.sql.QCapacity;
 import fi.hsl.parkandride.back.sql.QFacility;
 import fi.hsl.parkandride.back.sql.QFacilityAlias;
+import fi.hsl.parkandride.back.sql.QPort;
+import fi.hsl.parkandride.core.back.FacilityRepository;
+import fi.hsl.parkandride.core.domain.*;
+import fi.hsl.parkandride.core.service.ValidationException;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = TestConfiguration.class)
@@ -74,7 +74,7 @@ public class FacilityDaoTest {
     @Inject
     FacilityRepository facilityDao;
 
-    @After
+    @Before
     public void cleanup() {
         testHelper.clear(QFacilityAlias.facilityAlias, QCapacity.capacity, QPort.port, QFacility.facility);
     }
@@ -90,12 +90,11 @@ public class FacilityDaoTest {
 
         // Find by id
         facility = facilityDao.getFacility(id);
-        assertThat(facility).isNotNull();
-        assertThat(facility.location).isEqualTo(LOCATION);
-        assertThat(facility.name).isEqualTo(NAME);
-        assertThat(facility.aliases).isEqualTo(ALIASES);
-        assertThat(facility.capacities).isEqualTo(CAPACITIES);
-        assertThat(facility.ports).isEqualTo(PORTS);
+        assertDefault(facility);
+
+        // Search
+        facility = facilityDao.findFacilities(new PageableSpatialSearch()).get(0);
+        assertDefault(facility);
 
         // Update
         final MultilingualString newName = new MultilingualString("changed name");
@@ -130,6 +129,15 @@ public class FacilityDaoTest {
 
         // Not found by geometry
         assertThat(findByGeometry(NON_OVERLAPPING_AREA)).isEmpty();
+    }
+
+    private void assertDefault(Facility facility) {
+        assertThat(facility).isNotNull();
+        assertThat(facility.location).isEqualTo(LOCATION);
+        assertThat(facility.name).isEqualTo(NAME);
+        assertThat(facility.aliases).isEqualTo(ALIASES);
+        assertThat(facility.capacities).isEqualTo(CAPACITIES);
+        assertThat(facility.ports).isEqualTo(PORTS);
     }
 
     private List<Facility> findByGeometry(Polygon geometry) {

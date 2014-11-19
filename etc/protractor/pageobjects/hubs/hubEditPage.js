@@ -7,7 +7,7 @@ module.exports = function(spec) {
     spec.view = $('.wdHubEditView');
     spec.map = $('.hub-map .ol-viewport');
     spec.saveButton = element.all(by.css('.wdSave')).first();
-    spec.postalCode = element(by.model('editCtrl.hub.postalCode'));
+    spec.postalCode = spec.view.element(by.name('postalCode'));
     spec.form = $('form');
 
     spec.defineMultilingualAccessors("name");

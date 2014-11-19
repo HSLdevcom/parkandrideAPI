@@ -1,4 +1,83 @@
 {
+    "contacts": {
+        "title": "Yhteystiedot",
+        "label": "Yhteystieto",
+        "action": {
+            "new": "Lisää uusi yhteystieto",
+            "edit": "Muokkaa yhteystietoa"
+        },
+        "name" : {
+            "label": "Nimi",
+            "fi": {
+                "label": "Nimi (fi)"
+            },
+            "sv": {
+                "label": "Nimi (sv)"
+            },
+            "en": {
+                "label": "Nimi (en)"
+            }
+        },
+        "phone": {
+            "label": "Puhelinnumero"
+        },
+        "email": {
+            "label": "Sähköposti"
+        },
+        "openingHours": {
+            "label": "Asiakaspalvelun aukioloaika",
+            "fi": {
+                "label": "Asiakaspalvelun aukioloaika (fi)"
+            },
+            "sv": {
+                "label": "Asiakaspalvelun aukioloaika (sv)"
+            },
+            "en": {
+                "label": "Asiakaspalvelun aukioloaika (en)"
+            }
+        },
+        "info": {
+            "label": "Lisätiedot",
+            "fi": {
+                "label": "Lisätiedot (fi)"
+            },
+            "sv": {
+                "label": "Lisätiedot (sv)"
+            },
+            "en": {
+                "label": "Lisätiedot (en)"
+            }
+        },
+        "address": {
+            "streetAddress": {
+                "label": "Katuosoite",
+                "fi": {
+                    "label": "Katuosoite (fi)"
+                },
+                "sv": {
+                    "label": "Katuosoite (sv)"
+                },
+                "en": {
+                    "label": "Katuosoite (en)"
+                }
+            },
+            "postalCode":  {
+                "label": "Postinumero"
+            },
+            "city":  {
+                "label": "Kaupunki",
+                "fi": {
+                    "label": "Kaupunki (fi)"
+                },
+                "sv": {
+                    "label": "Kaupunki (sv)"
+                },
+                "en": {
+                    "label": "Kaupunki (en)"
+                }
+            }
+        }
+    },
     "facilities": {
         "title": "Pysäköintipaikat",
         "list": {
@@ -39,43 +118,46 @@
             "pedestrian": {
                 "label": "Jalankulku"
             },
-            "streetAddress": {
-                "label": "Katuosoite",
-                "fi": {
-                    "label": "Katuosoite (fi)"
+            "address": {
+                "label": "Osoite",
+                "streetAddress": {
+                    "label": "Katuosoite",
+                    "fi": {
+                        "label": "Käyntiosoitteen katu (fi)"
+                    },
+                    "sv": {
+                        "label": "Käyntiosoitteen katu (sv)"
+                    },
+                    "en": {
+                        "label": "Käyntiosoitteen katu (en)"
+                    }
                 },
-                "sv": {
-                    "label": "Katuosoite (sv)"
+                "postalCode":  {
+                    "label": "Postinumero"
                 },
-                "en": {
-                    "label": "Katuosoite (en)"
-                }
-            },
-            "postalCode":  {
-                "label": "Postinumero"
-            },
-            "city":  {
-                "label": "Kaupunki",
-                "fi": {
-                    "label": "Kaupunki (fi)"
-                },
-                "sv": {
-                    "label": "Kaupunki (sv)"
-                },
-                "en": {
-                    "label": "Kaupunki (en)"
+                "city":  {
+                    "label": "Kaupunki",
+                    "fi": {
+                        "label": "Käyntiosoitteen kaupunki (fi)"
+                    },
+                    "sv": {
+                        "label": "Käyntiosoitteen kaupunki (sv)"
+                    },
+                    "en": {
+                        "label": "Käyntiosoitteen kaupunki (en)"
+                    }
                 }
             },
             "info":  {
                 "label": "Lisätietoa",
                 "fi": {
-                    "label": "Lisätietoa (fi)"
+                    "label": "Käyntiosoitteen lisätiedot (fi)"
                 },
                 "sv": {
-                    "label": "Lisätietoa (sv)"
+                    "label": "Käyntiosoitteen lisätiedot (sv)"
                 },
                 "en": {
-                    "label": "Lisätietoa (en)"
+                    "label": "Käyntiosoitteen lisätiedot (en)"
                 }
             }
         },
@@ -176,33 +258,33 @@
             "label": "Sijainti"
         },
         "address": {
-            "label": "Osoite"
-        },
-        "streetAddress": {
-            "label": "Katuosoite",
-            "fi": {
-                "label": "Katuosoite (fi)"
+            "label": "Osoite",
+            "streetAddress": {
+                "label": "Katuosoite",
+                "fi": {
+                    "label": "Katuosoite (fi)"
+                },
+                "sv": {
+                    "label": "Katuosoite (sv)"
+                },
+                "en": {
+                    "label": "Katuosoite (en)"
+                }
             },
-            "sv": {
-                "label": "Katuosoite (sv)"
+            "postalCode":  {
+                "label": "Postinumero"
             },
-            "en": {
-                "label": "Katuosoite (en)"
-            }
-        },
-        "postalCode":  {
-            "label": "Postinumero"
-        },
-        "city":  {
-            "label": "Kaupunki",
-            "fi": {
-                "label": "Kaupunki (fi)"
-            },
-            "sv": {
-                "label": "Kaupunki (sv)"
-            },
-            "en": {
-                "label": "Kaupunki (en)"
+            "city":  {
+                "label": "Kaupunki",
+                "fi": {
+                    "label": "Kaupunki (fi)"
+                },
+                "sv": {
+                    "label": "Kaupunki (sv)"
+                },
+                "en": {
+                    "label": "Kaupunki (en)"
+                }
             }
         },
         "associatedFacilities": "Alueen pysäköintipaikat",
@@ -239,6 +321,7 @@
         "NotBlank": "ei saa olla tyhjä",
         "Length": "saa olla korkeintaan {{max}} merkkiä pitkä",
         "ElementLength": "saa olla korkeintaan {{max}} merkkiä pitkä",
-        "Pattern": "väärän muotoinen"
+        "Pattern": "väärän muotoinen",
+        "PhoneOrEmailRequired": "anna vähintään puhelinnumero tai sähköposti"
     }
 }

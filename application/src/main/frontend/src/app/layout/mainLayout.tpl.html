@@ -10,9 +10,12 @@
 </div>
 
 <div class="container content">
-	<div ng-show="common.violations.length > 0" class="row errorRow">
+	<div ng-show="common.translationPrefix && common.violations.length > 0" class="row errorRow">
 		<div ng-repeat="violation in common.violations" class="wdViolation">
-			<span class="wdViolationPath">{{common.translationPrefix + violation.path + '.label' | translate}}</span>:
+			<span class="wdViolationPath">{{
+				common.translationPrefix + (violation.path ? '.' + violation.path : '') + '.label'
+				| translate
+			}}</span>:
 			<span class="wdViolationMessage" translate="violation.{{violation.type}}" translate-values="{{violation.args}}"></span>
 		</div>
 	</div>

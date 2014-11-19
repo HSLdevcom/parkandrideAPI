@@ -10,8 +10,8 @@
         'filters',
         'featureToggle',
 
+        'parkandride.contacts',
         'parkandride.hubList',
-
         'parkandride.dev'
     ]);
 
@@ -45,7 +45,9 @@
             return {
                 responseError: function(rejection) {
                     if (rejection.status == 400 && rejection.data.violations) {
-                        $rootScope.$broadcast("validationErrors", rejection.data.violations);
+                        if (!rejection.config.skipDefaultViolationsHandling) {
+                            $rootScope.$broadcast("validationErrors", rejection.data.violations);
+                        }
                         return $q.reject(rejection);
                     } else {
                         swal({

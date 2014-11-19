@@ -17,6 +17,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindException;
 import org.springframework.validation.FieldError;
+import org.springframework.web.HttpMediaTypeException;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -52,9 +54,15 @@ public class ExceptionHandlers {
         return handleError(request, BAD_REQUEST, ex, "Invalid request parameters", violations);
     }
 
-    @ExceptionHandler(RuntimeException.class)
+    @ExceptionHandler({ HttpRequestMethodNotSupportedException.class, HttpMediaTypeException.class })
     @ResponseBody
-    public ResponseEntity<Map<String, Object>> runtimeException(HttpServletRequest request, RuntimeException ex) {
+    public ResponseEntity<Map<String, Object>> methodNotSupportedException(HttpServletRequest request, HttpRequestMethodNotSupportedException ex) {
+        return handleError(request, BAD_REQUEST, ex);
+    }
+
+    @ExceptionHandler(Exception.class)
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> exception(HttpServletRequest request, Exception ex) {
         return handleError(request, INTERNAL_SERVER_ERROR, ex);
     }
 

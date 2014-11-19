@@ -22,30 +22,7 @@
 					<multilingual-edit name="name" ng-model="editCtrl.hub.name" mandatory="true"></multilingual-edit>
 				</div>
 
-				<div class="row">
-					<label>{{ "hubs.streetAddress.label" | translate }}</label>
-				</div>
-				<div class="row">
-					<multilingual-edit name="streetAddress" ng-model="editCtrl.hub.streetAddress" mandatory="false"></multilingual-edit>
-				</div>
-
-				<div class="row">
-					<div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 column first-column">
-						<div class="form-group">
-							<label>{{ "hubs.postalCode.label" | translate }}</label>
-							<div>
-								<input name="postalCode" type="text" class="form-control" ng-model="editCtrl.hub.postalCode" />
-							</div>
-						</div>
-					</div>
-				</div>
-
-				<div class="row">
-					<label>{{ "hubs.city.label" | translate }}</label>
-				</div>
-				<div class="row">
-					<multilingual-edit name="city" ng-model="editCtrl.hub.city" mandatory="false"></multilingual-edit>
-				</div>
+				<address-edit ng-model="editCtrl.hub.address" path="hubs.address"></address-edit>
 
 				<div class="row">
 					<h3>{{"hubs.location.label" | translate}}</h3>

@@ -10,6 +10,8 @@ function init() {
   cd $protractor_dir
 
   npm install
+
+  export SPRING_PROFILES_ACTIVES=psql,e2e
 }
 
 function cleanup() {

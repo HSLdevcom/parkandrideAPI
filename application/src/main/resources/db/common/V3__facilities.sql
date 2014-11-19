@@ -78,3 +78,16 @@ create table port (
   constraint port_facility_id_fk foreign key (facility_id)
     references facility (id)
 );
+
+create table facility_service (
+  facility_id bigint not null,
+  service_id bigint not null,
+
+  primary key (facility_id, service_id),
+
+  constraint facility_service_facility_id_fk foreign key (facility_id)
+    references facility (id),
+
+  constraint facility_service_service_id_fk foreign key (service_id)
+    references service (id)
+);

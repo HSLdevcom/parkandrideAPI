@@ -2,7 +2,7 @@ package fi.hsl.parkandride.core.domain;
 
 import java.util.Set;
 
-public class ContactSearch {
+public class ServiceSearch {
 
     public int limit = 100;
 

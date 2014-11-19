@@ -14,8 +14,7 @@ public class Contact {
     @Valid
     public MultilingualString name;
 
-    // TODO: @Phone
-    public String phone;
+    public Phone phone;
 
     @Email
     public String email;
@@ -37,7 +36,7 @@ public class Contact {
         return name;
     }
 
-    public String getPhone() {
+    public Phone getPhone() {
         return phone;
     }
 

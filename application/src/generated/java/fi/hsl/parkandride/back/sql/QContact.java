@@ -55,7 +55,7 @@ public class QContact extends RelationalPathSpatial<QContact> {
 
     public final StringPath openingHoursSv = createString("openingHoursSv");
 
-    public final StringPath phone = createString("phone");
+    public final SimplePath<fi.hsl.parkandride.core.domain.Phone> phone = createSimple("phone", fi.hsl.parkandride.core.domain.Phone.class);
 
     public final StringPath postalCode = createString("postalCode");
 

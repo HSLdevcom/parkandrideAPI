@@ -148,6 +148,7 @@ public class JdbcConfiguration {
     public com.mysema.query.sql.Configuration querydslConfiguration() {
         com.mysema.query.sql.Configuration conf = new com.mysema.query.sql.Configuration(sqlTemplates);
         conf.register("CAPACITY", "CAPACITY_TYPE", new EnumByNameType<CapacityType>(CapacityType.class));
+        conf.register("CONTACT", "PHONE", new PhoneType());
 //        conf.register("FACILITY", "BORDER", H2PolygonType.DEFAULT);
         return conf;
     }

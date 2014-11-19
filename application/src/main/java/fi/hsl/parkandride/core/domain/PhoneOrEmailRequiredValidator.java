@@ -13,6 +13,6 @@ public class PhoneOrEmailRequiredValidator implements ConstraintValidator<PhoneO
 
     @Override
     public boolean isValid(Contact contact, ConstraintValidatorContext context) {
-        return contact == null || !(isNullOrEmpty(contact.email) && isNullOrEmpty(contact.phone));
+        return contact == null || !(isNullOrEmpty(contact.email) && contact.phone == null);
     }
 }

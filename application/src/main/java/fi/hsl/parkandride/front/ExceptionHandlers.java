@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.HttpMediaTypeException;
@@ -23,6 +24,10 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
+
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.google.common.collect.ImmutableList;
+import com.mysema.query.sql.types.Null;
 
 import fi.hsl.parkandride.core.domain.NotFoundException;
 import fi.hsl.parkandride.core.domain.Violation;
@@ -52,6 +57,36 @@ public class ExceptionHandlers {
             violations.add(new Violation(fieldError.getCode(), fieldError.getField(), fieldError.getDefaultMessage()));
         }
         return handleError(request, BAD_REQUEST, ex, "Invalid request parameters", violations);
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> jsonException(HttpServletRequest request, HttpMessageNotReadableException ex) {
+        if (ex.getCause() instanceof JsonMappingException) {
+            JsonMappingException jsonEx = (JsonMappingException) ex.getCause();
+            String path = getPath(jsonEx);
+            Violation violation = new Violation("TypeMismatch", path, jsonEx.getMessage());
+            return handleError(request, BAD_REQUEST, ex, "Invalid JSON", ImmutableList.of(violation));
+        }
+        return handleError(request, BAD_REQUEST, ex);
+    }
+
+    private String getPath(JsonMappingException jsonEx) {
+        StringBuilder path = new StringBuilder();
+        for (JsonMappingException.Reference ref : jsonEx.getPath()) {
+            if (path.length() > 0) {
+                path.append('.');
+            }
+            String field = ref.getFieldName();
+            int index = ref.getIndex();
+            if (field != null) {
+                path.append(field);
+            }
+            if (index >= 0) {
+                path.append('[').append(index).append(']');
+            }
+        }
+        return path.toString();
     }
 
     @ExceptionHandler({ HttpRequestMethodNotSupportedException.class, HttpMediaTypeException.class })

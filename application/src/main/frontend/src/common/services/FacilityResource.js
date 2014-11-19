@@ -59,7 +59,7 @@
         };
 
         api.listFacilities = function(search) {
-            return $http.get("/api/facilities", {
+            return $http.get("api/v1/facilities", {
                 params: search
             }).then(function(response) {
                 return addFacilityIndexes(response.data.results);
@@ -67,7 +67,7 @@
         };
 
         api.getFacility = function(id) {
-            return $http.get("/api/facilities/" + id).then(function(response){
+            return $http.get("api/v1/facilities/" + id).then(function(response){
                 return assignPortIds(response.data);
             });
         };
@@ -76,18 +76,18 @@
             cleanupCapacities(facility.capacities);
             cleanupPorts(facility.ports);
             if (facility.id) {
-                return $http.put("/api/facilities/" + facility.id, facility).then(function(response){
+                return $http.put("api/v1/facilities/" + facility.id, facility).then(function(response){
                     return response.data.id;
                 });
             } else {
-                return $http.post("/api/facilities", facility).then(function(response){
+                return $http.post("api/v1/facilities", facility).then(function(response){
                     return response.data.id;
                 });
             }
         };
 
         api.findFacilitiesAsFeatureCollection = function(search) {
-            return $http.get("/api/facilities.geojson", {
+            return $http.get("api/v1/facilities.geojson", {
                 params: search
             }).then(function(response) {
                 return addFacilityIndexesToFeatures(response.data);
@@ -110,7 +110,7 @@
                 return deferred.promise;
             }
 
-            return $http.get("/api/facilities", {
+            return $http.get("api/v1/facilities", {
                 params: { summary: true, ids: facilityIds }
             }).then(function(response) {
                 return response.data;
@@ -118,7 +118,7 @@
         };
 
         api.getCapacityTypes = function() {
-            return $http.get("/api/capacity-types").then(function(response) {
+            return $http.get("api/v1/capacity-types").then(function(response) {
                 capacityTypesCached = response.data.results;
                 return capacityTypesCached;
             });

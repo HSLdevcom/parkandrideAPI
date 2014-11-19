@@ -11,24 +11,24 @@
         };
 
         api.listHubs = function() {
-            return $http.get('/api/hubs').then(function(response) {
+            return $http.get('api/v1/hubs').then(function(response) {
                 return response.data.results;
             });
         };
 
         api.getHub = function(id) {
-            return $http.get('/api/hubs/' + id).then(function(response) {
+            return $http.get('api/v1/hubs/' + id).then(function(response) {
                 return response.data;
             });
         };
 
         api.save = function(data) {
             if (data.id) {
-                return $http.put('/api/hubs/' + data.id, data).then(function(response) {
+                return $http.put('api/v1/hubs/' + data.id, data).then(function(response) {
                     return response.data.id;
                 });
             } else {
-                return $http.post('/api/hubs', data).then(function(response) {
+                return $http.post('api/v1/hubs', data).then(function(response) {
                     return response.data.id;
                 });
             }

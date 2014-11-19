@@ -19,6 +19,7 @@ import fi.hsl.parkandride.core.domain.Address;
 import fi.hsl.parkandride.core.domain.Contact;
 import fi.hsl.parkandride.core.domain.ContactSearch;
 import fi.hsl.parkandride.core.domain.MultilingualString;
+import fi.hsl.parkandride.core.domain.Phone;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = TestConfiguration.class)
@@ -32,7 +33,7 @@ public class ContactDaoTest {
 
     private static String EMAIL = "test@example.com";
 
-    private static String PHONE = "09 1234567";
+    private static Phone PHONE = new Phone("09 1234567");
 
     private static Address ADDRESS = new Address("street", "12345", "city");
 
@@ -64,7 +65,7 @@ public class ContactDaoTest {
         final MultilingualString newOpeningHours = new MultilingualString("changed opening hours");
         final MultilingualString newInfo = new MultilingualString("changed info");
         final String newEmail = "example@example.com";
-        final String newPhone = "0800 123456";
+        final Phone newPhone = new Phone("0800 123456");
         final Address newAddress = new Address("changed street", "23456", "changed city");
         contact.name = newName;
         contact.openingHours = newOpeningHours;

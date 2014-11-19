@@ -33,9 +33,11 @@ import org.springframework.web.servlet.mvc.method.annotation.ExceptionHandlerExc
 import com.fasterxml.jackson.databind.Module;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 
+import fi.hsl.parkandride.core.domain.Phone;
 import fi.hsl.parkandride.front.Features;
 import fi.hsl.parkandride.front.GeojsonDeserializer;
 import fi.hsl.parkandride.front.GeojsonSerializer;
+import fi.hsl.parkandride.front.PhoneSerializer;
 
 @Configuration
 @EnableAutoConfiguration
@@ -66,6 +68,7 @@ public class Application {
                 addDeserializer(Geometry.class, new GeojsonDeserializer<>(jsonMapper, Geometry.class));
 
                 addSerializer(Feature.class, new GeojsonSerializer<>(jsonMapper));
+                addSerializer(Phone.class, new PhoneSerializer());
             }};
         }
 

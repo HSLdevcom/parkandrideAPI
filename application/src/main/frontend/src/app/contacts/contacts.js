@@ -4,6 +4,7 @@
         'parkandride.ContactResource',
         'parkandride.layout',
         'parkandride.multilingual',
+        'parkandride.util',
         'parkandride.address',
         'showErrors'
     ]);

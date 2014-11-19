@@ -223,7 +223,10 @@
                 "label": "Sähköauto"
             }
         },
-        "location": "Sijainti"
+        "location": "Sijainti",
+        "serviceIds": {
+            "heading": "Palvelut"
+        }
     },
     "footer": {
         "hslabbr": "HSL",

@@ -66,12 +66,15 @@ module.exports = {
       'vendor/angular-ui-utils/modules/validate/validate.js',
       'vendor/lodash/dist/lodash.js',
       'vendor/angular-translate/angular-translate.js',
+      'vendor/angular-ui-select/dist/select.min.js',
+      'vendor/angular-sanitize/angular-sanitize.min.js',
       'vendor/angular-translate-loader-static-files/angular-translate-loader-static-files.js',
       'vendor/openlayers3/build/ol.js',
       'vendor/ng-tags-input/ng-tags-input.js',
       'vendor/sweetalert/lib/sweet-alert.js'
     ],
     css: [
+        'vendor/angular-ui-select/dist/select.min.css',
         'vendor/openlayers3/css/ol.css',
         'vendor/ng-tags-input/ng-tags-input.css',
         'vendor/sweetalert/lib/sweet-alert.css'

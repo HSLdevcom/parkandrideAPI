@@ -30,7 +30,7 @@ public class UrlSchema {
     public static final String CONTACT = CONTACTS + "/{" + CONTACT_ID + "}" ;
 
 
-    public static final String SERVICES = API + "/service";
+    public static final String SERVICES = API + "/services";
 
     public static final String SERVICE_ID = "serviceId";
 

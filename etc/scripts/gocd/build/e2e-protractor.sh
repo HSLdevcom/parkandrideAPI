@@ -11,7 +11,7 @@ function init() {
 
   npm install
 
-  export SPRING_PROFILES_ACTIVE=gocd,psql,e2e
+  export SPRING_PROFILES_ACTIVE=env_gocd
 }
 
 function cleanup() {

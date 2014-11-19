@@ -36,7 +36,7 @@ import fi.hsl.parkandride.back.FacilityDao;
 import fi.hsl.parkandride.back.HubDao;
 
 @Controller
-@Profile({"e2e", "dev", "demo"})
+@Profile({"dev_api"})
 public class TestController {
 
     private static QFacility qFacility = QFacility.facility;

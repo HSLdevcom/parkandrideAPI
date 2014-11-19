@@ -23,7 +23,7 @@ function run() {
   CMD="$1"; shift
   case "$CMD" in
     start)
-        java -jar --debug $JARFile 2>&1 > $LOGFile &
+        java -jar $JARFile 2>&1 > $LOGFile &
         ;;
     wait_until_started)
         retryable_condition 'is_server_up' 120 || fail "Failed to start application"

@@ -7,7 +7,7 @@ import static com.google.i18n.phonenumbers.Phonenumber.PhoneNumber;
 import com.google.i18n.phonenumbers.NumberParseException;
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
 
-public class Phone {
+public final class Phone {
 
     private static final PhoneNumberUtil phoneUtil = PhoneNumberUtil.getInstance();
 
@@ -43,5 +43,22 @@ public class Phone {
 
     public String toString() {
         return number;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || !(o instanceof Phone)) return false;
+
+        Phone phone = (Phone) o;
+
+        if (!number.equals(phone.number)) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return number.hashCode();
     }
 }

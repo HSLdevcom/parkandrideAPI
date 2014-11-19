@@ -1,11 +1,8 @@
 package fi.hsl.parkandride.core.service;
 
-import com.fasterxml.jackson.databind.ser.ContainerSerializer;
-
 import fi.hsl.parkandride.core.back.ContactRepository;
 import fi.hsl.parkandride.core.domain.Contact;
 import fi.hsl.parkandride.core.domain.ContactSearch;
-import fi.hsl.parkandride.core.domain.PageableSpatialSearch;
 import fi.hsl.parkandride.core.domain.SearchResults;
 
 public class ContactService {

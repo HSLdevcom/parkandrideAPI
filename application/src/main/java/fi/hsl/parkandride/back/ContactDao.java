@@ -5,8 +5,6 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 import static fi.hsl.parkandride.core.domain.Sort.Dir.ASC;
 import static fi.hsl.parkandride.core.domain.Sort.Dir.DESC;
 
-import java.util.List;
-
 import com.mysema.query.Tuple;
 import com.mysema.query.dml.StoreClause;
 import com.mysema.query.sql.SQLExpressions;

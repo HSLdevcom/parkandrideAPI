@@ -1,7 +1,11 @@
 package fi.hsl.parkandride.front;
 
 import static fi.hsl.parkandride.front.FeatureCollection.FACILITY_TO_FEATURE;
-import static fi.hsl.parkandride.front.UrlSchema.*;
+import static fi.hsl.parkandride.front.UrlSchema.CAPACITY_TYPES;
+import static fi.hsl.parkandride.front.UrlSchema.FACILITIES;
+import static fi.hsl.parkandride.front.UrlSchema.FACILITY;
+import static fi.hsl.parkandride.front.UrlSchema.FACILITY_ID;
+import static fi.hsl.parkandride.front.UrlSchema.GEOJSON;
 import static java.util.Arrays.asList;
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.OK;

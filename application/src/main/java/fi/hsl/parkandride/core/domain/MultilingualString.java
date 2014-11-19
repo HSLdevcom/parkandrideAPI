@@ -1,7 +1,5 @@
 package fi.hsl.parkandride.core.domain;
 
-import static java.util.Objects.equals;
-
 import java.util.Objects;
 
 import org.hibernate.validator.constraints.Length;

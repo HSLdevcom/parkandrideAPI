@@ -6,26 +6,19 @@ import static fi.hsl.parkandride.core.domain.Sort.Dir.ASC;
 import static fi.hsl.parkandride.core.domain.Sort.Dir.DESC;
 
 import com.mysema.query.Tuple;
-import com.mysema.query.dml.StoreClause;
-import com.mysema.query.sql.SQLExpressions;
-import com.mysema.query.sql.dml.SQLInsertClause;
-import com.mysema.query.sql.dml.SQLUpdateClause;
 import com.mysema.query.sql.postgres.PostgresQuery;
 import com.mysema.query.sql.postgres.PostgresQueryFactory;
 import com.mysema.query.types.MappingProjection;
 import com.mysema.query.types.expr.ComparableExpression;
-import com.mysema.query.types.expr.SimpleExpression;
 
 import fi.hsl.parkandride.back.sql.QService;
 import fi.hsl.parkandride.core.back.ServiceRepository;
-import fi.hsl.parkandride.core.back.ServiceRepository;
+import fi.hsl.parkandride.core.domain.SearchResults;
 import fi.hsl.parkandride.core.domain.Service;
 import fi.hsl.parkandride.core.domain.ServiceSearch;
-import fi.hsl.parkandride.core.domain.SearchResults;
 import fi.hsl.parkandride.core.domain.Sort;
 import fi.hsl.parkandride.core.domain.Violation;
 import fi.hsl.parkandride.core.service.TransactionalRead;
-import fi.hsl.parkandride.core.service.TransactionalWrite;
 import fi.hsl.parkandride.core.service.ValidationException;
 
 public class ServiceDao implements ServiceRepository {

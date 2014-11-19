@@ -27,7 +27,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.google.common.collect.ImmutableList;
-import com.mysema.query.sql.types.Null;
 
 import fi.hsl.parkandride.core.domain.NotFoundException;
 import fi.hsl.parkandride.core.domain.Violation;

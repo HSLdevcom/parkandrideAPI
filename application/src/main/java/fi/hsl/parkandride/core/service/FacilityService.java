@@ -1,7 +1,11 @@
 package fi.hsl.parkandride.core.service;
 
-import fi.hsl.parkandride.core.domain.*;
 import fi.hsl.parkandride.core.back.FacilityRepository;
+import fi.hsl.parkandride.core.domain.Facility;
+import fi.hsl.parkandride.core.domain.FacilitySummary;
+import fi.hsl.parkandride.core.domain.PageableSpatialSearch;
+import fi.hsl.parkandride.core.domain.SearchResults;
+import fi.hsl.parkandride.core.domain.SpatialSearch;
 
 public class FacilityService {
 

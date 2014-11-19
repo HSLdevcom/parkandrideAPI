@@ -12,10 +12,10 @@
 
 function init() {
   export PGCLIENTENCODING="UTF8"
-  : ${LIIPI_DB:="liipidb"}
-  : ${LIIPI_SCHEMA:="liipi"}
-  : ${LIIPI_USER:="liipi"}
-  : ${LIIPI_PASS:="liipipw"}
+  : ${LIIPI_DB:="liipi"}
+  : ${LIIPI_SCHEMA:=$LIIPI_DB}
+  : ${LIIPI_USER:=$LIIPI_DB}
+  : ${LIIPI_PASS:=$LIIPI_DB}
 
   PSQL_OPTS=("-v" "ON_ERROR_STOP=1")
   for arg do

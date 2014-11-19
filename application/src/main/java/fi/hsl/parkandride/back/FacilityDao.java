@@ -31,6 +31,7 @@ import com.mysema.query.types.expr.SimpleExpression;
 import fi.hsl.parkandride.back.sql.QCapacity;
 import fi.hsl.parkandride.back.sql.QFacility;
 import fi.hsl.parkandride.back.sql.QFacilityAlias;
+import fi.hsl.parkandride.back.sql.QFacilityService;
 import fi.hsl.parkandride.back.sql.QPort;
 import fi.hsl.parkandride.core.back.FacilityRepository;
 import fi.hsl.parkandride.core.domain.*;
@@ -49,6 +50,8 @@ public class FacilityDao implements FacilityRepository {
     private static final QCapacity qCapacity = QCapacity.capacity;
 
     private static final QPort qPort = QPort.port;
+
+    private static final QFacilityService qService = QFacilityService.facilityService;
 
     private static final MappingProjection<Capacity> capacityMapping = new MappingProjection<Capacity>(Capacity.class, qCapacity.built, qCapacity.unavailable) {
         @Override
@@ -151,6 +154,7 @@ public class FacilityDao implements FacilityRepository {
         insertAliases(facilityId, facility.aliases);
         insertCapacities(facilityId, facility.capacities);
         insertPorts(facilityId, facility.ports);
+        updateServices(facilityId, facility.serviceIds);
 
         return facilityId;
     }
@@ -174,6 +178,7 @@ public class FacilityDao implements FacilityRepository {
         updateAliases(facilityId, newFacility.aliases, oldFacility.aliases);
         updateCapacities(facilityId, newFacility.capacities, oldFacility.capacities);
         updatePorts(facilityId, newFacility.ports, oldFacility.ports);
+        updateServices(facilityId, newFacility.serviceIds);
     }
 
     @TransactionalRead
@@ -201,6 +206,7 @@ public class FacilityDao implements FacilityRepository {
         fetchAliases(facilityMap);
         fetchCapacities(facilityMap);
         fetchPorts(facilityMap);
+        fetchServices(facilityMap);
         return facility;
     }
 
@@ -218,6 +224,7 @@ public class FacilityDao implements FacilityRepository {
         fetchAliases(facilities);
         fetchCapacities(facilities);
         fetchPorts(facilities);
+        fetchServices(facilities);
 
         return SearchResults.of(new ArrayList<>(facilities.values()), search.limit);
     }
@@ -436,7 +443,19 @@ public class FacilityDao implements FacilityRepository {
         }
     }
 
-    private Map<Long, Facility> fetchPorts(Map<Long, Facility> facilitiesById) {
+    private void updateServices(long facilityId, Set<Long> serviceIds) {
+        queryFactory.delete(qService).where(qService.facilityId.eq(facilityId)).execute();
+
+        if (serviceIds != null && !serviceIds.isEmpty()) {
+            SQLInsertClause insert = queryFactory.insert(qService);
+            for (Long serviceId : serviceIds) {
+                insert.set(qService.facilityId, facilityId).set(qService.serviceId, serviceId).addBatch();
+            }
+            insert.execute();
+        }
+    }
+
+    private void fetchPorts(Map<Long, Facility> facilitiesById) {
         if (!facilitiesById.isEmpty()) {
             Map<Long, List<Port>> ports = findPorts(facilitiesById.keySet());
 
@@ -444,10 +463,9 @@ public class FacilityDao implements FacilityRepository {
                 facilitiesById.get(entry.getKey()).ports = entry.getValue();
             }
         }
-        return facilitiesById;
     }
 
-    private Map<Long, Facility> fetchAliases(Map<Long, Facility> facilitiesById) {
+    private void fetchAliases(Map<Long, Facility> facilitiesById) {
         if (!facilitiesById.isEmpty()) {
             Map<Long, Set<String>> aliasesByFacilityId = findAliases(facilitiesById.keySet());
 
@@ -455,10 +473,9 @@ public class FacilityDao implements FacilityRepository {
                 facilitiesById.get(entry.getKey()).aliases = new TreeSet<>(entry.getValue());
             }
         }
-        return facilitiesById;
     }
 
-    private Map<Long, Facility> fetchCapacities(Map<Long, Facility> facilitiesById) {
+    private void fetchCapacities(Map<Long, Facility> facilitiesById) {
         if (!facilitiesById.isEmpty()) {
             Map<Long, Map<CapacityType, Capacity>> capacities = findCapacities(facilitiesById.keySet());
 
@@ -466,12 +483,27 @@ public class FacilityDao implements FacilityRepository {
                 facilitiesById.get(entry.getKey()).capacities = entry.getValue();
             }
         }
-        return facilitiesById;
     }
 
-    private Map<Long, Set<String>> findAliases(Set<Long> facilitiesById) {
+    private void fetchServices(Map<Long, Facility> facilitiesById) {
+        if (!facilitiesById.isEmpty()) {
+            Map<Long, Set<Long>> capacities = findServices(facilitiesById.keySet());
+
+            for (Map.Entry<Long, Set<Long>> entry : capacities.entrySet()) {
+                facilitiesById.get(entry.getKey()).serviceIds = entry.getValue();
+            }
+        }
+    }
+
+    private Map<Long, Set<Long>> findServices(Set<Long> facilityIds) {
+        return queryFactory.from(qService)
+                .where(qService.facilityId.in(facilityIds))
+                .transform(groupBy(qService.facilityId).as(set(qService.serviceId)));
+    }
+
+    private Map<Long, Set<String>> findAliases(Set<Long> facilityIds) {
         return queryFactory.from(qAlias)
-                .where(qAlias.facilityId.in(facilitiesById))
+                .where(qAlias.facilityId.in(facilityIds))
                 .transform(aliasesByFacilityIdMapping);
     }
 

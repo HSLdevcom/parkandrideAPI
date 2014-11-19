@@ -9,6 +9,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.SortedSet;
 
 import javax.inject.Inject;
@@ -23,11 +24,13 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSortedSet;
 
 import fi.hsl.parkandride.back.sql.QCapacity;
 import fi.hsl.parkandride.back.sql.QFacility;
 import fi.hsl.parkandride.back.sql.QFacilityAlias;
+import fi.hsl.parkandride.back.sql.QFacilityService;
 import fi.hsl.parkandride.back.sql.QPort;
 import fi.hsl.parkandride.core.back.FacilityRepository;
 import fi.hsl.parkandride.core.domain.*;
@@ -68,6 +71,8 @@ public class FacilityDaoTest {
 
     public static final Map<CapacityType, Capacity> CAPACITIES = ImmutableMap.of(CAR, new Capacity(100, 1), BICYCLE, new Capacity(10, 0));
 
+    public static final Set<Long> SERVICES = ImmutableSet.of(1l, 2l, 3l);
+
 
     @Inject TestHelper testHelper;
 
@@ -76,7 +81,8 @@ public class FacilityDaoTest {
 
     @Before
     public void cleanup() {
-        testHelper.clear(QFacilityAlias.facilityAlias, QCapacity.capacity, QPort.port, QFacility.facility);
+        testHelper.clear(QFacilityService.facilityService, QFacilityAlias.facilityAlias, QCapacity.capacity, QPort.port,
+                QFacility.facility);
     }
 
     @Test
@@ -101,11 +107,13 @@ public class FacilityDaoTest {
         final SortedSet<String> newAliases = ImmutableSortedSet.of("clias");
         final Map<CapacityType, Capacity> newCapacities = ImmutableMap.of(CAR, new Capacity(100, 50), PARK_AND_RIDE, new Capacity(5, 0));
         final List<Port> newPorts = ImmutableList.of(new Port(PORT_LOCATION2, true, true, true), new Port(PORT_LOCATION1, false, false, false));
+        final Set<Long> newServices = ImmutableSet.of(4l);
 
         facility.name = newName;
         facility.aliases = newAliases;
         facility.capacities = newCapacities;
         facility.ports = newPorts;
+        facility.serviceIds = newServices;
 
         facilityDao.updateFacility(id, facility);
         facility = facilityDao.getFacility(id);
@@ -113,11 +121,13 @@ public class FacilityDaoTest {
         assertThat(facility.aliases).isEqualTo(newAliases);
         assertThat(facility.capacities).isEqualTo(newCapacities);
         assertThat(facility.ports).isEqualTo(newPorts);
+        assertThat(facility.serviceIds).isEqualTo(newServices);
 
         // Remove aliases, capacities and ports
         facility.aliases = null;
         facility.capacities = null;
         facility.ports = null;
+        facility.serviceIds = null;
         facilityDao.updateFacility(id, facility);
 
         // Find by geometry
@@ -126,6 +136,7 @@ public class FacilityDaoTest {
         assertThat(facilities.get(0).aliases).isEmpty();
         assertThat(facilities.get(0).capacities).isEmpty();
         assertThat(facilities.get(0).ports).isEmpty();
+        assertThat(facilities.get(0).serviceIds).isEmpty();
 
         // Not found by geometry
         assertThat(findByGeometry(NON_OVERLAPPING_AREA)).isEmpty();
@@ -138,6 +149,7 @@ public class FacilityDaoTest {
         assertThat(facility.aliases).isEqualTo(ALIASES);
         assertThat(facility.capacities).isEqualTo(CAPACITIES);
         assertThat(facility.ports).isEqualTo(PORTS);
+        assertThat(facility.serviceIds).isEqualTo(SERVICES);
     }
 
     private List<Facility> findByGeometry(Polygon geometry) {
@@ -154,6 +166,7 @@ public class FacilityDaoTest {
         facility.aliases = ALIASES;
         facility.capacities = CAPACITIES;
         facility.ports = PORTS;
+        facility.serviceIds = SERVICES;
         return facility;
     }
 

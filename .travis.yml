@@ -6,7 +6,9 @@ env:
 addons:
   postgresql: "9.3"
 before_install:
-  - sudo apt-get update && sudo apt-get --reinstall install -qq language-pack-en language-pack-fi
+  - sudo apt-get update && sudo apt-get install -qq language-pack-fi
+  - sudo /etc/init.d/postgresql stop
+  - sudo /etc/init.d/postgresql start 9.3
   - sh -e /etc/init.d/xvfb start
 install:
   - mvn package -Dmaven.javadoc.skip=true -B -V

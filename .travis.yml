@@ -2,7 +2,7 @@ language: java
 jdk:
   - oraclejdk8
 env:
-  - PTOR_DIR=$TRAVIS_BUILD_DIR/etc/protractor APP_MODULE=$TRAVIS_BUILD_DIR/application SPRING_PROFILES_ACTIVES=env_travis DISPLAY=:99
+  - PTOR_DIR=$TRAVIS_BUILD_DIR/etc/protractor APP_MODULE=$TRAVIS_BUILD_DIR/application SPRING_PROFILES_ACTIVE=env_travis DISPLAY=:99
 before_install:
   - sh -e /etc/init.d/xvfb start
 install:

@@ -81,7 +81,7 @@
 					<div class="row">
 						<h3>{{"facilities.serviceIds.heading" | translate}}</h3>
 						<div class="panel panel-default">
-							<ui-select multiple ng-model="editCtrl.facility.serviceIds" ng-disabled="disabled">
+							<ui-select multiple ng-model="editCtrl.facility.serviceIds" theme="bootstrap" ng-disabled="disabled" reset-search-input="true">
 								<ui-select-match placeholder="Valitse palvelut...">{{$item.name.fi}}</ui-select-match>
 								<ui-select-choices repeat="service.id as service in editCtrl.services | filter: {name: {fi: $select.search}}">
 									<div ng-bind-html="service.name.fi | highlight: $select.search"></div>

@@ -49,6 +49,7 @@
             }
         },
         "address": {
+            "label": "Osoite",
             "streetAddress": {
                 "label": "Katuosoite",
                 "fi": {

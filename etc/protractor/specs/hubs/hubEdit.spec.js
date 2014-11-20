@@ -130,50 +130,56 @@ describe('edit hub view', function () {
         });
     });
 
-    describe('hub with facilities', function () {
-        var hub;
-        var facilityNameOrder = common.facilityNameOrder;
+    if (!common.isOsx) {
+        describe('hub with facilities', function () {
+            var hub;
+            var facilityNameOrder = common.facilityNameOrder;
 
-        beforeEach(function () {
-            hub = fixtures.hubsFixture.westend.copy();
-            var fproto = facFull;
-            var xdelta = fproto.locationInput.w + 5;
-            var n = 0;
-            var facilityCreator = function() { return fproto.copyHorizontallyInDefaultZoom(n++ * xdelta); };
-            var facilities = facilityFactory.facilitiesFromCreator(facilityCreator, facilityNameOrder);
+            beforeEach(function () {
+                hub = fixtures.hubsFixture.westend.copy();
+                var fproto = facFull;
+                var xdelta = fproto.locationInput.w + 5;
+                var n = 0;
+                var facilityCreator = function () {
+                    return fproto.copyHorizontallyInDefaultZoom(n++ * xdelta);
+                };
+                var facilities = facilityFactory.facilitiesFromCreator(facilityCreator, facilityNameOrder);
 
-            var f1LeftTop = [280, 155];
-            _.forEach(facilities, function(f, idx){ f.locationInput.offset = { x: f1LeftTop[0] + idx*xdelta, y: f1LeftTop[1] } });
+                var f1LeftTop = [280, 155];
+                _.forEach(facilities, function (f, idx) {
+                    f.locationInput.offset = { x: f1LeftTop[0] + idx * xdelta, y: f1LeftTop[1] }
+                });
 
-            hub.location.coordinates = facilities[0].coordinatesFromTopLeft({ x: 30, y: 30 });
-            hub.setFacilities(facilities);
-            devApi.resetAll(hub.facilities, [hub]);
-        });
+                hub.location.coordinates = facilities[0].coordinatesFromTopLeft({ x: 30, y: 30 });
+                hub.setFacilities(facilities);
+                devApi.resetAll(hub.facilities, [hub]);
+            });
 
-        it('facility can be removed from hub', function () {
-            hubEditPage.get(hub.id);
-            expect(hubEditPage.facilitiesTable.getSize()).toEqual(9);
+            it('facility can be removed from hub', function () {
+                hubEditPage.get(hub.id);
+                expect(hubEditPage.facilitiesTable.getSize()).toEqual(9);
 
-            hubEditPage.toggleFacility(hub.facilities[0]);
-            expect(hubEditPage.facilitiesTable.isDisplayed()).toBe(true);
-            expect(hubEditPage.facilitiesTable.getSize()).toEqual(8);
+                hubEditPage.toggleFacility(hub.facilities[0]);
+                expect(hubEditPage.facilitiesTable.isDisplayed()).toBe(true);
+                expect(hubEditPage.facilitiesTable.getSize()).toEqual(8);
 
-            hubEditPage.save();
-            expect(hubViewPage.isDisplayed()).toBe(true);
-            expect(hubViewPage.facilitiesTable.getSize()).toBe(8);
-        });
+                hubEditPage.save();
+                expect(hubViewPage.isDisplayed()).toBe(true);
+                expect(hubViewPage.facilitiesTable.getSize()).toBe(8);
+            });
 
-        it('when removing facilities, facility table is updated and order is maintained', function () {
-            hubEditPage.get(hub.id);
-            expect(hubEditPage.facilitiesTable.getSize()).toEqual(9);
+            it('when removing facilities, facility table is updated and order is maintained', function () {
+                hubEditPage.get(hub.id);
+                expect(hubEditPage.facilitiesTable.getSize()).toEqual(9);
 
-            _.forEach(hub.facilities, function(f, idx){
-                hubEditPage.toggleFacility(f);
-                if (idx < hub.facilities.length - 1) {
-                    expect(hubEditPage.facilitiesTable.isDisplayed()).toBe(true);
-                    arrayAssert.assertInOrder(hubEditPage.facilitiesTable.getNames(), facilityNameOrder, { allowSkip: true });
-                }
+                _.forEach(hub.facilities, function (f, idx) {
+                    hubEditPage.toggleFacility(f);
+                    if (idx < hub.facilities.length - 1) {
+                        expect(hubEditPage.facilitiesTable.isDisplayed()).toBe(true);
+                        arrayAssert.assertInOrder(hubEditPage.facilitiesTable.getNames(), facilityNameOrder, { allowSkip: true });
+                    }
+                });
             });
         });
-    });
+    }
 });

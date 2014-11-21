@@ -3,14 +3,13 @@ package fi.hsl.parkandride.back;
 import static fi.hsl.parkandride.core.domain.CapacityType.BICYCLE;
 import static fi.hsl.parkandride.core.domain.CapacityType.CAR;
 import static fi.hsl.parkandride.core.domain.CapacityType.PARK_AND_RIDE;
+import static fi.hsl.parkandride.core.domain.ContactType.CUSTOMER_SERVICE;
+import static fi.hsl.parkandride.core.domain.ContactType.EMERGENCY;
 import static fi.hsl.parkandride.core.domain.Sort.Dir.ASC;
 import static fi.hsl.parkandride.core.domain.Sort.Dir.DESC;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.SortedSet;
+import java.util.*;
 
 import javax.inject.Inject;
 
@@ -32,6 +31,7 @@ import fi.hsl.parkandride.back.sql.QFacility;
 import fi.hsl.parkandride.back.sql.QFacilityAlias;
 import fi.hsl.parkandride.back.sql.QFacilityService;
 import fi.hsl.parkandride.back.sql.QPort;
+import fi.hsl.parkandride.core.back.ContactRepository;
 import fi.hsl.parkandride.core.back.FacilityRepository;
 import fi.hsl.parkandride.core.domain.*;
 import fi.hsl.parkandride.core.service.ValidationException;
@@ -77,17 +77,26 @@ public class FacilityDaoTest {
     @Inject TestHelper testHelper;
 
     @Inject
+    ContactRepository contactDao;
+
+    @Inject
     FacilityRepository facilityDao;
 
     @Before
-    public void cleanup() {
+    public void initialize() {
         testHelper.clear(QFacilityService.facilityService, QFacilityAlias.facilityAlias, QCapacity.capacity, QPort.port,
                 QFacility.facility);
     }
 
     @Test
     public void create_read_update() {
+        final List<Long> dummyContacts = Arrays.asList(createDummyContact(), createDummyContact());
+        final Map<ContactType, Long> contacts = ImmutableMap.of(
+                EMERGENCY, dummyContacts.get(0),
+                CUSTOMER_SERVICE, dummyContacts.get(1));
+
         Facility facility = createFacility();
+        facility.contacts = contacts;
 
         // Insert
         final long id = facilityDao.insertFacility(facility);
@@ -97,6 +106,7 @@ public class FacilityDaoTest {
         // Find by id
         facility = facilityDao.getFacility(id);
         assertDefault(facility);
+        assertThat(facility.contacts).isEqualTo(contacts);
 
         // Search
         facility = facilityDao.findFacilities(new PageableSpatialSearch()).get(0);
@@ -128,6 +138,7 @@ public class FacilityDaoTest {
         facility.capacities = null;
         facility.ports = null;
         facility.serviceIds = null;
+        facility.contacts = null;
         facilityDao.updateFacility(id, facility);
 
         // Find by geometry
@@ -137,9 +148,17 @@ public class FacilityDaoTest {
         assertThat(facilities.get(0).capacities).isEmpty();
         assertThat(facilities.get(0).ports).isEmpty();
         assertThat(facilities.get(0).serviceIds).isEmpty();
+        assertThat(facilities.get(0).contacts).isEmpty();
 
         // Not found by geometry
         assertThat(findByGeometry(NON_OVERLAPPING_AREA)).isEmpty();
+    }
+
+    private Long createDummyContact() {
+        Contact contact = new Contact();
+        contact.name = new MultilingualString("TEST");
+        contact.email = "test@example.com";
+        return contactDao.insertContact(contact);
     }
 
     private void assertDefault(Facility facility) {

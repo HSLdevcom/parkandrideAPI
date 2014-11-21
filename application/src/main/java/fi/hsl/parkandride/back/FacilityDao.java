@@ -28,11 +28,7 @@ import com.mysema.query.types.expr.ComparableExpression;
 import com.mysema.query.types.expr.NumberExpression;
 import com.mysema.query.types.expr.SimpleExpression;
 
-import fi.hsl.parkandride.back.sql.QCapacity;
-import fi.hsl.parkandride.back.sql.QFacility;
-import fi.hsl.parkandride.back.sql.QFacilityAlias;
-import fi.hsl.parkandride.back.sql.QFacilityService;
-import fi.hsl.parkandride.back.sql.QPort;
+import fi.hsl.parkandride.back.sql.*;
 import fi.hsl.parkandride.core.back.FacilityRepository;
 import fi.hsl.parkandride.core.domain.*;
 import fi.hsl.parkandride.core.service.TransactionalRead;
@@ -52,6 +48,8 @@ public class FacilityDao implements FacilityRepository {
     private static final QPort qPort = QPort.port;
 
     private static final QFacilityService qService = QFacilityService.facilityService;
+
+    private static final QFacilityContact qContact= QFacilityContact.facilityContact;
 
     private static final MappingProjection<Capacity> capacityMapping = new MappingProjection<Capacity>(Capacity.class, qCapacity.built, qCapacity.unavailable) {
         @Override
@@ -155,6 +153,7 @@ public class FacilityDao implements FacilityRepository {
         insertCapacities(facilityId, facility.capacities);
         insertPorts(facilityId, facility.ports);
         updateServices(facilityId, facility.serviceIds);
+        updateContacts(facilityId, facility.contacts);
 
         return facilityId;
     }
@@ -178,7 +177,13 @@ public class FacilityDao implements FacilityRepository {
         updateAliases(facilityId, newFacility.aliases, oldFacility.aliases);
         updateCapacities(facilityId, newFacility.capacities, oldFacility.capacities);
         updatePorts(facilityId, newFacility.ports, oldFacility.ports);
-        updateServices(facilityId, newFacility.serviceIds);
+
+        if (!Objects.equals(newFacility.serviceIds, oldFacility.serviceIds)) {
+            updateServices(facilityId, newFacility.serviceIds);
+        }
+        if (!Objects.equals(newFacility.contacts, oldFacility.contacts)) {
+            updateContacts(facilityId, newFacility.contacts);
+        }
     }
 
     @TransactionalRead
@@ -207,6 +212,7 @@ public class FacilityDao implements FacilityRepository {
         fetchCapacities(facilityMap);
         fetchPorts(facilityMap);
         fetchServices(facilityMap);
+        fetchContacts(facilityMap);
         return facility;
     }
 
@@ -225,6 +231,7 @@ public class FacilityDao implements FacilityRepository {
         fetchCapacities(facilities);
         fetchPorts(facilities);
         fetchServices(facilities);
+        fetchContacts(facilities);
 
         return SearchResults.of(new ArrayList<>(facilities.values()), search.limit);
     }
@@ -455,6 +462,21 @@ public class FacilityDao implements FacilityRepository {
         }
     }
 
+    private void updateContacts(long facilityId, Map<ContactType, Long> contacts) {
+        queryFactory.delete(qContact).where(qContact.facilityId.eq(facilityId)).execute();
+
+        if (contacts != null && !contacts.isEmpty()) {
+            SQLInsertClause insert = queryFactory.insert(qContact);
+            for (Map.Entry<ContactType, Long> entry : contacts.entrySet()) {
+                insert.set(qContact.facilityId, facilityId)
+                        .set(qContact.contactType, entry.getKey())
+                        .set(qContact.contactId, entry.getValue())
+                        .addBatch();
+            }
+            insert.execute();
+        }
+    }
+
     private void fetchPorts(Map<Long, Facility> facilitiesById) {
         if (!facilitiesById.isEmpty()) {
             Map<Long, List<Port>> ports = findPorts(facilitiesById.keySet());
@@ -493,6 +515,22 @@ public class FacilityDao implements FacilityRepository {
                 facilitiesById.get(entry.getKey()).serviceIds = entry.getValue();
             }
         }
+    }
+
+    private void fetchContacts(Map<Long, Facility> facilitiesById) {
+        if (!facilitiesById.isEmpty()) {
+            Map<Long, Map<ContactType, Long>> capacities = findContacts(facilitiesById.keySet());
+
+            for (Map.Entry<Long, Map<ContactType, Long>> entry : capacities.entrySet()) {
+                facilitiesById.get(entry.getKey()).contacts = entry.getValue();
+            }
+        }
+    }
+
+    private Map<Long, Map<ContactType, Long>> findContacts(Set<Long> facilityIds) {
+        return queryFactory.from(qContact)
+                .where(qContact.facilityId.in(facilityIds))
+                .transform(groupBy(qContact.facilityId).as(map(qContact.contactType, qContact.contactId)));
     }
 
     private Map<Long, Set<Long>> findServices(Set<Long> facilityIds) {

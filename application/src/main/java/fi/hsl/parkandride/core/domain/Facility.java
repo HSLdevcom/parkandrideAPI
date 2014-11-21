@@ -30,6 +30,8 @@ public class Facility {
 
     public Set<Long> serviceIds = new HashSet<>();
 
+    public Map<ContactType, Long> contacts = new HashMap<>();
+
 
     public Long getId() {
         return id;
@@ -59,4 +61,7 @@ public class Facility {
         return serviceIds;
     }
 
+    public Map<ContactType, Long> getContacts() {
+        return contacts;
+    }
 }

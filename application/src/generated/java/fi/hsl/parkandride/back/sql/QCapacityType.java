@@ -27,7 +27,7 @@ public class QCapacityType extends RelationalPathSpatial<QCapacityType> {
 
     public static final QCapacityType capacityType = new QCapacityType("CAPACITY_TYPE");
 
-    public final StringPath name = createString("name");
+    public final EnumPath<fi.hsl.parkandride.core.domain.CapacityType> name = createEnum("name", fi.hsl.parkandride.core.domain.CapacityType.class);
 
     public final com.mysema.query.sql.PrimaryKey<QCapacityType> constraint5 = createPrimaryKey(name);
 

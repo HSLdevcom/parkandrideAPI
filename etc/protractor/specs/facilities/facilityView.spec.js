@@ -41,7 +41,7 @@ describe('facility view', function () {
         });
     });
 
-    describe('with aliases and capacities', function () {
+    describe('with aliases, capacitiesa and services', function () {
         beforeEach(function () {
             f = toView(facFull);
         });
@@ -54,6 +54,9 @@ describe('facility view', function () {
 
             arrayAssert.assertInOrder(viewPage.capacitiesTable.getTypes(), common.capacityTypeOrder);
             expect(viewPage.capacitiesTable.getCapacities(_.keys(f.capacities))).toEqual(f.capacities);
+
+            expect(viewPage.isServicesDisplayed()).toBe(true);
+            expect(viewPage.getServices()).toEqual(["Katettu", "Valaistus"]);
         });
     });
 
@@ -66,6 +69,18 @@ describe('facility view', function () {
 
         it('aliases are not displayed', function () {
             expect(viewPage.isAliasesDisplayed()).toBe(false);
+        });
+    });
+
+    describe('without services', function () {
+        beforeEach(function () {
+            f = facFull.copy();
+            f.serviceIds = [];
+            toView(f);
+        });
+
+        it('aliases are not displayed', function () {
+            expect(viewPage.isServicesDisplayed()).toBe(false);
         });
     });
 

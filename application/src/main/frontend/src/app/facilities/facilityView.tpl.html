@@ -40,9 +40,9 @@
 				<capacities-table capacities="viewCtrl.facility.capacities"></capacities-table>
 			</div>
 
-			<div class="row" ng-show="viewCtrl.hasServices()">
+			<div class="row wdServices" ng-show="viewCtrl.hasServices()">
 				<h3>{{"facilities.serviceIds.heading" | translate}}</h3>
-				<div ng-repeat="service in viewCtrl.services">
+				<div ng-repeat="service in viewCtrl.services" class="wdService">
 					{{service.name.fi}}
 				</div>
 			</div>

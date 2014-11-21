@@ -7,6 +7,8 @@ module.exports = function(spec) {
     spec.view = $('.wdFacilityView');
     spec.name = $('.wdFacilityNameFi');
     spec.aliases = $('.wdAliases');
+    spec.services = $$('.wdService');
+    spec.servicesBlock = $('.wdServices');
     spec.aliasesBlock = $('.wdAliasesBlock');
     spec.editViewButton = $$('.wdEditViewButton').first();
     spec.toListButton = element.all(by.linkUiSref('hub-list')).first();
@@ -25,8 +27,23 @@ module.exports = function(spec) {
         });
     };
 
+    that.getServices = function() {
+        return spec.services.getText();
+    };
+
     that.isAliasesDisplayed = function () {
         return spec.aliasesBlock.isDisplayed();
+    };
+
+    that.isServicesDisplayed = function () {
+        return spec.servicesBlock.then(
+            function(elem) {
+                return elem.isDisplayed();
+            },
+            function() {
+                return false;
+            }
+        );
     };
 
     that.toListView = function () {

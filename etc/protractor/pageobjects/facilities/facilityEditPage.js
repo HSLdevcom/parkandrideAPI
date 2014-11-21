@@ -29,7 +29,7 @@ module.exports = function(spec) {
     };
 
     that.selectService = function(name) {
-        spec.services.click();
+        spec.services.element(by.css('input')).click();
         var servicesElement = browser.driver.switchTo().activeElement();
         servicesElement.sendKeys(name);
         servicesElement.sendKeys(protractor.Key.ENTER);

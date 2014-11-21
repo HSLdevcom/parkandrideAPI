@@ -19,9 +19,14 @@ function cleanup() {
   bash protractor.sh stop
 }
 
+function init_db {
+  LIIPI_DB=liipici bash $ROOT_DIR/etc/scripts/db/psql-init-db.sh -h dev.cvokarbgtqbl.eu-west-1.rds.amazonaws.com -U devmaster postgres
+}
+
 function run() {
   trap cleanup EXIT
 
+  [ "$INIT_DB" = "yes" ] && init_db
   bash protractor.sh start
   bash protractor.sh wait_until_started
   bash protractor.sh test

@@ -28,6 +28,9 @@ public class Facility {
     @Valid
     public List<Port> ports = new ArrayList<>();
 
+    public Set<Long> serviceIds = new HashSet<>();
+
+
     public Long getId() {
         return id;
     }
@@ -50,6 +53,10 @@ public class Facility {
 
     public List<Port> getPorts() {
         return ports;
+    }
+
+    public Set<Long> getServiceIds() {
+        return serviceIds;
     }
 
 }

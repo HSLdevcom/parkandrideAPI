@@ -16,6 +16,7 @@ module.exports = function(spec) {
     spec.zoomOut = element(by.css('button.ol-zoom-in'));
     spec.editModePorts = element(by.id('editModePorts'));
     spec.editModeLocation = element(by.id('editModeLocation'));
+    spec.services = element(by.model('editCtrl.facility.serviceIds'));
 
     spec.defineMultilingualAccessors("name");
 
@@ -26,6 +27,33 @@ module.exports = function(spec) {
             browser.get('/#/facilities/create');
         }
     };
+
+    that.selectService = function(name) {
+        spec.services.element(by.css('input')).click();
+        var servicesElement = browser.driver.switchTo().activeElement();
+        servicesElement.sendKeys(name);
+        servicesElement.sendKeys(protractor.Key.ENTER);
+    };
+
+    that.removeService = function(name) {
+        spec.services
+            .element(by.cssContainingText(".ui-select-match-item", name))
+            .element(by.css(".ui-select-match-close"))
+            .click();
+    };
+
+    that.isServiceSelected = function(name) {
+        return spec.services
+            .element(by.cssContainingText(".ui-select-match-item", name))
+            .then(
+                function(elem) {
+                    return elem.isDisplayed();
+                },
+                function() {
+                    return false;
+                }
+            );
+    }
 
     that.drawLocation = function (topLeft, w, h) {
         spec.editModeLocation.click();

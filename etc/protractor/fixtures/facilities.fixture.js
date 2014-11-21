@@ -40,7 +40,8 @@ module.exports = function () {
                 "DISABLED": {"built": 40, "unavailable": 4},
                 "MOTORCYCLE": {"built": 50, "unavailable": 5},
                 "ELECTRIC_CAR": {"built": 60, "unavailable": 6}
-            }
+            },
+            serviceIds: [4, 5]
         }),
         facCar: facility({
             "id": ids._4,

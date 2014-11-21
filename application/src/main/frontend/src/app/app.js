@@ -6,6 +6,8 @@
         'templates-common',
 
         'ui.router',
+        'ui.select',
+        'ngSanitize',
 
         'filters',
         'featureToggle',

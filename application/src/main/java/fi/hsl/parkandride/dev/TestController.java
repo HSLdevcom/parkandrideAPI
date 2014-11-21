@@ -1,9 +1,9 @@
 package fi.hsl.parkandride.dev;
 
-import static fi.hsl.parkandride.front.UrlSchema.TEST_FACILITIES;
-import static fi.hsl.parkandride.front.UrlSchema.TEST_HUBS;
 import static fi.hsl.parkandride.back.FacilityDao.FACILITY_ID_SEQ;
 import static fi.hsl.parkandride.back.HubDao.HUB_ID_SEQ;
+import static fi.hsl.parkandride.front.UrlSchema.TEST_FACILITIES;
+import static fi.hsl.parkandride.front.UrlSchema.TEST_HUBS;
 import static java.lang.String.format;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
@@ -24,16 +24,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import com.mysema.query.sql.RelationalPath;
 import com.mysema.query.sql.postgres.PostgresQueryFactory;
 
+import fi.hsl.parkandride.back.FacilityDao;
+import fi.hsl.parkandride.back.HubDao;
 import fi.hsl.parkandride.back.sql.*;
-import fi.hsl.parkandride.core.domain.Facility;
-import fi.hsl.parkandride.core.domain.Hub;
 import fi.hsl.parkandride.core.back.FacilityRepository;
 import fi.hsl.parkandride.core.back.HubRepository;
+import fi.hsl.parkandride.core.domain.Facility;
+import fi.hsl.parkandride.core.domain.Hub;
 import fi.hsl.parkandride.core.service.FacilityService;
 import fi.hsl.parkandride.core.service.HubService;
 import fi.hsl.parkandride.core.service.TransactionalWrite;
-import fi.hsl.parkandride.back.FacilityDao;
-import fi.hsl.parkandride.back.HubDao;
 
 @Controller
 @Profile({"dev_api"})
@@ -58,7 +58,7 @@ public class TestController {
     @RequestMapping(method = DELETE, value = TEST_FACILITIES)
     @TransactionalWrite
     public ResponseEntity<Void> deleteFacilities() {
-        clear(QPort.port, QFacilityAlias.facilityAlias, QCapacity.capacity, QFacility.facility);
+        clear(QFacilityService.facilityService, QPort.port, QFacilityAlias.facilityAlias, QCapacity.capacity, QFacility.facility);
         resetSequence(FACILITY_ID_SEQ);
         return new ResponseEntity<Void>(OK);
     }

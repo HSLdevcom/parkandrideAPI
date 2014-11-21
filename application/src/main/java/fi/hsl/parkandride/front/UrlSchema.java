@@ -25,9 +25,16 @@ public class UrlSchema {
 
     public static final String CONTACTS = API + "/contacts";
 
-    public static final String CONTACT_ID = "contactsId";
+    public static final String CONTACT_ID = "contactId";
 
     public static final String CONTACT = CONTACTS + "/{" + CONTACT_ID + "}" ;
+
+
+    public static final String SERVICES = API + "/services";
+
+    public static final String SERVICE_ID = "serviceId";
+
+    public static final String SERVICE = SERVICES + "/{" + SERVICE_ID + "}" ;
 
 
     public static final String FEATURES = API + "/features" ;

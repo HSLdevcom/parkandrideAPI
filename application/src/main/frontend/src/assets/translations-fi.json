@@ -49,6 +49,7 @@
             }
         },
         "address": {
+            "label": "Osoite",
             "streetAddress": {
                 "label": "Katuosoite",
                 "fi": {
@@ -223,7 +224,10 @@
                 "label": "Sähköauto"
             }
         },
-        "location": "Sijainti"
+        "location": "Sijainti",
+        "serviceIds": {
+            "heading": "Palvelut"
+        }
     },
     "footer": {
         "hslabbr": "HSL",

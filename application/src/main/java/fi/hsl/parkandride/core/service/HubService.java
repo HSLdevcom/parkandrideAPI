@@ -1,9 +1,9 @@
 package fi.hsl.parkandride.core.service;
 
+import fi.hsl.parkandride.core.back.HubRepository;
 import fi.hsl.parkandride.core.domain.Hub;
 import fi.hsl.parkandride.core.domain.SearchResults;
 import fi.hsl.parkandride.core.domain.SpatialSearch;
-import fi.hsl.parkandride.core.back.HubRepository;
 
 public class HubService {
 

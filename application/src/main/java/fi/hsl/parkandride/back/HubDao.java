@@ -1,7 +1,6 @@
 package fi.hsl.parkandride.back;
 
 import static com.google.common.base.MoreObjects.firstNonNull;
-import static com.mysema.query.types.Projections.fields;
 import static fi.hsl.parkandride.core.domain.Sort.Dir.ASC;
 import static fi.hsl.parkandride.core.domain.Sort.Dir.DESC;
 
@@ -22,13 +21,13 @@ import com.mysema.query.types.MappingProjection;
 import com.mysema.query.types.expr.ComparableExpression;
 import com.mysema.query.types.expr.SimpleExpression;
 
-import fi.hsl.parkandride.core.domain.*;
+import fi.hsl.parkandride.back.sql.QHub;
+import fi.hsl.parkandride.back.sql.QHubFacility;
 import fi.hsl.parkandride.core.back.HubRepository;
+import fi.hsl.parkandride.core.domain.*;
 import fi.hsl.parkandride.core.service.TransactionalRead;
 import fi.hsl.parkandride.core.service.TransactionalWrite;
 import fi.hsl.parkandride.core.service.ValidationException;
-import fi.hsl.parkandride.back.sql.QHub;
-import fi.hsl.parkandride.back.sql.QHubFacility;
 
 public class HubDao implements HubRepository {
 

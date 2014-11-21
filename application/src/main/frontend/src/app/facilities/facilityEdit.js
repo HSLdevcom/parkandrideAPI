@@ -1,6 +1,7 @@
 (function() {
     var m = angular.module('parkandride.facilityEdit', [
         'ui.router',
+        'parkandride.ServiceResource',
         'parkandride.FacilityResource',
         'parkandride.facilityMap',
         'parkandride.layout',
@@ -28,6 +29,9 @@
                 },
                 facility: function(FacilityResource) {
                     return FacilityResource.newFacility();
+                },
+                services: function(ServiceResource) {
+                    return ServiceResource.listServices().then(function(response) { return response.results; });
                 }
             }
         });
@@ -48,15 +52,19 @@
                 },
                 facility: function($stateParams, FacilityResource) {
                     return FacilityResource.getFacility($stateParams.id);
+                },
+                services: function(ServiceResource) {
+                    return ServiceResource.listServices().then(function(response) { return response.results; });
                 }
             }
         });
     });
 
-    m.controller('FacilityEditCtrl', function($scope, $state, schema, FacilityResource, facility, aliasesPlaceholder) {
+    m.controller('FacilityEditCtrl', function($scope, $state, schema, FacilityResource, facility, aliasesPlaceholder, services) {
         var self = this;
         $scope.common.translationPrefix = "facilities";
         self.capacityTypes = schema.capacityTypes;
+        self.services = services;
         self.aliasesPlaceholder = aliasesPlaceholder;
 
         facility.aliases = _.map(facility.aliases, function(a) { return { text: a }; });

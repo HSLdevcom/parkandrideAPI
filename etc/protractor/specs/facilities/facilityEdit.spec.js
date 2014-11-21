@@ -162,6 +162,19 @@ describe('edit facility view', function () {
             });
         });
 
+        it('add and remove services', function () {
+            expect(editPage.isServiceSelected("Valaistus")).toBe(false);
+            expect(editPage.isServiceSelected("Katettu")).toBe(false);
+            editPage.selectService("Valaistus");
+            editPage.selectService("Katettu");
+            expect(editPage.isServiceSelected("Valaistus")).toBe(true);
+            expect(editPage.isServiceSelected("Katettu")).toBe(true);
+            editPage.removeService("Valaistus");
+            editPage.removeService("Katettu");
+            expect(editPage.isServiceSelected("Valaistus")).toBe(false);
+            expect(editPage.isServiceSelected("Katettu")).toBe(false);
+        });
+
         it('create full', function () {
             editPage.setName(facFull.name);
             editPage.drawLocation(facFull.locationInput.offset, facFull.locationInput.w, facFull.locationInput.h);
@@ -174,6 +187,9 @@ describe('edit facility view', function () {
             editPage.addAlias(facFull.aliases[1]);
             editPage.setCapacities(facFull.capacities);
             arrayAssert.assertInOrder(editPage.getCapacityTypes(), common.capacityTypeOrder);
+
+            editPage.selectService("Valaistus");
+            editPage.selectService("Katettu");
 
             editPage.save();
             expect(viewPage.isDisplayed()).toBe(true);

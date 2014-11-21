@@ -53,29 +53,32 @@ describe('hub list', function () {
         });
     });
 
-    describe('with hubs and facilities', function () {
-        var hnames = [ "guX", "NORF"];
-        var facilityNameOrder = common.facilityNameOrder;
+    if (!common.isOsx) {
+        describe('with hubs and facilities', function () {
+            var hnames = [ "guX", "NORF"];
+            var facilityNameOrder = common.facilityNameOrder;
 
-        beforeEach(function () {
-            var facilitiesFn  = _.partial(facilityFactory.facilitiesFromProto, fixtures.facilitiesFixture.dummies.facFull, facilityNameOrder);
+            beforeEach(function () {
+                var facilitiesFn  = _.partial(facilityFactory.facilitiesFromProto, fixtures.facilitiesFixture.dummies.facFull, facilityNameOrder);
 
-            var hubs = hubFactory.hubsFromProto(fixtures.hubsFixture.westend, hnames);
-            _.forEach(hubs, function(hub) {
-                var prependHubName = function (f) { f.name = hub.name + '_' + f.name; return f; };
-                hub.setFacilities(_.map(facilitiesFn(), prependHubName));
+                var hubs = hubFactory.hubsFromProto(fixtures.hubsFixture.westend, hnames);
+                _.forEach(hubs, function(hub) {
+                    var prependHubName = function (f) { f.name = hub.name + '_' + f.name; return f; };
+                    hub.setFacilities(_.map(facilitiesFn(), prependHubName));
+                });
+
+                devApi.resetAll(_.union(facilitiesFn(), hubs[0].facilities, hubs[1].facilities), hubs);
+                hubListPage.get();
             });
 
-            devApi.resetAll(_.union(facilitiesFn(), hubs[0].facilities, hubs[1].facilities), hubs);
-            hubListPage.get();
-        });
+            it('facilities without hubs are followed by facilities grouped into hubs', function () {
+                var expectedOrderHub = function(hubName) { return [hubName].concat(_.map(facilityNameOrder, function(name) { return hubName + "_" + name;  })); };
 
-        it('facilities without hubs are followed by facilities grouped into hubs', function () {
-            var expectedOrderHub = function(hubName) { return [hubName].concat(_.map(facilityNameOrder, function(name) { return hubName + "_" + name;  })); };
-
-            expect(hubListPage.getHubAndFacilityNames()).toEqual(
-                facilityNameOrder.concat(expectedOrderHub("guX")).concat(expectedOrderHub("NORF"))
-            );
+                expect(hubListPage.getHubAndFacilityNames()).toEqual(
+                    facilityNameOrder.concat(expectedOrderHub("guX")).concat(expectedOrderHub("NORF"))
+                );
+            });
         });
-    });
+    }
+
 });

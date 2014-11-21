@@ -45,7 +45,8 @@
             return {
                 aliases: [],
                 capacities: {},
-                ports: []
+                ports: [],
+                contacts: {}
             };
         };
 

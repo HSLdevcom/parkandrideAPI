@@ -36,7 +36,7 @@ import fi.hsl.parkandride.core.service.HubService;
 import fi.hsl.parkandride.core.service.TransactionalWrite;
 
 @Controller
-@Profile({"e2e", "dev", "demo"})
+@Profile({"dev_api"})
 public class TestController {
 
     private static QFacility qFacility = QFacility.facility;

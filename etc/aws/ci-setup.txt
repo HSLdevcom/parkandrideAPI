@@ -3,7 +3,7 @@ sudo apt-get update
 sudo apt-get install oracle-java8-installer
 
 export M2_HOME=/usr/local/apache-maven-3.2.3
-sudo wget -nv -O ${M2_HOME}.tar.gz http://mirror.netinch.com/pub/apache/maven/maven-3/3.2.3/binaries/apache-maven-3.2.3$
+sudo wget -nv -O ${M2_HOME}.tar.gz http://mirror.netinch.com/pub/apache/maven/maven-3/3.2.3/binaries/apache-maven-3.2.3-bin.tar.gz
 sudo tar xzvf ${M2_HOME}.tar.gz -C /usr/local > /dev/null
 export PATH=$M2_HOME/bin:$PATH
 
@@ -36,3 +36,8 @@ sudo apt-get install firefox
 
 # cp hsl-liipi.pem into /var/go
 # cp htpasswd into /var/go/htpasswd
+
+# postgres
+sudo apt-get install postgresql-client
+# as go user
+echo "*:*:*:*:l11p1L11" > ~/.pgpass && chmod 0600 ~/.pgpass

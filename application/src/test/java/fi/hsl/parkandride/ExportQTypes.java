@@ -27,7 +27,16 @@ import com.mysema.query.sql.codegen.MetaDataExporter;
 
 import fi.hsl.parkandride.config.JdbcConfiguration;
 
+/**
+ * NOTES:
+ * - expected to be run from parkandride-application module
+ * - after generation, the following classes should be removed as they are not used (TODO: automate this)
+ *   - QGeometryColumns
+ *   - QSchemaVersion
+ *   - QSpatialRefSys
+ */
 @org.springframework.context.annotation.Configuration
+@EnableAutoConfiguration
 @Import(JdbcConfiguration.class)
 public class ExportQTypes {
 

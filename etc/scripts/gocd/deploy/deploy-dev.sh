@@ -26,11 +26,16 @@ function transfer() {
 }
 
 function start() {
-  ssh $SSH_OPTS $AWS_TEST "cd $DST_ENV; nohup java -jar $DST_JAR --spring.profiles.active=demo --server.port=$PORT > app.out &"
+  ssh $SSH_OPTS $AWS_TEST "cd $DST_ENV; nohup java -jar $DST_JAR --spring.profiles.active=env_$DST_ENV --server.port=$PORT > app.out &"
+}
+
+function init_db {
+  LIIPI_DB=liipi${DST_ENV} bash $ROOT_DIR/etc/scripts/db/psql-init-db.sh -h dev.cvokarbgtqbl.eu-west-1.rds.amazonaws.com -U devmaster postgres
 }
 
 function run() {
   stop_and_delete
+  [ "$INIT_DB" = "yes" ] && init_db
   transfer
   start
 }

@@ -1,43 +1,72 @@
-sudo add-apt-repository ppa:webupd8team/java
-sudo apt-get update
-sudo apt-get install oracle-java8-installer
+##########
+server
+##########
 
+# java
+sudo add-apt-repository ppa:webupd8team/java
+sudo apt-get update -qqy
+sudo apt-get install -qqy oracle-java8-installer
+
+# go server
+GO_VERSION=14.3.0-1186
+wget -nv -O /tmp/go-server.deb http://download.go.cd/gocd-deb/go-server-$GO_VERSION.deb
+sudo dpkg -i /tmp/go-server.deb
+rm /tmp/go-server.deb
+# cp htpasswd into /var/go/htpasswd
+
+##########
+# client
+##########
+
+# java
+sudo add-apt-repository ppa:webupd8team/java
+sudo apt-get update -qqy
+sudo apt-get install -qqy oracle-java8-installer
+
+# maven
 export M2_HOME=/usr/local/apache-maven-3.2.3
 sudo wget -nv -O ${M2_HOME}.tar.gz http://mirror.netinch.com/pub/apache/maven/maven-3/3.2.3/binaries/apache-maven-3.2.3-bin.tar.gz
 sudo tar xzvf ${M2_HOME}.tar.gz -C /usr/local > /dev/null
 export PATH=$M2_HOME/bin:$PATH
 
-sudo apt-get install git unzip
+sudo apt-get install -qqy git unzip
 
+# go agent
 GO_VERSION=14.3.0-1186
-wget -nv -O /tmp/go-server.deb http://download.go.cd/gocd-deb/go-server-$GO_VERSION.deb
-sudo dpkg -i /tmp/go-server.deb
-rm /tmp/go-server.deb
-
 wget -nv -O /tmp/go-agent.deb http://download.go.cd/gocd-deb/go-agent-$GO_VERSION.deb
 sudo dpkg -i /tmp/go-agent.deb
 rm /tmp/go-agent.deb
 
-# .bash_profile (go-agent)
-M2_HOME=/usr/local/apache-maven-3.2.3
-PATH=$M2_HOME/bin:$PATH
-export M2_HOME PATH
-
-sudo dd-apt-repository ppa:chris-lea/node.js
+sudo add-apt-repository ppa:chris-lea/node.js
+sudo apt-get update -qqy
 sudo apt-get install -qqy nodejs
 sudo npm install -g grunt-cli
 
-## VNC - headless testing
-sudo apt-get install vnc4server fvwm
-# as go user
-vncpasswd #liipiL11
+sudo apt-get install -qqy vnc4server fvwm
+sudo apt-get install -qqy firefox
+
+sudo apt-get install -qqy postgresql-client
+
+#########
+# as go user (relogin as go user and restart go-agent after setting these)
+GO_SERVER_IP=$1
+
+cat > .bash_profile <<'EOF'
+M2_HOME=/usr/local/apache-maven-3.2.3
+PATH=$M2_HOME/bin:$PATH
+export M2_HOME PATH
+EOF
+
 # Edit '/etc/default/go-agent' and change the line 'VNC=N' to 'VNC=Y
-sudo apt-get install firefox
+GO_CONFIG=/etc/default/go-agent
+GO_CONFIG_NEW=$(mktemp)
+cp $GO_CONFIG $GO_CONFIG_NEW
+sed -rie "s/^(GO_SERVER)=(.*)/\1=$GO_SERVER_IP/" $GO_CONFIG_NEW
+sed -ie 's/VNC=N/VNC=Y/' $GO_CONFIG_NEW
+cp $GO_CONFIG_NEW $GO_CONFIG
 
-# cp hsl-liipi.pem into /var/go
-# cp htpasswd into /var/go/htpasswd
-
-# postgres
-sudo apt-get install postgresql-client
-# as go user
 echo "*:*:*:*:l11p1L11" > ~/.pgpass && chmod 0600 ~/.pgpass
+
+# cp .vncpasswd into ~/.vnc/passwd (create file with vncpasswd)
+# cp hsl-liipi.pem into /var/go (chmod 0400)
+

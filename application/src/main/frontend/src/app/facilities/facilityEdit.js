@@ -1,6 +1,7 @@
 (function() {
     var m = angular.module('parkandride.facilityEdit', [
         'ui.router',
+        'parkandride.contacts',
         'parkandride.ServiceResource',
         'parkandride.ContactResource',
         'parkandride.FacilityResource',
@@ -67,7 +68,7 @@
         });
     });
 
-    m.controller('FacilityEditCtrl', function($scope, $state, schema, FacilityResource, facility, aliasesPlaceholder, services, contacts) {
+    m.controller('FacilityEditCtrl', function($scope, $state, schema, FacilityResource, facility, aliasesPlaceholder, services, contacts, editContact) {
         var self = this;
         $scope.common.translationPrefix = "facilities";
         self.capacityTypes = schema.capacityTypes;
@@ -85,6 +86,12 @@
             facility.aliases = _.map(facility.aliases, function(alias) { return alias.text; });
             FacilityResource.save(facility).then(function(id){
                 $state.go('facility-view', { "id": id });
+            });
+        };
+        self.createContact = function(type) {
+            editContact({}, true).then(function(contact) {
+                self.contacts[contact.id] = contact;
+                self.facility.contacts[type] = contact.id;
             });
         };
     });

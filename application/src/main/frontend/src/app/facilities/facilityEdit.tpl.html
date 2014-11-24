@@ -78,15 +78,40 @@
 							</tbody>
 						</table>
 					</div>
-					<div class="row">
-						<h3>{{"facilities.serviceIds.heading" | translate}}</h3>
-						<div class="panel panel-default">
-							<ui-select multiple ng-model="editCtrl.facility.serviceIds" theme="bootstrap" ng-disabled="disabled" reset-search-input="true">
-								<ui-select-match placeholder="Valitse palvelut...">{{$item.name.fi}}</ui-select-match>
-								<ui-select-choices repeat="service.id as service in editCtrl.services | filter: {name: {fi: $select.search}}">
-									<div ng-bind-html="service.name.fi | highlight: $select.search"></div>
-								</ui-select-choices>
-							</ui-select>
+				</div>
+				<div class="row">
+					<h3>{{"facilities.serviceIds.heading" | translate}}</h3>
+					<div class="panel panel-default">
+						<ui-select multiple ng-model="editCtrl.facility.serviceIds" theme="bootstrap" ng-disabled="disabled" reset-search-input="true">
+							<ui-select-match placeholder="Valitse palvelut...">{{$item.name.fi}}</ui-select-match>
+							<ui-select-choices repeat="service.id as service in editCtrl.services | filter: {name: {fi: $select.search}}">
+								<div ng-bind-html="service.name.fi | highlight: $select.search"></div>
+							</ui-select-choices>
+						</ui-select>
+					</div>
+				</div>
+				<div class="row">
+					<h3>{{"facilities.contacts.heading" | translate}}</h3>
+				</div>
+				<div class="row">
+					<div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 column first-column">
+						<div class="form-group">
+							<label>{{ "facilities.contacts.EMERGENCY.label" | translate }}</label>
+							<div>
+								<ui-select ng-model="editCtrl.facility.contacts.EMERGENCY" theme="bootstrap" ng-disabled="disabled" reset-search-input="true">
+									<ui-select-match placeholder="Valitse kontakti...">
+										{{$select.selected.name.fi}} ({{$select.selected.phone}} / {{$select.selected.email}})
+										<button ng-click="editCtrl.facility.contacts.EMERGENCY = undefined" class="clear-selection">X</button>
+									</ui-select-match>
+									<ui-select-choices repeat="contact.id as contact in editCtrl.contacts | filter: {name: {fi: $select.search}}">
+										<div ng-bind-html="contact.name.fi | highlight: $select.search"></div>
+										<small>
+											email: {{contact.email}}<br/>
+											phone: {{contact.phone}}
+										</small>
+									</ui-select-choices>
+								</ui-select>
+							</div>
 						</div>
 					</div>
 				</div>

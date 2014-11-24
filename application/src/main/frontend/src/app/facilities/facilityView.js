@@ -4,6 +4,7 @@
         'parkandride.facilityMap',
         'parkandride.capacities',
         'parkandride.layout',
+        'parkandride.ContactResource',
         'parkandride.FacilityResource',
         'parkandride.ServiceResource',
         'parkandride.layout'
@@ -22,12 +23,22 @@
                             return FacilityResource.getFacility($stateParams.id);
                         },
                         services: function(ServiceResource, facility) {
-                            if (facility.serviceIds && facility.serviceIds.length > 0) {
+                            if (!_.isEmpty(facility.serviceIds)) {
                                 return ServiceResource.listServices({ids: facility.serviceIds}).then(function(results) {
                                     return results.results;
                                 });
                             } else {
                                 return [];
+                            }
+                        },
+                        contacts: function(ContactResource, facility)  {
+                            var contactIds = _.values(facility.contacts);
+                            if (!_.isEmpty(contactIds)) {
+                                return ContactResource.listContacts({ids: contactIds}).then(function(results) {
+                                    return _.indexBy(results.results, "id");
+                                });
+                            } else {
+                                return {};
                             }
                         }
                     }
@@ -37,17 +48,17 @@
         });
     });
 
-    m.controller('FacilityViewCtrl', ViewController);
-    function ViewController(facility, services) {
+    m.controller('FacilityViewCtrl', function(facility, services, contacts) {
         this.facility = facility;
         this.services = services;
+        this.contacts = contacts;
         this.hasCapacities = function() {
           return _.keys(facility.capacities).length !== 0;
         };
         this.hasServices = function() {
             return services.length > 0;
         };
-    }
+    });
 
     m.directive('facilityViewNavi', function() {
         return {

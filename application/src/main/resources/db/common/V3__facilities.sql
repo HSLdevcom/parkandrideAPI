@@ -91,3 +91,30 @@ create table facility_service (
   constraint facility_service_service_id_fk foreign key (service_id)
     references service (id)
 );
+
+
+create table contact_type (
+  name varchar(64) not null,
+
+  primary key (name)
+);
+
+insert into contact_type values ('EMERGENCY');
+insert into contact_type values ('CUSTOMER_SERVICE');
+
+create table facility_contact (
+  facility_id bigint not null,
+  contact_type varchar(64) not null,
+  contact_id bigint not null,
+
+  primary key (facility_id, contact_type, contact_id),
+
+  constraint facility_contact_facility_id_fk foreign key (facility_id)
+    references facility (id),
+
+  constraint facility_contact_type_fk foreign key (contact_type)
+    references contact_type (name),
+
+  constraint facility_contact_contact_id_fk foreign key (contact_id)
+    references contact (id)
+);

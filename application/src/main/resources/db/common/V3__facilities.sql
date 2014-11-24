@@ -5,7 +5,7 @@ create table facility (
   name_en varchar(255) not null,
   location geometry not null,
 
-  primary key (id),
+  primary key (id)
 );
 
 create sequence facility_id_seq increment by 1 start with 1;

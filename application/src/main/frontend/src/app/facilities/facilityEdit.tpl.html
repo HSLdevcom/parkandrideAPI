@@ -98,9 +98,9 @@
 						<div class="form-group">
 							<label>{{ "facilities.contacts.EMERGENCY.label" | translate }}</label>
 							<div>
-								<ui-select ng-model="editCtrl.facility.contacts.EMERGENCY" theme="bootstrap" ng-disabled="disabled" reset-search-input="false">
+								<ui-select ng-model="editCtrl.facility.contacts.EMERGENCY" theme="bootstrap" ng-disabled="disabled" reset-search-input="true">
 									<ui-select-match placeholder="Valitse kontakti...">
-										{{$select.selected.name.fi}}
+										{{$select.selected.name.fi}} ({{$select.selected.phone}} / {{$select.selected.email}})
 										<button ng-click="editCtrl.facility.contacts.EMERGENCY = undefined" class="clear-selection">X</button>
 									</ui-select-match>
 									<ui-select-choices repeat="contact.id as contact in editCtrl.contacts | filter: {name: {fi: $select.search}}">

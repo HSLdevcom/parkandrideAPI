@@ -332,8 +332,9 @@
         "NotNull": "ei saa olla tyhjä",
         "Length": "saa olla korkeintaan {{max}} merkkiä pitkä",
         "ElementLength": "saa olla korkeintaan {{max}} merkkiä pitkä",
-        "Pattern": "väärän muotoinen",
-        "TypeMismatch": "väärän muotoinen",
-        "PhoneOrEmailRequired": "anna vähintään puhelinnumero tai sähköposti"
+        "Pattern": "tarkista muoto",
+        "TypeMismatch": "tarkista muoto",
+        "PhoneOrEmailRequired": "anna vähintään puhelinnumero tai sähköposti",
+        "Email": "tarkista muoto"
     }
 }

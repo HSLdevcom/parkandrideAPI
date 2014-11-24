@@ -1,7 +1,9 @@
 package fi.hsl.parkandride.dev;
 
+import static fi.hsl.parkandride.back.ContactDao.CONTACT_ID_SEQ;
 import static fi.hsl.parkandride.back.FacilityDao.FACILITY_ID_SEQ;
 import static fi.hsl.parkandride.back.HubDao.HUB_ID_SEQ;
+import static fi.hsl.parkandride.front.UrlSchema.TEST_CONTACTS;
 import static fi.hsl.parkandride.front.UrlSchema.TEST_FACILITIES;
 import static fi.hsl.parkandride.front.UrlSchema.TEST_HUBS;
 import static java.lang.String.format;
@@ -24,32 +26,42 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import com.mysema.query.sql.RelationalPath;
 import com.mysema.query.sql.postgres.PostgresQueryFactory;
 
+import fi.hsl.parkandride.back.ContactDao;
 import fi.hsl.parkandride.back.FacilityDao;
 import fi.hsl.parkandride.back.HubDao;
 import fi.hsl.parkandride.back.sql.*;
+import fi.hsl.parkandride.core.back.ContactRepository;
 import fi.hsl.parkandride.core.back.FacilityRepository;
 import fi.hsl.parkandride.core.back.HubRepository;
+import fi.hsl.parkandride.core.domain.Contact;
 import fi.hsl.parkandride.core.domain.Facility;
 import fi.hsl.parkandride.core.domain.Hub;
+import fi.hsl.parkandride.core.service.ContactService;
 import fi.hsl.parkandride.core.service.FacilityService;
 import fi.hsl.parkandride.core.service.HubService;
 import fi.hsl.parkandride.core.service.TransactionalWrite;
 
 @Controller
 @Profile({"dev_api"})
-public class TestController {
+public class DevController {
 
     private static QFacility qFacility = QFacility.facility;
 
     private static QHub qHub = QHub.hub;
 
+    private static QContact qContact = QContact.contact;
+
     @Resource PostgresQueryFactory queryFactory;
 
     @Resource FacilityService facilityService;
 
+    @Resource ContactService contactService;
+
     @Resource FacilityRepository facilityRepository;
 
     @Resource HubRepository hubRepository;
+
+    @Resource ContactRepository contactRepository;
 
     @Resource HubService hubService;
 
@@ -69,6 +81,14 @@ public class TestController {
     public ResponseEntity<Void> deleteHubs() {
         clear(QHubFacility.hubFacility, QHub.hub);
         resetSequence(HUB_ID_SEQ);
+        return new ResponseEntity<Void>(OK);
+    }
+
+    @RequestMapping(method = DELETE, value = TEST_CONTACTS)
+    @TransactionalWrite
+    public ResponseEntity<Void> deleteContacts() {
+        clear(QFacilityContact.facilityContact, QContact.contact);
+        resetSequence(CONTACT_ID_SEQ);
         return new ResponseEntity<Void>(OK);
     }
 
@@ -104,6 +124,23 @@ public class TestController {
         }
         resetSequence(HUB_ID_SEQ, queryFactory.from(qHub).singleResult(qHub.id.max()));
         return new ResponseEntity<List<Hub>>(results, OK);
+    }
+
+    @RequestMapping(method = PUT, value = TEST_CONTACTS)
+    @TransactionalWrite
+    public ResponseEntity<List<Contact>> pushContacts(@RequestBody List<Contact> contacts) {
+        ContactDao contactDao = (ContactDao) contactRepository;
+        List<Contact> results = new ArrayList<>();
+        for (Contact contact : contacts) {
+            if (contact.id != null) {
+                contactDao.insertContact(contact, contact.id);
+                results.add(contact);
+            } else {
+                results.add(contactService.createContact(contact));
+            }
+        }
+        resetSequence(CONTACT_ID_SEQ, queryFactory.from(qContact).singleResult(qContact.id.max()));
+        return new ResponseEntity<List<Contact>>(results, OK);
     }
 
     private void clear(RelationalPath... tables) {

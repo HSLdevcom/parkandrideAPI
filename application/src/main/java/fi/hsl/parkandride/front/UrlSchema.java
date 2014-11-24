@@ -44,6 +44,8 @@ public class UrlSchema {
      */
     public static final String TEST_API = "/dev-api";
 
+    public static final String TEST_CONTACTS = TEST_API + "/contacts";
+
     public static final String TEST_FACILITIES = TEST_API + "/facilities";
 
     public static final String TEST_HUBS = TEST_API + "/hubs";

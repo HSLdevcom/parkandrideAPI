@@ -7,12 +7,19 @@ https://dl.dropboxusercontent.com/u/20567085/HSL_parkandride/LIIPI_Tarjouspyynt%
 
 # Development
 
-Install nginx and configure it as described in etc/nginx.conf. It routes /api requests to localhost:8080 and other (static resources) requests to
-localhost:9000.
+### Without livereload
+NOTE: Browser refresh is required when frontend resources are updated.
+* run `grunt watch` in application/src/main/frontend
+* run application with env_local profile. Application can be run
+  * from an IDE by running [fi.hsl.parkandride.Application](https://github.com/HSLdevcom/parkandrideAPI/blob/master/application/src/main/java/fi/hsl/parkandride/Application.java) 
+  * from command line by running the packaged jar (non-frontend changes require restart) 
+     * `java SPRING_PROFILES_ACTIVE=env_local -jar application/target/parkandride-application-0.0.1-SNAPSHOT.jar`
 
-Start grunt watch in application/src/main/frontend (listens to localhost:9000).
-
-Run fi.hsl.parkandride.Application (listens to localhost:8080). Application uses by default H2 in-memory DB. See below for Postresql.
+### With livereload
+* do the steps defined in 'Without livereload'
+* install nginx and configure it as described in [etc/nginx.conf](https://github.com/HSLdevcom/parkandrideAPI/blob/master/etc/nginx.conf). It routes
+  * /api requests to localhost:9100
+  * other requests to localhost:9000 (grunt-connect listens at this port)
 
 # Profiles
 
@@ -36,9 +43,6 @@ dev     |adds application/src/main/frontend/build as jetty resource
 dev_api |brings up [TestController](https://github.com/HSLdevcom/parkandrideAPI/blob/master/application/src/main/java/fi/hsl/parkandride/dev/TestController.java)
 psql    |postres is used instead of the default H2
 
-# Postgresql
+# Postgresql initialization
 
-Postgresql can be activated with --spring.profiles.active=psql option for Application.
-
-Schema and default test-user (liipi) can be installed on running Postgresql with etc/psql-init-db.sh. It passes all arguments to psql command. It requires an
-Postgresql admin user to run.
+Schema and default test-user (liipi) can be installed on running Postgresql with [etc/scripts/db/psql-init-db.sh](https://github.com/HSLdevcom/parkandrideAPI/blob/master/etc/scripts/db/psql-init-db.sh). See the file for example usage.

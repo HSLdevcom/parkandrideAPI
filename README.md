@@ -26,7 +26,7 @@ NOTE: Browser refresh is required when frontend resources are updated.
 # Profiles
 
 ## Environment profiles
-Application is started with single environment profile. Any features required by the environment needs, are triggered in the environment profile by adding feature profiles via spring.profiles.include.
+Application is started with single environment profile. Any features required by the environment, are triggered in the environment profile by adding feature profiles under property `spring.profiles.include`.
 
 Profile|Description
 -------|-----------

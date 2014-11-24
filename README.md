@@ -7,6 +7,8 @@ https://dl.dropboxusercontent.com/u/20567085/HSL_parkandride/LIIPI_Tarjouspyynt%
 
 # Development
 
+In both the approaches described below, the application runs in `localhost:8080` after the steps are completed.
+
 ### Without livereload
 NOTE: Browser refresh is required when frontend resources are updated.
 * run `grunt watch` in application/src/main/frontend

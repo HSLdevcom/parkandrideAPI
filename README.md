@@ -10,7 +10,8 @@ https://dl.dropboxusercontent.com/u/20567085/HSL_parkandride/LIIPI_Tarjouspyynt%
 In both the approaches described below, the application runs in `localhost:8080` after the steps are completed.
 
 ### Without livereload
-NOTE: Browser refresh is required when frontend resources are updated.
+> Browser refresh is required when frontend resources are updated.
+
 * run `grunt watch` in application/src/main/frontend
 * run application with env_local profile. Application can be run
   * from an IDE by running [fi.hsl.parkandride.Application](https://github.com/HSLdevcom/parkandrideAPI/blob/master/application/src/main/java/fi/hsl/parkandride/Application.java) 
@@ -26,7 +27,7 @@ NOTE: Browser refresh is required when frontend resources are updated.
 # Profiles
 
 ## Environment profiles
-Application is started with single environment profile. Any features required by the environment, are triggered in the environment profile by adding feature profiles under property `spring.profiles.include`.
+Application is started with single environment profile. Any features required by the environment, are triggered in the environment profile by adding **feature profiles** under property `spring.profiles.include`.
 
 Profile|Description
 -------|-----------
@@ -43,7 +44,7 @@ Profile|Description
 -------|-----------
 dev     |adds application/src/main/frontend/build as jetty resource
 dev_api |brings up [TestController](https://github.com/HSLdevcom/parkandrideAPI/blob/master/application/src/main/java/fi/hsl/parkandride/dev/TestController.java)
-psql    |postres is used instead of the default H2
+psql    |postgres is used instead of the default H2
 
 # Postgresql initialization
 

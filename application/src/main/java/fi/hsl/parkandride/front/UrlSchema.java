@@ -42,12 +42,12 @@ public class UrlSchema {
     /**
      * TESTING
      */
-    public static final String TEST_API = "/dev-api";
+    public static final String DEV_API = "/dev-api";
 
-    public static final String TEST_CONTACTS = TEST_API + "/contacts";
+    public static final String DEV_CONTACTS = DEV_API + "/contacts";
 
-    public static final String TEST_FACILITIES = TEST_API + "/facilities";
+    public static final String DEV_FACILITIES = DEV_API + "/facilities";
 
-    public static final String TEST_HUBS = TEST_API + "/hubs";
+    public static final String DEV_HUBS = DEV_API + "/hubs";
 
 }

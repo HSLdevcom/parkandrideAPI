@@ -3,9 +3,9 @@ package fi.hsl.parkandride.dev;
 import static fi.hsl.parkandride.back.ContactDao.CONTACT_ID_SEQ;
 import static fi.hsl.parkandride.back.FacilityDao.FACILITY_ID_SEQ;
 import static fi.hsl.parkandride.back.HubDao.HUB_ID_SEQ;
-import static fi.hsl.parkandride.front.UrlSchema.TEST_CONTACTS;
-import static fi.hsl.parkandride.front.UrlSchema.TEST_FACILITIES;
-import static fi.hsl.parkandride.front.UrlSchema.TEST_HUBS;
+import static fi.hsl.parkandride.front.UrlSchema.DEV_CONTACTS;
+import static fi.hsl.parkandride.front.UrlSchema.DEV_FACILITIES;
+import static fi.hsl.parkandride.front.UrlSchema.DEV_HUBS;
 import static java.lang.String.format;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
@@ -67,7 +67,7 @@ public class DevController {
 
     @Resource JdbcTemplate jdbcTemplate;
 
-    @RequestMapping(method = DELETE, value = TEST_FACILITIES)
+    @RequestMapping(method = DELETE, value = DEV_FACILITIES)
     @TransactionalWrite
     public ResponseEntity<Void> deleteFacilities() {
         clear(QFacilityContact.facilityContact, QFacilityService.facilityService, QPort.port, QFacilityAlias.facilityAlias, QCapacity.capacity,
@@ -76,7 +76,7 @@ public class DevController {
         return new ResponseEntity<Void>(OK);
     }
 
-    @RequestMapping(method = DELETE, value = TEST_HUBS)
+    @RequestMapping(method = DELETE, value = DEV_HUBS)
     @TransactionalWrite
     public ResponseEntity<Void> deleteHubs() {
         clear(QHubFacility.hubFacility, QHub.hub);
@@ -84,7 +84,7 @@ public class DevController {
         return new ResponseEntity<Void>(OK);
     }
 
-    @RequestMapping(method = DELETE, value = TEST_CONTACTS)
+    @RequestMapping(method = DELETE, value = DEV_CONTACTS)
     @TransactionalWrite
     public ResponseEntity<Void> deleteContacts() {
         clear(QFacilityContact.facilityContact, QContact.contact);
@@ -92,7 +92,7 @@ public class DevController {
         return new ResponseEntity<Void>(OK);
     }
 
-    @RequestMapping(method = PUT, value = TEST_FACILITIES)
+    @RequestMapping(method = PUT, value = DEV_FACILITIES)
     @TransactionalWrite
     public ResponseEntity<List<Facility>> pushFacilities(@RequestBody List<Facility> facilities) {
         FacilityDao facilityDao = (FacilityDao) facilityRepository;
@@ -109,7 +109,7 @@ public class DevController {
         return new ResponseEntity<List<Facility>>(results, OK);
     }
 
-    @RequestMapping(method = PUT, value = TEST_HUBS)
+    @RequestMapping(method = PUT, value = DEV_HUBS)
     @TransactionalWrite
     public ResponseEntity<List<Hub>> pushHubs(@RequestBody List<Hub> hubs) {
         HubDao hubDao = (HubDao) hubRepository;
@@ -126,7 +126,7 @@ public class DevController {
         return new ResponseEntity<List<Hub>>(results, OK);
     }
 
-    @RequestMapping(method = PUT, value = TEST_CONTACTS)
+    @RequestMapping(method = PUT, value = DEV_CONTACTS)
     @TransactionalWrite
     public ResponseEntity<List<Contact>> pushContacts(@RequestBody List<Contact> contacts) {
         ContactDao contactDao = (ContactDao) contactRepository;

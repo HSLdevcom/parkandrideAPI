@@ -47,14 +47,14 @@
 				<label>{{ "contacts.openingHours.label" | translate }}</label>
 			</div>
 			<div class="row">
-				<multilingual-edit name="info" ng-model="contact.openingHours" mandatory="false"></multilingual-edit>
+				<long-multilingual-edit name="openingHours" ng-model="contact.openingHours" mandatory="false"></long-multilingual-edit>
 			</div>
 
 			<div class="row">
 				<label>{{ "contacts.info.label" | translate }}</label>
 			</div>
 			<div class="row">
-				<multilingual-edit name="info" ng-model="contact.info" mandatory="false"></multilingual-edit>
+				<long-multilingual-edit name="info" ng-model="contact.info" mandatory="false"></long-multilingual-edit>
 			</div>
 		</form>
 	</div>

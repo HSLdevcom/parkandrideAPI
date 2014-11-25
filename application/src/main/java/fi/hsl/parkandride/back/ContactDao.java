@@ -31,7 +31,9 @@ public class ContactDao implements ContactRepository {
 
     private static final Sort DEFAULT_SORT = new Sort("name.fi", ASC);
 
-    private static final SimpleExpression<Long> contactIdNextval = SQLExpressions.nextval("contact_id_seq");
+    public static final String CONTACT_ID_SEQ = "contact_id_seq";
+
+    private static final SimpleExpression<Long> contactIdNextval = SQLExpressions.nextval(CONTACT_ID_SEQ);
 
     private static QContact qContact = QContact.contact;
 

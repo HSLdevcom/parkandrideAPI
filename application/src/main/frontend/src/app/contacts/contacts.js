@@ -15,7 +15,8 @@
         $scope.titleKey = 'contacts.action.' + (create ? 'new' : 'edit');
         $scope.ok = function () {
             ContactResource.save(contact).then(
-                function() {
+                function(id) {
+                    $scope.contact.id = id;
                     $modalInstance.close($scope.contact);
                 },
                 function(rejection) {

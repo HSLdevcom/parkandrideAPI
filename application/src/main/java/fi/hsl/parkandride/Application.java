@@ -2,12 +2,8 @@ package fi.hsl.parkandride;
 
 import static fi.hsl.parkandride.front.UrlSchema.GEOJSON;
 
-import java.io.IOException;
 import java.util.List;
 
-import org.eclipse.jetty.util.resource.Resource;
-import org.eclipse.jetty.util.resource.ResourceCollection;
-import org.eclipse.jetty.webapp.WebAppContext;
 import org.geolatte.common.Feature;
 import org.geolatte.common.dataformats.json.jackson.JsonMapper;
 import org.geolatte.geom.Geometry;
@@ -17,8 +13,6 @@ import org.springframework.boot.actuate.system.ApplicationPidListener;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.web.HttpMessageConverters;
 import org.springframework.boot.autoconfigure.web.WebMvcAutoConfiguration;
-import org.springframework.boot.context.embedded.EmbeddedServletContainerFactory;
-import org.springframework.boot.context.embedded.jetty.JettyEmbeddedServletContainerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -28,6 +22,10 @@ import org.springframework.http.MediaType;
 import org.springframework.web.filter.CharacterEncodingFilter;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
+import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import org.springframework.web.servlet.mvc.method.annotation.ExceptionHandlerExceptionResolver;
 
 import com.fasterxml.jackson.databind.Module;
@@ -49,7 +47,6 @@ public class Application {
         SpringApplication app = new SpringApplication(Application.class);
         app.addListeners(new ApplicationPidListener());
         app.run(args);
-//        SpringApplication.run(Application.class, args);
     }
 
     @Configuration
@@ -106,28 +103,28 @@ public class Application {
     }
 
     @Configuration
-    @Profile("dev")
-    public static class DevUIConfig {
+    @EnableWebMvc
+    @Profile({"dev"})
+    public static class DevUIConfig extends WebMvcConfigurerAdapter {
+        @Override
+        public void addResourceHandlers(ResourceHandlerRegistry registry) {
+            String projectDir = System.getProperty("user.dir");
+            if (!projectDir.endsWith("application")) {
+                projectDir += "/application";
+            }
+            registry.addResourceHandler("/**").addResourceLocations(
+                    "file://" + projectDir + "/src/main/frontend/build/"
+                    ,"/"
+                    ,"classpath:/META-INF/resources/"
+                    ,"classpath:/resources/"
+                    ,"classpath:/static/"
+                    ,"classpath:/public/"
+            );
+        }
 
-        @Bean
-        public EmbeddedServletContainerFactory servletContainer() {
-            return new JettyEmbeddedServletContainerFactory() {
-                @Override
-                protected void postProcessWebAppContext(WebAppContext webAppContext) {
-                    Resource defaultResource = webAppContext.getBaseResource();
-
-                    String projectDir = System.getProperty("user.dir");
-                    if (!projectDir.endsWith("application")) {
-                        projectDir += "/application";
-                    }
-                    try {
-                        Resource devResource = Resource.newResource(projectDir + "/src/main/frontend/build");
-                        webAppContext.setBaseResource(new ResourceCollection(devResource, defaultResource));
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
-                }
-            };
+        @Override
+        public void addViewControllers(ViewControllerRegistry registry) {
+            registry.addViewController("/").setViewName("forward:/index.html");
         }
     }
 }

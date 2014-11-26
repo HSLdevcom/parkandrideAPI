@@ -145,7 +145,6 @@
                         facility.location = new ol.format.GeoJSON().writeGeometry(polygon);
                         setLocation(facility.location);
 
-                        scope.editMode = 'ports';
                         locationLayer.setOpacity(1);
                         map.removeControl(cancelControl);
                         ctrl.$setValidity("required", true);

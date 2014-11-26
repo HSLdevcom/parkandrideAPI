@@ -251,8 +251,10 @@
         "action": {
             "new": "Lisää uusi alue"
         },
+        "basic": {
+            "title": "Perustiedot"
+        },
         "name": {
-            "title": "Nimitiedot",
             "placeholder": "Alue",
             "label": "Nimi",
             "fi": {
@@ -269,7 +271,7 @@
             "label": "Sijainti"
         },
         "address": {
-            "label": "Osoite",
+            "label": "Käyntiosoite",
             "streetAddress": {
                 "label": "Katuosoite",
                 "fi": {

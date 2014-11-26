@@ -30,6 +30,8 @@ import fi.hsl.parkandride.core.domain.CapacityType;
 import fi.hsl.parkandride.core.domain.Facility;
 import fi.hsl.parkandride.core.domain.FacilitySummary;
 import fi.hsl.parkandride.core.domain.SearchResults;
+import fi.hsl.parkandride.core.domain.User;
+import fi.hsl.parkandride.core.service.AuthService;
 import fi.hsl.parkandride.core.service.FacilityService;
 
 @Controller
@@ -39,8 +41,10 @@ public class FacilityController {
     FacilityService facilityService;
 
     @RequestMapping(method = POST, value = FACILITIES, produces = APPLICATION_JSON_VALUE)
-    public ResponseEntity<Facility> createFacility(@RequestBody Facility facility, UriComponentsBuilder builder) {
-        Facility newFacility = facilityService.createFacility(facility);
+    public ResponseEntity<Facility> createFacility(@RequestBody Facility facility,
+                                                   User currentUser,
+                                                   UriComponentsBuilder builder) {
+        Facility newFacility = facilityService.createFacility(facility, currentUser);
 
         HttpHeaders headers = new HttpHeaders();
         headers.setLocation(builder.path(FACILITY).buildAndExpand(newFacility.id).toUri());
@@ -61,8 +65,9 @@ public class FacilityController {
 
     @RequestMapping(method = PUT, value = FACILITY, produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<Facility> updateFacility(@PathVariable(FACILITY_ID) long facilityId,
-                                                   @RequestBody Facility facility) {
-        Facility response = facilityService.updateFacility(facilityId, facility);
+                                                   @RequestBody Facility facility,
+                                                   User currentUser) {
+        Facility response = facilityService.updateFacility(facilityId, facility, currentUser);
         return new ResponseEntity<>(facility, OK);
     }
 

@@ -30,4 +30,5 @@ public class ValidationService {
             throw new ValidationException(Iterables.transform(violations, TO_VIOLATION));
         }
     }
+
 }

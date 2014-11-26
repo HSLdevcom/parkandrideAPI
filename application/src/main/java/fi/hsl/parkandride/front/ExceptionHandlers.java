@@ -4,6 +4,7 @@ import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.http.HttpStatus.UNAUTHORIZED;
+import static org.springframework.http.HttpStatus.FORBIDDEN;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -34,6 +35,7 @@ import org.springframework.http.HttpHeaders;
 import fi.hsl.parkandride.core.domain.NotFoundException;
 import fi.hsl.parkandride.core.domain.Violation;
 import fi.hsl.parkandride.core.service.AccessDeniedException;
+import fi.hsl.parkandride.core.service.AuthenticationRequiredException;
 import fi.hsl.parkandride.core.service.ValidationException;
 
 @ControllerAdvice
@@ -74,12 +76,18 @@ public class ExceptionHandlers {
         return handleError(request, BAD_REQUEST, ex);
     }
 
-    @ExceptionHandler(AccessDeniedException.class)
+    @ExceptionHandler(AuthenticationRequiredException.class)
     @ResponseBody
-    public ResponseEntity<Void> accessDeniedException(AccessDeniedException ex) {
+    public ResponseEntity<Void> authenticationRequiredException(AuthenticationRequiredException ex) {
         HttpHeaders headers = new HttpHeaders();
         headers.set(WWW_AUTHENTICATE, "Basic realm=\"HSL Park and Ride\"");
         return new ResponseEntity<Void>(null, headers, UNAUTHORIZED);
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    @ResponseBody
+    public ResponseEntity<Void> accessDeniedException(AccessDeniedException ex) {
+        return new ResponseEntity<Void>((Void) null, FORBIDDEN);
     }
 
     private String getPath(JsonMappingException jsonEx) {

@@ -26,10 +26,10 @@ public class UserService {
     public User authenticate(String username, String password) {
         User user = users.get(username.toLowerCase());
         if (user == null) {
-            throw new AccessDeniedException();
+            throw new AuthenticationRequiredException();
         }
         if (!passwordEncryptor.checkPassword(password, user.password)) {
-            throw new AccessDeniedException();
+            throw new AuthenticationRequiredException();
         }
         return user;
     }

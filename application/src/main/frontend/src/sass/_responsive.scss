@@ -18,6 +18,10 @@
   .navi-col {
     padding-left: 0px;
   }
+  .modal-dialog {
+    width: $modal-sm;
+//    margin: 10px;
+  }
 }
 
 @media (min-width: 992px) {
@@ -25,11 +29,19 @@
   .nav-tabs {
     margin-top: 16px;
   }
+  .modal-dialog {
+    width: $modal-md;
+//    margin: auto auto;
+  }
 }
 
 @media (min-width: 1200px) {
   //header nav
   .nav-tabs {
     margin-top: 15px;
+  }
+  .modal-dialog {
+    width: $modal-lg;
+//    margin: auto auto;
   }
 }

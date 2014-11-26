@@ -25,3 +25,9 @@ $basic-font-size: 16px;
 //header variables
 $border-radius: 15px 15px 0 0;
 $tab-height: 40px;
+
+//Modal window size, override Bootstrap defaults
+$modal-lg:                    943px;
+$modal-md:                    845px;
+$modal-sm:                    95%;
+

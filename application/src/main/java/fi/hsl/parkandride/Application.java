@@ -4,6 +4,7 @@ import static fi.hsl.parkandride.front.UrlSchema.GEOJSON;
 
 import java.util.List;
 
+import org.apache.log4j.MDC;
 import org.geolatte.common.Feature;
 import org.geolatte.common.dataformats.json.jackson.JsonMapper;
 import org.geolatte.geom.Geometry;
@@ -13,6 +14,7 @@ import org.springframework.boot.actuate.system.ApplicationPidListener;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.web.HttpMessageConverters;
 import org.springframework.boot.autoconfigure.web.WebMvcAutoConfiguration;
+import org.springframework.boot.context.embedded.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -30,6 +32,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ExceptionHandlerExc
 
 import com.fasterxml.jackson.databind.Module;
 import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.google.common.base.Preconditions;
 
 import fi.hsl.parkandride.core.domain.Phone;
 import fi.hsl.parkandride.front.Features;
@@ -126,5 +129,14 @@ public class Application {
         public void addViewControllers(ViewControllerRegistry registry) {
             registry.addViewController("/").setViewName("forward:/index.html");
         }
+    }
+
+    @Bean
+    public FilterRegistrationBean registerMdcFilter(MdcFilter filter) {
+        Preconditions.checkNotNull(filter);
+        FilterRegistrationBean b = new FilterRegistrationBean();
+        b.setFilter(filter);
+        b.setMatchAfter(true);
+        return b;
     }
 }

@@ -8,8 +8,8 @@
         'parkandride.facilityMap',
         'parkandride.layout',
         'parkandride.multilingual',
+        'parkandride.tags',
         'parkandride.address',
-        'ngTagsInput',
         'showErrors'
     ]);
 
@@ -76,14 +76,11 @@
         self.contacts = contacts;
         self.aliasesPlaceholder = aliasesPlaceholder;
 
-        facility.aliases = _.map(facility.aliases, function(a) { return { text: a }; });
-
         self.facility = facility;
         self.editMode = (facility.id ? "ports" : "location");
 
         self.saveFacility = function() {
             var facility = _.cloneDeep(self.facility);
-            facility.aliases = _.map(facility.aliases, function(alias) { return alias.text; });
             FacilityResource.save(facility).then(function(id){
                 $state.go('facility-view', { "id": id });
             });

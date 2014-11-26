@@ -70,7 +70,6 @@ module.exports = {
       'vendor/angular-sanitize/angular-sanitize.min.js',
       'vendor/angular-translate-loader-static-files/angular-translate-loader-static-files.js',
       'vendor/openlayers3/build/ol.js',
-      'vendor/ng-tags-input/ng-tags-input.js',
       'vendor/sweetalert/lib/sweet-alert.js'
     ],
     css: [

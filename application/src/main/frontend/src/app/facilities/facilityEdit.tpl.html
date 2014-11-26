@@ -27,9 +27,8 @@
 					<div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 column first-column">
 						<div class="form-group">
 							<label>{{ "facilities.aliases.label" | translate }}</label>
-								<div class="wdAliases">
-									<tags-input ng-model="editCtrl.facility.aliases" placeholder="{{ 'facilities.aliases.placeholder' | translate }}"
-												replace-spaces-with-dashes="false"></tags-input>
+							<div class="wdAliases">
+								<tags ng-model="editCtrl.facility.aliases" placeholder="{{ 'facilities.aliases.placeholder' | translate }}"></tags>
 							</div>
 						</div>
 					</div>
@@ -37,13 +36,11 @@
 
 				<div class="row">
 					<h3>{{"facilities.location" | translate}} *</h3>
+					<div class="btn-group">
+						<label id="editModeLocation" class="btn btn-xs" ng-model="editCtrl.editMode" btn-radio="'location'">Määritä sijainti/alue</label>
+						<label id="editModePorts" class="btn btn-xs" ng-model="editCtrl.editMode" btn-radio="'ports'">Määritä sisään- ja uloskäynnit</label>
+					</div>
 					<div class="map-container">
-						<input id="editModeLocation" type="radio" ng-model="editCtrl.editMode" value="location">
-						<label for="editModeLocation">Määritä sijainti/alue</label>
-
-						<input id="editModePorts" type="radio" ng-model="editCtrl.editMode" value="ports">
-						<label for="editModePorts">Määritä sisään- ja uloskäynnit</label>
-
 						<facility-map name="facilityMap" ng-model="editCtrl.facility" edit-mode="editCtrl.editMode"
 									  no-tiles="{{features['mapNoTiles']}}" show-errors="{ instant: true }"></facility-map>
 					</div>
@@ -81,7 +78,7 @@
 				</div>
 				<div class="row">
 					<h3>{{"facilities.serviceIds.heading" | translate}}</h3>
-					<div class="panel panel-default">
+					<div>
 						<ui-select multiple ng-model="editCtrl.facility.serviceIds" theme="bootstrap" ng-disabled="disabled" reset-search-input="true">
 							<ui-select-match placeholder="Valitse palvelut...">{{$item.name.fi}}</ui-select-match>
 							<ui-select-choices repeat="service.id as service in editCtrl.services | filter: {name: {fi: $select.search}}">
@@ -97,11 +94,10 @@
 					<div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 column first-column">
 						<div class="form-group">
 							<label>{{ "facilities.contacts.EMERGENCY.label" | translate }}</label>
-							<div>
+							<div class="input-group">
 								<ui-select ng-model="editCtrl.facility.contacts.EMERGENCY" theme="bootstrap" ng-disabled="disabled" reset-search-input="true">
 									<ui-select-match placeholder="Valitse kontakti...">
 										{{$select.selected.name.fi}} ({{$select.selected.phone}} / {{$select.selected.email}})
-										<button ng-click="editCtrl.facility.contacts.EMERGENCY = undefined" class="clear-selection">X</button>
 									</ui-select-match>
 									<ui-select-choices repeat="contact.id as contact in editCtrl.contacts | filter: {name: {fi: $select.search}}">
 										<div ng-bind-html="contact.name.fi | highlight: $select.search"></div>
@@ -111,9 +107,11 @@
 										</small>
 									</ui-select-choices>
 								</ui-select>
-								<a class="btn btn-s wdSave" role="button" ng-click="editCtrl.createContact('EMERGENCY')">
-									{{'facilities.contacts.create' | translate }}
-								</a>
+								<span class="input-group-btn">
+									<button class="btn btn-default" type="button" ng-click="editCtrl.facility.contacts.EMERGENCY = undefined"
+											ng-show="editCtrl.facility.contacts.EMERGENCY">x</button>
+									<button class="btn btn-default" type="button" ng-click="editCtrl.createContact('EMERGENCY')">+</button>
+								</span>
 							</div>
 						</div>
 					</div>

@@ -1,0 +1,16 @@
+<div class="ui-select-multiple ui-select-bootstrap dropdown form-control ng-valid ng-dirty">
+	<div>
+		<span class="ui-select-match">
+			<span ng-repeat="tag in tags">
+				<span style="margin-right: 3px;" class="ui-select-match-item btn btn-default btn-xs" tabindex="-1">
+					<span class="close ui-select-match-close" ng-click="removeTag(tag)">&nbsp;×</span>
+					<span>
+						<span>{{tag}}</span>
+					</span>
+				</span>
+			</span>
+		</span>
+		<input type="text" ng-model="newTag" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" class="ui-select-search input-xs"
+			   placeholder="{{placeholder}}">
+	</div>
+</div>

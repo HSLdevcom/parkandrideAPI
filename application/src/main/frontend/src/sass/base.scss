@@ -8,6 +8,7 @@
 @import 'responsive';
 @import 'map';
 @import 'tags';
+@import 'dialogs';
 
 //buttons
 .btn-xs {
@@ -41,9 +42,22 @@
   color: #fff;
 }
 
+.btn.active {
+  background-color: $secondarycolor;
+  color: $primarycolor;
+}
+
+.btn-group {
+  margin-bottom: 20px;
+}
+
 //form controls
 .form-control {
   font-size: 16px;
+}
+
+textarea {
+  resize: vertical;
 }
 
 //table

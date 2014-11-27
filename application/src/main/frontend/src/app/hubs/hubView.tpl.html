@@ -10,12 +10,15 @@
 		<div class="wdHubView">
 
 			<div class="row">
-				<h3 class="h3-first">{{ "hubs.name.title" | translate }}</h3>
+				<h3 class="h3-first">{{ "hubs.basic.title" | translate }}</h3>
 			</div>
 			<div class="row">
 				<multilingual-view value="viewCtrl.hub.name"></multilingual-view>
 			</div>
 
+			<div class="row" ng-show="viewCtrl.hasAddress()">
+				<h4 class="ng-binding">{{ "hubs.address.label" | translate }}</h4>
+			</div>
 			<address-view address="viewCtrl.hub.address" path="hubs.address"></address-view>
 
 			<div class="row">

@@ -45,6 +45,9 @@
         this.hasCapacities = function() {
           return _.keys(summary.capacities).length !== 0;
         };
+        this.hasAddress = function() {
+                return hub.address && hub.address.streetAddress || hub.address.postalCode || hub.address.city;
+        };
     });
 
     m.directive('hubViewNavi', function() {

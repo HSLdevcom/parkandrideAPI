@@ -16,7 +16,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.GenericFilterBean;
 
 @Component
-public class MdcFilter extends GenericFilterBean {
+public class MDCFilter extends GenericFilterBean {
     public interface Key {
         String REQUESTID = "requestid";
         String USERNAME = "username";

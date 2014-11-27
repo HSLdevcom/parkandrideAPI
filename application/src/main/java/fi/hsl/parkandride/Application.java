@@ -132,7 +132,7 @@ public class Application {
     }
 
     @Bean
-    public FilterRegistrationBean registerMdcFilter(MdcFilter filter) {
+    public FilterRegistrationBean registerMdcFilter(MDCFilter filter) {
         Preconditions.checkNotNull(filter);
         FilterRegistrationBean b = new FilterRegistrationBean();
         b.setFilter(filter);

@@ -1,0 +1,27 @@
+//angular styles
+
+.form-control:focus {
+  border: 1px solid $secondarycolor;
+  -webkit-box-shadow: none;
+  box-shadow: none;
+}
+
+.ng-pristine .map {
+  border: 1px solid transparent;
+}
+
+.form-control.validation-error.ng-invalid,
+.validation-error.ng-invalid > .map {
+  border: 2px solid $errorcolor;
+}
+
+:focus {
+  outline: none;
+}
+
+.errorRow {
+  border: 3px solid $warningcolor;
+  background-color: $warningbgcolor;
+  padding: 20px;
+  margin-bottom: 40px;
+}

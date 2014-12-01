@@ -1,0 +1,47 @@
+@media (max-width: 768px) {
+  //footer height
+  .page-footer {
+    height: 80px;
+  }
+
+  //navi below changed because of footer
+  .navi-below {
+    bottom: 80px;
+  }
+
+  //REMOVE THIS!
+  .navi-row {
+    margin-top: -180px;
+  }
+
+  //header nav column
+  .navi-col {
+    padding-left: 0px;
+  }
+  .modal-dialog {
+    width: $modal-sm;
+//    margin: 10px;
+  }
+}
+
+@media (min-width: 992px) {
+  //header nav
+  .nav-tabs {
+    margin-top: 16px;
+  }
+  .modal-dialog {
+    width: $modal-md;
+//    margin: auto auto;
+  }
+}
+
+@media (min-width: 1200px) {
+  //header nav
+  .nav-tabs {
+    margin-top: 15px;
+  }
+  .modal-dialog {
+    width: $modal-lg;
+//    margin: auto auto;
+  }
+}

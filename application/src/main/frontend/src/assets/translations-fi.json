@@ -1,0 +1,343 @@
+{
+    "contacts": {
+        "title": "Yhteystiedot",
+        "label": "Yhteystieto",
+        "action": {
+            "new": "Lisää uusi yhteystieto",
+            "edit": "Muokkaa yhteystietoa"
+        },
+        "name" : {
+            "label": "Nimi",
+            "fi": {
+                "label": "Nimi (fi)"
+            },
+            "sv": {
+                "label": "Nimi (sv)"
+            },
+            "en": {
+                "label": "Nimi (en)"
+            }
+        },
+        "phone": {
+            "label": "Puhelinnumero"
+        },
+        "email": {
+            "label": "Sähköposti"
+        },
+        "openingHours": {
+            "label": "Asiakaspalvelun aukioloaika",
+            "fi": {
+                "label": "Asiakaspalvelun aukioloaika (fi)"
+            },
+            "sv": {
+                "label": "Asiakaspalvelun aukioloaika (sv)"
+            },
+            "en": {
+                "label": "Asiakaspalvelun aukioloaika (en)"
+            }
+        },
+        "info": {
+            "label": "Lisätiedot",
+            "fi": {
+                "label": "Lisätiedot (fi)"
+            },
+            "sv": {
+                "label": "Lisätiedot (sv)"
+            },
+            "en": {
+                "label": "Lisätiedot (en)"
+            }
+        },
+        "address": {
+            "label": "Osoite",
+            "streetAddress": {
+                "label": "Katuosoite",
+                "fi": {
+                    "label": "Katuosoite (fi)"
+                },
+                "sv": {
+                    "label": "Katuosoite (sv)"
+                },
+                "en": {
+                    "label": "Katuosoite (en)"
+                }
+            },
+            "postalCode":  {
+                "label": "Postinumero"
+            },
+            "city":  {
+                "label": "Kaupunki",
+                "fi": {
+                    "label": "Kaupunki (fi)"
+                },
+                "sv": {
+                    "label": "Kaupunki (sv)"
+                },
+                "en": {
+                    "label": "Kaupunki (en)"
+                }
+            }
+        }
+    },
+    "facilities": {
+        "title": "Pysäköintipaikat",
+        "list": {
+            "name": "Nimi",
+            "types": "Tyypit"
+        },
+        "action": {
+            "new": "Lisää uusi pysäköintipaikka"
+        },
+        "name" : {
+            "title": "Nimitiedot",
+            "placeholder": "Pysäköintipaikka",
+            "label": "Nimi",
+            "fi": {
+                "label": "Nimi (fi)"
+            },
+            "sv": {
+                "label": "Nimi (sv)"
+            },
+            "en": {
+                "label": "Nimi (en)"
+            }
+        },
+        "aliases": {
+            "label": "Aliakset",
+            "placeholder": "Lisää alias"
+        },
+        "location": "Sijainti",
+        "serviceIds": {
+            "heading": "Palvelut"
+        },
+        "ports": {
+            "create": "Lisää uusi käyntiosoite",
+            "edit": "Muokkaa käyntiosoitetta",
+            "label": "Käyntiosoitteet",
+            "entry": {
+                "label": "Sisäänkäynti"
+            },
+            "exit": {
+                "label": "Uloskäynti"
+            },
+            "pedestrian": {
+                "label": "Jalankulku"
+            },
+            "address": {
+                "label": "Osoite",
+                "streetAddress": {
+                    "label": "Katuosoite",
+                    "fi": {
+                        "label": "Käyntiosoitteen katu (fi)"
+                    },
+                    "sv": {
+                        "label": "Käyntiosoitteen katu (sv)"
+                    },
+                    "en": {
+                        "label": "Käyntiosoitteen katu (en)"
+                    }
+                },
+                "postalCode":  {
+                    "label": "Postinumero"
+                },
+                "city":  {
+                    "label": "Kaupunki",
+                    "fi": {
+                        "label": "Käyntiosoitteen kaupunki (fi)"
+                    },
+                    "sv": {
+                        "label": "Käyntiosoitteen kaupunki (sv)"
+                    },
+                    "en": {
+                        "label": "Käyntiosoitteen kaupunki (en)"
+                    }
+                }
+            },
+            "info":  {
+                "label": "Lisätietoa",
+                "fi": {
+                    "label": "Käyntiosoitteen lisätiedot (fi)"
+                },
+                "sv": {
+                    "label": "Käyntiosoitteen lisätiedot (sv)"
+                },
+                "en": {
+                    "label": "Käyntiosoitteen lisätiedot (en)"
+                }
+            }
+        },
+        "capacity": {
+            "heading": "Kapasiteetti",
+            "type": "Tyyppi",
+            "built": "Rakennettu kapasiteetti",
+            "unavailable": "Tilapäisesti poissa käytöstä"
+        },
+        "capacities": {
+            "CAR": {
+                "built":  {
+                    "label": "Henkilöauto, rakennettu kapasiteetti"
+                },
+                "unavailable": {
+                    "label": "Henkilöauto, tilapäisesti poissa käytöstä"
+                },
+                "label": "Henkilöauto"
+            },
+            "PARK_AND_RIDE": {
+                "built":  {
+                    "label": "Liityntäpysäköinti, rakennettu kapasiteetti"
+                },
+                "unavailable": {
+                    "label": "Liityntäpysäköinti, tilapäisesti poissa käytöstä"
+                },
+                "label": "Liityntäpysäköinti"
+            },
+            "BICYCLE": {
+                "built":  {
+                    "label": "Polkupyörä, rakennettu kapasiteetti"
+                },
+                "unavailable": {
+                    "label": "Polkupyörä, tilapäisesti poissa käytöstä"
+                },
+                "label": "Polkupyörä"
+            },
+            "DISABLED": {
+                "built":  {
+                    "label": "Invapaikka, rakennettu kapasiteetti"
+                },
+                "unavailable": {
+                    "label": "Invapaikka, tilapäisesti poissa käytöstä"
+                },
+                "label": "Invapaikka"
+            },
+            "MOTORCYCLE": {
+                "built":  {
+                    "label": "Moottoripyörä, rakennettu kapasiteetti"
+                },
+                "unavailable": {
+                    "label": "Moottoripyörä, tilapäisesti poissa käytöstä"
+                },
+                "label": "Moottoripyörä"
+            },
+            "ELECTRIC_CAR": {
+                "built":  {
+                    "label": "Sähköauto, rakennettu kapasiteetti"
+                },
+                "unavailable": {
+                    "label": "Sähköauto, tilapäisesti poissa käytöstä"
+                },
+                "label": "Sähköauto"
+            }
+        },
+        "contacts": {
+            "create": "Uusi yhteystieto",
+            "heading": "Yhteystiedot",
+            "EMERGENCY": {
+                "label": "Hätänumero"
+            }
+        }
+    },
+    "footer": {
+        "hslabbr": "HSL",
+        "contact": "Helsingin seudun liikenne, puh. 09 4766 4444, hsl@hsl.fi"
+    },
+    "header": {
+        "logodesc": "HSL Liityntäpysäköinti"
+    },
+    "hubs": {
+        "title": "Pysäköintipaikat",
+        "list": {
+            "name": "Nimi"
+        },
+        "action": {
+            "new": "Lisää uusi alue"
+        },
+        "basic": {
+            "title": "Perustiedot"
+        },
+        "name": {
+            "placeholder": "Alue",
+            "label": "Nimi",
+            "fi": {
+                "label": "Nimi (fi)"
+            },
+            "sv": {
+                "label": "Nimi (sv)"
+            },
+            "en": {
+                "label": "Nimi (en)"
+            }
+        },
+        "location": {
+            "label": "Sijainti"
+        },
+        "address": {
+            "label": "Käyntiosoite",
+            "streetAddress": {
+                "label": "Katuosoite",
+                "fi": {
+                    "label": "Katuosoite (fi)"
+                },
+                "sv": {
+                    "label": "Katuosoite (sv)"
+                },
+                "en": {
+                    "label": "Katuosoite (en)"
+                }
+            },
+            "postalCode":  {
+                "label": "Postinumero"
+            },
+            "city":  {
+                "label": "Kaupunki",
+                "fi": {
+                    "label": "Kaupunki (fi)"
+                },
+                "sv": {
+                    "label": "Kaupunki (sv)"
+                },
+                "en": {
+                    "label": "Kaupunki (en)"
+                }
+            }
+        },
+        "associatedFacilities": "Alueen pysäköintipaikat",
+        "noAssociatedFacilities": "Alueeseen ei ole lisätty pysäköintipaikkoja",
+        "facilitiesTotal": "Pysäköintipaikkoja yhteensä"
+    },
+    "common": {
+        "action": {
+            "back": "Takaisin listaukseen",
+            "cancel": "Peruuta",
+            "edit": "Muokkaa",
+            "logout": "Kirjaudu ulos",
+            "ok": "Hyväksy",
+            "remove": "Poista",
+            "save": "Tallenna muutokset"
+        },
+        "lang": {
+            "fi": "fi",
+            "sv": "sv",
+            "en": "en"
+        }
+    },
+    "error": {
+        "404": {
+            "title": "Sivua ei löytynyt. Tarkista osoite."
+        },
+        "500": {
+            "title": "Oops, nyt tuli virhe!"
+        },
+        "buttonText": "Voi veljet!"
+    },
+    "violation": {
+        "Min": "pitää olla vähintään {{value}}",
+        "NotBlank": "ei saa olla tyhjä",
+        "NotNull": "ei saa olla tyhjä",
+        "Length": "saa olla korkeintaan {{max}} merkkiä pitkä",
+        "ElementLength": "saa olla korkeintaan {{max}} merkkiä pitkä",
+        "Pattern": "tarkista muoto",
+        "TypeMismatch": "tarkista muoto",
+        "PhoneOrEmailRequired": "anna vähintään puhelinnumero tai sähköposti",
+        "Email": "tarkista muoto"
+    }
+}

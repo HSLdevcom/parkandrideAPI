@@ -1,0 +1,47 @@
+<form name="editHubForm" class="form-horizontal" role="form" novalidate>
+	<main-layout>
+		<headline>
+			{{editCtrl.hub.name.fi || ("hubs.name.placeholder" | translate) }}
+		</headline>
+		<actions>
+			<hub-edit-navi></hub-edit-navi>
+		</actions>
+		<content>
+			<div class="wdHubEditView">
+
+				<div class="row">
+					<h3 class="h3-first">{{ "hubs.basic.title" | translate }}</h3>
+				</div>
+
+				<div class="row">
+					<div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 column first-column">
+						<label>{{ "hubs.name.label" | translate }} *</label>
+					</div>
+				</div>
+				<div class="row">
+					<multilingual-edit name="name" ng-model="editCtrl.hub.name" mandatory="true"></multilingual-edit>
+				</div>
+
+				<div class="row">
+					<h4 class="ng-binding">{{ "hubs.address.label" | translate }}</h4>
+				</div>
+				<address-edit ng-model="editCtrl.hub.address" path="hubs.address"></address-edit>
+
+				<div class="row">
+					<h3>{{"hubs.location.label" | translate}}</h3>
+					<div class="map-container">
+						<edit-hub-map show-errors="{ instant: true }" name="editHubMap" ng-model="editCtrl.hub"
+									  facilities="editCtrl.facilities" no-tiles="{{features['mapNoTiles']}}"></edit-hub-map>
+					</div>
+				</div>
+
+				<div class="row">
+					<h3>{{"hubs.associatedFacilities" | translate}}</h3>
+					<p ng-hide="editCtrl.hasFacilities()">{{"hubs.noAssociatedFacilities" | translate}}</p>
+					<facilities-table facilities="editCtrl.facilities"></facilities-table>
+				</div>
+
+			</div>
+		</content>
+	</main-layout>
+</form>

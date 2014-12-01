@@ -1,0 +1,33 @@
+//primary color
+$primarycolor: #007AC9;
+$primarycolor-light: #4DC7FF;
+$primarycolor-dark: #004796;
+
+//secondary colors
+$secondarycolor: #BEE4F8;
+$highlightcolor: #F092CD;
+$k80: #333;
+$k60: #616365;
+$k40: #666;
+$k10: #DDD;
+$lightgray: #ccc;
+
+//message, warning and error colors
+$messagecolor: #64BE14;
+$warningcolor: #FED100;
+$warningbgcolor: #FFFFCC;
+$errorcolor: #DC0451;
+
+//font
+$font-family: Helvetica, sans-serif;
+$basic-font-size: 16px;
+
+//header variables
+$border-radius: 15px 15px 0 0;
+$tab-height: 40px;
+
+//Modal window size, override Bootstrap defaults
+$modal-lg:                    943px;
+$modal-md:                    845px;
+$modal-sm:                    95%;
+

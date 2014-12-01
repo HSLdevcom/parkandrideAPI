@@ -1,0 +1,34 @@
+<div class="row navi-above">
+	<div class="container">
+		<div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 first-column">
+			<h2><headline></headline></h2>
+		</div>
+		<div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 text-right last-column">
+			<actions-top></actions-top>
+		</div>
+	</div>
+</div>
+
+<div class="container content">
+	<div ng-show="common.translationPrefix && common.violations.length > 0" class="row errorRow">
+		<div ng-repeat="violation in common.violations" class="wdViolation">
+			<span class="wdViolationPath">{{
+				common.translationPrefix + (violation.path ? '.' + violation.path : '') + '.label'
+				| translate
+			}}</span>:
+			<span class="wdViolationMessage" translate="violation.{{violation.type}}" translate-values="{{violation.args}}"></span>
+		</div>
+	</div>
+
+	<content></content>
+</div>
+
+<div class="row navi-below">
+	<div class="container">
+		<div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 first-column">
+		</div>
+		<div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 text-right last-column">
+			<actions-bottom></actions-bottom>
+		</div>
+	</div>
+</div>

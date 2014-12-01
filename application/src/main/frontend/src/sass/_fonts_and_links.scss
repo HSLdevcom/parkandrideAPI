@@ -1,0 +1,36 @@
+//fonts
+h1 {
+  @include font($font-size: 60px);
+}
+
+h2 {
+  @include font($font-size: 40px);
+  margin-top: 30px;
+}
+
+h3 {
+  @include font($font-size: 30px);
+  border-bottom: 3px solid $primarycolor;
+  padding-bottom: 20px;
+  margin-top: 40px;
+  margin-bottom: 20px;
+}
+
+.h3-first{
+  margin-top: 0px;
+}
+
+h4 {
+  @include font($font-size: 20px);
+  margin-top: 20px;
+}
+
+//links
+a {
+  color: $primarycolor;
+}
+
+a:hover {
+  color: $primarycolor-light;
+  text-decoration: underline;
+}

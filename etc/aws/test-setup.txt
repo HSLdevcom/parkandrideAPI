@@ -1,0 +1,3 @@
+sudo add-apt-repository ppa:webupd8team/java
+sudo apt-get update -qqy
+sudo apt-get install -qqy oracle-java8-installer

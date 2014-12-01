@@ -1,0 +1,71 @@
+<main-layout>
+	<headline>
+		<span class="wdFacilityNameFi">{{viewCtrl.facility.name.fi}}</span>
+	</headline>
+	<actions>
+		<facility-view-navi></facility-view-navi>
+	</actions>
+	<content>
+		<div class="row wdFacilityView">
+
+			<div class="row">
+				<h3 class="h3-first">{{ "facilities.name.title" | translate }}</h3>
+			</div>
+
+			<div class="row">
+				<h4>{{ "facilities.name.label" | translate }}</h4>
+			</div>
+
+			<div class="row">
+				<multilingual-view value="viewCtrl.facility.name"></multilingual-view>
+			</div>
+
+			<div class="row">
+				<div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 column first-column wdAliasesBlock" ng-show="viewCtrl.facility.aliases.length !== 0">
+					<h4>{{ "facilities.aliases.label" | translate }}</h4>
+
+					<p class="wdAliases">{{viewCtrl.facility.aliases | joinBy: ", "}}</p>
+				</div>
+			</div>
+
+			<div class="row">
+				<h3>{{"facilities.location" | translate}}</h3>
+				<div class="map-container">
+					<facility-map ng-model="viewCtrl.facility" no-tiles="{{features['mapNoTiles']}}"></facility-map>
+				</div>
+			</div>
+
+			<div class="row" ng-show="viewCtrl.hasCapacities()">
+				<h3>{{"facilities.capacity.heading" | translate}}</h3>
+				<capacities-table capacities="viewCtrl.facility.capacities"></capacities-table>
+			</div>
+
+			<div class="row wdServices" ng-show="viewCtrl.hasServices()">
+				<h3>{{"facilities.serviceIds.heading" | translate}}</h3>
+				<div ng-repeat="service in viewCtrl.services" class="wdService">
+					{{service.name.fi}}
+				</div>
+			</div>
+
+			<div class="row contacts">
+				<h3>{{"facilities.contacts.heading" | translate}}</h3>
+				<div ng-if="viewCtrl.facility.contacts.EMERGENCY">
+					<h4>{{ "facilities.contacts.EMERGENCY.label" | translate }}</h4>
+					<p class="emergency-contact">
+						{{ viewCtrl.contacts[viewCtrl.facility.contacts.EMERGENCY].name.fi }}
+
+						{{ viewCtrl.contacts[viewCtrl.facility.contacts.EMERGENCY].phone }}
+						{{ viewCtrl.contacts[viewCtrl.facility.contacts.EMERGENCY].email }}
+
+						{{ viewCtrl.contacts[viewCtrl.facility.contacts.EMERGENCY].address.streetAddress.fi }}
+						{{ viewCtrl.contacts[viewCtrl.facility.contacts.EMERGENCY].address.postalCode }}
+						{{ viewCtrl.contacts[viewCtrl.facility.contacts.EMERGENCY].address.city.fi }}
+
+						{{ viewCtrl.contacts[viewCtrl.facility.contacts.EMERGENCY].openingHours.fi }}
+						{{ viewCtrl.contacts[viewCtrl.facility.contacts.EMERGENCY].info.fi }}
+					</p>
+				</div>
+			</div>
+		</div>
+	</content>
+</main-layout>

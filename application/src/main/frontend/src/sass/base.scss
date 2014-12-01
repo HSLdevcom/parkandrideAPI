@@ -1,0 +1,81 @@
+@import '../../vendor/bootstrap-sass-official/assets/stylesheets/bootstrap.scss';
+
+@import 'variables';
+@import 'mixins';
+@import 'layouts';
+@import 'fonts_and_links';
+@import 'messages_and_warnings';
+@import 'responsive';
+@import 'map';
+@import 'tags';
+@import 'dialogs';
+
+//buttons
+.btn-xs {
+  @include button($radius:15px, $font-size:16px, $height:30px);
+  padding: 1px 10px;
+}
+
+.btn-s {
+  @include button($radius:20px, $font-size:20px, $height:40px);
+}
+
+.btn-test {
+  border: 0px;
+  background-color: none;
+  color: $primarycolor;
+  height: 40px;
+  font-size: 20px;
+  border-bottom: 3px dotted $primarycolor;
+}
+
+.btn-m {
+  @include button($radius:30px, $font-size:30px, $height:60px);
+}
+
+.btn-l {
+  @include button($radius:40px, $font-size:40px, $height:80px);
+}
+
+.btn:hover {
+  background-color: $primarycolor-light;
+  color: #fff;
+}
+
+.btn.active {
+  background-color: $secondarycolor;
+  color: $primarycolor;
+}
+
+.btn-group {
+  margin-bottom: 20px;
+}
+
+//form controls
+.form-control {
+  font-size: 16px;
+}
+
+textarea {
+  resize: vertical;
+}
+
+//table
+.hubRow {
+  background-color: #f9f9f9;
+  font-size: 20px;
+}
+
+//capacity table inputs
+.capacityInput {
+  border: none;
+  background-color: transparent;
+  -webkit-box-shadow: none;
+  box-shadow: none;
+}
+
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}

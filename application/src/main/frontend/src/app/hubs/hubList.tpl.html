@@ -1,0 +1,26 @@
+<main-layout>
+	<headline>{{ "hubs.title" | translate }}</h2></headline>
+	<actions><hub-list-navi></hub-list-navi></actions>
+	<content>
+		<div class="panel panel-default">
+			<table class="table table-bordered table-condensed">
+				<tbody>
+				<!-- Unattached facilities -->
+				<tr ng-repeat="facility in hubsCtrl.getUnattachedFacilities()" class="facilityRow wdFacility{{facility.id}}">
+					<td class="wdNameFi"><a ui-sref="facility-view({id: facility.id})">{{facility.name.fi}}</a></td>
+					<td><capacities-list capacities="facility.capacities"></capacities-list></td>
+				</tr>
+				<!-- Facilities by hubs -->
+				<tr ng-repeat-start="hub in hubsCtrl.hubs" class="hubRow wdHub{{hub.id}}">
+					<th class="wdNameFi hubRow" colspan="2"><a ui-sref="hub-view({id: hub.id})">{{hub.name.fi}}</a></th>
+				</tr>
+				<tr ng-repeat="facility in hubsCtrl.getFacilities(hub) | orderBy:'_index'" class="facilityRow wdFacility{{facility.id}}"
+					ng-repeat-end>
+					<td class="wdNameFi"><a ui-sref="facility-view({id: facility.id})">{{facility.name.fi}}</a></td>
+					<td><capacities-list capacities="facility.capacities"></capacities-list></td>
+				</tr>
+				</tbody>
+			</table>
+		</div>
+	</content>
+</main-layout>

@@ -1,0 +1,39 @@
+tags-input .tags {
+  border:  1px solid #CCCCCC;
+  border-radius: 4px;
+  box-shadow: none;
+  padding: 2px;
+}
+
+tags-input .tags.focused {
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
+  border: 1px solid $secondarycolor;
+  border-radius: 4px;
+}
+
+tags-input .tags .tag-item {
+  border: none;
+  border-radius: 4px;
+  background: $secondarycolor;
+}
+
+tags-input .tags .tag-item.selected {
+  background: $secondarycolor;
+}
+
+tags-input .tags .tag-item .remove-button {
+  color: #333;
+}
+
+tags-input.ng-invalid .tags {
+  border-color: $errorcolor;
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
+}
+
+.input {
+  border: none;
+}

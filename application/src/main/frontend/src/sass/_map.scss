@@ -1,0 +1,38 @@
+//map height
+.map-container {
+  height: 400px;
+}
+
+.map {
+  height: 100%;
+  width: 100%;
+}
+
+.ol-control {
+  background-color: transparent;
+}
+
+.ol-control:hover {
+  background-color: transparent;
+}
+
+.ol-control button {
+  background-color: $primarycolor;
+}
+
+.ol-control button:hover,
+.ol-control button:focus {
+  background-color: $primarycolor-light;
+}
+
+.ol-control button,
+.ol-attribution,
+.ol-scale-line-inner,
+.ol-has-tooltip [role=tooltip] {
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;;
+}
+
+.map-cancel {
+  left: .5em;
+  bottom: .5em;
+}

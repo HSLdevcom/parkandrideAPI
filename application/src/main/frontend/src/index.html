@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html ng-app="parkandride" ng-controller="AppCtrl as appCtrl">
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta charset="utf-8">
+	<title ng-bind="pageTitle"></title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="shortcut icon" href="https://www.hsl.fi/sites/all/themes/custom/hsl/favicon.ico" type="image/vnd.microsoft.icon" />
+
+	<!-- font awesome from BootstrapCDN -->
+	<link href="https://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
+
+	<!-- compiled CSS --><% styles.forEach( function ( file ) { %>
+	<link rel="stylesheet" type="text/css" href="<%= file %>" /><% }); %>
+
+	<!-- compiled JavaScript --><% scripts.forEach( function ( file ) { %>
+	<script type="text/javascript" src="<%= file %>"></script><% }); %>
+</head>
+
+<body>
+
+
+	<div id="wrap">
+
+		<!--header-->
+		<div class="page-header navbar-static-top" role="navigation">
+			<div class="container">
+				<div class="row">
+					<div class="col-lg-4 col-md-5 col-sm-5 col-xs-12 first-column">
+						<img class="img-responsive logo" src="assets/hsl-liipi-logo2.png" alt="{{ 'header.logodesc' | translate }}">
+					</div>
+					<div class="col-lg-6 col-md-5 col-sm-4 col-xs-8 navi-col">
+						<ul class="nav nav-tabs">
+							<li class="active"><a id="hubsLink" ui-sref="hub-list" translate="hubs.title"></a></li>
+							<li><a id="contactsLink" ui-sref="contact-list" translate="contacts.title"></a></li>
+							<li toggle feature="dev"><a ui-sref="dev-page">Dev</a></li>
+						</ul>
+					</div>
+					<div class="col-lg-2 col-md-2 col-sm-3 col-xs-4 logout last-column">
+						<div class="pull-right">
+							<a href="index.html">{{ "common.action.logout" | translate }}</a>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!--main-->
+		<div class="clear-top" id="main" ui-view></div>
+
+	</div>
+
+	<!--footer-->
+	<div class="page-footer">
+		<div class="container">
+			<div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 first-column">
+				&copy {{ "footer.hslabbr" | translate }} 2014
+			</div>
+			<div class="col-lg-8 col-md-8 col-sm-8 col-xs-12 text-right last-column" translate="footer.contact"></div>
+		</div>
+	</div>
+
+</body>
+</html>

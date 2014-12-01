@@ -23,6 +23,9 @@ public class ProtractorTest {
     @Value("${local.server.port}")
     private int port;
 
+    @Value("${browser:firefox}")
+    private String browser;
+
     @Test
     public void protractor_tests() throws InterruptedException, IOException {
         File projectDir = new File(System.getProperty("user.dir"));
@@ -32,7 +35,7 @@ public class ProtractorTest {
         File script = new File(projectDir, "etc/protractor/protractor.sh");
         ProcessBuilder builder = new ProcessBuilder("bash", script.getAbsolutePath(),
                 "test",
-                "--browser=chrome",
+                "--browser=" + browser,
                 "--baseUrl=http://localhost:" + port)
                 .inheritIO();
         Process process = builder.start();

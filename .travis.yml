@@ -2,7 +2,7 @@ language: java
 jdk:
   - oraclejdk8
 env:
-  - APP_MODULE=$TRAVIS_BUILD_DIR/application DISPLAY=:99
+  - PTOR_DIR=$TRAVIS_BUILD_DIR/etc/protractor APP_MODULE=$TRAVIS_BUILD_DIR/application DISPLAY=:99
 addons:
   postgresql: "9.3"
 before_install:

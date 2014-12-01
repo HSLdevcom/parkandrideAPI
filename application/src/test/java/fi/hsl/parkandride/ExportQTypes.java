@@ -20,6 +20,7 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.Profile;
 
 import com.mysema.query.sql.Configuration;
 import com.mysema.query.sql.codegen.DefaultNamingStrategy;
@@ -38,6 +39,7 @@ import fi.hsl.parkandride.config.JdbcConfiguration;
 @org.springframework.context.annotation.Configuration
 @EnableAutoConfiguration
 @Import(JdbcConfiguration.class)
+@Profile("export_qtypes")
 public class ExportQTypes {
 
     public static final String NAME_PREFIX = "Q";

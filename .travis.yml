@@ -16,6 +16,7 @@ install:
   - npm install
   - SPRING_PROFILES_ACTIVE=env_travis
 script:
+  - cd $TRAVIS_BUILD_DIR
   - mvn package -Dmaven.javadoc.skip=true -B -V
 after_success:
   - cd $APP_MODULE && mvn clean test jacoco:report coveralls:report

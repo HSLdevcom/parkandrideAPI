@@ -2,7 +2,7 @@ language: java
 jdk:
   - oraclejdk8
 env:
-  - PTOR_DIR=$TRAVIS_BUILD_DIR/etc/protractor APP_MODULE=$TRAVIS_BUILD_DIR/application DISPLAY=:99
+  - PTOR_DIR=$TRAVIS_BUILD_DIR/etc/protractor APP_MODULE=$TRAVIS_BUILD_DIR/application DISPLAY=:99 SPRING_PROFILES_ACTIVE=env_travis
 addons:
   postgresql: "9.3"
 before_install:
@@ -14,7 +14,6 @@ install:
   - bash etc/scripts/db/psql-init-db.sh -U postgres
   - cd $PTOR_DIR
   - npm install
-  - SPRING_PROFILES_ACTIVE=env_travis
 script:
   - cd $TRAVIS_BUILD_DIR
   - mvn package -Dmaven.javadoc.skip=true -B -V

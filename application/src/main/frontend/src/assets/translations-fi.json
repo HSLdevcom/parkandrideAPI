@@ -81,6 +81,7 @@
     },
     "facilities": {
         "title": "Pysäköintipaikat",
+        "label": "Pysäköintipaikka",
         "list": {
             "name": "Nimi",
             "types": "Tyypit"
@@ -245,6 +246,7 @@
     },
     "hubs": {
         "title": "Pysäköintipaikat",
+        "label": "Alue",
         "list": {
             "name": "Nimi"
         },
@@ -338,6 +340,7 @@
         "Pattern": "tarkista muoto",
         "TypeMismatch": "tarkista muoto",
         "PhoneOrEmailRequired": "anna vähintään puhelinnumero tai sähköposti",
-        "Email": "tarkista muoto"
+        "Email": "tarkista muoto",
+        "BasicRequirements": "tarkista pakolliset tiedot ja syötteiden muoto"
     }
 }

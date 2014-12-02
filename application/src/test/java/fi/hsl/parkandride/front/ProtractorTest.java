@@ -41,6 +41,7 @@ public class ProtractorTest {
             }
             profiles.add("protractor");
             profiles.add("dev_api");
+            System.out.println("profiles = " + profiles);
             return profiles.toArray(new String[profiles.size()]);
         }
     }

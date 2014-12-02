@@ -50,3 +50,4 @@ psql    |postgres is used instead of the default H2
 # Postgresql initialization
 
 Schema and default test-user (liipi) can be installed on running Postgresql with [etc/scripts/db/psql-init-db.sh](https://github.com/HSLdevcom/parkandrideAPI/blob/master/etc/scripts/db/psql-init-db.sh). See the file for example usage.
+

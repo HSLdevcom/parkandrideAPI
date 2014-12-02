@@ -5,7 +5,8 @@ module.exports = function () {
     var request = require('request');
     var devApiUrl = browser.baseUrl + '/dev-api',
         facilitiesUrl = devApiUrl + '/facilities',
-        hubsUrl = devApiUrl + '/hubs';
+        hubsUrl = devApiUrl + '/hubs',
+        contactsUrl = devApiUrl + '/contacts';
     var flow = protractor.promise.controlFlow();
 
     var api = {};
@@ -44,9 +45,17 @@ module.exports = function () {
         }
     };
 
-    api.resetAll = function(facilities, hubs) {
+    api.resetContacts = function(contacts) {
+        flow.execute(function() { return asPromise({ method: 'DELETE', url: contactsUrl }); });
+        if (contacts) {
+            flow.execute(function(){ return asPromise({ method: 'PUT', url: contactsUrl, json: true, body: asPayload(contacts) }); });
+        }
+    };
+
+    api.resetAll = function(facilities, hubs, contacts) {
         api.resetFacilities(facilities);
         api.resetHubs(hubs);
+        api.resetContacts(contacts)
     };
 
     return api;

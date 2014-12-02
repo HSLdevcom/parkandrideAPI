@@ -4,6 +4,7 @@ module.exports = function(spec) {
     var that = require('../base')(spec);
 
     that.portEditModal = require('./portEditModal')({});
+    that.contactEditModal = require('../contacts/contactEditModal')({});
 
     spec.view = $('.wdFacilityEditView');
     spec.map = $('.facility-map .ol-viewport');
@@ -17,6 +18,10 @@ module.exports = function(spec) {
     spec.editModePorts = element(by.id('editModePorts'));
     spec.editModeLocation = element(by.id('editModeLocation'));
     spec.services = element(by.model('editCtrl.facility.serviceIds'));
+    spec.emergencyContact = element(by.model('editCtrl.facility.contacts.EMERGENCY'));
+    spec.createEmergencyContact = $('.emergencyContact .createContact');
+    spec.selectedEmergencyContact = $('.emergencyContact .ui-select-match');
+    spec.clearEmergencyContact = $('.emergencyContact .clearContact');
 
     spec.defineMultilingualAccessors("name");
 
@@ -54,6 +59,29 @@ module.exports = function(spec) {
                 }
             );
     }
+
+    that.selectEmergencyContact = function(name) {
+        spec.emergencyContact.element(by.css('.ui-select-match')).click();
+        var contactElement = browser.driver.switchTo().activeElement();
+        contactElement.sendKeys(name);
+        contactElement.sendKeys(protractor.Key.ENTER);
+    };
+
+    that.createContact = function(contact) {
+        spec.createEmergencyContact.click();
+        that.contactEditModal.setName(contact.name);
+        that.contactEditModal.setPhone(contact.phone);
+        that.contactEditModal.setEmail(contact.email);
+        that.contactEditModal.save();
+    };
+
+    that.getEmergencyContact = function() {
+        return spec.selectedEmergencyContact.getText();
+    };
+
+    that.clearEmergencyContact = function() {
+        spec.clearEmergencyContact.click();
+    };
 
     that.drawLocation = function (topLeft, w, h) {
         spec.editModeLocation.click();

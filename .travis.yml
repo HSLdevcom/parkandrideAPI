@@ -16,7 +16,7 @@ install:
   - npm install
 script:
   - cd $TRAVIS_BUILD_DIR
-  - mvn package -Dmaven.javadoc.skip=true -B -V
+  - mvn verify -Dmaven.javadoc.skip=true -B -V
 after_success:
   - mvn coveralls:report
 notifications:

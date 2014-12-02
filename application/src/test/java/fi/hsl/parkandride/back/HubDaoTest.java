@@ -13,6 +13,7 @@ import javax.inject.Inject;
 import org.geolatte.geom.Geometry;
 import org.geolatte.geom.Point;
 import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.SpringApplicationConfiguration;
@@ -43,7 +44,7 @@ public class HubDaoTest {
     @Inject
     HubRepository hubRepository;
 
-    @After
+    @Before
     public void cleanup() {
         testHelper.clear(QHubFacility.hubFacility, QHub.hub);
     }

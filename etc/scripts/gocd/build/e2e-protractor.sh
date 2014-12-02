@@ -1,6 +1,12 @@
 #!/bin/bash
 
+function init_db {
+  bash $ROOT_DIR/etc/scripts/db/psql-init-db.sh -h dev.cvokarbgtqbl.eu-west-1.rds.amazonaws.com -U devmaster postgres
+}
+
 function init() {
+  : ${LIIPI_DB:="liipici"}
+
   ROOT_DIR="$SCRIPT_DIR/../../../.."
 
   local v=`cat $ROOT_DIR/version`
@@ -8,10 +14,11 @@ function init() {
 
   local protractor_dir="$ROOT_DIR/etc/protractor"
   cd $protractor_dir
-
   npm install
 
-  export SPRING_PROFILES_ACTIVE=env_gocd
+  [ "$INIT_DB" = "yes" ] && init_db
+
+  export PSQL_USERNAME=$LIIPI_DB SPRING_PROFILES_ACTIVE=env_gocd
 }
 
 function cleanup() {
@@ -19,14 +26,10 @@ function cleanup() {
   bash protractor.sh stop
 }
 
-function init_db {
-  LIIPI_DB=liipici bash $ROOT_DIR/etc/scripts/db/psql-init-db.sh -h dev.cvokarbgtqbl.eu-west-1.rds.amazonaws.com -U devmaster postgres
-}
 
 function run() {
   trap cleanup EXIT
 
-  [ "$INIT_DB" = "yes" ] && init_db
   bash protractor.sh start
   bash protractor.sh wait_until_started
   bash protractor.sh test

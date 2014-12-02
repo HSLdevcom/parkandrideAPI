@@ -16,7 +16,7 @@ function init() {
   [ "$INIT_DB" = "yes" ] && init_db
   cd $ROOT_DIR
 
-  export SPRING_PROFILES_ACTIVE=env_gocd
+  export PSQL_USERNAME=$LIIPI_DB SPRING_PROFILES_ACTIVE=env_gocd
 }
 
 function version() {

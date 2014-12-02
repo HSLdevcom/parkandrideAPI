@@ -39,7 +39,7 @@ import fi.hsl.parkandride.config.JdbcConfiguration;
 @org.springframework.context.annotation.Configuration
 @EnableAutoConfiguration
 @Import(JdbcConfiguration.class)
-@Profile("ExportQTypes")
+@Profile("export_qtypes")
 public class ExportQTypes {
 
     public static final String NAME_PREFIX = "Q";
@@ -49,7 +49,7 @@ public class ExportQTypes {
     public static void main(String[] args) {
         SpringApplication application = new SpringApplication(ExportQTypes.class);
         application.setWebEnvironment(false);
-        application.setAdditionalProfiles("ExportQTypes");
+        application.setAdditionalProfiles("export_qtypes");
         application.run(args);
     }
 

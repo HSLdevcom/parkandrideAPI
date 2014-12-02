@@ -9,7 +9,9 @@ module.exports = function(spec) {
     spec.email = element(by.model('contact.email'));
     spec.postalCode = element(by.model('address.postalCode'));
     spec.ok = $("#wdContactOk");
+    spec.cancel = $("#wdContactCancel");
 
+    spec.context = spec.view;
     spec.defineMultilingualAccessors("name");
     spec.defineMultilingualAccessors("streetAddress");
     spec.defineMultilingualAccessors("city");
@@ -40,6 +42,10 @@ module.exports = function(spec) {
     that.save = function() {
         spec.ok.click();
     }
+
+    that.cancel = function() {
+        spec.cancel.click();
+    };
 
     return that;
 };

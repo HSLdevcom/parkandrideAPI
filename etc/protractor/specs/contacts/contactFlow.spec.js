@@ -21,7 +21,7 @@ describe('manage contacts', function () {
         contactPage.openCreateModal();
         editModal.isDisplayed();
         editModal.setName("HSL");
-        editModal.setPhone("(09) 4766 4444");
+        editModal.setPhone("+44 343 222 2222");
         editModal.setEmail("hsl@hsl.fi");
         editModal.setStreetAddress("Opastinsilta 6 A");
         editModal.setPostalCode("00077");
@@ -32,10 +32,10 @@ describe('manage contacts', function () {
     });
 
     it('should list created contact', function() {
-        expect(contactPage.getContacts()).toEqual([["HSL", "09 47664444", "hsl@hsl.fi"]]);
+        expect(contactPage.getContacts()).toEqual([["HSL", "+44 343 222 2222", "hsl@hsl.fi"]]);
     });
 
-    it('should edit contact with errors', function() {
+    it('should require phone or email', function() {
         contactPage.openEditDialog(1);
         editModal.isDisplayed();
         editModal.setPhone("");
@@ -46,9 +46,19 @@ describe('manage contacts', function () {
         }]);
     });
 
-    it('should show international phone with country code', function() {
-        editModal.setPhone("+44 (0)343 222 2222");
+    it('should change phone number and allow empty email', function() {
+        editModal.setPhone("(09) 4766 4444");
+        expect(editModal.getEmail()).toBe("");
         editModal.save();
-        expect(contactPage.getContacts()).toEqual([["HSL", "+44 343 222 2222", ""]]);
+        expect(contactPage.getContacts()).toEqual([["HSL", "09 47664444", ""]]);
+    });
+
+    it('should cancel edits', function() {
+        contactPage.openEditDialog(1);
+        editModal.isDisplayed();
+        editModal.setPhone("+44 343 222 2222");
+        editModal.setEmail("hsl@hsl.fi");
+        editModal.cancel();
+        expect(contactPage.getContacts()).toEqual([["HSL", "09 47664444", ""]]);
     });
 });

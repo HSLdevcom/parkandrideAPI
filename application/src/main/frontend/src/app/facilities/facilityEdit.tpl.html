@@ -94,7 +94,7 @@
 					<div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 column first-column">
 						<div class="form-group">
 							<label>{{ "facilities.contacts.EMERGENCY.label" | translate }}</label>
-							<div class="input-group">
+							<div class="input-group emergencyContact">
 								<ui-select ng-model="editCtrl.facility.contacts.EMERGENCY" theme="bootstrap" ng-disabled="disabled" reset-search-input="true">
 									<ui-select-match placeholder="Valitse kontakti...">
 										{{$select.selected.name.fi}} ({{$select.selected.phone}} / {{$select.selected.email}})
@@ -108,9 +108,9 @@
 									</ui-select-choices>
 								</ui-select>
 								<span class="input-group-btn">
-									<button class="btn btn-default" type="button" ng-click="editCtrl.facility.contacts.EMERGENCY = undefined"
+									<button class="btn btn-default clearContact" type="button" ng-click="editCtrl.facility.contacts.EMERGENCY = undefined"
 											ng-show="editCtrl.facility.contacts.EMERGENCY">x</button>
-									<button class="btn btn-default" type="button" ng-click="editCtrl.createContact('EMERGENCY')">+</button>
+									<button class="btn btn-default createContact" type="button" ng-click="editCtrl.createContact('EMERGENCY')">+</button>
 								</span>
 							</div>
 						</div>

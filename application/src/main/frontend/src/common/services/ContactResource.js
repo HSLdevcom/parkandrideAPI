@@ -16,11 +16,11 @@
             var config = {"skipDefaultViolationsHandling": true};
             if (data.id) {
                 return $http.put('api/v1/contacts/' + data.id, data, config).then(function(response) {
-                    return response.data.id;
+                    return response.data;
                 });
             } else {
                 return $http.post('api/v1/contacts', data, config).then(function(response) {
-                    return response.data.id;
+                    return response.data;
                 });
             }
         };

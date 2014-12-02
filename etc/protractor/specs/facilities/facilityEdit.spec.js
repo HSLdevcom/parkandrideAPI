@@ -18,7 +18,7 @@ describe('edit facility view', function () {
 
     describe('new facility', function () {
         beforeEach(function () {
-            devApi.resetAll();
+            devApi.resetFacilities();
             editPage.get();
         });
 
@@ -173,6 +173,24 @@ describe('edit facility view', function () {
             editPage.removeService("Katettu");
             expect(editPage.isServiceSelected("Valaistus")).toBe(false);
             expect(editPage.isServiceSelected("Katettu")).toBe(false);
+        });
+
+        it('should manage emergency contact', function() {
+            devApi.resetContacts();
+
+            // Create emergency contact on the fly
+            editPage.createContact({name: "new contact", phone: "(09) 4766 4444", email: "hsl@hsl.fi"});
+            expect(editPage.getEmergencyContact()).toBe("new contact (09 47664444 / hsl@hsl.fi)");
+
+            // Reload and expect that new contact is still available
+            editPage.get();
+
+            editPage.selectEmergencyContact("new contact");
+            expect(editPage.getEmergencyContact()).toBe("new contact (09 47664444 / hsl@hsl.fi)");
+
+            // Clear emergency contact
+            editPage.clearEmergencyContact();
+            expect(editPage.getEmergencyContact()).toBe("Valitse kontakti...");
         });
 
         it('create full', function () {

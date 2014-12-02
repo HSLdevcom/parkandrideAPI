@@ -115,6 +115,7 @@ public class Application {
             if (!projectDir.endsWith("application")) {
                 projectDir += "/application";
             }
+
             registry.addResourceHandler("/**").addResourceLocations(
                     "file://" + projectDir + "/src/main/frontend/build/"
                     ,"/"

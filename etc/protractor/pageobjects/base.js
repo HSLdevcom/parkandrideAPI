@@ -42,9 +42,10 @@ module.exports = function(spec) {
         spec[name] = spec.context ? spec.context.element(by.name(name)) : element(by.name(name));
 
         that["get" + capitalisedName + lang] = function() {
-            return spec.getValue(spec[name]).then(function(value) {
-                return value;
-            });
+            return spec.getValue(spec[name]);
+//            .then(function(value) {
+//                return value;
+//            });
         };
         that["set" + capitalisedName + lang] = function(value) {
             spec.sendKeys(spec[name], value);

@@ -43,9 +43,6 @@ module.exports = function(spec) {
 
         that["get" + capitalisedName + lang] = function() {
             return spec.getValue(spec[name]);
-//            .then(function(value) {
-//                return value;
-//            });
         };
         that["set" + capitalisedName + lang] = function(value) {
             spec.sendKeys(spec[name], value);

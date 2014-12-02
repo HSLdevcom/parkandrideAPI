@@ -49,6 +49,7 @@ public class ExportQTypes {
     public static void main(String[] args) {
         SpringApplication application = new SpringApplication(ExportQTypes.class);
         application.setWebEnvironment(false);
+        application.setAdditionalProfiles("export_qtypes");
         application.run(args);
     }
 

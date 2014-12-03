@@ -44,6 +44,7 @@ describe('edit hub view', function () {
 
         it('required errors are shown for all required fields if user submits empty form without editing', function() {
             hubEditPage.save();
+            expect(hubEditPage.getViolations()).toEqual([{ path: "Alue", message: "tarkista pakolliset tiedot ja syötteiden muoto" }]);
             expect(hubEditPage.isNameFiRequiredError()).toBe(true);
             expect(hubEditPage.isNameSvRequiredError()).toBe(true);
             expect(hubEditPage.isNameEnRequiredError()).toBe(true);

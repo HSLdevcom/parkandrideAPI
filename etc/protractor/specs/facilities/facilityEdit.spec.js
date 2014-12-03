@@ -38,6 +38,7 @@ describe('edit facility view', function () {
 
         it('required errors are shown for all required fields if user submits empty form without editing', function() {
             editPage.save();
+            expect(editPage.getViolations()).toEqual([{ path: "Pysäköintipaikka", message: "tarkista pakolliset tiedot ja syötteiden muoto" }]);
             expect(editPage.isNameFiRequiredError()).toBe(true);
             expect(editPage.isNameSvRequiredError()).toBe(true);
             expect(editPage.isNameEnRequiredError()).toBe(true);

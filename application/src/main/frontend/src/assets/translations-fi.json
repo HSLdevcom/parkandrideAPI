@@ -236,8 +236,14 @@
         "contacts": {
             "create": "Uusi yhteystieto",
             "heading": "Yhteystiedot",
-            "EMERGENCY": {
+            "emergency": {
                 "label": "Hätänumero"
+            },
+            "operator": {
+                "label": "Operaattori"
+            },
+            "service": {
+                "label": "Palveluyhtiö"
             }
         }
     },

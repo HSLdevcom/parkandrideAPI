@@ -1,0 +1,21 @@
+<div class="form-group">
+	<label>{{ "facilities.contacts." + contactType + ".label" | translate }}<span ng-if="mandatory"> *</span></label>
+	<div class="input-group {{contactType}}Contact">
+		<ui-select ng-model="facilityContacts[contactType]" theme="bootstrap" ng-disabled="disabled" reset-search-input="true"
+				   name="emergencyContact" show-errors ng-required="{{mandatory}}">
+			<ui-select-match placeholder="Valitse kontakti...">{{contactLabel($select.selected)}}</ui-select-match>
+			<ui-select-choices repeat="contact.id as contact in allContacts | filter: {name: {fi: $select.search}}">
+				<div ng-bind-html="contact.name.fi | highlight: $select.search"></div>
+				<small>
+					<div ng-if="contact.phone">{{ "contacts.phone.label" | translate }}: {{contact.phone}}</div>
+					<div ng-if="contact.email">{{ "contacts.email.label" | translate }}: {{contact.email}}</div>
+				</small>
+			</ui-select-choices>
+		</ui-select>
+		<span class="input-group-btn">
+			<button class="btn btn-default clearContact" type="button" ng-click="facilityContacts[contactType] = undefined"
+					ng-show="facilityContacts[contactType]">x</button>
+			<button class="btn btn-default createContact" type="button" ng-click="createContact(contactType)">+</button>
+		</span>
+	</div>
+</div>

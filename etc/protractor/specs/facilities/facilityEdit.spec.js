@@ -19,6 +19,10 @@ describe('edit facility view', function () {
     describe('new facility', function () {
         beforeEach(function () {
             devApi.resetFacilities();
+            devApi.resetContacts([{
+                name: { fi: "hsl fi", sv: "hsl sv", en: "hsl en" },
+                phone: "09 47664444"
+            }]);
             editPage.get();
         });
 

@@ -6,12 +6,9 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.sql.DataSource;
 
-import org.springframework.boot.autoconfigure.PropertyPlaceholderAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Profile;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.jdbc.datasource.DataSourceUtils;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -22,7 +19,6 @@ import com.mysema.query.sql.spatial.PostGISTemplates;
 import com.mysema.query.sql.types.EnumByNameType;
 
 import fi.hsl.parkandride.core.domain.CapacityType;
-import fi.hsl.parkandride.core.domain.ContactType;
 
 @Configuration
 public class JdbcConfiguration {
@@ -85,9 +81,6 @@ public class JdbcConfiguration {
         com.mysema.query.sql.Configuration conf = new com.mysema.query.sql.Configuration(sqlTemplates);
         conf.register("CAPACITY", "CAPACITY_TYPE", new EnumByNameType<>(CapacityType.class));
         conf.register("CAPACITY_TYPE", "NAME", new EnumByNameType<>(CapacityType.class));
-
-        conf.register("FACILITY_CONTACT", "CONTACT_TYPE", new EnumByNameType<>(ContactType.class));
-        conf.register("CONTACT_TYPE", "NAME", new EnumByNameType<>(ContactType.class));
 
         conf.register("CONTACT", "PHONE", new PhoneType());
 //        conf.register("FACILITY", "BORDER", H2PolygonType.DEFAULT);

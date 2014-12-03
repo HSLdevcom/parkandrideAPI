@@ -41,6 +41,10 @@ module.exports = function () {
                 "MOTORCYCLE": {"built": 50, "unavailable": 5},
                 "ELECTRIC_CAR": {"built": 60, "unavailable": 6}
             },
+            contacts: {
+                emergency: 1,
+                operator: 1
+            },
             serviceIds: [4, 5]
         }),
         facCar: facility({
@@ -65,6 +69,10 @@ module.exports = function () {
                 h: 60
             },
             aliases: ["facCar"],
+            contacts: {
+                emergency: 1,
+                operator: 1
+            },
             capacities: {
                 "CAR": {"built": 10, "unavailable": 1}
             }
@@ -88,6 +96,10 @@ module.exports = function () {
             ]
         },
         "aliases": ["Westend", "Westis"],
+        contacts: {
+            emergency: 1,
+            operator: 1
+        },
         "capacities": {
             "CAR": {
                 "built": 100,
@@ -113,6 +125,10 @@ module.exports = function () {
             ]
         },
         "aliases": ["Westis"],
+        contacts: {
+            emergency: 1,
+            operator: 1
+        },
         "capacities": {
             "BICYCLE": {
                 "built": 50,

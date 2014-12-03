@@ -8,6 +8,7 @@ module.exports = function(spec) {
     spec.entry = element(by.model('port.entry'));
     spec.exit = element(by.model('port.exit'));
     spec.pedestrian = element(by.model('port.pedestrian'));
+    spec.bicycle = element(by.model('port.bicycle'));
     spec.postalCode = spec.view.element(by.name('postalCode'));
     spec.cancel = element(by.id('wdPortCancel'));
     spec.remove = element(by.id('wdPortRemove'));
@@ -27,6 +28,9 @@ module.exports = function(spec) {
     that.togglePedestrian = function() {
         spec.pedestrian.click();
     };
+    that.toggleBicycle= function() {
+        spec.bicycle.click();
+    };
 
     that.getPostalCode = function() {
         return spec.getValue(spec.postalCode);
@@ -35,18 +39,23 @@ module.exports = function(spec) {
         spec.postalCode.sendKeys(value);
     };
 
-    that.entryIsSelected = function() {
+    that.isEntrySelected = function() {
         return spec.entry.isSelected().then(function(selected) {
             return !!selected;
         });
     };
-    that.exitIsSelected = function() {
+    that.isExitSelected = function() {
         return spec.exit.isSelected().then(function(selected) {
             return !!selected;
         });
     };
-    that.pedestrianIsSelected = function() {
+    that.isPedestrianSelected = function() {
         return spec.pedestrian.isSelected().then(function(selected) {
+            return !!selected;
+        });
+    };
+    that.isBicycleSelected = function() {
+        return spec.bicycle.isSelected().then(function(selected) {
             return !!selected;
         });
     };

@@ -20,6 +20,8 @@ public class Port {
 
     public boolean pedestrian;
 
+    public boolean bicycle;
+
     @Valid
     public Address address;
 
@@ -28,15 +30,16 @@ public class Port {
 
     public Port() {}
 
-    public Port(Geometry location, boolean entry, boolean exit, boolean pedestrian) {
-        this(location, entry, exit, pedestrian, null, null, null, null);
+    public Port(Geometry location, boolean entry, boolean exit, boolean pedestrian, boolean bicycle) {
+        this(location, entry, exit, pedestrian, bicycle, null, null, null, null);
     }
 
-    public Port(Geometry location, boolean entry, boolean exit, boolean pedestrian, String streetAddress, String postalCode, String city, String info) {
+    public Port(Geometry location, boolean entry, boolean exit, boolean pedestrian, boolean bicycle, String streetAddress, String postalCode, String city, String info) {
         this.location = location;
         this.entry = entry;
         this.exit = exit;
         this.pedestrian = pedestrian;
+        this.bicycle = bicycle;
         this.address = new Address(streetAddress, postalCode, city);
         this.info = info != null ? new MultilingualString(info, info, info) : null;
     }
@@ -50,6 +53,7 @@ public class Port {
             return this.entry == other.entry
                     && this.exit == other.exit
                     && this.pedestrian == other.pedestrian
+                    && this.bicycle == other.bicycle
                     && this.location.equals(other.location)
                     && Objects.equals(this.address, other.address)
                     && Objects.equals(this.info, other.info);
@@ -63,6 +67,7 @@ public class Port {
         int hashCode = Boolean.hashCode(entry);
         hashCode = 31*hashCode + Boolean.hashCode(exit);
         hashCode = 31*hashCode + Boolean.hashCode(pedestrian);
+        hashCode = 31*hashCode + Boolean.hashCode(bicycle);
         hashCode = 31*hashCode + (address == null ? 0 : address.hashCode());
         hashCode = 31*hashCode + (info == null ? 0 : info.hashCode());
         return 31*hashCode + location.hashCode();
@@ -78,6 +83,14 @@ public class Port {
 
     public boolean isPedestrian() {
         return pedestrian;
+    }
+
+    public boolean isBicycle() {
+        return bicycle;
+    }
+
+    public MultilingualString getInfo() {
+        return info;
     }
 
     public Geometry getLocation() {

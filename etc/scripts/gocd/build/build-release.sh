@@ -9,14 +9,13 @@ function init() {
   : ${GO_PIPELINE_COUNTER:?}
   : ${PWD:?}
   : ${LIIPI_DB:="liipici"}
+  export LIIPI_DB PSQL_USERNAME=$LIIPI_DB SPRING_PROFILES_ACTIVE=env_gocd
 
   ROOT_DIR="$SCRIPT_DIR/../../../.."
 
   cd "$ROOT_DIR/etc/protractor" && npm install
   [ "$INIT_DB" = "yes" ] && init_db
   cd $ROOT_DIR
-
-  export PSQL_USERNAME=$LIIPI_DB SPRING_PROFILES_ACTIVE=env_gocd
 }
 
 function version() {

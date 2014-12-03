@@ -82,12 +82,13 @@
                     var entry = properties.entry ? "entry" : "noentry";
                     var exit = properties.exit ? "exit" : "noexit";
                     var pedestrian = properties.pedestrian ? "pedestrian" : "nopedestrian";
+                    var bicycle = properties.bicycle ? "bicycle" : "nobicycle";
                     return [new ol.style.Style({
                         image: new ol.style.Icon({
                             anchor: [0.5, 1],
                             anchorXUnits: 'fraction',
                             anchorYUnits: 'fraction',
-                            src: 'assets/ports/' + entry + "-" + exit + "-" + pedestrian + ".gif"
+                            src: 'assets/ports/' + entry + "-" + exit + "-" + pedestrian + "-" + bicycle + ".gif"
                         })
                     })];
                 }

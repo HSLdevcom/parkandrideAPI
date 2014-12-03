@@ -13,7 +13,7 @@
 		</div>
 		<form name="editContactForm" class="form-horizontal" role="form" novalidate>
 			<div class="row">
-				<label>{{ "contacts.name.label" | translate }}</label>
+				<label>{{ "contacts.name.label" | translate }} *</label>
 			</div>
 			<div class="row">
 				<multilingual-edit name="name" ng-model="contact.name" mandatory="true"></multilingual-edit>
@@ -22,7 +22,7 @@
 			<div class="row">
 				<div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 column first-column">
 					<div class="form-group">
-						<label>{{ "contacts.phone.label" | translate }}</label>
+						<label>{{ "contacts.phone.label" | translate }} *</label>
 						<div>
 							<input name="phone" type="input" ng-model="contact.phone" class="form-control" empty-to-null>
 						</div>
@@ -33,7 +33,7 @@
 			<div class="row">
 				<div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 column first-column">
 					<div class="form-group">
-						<label>{{ "contacts.email.label" | translate }}</label>
+						<label>{{ "contacts.email.label" | translate }} *</label>
 						<div>
 							<input name="phone" type="input" ng-model="contact.email" class="form-control" empty-to-null>
 						</div>

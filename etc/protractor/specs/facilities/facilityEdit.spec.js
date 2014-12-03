@@ -38,6 +38,7 @@ describe('edit facility view', function () {
 
         it('required errors are shown for all required fields if user submits empty form without editing', function() {
             editPage.save();
+            expect(editPage.getViolations()).toEqual([{ path: "Pysäköintipaikka", message: "tarkista pakolliset tiedot ja syötteiden muoto" }]);
             expect(editPage.isNameFiRequiredError()).toBe(true);
             expect(editPage.isNameSvRequiredError()).toBe(true);
             expect(editPage.isNameEnRequiredError()).toBe(true);
@@ -108,13 +109,15 @@ describe('edit facility view', function () {
                 // New port
                 editPage.openPortAt(200, 200);
                 expect(editPage.portEditModal.isDisplayed()).toBe(true);
-                expect(editPage.portEditModal.entryIsSelected()).toBe(true);
-                expect(editPage.portEditModal.exitIsSelected()).toBe(true);
-                expect(editPage.portEditModal.pedestrianIsSelected()).toBe(false);
+                expect(editPage.portEditModal.isEntrySelected()).toBe(true);
+                expect(editPage.portEditModal.isExitSelected()).toBe(true);
+                expect(editPage.portEditModal.isPedestrianSelected()).toBe(false);
+                expect(editPage.portEditModal.isBicycleSelected()).toBe(false);
 
                 editPage.portEditModal.toggleEntry();
                 editPage.portEditModal.toggleExit();
                 editPage.portEditModal.togglePedestrian();
+                editPage.portEditModal.toggleBicycle();
                 editPage.portEditModal.setStreetAddress(["katu", "gata", "street"]);
                 editPage.portEditModal.setPostalCode("00100");
                 editPage.portEditModal.setCity(["kaupunki", "stad", "city"]);
@@ -126,9 +129,10 @@ describe('edit facility view', function () {
                 editPage.openPortAt(200, 198);
                 expect(editPage.portEditModal.isDisplayed()).toBe(true);
 
-                expect(editPage.portEditModal.entryIsSelected()).toBe(false);
-                expect(editPage.portEditModal.exitIsSelected()).toBe(false);
-                expect(editPage.portEditModal.pedestrianIsSelected()).toBe(true);
+                expect(editPage.portEditModal.isEntrySelected()).toBe(false);
+                expect(editPage.portEditModal.isExitSelected()).toBe(false);
+                expect(editPage.portEditModal.isPedestrianSelected()).toBe(true);
+                expect(editPage.portEditModal.isBicycleSelected()).toBe(true);
 
                 expect(editPage.portEditModal.getStreetAddress()).toEqual(["katu", "gata", "street"]);
                 expect(editPage.portEditModal.getPostalCode()).toBe("00100");
@@ -144,20 +148,24 @@ describe('edit facility view', function () {
                 expect(editPage.portEditModal.getCity()).toEqual(["city", "city", "city"]);
                 editPage.portEditModal.setCity("kaupunki");
                 editPage.portEditModal.togglePedestrian();
+                editPage.portEditModal.toggleBicycle();
                 editPage.portEditModal.cancel();
                 expect(editPage.portEditModal.isDisplayed()).toBe(false);
 
                 // Remove port
                 editPage.openPortAt(200, 198);
                 expect(editPage.portEditModal.isDisplayed()).toBe(true);
-                expect(editPage.portEditModal.pedestrianIsSelected()).toBe(true);
+                expect(editPage.portEditModal.isPedestrianSelected()).toBe(true);
+                expect(editPage.portEditModal.isBicycleSelected()).toBe(true);
                 expect(editPage.portEditModal.getCityFi()).toBe("city");
                 editPage.portEditModal.remove();
                 expect(editPage.portEditModal.isDisplayed()).toBe(false);
 
+                // New port with defaults
                 editPage.openPortAt(200, 198);
                 expect(editPage.portEditModal.isDisplayed()).toBe(true);
-                expect(editPage.portEditModal.pedestrianIsSelected()).toBe(false);
+                expect(editPage.portEditModal.isPedestrianSelected()).toBe(false);
+                expect(editPage.portEditModal.isBicycleSelected()).toBe(false);
                 expect(editPage.portEditModal.getCityFi()).toBe("");
             });
         });

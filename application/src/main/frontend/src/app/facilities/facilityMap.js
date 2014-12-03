@@ -5,9 +5,14 @@
         'parkandride.FacilityResource'
     ]);
 
-    m.controller("PortEditCtrl", function ($scope, $modalInstance, port, create) {
+    m.controller("PortModalCtrl", function ($scope, $modalInstance, port, mode) {
         $scope.port = port;
-        $scope.titleKey = 'facilities.ports.' + (create ? 'create' : 'edit');
+        $scope.titleKey = 'facilities.ports.' + mode;
+
+        $scope.hasAddress = function() {
+            return port.address && port.address.streetAddress || port.address.postalCode || port.address.city;
+        };
+
         $scope.ok = function () {
             $modalInstance.close($scope.port);
         };
@@ -111,6 +116,42 @@
                     }
                     feature.setProperties(port);
                 };
+                var findPortIndex = function(portId) {
+                    return _.findIndex(facility.ports, function(p) {
+                        return p._id == portId;
+                    });
+                };
+                var findPortAtPixel = function(pixel) {
+                    var portId = map.forEachFeatureAtPixel(pixel,
+                        function(feature, layer) {
+                            if (layer != null) {
+                                return feature.getId();
+                            }
+                        },
+                        undefined,
+                        function(layer) {
+                            return layer === portsLayer;
+                        });
+                    if (portId) {
+                        return facility.ports[findPortIndex(portId)];
+                    }
+                    return null;
+                };
+                var openPort = function(port, mode) {
+                    var modalInstance = $modal.open({
+                        templateUrl: (mode === 'view' ? 'facilities/portView.tpl.html' : 'facilities/portEdit.tpl.html'),
+                        controller: 'PortModalCtrl',
+                        resolve: {
+                            port: function () {
+                                return _.cloneDeep(port);
+                            },
+                            mode: function() {
+                                return mode;
+                            }
+                        }
+                    });
+                    return modalInstance.result;
+                };
 
                 if (editable) {
                     var portsDisabled = false;
@@ -161,54 +202,18 @@
                     var drawPortCondition = function(mapBrowserEvent) {
                         return !portsDisabled && scope.editMode == 'ports' && ol.events.condition.noModifierKeys(mapBrowserEvent);
                     };
-                    var findPortIndex = function(portId) {
-                        return _.findIndex(facility.ports, function(p) {
-                            return p._id == portId;
-                        });
-                    };
-                    var findPortAtPixel = function(pixel) {
-                        var portId = map.forEachFeatureAtPixel(pixel,
-                            function(feature, layer) {
-                                if (layer != null) {
-                                    return feature.getId();
-                                }
-                            },
-                            undefined,
-                            function(layer) {
-                                return layer === portsLayer;
-                            });
-                        if (portId) {
-                            return facility.ports[findPortIndex(portId)];
-                        }
-                        return null;
-                    };
-                    var editPort = function(port, create) {
-                        var modalInstance = $modal.open({
-                            templateUrl: 'facilities/portEdit.tpl.html',
-                            controller: 'PortEditCtrl',
-                            resolve: {
-                                port: function () {
-                                    return _.cloneDeep(port);
-                                },
-                                create: function() {
-                                    return create;
-                                }
-                            }
-                        });
-                        return modalInstance.result;
-                    };
                     map.on('dblclick', function(event) {
                         if (drawPortCondition(event)) {
                             // Edit existing port
-                            var create = false;
+                            var mode = "edit";
                             var port = findPortAtPixel(event.pixel);
                             if (!port) {
                                 // Create new port
-                                create = true;
+                                mode = "create";
                                 var point = new ol.geom.Point(event.coordinate).transform(mapCRS, targetCRS);
                                 port = FacilityResource.newPort(new ol.format.GeoJSON().writeGeometry(point));
                             }
-                            editPort(port, create).then(function (port) {
+                            openPort(port, mode).then(function (port) {
                                 if (port._id) {
                                     var portIndex = findPortIndex(port._id);
                                     if (port.entry || port.exit || port.pedestrian) {
@@ -236,6 +241,25 @@
 //                    map.addInteraction(new ol.interaction.Modify({
 //                        features: selectInteraction.getFeatures()
 //                    }));
+                }
+                // view mode
+                else {
+                    var viewPort;
+                    map.on('click', function(event) {
+                        var port = findPortAtPixel(event.pixel);
+                        if (port) {
+                            viewPort = true;
+                            event.preventDefault(); // prevent zoom
+                            openPort(port, "view");
+                        } else {
+                            viewPort = false;
+                        }
+                    });
+                    map.on('dblclick', function(event) {
+                        if (viewPort) {
+                            event.preventDefault();
+                        }
+                    });
                 }
 
                 if (facility.location) {

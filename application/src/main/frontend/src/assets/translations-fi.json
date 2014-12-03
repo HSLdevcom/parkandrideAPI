@@ -114,6 +114,7 @@
         "ports": {
             "create": "Lisää uusi käyntiosoite",
             "edit": "Muokkaa käyntiosoitetta",
+            "view": "Käyntiosoitteen tiedot",
             "label": "Käyntiosoitteet",
             "entry": {
                 "label": "Sisäänkäynti"
@@ -312,7 +313,7 @@
             "cancel": "Peruuta",
             "edit": "Muokkaa",
             "logout": "Kirjaudu ulos",
-            "ok": "Hyväksy",
+            "ok": "Valmis",
             "remove": "Poista",
             "save": "Tallenna muutokset"
         },

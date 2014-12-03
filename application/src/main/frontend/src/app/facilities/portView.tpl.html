@@ -1,0 +1,35 @@
+<div id="portEditModal">
+	<div class="modal-header">
+		<h3 class="modal-title">{{ titleKey | translate }}</h3>
+	</div>
+	<div class="modal-body">
+		<form name="editPortForm" class="form-horizontal" role="form" novalidate>
+			<div class="row">
+				<div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 column first-column">
+					<div ng-show="port.entry">&#x2713; {{ "facilities.ports.entry.label" | translate }}</div>
+					<div ng-show="port.exit">&#x2713; {{ "facilities.ports.exit.label" | translate }}</div>
+					<div ng-show="port.pedestrian">&#x2713; {{ "facilities.ports.pedestrian.label" | translate }}</div>
+				</div>
+			</div>
+
+			<div class="row" ng-show="hasAddress()">
+				<h4>{{ "facilities.ports.address.label" | translate }}</h4>
+			</div>
+			<address-view address="port.address" path="ports.address"></address-view>
+
+			<div class="row" ng-show="port.info">
+				<h4>{{ "facilities.ports.info.label" | translate }}</h4>
+			</div>
+			<div class="row">
+				<multilingual-view name="info" value="port.info" mandatory="false"></multilingual-view>
+			</div>
+		</form>
+	</div>
+	<div class="modal-footer">
+		<div class="row">
+			<div class="column">
+				<button id="wdPortOk" class="btn btn-xs" ng-click="ok()">{{ "common.action.ok" | translate }}</button>
+			</div>
+		</div>
+	</div>
+</div>

@@ -57,6 +57,7 @@ create table port (
   entry boolean not null,
   exit boolean not null,
   pedestrian boolean not null,
+  bicycle boolean not null,
   location geometry not null,
 
   street_address_fi varchar(255),

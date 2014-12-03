@@ -37,9 +37,8 @@ public class ExceptionHandlers {
 
     @ExceptionHandler(NotFoundException.class)
     @ResponseStatus(value= NOT_FOUND)
-    @ResponseBody
-    public String notFound(HttpServletRequest req, NotFoundException ex) {
-        return ex.getMessage();
+    public void notFound(HttpServletRequest req, NotFoundException ex) {
+
     }
 
     @ExceptionHandler(ValidationException.class)

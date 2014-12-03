@@ -13,6 +13,7 @@ describe('facility view', function () {
     var facCar = fixtures.facilitiesFixture.dummies.facCar;
 
     var viewPage = po.facilityViewPage({});
+    var portView = viewPage.portView;
     var editPage = po.facilityEditPage({});
     var listPage = po.hubListPage({});
 
@@ -41,7 +42,7 @@ describe('facility view', function () {
         });
     });
 
-    describe('with aliases, capacitiesa and services', function () {
+    describe('with aliases, capacities and services', function () {
         beforeEach(function () {
             f = toView(facFull);
         });
@@ -58,6 +59,34 @@ describe('facility view', function () {
             expect(viewPage.isServicesDisplayed()).toBe(true);
             expect(viewPage.getServices()).toEqual(["Katettu", "Valaistus"]);
         });
+    });
+
+    it('view port', function() {
+        f = {
+            "id":1,"name":{"fi":"test","sv":"test","en":"tes"},
+            "aliases":[],"capacities":{},"serviceIds":[],"contacts":{},
+            "location":{"type":"Polygon","coordinates":[[[24.943295535227904,60.17184809821847],[24.944218215129023,60.17186410779244],[24.94464736857141,60.17192280949709],[24.94479757227624,60.17077543898606],[24.944293316981444,60.17060466413514],[24.9436925021621,60.170572643751754],[24.9434028235885,60.17073274535653],[24.943295535227904,60.17184809821847]]]},
+            "ports":[{
+                "location":{"type":"Point","coordinates":[24.944605,60.17197]},
+                "entry":true,"exit":true,"pedestrian":true,"bicycle":true,
+                "address":{"streetAddress":{"fi":"Vilhonkatu 9","sv":"Vilhelmsgatan 9","en":"Vilhonkatu 9"},
+                    "postalCode":"00100","city":{"fi":"Helsinki","sv":"Helsingfors","en":"Helsinki"}},
+                "info":{"fi":"Info fi","sv":"Info sv","en":"Info en"}}]
+            };
+        f.toPayload = function() { return f; };
+        f = toView(f);
+        viewPage.openPortAt(620, 49);
+        expect(portView.isDisplayed()).toBe(true);
+        expect(portView.isEntrySelected()).toBe(true);
+        expect(portView.isExitSelected()).toBe(true);
+        expect(portView.isPedestrianSelected()).toBe(true);
+        expect(portView.isBicycleSelected()).toBe(true);
+        expect(portView.getStreetAddress()).toEqual(["Vilhonkatu 9", "Vilhelmsgatan 9", "Vilhonkatu 9"]);
+        expect(portView.getPostalCode()).toBe("00100");
+        expect(portView.getCity()).toEqual(["Helsinki", "Helsingfors", "Helsinki"]);
+        expect(portView.getInfo()).toEqual(["Info fi", "Info sv", "Info en"]);
+        portView.ok();
+        expect(portView.isDisplayed()).toBe(false);
     });
 
     describe('without aliases', function () {

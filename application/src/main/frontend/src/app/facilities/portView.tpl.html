@@ -6,10 +6,10 @@
 		<form name="editPortForm" class="form-horizontal" role="form" novalidate>
 			<div class="row">
 				<div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 column first-column">
-					<div ng-show="port.entry">&#x2713; {{ "facilities.ports.entry.label" | translate }}</div>
-					<div ng-show="port.exit">&#x2713; {{ "facilities.ports.exit.label" | translate }}</div>
-					<div ng-show="port.pedestrian">&#x2713; {{ "facilities.ports.pedestrian.label" | translate }}</div>
-					<div ng-show="port.bicycle">&#x2713; {{ "facilities.ports.bicycle.label" | translate }}</div>
+					<div class="portEntry" ng-show="port.entry">&#x2713; {{ "facilities.ports.entry.label" | translate }}</div>
+					<div class="portExit" ng-show="port.exit">&#x2713; {{ "facilities.ports.exit.label" | translate }}</div>
+					<div class="portPedestrian" ng-show="port.pedestrian">&#x2713; {{ "facilities.ports.pedestrian.label" | translate }}</div>
+					<div class="portBicycle" ng-show="port.bicycle">&#x2713; {{ "facilities.ports.bicycle.label" | translate }}</div>
 				</div>
 			</div>
 
@@ -21,7 +21,7 @@
 			<div class="row" ng-show="port.info">
 				<h4>{{ "facilities.ports.info.label" | translate }}</h4>
 			</div>
-			<div class="row">
+			<div class="row portInfo">
 				<multilingual-view name="info" value="port.info" mandatory="false"></multilingual-view>
 			</div>
 		</form>

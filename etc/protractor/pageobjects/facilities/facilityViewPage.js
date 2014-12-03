@@ -3,6 +3,7 @@
 module.exports = function(spec) {
     var that = require('../base')(spec);
     var capacitiesTable = require('../capacitiesTable')({});
+    var portView = require('./portViewModal')();
 
     spec.view = $('.wdFacilityView');
     spec.name = $('.wdFacilityNameFi');
@@ -10,6 +11,7 @@ module.exports = function(spec) {
     spec.services = $$('.wdService');
     spec.servicesBlock = $('.wdServices');
     spec.aliasesBlock = $('.wdAliasesBlock');
+    spec.map = $('.facility-map .ol-viewport');
     spec.editViewButton = $$('.wdEditViewButton').first();
     spec.toListButton = element.all(by.linkUiSref('hub-list')).first();
 
@@ -46,6 +48,10 @@ module.exports = function(spec) {
         );
     };
 
+    that.openPortAt = function(x, y) {
+        browser.actions().mouseMove(spec.map, {x: x, y: y}).click().perform();
+    };
+
     that.toListView = function () {
         spec.toListButton.click();
     };
@@ -53,6 +59,8 @@ module.exports = function(spec) {
     that.toEditView = function () {
         spec.editViewButton.click();
     };
+
+    that.portView = portView;
 
     that.capacitiesTable = capacitiesTable;
 

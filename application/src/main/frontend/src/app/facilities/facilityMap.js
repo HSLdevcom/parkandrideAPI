@@ -20,6 +20,7 @@
             $scope.port.entry = false;
             $scope.port.exit = false;
             $scope.port.pedestrian = false;
+            $scope.port.bicycle = false;
             $modalInstance.close($scope.port);
         };
         $scope.cancel = function () {

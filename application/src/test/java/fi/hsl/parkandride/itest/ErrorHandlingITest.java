@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 
 import fi.hsl.parkandride.core.domain.Facility;
+import fi.hsl.parkandride.core.service.ValidationException;
 
 public class ErrorHandlingITest extends AbstractIntegrationTest {
     @Test
@@ -31,7 +32,7 @@ public class ErrorHandlingITest extends AbstractIntegrationTest {
         .then()
             .statusCode(HttpStatus.BAD_REQUEST.value())
             .body("status", is(HttpStatus.BAD_REQUEST.value()))
-            .body("message", is("Invalid data. See violations for details."))
+            .body("exception", is(ValidationException.class.getCanonicalName()))
         ;
     }
 
@@ -44,6 +45,7 @@ public class ErrorHandlingITest extends AbstractIntegrationTest {
             .post("/api/v1/facilities")
         .then()
             .statusCode(HttpStatus.BAD_REQUEST.value())
+            .body("status", is(HttpStatus.BAD_REQUEST.value()))
             .body("exception", is(HttpMessageNotReadableException.class.getCanonicalName()))
         ;
     }

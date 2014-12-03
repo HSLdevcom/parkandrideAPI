@@ -13,7 +13,8 @@
     m.controller("ContactEditCtrl", function ($scope, $modalInstance, ContactResource, contact, create) {
         $scope.contact = contact;
         $scope.titleKey = 'contacts.action.' + (create ? 'new' : 'edit');
-        $scope.ok = function () {
+
+        function saveContact() {
             ContactResource.save(contact).then(
                 function(contact) {
                     $scope.contact = contact;
@@ -25,6 +26,18 @@
                     }
                 }
             );
+        }
+
+        $scope.ok = function (form) {
+            $scope.$broadcast('show-errors-check-validity');
+            if (form.$valid) {
+                saveContact();
+            } else {
+                $scope.violations = [{
+                    path: "",
+                    type: "BasicRequirements"
+                }];
+            }
         };
         $scope.cancel = function () {
             $modalInstance.dismiss('cancel');

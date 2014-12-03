@@ -39,8 +39,10 @@
           <version>${maven-plugin.jacoco.version}</version>
           <configuration>
             <excludes>
+              <exclude>**/parkandride/dev/**</exclude>
               <exclude>**/parkandride/back/sql/**</exclude>
               <exclude>**/H2GeometryWktType.class</exclude>
+              <exclude>**/H2GISTemplates.class</exclude>
             </excludes>
           </configuration>
           <executions>

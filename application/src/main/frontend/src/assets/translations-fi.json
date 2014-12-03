@@ -112,10 +112,10 @@
             "heading": "Palvelut"
         },
         "ports": {
-            "create": "Lisää uusi käyntiosoite",
-            "edit": "Muokkaa käyntiosoitetta",
-            "view": "Käyntiosoitteen tiedot",
-            "label": "Käyntiosoitteet",
+            "create": "Sisään-/uloskäynti",
+            "edit": "Sisään-/uloskäynti",
+            "view": "Sisään-/uloskäynti",
+            "label": "Sisään-/uloskäynnit",
             "entry": {
                 "label": "Sisäänkäynti"
             },

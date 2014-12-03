@@ -67,7 +67,7 @@ public class FacilityDaoTest {
 
     public static final SortedSet<String> ALIASES = ImmutableSortedSet.of("alias", "blias");
 
-    public static final List<Port> PORTS = ImmutableList.of(new Port(PORT_LOCATION1, true, false, true, "street", "00100", "city", "info"));
+    public static final List<Port> PORTS = ImmutableList.of(new Port(PORT_LOCATION1, true, false, true, false, "street", "00100", "city", "info"));
 
     public static final Map<CapacityType, Capacity> CAPACITIES = ImmutableMap.of(CAR, new Capacity(100, 1), BICYCLE, new Capacity(10, 0));
 
@@ -116,7 +116,7 @@ public class FacilityDaoTest {
         final MultilingualString newName = new MultilingualString("changed name");
         final SortedSet<String> newAliases = ImmutableSortedSet.of("clias");
         final Map<CapacityType, Capacity> newCapacities = ImmutableMap.of(CAR, new Capacity(100, 50), PARK_AND_RIDE, new Capacity(5, 0));
-        final List<Port> newPorts = ImmutableList.of(new Port(PORT_LOCATION2, true, true, true), new Port(PORT_LOCATION1, false, false, false));
+        final List<Port> newPorts = ImmutableList.of(new Port(PORT_LOCATION2, true, true, true, true), new Port(PORT_LOCATION1, false, false, false, false));
         final Set<Long> newServices = ImmutableSet.of(4l);
 
         facility.name = newName;

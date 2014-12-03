@@ -216,7 +216,7 @@
                             openPort(port, mode).then(function (port) {
                                 if (port._id) {
                                     var portIndex = findPortIndex(port._id);
-                                    if (port.entry || port.exit || port.pedestrian) {
+                                    if (port.entry || port.exit || port.pedestrian || port.bicycle) {
                                         facility.ports[portIndex] = port;
                                         setPortAsFeature(port);
                                     } else {

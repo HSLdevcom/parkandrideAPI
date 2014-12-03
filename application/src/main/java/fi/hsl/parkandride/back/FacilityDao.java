@@ -78,7 +78,8 @@ public class FacilityDao implements FacilityRepository {
             Geometry location = row.get(qPort.location);
             boolean exit = row.get(qPort.exit);
             boolean pedestrian = row.get(qPort.pedestrian);
-            Port port = new Port(location, entry, exit, pedestrian);
+            boolean bicycle = row.get(qPort.bicycle);
+            Port port = new Port(location, entry, exit, pedestrian, bicycle);
             port.address = addressMapping.map(row);
             port.info = portInfoMapping.map(row);
             return port;
@@ -384,6 +385,7 @@ public class FacilityDao implements FacilityRepository {
                 .set(qPort.location, port.location)
                 .set(qPort.entry, port.entry)
                 .set(qPort.exit, port.exit)
+                .set(qPort.bicycle, port.bicycle)
                 .set(qPort.pedestrian, port.pedestrian);
         addressMapping.populate(port.address, store);
         portInfoMapping.populate(port.info, store);

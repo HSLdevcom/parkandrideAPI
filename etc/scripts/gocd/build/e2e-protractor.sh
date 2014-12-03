@@ -6,6 +6,7 @@ function init_db {
 
 function init() {
   : ${LIIPI_DB:="liipici"}
+  export LIIPI_DB PSQL_USERNAME=$LIIPI_DB SPRING_PROFILES_ACTIVE=env_gocd
 
   ROOT_DIR="$SCRIPT_DIR/../../../.."
 
@@ -17,8 +18,6 @@ function init() {
   npm install
 
   [ "$INIT_DB" = "yes" ] && init_db
-
-  export PSQL_USERNAME=$LIIPI_DB SPRING_PROFILES_ACTIVE=env_gocd
 }
 
 function cleanup() {

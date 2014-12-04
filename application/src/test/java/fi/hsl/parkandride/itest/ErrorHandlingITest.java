@@ -9,7 +9,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 
+import com.jayway.restassured.builder.RequestSpecBuilder;
 import com.jayway.restassured.builder.ResponseSpecBuilder;
+import com.jayway.restassured.specification.RequestSpecification;
 import com.jayway.restassured.specification.ResponseSpecification;
 
 import fi.hsl.parkandride.core.domain.Facility;
@@ -29,8 +31,7 @@ public class ErrorHandlingITest extends AbstractIntegrationTest {
 
     @Test
     public void validationException() {
-        given()
-            .header("Content-Type", "application/json;charset=UTF-8")
+        givenWithContent()
             .body(new Facility())
         .when()
             .post(UrlSchema.FACILITIES)
@@ -41,8 +42,7 @@ public class ErrorHandlingITest extends AbstractIntegrationTest {
 
     @Test
     public void httpMessageNotReadableException() {
-        given()
-            .header("Content-Type", "application/json;charset=UTF-8")
+        givenWithContent()
             .body("{ \"name\": \"foo\", \"location\": \"invalid location\"  }")
         .when()
             .post(UrlSchema.FACILITIES)
@@ -53,13 +53,13 @@ public class ErrorHandlingITest extends AbstractIntegrationTest {
 
     @Test
     public void httpRequestMethodNotSupportedException() {
-        given()
-            .header("Content-Type", "application/json;charset=UTF-8")
+        givenWithContent()
             .body(new Facility())
         .when()
             .put(UrlSchema.FACILITIES)
         .then()
             .spec(assertResponse(HttpStatus.BAD_REQUEST, HttpRequestMethodNotSupportedException.class))
+            .body("message", is("Request method 'PUT' not supported"))
         ;
     }
 
@@ -67,6 +67,12 @@ public class ErrorHandlingITest extends AbstractIntegrationTest {
     // HttpMediaTypeException: unclear how to trigger
     // bindException: unclear how to trigger
     // exception: unclear how to trigger
+
+    private static RequestSpecification givenWithContent() {
+        return given().spec(new RequestSpecBuilder()
+                .addHeader("Content-Type", "application/json;charset=UTF-8")
+                .build());
+    }
 
     private static ResponseSpecification assertResponse(HttpStatus status, Class<?> exClass) {
         return new ResponseSpecBuilder()

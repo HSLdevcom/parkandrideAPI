@@ -4,11 +4,15 @@ import static com.jayway.restassured.RestAssured.given;
 import static com.jayway.restassured.RestAssured.when;
 import static org.hamcrest.Matchers.is;
 
+import java.io.IOException;
+
 import org.junit.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 
+import com.google.common.base.Charsets;
+import com.google.common.io.Resources;
 import com.jayway.restassured.builder.RequestSpecBuilder;
 import com.jayway.restassured.builder.ResponseSpecBuilder;
 import com.jayway.restassured.specification.RequestSpecification;
@@ -52,6 +56,18 @@ public class ErrorHandlingITest extends AbstractIntegrationTest {
     }
 
     @Test
+    public void httpMessageNotReadableException_jsonMappingException() throws IOException {
+        givenWithContent()
+            .body(Resources.toString(Resources.getResource("facility.create.JsonMappingException.json"), Charsets.UTF_8))
+        .when()
+            .post(UrlSchema.FACILITIES)
+        .then()
+            .log().all()
+            .spec(assertResponse(HttpStatus.BAD_REQUEST, HttpMessageNotReadableException.class))
+        ;
+    }
+
+    @Test
     public void httpRequestMethodNotSupportedException() {
         givenWithContent()
             .body(new Facility())
@@ -63,7 +79,6 @@ public class ErrorHandlingITest extends AbstractIntegrationTest {
         ;
     }
 
-    // HttpMessageNotReadableException_jsonMappingException: unclear how to trigger
     // HttpMediaTypeException: unclear how to trigger
     // bindException: unclear how to trigger
     // exception: unclear how to trigger

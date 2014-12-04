@@ -6,17 +6,17 @@ import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 import javax.inject.Inject;
 
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
-@Controller
+@RestController
 public class FeaturesController {
 
     @Inject Features features;
 
     @RequestMapping(method = GET, value = FEATURES, produces = APPLICATION_JSON_VALUE)
-    public @ResponseBody Features getFeatures() {
+    public Features getFeatures() {
         return features;
     }
 

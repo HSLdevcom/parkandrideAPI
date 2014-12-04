@@ -70,6 +70,15 @@ html, body {
       text-decoration: underline;
       border: 0px;
     }
+    > a:focus {
+      font-weight: bold;
+      height: $tab-height;
+      color: #fff;
+      background-color: $primarycolor;
+      border-radius: $border-radius;
+      border: 0px;
+      outline: none;
+    }
   }
   > li.active {
     > a {
@@ -86,6 +95,14 @@ html, body {
       background-color: $secondarycolor;
       text-decoration: underline;
       border: 0;
+    }
+    > a:focus {
+      font-weight: bold;
+      height: $tab-height;
+      border-radius: $border-radius;
+      background-color: $secondarycolor;
+      border: 0;
+      outline: none;
     }
   }
 }

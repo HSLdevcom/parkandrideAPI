@@ -18,12 +18,13 @@ import com.google.common.io.Resources;
 
 import fi.hsl.parkandride.core.domain.Facility;
 import fi.hsl.parkandride.core.service.ValidationException;
+import fi.hsl.parkandride.front.UrlSchema;
 
 public class ErrorHandlingITest extends AbstractIntegrationTest {
     @Test
     public void notFound() {
         when()
-            .get("api/v1/facilities/42")
+            .get(UrlSchema.FACILITIES + "/42")
         .then()
             .statusCode(HttpStatus.NOT_FOUND.value())
             .body(is(""))
@@ -36,7 +37,7 @@ public class ErrorHandlingITest extends AbstractIntegrationTest {
             .header("Content-Type", "application/json;charset=UTF-8")
             .body(new Facility())
         .when()
-            .post("/api/v1/facilities")
+            .post(UrlSchema.FACILITIES)
         .then()
             .statusCode(HttpStatus.BAD_REQUEST.value())
             .body("status", is(HttpStatus.BAD_REQUEST.value()))
@@ -50,7 +51,7 @@ public class ErrorHandlingITest extends AbstractIntegrationTest {
             .header("Content-Type", "application/json;charset=UTF-8")
             .body("{ \"name\": \"foo\", \"location\": \"invalid location\"  }")
         .when()
-            .post("/api/v1/facilities")
+            .post(UrlSchema.FACILITIES)
         .then()
             .statusCode(HttpStatus.BAD_REQUEST.value())
             .body("status", is(HttpStatus.BAD_REQUEST.value()))
@@ -65,7 +66,7 @@ public class ErrorHandlingITest extends AbstractIntegrationTest {
             .header("Content-Type", "application/json;charset=UTF-8")
             .body(new Facility())
         .when()
-            .put("api/v1/facilities")
+            .put(UrlSchema.FACILITIES)
         .then()
             .log().all()
             .statusCode(HttpStatus.BAD_REQUEST.value())

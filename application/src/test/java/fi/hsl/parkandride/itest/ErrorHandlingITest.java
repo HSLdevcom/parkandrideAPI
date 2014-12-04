@@ -3,18 +3,14 @@ package fi.hsl.parkandride.itest;
 import static com.jayway.restassured.RestAssured.given;
 import static com.jayway.restassured.RestAssured.when;
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.startsWith;
-
-import java.io.IOException;
 
 import org.junit.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.google.common.base.Charsets;
-import com.google.common.io.Resources;
+import com.jayway.restassured.builder.ResponseSpecBuilder;
+import com.jayway.restassured.specification.ResponseSpecification;
 
 import fi.hsl.parkandride.core.domain.Facility;
 import fi.hsl.parkandride.core.service.ValidationException;
@@ -39,9 +35,7 @@ public class ErrorHandlingITest extends AbstractIntegrationTest {
         .when()
             .post(UrlSchema.FACILITIES)
         .then()
-            .statusCode(HttpStatus.BAD_REQUEST.value())
-            .body("status", is(HttpStatus.BAD_REQUEST.value()))
-            .body("exception", is(ValidationException.class.getCanonicalName()))
+            .spec(assertResponse(HttpStatus.BAD_REQUEST, ValidationException.class))
         ;
     }
 
@@ -53,25 +47,19 @@ public class ErrorHandlingITest extends AbstractIntegrationTest {
         .when()
             .post(UrlSchema.FACILITIES)
         .then()
-            .statusCode(HttpStatus.BAD_REQUEST.value())
-            .body("status", is(HttpStatus.BAD_REQUEST.value()))
-            .body("exception", is(HttpMessageNotReadableException.class.getCanonicalName()))
+            .spec(assertResponse(HttpStatus.BAD_REQUEST, HttpMessageNotReadableException.class))
         ;
     }
 
     @Test
     public void httpRequestMethodNotSupportedException() {
         given()
-            .log().all()
             .header("Content-Type", "application/json;charset=UTF-8")
             .body(new Facility())
         .when()
             .put(UrlSchema.FACILITIES)
         .then()
-            .log().all()
-            .statusCode(HttpStatus.BAD_REQUEST.value())
-            .body("status", is(HttpStatus.BAD_REQUEST.value()))
-            .body("exception", is(HttpRequestMethodNotSupportedException.class.getCanonicalName()))
+            .spec(assertResponse(HttpStatus.BAD_REQUEST, HttpRequestMethodNotSupportedException.class))
         ;
     }
 
@@ -79,4 +67,12 @@ public class ErrorHandlingITest extends AbstractIntegrationTest {
     // HttpMediaTypeException: unclear how to trigger
     // bindException: unclear how to trigger
     // exception: unclear how to trigger
+
+    private static ResponseSpecification assertResponse(HttpStatus status, Class<?> exClass) {
+        return new ResponseSpecBuilder()
+                .expectStatusCode(status.value())
+                .expectBody("status", is(status.value()))
+                .expectBody("exception", is(exClass.getCanonicalName()))
+                .build();
+    }
 }

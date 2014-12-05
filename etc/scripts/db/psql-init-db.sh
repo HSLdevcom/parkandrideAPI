@@ -7,7 +7,7 @@
 #
 # - create dev rds (requires tunneling via ec2 instances in development subnet)
 # LIIPI_DB=liipitest bash etc/scripts/db/psql-init-db.sh -h hsl-liipi-rds-dev -U devmaster postgres
-# LIIPI_=liipidemo bash etc/scripts/db/psql-init-db.sh -h hsl-liipi-rds-dev -U devmaster postgres
+# LIIPI_DB=liipidemo bash etc/scripts/db/psql-init-db.sh -h hsl-liipi-rds-dev -U devmaster postgres
 #
 
 function init() {

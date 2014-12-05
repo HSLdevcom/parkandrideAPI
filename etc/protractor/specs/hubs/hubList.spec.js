@@ -26,9 +26,10 @@ describe('hub list', function () {
     describe('navigation', function () {
         var f = fixtures.facilitiesFixture.dummies.facFull;
         var h = fixtures.hubsFixture.westend;
+        var c = fixtures.facilitiesFixture.contact;
 
         beforeEach(function () {
-            devApi.resetAll([f], [h]);
+            devApi.resetAll([f], [h], [c]);
             hubListPage.get();
         });
 
@@ -67,7 +68,7 @@ describe('hub list', function () {
                     hub.setFacilities(_.map(facilitiesFn(), prependHubName));
                 });
 
-                devApi.resetAll(_.union(facilitiesFn(), hubs[0].facilities, hubs[1].facilities), hubs);
+                devApi.resetAll(_.union(facilitiesFn(), hubs[0].facilities, hubs[1].facilities), hubs, [c]);
                 hubListPage.get();
             });
 

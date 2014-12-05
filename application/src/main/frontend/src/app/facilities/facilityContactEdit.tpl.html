@@ -2,7 +2,7 @@
 	<label>{{ "facilities.contacts." + contactType + ".label" | translate }}<span ng-if="mandatory"> *</span></label>
 	<div class="input-group {{contactType}}Contact">
 		<ui-select ng-model="facilityContacts[contactType]" theme="bootstrap" ng-disabled="disabled" reset-search-input="true"
-				   name="emergencyContact" show-errors ng-required="{{mandatory}}">
+				   name="{{contactType}}Contact" show-errors ng-required="{{mandatory}}">
 			<ui-select-match placeholder="Valitse kontakti...">{{contactLabel($select.selected)}}</ui-select-match>
 			<ui-select-choices repeat="contact.id as contact in allContacts | filter: {name: {fi: $select.search}}">
 				<div ng-bind-html="contact.name.fi | highlight: $select.search"></div>

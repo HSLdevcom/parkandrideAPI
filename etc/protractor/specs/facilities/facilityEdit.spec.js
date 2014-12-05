@@ -18,11 +18,7 @@ describe('edit facility view', function () {
 
     describe('new facility', function () {
         beforeEach(function () {
-            devApi.resetFacilities();
-            devApi.resetContacts([{
-                name: { fi: "hsl fi", sv: "hsl sv", en: "hsl en" },
-                phone: "09 47664444"
-            }]);
+            devApi.resetAll([], [], [fixtures.facilitiesFixture.contact])
             editPage.get();
         });
 
@@ -83,6 +79,8 @@ describe('edit facility view', function () {
         describe('facility', function () {
             it('is required, error is cleared after facility is set', function () {
                 editPage.setName("Facility name");
+                editPage.selectEmergencyContact("hsl");
+                editPage.selectOperatorContact("hsl");
                 editPage.save();
                 expect(editPage.isFacilityRequiredError()).toBe(true);
 
@@ -187,9 +185,7 @@ describe('edit facility view', function () {
             expect(editPage.isServiceSelected("Katettu")).toBe(false);
         });
 
-        it('should manage emergency contact', function() {
-            devApi.resetContacts();
-
+        it('should manage contacts', function() {
             // Create emergency contact on the fly
             editPage.createContact({name: "new contact", phone: "(09) 4766 4444", email: "hsl@hsl.fi"});
             expect(editPage.getEmergencyContact()).toBe("new contact (09 47664444 / hsl@hsl.fi)");
@@ -205,7 +201,7 @@ describe('edit facility view', function () {
             expect(editPage.getEmergencyContact()).toBe("Valitse kontakti...");
         });
 
-        it('create full', function () {
+        it('create and edit full', function () {
             editPage.setName(facFull.name);
             editPage.drawLocation(facFull.locationInput.offset, facFull.locationInput.w, facFull.locationInput.h);
 
@@ -221,6 +217,24 @@ describe('edit facility view', function () {
             editPage.selectService("Valaistus");
             editPage.selectService("Katettu");
 
+            editPage.selectEmergencyContact("hsl");
+            editPage.selectOperatorContact("hsl");
+            editPage.selectServiceContact("hsl");
+
+            editPage.save();
+            expect(viewPage.isDisplayed()).toBe(true);
+
+            // Back to edit...
+            viewPage.toEditView();
+            expect(editPage.isDisplayed()).toBe(true);
+            expect(editPage.getEmergencyContact()).toBe("hsl fi (09 47664444)");
+            expect(editPage.getOperatorContact()).toBe("hsl fi (09 47664444)");
+            expect(editPage.getServiceContact()).toBe("hsl fi (09 47664444)");
+            // TODO: other expectations & modifications
+
+            editPage.clearServiceContact();
+            expect(editPage.getServiceContact()).toBe("Valitse kontakti...");
+
             editPage.save();
             expect(viewPage.isDisplayed()).toBe(true);
         });
@@ -230,6 +244,9 @@ describe('edit facility view', function () {
             editPage.drawLocation(facCar.locationInput.offset, facCar.locationInput.w, facCar.locationInput.h);
             editPage.setCapacities(facCar.capacities);
             arrayAssert.assertInOrder(editPage.getCapacityTypes(), common.capacityTypeOrder);
+
+            editPage.selectEmergencyContact("hsl");
+            editPage.selectOperatorContact("hsl");
 
             editPage.save();
             expect(viewPage.isDisplayed()).toBe(true);

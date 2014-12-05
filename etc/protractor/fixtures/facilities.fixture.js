@@ -137,6 +137,15 @@ module.exports = function () {
         }
     });
 
+    self.contact = {
+        id: 1,
+        name: { fi: "hsl fi", sv: "hsl sv", en: "hsl en" },
+        phone: "09 47664444",
+        toPayload: function() {
+            return self.contact;
+        }
+    };
+
     self.all = [
         self.westend1,
         self.westend2

@@ -18,10 +18,16 @@ module.exports = function(spec) {
     spec.editModePorts = element(by.id('editModePorts'));
     spec.editModeLocation = element(by.id('editModeLocation'));
     spec.services = element(by.model('editCtrl.facility.serviceIds'));
-    spec.emergencyContact = element(by.model('editCtrl.facility.contacts.emergency'));
+    spec.emergencyContact = element(by.name('emergencyContact'));
+    spec.operatorContact = element(by.name('operatorContact'));
+    spec.serviceContact = element(by.name('serviceContact'));
     spec.createEmergencyContact = $('.emergencyContact .createContact');
     spec.selectedEmergencyContact = $('.emergencyContact .ui-select-match');
+    spec.selectedOperatorContact = $('.operatorContact .ui-select-match');
+    spec.selectedServiceContact = $('.serviceContact .ui-select-match');
     spec.clearEmergencyContact = $('.emergencyContact .clearContact');
+    spec.clearOperatorContact = $('.operatorContact .clearContact');
+    spec.clearServiceContact = $('.serviceContact .clearContact');
 
     spec.defineMultilingualAccessors("name");
 
@@ -60,13 +66,6 @@ module.exports = function(spec) {
             );
     }
 
-    that.selectEmergencyContact = function(name) {
-        spec.emergencyContact.element(by.css('.ui-select-match')).click();
-        var contactElement = browser.driver.switchTo().activeElement();
-        contactElement.sendKeys(name);
-        contactElement.sendKeys(protractor.Key.ENTER);
-    };
-
     that.createContact = function(contact) {
         spec.createEmergencyContact.click();
         that.contactEditModal.setName(contact.name);
@@ -75,12 +74,49 @@ module.exports = function(spec) {
         that.contactEditModal.save();
     };
 
+    that.selectEmergencyContact = function(name) {
+        spec.emergencyContact.element(by.css('.ui-select-match')).click();
+        var contactElement = browser.driver.switchTo().activeElement();
+        contactElement.sendKeys(name);
+        contactElement.sendKeys(protractor.Key.ENTER);
+    };
+
     that.getEmergencyContact = function() {
         return spec.selectedEmergencyContact.getText();
     };
 
+    that.selectOperatorContact = function(name) {
+        spec.operatorContact.element(by.css('.ui-select-match')).click();
+        var contactElement = browser.driver.switchTo().activeElement();
+        contactElement.sendKeys(name);
+        contactElement.sendKeys(protractor.Key.ENTER);
+    };
+
+    that.getOperatorContact = function() {
+        return spec.selectedOperatorContact.getText();
+    };
+
+    that.selectServiceContact = function(name) {
+        spec.serviceContact.element(by.css('.ui-select-match')).click();
+        var contactElement = browser.driver.switchTo().activeElement();
+        contactElement.sendKeys(name);
+        contactElement.sendKeys(protractor.Key.ENTER);
+    };
+
+    that.getServiceContact = function() {
+        return spec.selectedServiceContact.getText();
+    };
+
     that.clearEmergencyContact = function() {
         spec.clearEmergencyContact.click();
+    };
+
+    that.clearOperatorContact = function() {
+        spec.clearOperatorContact.click();
+    };
+
+    that.clearServiceContact = function() {
+        spec.clearServiceContact.click();
     };
 
     that.drawLocation = function (topLeft, w, h) {

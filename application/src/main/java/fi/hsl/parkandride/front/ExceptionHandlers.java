@@ -37,19 +37,16 @@ public class ExceptionHandlers {
 
     @ExceptionHandler(NotFoundException.class)
     @ResponseStatus(value= NOT_FOUND)
-    @ResponseBody
-    public String notFound(HttpServletRequest req, NotFoundException ex) {
-        return ex.getMessage();
+    public void notFound(HttpServletRequest req, NotFoundException ex) {
+
     }
 
     @ExceptionHandler(ValidationException.class)
-    @ResponseBody
     public ResponseEntity<Map<String, Object>> validationException(HttpServletRequest request, ValidationException ex) {
         return handleError(request, BAD_REQUEST, ex, ex.getMessage(), ex.violations);
     }
 
     @ExceptionHandler(BindException.class)
-    @ResponseBody
     public ResponseEntity<Map<String, Object>> bindException(HttpServletRequest request, BindException ex) {
         List<Violation> violations = new ArrayList<>();
         for (FieldError fieldError : ex.getFieldErrors()) {
@@ -59,7 +56,6 @@ public class ExceptionHandlers {
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
-    @ResponseBody
     public ResponseEntity<Map<String, Object>> jsonException(HttpServletRequest request, HttpMessageNotReadableException ex) {
         if (ex.getCause() instanceof JsonMappingException) {
             JsonMappingException jsonEx = (JsonMappingException) ex.getCause();
@@ -89,13 +85,11 @@ public class ExceptionHandlers {
     }
 
     @ExceptionHandler({ HttpRequestMethodNotSupportedException.class, HttpMediaTypeException.class })
-    @ResponseBody
     public ResponseEntity<Map<String, Object>> methodNotSupportedException(HttpServletRequest request, HttpRequestMethodNotSupportedException ex) {
         return handleError(request, BAD_REQUEST, ex);
     }
 
     @ExceptionHandler(Exception.class)
-    @ResponseBody
     public ResponseEntity<Map<String, Object>> exception(HttpServletRequest request, Exception ex) {
         return handleError(request, INTERNAL_SERVER_ERROR, ex);
     }
@@ -124,5 +118,4 @@ public class ExceptionHandlers {
         }
         return ex;
     }
-
 }

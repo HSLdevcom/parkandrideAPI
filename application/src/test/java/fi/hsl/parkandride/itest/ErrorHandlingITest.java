@@ -12,6 +12,7 @@ import org.junit.Test;
 import org.springframework.beans.TypeMismatchException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.validation.BindException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 
 import fi.hsl.parkandride.core.domain.Facility;
@@ -78,15 +79,29 @@ public class ErrorHandlingITest extends AbstractIntegrationTest {
     }
 
     @Test
+    public void bindException() {
+        when()
+            .get(UrlSchema.FACILITIES + "?ids=foo")
+        .then()
+            .spec(assertResponse(HttpStatus.BAD_REQUEST, BindException.class))
+            .body("message", is("Invalid request parameters"))
+            .body("violations[0].path", is("ids"))
+            .body("violations[0].message", is("Failed to convert property value of type 'java.lang.String' to required type 'java.util.Set' for property " +
+                    "'ids'; nested exception is java.lang.NumberFormatException: For input string: \"foo\""))
+        ;
+    }
+
+    @Test
     public void invalid_path_variable_type_is_reported_with_status_code_500() {
         when()
             .get(UrlSchema.FACILITIES + "/foo")
         .then()
             .spec(assertResponse(HttpStatus.INTERNAL_SERVER_ERROR, TypeMismatchException.class))
-            .body("message", is("Failed to convert value of type 'java.lang.String' to required type 'long'; nested exception is java.lang.NumberFormatException: For input string: \"foo\""))
+            .body("message", is("Failed to convert value of type 'java.lang.String' to required type 'long'; nested exception is " +
+                    "java.lang.NumberFormatException: For input string: \"foo\""))
+            .body("violations", is(nullValue()))
         ;
     }
 
     // HttpMediaTypeException: unclear how to trigger
-    // bindException: unclear how to trigger
 }

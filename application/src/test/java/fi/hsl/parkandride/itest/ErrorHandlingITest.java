@@ -1,7 +1,10 @@
 package fi.hsl.parkandride.itest;
 
 import static com.jayway.restassured.RestAssured.when;
+import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.nullValue;
 
 import java.io.IOException;
 
@@ -33,28 +36,31 @@ public class ErrorHandlingITest extends AbstractIntegrationTest {
             .post(UrlSchema.FACILITIES)
         .then()
             .spec(assertResponse(HttpStatus.BAD_REQUEST, ValidationException.class))
+            .body("violations", is(notNullValue()))
         ;
     }
 
     @Test
-    public void httpMessageNotReadableException() {
+    public void httpMessageNotReadableException_geolatte_violations_are_not_detected() {
         givenWithContent()
             .body("{ \"name\": \"foo\", \"location\": \"this is not readable location\"  }")
         .when()
             .post(UrlSchema.FACILITIES)
         .then()
             .spec(assertResponse(HttpStatus.BAD_REQUEST, HttpMessageNotReadableException.class))
+            .body("violations", is(nullValue()))
         ;
     }
 
     @Test
-    public void httpMessageNotReadableException_jsonMappingException() throws IOException {
+    public void httpMessageNotReadableException_typical_json_mapping_violations_are_detected() throws IOException {
         givenWithContent()
             .body(resourceAsString("facility.create.JsonMappingException.json"))
         .when()
             .post(UrlSchema.FACILITIES)
         .then()
             .spec(assertResponse(HttpStatus.BAD_REQUEST, HttpMessageNotReadableException.class))
+            .body("violations[0].path", is("capacities.built"))
         ;
     }
 

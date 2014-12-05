@@ -1,0 +1,16 @@
+<div ng-if="contact">
+	<h4>{{ "facilities.contacts." + contactType + ".label" | translate }}</h4>
+	<p class="emergency-contact">
+		{{ contact.name.fi }}
+
+		{{ contact.phone }}
+		{{ contact.email }}
+
+		{{ contact.address.streetAddress.fi }}
+		{{ contact.address.postalCode }}
+		{{ contact.address.city.fi }}
+
+		{{ contact.openingHours.fi }}
+		{{ contact.info.fi }}
+	</p>
+</div>

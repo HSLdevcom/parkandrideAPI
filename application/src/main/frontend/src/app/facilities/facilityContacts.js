@@ -37,4 +37,15 @@
         };
     });
 
+    m.directive('facilityContactView', function (editContact) {
+        return {
+            restrict: 'E',
+            scope: {
+                contact: '=',
+                contactType: '@'
+            },
+            templateUrl: 'facilities/facilityContactView.tpl.html',
+            transclude: false
+        };
+    });
 })();

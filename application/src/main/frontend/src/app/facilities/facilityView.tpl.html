@@ -49,22 +49,9 @@
 
 			<div class="row contacts">
 				<h3>{{"facilities.contacts.heading" | translate}}</h3>
-				<div ng-if="viewCtrl.facility.contacts.emergency">
-					<h4>{{ "facilities.contacts.emergency.label" | translate }}</h4>
-					<p class="emergency-contact">
-						{{ viewCtrl.contacts[viewCtrl.facility.contacts.emergency].name.fi }}
-
-						{{ viewCtrl.contacts[viewCtrl.facility.contacts.emergency].phone }}
-						{{ viewCtrl.contacts[viewCtrl.facility.contacts.emergency].email }}
-
-						{{ viewCtrl.contacts[viewCtrl.facility.contacts.emergency].address.streetAddress.fi }}
-						{{ viewCtrl.contacts[viewCtrl.facility.contacts.emergency].address.postalCode }}
-						{{ viewCtrl.contacts[viewCtrl.facility.contacts.emergency].address.city.fi }}
-
-						{{ viewCtrl.contacts[viewCtrl.facility.contacts.emergency].openingHours.fi }}
-						{{ viewCtrl.contacts[viewCtrl.facility.contacts.emergency].info.fi }}
-					</p>
-				</div>
+				<facility-contact-view contact="viewCtrl.contacts[viewCtrl.facility.contacts.emergency]" contact-type="emergency"></facility-contact-view>
+				<facility-contact-view contact="viewCtrl.contacts[viewCtrl.facility.contacts.operator]" contact-type="operator"></facility-contact-view>
+				<facility-contact-view contact="viewCtrl.contacts[viewCtrl.facility.contacts.service]" contact-type="service"></facility-contact-view>
 			</div>
 		</div>
 	</content>

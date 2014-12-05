@@ -9,6 +9,7 @@ import static org.hamcrest.Matchers.nullValue;
 import java.io.IOException;
 
 import org.junit.Test;
+import org.springframework.beans.TypeMismatchException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
@@ -76,7 +77,16 @@ public class ErrorHandlingITest extends AbstractIntegrationTest {
         ;
     }
 
+    @Test
+    public void invalid_path_variable_type_is_reported_with_status_code_500() {
+        when()
+            .get(UrlSchema.FACILITIES + "/foo")
+        .then()
+            .spec(assertResponse(HttpStatus.INTERNAL_SERVER_ERROR, TypeMismatchException.class))
+            .body("message", is("Failed to convert value of type 'java.lang.String' to required type 'long'; nested exception is java.lang.NumberFormatException: For input string: \"foo\""))
+        ;
+    }
+
     // HttpMediaTypeException: unclear how to trigger
     // bindException: unclear how to trigger
-    // exception: unclear how to trigger
 }

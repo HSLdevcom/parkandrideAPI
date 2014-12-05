@@ -43,7 +43,7 @@ Profile|Description
 
 Profile|Description
 -------|-----------
-dev     |adds application/src/main/frontend/build as jetty resource
+dev     |adds application/src/main/frontend/build as webapp resource
 dev_api |brings up [DevController](https://github.com/HSLdevcom/parkandrideAPI/blob/master/application/src/main/java/fi/hsl/parkandride/dev/DevController.java)
 psql    |postgres is used instead of the default H2
 

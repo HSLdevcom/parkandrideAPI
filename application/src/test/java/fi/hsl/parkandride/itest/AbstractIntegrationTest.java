@@ -2,6 +2,7 @@ package fi.hsl.parkandride.itest;
 
 import static com.jayway.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
 
 import java.io.IOException;
 
@@ -57,6 +58,7 @@ public abstract class AbstractIntegrationTest {
                 .expectStatusCode(status.value())
                 .expectBody("status", is(status.value()))
                 .expectBody("exception", is(exClass.getCanonicalName()))
+                .expectBody("timestamp", is(notNullValue()))
                 .build();
     }
 }

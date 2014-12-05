@@ -17,8 +17,22 @@ describe('manage contacts', function () {
         contactPage.get();
     });
 
-    it('should create new contact', function() {
+    it('no errors shown initially', function() {
         contactPage.openCreateModal();
+        expect(editModal.isNameFiRequiredError()).toBe(false);
+        expect(editModal.isNameSvRequiredError()).toBe(false);
+        expect(editModal.isNameEnRequiredError()).toBe(false);
+    });
+
+    it('errors shown on save', function() {
+        editModal.save();
+        expect(editModal.getViolations()).toEqual([{ path: "Yhteystieto", message: "tarkista pakolliset tiedot ja syötteiden muoto" }]);
+        expect(editModal.isNameFiRequiredError()).toBe(true);
+        expect(editModal.isNameSvRequiredError()).toBe(true);
+        expect(editModal.isNameEnRequiredError()).toBe(true);
+    });
+
+    it('should create new contact', function() {
         editModal.isDisplayed();
         editModal.setName("HSL");
         editModal.setPhone("+44 343 222 2222");

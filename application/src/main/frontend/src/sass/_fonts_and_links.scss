@@ -34,3 +34,7 @@ a:hover {
   color: $primarycolor-light;
   text-decoration: underline;
 }
+
+a:focus {
+  outline: none;
+}

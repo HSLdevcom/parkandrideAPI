@@ -1,12 +1,9 @@
 package fi.hsl.parkandride.itest;
 
 import static com.jayway.restassured.RestAssured.when;
-import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
-
-import java.io.IOException;
 
 import org.junit.Test;
 import org.springframework.beans.TypeMismatchException;
@@ -21,7 +18,7 @@ import fi.hsl.parkandride.front.UrlSchema;
 
 public class ErrorHandlingITest extends AbstractIntegrationTest {
     @Test
-    public void notFound() {
+    public void non_existing_resource_is_communicated_with_status_code_only() {
         when()
             .get(UrlSchema.FACILITIES + "/42")
         .then()
@@ -31,31 +28,20 @@ public class ErrorHandlingITest extends AbstractIntegrationTest {
     }
 
     @Test
-    public void validationException() {
+    public void validation_errors_are_detailed_as_violations() {
         givenWithContent()
             .body(new Facility())
         .when()
             .post(UrlSchema.FACILITIES)
         .then()
             .spec(assertResponse(HttpStatus.BAD_REQUEST, ValidationException.class))
+            .body("message", is("Invalid data. See violations for details."))
             .body("violations", is(notNullValue()))
         ;
     }
 
     @Test
-    public void httpMessageNotReadableException_geolatte_violations_are_not_detected() {
-        givenWithContent()
-            .body("{ \"name\": \"foo\", \"location\": \"this is not readable location\"  }")
-        .when()
-            .post(UrlSchema.FACILITIES)
-        .then()
-            .spec(assertResponse(HttpStatus.BAD_REQUEST, HttpMessageNotReadableException.class))
-            .body("violations", is(nullValue()))
-        ;
-    }
-
-    @Test
-    public void httpMessageNotReadableException_typical_json_mapping_violations_are_detected() throws IOException {
+    public void typical_json_mapping_violations_are_detected() {
         givenWithContent()
             .body(resourceAsString("facility.create.JsonMappingException.json"))
         .when()
@@ -67,7 +53,19 @@ public class ErrorHandlingITest extends AbstractIntegrationTest {
     }
 
     @Test
-    public void httpRequestMethodNotSupportedException() {
+    public void geolatte_json_mapping_violations_are_not_detected() {
+        givenWithContent()
+            .body("{ \"name\": \"foo\", \"location\": \"this is not readable location\"  }")
+        .when()
+            .post(UrlSchema.FACILITIES)
+        .then()
+            .spec(assertResponse(HttpStatus.BAD_REQUEST, HttpMessageNotReadableException.class))
+            .body("violations", is(nullValue()))
+        ;
+    }
+
+    @Test
+    public void unsupported_request_methods_are_detected() {
         givenWithContent()
             .body(new Facility())
         .when()
@@ -79,7 +77,7 @@ public class ErrorHandlingITest extends AbstractIntegrationTest {
     }
 
     @Test
-    public void bindException() {
+    public void request_parameter_binding_errors_are_detailed_as_violations() {
         when()
             .get(UrlSchema.FACILITIES + "?ids=foo")
         .then()
@@ -92,7 +90,7 @@ public class ErrorHandlingITest extends AbstractIntegrationTest {
     }
 
     @Test
-    public void invalid_path_variable_type_is_reported_with_status_code_500() {
+    public void invalid_path_variable_type_is_reported_as_internal_error() {
         when()
             .get(UrlSchema.FACILITIES + "/foo")
         .then()

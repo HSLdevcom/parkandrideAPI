@@ -75,7 +75,7 @@ describe('facility view', function () {
                 "entry":true,"exit":true,"pedestrian":true,"bicycle":true,
                 "address":{"streetAddress":{"fi":"Vilhonkatu 9","sv":"Vilhelmsgatan 9","en":"Vilhonkatu 9"},
                     "postalCode":"00100","city":{"fi":"Helsinki","sv":"Helsingfors","en":"Helsinki"}},
-                "info":{"fi":"Info fi","sv":"Info sv","en":"Info en"}}],
+                "info":{"fi":"Info fi","sv":"Info sv","en":"Info en"}}]
             };
         f.toPayload = function() { return f; };
         f = toView(f);

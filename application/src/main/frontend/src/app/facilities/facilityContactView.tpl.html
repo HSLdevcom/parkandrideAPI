@@ -1,16 +1,32 @@
 <div ng-if="contact">
 	<h4>{{ "facilities.contacts." + contactType + ".label" | translate }}</h4>
-	<p class="emergency-contact">
-		{{ contact.name.fi }}
+	<div class="row">
+		<multilingual-view value="contact.name"></multilingual-view>
+	</div>
 
-		{{ contact.phone }}
-		{{ contact.email }}
+	<div class="row" ng-if="contact.phone">
+		<div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 column first-column">
+			<p>{{ contact.phone }}</p>
+		</div>
+	</div>
 
-		{{ contact.address.streetAddress.fi }}
-		{{ contact.address.postalCode }}
-		{{ contact.address.city.fi }}
+	<div class="row" ng-if="contact.email">
+		<div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 column first-column">
+			<p>{{ contact.email }}</p>
+		</div>
+	</div>
 
-		{{ contact.openingHours.fi }}
-		{{ contact.info.fi }}
-	</p>
+	<div class="row" ng-if="contact.address.streetAddress || contact.address.postalCode || contact.address.city">&nbsp;</div>
+
+	<address-view address="contact.address"></address-view>
+
+	<div class="row" ng-if="contact.openingHours || contact.info">&nbsp;</div>
+
+	<div class="row" ng-if="contact.openingHours">
+		<multilingual-view value="contact.openingHours"></multilingual-view>
+	</div>
+
+	<div class="row" ng-if="contact.info">
+		<multilingual-view value="contact.info"></multilingual-view>
+	</div>
 </div>

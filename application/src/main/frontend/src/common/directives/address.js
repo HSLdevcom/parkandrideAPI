@@ -18,8 +18,7 @@
         return {
             restrict: 'E',
             scope: {
-                address: '=',
-                path: '@'
+                address: '='
             },
             templateUrl: 'directives/addressView.tpl.html',
             transclude: false

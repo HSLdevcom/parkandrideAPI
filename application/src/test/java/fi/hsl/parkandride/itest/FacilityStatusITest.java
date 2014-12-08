@@ -1,6 +1,7 @@
 package fi.hsl.parkandride.itest;
 
 import static com.jayway.restassured.RestAssured.when;
+import static org.hamcrest.Matchers.is;
 
 import java.util.List;
 
@@ -16,6 +17,7 @@ import com.google.common.collect.Lists;
 import fi.hsl.parkandride.core.domain.CapacityType;
 import fi.hsl.parkandride.core.domain.FacilityStatus;
 import fi.hsl.parkandride.core.domain.FacilityStatusEnum;
+import fi.hsl.parkandride.core.service.ValidationException;
 import fi.hsl.parkandride.front.UrlSchema;
 
 public class FacilityStatusITest extends AbstractIntegrationTest {
@@ -23,6 +25,7 @@ public class FacilityStatusITest extends AbstractIntegrationTest {
     interface Key {
         String CAPACITY_TYPE = "capacityType";
         String SPACES_AVAILABLE = "spacesAvailable";
+        String STATUS = "status";
         String TIMESTAMP = "timestamp";
     }
 
@@ -98,6 +101,47 @@ public class FacilityStatusITest extends AbstractIntegrationTest {
             .put(UrlSchema.FACILITY_STATUS, 42)
         .then()
             .statusCode(HttpStatus.OK.value())
+        ;
+    }
+
+    @Test
+    public void timestamp_is_required() {
+        givenWithContent()
+            .body(minValidPayload().put(Key.TIMESTAMP, null).asArray())
+        .when()
+            .put(UrlSchema.FACILITY_STATUS, 42)
+        .then()
+            .spec(assertResponse(HttpStatus.BAD_REQUEST, ValidationException.class))
+            .body("violations[0].path", is(Key.TIMESTAMP))
+            .body("violations[0].type", is("NotNull"))
+        ;
+    }
+
+    @Test
+    public void capacity_type_is_required() {
+        givenWithContent()
+            .body(minValidPayload().put(Key.CAPACITY_TYPE, null).asArray())
+        .when()
+            .put(UrlSchema.FACILITY_STATUS, 42)
+        .then()
+            .spec(assertResponse(HttpStatus.BAD_REQUEST, ValidationException.class))
+            .body("violations[0].path", is(Key.CAPACITY_TYPE))
+            .body("violations[0].type", is("NotNull"))
+        ;
+    }
+
+    @Test
+    public void spaces_or_status_is_required() {
+        givenWithContent()
+            .body(minValidPayload()
+                    .put(Key.SPACES_AVAILABLE, null)
+                    .put(Key.STATUS, null)
+                    .asArray())
+        .when()
+            .put(UrlSchema.FACILITY_STATUS, 42)
+        .then()
+            .spec(assertResponse(HttpStatus.BAD_REQUEST, ValidationException.class))
+            .body("violations[0].type", is("SpacesAvailableOrStatusRequired"))
         ;
     }
 

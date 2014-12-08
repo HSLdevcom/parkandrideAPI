@@ -22,6 +22,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.MediaType;
 import org.springframework.web.filter.CharacterEncodingFilter;
+import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
@@ -39,6 +40,7 @@ import fi.hsl.parkandride.front.Features;
 import fi.hsl.parkandride.front.GeojsonDeserializer;
 import fi.hsl.parkandride.front.GeojsonSerializer;
 import fi.hsl.parkandride.front.PhoneSerializer;
+import fi.hsl.parkandride.front.UserArgumentResolver;
 
 @Configuration
 @EnableAutoConfiguration
@@ -102,6 +104,16 @@ public class Application {
         @Override
         public void configureHandlerExceptionResolvers(List<HandlerExceptionResolver> exceptionResolvers) {
             exceptionResolvers.add(exceptionHandlerExceptionResolver());
+        }
+
+        @Override
+        public void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
+            argumentResolvers.add(userArgumentResolver());
+        }
+
+        @Bean
+        public UserArgumentResolver userArgumentResolver() {
+            return new UserArgumentResolver();
         }
     }
 

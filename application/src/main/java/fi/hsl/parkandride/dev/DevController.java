@@ -36,6 +36,7 @@ import fi.hsl.parkandride.core.back.HubRepository;
 import fi.hsl.parkandride.core.domain.Contact;
 import fi.hsl.parkandride.core.domain.Facility;
 import fi.hsl.parkandride.core.domain.Hub;
+import fi.hsl.parkandride.core.domain.User;
 import fi.hsl.parkandride.core.service.ContactService;
 import fi.hsl.parkandride.core.service.FacilityService;
 import fi.hsl.parkandride.core.service.HubService;
@@ -94,7 +95,7 @@ public class DevController {
 
     @RequestMapping(method = PUT, value = DEV_FACILITIES)
     @TransactionalWrite
-    public ResponseEntity<List<Facility>> pushFacilities(@RequestBody List<Facility> facilities) {
+    public ResponseEntity<List<Facility>> pushFacilities(@RequestBody List<Facility> facilities, User currentUser) {
         FacilityDao facilityDao = (FacilityDao) facilityRepository;
         List<Facility> results = new ArrayList<>();
         for (Facility facility : facilities) {
@@ -102,7 +103,7 @@ public class DevController {
                 facilityDao.insertFacility(facility, facility.id);
                 results.add(facility);
             } else {
-                results.add(facilityService.createFacility(facility));
+                results.add(facilityService.createFacility(facility, currentUser));
             }
         }
         resetSequence(FACILITY_ID_SEQ, queryFactory.from(qFacility).singleResult(qFacility.id.max()));
@@ -111,7 +112,7 @@ public class DevController {
 
     @RequestMapping(method = PUT, value = DEV_HUBS)
     @TransactionalWrite
-    public ResponseEntity<List<Hub>> pushHubs(@RequestBody List<Hub> hubs) {
+    public ResponseEntity<List<Hub>> pushHubs(@RequestBody List<Hub> hubs, User currentUser) {
         HubDao hubDao = (HubDao) hubRepository;
         List<Hub> results = new ArrayList<>();
         for (Hub hub : hubs) {
@@ -119,7 +120,7 @@ public class DevController {
                 hubDao.insertHub(hub, hub.id);
                 results.add(hub);
             } else {
-                results.add(hubService.createHub(hub));
+                results.add(hubService.createHub(hub, currentUser));
             }
         }
         resetSequence(HUB_ID_SEQ, queryFactory.from(qHub).singleResult(qHub.id.max()));
@@ -128,7 +129,7 @@ public class DevController {
 
     @RequestMapping(method = PUT, value = DEV_CONTACTS)
     @TransactionalWrite
-    public ResponseEntity<List<Contact>> pushContacts(@RequestBody List<Contact> contacts) {
+    public ResponseEntity<List<Contact>> pushContacts(@RequestBody List<Contact> contacts, User currentUser) {
         ContactDao contactDao = (ContactDao) contactRepository;
         List<Contact> results = new ArrayList<>();
         for (Contact contact : contacts) {
@@ -136,7 +137,7 @@ public class DevController {
                 contactDao.insertContact(contact, contact.id);
                 results.add(contact);
             } else {
-                results.add(contactService.createContact(contact));
+                results.add(contactService.createContact(contact, currentUser));
             }
         }
         resetSequence(CONTACT_ID_SEQ, queryFactory.from(qContact).singleResult(qContact.id.max()));

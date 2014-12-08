@@ -3,6 +3,8 @@ package fi.hsl.parkandride.front;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
+import static org.springframework.http.HttpStatus.UNAUTHORIZED;
+import static org.springframework.http.HttpStatus.FORBIDDEN;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -27,9 +29,13 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.google.common.collect.ImmutableList;
+import static com.google.common.net.HttpHeaders.*;
+import org.springframework.http.HttpHeaders;
 
 import fi.hsl.parkandride.core.domain.NotFoundException;
 import fi.hsl.parkandride.core.domain.Violation;
+import fi.hsl.parkandride.core.service.AccessDeniedException;
+import fi.hsl.parkandride.core.service.AuthenticationRequiredException;
 import fi.hsl.parkandride.core.service.ValidationException;
 
 @ControllerAdvice
@@ -64,6 +70,19 @@ public class ExceptionHandlers {
             return handleError(request, BAD_REQUEST, ex, "Invalid JSON", ImmutableList.of(violation));
         }
         return handleError(request, BAD_REQUEST, ex);
+    }
+
+    @ExceptionHandler(AuthenticationRequiredException.class)
+    @ResponseBody
+    public ResponseEntity<Void> authenticationRequiredException(AuthenticationRequiredException ex) {
+        HttpHeaders headers = new HttpHeaders();
+        return new ResponseEntity<Void>(null, headers, UNAUTHORIZED);
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    @ResponseBody
+    public ResponseEntity<Void> accessDeniedException(AccessDeniedException ex) {
+        return new ResponseEntity<Void>((Void) null, FORBIDDEN);
     }
 
     private String getPath(JsonMappingException jsonEx) {

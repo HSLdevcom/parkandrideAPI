@@ -1,6 +1,8 @@
 package fi.hsl.parkandride.itest;
 
 import static com.jayway.restassured.RestAssured.given;
+import static com.jayway.restassured.config.ObjectMapperConfig.objectMapperConfig;
+import static com.jayway.restassured.config.RestAssuredConfig.config;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 
@@ -15,8 +17,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.joda.JodaModule;
 import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
@@ -39,21 +43,15 @@ public abstract class AbstractIntegrationTest {
     @Value("${local.server.port}")
     protected int port;
 
+    protected final ObjectMapper objectMapper = new ObjectMapper();
+
     @Before
     public void setup() {
         RestAssured.port = port;
 
-        RestAssured.config =  RestAssuredConfig.config().objectMapperConfig(ObjectMapperConfig.objectMapperConfig().jackson2ObjectMapperFactory(
-                new Jackson2ObjectMapperFactory() {
-                    @Override
-                    public ObjectMapper create(Class cls, String charset) {
-                        ObjectMapper objectMapper = new ObjectMapper();
-                        objectMapper.registerModule(new JodaModule());
-                        objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
-                        return objectMapper;
-                    }
-                }
-        ));
+        objectMapper.registerModule(new JodaModule());
+        objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
+        RestAssured.config =  config().objectMapperConfig(objectMapperConfig().jackson2ObjectMapperFactory((cls, charset) -> objectMapper));
     }
 
     public static String resourceAsString(String resourcePath) {

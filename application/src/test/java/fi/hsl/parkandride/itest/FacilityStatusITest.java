@@ -6,15 +6,16 @@ import java.util.List;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
+import org.joda.time.Instant;
 import org.junit.Test;
 import org.springframework.http.HttpStatus;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.google.common.collect.Lists;
 
 import fi.hsl.parkandride.core.domain.CapacityType;
 import fi.hsl.parkandride.core.domain.FacilityStatus;
+import fi.hsl.parkandride.core.domain.FacilityStatusEnum;
 import fi.hsl.parkandride.front.UrlSchema;
 
 public class FacilityStatusITest extends AbstractIntegrationTest {
@@ -54,6 +55,46 @@ public class FacilityStatusITest extends AbstractIntegrationTest {
         givenWithContent()
             .body(builder.asArray())
         .when()
+            .put(UrlSchema.FACILITY_STATUS, 42)
+        .then()
+            .statusCode(HttpStatus.OK.value())
+        ;
+    }
+
+    @Test
+    public void accepts_unset_optional_values_with_null_value() {
+        objectMapper.setSerializationInclusion(JsonInclude.Include.ALWAYS);
+        multiCapacityUpdate();
+    }
+    @Test
+    public void accepts_unset_optional_values_to_be_absent() {
+        objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+        multiCapacityUpdate();
+    }
+
+    private void multiCapacityUpdate() {
+        FacilityStatus spacesOnly = new FacilityStatus();
+        spacesOnly.timestamp = Instant.now();
+        spacesOnly.spacesAvailable = 1;
+        spacesOnly.capacityType = CapacityType.CAR;
+
+        FacilityStatus statusOnly = new FacilityStatus();
+        statusOnly.timestamp = Instant.now();
+        statusOnly.status = FacilityStatusEnum.FULL;
+        statusOnly.capacityType = CapacityType.BICYCLE;
+
+        FacilityStatus spacesAndStatus = new FacilityStatus();
+        spacesAndStatus.timestamp = Instant.now();
+        spacesAndStatus.spacesAvailable = 2;
+        spacesAndStatus.status = FacilityStatusEnum.SPACES_AVAILABLE;
+        spacesAndStatus.capacityType = CapacityType.PARK_AND_RIDE;
+
+        List<FacilityStatus> payload = Lists.newArrayList(spacesOnly, statusOnly, spacesAndStatus);
+
+        givenWithContent()
+            .body(payload)
+        .when()
+            .log().all()
             .put(UrlSchema.FACILITY_STATUS, 42)
         .then()
             .statusCode(HttpStatus.OK.value())

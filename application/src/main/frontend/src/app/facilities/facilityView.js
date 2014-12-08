@@ -4,6 +4,7 @@
         'parkandride.facilityMap',
         'parkandride.capacities',
         'parkandride.layout',
+        'parkandride.address',
         'parkandride.ContactResource',
         'parkandride.FacilityResource',
         'parkandride.ServiceResource',

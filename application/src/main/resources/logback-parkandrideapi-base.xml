@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<included>
+  <property name="LOG_FILE_APP" value="${LOG_PATH}/parkandrideapi" />
+  <property name="FILE_LOG_PATTERN"
+            value="%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%X{srcip}] [%X{username}] [%X{requestid}] [%thread] %-40.40logger{39} - %msg %rEx{full}%n"/>
+
+  <appender name="APP" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <file>${LOG_FILE_APP}.log</file>
+    <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+      <fileNamePattern>${LOG_FILE_APP}.log.%d{yyyy-MM-dd}</fileNamePattern>
+    </rollingPolicy>
+    <encoder>
+      <pattern>${FILE_LOG_PATTERN}</pattern>
+    </encoder>
+  </appender>
+
+  <appender name="APP_ERROR" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <file>${LOG_FILE_APP}_error.log</file>
+    <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+      <fileNamePattern>${LOG_FILE_APP}_error.log.%d{yyyy-MM-dd}</fileNamePattern>
+    </rollingPolicy>
+    <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+      <level>ERROR</level>
+    </filter>
+    <encoder>
+      <pattern>${FILE_LOG_PATTERN}</pattern>
+    </encoder>
+  </appender>
+
+  <logger name="fi.hsl.parkandride" level="DEBUG"/>
+  <logger name="org.springframework" level="INFO" />
+
+  <root level="WARN">
+    <appender-ref ref="APP" />
+    <appender-ref ref="APP_ERROR" />
+  </root>
+
+</included>

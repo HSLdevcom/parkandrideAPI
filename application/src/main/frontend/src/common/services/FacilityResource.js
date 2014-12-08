@@ -55,7 +55,8 @@
                 location: location,
                 entry: true,
                 exit: true,
-                pedestrian: false
+                pedestrian: false,
+                bicycle: false
             };
         };
 

@@ -18,7 +18,7 @@ describe('edit facility view', function () {
 
     describe('new facility', function () {
         beforeEach(function () {
-            devApi.resetAll();
+            devApi.resetAll([], [], [fixtures.facilitiesFixture.contact])
             editPage.get();
         });
 
@@ -38,6 +38,7 @@ describe('edit facility view', function () {
 
         it('required errors are shown for all required fields if user submits empty form without editing', function() {
             editPage.save();
+            expect(editPage.getViolations()).toEqual([{ path: "Pysäköintipaikka", message: "tarkista pakolliset tiedot ja syötteiden muoto" }]);
             expect(editPage.isNameFiRequiredError()).toBe(true);
             expect(editPage.isNameSvRequiredError()).toBe(true);
             expect(editPage.isNameEnRequiredError()).toBe(true);
@@ -78,6 +79,8 @@ describe('edit facility view', function () {
         describe('facility', function () {
             it('is required, error is cleared after facility is set', function () {
                 editPage.setName("Facility name");
+                editPage.selectEmergencyContact("hsl");
+                editPage.selectOperatorContact("hsl");
                 editPage.save();
                 expect(editPage.isFacilityRequiredError()).toBe(true);
 
@@ -108,13 +111,15 @@ describe('edit facility view', function () {
                 // New port
                 editPage.openPortAt(200, 200);
                 expect(editPage.portEditModal.isDisplayed()).toBe(true);
-                expect(editPage.portEditModal.entryIsSelected()).toBe(true);
-                expect(editPage.portEditModal.exitIsSelected()).toBe(true);
-                expect(editPage.portEditModal.pedestrianIsSelected()).toBe(false);
+                expect(editPage.portEditModal.isEntrySelected()).toBe(true);
+                expect(editPage.portEditModal.isExitSelected()).toBe(true);
+                expect(editPage.portEditModal.isPedestrianSelected()).toBe(false);
+                expect(editPage.portEditModal.isBicycleSelected()).toBe(false);
 
                 editPage.portEditModal.toggleEntry();
                 editPage.portEditModal.toggleExit();
                 editPage.portEditModal.togglePedestrian();
+                editPage.portEditModal.toggleBicycle();
                 editPage.portEditModal.setStreetAddress(["katu", "gata", "street"]);
                 editPage.portEditModal.setPostalCode("00100");
                 editPage.portEditModal.setCity(["kaupunki", "stad", "city"]);
@@ -126,9 +131,10 @@ describe('edit facility view', function () {
                 editPage.openPortAt(200, 198);
                 expect(editPage.portEditModal.isDisplayed()).toBe(true);
 
-                expect(editPage.portEditModal.entryIsSelected()).toBe(false);
-                expect(editPage.portEditModal.exitIsSelected()).toBe(false);
-                expect(editPage.portEditModal.pedestrianIsSelected()).toBe(true);
+                expect(editPage.portEditModal.isEntrySelected()).toBe(false);
+                expect(editPage.portEditModal.isExitSelected()).toBe(false);
+                expect(editPage.portEditModal.isPedestrianSelected()).toBe(true);
+                expect(editPage.portEditModal.isBicycleSelected()).toBe(true);
 
                 expect(editPage.portEditModal.getStreetAddress()).toEqual(["katu", "gata", "street"]);
                 expect(editPage.portEditModal.getPostalCode()).toBe("00100");
@@ -144,20 +150,24 @@ describe('edit facility view', function () {
                 expect(editPage.portEditModal.getCity()).toEqual(["city", "city", "city"]);
                 editPage.portEditModal.setCity("kaupunki");
                 editPage.portEditModal.togglePedestrian();
+                editPage.portEditModal.toggleBicycle();
                 editPage.portEditModal.cancel();
                 expect(editPage.portEditModal.isDisplayed()).toBe(false);
 
                 // Remove port
                 editPage.openPortAt(200, 198);
                 expect(editPage.portEditModal.isDisplayed()).toBe(true);
-                expect(editPage.portEditModal.pedestrianIsSelected()).toBe(true);
+                expect(editPage.portEditModal.isPedestrianSelected()).toBe(true);
+                expect(editPage.portEditModal.isBicycleSelected()).toBe(true);
                 expect(editPage.portEditModal.getCityFi()).toBe("city");
                 editPage.portEditModal.remove();
                 expect(editPage.portEditModal.isDisplayed()).toBe(false);
 
+                // New port with defaults
                 editPage.openPortAt(200, 198);
                 expect(editPage.portEditModal.isDisplayed()).toBe(true);
-                expect(editPage.portEditModal.pedestrianIsSelected()).toBe(false);
+                expect(editPage.portEditModal.isPedestrianSelected()).toBe(false);
+                expect(editPage.portEditModal.isBicycleSelected()).toBe(false);
                 expect(editPage.portEditModal.getCityFi()).toBe("");
             });
         });
@@ -175,7 +185,23 @@ describe('edit facility view', function () {
             expect(editPage.isServiceSelected("Katettu")).toBe(false);
         });
 
-        it('create full', function () {
+        it('should manage contacts', function() {
+            // Create emergency contact on the fly
+            editPage.createContact({name: "new contact", phone: "(09) 4766 4444", email: "hsl@hsl.fi"});
+            expect(editPage.getEmergencyContact()).toBe("new contact (09 47664444 / hsl@hsl.fi)");
+
+            // Reload and expect that new contact is still available
+            editPage.get();
+
+            editPage.selectEmergencyContact("new contact");
+            expect(editPage.getEmergencyContact()).toBe("new contact (09 47664444 / hsl@hsl.fi)");
+
+            // Clear emergency contact
+            editPage.clearEmergencyContact();
+            expect(editPage.getEmergencyContact()).toBe("Valitse kontakti...");
+        });
+
+        it('create and edit full', function () {
             editPage.setName(facFull.name);
             editPage.drawLocation(facFull.locationInput.offset, facFull.locationInput.w, facFull.locationInput.h);
 
@@ -191,6 +217,24 @@ describe('edit facility view', function () {
             editPage.selectService("Valaistus");
             editPage.selectService("Katettu");
 
+            editPage.selectEmergencyContact("hsl");
+            editPage.selectOperatorContact("hsl");
+            editPage.selectServiceContact("hsl");
+
+            editPage.save();
+            expect(viewPage.isDisplayed()).toBe(true);
+
+            // Back to edit...
+            viewPage.toEditView();
+            expect(editPage.isDisplayed()).toBe(true);
+            expect(editPage.getEmergencyContact()).toBe("hsl fi (09 47664444)");
+            expect(editPage.getOperatorContact()).toBe("hsl fi (09 47664444)");
+            expect(editPage.getServiceContact()).toBe("hsl fi (09 47664444)");
+            // TODO: other expectations & modifications
+
+            editPage.clearServiceContact();
+            expect(editPage.getServiceContact()).toBe("Valitse kontakti...");
+
             editPage.save();
             expect(viewPage.isDisplayed()).toBe(true);
         });
@@ -200,6 +244,9 @@ describe('edit facility view', function () {
             editPage.drawLocation(facCar.locationInput.offset, facCar.locationInput.w, facCar.locationInput.h);
             editPage.setCapacities(facCar.capacities);
             arrayAssert.assertInOrder(editPage.getCapacityTypes(), common.capacityTypeOrder);
+
+            editPage.selectEmergencyContact("hsl");
+            editPage.selectOperatorContact("hsl");
 
             editPage.save();
             expect(viewPage.isDisplayed()).toBe(true);

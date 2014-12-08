@@ -81,6 +81,7 @@
     },
     "facilities": {
         "title": "Pysäköintipaikat",
+        "label": "Pysäköintipaikka",
         "list": {
             "name": "Nimi",
             "types": "Tyypit"
@@ -111,30 +112,34 @@
             "heading": "Palvelut"
         },
         "ports": {
-            "create": "Lisää uusi käyntiosoite",
-            "edit": "Muokkaa käyntiosoitetta",
-            "label": "Käyntiosoitteet",
+            "create": "Sisään-/uloskäynti",
+            "edit": "Sisään-/uloskäynti",
+            "view": "Sisään-/uloskäynti",
+            "label": "Sisään-/uloskäynnit",
             "entry": {
-                "label": "Sisäänkäynti"
+                "label": "Sisäänajo"
             },
             "exit": {
-                "label": "Uloskäynti"
+                "label": "Ulosajo"
             },
             "pedestrian": {
                 "label": "Jalankulku"
+            },
+            "bicycle": {
+                "label": "Polkupyörä"
             },
             "address": {
                 "label": "Osoite",
                 "streetAddress": {
                     "label": "Katuosoite",
                     "fi": {
-                        "label": "Käyntiosoitteen katu (fi)"
+                        "label": "Sisään-/uloskäynnin katu (fi)"
                     },
                     "sv": {
-                        "label": "Käyntiosoitteen katu (sv)"
+                        "label": "Sisään-/uloskäynnin katu (sv)"
                     },
                     "en": {
-                        "label": "Käyntiosoitteen katu (en)"
+                        "label": "Sisään-/uloskäynnin katu (en)"
                     }
                 },
                 "postalCode":  {
@@ -143,26 +148,26 @@
                 "city":  {
                     "label": "Kaupunki",
                     "fi": {
-                        "label": "Käyntiosoitteen kaupunki (fi)"
+                        "label": "Sisään-/uloskäynnin kaupunki (fi)"
                     },
                     "sv": {
-                        "label": "Käyntiosoitteen kaupunki (sv)"
+                        "label": "Sisään-/uloskäynnin kaupunki (sv)"
                     },
                     "en": {
-                        "label": "Käyntiosoitteen kaupunki (en)"
+                        "label": "Sisään-/uloskäynnin kaupunki (en)"
                     }
                 }
             },
             "info":  {
                 "label": "Lisätietoa",
                 "fi": {
-                    "label": "Käyntiosoitteen lisätiedot (fi)"
+                    "label": "Sisään-/uloskäynnin lisätiedot (fi)"
                 },
                 "sv": {
-                    "label": "Käyntiosoitteen lisätiedot (sv)"
+                    "label": "Sisään-/uloskäynnin lisätiedot (sv)"
                 },
                 "en": {
-                    "label": "Käyntiosoitteen lisätiedot (en)"
+                    "label": "Sisään-/uloskäynnin lisätiedot (en)"
                 }
             }
         },
@@ -231,8 +236,14 @@
         "contacts": {
             "create": "Uusi yhteystieto",
             "heading": "Yhteystiedot",
-            "EMERGENCY": {
+            "emergency": {
                 "label": "Hätänumero"
+            },
+            "operator": {
+                "label": "Operaattori"
+            },
+            "service": {
+                "label": "Palveluyhtiö"
             }
         }
     },
@@ -245,6 +256,7 @@
     },
     "hubs": {
         "title": "Pysäköintipaikat",
+        "label": "Alue",
         "list": {
             "name": "Nimi"
         },
@@ -310,7 +322,7 @@
             "cancel": "Peruuta",
             "edit": "Muokkaa",
             "logout": "Kirjaudu ulos",
-            "ok": "Hyväksy",
+            "ok": "Valmis",
             "remove": "Poista",
             "save": "Tallenna muutokset"
         },
@@ -338,6 +350,7 @@
         "Pattern": "tarkista muoto",
         "TypeMismatch": "tarkista muoto",
         "PhoneOrEmailRequired": "anna vähintään puhelinnumero tai sähköposti",
-        "Email": "tarkista muoto"
+        "Email": "tarkista muoto",
+        "BasicRequirements": "tarkista pakolliset tiedot ja syötteiden muoto"
     }
 }

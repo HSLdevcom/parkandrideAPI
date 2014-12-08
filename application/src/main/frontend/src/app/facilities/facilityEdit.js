@@ -8,6 +8,7 @@
         'parkandride.facilityMap',
         'parkandride.layout',
         'parkandride.multilingual',
+        'parkandride.facilityContacts',
         'parkandride.tags',
         'parkandride.address',
         'showErrors'
@@ -68,7 +69,7 @@
         });
     });
 
-    m.controller('FacilityEditCtrl', function($scope, $state, schema, FacilityResource, facility, aliasesPlaceholder, services, contacts, editContact) {
+    m.controller('FacilityEditCtrl', function($scope, $state, schema, FacilityResource, facility, aliasesPlaceholder, services, contacts) {
         var self = this;
         $scope.common.translationPrefix = "facilities";
         self.capacityTypes = schema.capacityTypes;
@@ -83,12 +84,6 @@
             var facility = _.cloneDeep(self.facility);
             FacilityResource.save(facility).then(function(id){
                 $state.go('facility-view', { "id": id });
-            });
-        };
-        self.createContact = function(type) {
-            editContact({}, true).then(function(contact) {
-                self.contacts[contact.id] = contact;
-                self.facility.contacts[type] = contact.id;
             });
         };
     });

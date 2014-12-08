@@ -19,9 +19,9 @@ import javax.annotation.Resource;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.mysema.query.sql.RelationalPath;
 import com.mysema.query.sql.postgres.PostgresQueryFactory;
@@ -41,7 +41,7 @@ import fi.hsl.parkandride.core.service.FacilityService;
 import fi.hsl.parkandride.core.service.HubService;
 import fi.hsl.parkandride.core.service.TransactionalWrite;
 
-@Controller
+@RestController
 @Profile({"dev_api"})
 public class DevController {
 
@@ -70,7 +70,7 @@ public class DevController {
     @RequestMapping(method = DELETE, value = DEV_FACILITIES)
     @TransactionalWrite
     public ResponseEntity<Void> deleteFacilities() {
-        clear(QFacilityContact.facilityContact, QFacilityService.facilityService, QPort.port, QFacilityAlias.facilityAlias, QCapacity.capacity,
+        clear(QFacilityService.facilityService, QPort.port, QFacilityAlias.facilityAlias, QCapacity.capacity,
                 QFacility.facility);
         resetSequence(FACILITY_ID_SEQ);
         return new ResponseEntity<Void>(OK);
@@ -87,7 +87,7 @@ public class DevController {
     @RequestMapping(method = DELETE, value = DEV_CONTACTS)
     @TransactionalWrite
     public ResponseEntity<Void> deleteContacts() {
-        clear(QFacilityContact.facilityContact, QContact.contact);
+        clear(QContact.contact);
         resetSequence(CONTACT_ID_SEQ);
         return new ResponseEntity<Void>(OK);
     }

@@ -95,6 +95,13 @@
             $scope.$broadcast('show-errors-check-validity');
             if (form.$valid) {
                 submitFn();
+            } else {
+                $scope.$broadcast("validationErrors", [
+                    {
+                        path: "",
+                        type: "BasicRequirements"
+                    }
+                ]);
             }
         };
     });

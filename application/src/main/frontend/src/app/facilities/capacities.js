@@ -1,7 +1,7 @@
 (function() {
     var m = angular.module('parkandride.capacities', []);
 
-    m.directive('capacitiesTable', function (MapService, schema) {
+    m.directive('capacitiesTable', function (schema) {
         return {
             restrict: 'E',
             scope: {
@@ -21,7 +21,7 @@
         };
     });
 
-    m.directive('capacitiesList', function (MapService, schema) {
+    m.directive('capacitiesList', function (schema) {
         return {
             restrict: 'E',
             scope: {

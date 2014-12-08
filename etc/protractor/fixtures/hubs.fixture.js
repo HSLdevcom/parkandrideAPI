@@ -24,6 +24,8 @@ module.exports = function (data) {
     });
     self.westend.facilityIds = _.map(self.westend.facilities, function(f) { return f.id; });
 
+    self.contact = facilitiesFixture.contact;
+
     self.all = [
         self.westend
     ];

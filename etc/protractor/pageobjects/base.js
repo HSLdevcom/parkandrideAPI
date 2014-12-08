@@ -23,11 +23,19 @@ module.exports = function(spec) {
     };
 
     spec.getValue = function(element) {
-        return element.getAttribute("value");
+        var value = element.getAttribute("value");
+        return value || element.getText();
     };
 
     spec.sendKeys = function(element, input) {
         element.clear().sendKeys(input);
+    };
+
+    spec.isDisplayed = function(element) {
+        return element.then(
+            function(elem) { return elem.isDisplayed(); },
+            function() { return false; }
+        );
     };
 
     var that = {};
@@ -42,9 +50,7 @@ module.exports = function(spec) {
         spec[name] = spec.context ? spec.context.element(by.name(name)) : element(by.name(name));
 
         that["get" + capitalisedName + lang] = function() {
-            return spec.getValue(spec[name]).then(function(value) {
-                return value;
-            });
+            return spec.getValue(spec[name]);
         };
         that["set" + capitalisedName + lang] = function(value) {
             spec.sendKeys(spec[name], value);
@@ -71,17 +77,18 @@ module.exports = function(spec) {
                 that["get" + capitalisedName + "En"]()
             ]);
         };
-    }
+    };
+
+    spec.getMultilingualValues = function(parentElement) {
+        return protractor.promise.all([
+            parentElement.element(by.css(".lang-fi")).getText(),
+            parentElement.element(by.css(".lang-sv")).getText(),
+            parentElement.element(by.css(".lang-en")).getText()
+            ]);
+    };
 
     that.isDisplayed = function() {
-        return spec.view.then(
-            function(elem) {
-                return elem.isDisplayed();
-            },
-            function() {
-                return false;
-            }
-        );
+        return spec.isDisplayed(spec.view);
     };
 
     that.getViolations = function() {

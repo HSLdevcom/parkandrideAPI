@@ -5,7 +5,8 @@ module.exports = function () {
     var request = require('request');
     var devApiUrl = browser.baseUrl + '/dev-api',
         facilitiesUrl = devApiUrl + '/facilities',
-        hubsUrl = devApiUrl + '/hubs';
+        hubsUrl = devApiUrl + '/hubs',
+        contactsUrl = devApiUrl + '/contacts';
     var flow = protractor.promise.controlFlow();
 
     var api = {};
@@ -30,10 +31,21 @@ module.exports = function () {
         return _.map(coll, function(item) { return item.toPayload(); });
     }
 
-    api.resetFacilities = function(facilities) {
+    api.deleteFacilities = function() {
         flow.execute(function() { return asPromise({ method: 'DELETE', url: facilitiesUrl }); });
+    };
+
+    api.insertFacilities = function(facilities) {
+        flow.execute(function() { return asPromise({ method: 'PUT', url: facilitiesUrl, json: true, body: asPayload(facilities) }); });
+    }
+
+    api.resetFacilities = function(facilities, contacts) {
+        api.deleteFacilities();
+        if (contacts) {
+            api.resetContacts(contacts);
+        }
         if (facilities) {
-            flow.execute(function() { return asPromise({ method: 'PUT', url: facilitiesUrl, json: true, body: asPayload(facilities) }); });
+            api.insertFacilities(facilities);
         }
     };
 
@@ -44,8 +56,21 @@ module.exports = function () {
         }
     };
 
-    api.resetAll = function(facilities, hubs) {
-        api.resetFacilities(facilities);
+    api.resetContacts = function(contacts) {
+        flow.execute(function() { return asPromise({ method: 'DELETE', url: contactsUrl }); });
+        if (contacts) {
+            flow.execute(function(){ return asPromise({ method: 'PUT', url: contactsUrl, json: true, body: asPayload(contacts) }); });
+        }
+    };
+
+    api.resetAll = function(facilities, hubs, contacts) {
+        // Contacts cannot be deleted if there's facilities refering them
+        api.deleteFacilities();
+        // Facilities may refer to contacts, so insert contacts first
+        api.resetContacts(contacts)
+        if (facilities) {
+            api.insertFacilities(facilities);
+        }
         api.resetHubs(hubs);
     };
 

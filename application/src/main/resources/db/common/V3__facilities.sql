@@ -5,7 +5,20 @@ create table facility (
   name_en varchar(255) not null,
   location geometry not null,
 
-  primary key (id)
+  emergency_contact_id bigint not null,
+  operator_contact_id bigint not null,
+  service_contact_id bigint,
+
+  primary key (id),
+
+  constraint facility_emergency_contact_id_fk foreign key (emergency_contact_id)
+    references contact (id),
+
+  constraint facility_operator_contact_id_fk foreign key (operator_contact_id)
+    references contact (id),
+
+  constraint facility_service_contact_id_fk foreign key (service_contact_id)
+    references contact (id)
 );
 
 create sequence facility_id_seq increment by 1 start with 1;
@@ -57,6 +70,7 @@ create table port (
   entry boolean not null,
   exit boolean not null,
   pedestrian boolean not null,
+  bicycle boolean not null,
   location geometry not null,
 
   street_address_fi varchar(255),
@@ -92,29 +106,3 @@ create table facility_service (
     references service (id)
 );
 
-
-create table contact_type (
-  name varchar(64) not null,
-
-  primary key (name)
-);
-
-insert into contact_type values ('EMERGENCY');
-insert into contact_type values ('CUSTOMER_SERVICE');
-
-create table facility_contact (
-  facility_id bigint not null,
-  contact_type varchar(64) not null,
-  contact_id bigint not null,
-
-  primary key (facility_id, contact_type, contact_id),
-
-  constraint facility_contact_facility_id_fk foreign key (facility_id)
-    references facility (id),
-
-  constraint facility_contact_type_fk foreign key (contact_type)
-    references contact_type (name),
-
-  constraint facility_contact_contact_id_fk foreign key (contact_id)
-    references contact (id)
-);

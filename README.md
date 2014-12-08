@@ -43,10 +43,11 @@ Profile|Description
 
 Profile|Description
 -------|-----------
-dev     |adds application/src/main/frontend/build as jetty resource
-dev_api |brings up [TestController](https://github.com/HSLdevcom/parkandrideAPI/blob/master/application/src/main/java/fi/hsl/parkandride/dev/TestController.java)
+dev     |adds application/src/main/frontend/build as webapp resource
+dev_api |brings up [DevController](https://github.com/HSLdevcom/parkandrideAPI/blob/master/application/src/main/java/fi/hsl/parkandride/dev/DevController.java)
 psql    |postgres is used instead of the default H2
 
 # Postgresql initialization
 
 Schema and default test-user (liipi) can be installed on running Postgresql with [etc/scripts/db/psql-init-db.sh](https://github.com/HSLdevcom/parkandrideAPI/blob/master/etc/scripts/db/psql-init-db.sh). See the file for example usage.
+

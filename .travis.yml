@@ -2,7 +2,7 @@ language: java
 jdk:
   - oraclejdk8
 env:
-  - PTOR_DIR=$TRAVIS_BUILD_DIR/etc/protractor APP_MODULE=$TRAVIS_BUILD_DIR/application DISPLAY=:99
+  - PTOR_DIR=$TRAVIS_BUILD_DIR/etc/protractor APP_MODULE=$TRAVIS_BUILD_DIR/application DISPLAY=:99 SPRING_PROFILES_ACTIVE=env_travis
 addons:
   postgresql: "9.3"
 before_install:
@@ -11,18 +11,14 @@ before_install:
   - sudo /etc/init.d/postgresql start 9.3
   - sh -e /etc/init.d/xvfb start
 install:
-  - mvn package -Dmaven.javadoc.skip=true -B -V
-before_script:
   - bash etc/scripts/db/psql-init-db.sh -U postgres
   - cd $PTOR_DIR
   - npm install
-  - SPRING_PROFILES_ACTIVE=env_travis bash protractor.sh start
-  - bash protractor.sh wait_until_started
 script:
-  - bash protractor.sh test
-  - bash protractor.sh verify
+  - cd $TRAVIS_BUILD_DIR
+  - mvn verify -Dmaven.javadoc.skip=true -B -V
 after_success:
-  - cd $APP_MODULE && mvn clean test jacoco:report coveralls:report
+  - mvn coveralls:report
 notifications:
   flowdock:
     secure: h3OB+ZyOFh6m/43twXDTh15enuvALOVvCNe81+doFj5o0s9x+n1K06x02hU2ISkHt5MYGg5JNtyeDTg2DDDht3TsfJcM3U8P/auMaIB7jt6Cwwrp0WPbFwyMR5t+CHYK27teeaopPtXbk+PWdq7FMma1kzvgOZlC6yq6OOj4hwM=

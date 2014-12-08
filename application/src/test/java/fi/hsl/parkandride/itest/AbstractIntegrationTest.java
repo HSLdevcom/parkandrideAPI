@@ -5,7 +5,11 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.TimeZone;
 
+import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Value;
@@ -15,11 +19,17 @@ import org.springframework.http.HttpStatus;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.joda.JodaModule;
 import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
 import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.builder.RequestSpecBuilder;
 import com.jayway.restassured.builder.ResponseSpecBuilder;
+import com.jayway.restassured.config.ObjectMapperConfig;
+import com.jayway.restassured.config.RestAssuredConfig;
+import com.jayway.restassured.mapper.factory.Jackson2ObjectMapperFactory;
 import com.jayway.restassured.specification.RequestSpecification;
 import com.jayway.restassured.specification.ResponseSpecification;
 
@@ -36,8 +46,19 @@ public abstract class AbstractIntegrationTest {
     @Before
     public void setup() {
         RestAssured.port = port;
-    }
 
+        RestAssured.config =  RestAssuredConfig.config().objectMapperConfig(ObjectMapperConfig.objectMapperConfig().jackson2ObjectMapperFactory(
+                new Jackson2ObjectMapperFactory() {
+                    @Override
+                    public ObjectMapper create(Class cls, String charset) {
+                        ObjectMapper objectMapper = new ObjectMapper();
+                        objectMapper.registerModule(new JodaModule());
+                        objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
+                        return objectMapper;
+                    }
+                }
+        ));
+    }
 
     public static String resourceAsString(String resourcePath) {
         try {

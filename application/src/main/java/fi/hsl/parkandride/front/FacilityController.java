@@ -1,11 +1,7 @@
 package fi.hsl.parkandride.front;
 
 import static fi.hsl.parkandride.front.FeatureCollection.FACILITY_TO_FEATURE;
-import static fi.hsl.parkandride.front.UrlSchema.CAPACITY_TYPES;
-import static fi.hsl.parkandride.front.UrlSchema.FACILITIES;
-import static fi.hsl.parkandride.front.UrlSchema.FACILITY;
-import static fi.hsl.parkandride.front.UrlSchema.FACILITY_ID;
-import static fi.hsl.parkandride.front.UrlSchema.GEOJSON;
+import static fi.hsl.parkandride.front.UrlSchema.*;
 import static java.util.Arrays.asList;
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.OK;
@@ -18,6 +14,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import org.joda.time.Instant;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -90,4 +87,16 @@ public class FacilityController {
         return new ResponseEntity<>(SearchResults.of(types), OK);
     }
 
+    @RequestMapping(method = PUT, value = FACILITY_STATUS, produces = APPLICATION_JSON_VALUE)
+    public void updateStatus(@PathVariable(FACILITY_ID) long facilityId, @RequestBody List<FacilityStatus> updates) {
+
+    }
+
+    @RequestMapping(method = GET, value = FACILITY_STATUS, produces = APPLICATION_JSON_VALUE)
+    public ResponseEntity<FacilityStatus> getStatus(@PathVariable(FACILITY_ID) long facilityId) {
+        FacilityStatus payload = new FacilityStatus();
+        payload.setTimestamp(Instant.now());
+
+        return new ResponseEntity<FacilityStatus>(payload, OK);
+    }
 }

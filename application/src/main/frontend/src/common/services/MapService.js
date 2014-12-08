@@ -65,7 +65,7 @@
             },
 
             portsStyle: function(feature, resolution) {
-               if (resolution >= 6) {
+               if (resolution >= 7) {
                     return [];
                 } else
                 if (resolution >= 4) {

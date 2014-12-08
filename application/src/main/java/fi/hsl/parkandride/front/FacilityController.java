@@ -25,6 +25,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import fi.hsl.parkandride.core.domain.CapacityType;
 import fi.hsl.parkandride.core.domain.Facility;
+import fi.hsl.parkandride.core.domain.FacilityStatus;
 import fi.hsl.parkandride.core.domain.FacilitySummary;
 import fi.hsl.parkandride.core.domain.SearchResults;
 import fi.hsl.parkandride.core.service.FacilityService;
@@ -89,13 +90,13 @@ public class FacilityController {
 
     @RequestMapping(method = PUT, value = FACILITY_STATUS, produces = APPLICATION_JSON_VALUE)
     public void updateStatus(@PathVariable(FACILITY_ID) long facilityId, @RequestBody List<FacilityStatus> updates) {
-
+        facilityService.updateStatuses(facilityId, updates);
     }
 
     @RequestMapping(method = GET, value = FACILITY_STATUS, produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<FacilityStatus> getStatus(@PathVariable(FACILITY_ID) long facilityId) {
         FacilityStatus payload = new FacilityStatus();
-        payload.setTimestamp(Instant.now());
+        payload.timestamp = Instant.now();
 
         return new ResponseEntity<FacilityStatus>(payload, OK);
     }

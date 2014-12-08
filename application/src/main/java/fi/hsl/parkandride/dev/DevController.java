@@ -70,7 +70,7 @@ public class DevController {
     @RequestMapping(method = DELETE, value = DEV_FACILITIES)
     @TransactionalWrite
     public ResponseEntity<Void> deleteFacilities() {
-        clear(QFacilityContact.facilityContact, QFacilityService.facilityService, QPort.port, QFacilityAlias.facilityAlias, QCapacity.capacity,
+        clear(QFacilityService.facilityService, QPort.port, QFacilityAlias.facilityAlias, QCapacity.capacity,
                 QFacility.facility);
         resetSequence(FACILITY_ID_SEQ);
         return new ResponseEntity<Void>(OK);
@@ -87,7 +87,7 @@ public class DevController {
     @RequestMapping(method = DELETE, value = DEV_CONTACTS)
     @TransactionalWrite
     public ResponseEntity<Void> deleteContacts() {
-        clear(QFacilityContact.facilityContact, QContact.contact);
+        clear(QContact.contact);
         resetSequence(CONTACT_ID_SEQ);
         return new ResponseEntity<Void>(OK);
     }

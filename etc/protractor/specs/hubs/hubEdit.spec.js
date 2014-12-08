@@ -14,6 +14,7 @@ describe('edit hub view', function () {
 
     var facFull = fixtures.facilitiesFixture.dummies.facFull;
     var facCar = fixtures.facilitiesFixture.dummies.facCar;
+    var contact = fixtures.facilitiesFixture.contact;
 
     var facilityFactory = fixtures.facilityFactory;
 
@@ -112,7 +113,7 @@ describe('edit hub view', function () {
 
         describe('with facilities', function() {
             beforeEach(function () {
-                devApi.resetFacilities([facFull, facCar]);
+                devApi.resetFacilities([facFull, facCar], [contact]);
                 hubEditPage.get();
             });
 
@@ -153,7 +154,7 @@ describe('edit hub view', function () {
 
                 hub.location.coordinates = facilities[0].coordinatesFromTopLeft({ x: 30, y: 30 });
                 hub.setFacilities(facilities);
-                devApi.resetAll(hub.facilities, [hub]);
+                devApi.resetAll(hub.facilities, [hub], [contact]);
             });
 
             it('facility can be removed from hub', function () {

@@ -32,7 +32,7 @@
                             }
                         },
                         contacts: function(ContactResource, facility)  {
-                            var contactIds = _.values(facility.contacts);
+                            var contactIds = _.filter(_.values(facility.contacts));
                             if (!_.isEmpty(contactIds)) {
                                 return ContactResource.listContacts({ids: contactIds}).then(function(results) {
                                     return _.indexBy(results.results, "id");

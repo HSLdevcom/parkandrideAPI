@@ -67,7 +67,11 @@ public class QContact extends RelationalPathSpatial<QContact> {
 
     public final com.mysema.query.sql.PrimaryKey<QContact> constraint6 = createPrimaryKey(id);
 
-    public final com.mysema.query.sql.ForeignKey<QFacilityContact> _facilityContactContactIdFk = createInvForeignKey(id, "CONTACT_ID");
+    public final com.mysema.query.sql.ForeignKey<QFacility> _facilityOperatorContactIdFk = createInvForeignKey(id, "OPERATOR_CONTACT_ID");
+
+    public final com.mysema.query.sql.ForeignKey<QFacility> _facilityServiceContactIdFk = createInvForeignKey(id, "SERVICE_CONTACT_ID");
+
+    public final com.mysema.query.sql.ForeignKey<QFacility> _facilityEmergencyContactIdFk = createInvForeignKey(id, "EMERGENCY_CONTACT_ID");
 
     public QContact(String variable) {
         super(QContact.class, forVariable(variable), "PUBLIC", "CONTACT");

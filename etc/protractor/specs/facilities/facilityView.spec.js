@@ -20,7 +20,7 @@ describe('facility view', function () {
     var f;
 
     function toView(f) {
-        devApi.resetAll([f], []);
+        devApi.resetAll([f], [], [fixtures.facilitiesFixture.contact]);
         viewPage.get(f.id);
         expect(viewPage.isDisplayed()).toBe(true);
         return f;
@@ -64,14 +64,18 @@ describe('facility view', function () {
     it('view port', function() {
         f = {
             "id":1,"name":{"fi":"test","sv":"test","en":"tes"},
-            "aliases":[],"capacities":{},"serviceIds":[],"contacts":{},
+            "aliases":[],"capacities":{},"serviceIds":[],
+            "contacts":{
+                "emergency": 1,
+                "operator": 1
+            },
             "location":{"type":"Polygon","coordinates":[[[24.943295535227904,60.17184809821847],[24.944218215129023,60.17186410779244],[24.94464736857141,60.17192280949709],[24.94479757227624,60.17077543898606],[24.944293316981444,60.17060466413514],[24.9436925021621,60.170572643751754],[24.9434028235885,60.17073274535653],[24.943295535227904,60.17184809821847]]]},
             "ports":[{
                 "location":{"type":"Point","coordinates":[24.944605,60.17197]},
                 "entry":true,"exit":true,"pedestrian":true,"bicycle":true,
                 "address":{"streetAddress":{"fi":"Vilhonkatu 9","sv":"Vilhelmsgatan 9","en":"Vilhonkatu 9"},
                     "postalCode":"00100","city":{"fi":"Helsinki","sv":"Helsingfors","en":"Helsinki"}},
-                "info":{"fi":"Info fi","sv":"Info sv","en":"Info en"}}]
+                "info":{"fi":"Info fi","sv":"Info sv","en":"Info en"}}],
             };
         f.toPayload = function() { return f; };
         f = toView(f);

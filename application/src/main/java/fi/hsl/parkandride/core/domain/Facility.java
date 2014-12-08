@@ -30,7 +30,9 @@ public class Facility {
 
     public Set<Long> serviceIds = new HashSet<>();
 
-    public Map<ContactType, Long> contacts = new HashMap<>();
+    @NotNull
+    @Valid
+    public FacilityContacts contacts = new FacilityContacts();
 
 
     public Long getId() {
@@ -61,7 +63,7 @@ public class Facility {
         return serviceIds;
     }
 
-    public Map<ContactType, Long> getContacts() {
+    public FacilityContacts getContacts() {
         return contacts;
     }
 }

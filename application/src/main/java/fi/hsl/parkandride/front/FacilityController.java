@@ -89,8 +89,8 @@ public class FacilityController {
     }
 
     @RequestMapping(method = PUT, value = FACILITY_STATUS, produces = APPLICATION_JSON_VALUE)
-    public void updateStatus(@PathVariable(FACILITY_ID) long facilityId, @RequestBody List<FacilityStatus> updates) {
-        facilityService.updateStatuses(facilityId, updates);
+    public void createStatuses(@PathVariable(FACILITY_ID) long facilityId, @RequestBody List<FacilityStatus> statuses) {
+        facilityService.createStatuses(facilityId, statuses);
     }
 
     @RequestMapping(method = GET, value = FACILITY_STATUS, produces = APPLICATION_JSON_VALUE)

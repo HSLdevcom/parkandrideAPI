@@ -47,7 +47,7 @@ public class FacilityService {
     }
 
     @TransactionalWrite
-    public void updateStatuses(long facilityId, List<FacilityStatus> statuses) {
+    public void createStatuses(long facilityId, List<FacilityStatus> statuses) {
         statuses.forEach((status) -> validationService.validate(status));
     }
 }

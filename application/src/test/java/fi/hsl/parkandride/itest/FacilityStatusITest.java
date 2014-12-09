@@ -67,15 +67,15 @@ public class FacilityStatusITest extends AbstractIntegrationTest {
     @Test
     public void accepts_unset_optional_values_with_null_value() {
         objectMapper.setSerializationInclusion(JsonInclude.Include.ALWAYS);
-        multiCapacityUpdate();
+        multiCapacityCreate();
     }
     @Test
     public void accepts_unset_optional_values_to_be_absent() {
         objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-        multiCapacityUpdate();
+        multiCapacityCreate();
     }
 
-    private void multiCapacityUpdate() {
+    private void multiCapacityCreate() {
         FacilityStatus spacesOnly = new FacilityStatus();
         spacesOnly.timestamp = Instant.now();
         spacesOnly.spacesAvailable = 1;

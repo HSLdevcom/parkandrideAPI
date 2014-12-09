@@ -8,6 +8,8 @@ import static org.hamcrest.Matchers.notNullValue;
 
 import java.io.IOException;
 
+import javax.inject.Inject;
+
 import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Value;
@@ -34,6 +36,8 @@ import com.jayway.restassured.specification.RequestSpecification;
 import com.jayway.restassured.specification.ResponseSpecification;
 
 import fi.hsl.parkandride.Application;
+import fi.hsl.parkandride.back.TestHelper;
+import fi.hsl.parkandride.back.sql.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = Application.class)
@@ -52,6 +56,17 @@ public abstract class AbstractIntegrationTest {
         objectMapper.registerModule(new JodaModule());
         objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
         RestAssured.config =  config().objectMapperConfig(objectMapperConfig().jackson2ObjectMapperFactory((cls, charset) -> objectMapper));
+    }
+
+    @Inject
+    private TestHelper testHelper;
+
+    public void resetFacilities() {
+        testHelper.clear(QFacilityService.facilityService, QFacilityAlias.facilityAlias, QCapacity.capacity, QPort.port, QFacility.facility);
+    }
+
+    public void resetContacts() {
+        testHelper.clear(QContact.contact);
     }
 
     public static String resourceAsString(String resourcePath) {

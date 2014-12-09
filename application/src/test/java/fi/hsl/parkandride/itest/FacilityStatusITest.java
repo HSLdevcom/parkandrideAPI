@@ -19,12 +19,6 @@ import com.google.common.collect.Lists;
 
 import fi.hsl.parkandride.back.ContactDao;
 import fi.hsl.parkandride.back.FacilityDao;
-import fi.hsl.parkandride.back.TestHelper;
-import fi.hsl.parkandride.back.sql.QCapacity;
-import fi.hsl.parkandride.back.sql.QFacility;
-import fi.hsl.parkandride.back.sql.QFacilityAlias;
-import fi.hsl.parkandride.back.sql.QFacilityService;
-import fi.hsl.parkandride.back.sql.QPort;
 import fi.hsl.parkandride.core.domain.*;
 import fi.hsl.parkandride.core.service.ValidationException;
 import fi.hsl.parkandride.front.UrlSchema;
@@ -44,6 +38,8 @@ public class FacilityStatusITest extends AbstractIntegrationTest {
     @Inject
     private FacilityDao facilityDao;
 
+    private Facility f;
+
     @Before
     public void initFixture() {
         resetFixture();
@@ -52,15 +48,10 @@ public class FacilityStatusITest extends AbstractIntegrationTest {
         c.id = 1L;
         c.name = new MultilingualString("minimal contact");
 
-        Facility f = new Facility();
+        f = new Facility();
         f.id = 1L;
         f.name = new MultilingualString("minimal facility");
-        f.location = Spatial.fromWkt("POLYGON((" +
-                "25.010822 60.25054, " +
-                "25.010822 60.250023, " +
-                "25.012479 60.250337, " +
-                "25.011449 60.250885, " +
-                "25.010822 60.25054))");
+        f.location = Spatial.fromWkt("POLYGON((25.010822 60.25054, 25.010822 60.250023, 25.012479 60.250337, 25.011449 60.250885, 25.010822 60.25054))");
         f.contacts = new FacilityContacts(c.id, c.id);
 
         contactDao.insertContact(c, c.id);
@@ -74,11 +65,22 @@ public class FacilityStatusITest extends AbstractIntegrationTest {
 
     @Test
     public void returns_ISO8601_UTC_timestamp() {
-        when()
-            .get(UrlSchema.FACILITY_STATUS, 42)
+        JSONObjectBuilder expected = minValidPayload();
+        givenWithContent()
+            .body(expected.asArray())
+        .when()
+            .put(UrlSchema.FACILITY_STATUS, f.id)
         .then()
             .statusCode(HttpStatus.OK.value())
-            .body(Key.TIMESTAMP, new ISO8601UTCTimestampMatcher())
+        ;
+
+        when()
+            .get(UrlSchema.FACILITY_STATUS, f.id)
+        .then()
+            .statusCode(HttpStatus.OK.value())
+            .body("results[0]." + Key.TIMESTAMP, new ISO8601UTCTimestampMatcher())
+            .body("results[0]." + Key.CAPACITY_TYPE, is(expected.jsonObject.get(Key.CAPACITY_TYPE)))
+            .body("results[0]." + Key.SPACES_AVAILABLE, is(expected.jsonObject.get(Key.SPACES_AVAILABLE)))
         ;
     }
 
@@ -101,7 +103,7 @@ public class FacilityStatusITest extends AbstractIntegrationTest {
         givenWithContent()
             .body(builder.asArray())
         .when()
-            .put(UrlSchema.FACILITY_STATUS, 42)
+            .put(UrlSchema.FACILITY_STATUS, f.id)
         .then()
             .statusCode(HttpStatus.OK.value())
         ;
@@ -141,7 +143,7 @@ public class FacilityStatusITest extends AbstractIntegrationTest {
             .body(payload)
         .when()
             .log().all()
-            .put(UrlSchema.FACILITY_STATUS, 42)
+            .put(UrlSchema.FACILITY_STATUS, f.id)
         .then()
             .statusCode(HttpStatus.OK.value())
         ;
@@ -152,7 +154,7 @@ public class FacilityStatusITest extends AbstractIntegrationTest {
         givenWithContent()
             .body(minValidPayload().put(Key.TIMESTAMP, null).asArray())
         .when()
-            .put(UrlSchema.FACILITY_STATUS, 42)
+            .put(UrlSchema.FACILITY_STATUS, f.id)
         .then()
             .spec(assertResponse(HttpStatus.BAD_REQUEST, ValidationException.class))
             .body("violations[0].path", is(Key.TIMESTAMP))
@@ -165,7 +167,7 @@ public class FacilityStatusITest extends AbstractIntegrationTest {
         givenWithContent()
             .body(minValidPayload().put(Key.CAPACITY_TYPE, null).asArray())
         .when()
-            .put(UrlSchema.FACILITY_STATUS, 42)
+            .put(UrlSchema.FACILITY_STATUS, f.id)
         .then()
             .spec(assertResponse(HttpStatus.BAD_REQUEST, ValidationException.class))
             .body("violations[0].path", is(Key.CAPACITY_TYPE))
@@ -181,7 +183,7 @@ public class FacilityStatusITest extends AbstractIntegrationTest {
                     .put(Key.STATUS, null)
                     .asArray())
         .when()
-            .put(UrlSchema.FACILITY_STATUS, 42)
+            .put(UrlSchema.FACILITY_STATUS, f.id)
         .then()
             .spec(assertResponse(HttpStatus.BAD_REQUEST, ValidationException.class))
             .body("violations[0].type", is("SpacesAvailableOrStatusRequired"))

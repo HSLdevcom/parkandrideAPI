@@ -23,6 +23,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import com.google.common.collect.Lists;
+
 import fi.hsl.parkandride.core.domain.CapacityType;
 import fi.hsl.parkandride.core.domain.Facility;
 import fi.hsl.parkandride.core.domain.FacilityStatus;
@@ -94,10 +96,10 @@ public class FacilityController {
     }
 
     @RequestMapping(method = GET, value = FACILITY_STATUS, produces = APPLICATION_JSON_VALUE)
-    public ResponseEntity<FacilityStatus> getStatus(@PathVariable(FACILITY_ID) long facilityId) {
+    public ResponseEntity<Results<FacilityStatus>> getStatus(@PathVariable(FACILITY_ID) long facilityId) {
         FacilityStatus payload = new FacilityStatus();
         payload.timestamp = Instant.now();
 
-        return new ResponseEntity<FacilityStatus>(payload, OK);
+        return new ResponseEntity<Results<FacilityStatus>>(Results.of(Lists.newArrayList(payload)), OK);
     }
 }

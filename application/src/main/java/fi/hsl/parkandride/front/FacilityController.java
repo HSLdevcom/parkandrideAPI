@@ -96,10 +96,8 @@ public class FacilityController {
     }
 
     @RequestMapping(method = GET, value = FACILITY_STATUS, produces = APPLICATION_JSON_VALUE)
-    public ResponseEntity<Results<FacilityStatus>> getStatus(@PathVariable(FACILITY_ID) long facilityId) {
-        FacilityStatus payload = new FacilityStatus();
-        payload.timestamp = Instant.now();
-
-        return new ResponseEntity<Results<FacilityStatus>>(Results.of(Lists.newArrayList(payload)), OK);
+    public ResponseEntity<Results<FacilityStatus>> getStatuses(@PathVariable(FACILITY_ID) long facilityId) {
+        List<FacilityStatus> statuses = facilityService.getStatuses(facilityId);
+        return new ResponseEntity<>(Results.of(statuses), OK);
     }
 }

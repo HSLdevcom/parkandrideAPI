@@ -12,8 +12,10 @@ import static fi.hsl.parkandride.core.domain.Sort.Dir.DESC;
 import java.util.*;
 
 import org.geolatte.geom.Geometry;
+import org.joda.time.Instant;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.mysema.query.ResultTransformer;
 import com.mysema.query.Tuple;
@@ -249,6 +251,20 @@ public class FacilityDao implements FacilityRepository {
         Map<CapacityType, Capacity> capacities = qry.map(qCapacity.capacityType, capacitySummaryMapping);
 
         return new FacilitySummary(count, capacities);
+    }
+
+    @TransactionalWrite
+    @Override
+    public void insertStatuses(List<FacilityStatus> statuses) {
+
+    }
+
+    @TransactionalRead
+    @Override
+    public List<FacilityStatus> getStatuses(long facilityId) {
+        final FacilityStatus facilityStatus = new FacilityStatus();
+        facilityStatus.timestamp = Instant.now();
+        return Lists.newArrayList(facilityStatus);
     }
 
     private void updateCapacities(long facilityId, Map<CapacityType, Capacity> newCapacities, Map<CapacityType, Capacity> oldCapacities) {

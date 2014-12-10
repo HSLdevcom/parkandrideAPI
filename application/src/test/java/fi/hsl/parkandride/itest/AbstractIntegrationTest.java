@@ -59,7 +59,7 @@ public abstract class AbstractIntegrationTest {
     }
 
     @Inject
-    private TestHelper testHelper;
+    protected TestHelper testHelper;
 
     public void resetFacilities() {
         testHelper.clear(QFacilityService.facilityService, QFacilityAlias.facilityAlias, QCapacity.capacity, QPort.port, QFacility.facility);
@@ -88,7 +88,7 @@ public abstract class AbstractIntegrationTest {
                 .expectStatusCode(status.value())
                 .expectBody("status", is(status.value()))
                 .expectBody("exception", is(exClass.getCanonicalName()))
-                .expectBody("timestamp", is(notNullValue()))
+                .expectBody("timestamp", new ISO8601UTCTimestampMatcher())
                 .build();
     }
 }

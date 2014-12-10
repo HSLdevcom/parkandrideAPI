@@ -13,6 +13,7 @@ import java.util.Map;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 
+import org.joda.time.DateTime;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -104,7 +105,7 @@ public class ExceptionHandlers {
         Map<String, Object> errorAttributes = new LinkedHashMap<>();
         errorAttributes.put("status", status.value());
         errorAttributes.put("message", message);
-        errorAttributes.put("timestamp", new Date());
+        errorAttributes.put("timestamp", DateTime.now());
         errorAttributes.put("exception", resolveError(ex).getClass().getName());
         if (violations != null && !violations.isEmpty()) {
             errorAttributes.put("violations", violations);

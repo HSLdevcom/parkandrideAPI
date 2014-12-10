@@ -61,14 +61,6 @@ public abstract class AbstractIntegrationTest {
     @Inject
     protected TestHelper testHelper;
 
-    public void resetFacilities() {
-        testHelper.clear(QFacilityService.facilityService, QFacilityAlias.facilityAlias, QCapacity.capacity, QPort.port, QFacility.facility);
-    }
-
-    public void resetContacts() {
-        testHelper.clear(QContact.contact);
-    }
-
     public static String resourceAsString(String resourcePath) {
         try {
             return Resources.toString(Resources.getResource(resourcePath), Charsets.UTF_8);

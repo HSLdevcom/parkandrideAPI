@@ -46,7 +46,7 @@ public class HubDaoTest {
 
     @Before
     public void cleanup() {
-        testHelper.clear(QHubFacility.hubFacility, QHub.hub);
+        testHelper.resetHubs();
     }
 
     @Test

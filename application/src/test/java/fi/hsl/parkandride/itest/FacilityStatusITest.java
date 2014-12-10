@@ -61,9 +61,8 @@ public class FacilityStatusITest extends AbstractIntegrationTest {
     }
 
     private void resetFixture() {
-        testHelper.clear(QFacilityStatus.facilityStatus);
-        resetFacilities();
-        resetContacts();
+        testHelper.resetFacilities();
+        testHelper.resetContacts();
     }
 
     @Test
@@ -165,7 +164,7 @@ public class FacilityStatusITest extends AbstractIntegrationTest {
                 .contains(
                         tuple(spacesOnly.capacityType, spacesOnly.spacesAvailable, spacesOnly.status, spacesOnly.timestamp.toInstant()),
                         tuple(statusOnly.capacityType, statusOnly.spacesAvailable, statusOnly.status, statusOnly.timestamp.toInstant()),
-                        tuple(spacesAndStatus.capacityType, spacesAndStatus.spacesAvailable, spacesAndStatus.status, spacesAndStatus.timestamp.toInstant() )
+                        tuple(spacesAndStatus.capacityType, spacesAndStatus.spacesAvailable, spacesAndStatus.status, spacesAndStatus.timestamp.toInstant())
                 )
         ;
     }

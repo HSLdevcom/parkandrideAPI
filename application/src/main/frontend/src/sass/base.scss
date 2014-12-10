@@ -50,6 +50,8 @@
 .btn.active {
   background-color: $secondarycolor;
   color: $primarycolor;
+  -webkit-box-shadow: none;
+  box-shadow: none;
 }
 
 .btn-group {
@@ -93,6 +95,36 @@ span.input-group-btn > .btn:hover {
 span.input-group-btn > .btn:active {
   -webkit-box-shadow: none;
   box-shadow: none;
+}
+
+//span buttons for service and alias selections
+span > .btn-xs, .btn-group-xs > .btn {
+  background-color: $secondarycolor;
+  color: $primarycolor;
+}
+
+span > .btn:hover {
+  background-color: $secondarycolor;
+  color: $primarycolor;
+}
+
+span > .btn-default:focus {
+  background-color: $secondarycolor;
+  color: $primarycolor;
+}
+
+span > .btn-default:active {
+  background-color: $secondarycolor;
+  color: $primarycolor;
+}
+
+span > .btn:active {
+   -webkit-box-shadow: none;
+   box-shadow: none;
+}
+
+span > .btn:active:focus {
+  color: $primarycolor;
 }
 
 //form controls

@@ -1,7 +1,7 @@
 (function() {
     var m = angular.module('showErrors', []);
 
-    m.directive('showErrors', function($interpolate) {
+    m.directive('showErrors', function($interpolate, EVENTS) {
         var errorClass = "validation-error";
 
         function linkFn(scope, el, attrs, formCtrl) {
@@ -38,7 +38,7 @@
                 return toggleClasses(invalid);
             });
 
-            scope.$on('show-errors-check-validity', function() {
+            scope.$on(EVENTS.showErrorsCheckValidity, function() {
                 return toggleClasses(formCtrl[elName].$invalid);
             });
 

@@ -10,19 +10,19 @@ import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
 
-import com.google.common.base.Charsets;
 import com.google.common.base.Strings;
 import com.google.common.net.HttpHeaders;
 
 import fi.hsl.parkandride.core.domain.User;
 import fi.hsl.parkandride.core.service.AuthenticationRequiredException;
-import fi.hsl.parkandride.core.service.UserService;
+import fi.hsl.parkandride.core.service.AuthenticationService;
 
 public class UserArgumentResolver implements HandlerMethodArgumentResolver {
 
     private static final String BEARER_PREFIX = "Bearer ";
 
-    @Resource UserService userService;
+    @Resource
+    AuthenticationService authenticationService;
 
     private final Base64.Decoder base64 = Base64.getDecoder();
 
@@ -41,7 +41,7 @@ public class UserArgumentResolver implements HandlerMethodArgumentResolver {
             throw new AuthenticationRequiredException();
         }
         String token = authorization.substring(BEARER_PREFIX.length()).trim();
-        return userService.authenticate(token);
+        return authenticationService.authenticate(token);
     }
 
 }

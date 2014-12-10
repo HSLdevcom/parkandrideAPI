@@ -4,12 +4,16 @@ create table facility (
   name_sv varchar(255) not null,
   name_en varchar(255) not null,
   location geometry not null,
+  operator_id bigint not null,
 
   emergency_contact_id bigint not null,
   operator_contact_id bigint not null,
   service_contact_id bigint,
 
   primary key (id),
+
+  constraint facility_operator_id_fk foreign key (operator_id)
+    references operator (id),
 
   constraint facility_emergency_contact_id_fk foreign key (emergency_contact_id)
     references contact (id),

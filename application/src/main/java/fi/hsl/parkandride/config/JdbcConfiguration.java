@@ -19,6 +19,7 @@ import com.mysema.query.sql.spatial.PostGISTemplates;
 import com.mysema.query.sql.types.EnumByNameType;
 
 import fi.hsl.parkandride.core.domain.CapacityType;
+import fi.hsl.parkandride.core.domain.Role;
 
 @Configuration
 public class JdbcConfiguration {
@@ -83,6 +84,8 @@ public class JdbcConfiguration {
         conf.register("CAPACITY_TYPE", "NAME", new EnumByNameType<>(CapacityType.class));
 
         conf.register("CONTACT", "PHONE", new PhoneType());
+
+        conf.register("APP_USER", "ROLE", new EnumByNameType<Role>(Role.class));
 //        conf.register("FACILITY", "BORDER", H2PolygonType.DEFAULT);
         return conf;
     }

@@ -65,17 +65,6 @@ public class ServiceDao implements ServiceRepository {
         if (search.ids != null && !search.ids.isEmpty()) {
             qry.where(qService.id.in(search.ids));
         }
-        if (search.name != null) {
-            if (!isNullOrEmpty(search.name.fi)) {
-                qry.where(qService.nameFi.startsWith(search.name.fi));
-            }
-            if (!isNullOrEmpty(search.name.sv)) {
-                qry.where(qService.nameSv.startsWith(search.name.sv));
-            }
-            if (!isNullOrEmpty(search.name.en)) {
-                qry.where(qService.nameEn.startsWith(search.name.en));
-            }
-        }
 
         orderBy(search.sort, qry);
         return SearchResults.of(qry.list(serviceMapping), search.limit);

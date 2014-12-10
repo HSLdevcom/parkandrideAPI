@@ -26,7 +26,7 @@ public class Violation {
     public final String message;
 
     public Violation(String type) {
-        this(type, ImmutableMap.of(), null, type);
+        this(type, ImmutableMap.of(), "", type);
     }
 
     public Violation(String type, String path, String message) {

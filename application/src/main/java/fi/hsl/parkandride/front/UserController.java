@@ -11,17 +11,17 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import fi.hsl.parkandride.core.domain.Login;
-import fi.hsl.parkandride.core.service.UserService;
+import fi.hsl.parkandride.core.service.AuthenticationService;
 
 @RestController
 public class UserController {
 
     @Resource
-    UserService userService;
+    AuthenticationService authenticationService;
 
     @RequestMapping(value = LOGIN, method = POST, produces = APPLICATION_JSON_VALUE)
     public Login login(@RequestBody Credentials credentials) {
-        return userService.login(credentials.username, credentials.password);
+        return authenticationService.login(credentials.username, credentials.password);
     }
 
 }

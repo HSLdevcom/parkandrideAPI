@@ -20,7 +20,7 @@ public interface FacilityRepository {
 
     FacilitySummary summarizeFacilities(SpatialSearch search);
 
-    void insertStatuses(List<FacilityStatus> statuses);
+    void insertStatuses(long facilityId, List<FacilityStatus> statuses);
 
     List<FacilityStatus> getStatuses(long facilityId);
 }

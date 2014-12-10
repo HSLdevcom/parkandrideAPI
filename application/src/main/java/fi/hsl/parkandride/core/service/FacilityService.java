@@ -51,7 +51,7 @@ public class FacilityService {
     @TransactionalWrite
     public void createStatuses(long facilityId, List<FacilityStatus> statuses) {
         statuses.forEach((status) -> validationService.validate(status));
-        repository.insertStatuses(statuses);
+        repository.insertStatuses(facilityId, statuses);
     }
 
     @TransactionalRead

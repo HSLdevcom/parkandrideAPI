@@ -27,7 +27,7 @@ public class QFacilityStatusEnum extends RelationalPathSpatial<QFacilityStatusEn
 
     public static final QFacilityStatusEnum facilityStatusEnum = new QFacilityStatusEnum("FACILITY_STATUS_ENUM");
 
-    public final StringPath name = createString("name");
+    public final EnumPath<fi.hsl.parkandride.core.domain.FacilityStatusEnum> name = createEnum("name", fi.hsl.parkandride.core.domain.FacilityStatusEnum.class);
 
     public final com.mysema.query.sql.PrimaryKey<QFacilityStatusEnum> constraintC = createPrimaryKey(name);
 

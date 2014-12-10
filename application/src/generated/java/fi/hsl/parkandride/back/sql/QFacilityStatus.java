@@ -27,15 +27,15 @@ public class QFacilityStatus extends RelationalPathSpatial<QFacilityStatus> {
 
     public static final QFacilityStatus facilityStatus = new QFacilityStatus("FACILITY_STATUS");
 
-    public final StringPath capacityType = createString("capacityType");
+    public final EnumPath<fi.hsl.parkandride.core.domain.CapacityType> capacityType = createEnum("capacityType", fi.hsl.parkandride.core.domain.CapacityType.class);
 
     public final NumberPath<Long> facilityId = createNumber("facilityId", Long.class);
 
     public final NumberPath<Integer> spacesAvailable = createNumber("spacesAvailable", Integer.class);
 
-    public final StringPath status = createString("status");
+    public final EnumPath<fi.hsl.parkandride.core.domain.FacilityStatusEnum> status = createEnum("status", fi.hsl.parkandride.core.domain.FacilityStatusEnum.class);
 
-    public final DateTimePath<java.sql.Timestamp> ts = createDateTime("ts", java.sql.Timestamp.class);
+    public final DateTimePath<org.joda.time.DateTime> ts = createDateTime("ts", org.joda.time.DateTime.class);
 
     public final com.mysema.query.sql.PrimaryKey<QFacilityStatus> constraint5d = createPrimaryKey(capacityType, facilityId, ts);
 

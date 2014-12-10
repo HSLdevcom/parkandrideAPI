@@ -9,7 +9,6 @@ import javax.inject.Inject;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
-import org.joda.time.Instant;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.http.HttpStatus;
@@ -19,6 +18,7 @@ import com.google.common.collect.Lists;
 
 import fi.hsl.parkandride.back.ContactDao;
 import fi.hsl.parkandride.back.FacilityDao;
+import fi.hsl.parkandride.back.sql.QFacilityStatus;
 import fi.hsl.parkandride.core.domain.*;
 import fi.hsl.parkandride.core.service.ValidationException;
 import fi.hsl.parkandride.front.UrlSchema;
@@ -59,6 +59,7 @@ public class FacilityStatusITest extends AbstractIntegrationTest {
     }
 
     private void resetFixture() {
+        testHelper.clear(QFacilityStatus.facilityStatus);
         resetFacilities();
         resetContacts();
     }
@@ -79,7 +80,7 @@ public class FacilityStatusITest extends AbstractIntegrationTest {
         .then()
             .statusCode(HttpStatus.OK.value())
             .body("results[0]." + Key.TIMESTAMP, new ISO8601UTCTimestampMatcher())
-            .body("results[0]." + Key.CAPACITY_TYPE, is(expected.jsonObject.get(Key.CAPACITY_TYPE)))
+            .body("results[0]." + Key.CAPACITY_TYPE, is(expected.jsonObject.get(Key.CAPACITY_TYPE).toString()))
             .body("results[0]." + Key.SPACES_AVAILABLE, is(expected.jsonObject.get(Key.SPACES_AVAILABLE)))
         ;
     }
@@ -122,17 +123,17 @@ public class FacilityStatusITest extends AbstractIntegrationTest {
 
     private void multiCapacityCreate() {
         FacilityStatus spacesOnly = new FacilityStatus();
-        spacesOnly.timestamp = Instant.now();
+        spacesOnly.timestamp = DateTime.now();
         spacesOnly.spacesAvailable = 1;
         spacesOnly.capacityType = CapacityType.CAR;
 
         FacilityStatus statusOnly = new FacilityStatus();
-        statusOnly.timestamp = Instant.now();
+        statusOnly.timestamp = DateTime.now();
         statusOnly.status = FacilityStatusEnum.FULL;
         statusOnly.capacityType = CapacityType.BICYCLE;
 
         FacilityStatus spacesAndStatus = new FacilityStatus();
-        spacesAndStatus.timestamp = Instant.now();
+        spacesAndStatus.timestamp = DateTime.now();
         spacesAndStatus.spacesAvailable = 2;
         spacesAndStatus.status = FacilityStatusEnum.SPACES_AVAILABLE;
         spacesAndStatus.capacityType = CapacityType.PARK_AND_RIDE;
@@ -142,7 +143,6 @@ public class FacilityStatusITest extends AbstractIntegrationTest {
         givenWithContent()
             .body(payload)
         .when()
-            .log().all()
             .put(UrlSchema.FACILITY_STATUS, f.id)
         .then()
             .statusCode(HttpStatus.OK.value())

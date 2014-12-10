@@ -1,12 +1,16 @@
 package fi.hsl.parkandride.itest;
 
 import static com.jayway.restassured.RestAssured.when;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.tuple;
+import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.is;
 
 import java.util.List;
 
 import javax.inject.Inject;
 
+import org.assertj.core.api.Assertions;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.junit.Before;
@@ -15,12 +19,16 @@ import org.springframework.http.HttpStatus;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.google.common.collect.Lists;
+import com.jayway.restassured.path.json.JsonPath;
+import com.jayway.restassured.response.Response;
+import com.jayway.restassured.response.ValidatableResponse;
 
 import fi.hsl.parkandride.back.ContactDao;
 import fi.hsl.parkandride.back.FacilityDao;
 import fi.hsl.parkandride.back.sql.QFacilityStatus;
 import fi.hsl.parkandride.core.domain.*;
 import fi.hsl.parkandride.core.service.ValidationException;
+import fi.hsl.parkandride.front.Results;
 import fi.hsl.parkandride.front.UrlSchema;
 
 public class FacilityStatusITest extends AbstractIntegrationTest {
@@ -122,18 +130,20 @@ public class FacilityStatusITest extends AbstractIntegrationTest {
     }
 
     private void multiCapacityCreate() {
+        DateTime now = DateTime.now();
+
         FacilityStatus spacesOnly = new FacilityStatus();
-        spacesOnly.timestamp = DateTime.now();
+        spacesOnly.timestamp = now;
         spacesOnly.spacesAvailable = 1;
         spacesOnly.capacityType = CapacityType.CAR;
 
         FacilityStatus statusOnly = new FacilityStatus();
-        statusOnly.timestamp = DateTime.now();
+        statusOnly.timestamp = now.minusSeconds(10);
         statusOnly.status = FacilityStatusEnum.FULL;
         statusOnly.capacityType = CapacityType.BICYCLE;
 
         FacilityStatus spacesAndStatus = new FacilityStatus();
-        spacesAndStatus.timestamp = DateTime.now();
+        spacesAndStatus.timestamp = now.minusSeconds(20);
         spacesAndStatus.spacesAvailable = 2;
         spacesAndStatus.status = FacilityStatusEnum.SPACES_AVAILABLE;
         spacesAndStatus.capacityType = CapacityType.PARK_AND_RIDE;
@@ -146,6 +156,23 @@ public class FacilityStatusITest extends AbstractIntegrationTest {
             .put(UrlSchema.FACILITY_STATUS, f.id)
         .then()
             .statusCode(HttpStatus.OK.value())
+        ;
+
+        StatusResults r =
+            when()
+                .get(UrlSchema.FACILITY_STATUS, f.id)
+            .then()
+                .statusCode(HttpStatus.OK.value())
+                .extract().as(StatusResults.class)
+                ;
+
+        assertThat(r.results)
+                .extracting("capacityType", "spacesAvailable", "status", "timestamp")
+                .contains(
+                        tuple(spacesOnly.capacityType, spacesOnly.spacesAvailable, spacesOnly.status, spacesOnly.timestamp.toInstant()),
+                        tuple(statusOnly.capacityType, statusOnly.spacesAvailable, statusOnly.status, statusOnly.timestamp.toInstant()),
+                        tuple(spacesAndStatus.capacityType, spacesAndStatus.spacesAvailable, spacesAndStatus.status, spacesAndStatus.timestamp.toInstant() )
+                )
         ;
     }
 
@@ -195,5 +222,9 @@ public class FacilityStatusITest extends AbstractIntegrationTest {
                 .put(Key.CAPACITY_TYPE, CapacityType.CAR)
                 .put(Key.SPACES_AVAILABLE, 42)
                 .put(Key.TIMESTAMP, DateTime.now().getMillis());
+    }
+
+    public static class StatusResults {
+        public List<FacilityStatus> results;
     }
 }

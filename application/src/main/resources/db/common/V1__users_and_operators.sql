@@ -13,7 +13,7 @@ create table app_user (
   role varchar(32) not null,
   operator_id bigint,
 
-  secret varchar(128) not null,
+  min_token_timestamp timestamp default current_timestamp,
   password varchar(128),
 
   primary key (id),
@@ -26,4 +26,4 @@ create table app_user (
 
 create sequence user_id_seq increment by 1 start with 1;
 
-insert into app_user (id, username, role, secret, password) values (nextval('user_id_seq'), 'admin', 'ADMIN', '10Nb3d7SZ6S46hIpz_TvTqNZDTA', 'x1X5yoLwDpZ1CG4iUagSgc4OQznA8Z5WAakRfCLmYMGLpBTwhQi+D5UaPDxd9YHP');
+insert into app_user (id, username, role, password) values (nextval('user_id_seq'), 'admin', 'ADMIN', 'x1X5yoLwDpZ1CG4iUagSgc4OQznA8Z5WAakRfCLmYMGLpBTwhQi+D5UaPDxd9YHP');

@@ -50,14 +50,12 @@ public class PWGen {
     @Bean
     public CommandLineRunner runner() {
         return (String... args) -> {
-            String pwd;
-            if (args.length > 0) {
-                pwd = args[0];
+            if (args.length != 0) {
+                String pwd = args[0];
+                System.out.println(format("Password: %s -> %s", pwd, authenticationService.encryptPassword(pwd)));
             } else {
-                pwd = authenticationService.generateRandom(10);
+                throw new RuntimeException("Expected one argument: password to be encrypted.");
             }
-            System.out.println(format("Password: %s -> %s", pwd, authenticationService.encryptPassword(pwd)));
-            System.out.println(format("Secret: %s", authenticationService.newSecret()));
         };
     }
 

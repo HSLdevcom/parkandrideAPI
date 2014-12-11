@@ -4,6 +4,9 @@ import javax.inject.Inject;
 
 import org.jasypt.util.password.PasswordEncryptor;
 import org.jasypt.util.password.StrongPasswordEncryptor;
+import org.joda.time.format.ISOPeriodFormat;
+import org.joda.time.format.PeriodFormatter;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
@@ -22,9 +25,22 @@ public class CoreConfiguration {
 
     @Inject PostgresQueryFactory queryFactory;
 
+    @Value("#{security.token.secret}")
+    private String tokenSecret;
+
+    @Value("#{security.token.expires}")
+    private String tokenExpires;
+
+    private PeriodFormatter periodFormatter = ISOPeriodFormat.standard();
+
     @Bean
     public AuthenticationService userService() {
-        return new AuthenticationService(userRepository(), passwordEncryptor());
+        return new AuthenticationService(
+                userRepository(),
+                passwordEncryptor(),
+                tokenSecret,
+                periodFormatter.parsePeriod(tokenExpires)
+        );
     }
 
     @Bean

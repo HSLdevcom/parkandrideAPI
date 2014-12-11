@@ -42,12 +42,13 @@ public class UserDao implements UserRepository {
 
 
     private static final MappingProjection<UserSecret> userSecretMapping = new MappingProjection<UserSecret>(UserSecret.class,
-            qUser.password, qUser.secret, userMapping) {
+            qUser.password, qUser.minTokenTimestamp, userMapping) {
         @Override
         protected UserSecret map(Tuple row) {
             UserSecret userSecret = new UserSecret();
             userSecret.password = row.get(qUser.password);
-            userSecret.secret = row.get(qUser.secret);
+//            userSecret.minTokenTimestamp = row.get(qUser.minTokenTimestamp);
+//            userSecret.secret = row.get(qUser.secret);
             userSecret.user = row.get(userMapping);
             return userSecret;
         }
@@ -72,7 +73,7 @@ public class UserDao implements UserRepository {
         SQLInsertClause insert = queryFactory.insert(qUser);
         insert.set(qUser.id, userId)
                 .set(qUser.password, userSecret.password)
-                .set(qUser.secret, userSecret.secret)
+//                .set(qUser.secret, userSecret.secret)
 
                 .set(qUser.username, userSecret.user.username.toLowerCase())
                 .set(qUser.role, userSecret.user.role)
@@ -86,7 +87,7 @@ public class UserDao implements UserRepository {
     public void updateSecret(long userId, String secret) {
         if (queryFactory.update(qUser)
                 .where(qUser.id.eq(userId))
-                .set(qUser.secret, secret)
+//                .set(qUser.secret, secret)
                 .execute() != 1) {
             notFound(userId);
         }
@@ -98,7 +99,7 @@ public class UserDao implements UserRepository {
         if (queryFactory.update(qUser)
                 .where(qUser.id.eq(userId))
                 .set(qUser.password, password)
-                .set(qUser.secret, secret)
+//                .set(qUser.secret, secret)
                 .execute() != 1) {
             notFound(userId);
         }

@@ -29,13 +29,13 @@ public class QAppUser extends RelationalPathSpatial<QAppUser> {
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
+    public final DateTimePath<java.sql.Timestamp> minTokenTimestamp = createDateTime("minTokenTimestamp", java.sql.Timestamp.class);
+
     public final NumberPath<Long> operatorId = createNumber("operatorId", Long.class);
 
     public final StringPath password = createString("password");
 
     public final EnumPath<fi.hsl.parkandride.core.domain.Role> role = createEnum("role", fi.hsl.parkandride.core.domain.Role.class);
-
-    public final StringPath secret = createString("secret");
 
     public final StringPath username = createString("username");
 
@@ -65,10 +65,10 @@ public class QAppUser extends RelationalPathSpatial<QAppUser> {
 
     public void addMetadata() {
         addMetadata(id, ColumnMetadata.named("ID").withIndex(1).ofType(Types.BIGINT).withSize(19).notNull());
+        addMetadata(minTokenTimestamp, ColumnMetadata.named("MIN_TOKEN_TIMESTAMP").withIndex(5).ofType(Types.TIMESTAMP).withSize(23).withDigits(10));
         addMetadata(operatorId, ColumnMetadata.named("OPERATOR_ID").withIndex(4).ofType(Types.BIGINT).withSize(19));
         addMetadata(password, ColumnMetadata.named("PASSWORD").withIndex(6).ofType(Types.VARCHAR).withSize(128));
         addMetadata(role, ColumnMetadata.named("ROLE").withIndex(3).ofType(Types.VARCHAR).withSize(32).notNull());
-        addMetadata(secret, ColumnMetadata.named("SECRET").withIndex(5).ofType(Types.VARCHAR).withSize(128).notNull());
         addMetadata(username, ColumnMetadata.named("USERNAME").withIndex(2).ofType(Types.VARCHAR).withSize(255).notNull());
     }
 

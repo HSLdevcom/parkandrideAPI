@@ -1,8 +1,11 @@
 package fi.hsl.parkandride.core.service;
 
+import static com.google.common.base.Strings.isNullOrEmpty;
 import static fi.hsl.parkandride.core.domain.Role.ADMIN;
 import static fi.hsl.parkandride.core.domain.Role.OPERATOR;
 import static fi.hsl.parkandride.core.domain.Role.OPERATOR_API;
+
+import com.google.common.base.Strings;
 
 import fi.hsl.parkandride.core.back.UserRepository;
 import fi.hsl.parkandride.core.domain.*;
@@ -15,10 +18,13 @@ public class UserService {
 
     private final UserRepository userRepository;
 
-    public UserService(UserRepository userRepository, AuthService authService, AuthenticationService authenticationService) {
+    private final ValidationService validationService;
+
+    public UserService(UserRepository userRepository, AuthService authService, AuthenticationService authenticationService, ValidationService validationService) {
         this.userRepository = userRepository;
         this.authService = authService;
         this.authenticationService = authenticationService;
+        this.validationService = validationService;
     }
 
     public SearchResults<User> findUsers(UserSearch search, User currentUser) {
@@ -38,16 +44,34 @@ public class UserService {
         if (currentUser.role != ADMIN) {
             newUser.operatorId = currentUser.operatorId;
             if (!isOperatorRole(newUser.role)) {
-                throw new ValidationException(new Violation("IllegalRole", "role", "Illegal operator role: " + newUser.role));
+                throw new ValidationException(new Violation("IllegalRole", "role", "Expected an operator role, got " + newUser.role));
             }
         }
+        validationService.validate(newUser);
 
         UserSecret userSecret = new UserSecret();
-        userSecret.password = authenticationService.encryptPassword(newUser.password);
+        if (!newUser.role.perpetualToken) {
+            validatePassword(newUser.password);
+            userSecret.password = authenticationService.encryptPassword(newUser.password);
+        }
         userSecret.secret = authenticationService.newSecret();
         userSecret.user = newUser;
         userSecret.user.id = userRepository.insertUser(userSecret);
         return userSecret.user;
+    }
+
+    private void validatePassword(String password) {
+        if (!isValidPassword(password)) {
+            throw new ValidationException(new Violation("BadPassword", "password", "Expected a password of length >= 8"));
+        }
+    }
+
+    private boolean isValidPassword(String password) {
+        if (password == null) {
+            return false;
+        }
+
+        return true;
     }
 
     private boolean isOperatorRole(Role role) {

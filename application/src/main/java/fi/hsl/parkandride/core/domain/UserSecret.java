@@ -1,5 +1,7 @@
 package fi.hsl.parkandride.core.domain;
 
+import javax.validation.Valid;
+
 import org.hibernate.validator.constraints.NotBlank;
 
 public class UserSecret {
@@ -9,6 +11,7 @@ public class UserSecret {
     @NotBlank
     public String secret;
 
+    @Valid
     public User user;
 
     public UserSecret() {}

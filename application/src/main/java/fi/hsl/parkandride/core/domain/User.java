@@ -2,15 +2,19 @@ package fi.hsl.parkandride.core.domain;
 
 import javax.validation.constraints.NotNull;
 
+import org.hibernate.validator.constraints.NotBlank;
+
 public class User {
 
     public Long id;
 
+    @NotBlank
     public String username;
 
     @NotNull
     public Role role;
 
+    @NotNull
     public Long operatorId;
 
     public User() {}

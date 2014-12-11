@@ -50,12 +50,13 @@
             }
         });
 
-        $httpProvider.interceptors.push(function($q, $translate, $rootScope, Session, EVENTS) {
+        $httpProvider.interceptors.push(function($q, $translate, $rootScope, Session, $injector, EVENTS) {
             return {
                 responseError: function(rejection) {
                     if (rejection.status == 401) {
-                        $rootScope.$broadcast(EVENTS.loginRequired, "login-required");
-                        return $q.reject(rejection);
+                        return $injector.get('loginPrompt')().then(function() {
+                            return $injector.get('$http')(rejection.config);
+                        });
                     } else if (rejection.status == 400 && rejection.data.violations) {
                         if (!rejection.config.skipDefaultViolationsHandling) {
                             $rootScope.$broadcast(EVENTS.validationErrors, rejection.data.violations);
@@ -86,7 +87,7 @@
         });
     });
 
-    m.controller('AppCtrl', function AppCtrl($scope, $location, loginPrompt, EVENTS) {
+    m.controller('AppCtrl', function AppCtrl($scope, $location, loginPrompt, Session, EVENTS) {
         $scope.common = {};
         $scope.$on(EVENTS.validationErrors, function(event, violations) {
                 $scope.common.violations = _.map(violations, function(violation) {
@@ -107,6 +108,14 @@
 
         this.openLoginPrompt = function() {
             loginPrompt().then(function() {}, function() {});
+        };
+
+        this.logout = function() {
+            Session.remove();
+        };
+
+        this.isUserLoggedIn = function() {
+            return Session.get() != null;
         };
 
         this.validateAndSubmit = function(form, submitFn) {

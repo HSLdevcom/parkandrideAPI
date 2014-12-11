@@ -86,14 +86,10 @@ public class FacilityDaoTest {
 
     private FacilityContacts dummyContacts;
 
-    public static void clearFacilities(TestHelper testHelper) {
-        testHelper.clear(QFacilityService.facilityService, QFacilityAlias.facilityAlias, QCapacity.capacity, QPort.port,
-                QFacility.facility);
-    }
-
     @Before
     public void initialize() {
-        clearFacilities(testHelper);
+        testHelper.resetFacilities();
+        testHelper.resetContacts();
         dummyContacts = new FacilityContacts(createDummyContact(), createDummyContact());
     }
 

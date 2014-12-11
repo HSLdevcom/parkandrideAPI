@@ -1,6 +1,7 @@
 package fi.hsl.parkandride.config;
 
 import java.sql.Connection;
+import java.time.Instant;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
@@ -16,9 +17,11 @@ import org.springframework.transaction.PlatformTransactionManager;
 import com.mysema.query.sql.SQLTemplates;
 import com.mysema.query.sql.postgres.PostgresQueryFactory;
 import com.mysema.query.sql.spatial.PostGISTemplates;
+import com.mysema.query.sql.types.DateTimeType;
 import com.mysema.query.sql.types.EnumByNameType;
 
 import fi.hsl.parkandride.core.domain.CapacityType;
+import fi.hsl.parkandride.core.domain.FacilityStatusEnum;
 
 @Configuration
 public class JdbcConfiguration {
@@ -84,6 +87,12 @@ public class JdbcConfiguration {
 
         conf.register("CONTACT", "PHONE", new PhoneType());
 //        conf.register("FACILITY", "BORDER", H2PolygonType.DEFAULT);
+
+        conf.register("FACILITY_STATUS", "CAPACITY_TYPE", new EnumByNameType<>(CapacityType.class));
+        conf.register("FACILITY_STATUS", "STATUS", new EnumByNameType<>(FacilityStatusEnum.class));
+        conf.register("FACILITY_STATUS_ENUM", "NAME", new EnumByNameType<>(FacilityStatusEnum.class));
+
+        conf.register(new DateTimeType());
         return conf;
     }
 }

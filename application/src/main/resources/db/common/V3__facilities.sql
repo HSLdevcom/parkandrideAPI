@@ -106,3 +106,31 @@ create table facility_service (
     references service (id)
 );
 
+
+create table facility_status_enum (
+  name varchar(64) not null,
+
+  primary key (name)
+);
+
+insert into facility_status_enum values ('FULL');
+insert into facility_status_enum values ('SPACES_AVAILABLE');
+
+create table facility_status (
+  facility_id bigint not null,
+  capacity_type varchar(64) not null,
+  ts timestamp,
+  spaces_available int,
+  status varchar(64),
+
+  primary key (facility_id, capacity_type, ts),
+
+  constraint facility_status_facility_id_fk foreign key (facility_id)
+    references facility (id),
+
+  constraint facility_status_capacity_type_fk foreign key (capacity_type)
+    references capacity_type (name),
+
+  constraint facility_status_facility_status_enum_fk foreign key (status)
+    references facility_status_enum (name)
+);

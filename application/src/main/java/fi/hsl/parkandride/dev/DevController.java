@@ -70,7 +70,7 @@ public class DevController {
     @RequestMapping(method = DELETE, value = DEV_FACILITIES)
     @TransactionalWrite
     public ResponseEntity<Void> deleteFacilities() {
-        clear(QFacilityService.facilityService, QPort.port, QFacilityAlias.facilityAlias, QCapacity.capacity,
+        clear(QFacilityStatus.facilityStatus, QFacilityService.facilityService, QPort.port, QFacilityAlias.facilityAlias, QCapacity.capacity,
                 QFacility.facility);
         resetSequence(FACILITY_ID_SEQ);
         return new ResponseEntity<Void>(OK);

@@ -4,7 +4,6 @@ import static fi.hsl.parkandride.front.UrlSchema.GEOJSON;
 
 import java.util.List;
 
-import org.apache.log4j.MDC;
 import org.geolatte.common.Feature;
 import org.geolatte.common.dataformats.json.jackson.JsonMapper;
 import org.geolatte.geom.Geometry;
@@ -15,11 +14,7 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.web.HttpMessageConverters;
 import org.springframework.boot.autoconfigure.web.WebMvcAutoConfiguration;
 import org.springframework.boot.context.embedded.FilterRegistrationBean;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
-import org.springframework.context.annotation.Profile;
+import org.springframework.context.annotation.*;
 import org.springframework.http.MediaType;
 import org.springframework.web.filter.CharacterEncodingFilter;
 import org.springframework.web.servlet.HandlerExceptionResolver;
@@ -31,6 +26,8 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 import org.springframework.web.servlet.mvc.method.annotation.ExceptionHandlerExceptionResolver;
 
 import com.fasterxml.jackson.databind.Module;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.google.common.base.Preconditions;
 
@@ -140,4 +137,19 @@ public class Application {
         b.setMatchAfter(true);
         return b;
     }
+
+    @Bean
+    @Primary
+    public ObjectMapper jacksonObjectMapper() {
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
+        return objectMapper;
+    }
+
+//    @Bean
+//    public CommonsRequestLoggingFilter commonsRequestLoggingFilter() {
+//        CommonsRequestLoggingFilter f = new CommonsRequestLoggingFilter();
+//        f.setIncludePayload(true);
+//        return f;
+//    }
 }

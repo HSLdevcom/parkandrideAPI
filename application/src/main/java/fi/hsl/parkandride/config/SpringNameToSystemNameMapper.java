@@ -18,7 +18,8 @@ public class SpringNameToSystemNameMapper implements SmartApplicationListener {
 
     @Override
     public int getOrder() {
-        return Ordered.HIGHEST_PRECEDENCE;
+        // load after ConfigFileApplicationListener and before LoggingApplicationListener
+        return Ordered.HIGHEST_PRECEDENCE + 10;
     }
 
     @Override

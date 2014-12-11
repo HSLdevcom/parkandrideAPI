@@ -48,7 +48,7 @@ public class ErrorHandlingITest extends AbstractIntegrationTest {
             .post(UrlSchema.FACILITIES)
         .then()
             .spec(assertResponse(HttpStatus.BAD_REQUEST, HttpMessageNotReadableException.class))
-            .body("violations[0].path", is("capacities.built"))
+            .body("violations[0].path", is("capacities.CAR.built"))
         ;
     }
 

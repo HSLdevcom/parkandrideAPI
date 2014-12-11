@@ -11,10 +11,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.actuate.system.ApplicationPidListener;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.web.HttpMessageConverters;
 import org.springframework.boot.autoconfigure.web.WebMvcAutoConfiguration;
 import org.springframework.boot.context.embedded.FilterRegistrationBean;
+import org.springframework.boot.context.event.ApplicationEnvironmentPreparedEvent;
+import org.springframework.context.ApplicationEvent;
 import org.springframework.context.annotation.*;
+import org.springframework.context.event.SmartApplicationListener;
+import org.springframework.core.Ordered;
+import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.http.MediaType;
 import org.springframework.web.filter.CharacterEncodingFilter;
 import org.springframework.web.servlet.HandlerExceptionResolver;
@@ -31,21 +37,21 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.google.common.base.Preconditions;
 
+import fi.hsl.parkandride.config.SpringNameToSystemNameMapper;
 import fi.hsl.parkandride.core.domain.Phone;
 import fi.hsl.parkandride.front.Features;
 import fi.hsl.parkandride.front.GeojsonDeserializer;
 import fi.hsl.parkandride.front.GeojsonSerializer;
 import fi.hsl.parkandride.front.PhoneSerializer;
 
-@Configuration
-@EnableAutoConfiguration
-@ComponentScan
+@SpringBootApplication
 @Import(Application.UiConfig.class)
 public class Application {
 
     public static void main(String[] args) {
         SpringApplication app = new SpringApplication(Application.class);
         app.addListeners(new ApplicationPidListener());
+        app.addListeners(new SpringNameToSystemNameMapper());
         app.run(args);
     }
 
@@ -137,19 +143,4 @@ public class Application {
         b.setMatchAfter(true);
         return b;
     }
-
-    @Bean
-    @Primary
-    public ObjectMapper jacksonObjectMapper() {
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
-        return objectMapper;
-    }
-
-//    @Bean
-//    public CommonsRequestLoggingFilter commonsRequestLoggingFilter() {
-//        CommonsRequestLoggingFilter f = new CommonsRequestLoggingFilter();
-//        f.setIncludePayload(true);
-//        return f;
-//    }
 }

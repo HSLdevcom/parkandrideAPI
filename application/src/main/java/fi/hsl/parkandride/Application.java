@@ -136,19 +136,4 @@ public class Application {
         b.setMatchAfter(true);
         return b;
     }
-
-    @Bean
-    @Primary
-    public ObjectMapper jacksonObjectMapper() {
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
-        return objectMapper;
-    }
-
-//    @Bean
-//    public CommonsRequestLoggingFilter commonsRequestLoggingFilter() {
-//        CommonsRequestLoggingFilter f = new CommonsRequestLoggingFilter();
-//        f.setIncludePayload(true);
-//        return f;
-//    }
 }

@@ -1,5 +1,9 @@
 package fi.hsl.parkandride.core.service;
 
+import java.util.List;
+
+import com.google.common.collect.Lists;
+
 import fi.hsl.parkandride.core.back.FacilityRepository;
 import fi.hsl.parkandride.core.domain.*;
 
@@ -49,4 +53,14 @@ public class FacilityService {
         return repository.summarizeFacilities(search);
     }
 
+    @TransactionalWrite
+    public void createStatuses(long facilityId, List<FacilityStatus> statuses) {
+        statuses.forEach((status) -> validationService.validate(status));
+        repository.insertStatuses(facilityId, statuses);
+    }
+
+    @TransactionalRead
+    public List<FacilityStatus> getStatuses(long facilityId) {
+        return repository.getStatuses(facilityId);
+    }
 }

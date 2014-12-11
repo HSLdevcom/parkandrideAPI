@@ -50,10 +50,81 @@
 .btn.active {
   background-color: $secondarycolor;
   color: $primarycolor;
+  -webkit-box-shadow: none;
+  box-shadow: none;
 }
 
 .btn-group {
   margin-bottom: 20px;
+}
+
+//facility contact buttons
+div.ui-select-bootstrap > .btn:hover {
+  background-color: #fff;
+  color: $k80;
+  border-color: $lightgray;
+}
+
+div.ui-select-bootstrap > .btn-default:active {
+  background-color: #fff;
+  color: $k80;
+  -webkit-box-shadow: none;
+  box-shadow: none;
+  border-color: $lightgray;
+}
+
+div.ui-select-bootstrap > .btn-default:focus {
+  background-color: #fff;
+  color: $k80;
+}
+
+.btn-default-focus {
+  outline: none;
+}
+
+span.input-group-btn > .btn-default {
+  background-color: $primarycolor;
+  color: #fff;
+}
+
+span.input-group-btn > .btn:hover {
+  background-color: $primarycolor-light;
+  color: #fff;
+}
+
+span.input-group-btn > .btn:active {
+  -webkit-box-shadow: none;
+  box-shadow: none;
+}
+
+//span buttons for service and alias selections
+span > .btn-xs, .btn-group-xs > .btn {
+  background-color: $secondarycolor;
+  color: $primarycolor;
+}
+
+span > .btn:hover {
+  background-color: $secondarycolor;
+  color: $primarycolor;
+}
+
+span > .btn-default:focus {
+  background-color: $secondarycolor;
+  color: $primarycolor;
+}
+
+span > .btn-default:active {
+  background-color: $secondarycolor;
+  color: $primarycolor;
+}
+
+span > .btn:active {
+   -webkit-box-shadow: none;
+   box-shadow: none;
+}
+
+span > .btn:active:focus {
+  color: $primarycolor;
 }
 
 //form controls

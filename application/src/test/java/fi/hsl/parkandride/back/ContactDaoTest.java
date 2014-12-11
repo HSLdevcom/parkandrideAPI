@@ -45,8 +45,8 @@ public class ContactDaoTest {
 
     @Before
     public void cleanup() {
-        FacilityDaoTest.clearFacilities(testHelper);
-        testHelper.clear(QContact.contact);
+        testHelper.resetFacilities();
+        testHelper.resetContacts();
     }
 
     @Test

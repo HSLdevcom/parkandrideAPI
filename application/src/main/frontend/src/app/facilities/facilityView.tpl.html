@@ -40,18 +40,18 @@
 				<capacities-table capacities="viewCtrl.facility.capacities"></capacities-table>
 			</div>
 
-			<div class="row wdServices" ng-show="viewCtrl.hasServices()">
-				<h3>{{"facilities.serviceIds.heading" | translate}}</h3>
-				<div ng-repeat="service in viewCtrl.services" class="wdService">
-					{{service.name.fi}}
-				</div>
-			</div>
-
 			<div class="row contacts">
 				<h3>{{"facilities.contacts.heading" | translate}}</h3>
 				<facility-contact-view contact="viewCtrl.contacts[viewCtrl.facility.contacts.emergency]" contact-type="emergency"></facility-contact-view>
 				<facility-contact-view contact="viewCtrl.contacts[viewCtrl.facility.contacts.operator]" contact-type="operator"></facility-contact-view>
 				<facility-contact-view contact="viewCtrl.contacts[viewCtrl.facility.contacts.service]" contact-type="service"></facility-contact-view>
+			</div>
+
+			<div class="row wdServices" ng-show="viewCtrl.hasServices()">
+				<h3>{{"facilities.serviceIds.heading" | translate}}</h3>
+				<div ng-repeat="service in viewCtrl.services" class="wdService">
+					{{service.name.fi}}
+				</div>
 			</div>
 		</div>
 	</content>

@@ -16,9 +16,11 @@ import org.springframework.transaction.PlatformTransactionManager;
 import com.mysema.query.sql.SQLTemplates;
 import com.mysema.query.sql.postgres.PostgresQueryFactory;
 import com.mysema.query.sql.spatial.PostGISTemplates;
+import com.mysema.query.sql.types.DateTimeType;
 import com.mysema.query.sql.types.EnumByNameType;
 
 import fi.hsl.parkandride.core.domain.CapacityType;
+import fi.hsl.parkandride.core.domain.FacilityStatusEnum;
 import fi.hsl.parkandride.core.domain.Role;
 
 @Configuration
@@ -87,6 +89,12 @@ public class JdbcConfiguration {
 
         conf.register("APP_USER", "ROLE", new EnumByNameType<Role>(Role.class));
 //        conf.register("FACILITY", "BORDER", H2PolygonType.DEFAULT);
+
+        conf.register("FACILITY_STATUS", "CAPACITY_TYPE", new EnumByNameType<>(CapacityType.class));
+        conf.register("FACILITY_STATUS", "STATUS", new EnumByNameType<>(FacilityStatusEnum.class));
+        conf.register("FACILITY_STATUS_ENUM", "NAME", new EnumByNameType<>(FacilityStatusEnum.class));
+
+        conf.register(new DateTimeType());
         return conf;
     }
 }

@@ -49,9 +49,7 @@
 
 			<div class="row wdServices" ng-show="viewCtrl.hasServices()">
 				<h3>{{"facilities.serviceIds.heading" | translate}}</h3>
-				<div ng-repeat="service in viewCtrl.services" class="wdService">
-					{{service.name.fi}}
-				</div>
+				<p class="wdService">{{viewCtrl.getServiceNames() | joinBy: ", "}}</p>
 			</div>
 		</div>
 	</content>

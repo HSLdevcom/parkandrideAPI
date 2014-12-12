@@ -1,4 +1,9 @@
 (function() {
+    var urlPrefix = {
+        api : "api/v1/",
+        devApi : "dev-api/"
+    };
+
     var m = angular.module('parkandride.dev', [
         'ui.router'
     ]);
@@ -18,31 +23,33 @@
     });
 
     m.factory('DevService', function($http, $q) {
-        function reset(endpoint, data) {
-            var url = 'dev-api/' + endpoint;
-            var promise = $http['delete'](url);
+        function insert(endpoint, data) {
             if (data) {
-                return promise.then(function() {
-                    return $http.put(url, data).then(function(response){
-                        return response.data;
-                    });
+                return $http.put(urlPrefix.devApi + endpoint, data).then(function(response){
+                    return response.data;
                 });
             }
-            return promise;
+            var defer = $q.defer();
+            defer.resolve('no data');
+            return defer;
         }
-        
+
+        function remove(endpoint) {
+            return $http['delete'](urlPrefix.devApi + endpoint);
+        }
+
+        function reset(endpoint, data) {
+            return remove(endpoint).then(function(){
+                return insert(endpoint, data);
+            });
+        }
+
         var api = {
-            resetFacilities: function(facilities) {
-                return reset('facilities', facilities);
-            },
-            resetHubs: function(hubs) {
-                return reset('hubs', hubs);
-            },
-            resetContacts: function(contacts) {
-                return reset('contacts', contacts);
-            },
             resetAll: function(facilities, hubs, contacts) {
-                return $q.all([api.resetFacilities(facilities), api.resetContacts(contacts), api.resetHubs(hubs)]);
+                return remove('facilities')
+                    .then(function() { return reset('contacts', contacts); })
+                    .then(function() { return $q.all([ insert('facilities', facilities), reset('hubs', hubs)]);
+                });
             }
         };
         return api;
@@ -56,7 +63,7 @@
         };
         this.saveCurrentState = function() {
             function list(entity) {
-                return $http.get('api/v1/' + entity).then(function(response) {
+                return $http.get(urlPrefix.api + entity).then(function(response) {
                     return response.data.results;
                 });
             }

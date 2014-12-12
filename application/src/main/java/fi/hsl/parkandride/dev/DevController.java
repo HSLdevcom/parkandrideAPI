@@ -67,11 +67,12 @@ public class DevController {
 
     @Resource JdbcTemplate jdbcTemplate;
 
+    @Resource DevHelper devHelper;
+
     @RequestMapping(method = DELETE, value = DEV_FACILITIES)
     @TransactionalWrite
     public ResponseEntity<Void> deleteFacilities() {
-        clear(QFacilityStatus.facilityStatus, QFacilityService.facilityService, QPort.port, QFacilityAlias.facilityAlias, QCapacity.capacity,
-                QFacility.facility);
+        devHelper.resetFacilities();
         resetSequence(FACILITY_ID_SEQ);
         return new ResponseEntity<Void>(OK);
     }
@@ -79,7 +80,7 @@ public class DevController {
     @RequestMapping(method = DELETE, value = DEV_HUBS)
     @TransactionalWrite
     public ResponseEntity<Void> deleteHubs() {
-        clear(QHubFacility.hubFacility, QHub.hub);
+        devHelper.resetHubs();
         resetSequence(HUB_ID_SEQ);
         return new ResponseEntity<Void>(OK);
     }
@@ -87,7 +88,7 @@ public class DevController {
     @RequestMapping(method = DELETE, value = DEV_CONTACTS)
     @TransactionalWrite
     public ResponseEntity<Void> deleteContacts() {
-        clear(QContact.contact);
+        devHelper.resetContacts();
         resetSequence(CONTACT_ID_SEQ);
         return new ResponseEntity<Void>(OK);
     }
@@ -141,12 +142,6 @@ public class DevController {
         }
         resetSequence(CONTACT_ID_SEQ, queryFactory.from(qContact).singleResult(qContact.id.max()));
         return new ResponseEntity<List<Contact>>(results, OK);
-    }
-
-    private void clear(RelationalPath... tables) {
-        for (RelationalPath table : tables) {
-            queryFactory.delete(table).execute();
-        }
     }
 
     private void resetSequence(String sequence) {

@@ -63,7 +63,6 @@ public class DevController {
     @TransactionalWrite
     public ResponseEntity<Void> deleteFacilities() {
         devHelper.resetFacilities();
-        devHelper.resetSequence(FACILITY_ID_SEQ);
         return new ResponseEntity<Void>(OK);
     }
 
@@ -71,7 +70,6 @@ public class DevController {
     @TransactionalWrite
     public ResponseEntity<Void> deleteHubs() {
         devHelper.resetHubs();
-        devHelper.resetSequence(HUB_ID_SEQ);
         return new ResponseEntity<Void>(OK);
     }
 
@@ -79,7 +77,6 @@ public class DevController {
     @TransactionalWrite
     public ResponseEntity<Void> deleteContacts() {
         devHelper.resetContacts();
-        devHelper.resetSequence(CONTACT_ID_SEQ);
         return new ResponseEntity<Void>(OK);
     }
 

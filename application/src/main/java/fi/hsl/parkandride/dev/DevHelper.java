@@ -14,8 +14,6 @@ import org.springframework.stereotype.Component;
 import com.mysema.query.sql.RelationalPath;
 import com.mysema.query.sql.postgres.PostgresQueryFactory;
 
-import fi.hsl.parkandride.back.ContactDao;
-import fi.hsl.parkandride.back.FacilityDao;
 import fi.hsl.parkandride.back.sql.*;
 import fi.hsl.parkandride.core.service.TransactionalWrite;
 
@@ -24,10 +22,6 @@ import fi.hsl.parkandride.core.service.TransactionalWrite;
 public class DevHelper {
     private final PostgresQueryFactory queryFactory;
     private final JdbcTemplate jdbcTemplate;
-
-    private static QFacility qFacility = QFacility.facility;
-    private static QHub qHub = QHub.hub;
-    private static QContact qContact = QContact.contact;
 
     @Inject
     public DevHelper(PostgresQueryFactory queryFactory, JdbcTemplate jdbcTemplate) {
@@ -45,6 +39,7 @@ public class DevHelper {
     @TransactionalWrite
     public void resetContacts() {
         clear(QContact.contact);
+        resetContactSequence();
     }
 
     @TransactionalWrite
@@ -57,31 +52,28 @@ public class DevHelper {
                 QPort.port,
                 QFacility.facility)
         ;
+        resetFacilitySequence();
     }
 
     @TransactionalWrite
     public void resetHubs() {
         clear(QHubFacility.hubFacility, QHub.hub);
+        resetHubSequence();
     }
 
     @TransactionalWrite
     public void resetHubSequence() {
-        resetSequence(HUB_ID_SEQ, queryFactory.from(qHub).singleResult(qHub.id.max()));
+        resetSequence(HUB_ID_SEQ, queryFactory.from(QHub.hub).singleResult(QHub.hub.id.max()));
     }
 
     @TransactionalWrite
     public void resetFacilitySequence() {
-        resetSequence(FACILITY_ID_SEQ, queryFactory.from(qFacility).singleResult(qFacility.id.max()));
+        resetSequence(FACILITY_ID_SEQ, queryFactory.from(QFacility.facility).singleResult(QFacility.facility.id.max()));
     }
 
     @TransactionalWrite
     public void resetContactSequence() {
-        resetSequence(CONTACT_ID_SEQ, queryFactory.from(qContact).singleResult(qContact.id.max()));
-    }
-
-    @TransactionalWrite
-    public void resetSequence(String sequence) {
-        resetSequence(sequence, 0l);
+        resetSequence(CONTACT_ID_SEQ, queryFactory.from(QContact.contact).singleResult(QContact.contact.id.max()));
     }
 
     @TransactionalWrite

@@ -43,7 +43,7 @@ public class FacilityStatusITest extends AbstractIntegrationTest {
 
     @Before
     public void initFixture() {
-        resetFixture();
+        devHelper.resetAll();
 
         Contact c = new Contact();
         c.id = 1L;
@@ -57,11 +57,6 @@ public class FacilityStatusITest extends AbstractIntegrationTest {
 
         contactDao.insertContact(c, c.id);
         facilityDao.insertFacility(f, f.id);
-    }
-
-    private void resetFixture() {
-        devHelper.resetFacilities();
-        devHelper.resetContacts();
     }
 
     @Test

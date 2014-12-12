@@ -20,8 +20,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.google.common.collect.ImmutableSet;
 
-import fi.hsl.parkandride.core.domain.*;
 import fi.hsl.parkandride.core.back.HubRepository;
+import fi.hsl.parkandride.core.domain.*;
 import fi.hsl.parkandride.dev.DevHelper;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -44,7 +44,7 @@ public class HubDaoTest {
 
     @Before
     public void cleanup() {
-        devHelper.resetHubs();
+        devHelper.resetAll();
     }
 
     @Test

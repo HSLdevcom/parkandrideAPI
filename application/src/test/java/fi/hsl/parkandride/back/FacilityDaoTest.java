@@ -84,8 +84,7 @@ public class FacilityDaoTest {
 
     @Before
     public void initialize() {
-        devHelper.resetFacilities();
-        devHelper.resetContacts();
+        devHelper.resetAll();
         dummyContacts = new FacilityContacts(createDummyContact(), createDummyContact());
     }
 

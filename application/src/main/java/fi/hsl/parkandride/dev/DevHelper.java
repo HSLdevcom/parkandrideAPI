@@ -30,6 +30,13 @@ public class DevHelper {
     }
 
     @TransactionalWrite
+    public void resetAll() {
+        resetHubs();
+        resetFacilities();
+        resetContacts();
+    }
+
+    @TransactionalWrite
     public void resetContacts() {
         resetTables(QContact.contact);
         resetContactSequence();

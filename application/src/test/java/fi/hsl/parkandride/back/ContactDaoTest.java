@@ -1,5 +1,9 @@
 package fi.hsl.parkandride.back;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
+import java.util.List;
+
 import javax.inject.Inject;
 
 import org.junit.Before;
@@ -7,10 +11,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-
-import static org.assertj.core.api.Assertions.assertThat;
-
-import java.util.List;
 
 import fi.hsl.parkandride.core.back.ContactRepository;
 import fi.hsl.parkandride.core.domain.Address;
@@ -44,8 +44,7 @@ public class ContactDaoTest {
 
     @Before
     public void cleanup() {
-        devHelper.resetFacilities();
-        devHelper.resetContacts();
+        devHelper.resetAll();
     }
 
     @Test

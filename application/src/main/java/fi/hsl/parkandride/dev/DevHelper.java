@@ -1,15 +1,23 @@
 package fi.hsl.parkandride.dev;
 
+import javax.inject.Inject;
+
+import org.springframework.context.annotation.Profile;
+import org.springframework.stereotype.Component;
+
 import com.mysema.query.sql.RelationalPath;
 import com.mysema.query.sql.postgres.PostgresQueryFactory;
 
 import fi.hsl.parkandride.back.sql.*;
 import fi.hsl.parkandride.core.service.TransactionalWrite;
 
+@Component
+@Profile({"dev_api"})
 public class DevHelper {
 
     private final PostgresQueryFactory queryFactory;
 
+    @Inject
     public DevHelper(PostgresQueryFactory queryFactory) {
         this.queryFactory = queryFactory;
     }

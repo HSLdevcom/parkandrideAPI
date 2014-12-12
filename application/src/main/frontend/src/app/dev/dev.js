@@ -1,8 +1,11 @@
 (function() {
+    var urlPrefix = {
+        api : "api/v1/",
+        devApi : "dev-api/"
+    };
+
     var m = angular.module('parkandride.dev', [
-        'ui.router',
-        'parkandride.FacilityResource',
-        'parkandride.HubResource'
+        'ui.router'
     ]);
 
     m.config(function config($stateProvider) {
@@ -20,61 +23,65 @@
     });
 
     m.factory('DevService', function($http, $q) {
+        function insert(endpoint, data) {
+            if (data) {
+                return $http.put(urlPrefix.devApi + endpoint, data).then(function(response){
+                    return response.data;
+                });
+            }
+            var defer = $q.defer();
+            defer.resolve('no data');
+            return defer;
+        }
+
+        function remove(endpoint) {
+            return $http['delete'](urlPrefix.devApi + endpoint);
+        }
+
+        function reset(endpoint, data) {
+            return remove(endpoint).then(function(){
+                return insert(endpoint, data);
+            });
+        }
+
         var api = {
-            resetFacilities: function(facilities) {
-                var promise = $http['delete']('/dev-api/facilities');
-                if (facilities) {
-                    return promise.then(function() {
-                        return $http.put('/dev-api/facilities', facilities).then(function(response){
-                            return response.data;
-                        });
-                    });
-                } else {
-                    return promise;
-                }
-            },
-            resetHubs: function(hubs) {
-                var promise = $http['delete']('/dev-api/hubs');
-                if (hubs) {
-                    return promise.then(function() {
-                        return $http.put('/dev-api/hubs', hubs).then(function(response){
-                            return response.data;
-                        });
-                    });
-                } else {
-                    return promise;
-                }
-            },
-            resetAll: function(facilities, hubs) {
-                return $q.all([api.resetFacilities(facilities), api.resetHubs(hubs)]);
+            resetAll: function(facilities, hubs, contacts) {
+                return remove('facilities')
+                    .then(function() { return reset('contacts', contacts); })
+                    .then(function() { return $q.all([ insert('facilities', facilities), reset('hubs', hubs)]);
+                });
             }
         };
         return api;
     });
 
-    m.controller('DevCtrl', function(DevService, FacilityResource, HubResource, $q, $scope) {
+    m.controller('DevCtrl', function(DevService, $http, $q, $scope) {
         this.resetAll = function() {
             DevService.resetAll().then(function() {
                 $scope.successMessage = "Reset all OK!";
             });
         };
         this.saveCurrentState = function() {
-            $q.all([FacilityResource.listFacilities(), HubResource.listHubs()]).then(function(allResults) {
+            function list(entity) {
+                return $http.get(urlPrefix.api + entity).then(function(response) {
+                    return response.data.results;
+                });
+            }
+
+            $q.all([list('facilities'), list('hubs'), list('contacts')]).then(function(allResults) {
                 localStorage.setItem("facilities", angular.toJson(allResults[0]));
                 localStorage.setItem("hubs", angular.toJson(allResults[1]));
-                $scope.successMessage = "Current facilities and hubs saved!";
+                localStorage.setItem("contacts", angular.toJson(allResults[2]));
+                $scope.successMessage = "Current state saved!";
             });
         };
         this.revertToSavedState = function() {
-            var facilities = localStorage.getItem('facilities');
-            if (facilities) {
-                facilities = angular.fromJson(facilities);
+            function fromLocalStorage(name) {
+                var stored = localStorage.getItem(name);
+                return stored ? angular.fromJson(stored) : stored;
             }
-            var hubs = localStorage.getItem('hubs');
-            if (hubs) {
-                hubs = angular.fromJson(hubs);
-            }
-            DevService.resetAll(facilities, hubs).then(function() {
+
+            DevService.resetAll(fromLocalStorage('facilities'), fromLocalStorage('hubs'), fromLocalStorage('contacts')).then(function() {
                 $scope.successMessage = "Reset to previous state OK!";
             });
         };

@@ -15,6 +15,7 @@ import org.springframework.test.context.web.WebAppConfiguration;
 
 import fi.hsl.parkandride.ActiveProfileAppender;
 import fi.hsl.parkandride.Application;
+import fi.hsl.parkandride.FeatureProfile;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = Application.class)
@@ -25,7 +26,7 @@ public class ProtractorTest {
 
     public static class ProfileResolver extends ActiveProfileAppender {
         public ProfileResolver() {
-            super("protractor", "dev_api");
+            super(FeatureProfile.PTOR, FeatureProfile.DEV_API);
         }
     }
 

@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 import com.mysema.query.sql.postgres.PostgresQueryFactory;
 
 import fi.hsl.parkandride.config.CoreConfiguration;
+import fi.hsl.parkandride.dev.DevHelper;
 
 @Configuration
 @EnableAutoConfiguration
@@ -22,8 +23,8 @@ public class TestConfiguration {
     PostgresQueryFactory queryFactory;
 
     @Bean
-    public TestHelper testHelper() {
-        return new TestHelper(queryFactory);
+    public DevHelper testHelper() {
+        return new DevHelper(queryFactory);
     }
 
 }

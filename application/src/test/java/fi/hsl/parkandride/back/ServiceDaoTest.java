@@ -2,28 +2,23 @@ package fi.hsl.parkandride.back;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.util.List;
-
 import javax.inject.Inject;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import fi.hsl.parkandride.back.sql.QContact;
-import fi.hsl.parkandride.back.sql.QService;
-import fi.hsl.parkandride.core.back.ContactRepository;
 import fi.hsl.parkandride.core.back.ServiceRepository;
 import fi.hsl.parkandride.core.domain.*;
+import fi.hsl.parkandride.dev.DevHelper;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = TestConfiguration.class)
 public class ServiceDaoTest {
 
     @Inject
-    TestHelper testHelper;
+    DevHelper devHelper;
 
     @Inject
     ServiceRepository serviceDao;

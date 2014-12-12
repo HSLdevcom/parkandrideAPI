@@ -2,7 +2,6 @@ package fi.hsl.parkandride.back;
 
 import javax.inject.Inject;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -13,13 +12,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
 
-import fi.hsl.parkandride.back.sql.QContact;
 import fi.hsl.parkandride.core.back.ContactRepository;
 import fi.hsl.parkandride.core.domain.Address;
 import fi.hsl.parkandride.core.domain.Contact;
 import fi.hsl.parkandride.core.domain.ContactSearch;
 import fi.hsl.parkandride.core.domain.MultilingualString;
 import fi.hsl.parkandride.core.domain.Phone;
+import fi.hsl.parkandride.dev.DevHelper;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = TestConfiguration.class)
@@ -38,15 +37,15 @@ public class ContactDaoTest {
     private static Address ADDRESS = new Address("street", "12345", "city");
 
     @Inject
-    TestHelper testHelper;
+    DevHelper devHelper;
 
     @Inject
     ContactRepository contactDao;
 
     @Before
     public void cleanup() {
-        testHelper.resetFacilities();
-        testHelper.resetContacts();
+        devHelper.resetFacilities();
+        devHelper.resetContacts();
     }
 
     @Test

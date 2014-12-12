@@ -1,4 +1,4 @@
-package fi.hsl.parkandride.back;
+package fi.hsl.parkandride.dev;
 
 import com.mysema.query.sql.RelationalPath;
 import com.mysema.query.sql.postgres.PostgresQueryFactory;
@@ -6,11 +6,11 @@ import com.mysema.query.sql.postgres.PostgresQueryFactory;
 import fi.hsl.parkandride.back.sql.*;
 import fi.hsl.parkandride.core.service.TransactionalWrite;
 
-public class TestHelper {
+public class DevHelper {
 
     private final PostgresQueryFactory queryFactory;
 
-    public TestHelper(PostgresQueryFactory queryFactory) {
+    public DevHelper(PostgresQueryFactory queryFactory) {
         this.queryFactory = queryFactory;
     }
 

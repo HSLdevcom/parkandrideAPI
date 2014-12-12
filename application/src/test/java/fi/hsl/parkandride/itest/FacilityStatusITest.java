@@ -20,7 +20,6 @@ import com.google.common.collect.Lists;
 
 import fi.hsl.parkandride.back.ContactDao;
 import fi.hsl.parkandride.back.FacilityDao;
-import fi.hsl.parkandride.back.sql.QFacilityStatus;
 import fi.hsl.parkandride.core.domain.*;
 import fi.hsl.parkandride.core.service.ValidationException;
 import fi.hsl.parkandride.front.UrlSchema;
@@ -61,8 +60,8 @@ public class FacilityStatusITest extends AbstractIntegrationTest {
     }
 
     private void resetFixture() {
-        testHelper.resetFacilities();
-        testHelper.resetContacts();
+        devHelper.resetFacilities();
+        devHelper.resetContacts();
     }
 
     @Test

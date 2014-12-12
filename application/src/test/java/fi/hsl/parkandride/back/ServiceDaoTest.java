@@ -13,12 +13,7 @@ import fi.hsl.parkandride.core.back.ServiceRepository;
 import fi.hsl.parkandride.core.domain.*;
 import fi.hsl.parkandride.dev.DevHelper;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = TestConfiguration.class)
-public class ServiceDaoTest {
-
-    @Inject
-    DevHelper devHelper;
+public class ServiceDaoTest extends AbstractDaoTest {
 
     @Inject
     ServiceRepository serviceDao;
@@ -45,5 +40,4 @@ public class ServiceDaoTest {
         assertThat(results.get(0).name.en).isEqualTo("Car Wash");
         assertThat(results.get(1).name.en).isEqualTo("Covered");
     }
-
 }

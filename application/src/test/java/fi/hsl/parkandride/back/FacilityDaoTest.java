@@ -33,9 +33,7 @@ import fi.hsl.parkandride.core.domain.*;
 import fi.hsl.parkandride.core.service.ValidationException;
 import fi.hsl.parkandride.dev.DevHelper;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = TestConfiguration.class)
-public class FacilityDaoTest {
+public class FacilityDaoTest extends AbstractDaoTest {
 
     public static final MultilingualString NAME = new MultilingualString("Facility");
 
@@ -72,9 +70,6 @@ public class FacilityDaoTest {
 
 
     @Inject
-    DevHelper devHelper;
-
-    @Inject
     ContactRepository contactDao;
 
     @Inject
@@ -84,7 +79,6 @@ public class FacilityDaoTest {
 
     @Before
     public void initialize() {
-        devHelper.resetAll();
         dummyContacts = new FacilityContacts(createDummyContact(), createDummyContact());
     }
 

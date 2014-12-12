@@ -24,9 +24,7 @@ import fi.hsl.parkandride.core.back.HubRepository;
 import fi.hsl.parkandride.core.domain.*;
 import fi.hsl.parkandride.dev.DevHelper;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = TestConfiguration.class)
-public class HubDaoTest {
+public class HubDaoTest extends AbstractDaoTest {
 
     private static final MultilingualString NAME = new MultilingualString("Malmi");
 
@@ -37,15 +35,7 @@ public class HubDaoTest {
     public static final MultilingualString CITY = new MultilingualString("city");
 
     @Inject
-    DevHelper devHelper;
-
-    @Inject
     HubRepository hubRepository;
-
-    @Before
-    public void cleanup() {
-        devHelper.resetAll();
-    }
 
     @Test
     public void create_read_update() {

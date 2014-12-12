@@ -10,8 +10,10 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import fi.hsl.parkandride.DevApiProfileAppender;
 import fi.hsl.parkandride.core.back.ContactRepository;
 import fi.hsl.parkandride.core.domain.Address;
 import fi.hsl.parkandride.core.domain.Contact;
@@ -20,9 +22,7 @@ import fi.hsl.parkandride.core.domain.MultilingualString;
 import fi.hsl.parkandride.core.domain.Phone;
 import fi.hsl.parkandride.dev.DevHelper;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = TestConfiguration.class)
-public class ContactDaoTest {
+public class ContactDaoTest extends AbstractDaoTest {
 
     private static MultilingualString NAME = new MultilingualString("name");
 
@@ -35,17 +35,8 @@ public class ContactDaoTest {
     private static Phone PHONE = new Phone("09 1234567");
 
     private static Address ADDRESS = new Address("street", "12345", "city");
-
-    @Inject
-    DevHelper devHelper;
-
     @Inject
     ContactRepository contactDao;
-
-    @Before
-    public void cleanup() {
-        devHelper.resetAll();
-    }
 
     @Test
     public void create_read_update() {

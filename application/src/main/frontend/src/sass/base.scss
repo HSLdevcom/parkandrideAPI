@@ -12,7 +12,14 @@
 
 //buttons
 .btn-xs {
+   @include button($radius:15px, $font-size:16px, $height:30px);
+   padding: 1px 10px;
+}
+
+.btn-xs-secondary {
   @include button($radius:15px, $font-size:16px, $height:30px);
+  background-color: $secondarycolor;
+  color: $primarycolor;
   padding: 1px 10px;
 }
 

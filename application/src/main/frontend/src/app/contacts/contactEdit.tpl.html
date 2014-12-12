@@ -41,8 +41,10 @@
 				</div>
 			</div>
 
+			<h4 class="ng-binding">Osoite</h4>
 			<address-edit ng-model="contact.address" path="contacts.address"></address-edit>
 
+			<h4 class="ng-binding">Lisätiedot</h4>
 			<div class="row">
 				<label>{{ "contacts.openingHours.label" | translate }}</label>
 			</div>
@@ -61,7 +63,7 @@
 	<div class="modal-footer">
 		<div class="row">
 			<div class="column">
-				<button id="wdContactCancel" class="btn btn-xs" ng-click="cancel()">{{ "common.action.cancel" | translate }}</button>
+				<button id="wdContactCancel" class="btn btn-xs-secondary" ng-click="cancel()">{{ "common.action.cancel" | translate }}</button>
 				<button id="wdContactOk" class="btn btn-xs" ng-click="ok(editContactForm)">{{ "common.action.ok" | translate }}</button>
 			</div>
 		</div>

@@ -12,7 +12,6 @@ import javax.inject.Inject;
 
 import org.geolatte.geom.Geometry;
 import org.geolatte.geom.Point;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -21,14 +20,11 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.google.common.collect.ImmutableSet;
 
-import fi.hsl.parkandride.core.domain.*;
 import fi.hsl.parkandride.core.back.HubRepository;
-import fi.hsl.parkandride.back.sql.QHub;
-import fi.hsl.parkandride.back.sql.QHubFacility;
+import fi.hsl.parkandride.core.domain.*;
+import fi.hsl.parkandride.dev.DevHelper;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = TestConfiguration.class)
-public class HubDaoTest {
+public class HubDaoTest extends AbstractDaoTest {
 
     private static final MultilingualString NAME = new MultilingualString("Malmi");
 
@@ -39,15 +35,7 @@ public class HubDaoTest {
     public static final MultilingualString CITY = new MultilingualString("city");
 
     @Inject
-    TestHelper testHelper;
-
-    @Inject
     HubRepository hubRepository;
-
-    @Before
-    public void cleanup() {
-        testHelper.resetHubs();
-    }
 
     @Test
     public void create_read_update() {

@@ -20,6 +20,7 @@ import com.mysema.query.sql.spatial.PostGISTemplates;
 import com.mysema.query.sql.types.DateTimeType;
 import com.mysema.query.sql.types.EnumByNameType;
 
+import fi.hsl.parkandride.FeatureProfile;
 import fi.hsl.parkandride.core.domain.CapacityType;
 import fi.hsl.parkandride.core.domain.FacilityStatusEnum;
 
@@ -27,7 +28,7 @@ import fi.hsl.parkandride.core.domain.FacilityStatusEnum;
 public class JdbcConfiguration {
 
     @Configuration
-    @Profile({"!psql"})
+    @Profile({"!" + FeatureProfile.PSQL})
     public static class H2 {
 
         public H2() {
@@ -42,7 +43,7 @@ public class JdbcConfiguration {
     }
 
     @Configuration
-    @Profile("psql")
+    @Profile(FeatureProfile.PSQL)
     public static class Postgresql {
 
         public Postgresql() {

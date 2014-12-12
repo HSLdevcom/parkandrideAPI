@@ -43,7 +43,7 @@ public class FacilityStatusITest extends AbstractIntegrationTest {
 
     @Before
     public void initFixture() {
-        devHelper.resetAll();
+        devHelper.deleteAll();
 
         Contact c = new Contact();
         c.id = 1L;

@@ -31,21 +31,21 @@ public class DevHelper {
     }
 
     @TransactionalWrite
-    public void resetAll() {
-        resetHubs();
-        resetFacilities();
-        resetContacts();
+    public void deleteAll() {
+        deleteHubs();
+        deleteFacilities();
+        deleteContacts();
     }
 
     @TransactionalWrite
-    public void resetContacts() {
-        resetTables(QContact.contact);
+    public void deleteContacts() {
+        delete(QContact.contact);
         resetContactSequence();
     }
 
     @TransactionalWrite
-    public void resetFacilities() {
-        resetTables(
+    public void deleteFacilities() {
+        delete(
                 QFacilityStatus.facilityStatus,
                 QFacilityService.facilityService,
                 QFacilityAlias.facilityAlias,
@@ -57,8 +57,8 @@ public class DevHelper {
     }
 
     @TransactionalWrite
-    public void resetHubs() {
-        resetTables(QHubFacility.hubFacility, QHub.hub);
+    public void deleteHubs() {
+        delete(QHubFacility.hubFacility, QHub.hub);
         resetHubSequence();
     }
 
@@ -77,7 +77,7 @@ public class DevHelper {
         resetSequence(CONTACT_ID_SEQ, queryFactory.from(QContact.contact).singleResult(QContact.contact.id.max()));
     }
 
-    private void resetTables(RelationalPath... tables) {
+    private void delete(RelationalPath... tables) {
         for (RelationalPath table : tables) {
             queryFactory.delete(table).execute();
         }

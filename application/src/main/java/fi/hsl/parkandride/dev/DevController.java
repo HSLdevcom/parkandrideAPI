@@ -1,8 +1,5 @@
 package fi.hsl.parkandride.dev;
 
-import static fi.hsl.parkandride.back.ContactDao.CONTACT_ID_SEQ;
-import static fi.hsl.parkandride.back.FacilityDao.FACILITY_ID_SEQ;
-import static fi.hsl.parkandride.back.HubDao.HUB_ID_SEQ;
 import static fi.hsl.parkandride.front.UrlSchema.DEV_CONTACTS;
 import static fi.hsl.parkandride.front.UrlSchema.DEV_FACILITIES;
 import static fi.hsl.parkandride.front.UrlSchema.DEV_HUBS;
@@ -18,19 +15,14 @@ import javax.annotation.Resource;
 
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.ResponseEntity;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import com.mysema.query.sql.RelationalPath;
-import com.mysema.query.sql.postgres.PostgresQueryFactory;
 
 import fi.hsl.parkandride.FeatureProfile;
 import fi.hsl.parkandride.back.ContactDao;
 import fi.hsl.parkandride.back.FacilityDao;
 import fi.hsl.parkandride.back.HubDao;
-import fi.hsl.parkandride.back.sql.*;
 import fi.hsl.parkandride.core.back.ContactRepository;
 import fi.hsl.parkandride.core.back.FacilityRepository;
 import fi.hsl.parkandride.core.back.HubRepository;
@@ -63,21 +55,21 @@ public class DevController {
     @RequestMapping(method = DELETE, value = DEV_FACILITIES)
     @TransactionalWrite
     public ResponseEntity<Void> deleteFacilities() {
-        devHelper.resetFacilities();
+        devHelper.deleteFacilities();
         return new ResponseEntity<Void>(OK);
     }
 
     @RequestMapping(method = DELETE, value = DEV_HUBS)
     @TransactionalWrite
     public ResponseEntity<Void> deleteHubs() {
-        devHelper.resetHubs();
+        devHelper.deleteHubs();
         return new ResponseEntity<Void>(OK);
     }
 
     @RequestMapping(method = DELETE, value = DEV_CONTACTS)
     @TransactionalWrite
     public ResponseEntity<Void> deleteContacts() {
-        devHelper.resetContacts();
+        devHelper.deleteContacts();
         return new ResponseEntity<Void>(OK);
     }
 

@@ -20,6 +20,6 @@ public abstract class AbstractDaoTest {
 
     @Before
     public void cleanup() {
-        devHelper.resetAll();
+        devHelper.deleteAll();
     }
 }

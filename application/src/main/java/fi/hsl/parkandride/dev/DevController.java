@@ -45,14 +45,6 @@ import fi.hsl.parkandride.core.service.TransactionalWrite;
 @Profile({"dev_api"})
 public class DevController {
 
-    private static QFacility qFacility = QFacility.facility;
-
-    private static QHub qHub = QHub.hub;
-
-    private static QContact qContact = QContact.contact;
-
-    @Resource PostgresQueryFactory queryFactory;
-
     @Resource FacilityService facilityService;
 
     @Resource ContactService contactService;
@@ -65,15 +57,13 @@ public class DevController {
 
     @Resource HubService hubService;
 
-    @Resource JdbcTemplate jdbcTemplate;
-
     @Resource DevHelper devHelper;
 
     @RequestMapping(method = DELETE, value = DEV_FACILITIES)
     @TransactionalWrite
     public ResponseEntity<Void> deleteFacilities() {
         devHelper.resetFacilities();
-        resetSequence(FACILITY_ID_SEQ);
+        devHelper.resetSequence(FACILITY_ID_SEQ);
         return new ResponseEntity<Void>(OK);
     }
 
@@ -81,7 +71,7 @@ public class DevController {
     @TransactionalWrite
     public ResponseEntity<Void> deleteHubs() {
         devHelper.resetHubs();
-        resetSequence(HUB_ID_SEQ);
+        devHelper.resetSequence(HUB_ID_SEQ);
         return new ResponseEntity<Void>(OK);
     }
 
@@ -89,7 +79,7 @@ public class DevController {
     @TransactionalWrite
     public ResponseEntity<Void> deleteContacts() {
         devHelper.resetContacts();
-        resetSequence(CONTACT_ID_SEQ);
+        devHelper.resetSequence(CONTACT_ID_SEQ);
         return new ResponseEntity<Void>(OK);
     }
 
@@ -106,7 +96,7 @@ public class DevController {
                 results.add(facilityService.createFacility(facility));
             }
         }
-        resetSequence(FACILITY_ID_SEQ, queryFactory.from(qFacility).singleResult(qFacility.id.max()));
+        devHelper.resetFacilitySequence();
         return new ResponseEntity<List<Facility>>(results, OK);
     }
 
@@ -123,7 +113,7 @@ public class DevController {
                 results.add(hubService.createHub(hub));
             }
         }
-        resetSequence(HUB_ID_SEQ, queryFactory.from(qHub).singleResult(qHub.id.max()));
+        devHelper.resetHubSequence();
         return new ResponseEntity<List<Hub>>(results, OK);
     }
 
@@ -140,19 +130,7 @@ public class DevController {
                 results.add(contactService.createContact(contact));
             }
         }
-        resetSequence(CONTACT_ID_SEQ, queryFactory.from(qContact).singleResult(qContact.id.max()));
+        devHelper.resetContactSequence();
         return new ResponseEntity<List<Contact>>(results, OK);
     }
-
-    private void resetSequence(String sequence) {
-        resetSequence(sequence, 0l);
-    }
-    private void resetSequence(String sequence, Long currentMax) {
-        if (currentMax == null) {
-            currentMax = 0l;
-        }
-        jdbcTemplate.execute(format("drop sequence %s", sequence));
-        jdbcTemplate.execute(format("create sequence %s increment by 1 start with %s", sequence, currentMax+1));
-    }
-
 }

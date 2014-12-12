@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.mysema.query.sql.RelationalPath;
 import com.mysema.query.sql.postgres.PostgresQueryFactory;
 
+import fi.hsl.parkandride.FeatureProfile;
 import fi.hsl.parkandride.back.ContactDao;
 import fi.hsl.parkandride.back.FacilityDao;
 import fi.hsl.parkandride.back.HubDao;
@@ -42,7 +43,7 @@ import fi.hsl.parkandride.core.service.HubService;
 import fi.hsl.parkandride.core.service.TransactionalWrite;
 
 @RestController
-@Profile({"dev_api"})
+@Profile({ FeatureProfile.DEV_API})
 public class DevController {
 
     @Resource FacilityService facilityService;

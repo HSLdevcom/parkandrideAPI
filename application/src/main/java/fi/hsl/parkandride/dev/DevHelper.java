@@ -14,11 +14,12 @@ import org.springframework.stereotype.Component;
 import com.mysema.query.sql.RelationalPath;
 import com.mysema.query.sql.postgres.PostgresQueryFactory;
 
+import fi.hsl.parkandride.FeatureProfile;
 import fi.hsl.parkandride.back.sql.*;
 import fi.hsl.parkandride.core.service.TransactionalWrite;
 
 @Component
-@Profile({"dev_api"})
+@Profile({ FeatureProfile.DEV_API})
 public class DevHelper {
     private final PostgresQueryFactory queryFactory;
     private final JdbcTemplate jdbcTemplate;

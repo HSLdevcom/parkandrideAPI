@@ -25,11 +25,11 @@
             "label": "Sähköposti"
         },
         "address": {
-        "label": "Osoite"
-          },
-         "additionalInfo": {
-        "label": "Lisätiedot"
-         },
+            "label": "Osoite"
+        },
+        "additionalInfo": {
+            "label": "Lisätiedot"
+        },
         "openingHours": {
             "label": "Asiakaspalvelun aukioloaika",
             "fi": {

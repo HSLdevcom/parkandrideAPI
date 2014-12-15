@@ -22,16 +22,19 @@
                     });
                 };
                 scope.contactLabel = function(contact) {
-                    var label = contact.name.fi + " (";
-                    if (contact.phone) {
-                        label += contact.phone;
-                        if (contact.email) {
-                            label += " / " + contact.email;
+                    if (contact) {
+                        var label = contact.name.fi + " (";
+                        if (contact.phone) {
+                            label += contact.phone;
+                            if (contact.email) {
+                                label += " / " + contact.email;
+                            }
+                        } else {
+                            label += contact.email;
                         }
-                    } else {
-                        label += contact.email;
+                        return label + ")";
                     }
-                    return label + ")";
+                    return "";
                 };
             }
         };

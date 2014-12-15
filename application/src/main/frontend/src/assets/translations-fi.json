@@ -24,6 +24,12 @@
         "email": {
             "label": "Sähköposti"
         },
+        "address": {
+            "label": "Osoite"
+        },
+        "additionalInfo": {
+            "label": "Lisätiedot"
+        },
         "openingHours": {
             "label": "Asiakaspalvelun aukioloaika",
             "fi": {

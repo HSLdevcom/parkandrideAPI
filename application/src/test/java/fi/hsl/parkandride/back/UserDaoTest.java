@@ -1,6 +1,7 @@
 package fi.hsl.parkandride.back;
 
 import static fi.hsl.parkandride.core.domain.Role.ADMIN;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import javax.inject.Inject;
 
@@ -8,13 +9,10 @@ import org.joda.time.DateTime;
 import org.junit.Test;
 
 import fi.hsl.parkandride.core.back.UserRepository;
-import fi.hsl.parkandride.core.domain.Role;
 import fi.hsl.parkandride.core.domain.SearchResults;
 import fi.hsl.parkandride.core.domain.User;
 import fi.hsl.parkandride.core.domain.UserSearch;
 import fi.hsl.parkandride.core.domain.UserSecret;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.joda.time.DateTime.now;
 
 public class UserDaoTest extends AbstractDaoTest {
 

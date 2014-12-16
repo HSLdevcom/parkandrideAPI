@@ -80,7 +80,7 @@ public class AuthenticationService {
         try {
             UserSecret userSecret = userRepository.getUser(username);
             if (userSecret.user.role.perpetualToken) {
-                throw new RuntimeException("Login not allowed for API-user");
+                throw new ValidationException(new Violation("LoginNotAllowed"));
             }
             if (!passwordEncryptor.checkPassword(password, userSecret.password)) {
                 throw new ValidationException(new Violation("BadCredentials"));
@@ -95,6 +95,17 @@ public class AuthenticationService {
         }
     }
 
+    @TransactionalWrite
+    public String resetToken(long userId) {
+        UserSecret userSecret = userRepository.getUser(userId);
+        if (!userSecret.user.role.perpetualToken) {
+            throw new ValidationException(new Violation("PerpetualTokenNotAllowed"));
+        }
+        DateTime now = userRepository.getCurrentTime();
+        userRepository.revokeTokens(userId, now);
+        return token(userSecret.user, now);
+    }
+
     private UserSecret loadUser(long id) {
         try {
             return userRepository.getUser(id);
@@ -104,10 +115,14 @@ public class AuthenticationService {
     }
 
     public String token(User user) {
+        return token(user, now());
+    }
+
+    public String token(User user, DateTime now) {
         StringBuilder token = new StringBuilder()
                 .append(user.role.perpetualToken ? "P" : "T").append(DELIM)
                 .append(user.id).append(DELIM)
-                .append(now().getMillis()).append(DELIM);
+                .append(now.getMillis()).append(DELIM);
 
         token.append(hmac(token.toString()));
 

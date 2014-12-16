@@ -87,12 +87,18 @@ public class UserDao implements UserRepository {
         return userId;
     }
 
+    @TransactionalRead
+    @Override
+    public DateTime getCurrentTime() {
+        return queryFactory.query().singleResult(currentTime);
+    }
+
     @TransactionalWrite
     @Override
-    public void revokeTokens(long userId) {
+    public void revokeTokens(long userId, DateTime asOf) {
         if (queryFactory.update(qUser)
                 .where(qUser.id.eq(userId))
-                .set(qUser.minTokenTimestamp, currentTime)
+                .set(qUser.minTokenTimestamp, asOf)
                 .execute() != 1) {
             notFound(userId);
         }

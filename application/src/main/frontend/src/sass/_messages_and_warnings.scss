@@ -1,10 +1,7 @@
 //angular styles
 
-// TODO make focus style reusable and use it from tags
-.form-control:focus, tags.has-focus .ui-select-multiple {
-  border: 1px solid $secondarycolor;
-  -webkit-box-shadow: none;
-  box-shadow: none;
+.form-control:focus {
+  @include focused-input;
 }
 
 :focus {

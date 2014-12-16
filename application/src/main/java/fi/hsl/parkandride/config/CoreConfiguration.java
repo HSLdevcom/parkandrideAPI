@@ -90,7 +90,7 @@ public class CoreConfiguration {
 
     @Bean
     public OperatorService operatorService() {
-        return new OperatorService(operatorRepository());
+        return new OperatorService(operatorRepository(), validationService(), authService());
     }
 
     @Bean

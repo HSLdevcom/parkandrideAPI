@@ -9,6 +9,8 @@ public interface OperatorRepository {
 
     long insertOperator(Operator operator);
 
+    void updateOperator(long operatorId, Operator operator);
+
     Operator getOperator(long serviceId);
 
     SearchResults<Operator> findOperators(OperatorSearch search);

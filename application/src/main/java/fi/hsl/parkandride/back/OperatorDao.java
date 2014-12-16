@@ -7,6 +7,7 @@ import static fi.hsl.parkandride.core.domain.Sort.Dir.DESC;
 import com.mysema.query.Tuple;
 import com.mysema.query.sql.SQLExpressions;
 import com.mysema.query.sql.dml.SQLInsertClause;
+import com.mysema.query.sql.dml.SQLUpdateClause;
 import com.mysema.query.sql.postgres.PostgresQuery;
 import com.mysema.query.sql.postgres.PostgresQueryFactory;
 import com.mysema.query.types.MappingProjection;
@@ -15,11 +16,7 @@ import com.mysema.query.types.expr.SimpleExpression;
 
 import fi.hsl.parkandride.back.sql.QOperator;
 import fi.hsl.parkandride.core.back.OperatorRepository;
-import fi.hsl.parkandride.core.domain.Operator;
-import fi.hsl.parkandride.core.domain.OperatorSearch;
-import fi.hsl.parkandride.core.domain.SearchResults;
-import fi.hsl.parkandride.core.domain.Sort;
-import fi.hsl.parkandride.core.domain.Violation;
+import fi.hsl.parkandride.core.domain.*;
 import fi.hsl.parkandride.core.service.TransactionalRead;
 import fi.hsl.parkandride.core.service.TransactionalWrite;
 import fi.hsl.parkandride.core.service.ValidationException;
@@ -63,11 +60,27 @@ public class OperatorDao implements OperatorRepository {
     }
 
     @TransactionalWrite
-    public long insertOperator(Operator operator, long id) {
+    public long insertOperator(Operator operator, long operatorId) {
         SQLInsertClause insert = queryFactory.insert(qOperator);
+        insert.set(qOperator.id, operatorId);
         nameMapping.populate(operator.name, insert);
         insert.execute();
-        return id;
+        return operatorId;
+    }
+
+    @TransactionalWrite
+    @Override
+    public void updateOperator(long operatorId, Operator operator) {
+        SQLUpdateClause update = queryFactory.update(qOperator);
+        update.where(qOperator.id.eq(operatorId));
+        nameMapping.populate(operator.name, update);
+        if (update.execute() != 1) {
+            notFound(operatorId);
+        }
+    }
+
+    private void notFound(long operatorId) {
+        throw new NotFoundException("Operator by id '%s'", operatorId);
     }
 
     @Override

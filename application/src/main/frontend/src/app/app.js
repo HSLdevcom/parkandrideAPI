@@ -13,6 +13,7 @@
         'featureToggle',
 
         'parkandride.contacts',
+        'parkandride.operators',
         'parkandride.hubList',
         'parkandride.dev',
         'parkandride.auth'

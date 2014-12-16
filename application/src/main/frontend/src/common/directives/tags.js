@@ -8,6 +8,8 @@
     };
 
     m.directive('tags', function () {
+        var focusClass = "has-focus";
+
         return {
             restrict: 'E',
             require: 'ngModel',
@@ -57,7 +59,11 @@
                         }
                     })
                     .on('blur', function(e) {
+                        element.toggleClass(focusClass, false);
                         addNewTag();
+                    })
+                    .on('focus', function(e){
+                        element.toggleClass(focusClass, true);
                     });
 
                 scope.removeTag = function(tag) {

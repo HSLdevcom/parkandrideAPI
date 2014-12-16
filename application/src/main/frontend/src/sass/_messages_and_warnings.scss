@@ -1,9 +1,14 @@
 //angular styles
 
-.form-control:focus {
+// TODO make focus style reusable and use it from tags
+.form-control:focus, tags.has-focus .ui-select-multiple {
   border: 1px solid $secondarycolor;
   -webkit-box-shadow: none;
   box-shadow: none;
+}
+
+:focus {
+  outline: none;
 }
 
 .ng-pristine .map {
@@ -15,10 +20,6 @@
 .emergencyContact > .validation-error.ng-invalid > button,
 .operatorContact > .validation-error.ng-invalid  > button {
   border: 2px solid $errorcolor;
-}
-
-:focus {
-  outline: none;
 }
 
 .errorRow {

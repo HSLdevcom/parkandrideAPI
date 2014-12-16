@@ -21,7 +21,7 @@
   color: $primarycolor;
 }
 
-@mixin focused-input {
+%focused-input {
   border: 1px solid $secondarycolor;
   -webkit-box-shadow: none;
   box-shadow: none;

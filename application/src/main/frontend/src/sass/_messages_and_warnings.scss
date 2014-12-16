@@ -1,7 +1,7 @@
 //angular styles
 
 .form-control:focus {
-  @include focused-input;
+  @extend %focused-input;
 }
 
 :focus {

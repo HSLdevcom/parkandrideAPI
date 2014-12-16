@@ -94,8 +94,6 @@ public class AuthenticationService {
         }
     }
 
-
-
     private UserSecret loadUser(long id) {
         try {
             return userRepository.getUser(id);
@@ -104,7 +102,7 @@ public class AuthenticationService {
         }
     }
 
-    private String token(Long userId) {
+    public String token(Long userId) {
         StringBuilder token = new StringBuilder();
         token.append(userId).append(DELIM);
         token.append(now().getMillis()).append(DELIM);

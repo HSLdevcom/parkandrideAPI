@@ -6,7 +6,8 @@ module.exports = function () {
     var devApiUrl = browser.baseUrl + '/dev-api',
         facilitiesUrl = devApiUrl + '/facilities',
         hubsUrl = devApiUrl + '/hubs',
-        contactsUrl = devApiUrl + '/contacts';
+        contactsUrl = devApiUrl + '/contacts',
+        loginUrl = devApiUrl + "/login";
     var flow = protractor.promise.controlFlow();
 
     var api = {};
@@ -59,8 +60,26 @@ module.exports = function () {
     api.resetContacts = function(contacts) {
         flow.execute(function() { return asPromise({ method: 'DELETE', url: contactsUrl }); });
         if (contacts) {
-            flow.execute(function(){ return asPromise({ method: 'PUT', url: contactsUrl, json: true, body: asPayload(contacts) }); });
+            flow.execute(function(){return asPromise({ method: 'PUT', url: contactsUrl, json: true, body: asPayload(contacts) })});
         }
+    };
+
+    api.loginAs = function(role, username, password) {
+        var newUser = {
+            username: username || "testuser",
+            password: password || "password",
+            role: role
+        };
+        flow.execute(function() {
+            asPromise({ method: 'POST', url: loginUrl, json: true, body: newUser })
+            .then(function(response) {
+                    var login = response.body;
+                    var script = "sessionStorage.authToken='"+login.token+"';\n" +
+                        "sessionStorage.authUsername='"+login.username+"';\n" +
+                        "sessionStorage.authRole='"+login.role+"';\n";
+                    return browser.driver.executeScript(script);
+            });
+        });
     };
 
     api.resetAll = function(facilities, hubs, contacts) {

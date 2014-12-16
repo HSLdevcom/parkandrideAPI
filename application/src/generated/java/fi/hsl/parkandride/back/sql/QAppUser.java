@@ -29,7 +29,7 @@ public class QAppUser extends RelationalPathSpatial<QAppUser> {
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
-    public final DateTimePath<java.sql.Timestamp> minTokenTimestamp = createDateTime("minTokenTimestamp", java.sql.Timestamp.class);
+    public final DateTimePath<org.joda.time.DateTime> minTokenTimestamp = createDateTime("minTokenTimestamp", org.joda.time.DateTime.class);
 
     public final NumberPath<Long> operatorId = createNumber("operatorId", Long.class);
 

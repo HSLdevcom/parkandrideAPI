@@ -14,7 +14,6 @@ public class User {
     @NotNull
     public Role role;
 
-    @NotNull
     public Long operatorId;
 
     public User() {}

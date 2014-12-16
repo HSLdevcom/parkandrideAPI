@@ -25,22 +25,27 @@ public class CoreConfiguration {
 
     @Inject PostgresQueryFactory queryFactory;
 
-    @Value("#{security.token.secret}")
-    private String tokenSecret;
+    @Value("${security.token.secret}")
+    String tokenSecret;
 
-    @Value("#{security.token.expires}")
-    private String tokenExpires;
+    @Value("${security.token.expires}")
+    String tokenExpires;
 
     private PeriodFormatter periodFormatter = ISOPeriodFormat.standard();
 
     @Bean
-    public AuthenticationService userService() {
+    public AuthenticationService authenticationService() {
         return new AuthenticationService(
                 userRepository(),
                 passwordEncryptor(),
                 tokenSecret,
                 periodFormatter.parsePeriod(tokenExpires)
         );
+    }
+
+    @Bean
+    public UserService userService() {
+        return new UserService(userRepository(), authService(), authenticationService(), validationService());
     }
 
     @Bean

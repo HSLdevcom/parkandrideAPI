@@ -9,11 +9,15 @@ public class AuthService {
         if (currentUser == null) {
             throw new AccessDeniedException();
         }
+        if (requiredRoles.length == 0) {
+            return;
+        }
         for (Role requiredRole : requiredRoles) {
-            if (currentUser.role != requiredRole) {
-                throw new AccessDeniedException();
+            if (currentUser.role == requiredRole) {
+                return;
             }
         }
+        throw new AccessDeniedException();
     }
 
 }

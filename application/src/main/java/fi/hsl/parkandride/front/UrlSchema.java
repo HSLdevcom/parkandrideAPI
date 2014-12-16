@@ -62,6 +62,8 @@ public class UrlSchema {
 
     public static final String DEV_FACILITIES = DEV_API + "/facilities";
 
+    public static final String DEV_LOGIN = DEV_API + "/login";
+
     public static final String DEV_HUBS = DEV_API + "/hubs";
 
 }

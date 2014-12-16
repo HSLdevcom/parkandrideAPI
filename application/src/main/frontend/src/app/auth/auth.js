@@ -56,8 +56,4 @@
         };
     });
 
-//    m.run(function($rootScope, loginPrompt, EVENTS) {
-//        $rootScope.$on(EVENTS.loginRequired, loginPrompt);
-//    });
-
 })();

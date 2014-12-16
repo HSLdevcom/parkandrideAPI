@@ -1,11 +1,14 @@
 package fi.hsl.parkandride.back;
 
+import org.joda.time.DateTime;
+
 import com.mysema.query.Tuple;
 import com.mysema.query.sql.SQLExpressions;
 import com.mysema.query.sql.dml.SQLInsertClause;
 import com.mysema.query.sql.postgres.PostgresQuery;
 import com.mysema.query.sql.postgres.PostgresQueryFactory;
 import com.mysema.query.types.MappingProjection;
+import com.mysema.query.types.expr.DateTimeExpression;
 import com.mysema.query.types.expr.SimpleExpression;
 
 import fi.hsl.parkandride.back.sql.QAppUser;
@@ -21,6 +24,8 @@ import fi.hsl.parkandride.core.service.TransactionalWrite;
 public class UserDao implements UserRepository {
 
     public static final String USER_ID_SEQ = "user_id_seq";
+
+    private static final DateTimeExpression<DateTime> currentTime = DateTimeExpression.currentTimestamp(DateTime.class);
 
     private static final SimpleExpression<Long> nextUserId = SQLExpressions.nextval(USER_ID_SEQ);
 
@@ -47,7 +52,7 @@ public class UserDao implements UserRepository {
         protected UserSecret map(Tuple row) {
             UserSecret userSecret = new UserSecret();
             userSecret.password = row.get(qUser.password);
-//            userSecret.minTokenTimestamp = row.get(qUser.minTokenTimestamp);
+            userSecret.minTokenTimestamp = row.get(qUser.minTokenTimestamp);
 //            userSecret.secret = row.get(qUser.secret);
             userSecret.user = row.get(userMapping);
             return userSecret;
@@ -73,7 +78,7 @@ public class UserDao implements UserRepository {
         SQLInsertClause insert = queryFactory.insert(qUser);
         insert.set(qUser.id, userId)
                 .set(qUser.password, userSecret.password)
-//                .set(qUser.secret, userSecret.secret)
+                .set(qUser.minTokenTimestamp, currentTime)
 
                 .set(qUser.username, userSecret.user.username.toLowerCase())
                 .set(qUser.role, userSecret.user.role)
@@ -84,10 +89,10 @@ public class UserDao implements UserRepository {
 
     @TransactionalWrite
     @Override
-    public void updateSecret(long userId, String secret) {
+    public void revokeTokens(long userId) {
         if (queryFactory.update(qUser)
                 .where(qUser.id.eq(userId))
-//                .set(qUser.secret, secret)
+                .set(qUser.minTokenTimestamp, currentTime)
                 .execute() != 1) {
             notFound(userId);
         }
@@ -95,11 +100,11 @@ public class UserDao implements UserRepository {
 
     @TransactionalWrite
     @Override
-    public void updatePassword(long userId, String password, String secret) {
+    public void updatePassword(long userId, String password) {
         if (queryFactory.update(qUser)
                 .where(qUser.id.eq(userId))
                 .set(qUser.password, password)
-//                .set(qUser.secret, secret)
+                .set(qUser.minTokenTimestamp, currentTime)
                 .execute() != 1) {
             notFound(userId);
         }

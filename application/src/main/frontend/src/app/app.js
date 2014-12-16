@@ -24,8 +24,7 @@
 
     m.value("EVENTS", {
         validationErrors: "validation-errors-updated",
-        showErrorsCheckValidity: "show-errors-check-validity",
-        loginRequired: "login-required"
+        showErrorsCheckValidity: "show-errors-check-validity"
     });
 
     m.config(function myAppConfig($stateProvider, $urlRouterProvider, $httpProvider) {

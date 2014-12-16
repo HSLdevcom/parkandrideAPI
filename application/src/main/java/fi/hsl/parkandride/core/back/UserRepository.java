@@ -9,9 +9,9 @@ public interface UserRepository {
 
     long insertUser(UserSecret userSecret);
 
-    void updateSecret(long userId, String secret);
+    void revokeTokens(long userId);
 
-    void updatePassword(long userId, String password, String secret);
+    void updatePassword(long userId, String password);
 
     void updateUser(long userId, User user);
 

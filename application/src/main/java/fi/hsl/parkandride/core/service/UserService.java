@@ -48,7 +48,11 @@ public class UserService {
             }
         }
         validationService.validate(newUser);
+        return createUserNoValidate(newUser);
+    }
 
+    @TransactionalWrite
+    public User createUserNoValidate(NewUser newUser) {
         UserSecret userSecret = new UserSecret();
         if (!newUser.role.perpetualToken) {
             validatePassword(newUser.password);
@@ -69,7 +73,7 @@ public class UserService {
         if (password == null) {
             return false;
         }
-
+        // TODO
         return true;
     }
 

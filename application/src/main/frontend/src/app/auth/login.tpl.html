@@ -1,10 +1,12 @@
-<div id="contactEditModal">
+<div id="loginModal">
 	<div class="modal-header">
 		<h3 class="modal-title">Kirjaudu sisään</h3>
 	</div>
 	<div class="modal-body">
-		<div class="row" ng-show="loginError">
-			Virheellinen käyttäjätunnus tai salasana. Yritä uudestaan.
+		<div class="row errorRow" ng-show="loginError">
+			<div id="loginError" class="wdViolation">
+				<span class="wdViolationMessage">Virheellinen käyttäjätunnus tai salasana. Yritä uudestaan.</span>
+			</div>
 		</div>
 		<form name="editContactForm" class="form-horizontal" role="form" novalidate>
 			<div class="row">

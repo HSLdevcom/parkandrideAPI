@@ -9,7 +9,7 @@ public class UserSecret {
 
     public String password;
 
-    public DateTime minTokenTimestamp;
+    public DateTime minTokenTimestamp = new DateTime();
 
     @Valid
     public User user;

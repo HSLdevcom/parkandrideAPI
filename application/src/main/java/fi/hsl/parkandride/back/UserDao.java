@@ -25,9 +25,9 @@ public class UserDao implements UserRepository {
 
     public static final String USER_ID_SEQ = "user_id_seq";
 
-    private static final DateTimeExpression<DateTime> currentTime = DateTimeExpression.currentTimestamp(DateTime.class);
-
     private static final SimpleExpression<Long> nextUserId = SQLExpressions.nextval(USER_ID_SEQ);
+
+    private static final DateTimeExpression<DateTime> currentTime = DateTimeExpression.currentTimestamp(DateTime.class);
 
     private static final QAppUser qUser = QAppUser.appUser;
 
@@ -87,12 +87,18 @@ public class UserDao implements UserRepository {
         return userId;
     }
 
+    @TransactionalRead
+    @Override
+    public DateTime getCurrentTime() {
+        return queryFactory.query().singleResult(currentTime);
+    }
+
     @TransactionalWrite
     @Override
-    public void revokeTokens(long userId) {
+    public void revokeTokens(long userId, DateTime asOf) {
         if (queryFactory.update(qUser)
                 .where(qUser.id.eq(userId))
-                .set(qUser.minTokenTimestamp, currentTime)
+                .set(qUser.minTokenTimestamp, asOf)
                 .execute() != 1) {
             notFound(userId);
         }

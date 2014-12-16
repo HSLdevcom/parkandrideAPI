@@ -7,6 +7,8 @@ create table operator (
   primary key (id)
 );
 
+create sequence operator_id_seq increment by 1 start with 1;
+
 create table app_user (
   id bigint not null,
   username varchar(255) not null,

@@ -32,11 +32,12 @@ public class AuthenticationService {
 
     public static final Pattern TOKEN_PATTERN = Pattern.compile(
             "^" + // start
-            "(" + // 1: message for hmac
-            "(\\d+)" + DELIM_REGEX + // 2: userId
-            "(\\d+)" + DELIM_REGEX + // 3: timestamp
-            ")" + // (1: message for hmac)
-            "([A-Za-z0-9\\-_]+)" +   // 4: base64url(hmac)
+            "(?<message>" + // message for hmac
+            "(?<type>[PT])" + DELIM_REGEX + // token type
+            "(?<userId>\\d+)" + DELIM_REGEX + // userId
+            "(?<timestamp>\\d+)" + DELIM_REGEX + // timestamp
+            ")" + // (message for hmac)
+            "(?<hmac>[A-Za-z0-9\\-_]+)" +   // base64url(hmac)
             "$" // end
     );
 
@@ -79,19 +80,30 @@ public class AuthenticationService {
         try {
             UserSecret userSecret = userRepository.getUser(username);
             if (userSecret.user.role.perpetualToken) {
-                throw new RuntimeException("Login not allowed for API-user");
+                throw new ValidationException(new Violation("LoginNotAllowed"));
             }
             if (!passwordEncryptor.checkPassword(password, userSecret.password)) {
                 throw new ValidationException(new Violation("BadCredentials"));
             }
             Login login = new Login();
-            login.token = token(userSecret.user.id);
+            login.token = token(userSecret.user);
             login.username = userSecret.user.username;
             login.role = userSecret.user.role;
             return login;
         } catch (NotFoundException e) {
             throw new ValidationException(new Violation("BadCredentials"));
         }
+    }
+
+    @TransactionalWrite
+    public String resetToken(long userId) {
+        UserSecret userSecret = userRepository.getUser(userId);
+        if (!userSecret.user.role.perpetualToken) {
+            throw new ValidationException(new Violation("PerpetualTokenNotAllowed"));
+        }
+        DateTime now = userRepository.getCurrentTime();
+        userRepository.revokeTokens(userId, now);
+        return token(userSecret.user, now);
     }
 
     private UserSecret loadUser(long id) {
@@ -102,11 +114,18 @@ public class AuthenticationService {
         }
     }
 
-    public String token(Long userId) {
-        StringBuilder token = new StringBuilder();
-        token.append(userId).append(DELIM);
-        token.append(now().getMillis()).append(DELIM);
+    public String token(User user) {
+        return token(user, now());
+    }
+
+    public String token(User user, DateTime now) {
+        StringBuilder token = new StringBuilder()
+                .append(user.role.perpetualToken ? "P" : "T").append(DELIM)
+                .append(user.id).append(DELIM)
+                .append(now.getMillis()).append(DELIM);
+
         token.append(hmac(token.toString()));
+
         return token.toString();
     }
 
@@ -128,14 +147,29 @@ public class AuthenticationService {
         if (!m.matches()) {
             throw new AuthenticationRequiredException();
         }
-        String message = m.group(1);
-        long userId = Long.valueOf(m.group(2));
-        long tokenTimestamp = Long.valueOf(m.group(3));
-        String givenMac = m.group(4);
+        String message = m.group("message");
+        String type = m.group("type");
+        long userId = Long.valueOf(m.group("userId"));
+        long tokenTimestamp = Long.valueOf(m.group("timestamp"));
+        String givenMac = m.group("hmac");
         String expectedMac = hmac(message);
 
         if (!expectedMac.equals(givenMac)) {
             throw new AuthenticationRequiredException();
+        }
+        boolean perpetualToken = false;
+        switch (type) {
+            case "T":
+                // Temporal token expired?
+                DateTime expires = new DateTime(tokenTimestamp).plus(expiresDuration);
+                if (expires.isBeforeNow()) {
+                    throw new AuthenticationRequiredException();
+                }
+                break;
+            case "P":
+                perpetualToken = true;
+                break;
+            default: new AuthenticationRequiredException();
         }
 
         UserSecret userSecret = loadUser(userId);
@@ -145,12 +179,9 @@ public class AuthenticationService {
             throw new AuthenticationRequiredException();
         }
 
-        // Temporal token expired?
-        if (!userSecret.user.role.perpetualToken) {
-            DateTime expires = new DateTime(tokenTimestamp).plus(expiresDuration);
-            if (expires.isBeforeNow()) {
-                throw new AuthenticationRequiredException();
-            }
+        // Token type mismatch
+        if (userSecret.user.role.perpetualToken != perpetualToken) {
+            throw new AuthenticationRequiredException();
         }
 
         return userSecret.user;

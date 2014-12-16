@@ -20,31 +20,36 @@ module.exports = function(spec) {
 
     that.setPhone = function(phone) {
         spec.sendKeys(spec.phone, phone);
-    }
+    };
+
     that.getPhone = function() {
         return spec.getValue(spec.phone);
-    }
+    };
 
     that.setEmail = function(email) {
         spec.sendKeys(spec.email, email);
-    }
+    };
+
     that.getEmail = function() {
         return spec.getValue(spec.email);
-    }
+    };
 
     that.setPostalCode = function(postalCode) {
         spec.sendKeys(spec.postalCode, postalCode);
-    }
+    };
+
     that.getPostalCode = function() {
         return spec.getValue(spec.postalCode);
-    }
+    };
 
     that.save = function() {
         spec.ok.click();
-    }
+        browser.waitForAngular();
+    };
 
     that.cancel = function() {
         spec.cancel.click();
+        browser.waitForAngular();
     };
 
     return that;

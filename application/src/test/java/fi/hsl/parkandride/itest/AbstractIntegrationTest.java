@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.IntegrationTest;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.http.HttpStatus;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
@@ -31,10 +32,12 @@ import com.jayway.restassured.specification.RequestSpecification;
 import com.jayway.restassured.specification.ResponseSpecification;
 
 import fi.hsl.parkandride.Application;
+import fi.hsl.parkandride.DevApiProfileAppender;
 import fi.hsl.parkandride.dev.DevHelper;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = Application.class)
+@ActiveProfiles(resolver = DevApiProfileAppender.class)
 @WebAppConfiguration
 @IntegrationTest("server.port:0")
 public abstract class AbstractIntegrationTest {

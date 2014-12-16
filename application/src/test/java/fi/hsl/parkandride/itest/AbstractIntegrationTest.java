@@ -19,25 +19,19 @@ import org.springframework.http.HttpStatus;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.joda.JodaModule;
 import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
 import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.builder.RequestSpecBuilder;
 import com.jayway.restassured.builder.ResponseSpecBuilder;
-import com.jayway.restassured.config.ObjectMapperConfig;
-import com.jayway.restassured.config.RestAssuredConfig;
-import com.jayway.restassured.mapper.factory.Jackson2ObjectMapperFactory;
 import com.jayway.restassured.specification.RequestSpecification;
 import com.jayway.restassured.specification.ResponseSpecification;
 
 import fi.hsl.parkandride.Application;
-import fi.hsl.parkandride.back.TestHelper;
-import fi.hsl.parkandride.back.sql.*;
+import fi.hsl.parkandride.dev.DevHelper;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = Application.class)
@@ -59,7 +53,7 @@ public abstract class AbstractIntegrationTest {
     }
 
     @Inject
-    protected TestHelper testHelper;
+    protected DevHelper devHelper;
 
     public static String resourceAsString(String resourcePath) {
         try {

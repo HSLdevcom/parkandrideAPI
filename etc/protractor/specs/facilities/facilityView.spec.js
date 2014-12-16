@@ -57,7 +57,7 @@ describe('facility view', function () {
             expect(viewPage.capacitiesTable.getCapacities(_.keys(f.capacities))).toEqual(f.capacities);
 
             expect(viewPage.isServicesDisplayed()).toBe(true);
-            expect(viewPage.getServices()).toEqual(["Katettu", "Valaistus"]);
+            expect(viewPage.getServices()).toEqual(["Katettu, Valaistus"]);
         });
     });
 

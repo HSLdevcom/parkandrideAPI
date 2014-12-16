@@ -7,7 +7,6 @@ import static fi.hsl.parkandride.core.domain.Sort.Dir.ASC;
 import static fi.hsl.parkandride.core.domain.Sort.Dir.DESC;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -28,19 +27,13 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSortedSet;
 
-import fi.hsl.parkandride.back.sql.QCapacity;
-import fi.hsl.parkandride.back.sql.QFacility;
-import fi.hsl.parkandride.back.sql.QFacilityAlias;
-import fi.hsl.parkandride.back.sql.QFacilityService;
-import fi.hsl.parkandride.back.sql.QPort;
 import fi.hsl.parkandride.core.back.ContactRepository;
 import fi.hsl.parkandride.core.back.FacilityRepository;
 import fi.hsl.parkandride.core.domain.*;
 import fi.hsl.parkandride.core.service.ValidationException;
+import fi.hsl.parkandride.dev.DevHelper;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = TestConfiguration.class)
-public class FacilityDaoTest {
+public class FacilityDaoTest extends AbstractDaoTest {
 
     public static final MultilingualString NAME = new MultilingualString("Facility");
 
@@ -76,8 +69,6 @@ public class FacilityDaoTest {
     public static final Set<Long> SERVICES = ImmutableSet.of(1l, 2l, 3l);
 
 
-    @Inject TestHelper testHelper;
-
     @Inject
     ContactRepository contactDao;
 
@@ -88,8 +79,6 @@ public class FacilityDaoTest {
 
     @Before
     public void initialize() {
-        testHelper.resetFacilities();
-        testHelper.resetContacts();
         dummyContacts = new FacilityContacts(createDummyContact(), createDummyContact());
     }
 

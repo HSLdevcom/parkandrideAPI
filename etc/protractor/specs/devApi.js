@@ -38,7 +38,7 @@ module.exports = function () {
 
     api.insertFacilities = function(facilities) {
         flow.execute(function() { return asPromise({ method: 'PUT', url: facilitiesUrl, json: true, body: asPayload(facilities) }); });
-    }
+    };
 
     api.resetFacilities = function(facilities, contacts) {
         api.deleteFacilities();

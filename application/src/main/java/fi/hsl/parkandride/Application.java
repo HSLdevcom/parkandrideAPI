@@ -122,7 +122,7 @@ public class Application {
 
     @Configuration
     @EnableWebMvc
-    @Profile({"dev"})
+    @Profile({FeatureProfile.DEV})
     public static class DevUIConfig extends WebMvcConfigurerAdapter {
         @Override
         public void addResourceHandlers(ResourceHandlerRegistry registry) {

@@ -1,12 +1,7 @@
 package fi.hsl.parkandride.front;
 
-import static java.util.Arrays.asList;
-import static org.assertj.core.util.Strings.isNullOrEmpty;
-
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -15,34 +10,23 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.IntegrationTest;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.ActiveProfilesResolver;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
+import fi.hsl.parkandride.ActiveProfileAppender;
 import fi.hsl.parkandride.Application;
+import fi.hsl.parkandride.FeatureProfile;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = Application.class)
-@ActiveProfiles(resolver = ProtractorTest.TestProfilesResolver.class)
+@ActiveProfiles(resolver = ProtractorTest.ProfileResolver.class)
 @WebAppConfiguration
 @IntegrationTest("server.port:0")
 public class ProtractorTest {
 
-    public static class TestProfilesResolver implements ActiveProfilesResolver {
-        @Override
-        public String[] resolve(Class<?> testClass) {
-            String springProfilesActive = System.getProperty("spring.profiles.active");
-            if (isNullOrEmpty(springProfilesActive)) {
-                springProfilesActive = System.getenv("SPRING_PROFILES_ACTIVE");
-            }
-            List<String> profiles = new ArrayList<>();
-            if (!isNullOrEmpty(springProfilesActive)) {
-                profiles.addAll(asList(springProfilesActive.split(",")));
-            }
-            profiles.add("protractor");
-            profiles.add("dev_api");
-            System.out.println("profiles = " + profiles);
-            return profiles.toArray(new String[profiles.size()]);
+    public static class ProfileResolver extends ActiveProfileAppender {
+        public ProfileResolver() {
+            super(FeatureProfile.PTOR, FeatureProfile.DEV_API);
         }
     }
 

@@ -39,7 +39,7 @@ import fi.hsl.parkandride.config.JdbcConfiguration;
 @org.springframework.context.annotation.Configuration
 @EnableAutoConfiguration
 @Import(JdbcConfiguration.class)
-@Profile("export_qtypes")
+@Profile(FeatureProfile.EXPORT_QTYPES)
 public class ExportQTypes {
 
     public static final String NAME_PREFIX = "Q";

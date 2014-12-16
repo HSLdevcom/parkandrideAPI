@@ -16,14 +16,14 @@ describe('edit facility view', function () {
     var facFull = fixtures.facilitiesFixture.dummies.facFull;
     var facCar = fixtures.facilitiesFixture.dummies.facCar;
 
+    it('should login as admin', function() {
+        devApi.loginAs('ADMIN');
+    });
+
     describe('new facility', function () {
         beforeEach(function () {
             editPage.get();
             devApi.resetAll([], [], [fixtures.facilitiesFixture.contact])
-        });
-
-        it('should login as admin', function() {
-            devApi.loginAs('ADMIN');
         });
 
         it('initially no errors exist', function () {

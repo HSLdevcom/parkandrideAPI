@@ -65,6 +65,7 @@ module.exports = function () {
     };
 
     api.loginAs = function(role, username, password) {
+        browser.get('/');
         var newUser = {
             username: username || "testuser",
             password: password || "password",
@@ -74,7 +75,8 @@ module.exports = function () {
             asPromise({ method: 'POST', url: loginUrl, json: true, body: newUser })
             .then(function(response) {
                     var login = response.body;
-                    var script = "sessionStorage.authToken='"+login.token+"';\n" +
+                    var script =
+                        "sessionStorage.authToken='"+login.token+"';\n" +
                         "sessionStorage.authUsername='"+login.username+"';\n" +
                         "sessionStorage.authRole='"+login.role+"';\n";
                     return browser.driver.executeScript(script);

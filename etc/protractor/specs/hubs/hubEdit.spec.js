@@ -23,11 +23,14 @@ describe('edit hub view', function () {
         arrayAssert.assertInAnyOrder(facilitiesTable.getNames(), expected);
     }
 
+    it('should login as admin', function() {
+        devApi.loginAs('ADMIN');
+    });
+
     describe('new hub', function () {
         beforeEach(function () {
             devApi.resetAll();
             hubEditPage.get();
-            devApi.loginAs('ADMIN');
         });
 
         it('initially no errors exist', function () {
@@ -156,8 +159,6 @@ describe('edit hub view', function () {
                 hub.location.coordinates = facilities[0].coordinatesFromTopLeft({ x: 30, y: 30 });
                 hub.setFacilities(facilities);
                 devApi.resetAll(hub.facilities, [hub], [contact]);
-                hubEditPage.get();
-                devApi.loginAs('ADMIN');
             });
 
             it('facility can be removed from hub', function () {

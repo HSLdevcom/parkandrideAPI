@@ -3,9 +3,11 @@ package fi.hsl.parkandride.core.service;
 import static fi.hsl.parkandride.core.domain.Role.ADMIN;
 import static fi.hsl.parkandride.core.domain.Role.OPERATOR_API;
 import static fi.hsl.parkandride.core.service.AuthenticationService.TOKEN_PATTERN;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.util.regex.Matcher;
-import static org.assertj.core.api.Assertions.assertThat;
 
 import org.jasypt.util.password.PasswordEncryptor;
 import org.joda.time.DateTime;
@@ -20,10 +22,8 @@ import org.mockito.MockitoAnnotations;
 import fi.hsl.parkandride.core.back.UserRepository;
 import fi.hsl.parkandride.core.domain.Login;
 import fi.hsl.parkandride.core.domain.NotFoundException;
-import fi.hsl.parkandride.core.domain.Role;
 import fi.hsl.parkandride.core.domain.User;
 import fi.hsl.parkandride.core.domain.UserSecret;
-import static org.mockito.Mockito.*;
 
 public class AuthenticationServiceTest {
 

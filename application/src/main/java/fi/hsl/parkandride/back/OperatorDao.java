@@ -5,10 +5,13 @@ import static fi.hsl.parkandride.core.domain.Sort.Dir.ASC;
 import static fi.hsl.parkandride.core.domain.Sort.Dir.DESC;
 
 import com.mysema.query.Tuple;
+import com.mysema.query.sql.SQLExpressions;
+import com.mysema.query.sql.dml.SQLInsertClause;
 import com.mysema.query.sql.postgres.PostgresQuery;
 import com.mysema.query.sql.postgres.PostgresQueryFactory;
 import com.mysema.query.types.MappingProjection;
 import com.mysema.query.types.expr.ComparableExpression;
+import com.mysema.query.types.expr.SimpleExpression;
 
 import fi.hsl.parkandride.back.sql.QOperator;
 import fi.hsl.parkandride.core.back.OperatorRepository;
@@ -18,9 +21,14 @@ import fi.hsl.parkandride.core.domain.SearchResults;
 import fi.hsl.parkandride.core.domain.Sort;
 import fi.hsl.parkandride.core.domain.Violation;
 import fi.hsl.parkandride.core.service.TransactionalRead;
+import fi.hsl.parkandride.core.service.TransactionalWrite;
 import fi.hsl.parkandride.core.service.ValidationException;
 
 public class OperatorDao implements OperatorRepository {
+
+    public static final String OPERATOR_ID_SEQ = "user_id_seq";
+
+    private static final SimpleExpression<Long> nextOperatorId = SQLExpressions.nextval(OPERATOR_ID_SEQ);
 
     private static final Sort DEFAULT_SORT = new Sort("name.fi", ASC);
 
@@ -46,6 +54,20 @@ public class OperatorDao implements OperatorRepository {
 
     public OperatorDao(PostgresQueryFactory queryFactory) {
         this.queryFactory = queryFactory;
+    }
+
+    @TransactionalWrite
+    @Override
+    public long insertOperator(Operator operator) {
+        return insertOperator(operator, queryFactory.query().singleResult(nextOperatorId));
+    }
+
+    @TransactionalWrite
+    public long insertOperator(Operator operator, long id) {
+        SQLInsertClause insert = queryFactory.insert(qOperator);
+        nameMapping.populate(operator.name, insert);
+        insert.execute();
+        return id;
     }
 
     @Override

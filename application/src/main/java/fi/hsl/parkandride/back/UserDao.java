@@ -25,9 +25,9 @@ public class UserDao implements UserRepository {
 
     public static final String USER_ID_SEQ = "user_id_seq";
 
-    private static final DateTimeExpression<DateTime> currentTime = DateTimeExpression.currentTimestamp(DateTime.class);
-
     private static final SimpleExpression<Long> nextUserId = SQLExpressions.nextval(USER_ID_SEQ);
+
+    private static final DateTimeExpression<DateTime> currentTime = DateTimeExpression.currentTimestamp(DateTime.class);
 
     private static final QAppUser qUser = QAppUser.appUser;
 

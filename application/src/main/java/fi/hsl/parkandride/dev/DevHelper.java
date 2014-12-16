@@ -3,6 +3,7 @@ package fi.hsl.parkandride.dev;
 import static fi.hsl.parkandride.back.ContactDao.CONTACT_ID_SEQ;
 import static fi.hsl.parkandride.back.FacilityDao.FACILITY_ID_SEQ;
 import static fi.hsl.parkandride.back.HubDao.HUB_ID_SEQ;
+import static fi.hsl.parkandride.back.UserDao.USER_ID_SEQ;
 import static java.lang.String.format;
 
 import javax.inject.Inject;
@@ -15,6 +16,8 @@ import com.mysema.query.sql.RelationalPath;
 import com.mysema.query.sql.postgres.PostgresQueryFactory;
 
 import fi.hsl.parkandride.FeatureProfile;
+import fi.hsl.parkandride.back.OperatorDao;
+import fi.hsl.parkandride.back.UserDao;
 import fi.hsl.parkandride.back.sql.*;
 import fi.hsl.parkandride.core.service.TransactionalWrite;
 
@@ -35,12 +38,25 @@ public class DevHelper {
         deleteHubs();
         deleteFacilities();
         deleteContacts();
+        deleteUsers();
     }
 
     @TransactionalWrite
     public void deleteContacts() {
         delete(QContact.contact);
         resetContactSequence();
+    }
+
+    @TransactionalWrite
+    public void deleteUsers() {
+        delete(QAppUser.appUser);
+        resetUserSequence();
+    }
+
+    @TransactionalWrite
+    public void deleteOperators() {
+        delete(QOperator.operator);
+        resetOperatorSequence();
     }
 
     @TransactionalWrite
@@ -75,6 +91,16 @@ public class DevHelper {
     @TransactionalWrite
     public void resetContactSequence() {
         resetSequence(CONTACT_ID_SEQ, queryFactory.from(QContact.contact).singleResult(QContact.contact.id.max()));
+    }
+
+    @TransactionalWrite
+    public void resetUserSequence() {
+        resetSequence(USER_ID_SEQ, queryFactory.from(QAppUser.appUser).singleResult(QAppUser.appUser.id.max()));
+    }
+
+    @TransactionalWrite
+    public void resetOperatorSequence() {
+        resetSequence(OperatorDao.OPERATOR_ID_SEQ, queryFactory.from(QAppUser.appUser).singleResult(QAppUser.appUser.id.max()));
     }
 
     private void delete(RelationalPath... tables) {

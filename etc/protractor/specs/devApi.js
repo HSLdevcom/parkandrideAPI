@@ -84,6 +84,10 @@ module.exports = function () {
         });
     };
 
+    api.softLogout = function() {
+        browser.driver.executeScript("sessionStorage.clear();");
+    };
+
     api.resetAll = function(facilities, hubs, contacts) {
         // Contacts cannot be deleted if there's facilities refering them
         api.deleteFacilities();

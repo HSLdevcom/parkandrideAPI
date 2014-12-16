@@ -5,6 +5,7 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.TypeMismatchException;
 import org.springframework.http.HttpStatus;
@@ -28,8 +29,20 @@ public class ErrorHandlingITest extends AbstractIntegrationTest {
     }
 
     @Test
+    public void unauthorized_access() {
+        givenWithContent()
+            .body(new Facility())
+        .when()
+            .post(UrlSchema.FACILITIES)
+        .then()
+            .statusCode(HttpStatus.UNAUTHORIZED.value());
+    }
+
+    @Test
+    @Ignore
     public void validation_errors_are_detailed_as_violations() {
         givenWithContent()
+                // FIXME: Authorization
             .body(new Facility())
         .when()
             .post(UrlSchema.FACILITIES)

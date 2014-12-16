@@ -18,8 +18,12 @@ describe('edit facility view', function () {
 
     describe('new facility', function () {
         beforeEach(function () {
-            devApi.resetAll([], [], [fixtures.facilitiesFixture.contact])
             editPage.get();
+            devApi.resetAll([], [], [fixtures.facilitiesFixture.contact])
+        });
+
+        it('should login as admin', function() {
+            devApi.loginAs('ADMIN');
         });
 
         it('initially no errors exist', function () {

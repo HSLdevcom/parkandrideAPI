@@ -10,7 +10,7 @@
     ]);
 
 
-    m.controller("ContactEditCtrl", function ($scope, $modalInstance, ContactResource, contact, create) {
+    m.controller("ContactEditCtrl", function ($scope, $modalInstance, ContactResource, contact, create, EVENTS) {
         $scope.contact = contact;
         $scope.titleKey = 'contacts.action.' + (create ? 'new' : 'edit');
 
@@ -29,7 +29,7 @@
         }
 
         $scope.ok = function (form) {
-            $scope.$broadcast('show-errors-check-validity');
+            $scope.$broadcast(EVENTS.showErrorsCheckValidity);
             if (form.$valid) {
                 saveContact();
             } else {

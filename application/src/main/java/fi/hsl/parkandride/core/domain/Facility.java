@@ -18,6 +18,9 @@ public class Facility {
     @NotNull
     public Geometry location;
 
+//    @NotNull
+//    public Long operatorId;
+
     @ElementNotBlank
     @ElementLength(min=0, max=255)
     public Set<String> aliases = new HashSet<>();
@@ -66,4 +69,9 @@ public class Facility {
     public FacilityContacts getContacts() {
         return contacts;
     }
+
+//    public Long getOperatorId() {
+//        return operatorId;
+//    }
+
 }

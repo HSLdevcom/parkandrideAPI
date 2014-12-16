@@ -39,7 +39,19 @@ public class UrlSchema {
     public static final String SERVICE = SERVICES + "/{" + SERVICE_ID + "}" ;
 
 
+    public static final String OPERATORS = API + "/operators";
+
+    public static final String OPERATOR_ID = "operatorId";
+
+    public static final String OPERATOR = OPERATORS + "/{" + OPERATOR_ID + "}" ;
+
+
     public static final String FEATURES = API + "/features" ;
+
+
+    public static final String INTERNAL = "/internal";
+
+    public static final String LOGIN = INTERNAL + "/login";
 
     /**
      * TESTING
@@ -49,6 +61,8 @@ public class UrlSchema {
     public static final String DEV_CONTACTS = DEV_API + "/contacts";
 
     public static final String DEV_FACILITIES = DEV_API + "/facilities";
+
+    public static final String DEV_LOGIN = DEV_API + "/login";
 
     public static final String DEV_HUBS = DEV_API + "/hubs";
 

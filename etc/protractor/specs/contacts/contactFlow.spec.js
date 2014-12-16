@@ -12,9 +12,10 @@ describe('manage contacts', function () {
     var contactPage = po.contactPage({});
     var editModal = contactPage.editModal;
 
-    it('should reset data', function() {
-        devApi.resetAll();
+    it('should login and reset data', function() {
         contactPage.get();
+        devApi.loginAs('ADMIN');
+        devApi.resetAll();
     });
 
     it('no errors shown initially', function() {

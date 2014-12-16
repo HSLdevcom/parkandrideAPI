@@ -13,20 +13,25 @@ public class FacilityService {
 
     private final ValidationService validationService;
 
-    public FacilityService(FacilityRepository repository, ValidationService validationService) {
+    private final AuthService authService;
+
+    public FacilityService(FacilityRepository repository, ValidationService validationService, AuthService authService) {
         this.repository = repository;
         this.validationService = validationService;
+        this.authService = authService;
     }
 
     @TransactionalWrite
-    public Facility createFacility(Facility facility) {
+    public Facility createFacility(Facility facility, User currentUser) {
+        authService.authorize(currentUser);
         validationService.validate(facility);
         facility.id = repository.insertFacility(facility);
         return facility;
     }
 
     @TransactionalWrite
-    public Facility updateFacility(long facilityId, Facility facility) {
+    public Facility updateFacility(long facilityId, Facility facility, User currentUser) {
+        authService.authorize(currentUser);
         validationService.validate(facility);
         Facility oldFacility = repository.getFacilityForUpdate(facilityId);
         repository.updateFacility(facilityId, facility, oldFacility);

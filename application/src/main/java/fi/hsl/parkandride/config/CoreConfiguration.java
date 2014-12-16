@@ -2,6 +2,11 @@ package fi.hsl.parkandride.config;
 
 import javax.inject.Inject;
 
+import org.jasypt.util.password.PasswordEncryptor;
+import org.jasypt.util.password.StrongPasswordEncryptor;
+import org.joda.time.format.ISOPeriodFormat;
+import org.joda.time.format.PeriodFormatter;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
@@ -9,19 +14,9 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import com.mysema.query.sql.postgres.PostgresQueryFactory;
 
-import fi.hsl.parkandride.back.ContactDao;
-import fi.hsl.parkandride.back.FacilityDao;
-import fi.hsl.parkandride.back.HubDao;
-import fi.hsl.parkandride.back.ServiceDao;
-import fi.hsl.parkandride.core.back.ContactRepository;
-import fi.hsl.parkandride.core.back.FacilityRepository;
-import fi.hsl.parkandride.core.back.HubRepository;
-import fi.hsl.parkandride.core.back.ServiceRepository;
-import fi.hsl.parkandride.core.service.ContactService;
-import fi.hsl.parkandride.core.service.FacilityService;
-import fi.hsl.parkandride.core.service.HubService;
-import fi.hsl.parkandride.core.service.ServiceService;
-import fi.hsl.parkandride.core.service.ValidationService;
+import fi.hsl.parkandride.back.*;
+import fi.hsl.parkandride.core.back.*;
+import fi.hsl.parkandride.core.service.*;
 
 @Configuration
 @Import(JdbcConfiguration.class)
@@ -30,6 +25,44 @@ public class CoreConfiguration {
 
     @Inject PostgresQueryFactory queryFactory;
 
+    @Value("${security.token.secret}")
+    String tokenSecret;
+
+    @Value("${security.token.expires}")
+    String tokenExpires;
+
+    private PeriodFormatter periodFormatter = ISOPeriodFormat.standard();
+
+    @Bean
+    public AuthenticationService authenticationService() {
+        return new AuthenticationService(
+                userRepository(),
+                passwordEncryptor(),
+                tokenSecret,
+                periodFormatter.parsePeriod(tokenExpires)
+        );
+    }
+
+    @Bean
+    public UserService userService() {
+        return new UserService(userRepository(), authService(), authenticationService(), validationService());
+    }
+
+    @Bean
+    public PasswordEncryptor passwordEncryptor() {
+        return new StrongPasswordEncryptor();
+    }
+
+    @Bean
+    public UserRepository userRepository() {
+        return new UserDao(queryFactory);
+    }
+
+    @Bean
+    public AuthService authService() {
+        return new AuthService();
+    }
+
     @Bean
     public ContactRepository contactRepository() {
         return new ContactDao(queryFactory);
@@ -37,7 +70,7 @@ public class CoreConfiguration {
 
     @Bean
     public ContactService contactService() {
-        return new ContactService(contactRepository(), validationService());
+        return new ContactService(contactRepository(), validationService(), authService());
     }
 
     @Bean
@@ -51,13 +84,23 @@ public class CoreConfiguration {
     }
 
     @Bean
+    public OperatorRepository operatorRepository() {
+        return new OperatorDao(queryFactory);
+    }
+
+    @Bean
+    public OperatorService operatorService() {
+        return new OperatorService(operatorRepository());
+    }
+
+    @Bean
     public FacilityRepository facilityRepository() {
         return new FacilityDao(queryFactory);
     }
 
     @Bean
     public FacilityService facilityService () {
-        return new FacilityService(facilityRepository(), validationService());
+        return new FacilityService(facilityRepository(), validationService(), authService());
     }
 
     @Bean
@@ -72,6 +115,6 @@ public class CoreConfiguration {
 
     @Bean
     public HubService hubService() {
-        return new HubService(hubRepository(), validationService());
+        return new HubService(hubRepository(), validationService(), authService());
     }
 }

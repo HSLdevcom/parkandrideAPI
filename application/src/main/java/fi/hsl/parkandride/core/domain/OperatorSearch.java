@@ -2,15 +2,13 @@ package fi.hsl.parkandride.core.domain;
 
 import java.util.Set;
 
-public class ServiceSearch {
+public class OperatorSearch {
 
     public int limit = 100;
 
     public long offset = 0l;
 
     public Sort sort;
-
-    public Set<Long> ids;
 
     public int getLimit() {
         return limit;
@@ -26,14 +24,6 @@ public class ServiceSearch {
 
     public void setOffset(long offset) {
         this.offset = offset;
-    }
-
-    public Set<Long> getIds() {
-        return ids;
-    }
-
-    public void setIds(Set<Long> ids) {
-        this.ids = ids;
     }
 
     public Sort getSort() {

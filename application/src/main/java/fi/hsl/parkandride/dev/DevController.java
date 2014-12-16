@@ -66,7 +66,7 @@ public class DevController {
             userSecret.user = userService.createUserNoValidate(newUser);
         }
         Login login = new Login();
-        login.token = authenticationService.token(userSecret.user.id);
+        login.token = authenticationService.token(userSecret.user);
         login.username = userSecret.user.username;
         login.role = userSecret.user.role;
         return new ResponseEntity<>(login, OK);

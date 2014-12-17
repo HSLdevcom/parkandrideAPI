@@ -271,9 +271,7 @@
                     }
 
                     var extent = ol.extent.extend(portsSource.getExtent(), locationSource.getExtent());
-                    if (!ol.extent.isEmpty(extent)) {
-                        view.fitExtent(extent, map.getSize());
-                    }
+                    view.fitExtent(extent, map.getSize());
                 } else {
                     ctrl.$setValidity("required", false);
                 }

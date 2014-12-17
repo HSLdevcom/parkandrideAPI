@@ -3,6 +3,7 @@ package fi.hsl.parkandride.dev;
 import static fi.hsl.parkandride.back.ContactDao.CONTACT_ID_SEQ;
 import static fi.hsl.parkandride.back.FacilityDao.FACILITY_ID_SEQ;
 import static fi.hsl.parkandride.back.HubDao.HUB_ID_SEQ;
+import static fi.hsl.parkandride.back.OperatorDao.OPERATOR_ID_SEQ;
 import static fi.hsl.parkandride.back.UserDao.USER_ID_SEQ;
 import static java.lang.String.format;
 
@@ -100,7 +101,7 @@ public class DevHelper {
 
     @TransactionalWrite
     public void resetOperatorSequence() {
-        resetSequence(OperatorDao.OPERATOR_ID_SEQ, queryFactory.from(QAppUser.appUser).singleResult(QAppUser.appUser.id.max()));
+        resetSequence(OPERATOR_ID_SEQ, queryFactory.from(QOperator.operator).singleResult(QOperator.operator.id.max()));
     }
 
     private void delete(RelationalPath... tables) {

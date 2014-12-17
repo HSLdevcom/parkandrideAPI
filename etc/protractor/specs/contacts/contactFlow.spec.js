@@ -37,7 +37,7 @@ describe('manage contacts', function () {
     });
 
     it('should create new contact', function() {
-        editModal.isDisplayed();
+        expect(editModal.isDisplayed()).toBe(true);
         editModal.setName("HSL");
         editModal.setPhone("+44 343 222 2222");
         editModal.setEmail("hsl@hsl.fi");
@@ -55,10 +55,11 @@ describe('manage contacts', function () {
 
     it('should require phone or email', function() {
         contactPage.openEditDialog(1);
-        editModal.isDisplayed();
+        expect(editModal.isDisplayed()).toBe(true);
         editModal.setPhone("");
         editModal.setEmail("");
         editModal.save();
+        expect(editModal.isDisplayed()).toBe(true);
         expect(editModal.getViolations()).toEqual([{
             path: "Yhteystieto", message: "anna vähintään puhelinnumero tai sähköposti"
         }]);
@@ -68,15 +69,17 @@ describe('manage contacts', function () {
         editModal.setPhone("(09) 4766 4444");
         expect(editModal.getEmail()).toBe("");
         editModal.save();
+        expect(editModal.isDisplayed()).toBe(false);
         expect(contactPage.getContacts()).toEqual([["HSL", "09 47664444", ""]]);
     });
 
     it('should cancel edits', function() {
         contactPage.openEditDialog(1);
-        editModal.isDisplayed();
+        expect(editModal.isDisplayed()).toBe(true);
         editModal.setPhone("+44 343 222 2222");
         editModal.setEmail("hsl@hsl.fi");
         editModal.cancel();
+        expect(editModal.isDisplayed()).toBe(false);
         expect(contactPage.getContacts()).toEqual([["HSL", "09 47664444", ""]]);
     });
 });

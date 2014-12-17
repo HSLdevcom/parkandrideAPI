@@ -4,6 +4,7 @@ import static fi.hsl.parkandride.front.UrlSchema.DEV_CONTACTS;
 import static fi.hsl.parkandride.front.UrlSchema.DEV_FACILITIES;
 import static fi.hsl.parkandride.front.UrlSchema.DEV_HUBS;
 import static fi.hsl.parkandride.front.UrlSchema.DEV_LOGIN;
+import static fi.hsl.parkandride.front.UrlSchema.DEV_OPERATORS;
 import static java.lang.String.format;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
@@ -21,13 +22,17 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.sun.org.apache.xalan.internal.xsltc.runtime.Operators;
+
 import fi.hsl.parkandride.FeatureProfile;
 import fi.hsl.parkandride.back.ContactDao;
 import fi.hsl.parkandride.back.FacilityDao;
 import fi.hsl.parkandride.back.HubDao;
+import fi.hsl.parkandride.back.OperatorDao;
 import fi.hsl.parkandride.core.back.ContactRepository;
 import fi.hsl.parkandride.core.back.FacilityRepository;
 import fi.hsl.parkandride.core.back.HubRepository;
+import fi.hsl.parkandride.core.back.OperatorRepository;
 import fi.hsl.parkandride.core.back.UserRepository;
 import fi.hsl.parkandride.core.domain.*;
 import fi.hsl.parkandride.core.service.*;
@@ -43,6 +48,8 @@ public class DevController {
     @Resource HubRepository hubRepository;
 
     @Resource ContactRepository contactRepository;
+
+    @Resource OperatorRepository operatorRepository;
 
     @Resource DevHelper devHelper;
 
@@ -76,21 +83,28 @@ public class DevController {
     @TransactionalWrite
     public ResponseEntity<Void> deleteFacilities() {
         devHelper.deleteFacilities();
-        return new ResponseEntity<Void>(OK);
+        return new ResponseEntity<>(OK);
     }
 
     @RequestMapping(method = DELETE, value = DEV_HUBS)
     @TransactionalWrite
     public ResponseEntity<Void> deleteHubs() {
         devHelper.deleteHubs();
-        return new ResponseEntity<Void>(OK);
+        return new ResponseEntity<>(OK);
     }
 
     @RequestMapping(method = DELETE, value = DEV_CONTACTS)
     @TransactionalWrite
     public ResponseEntity<Void> deleteContacts() {
         devHelper.deleteContacts();
-        return new ResponseEntity<Void>(OK);
+        return new ResponseEntity<>(OK);
+    }
+
+    @RequestMapping(method = DELETE, value = DEV_OPERATORS)
+    @TransactionalWrite
+    public ResponseEntity<Void> deleteOperators() {
+        devHelper.deleteOperators();
+        return new ResponseEntity<>(OK);
     }
 
     @RequestMapping(method = PUT, value = DEV_FACILITIES)
@@ -107,7 +121,7 @@ public class DevController {
             results.add(facility);
         }
         devHelper.resetFacilitySequence();
-        return new ResponseEntity<List<Facility>>(results, OK);
+        return new ResponseEntity<>(results, OK);
     }
 
     @RequestMapping(method = PUT, value = DEV_HUBS)
@@ -124,7 +138,7 @@ public class DevController {
             results.add(hub);
         }
         devHelper.resetHubSequence();
-        return new ResponseEntity<List<Hub>>(results, OK);
+        return new ResponseEntity<>(results, OK);
     }
 
     @RequestMapping(method = PUT, value = DEV_CONTACTS)
@@ -141,6 +155,23 @@ public class DevController {
             results.add(contact);
         }
         devHelper.resetContactSequence();
-        return new ResponseEntity<List<Contact>>(results, OK);
+        return new ResponseEntity<>(results, OK);
+    }
+
+    @RequestMapping(method = PUT, value = DEV_OPERATORS)
+    @TransactionalWrite
+    public ResponseEntity<List<Operator>> pushOperators(@RequestBody List<Operator> operators) {
+        OperatorDao operatorDao = (OperatorDao) operatorRepository;
+        List<Operator> results = new ArrayList<>();
+        for (Operator operator : operators) {
+            if (operator.id != null) {
+                operatorDao.insertOperator(operator, operator.id);
+            } else {
+                operator.id = operatorDao.insertOperator(operator);
+            }
+            results.add(operator);
+        }
+        devHelper.resetOperatorSequence();
+        return new ResponseEntity<>(results, OK);
     }
 }

@@ -23,7 +23,7 @@ describe('edit facility view', function () {
     describe('new facility', function () {
         beforeEach(function () {
             editPage.get();
-            devApi.resetAll([], [], [fixtures.facilitiesFixture.contact])
+            devApi.resetAll({ contacts: [fixtures.facilitiesFixture.contact] });
         });
 
         it('initially no errors exist', function () {

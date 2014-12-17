@@ -20,7 +20,7 @@ describe('facility view', function () {
     var f;
 
     function toView(f) {
-        devApi.resetAll([f], [], [fixtures.facilitiesFixture.contact]);
+        devApi.resetAll({ facilities: [f], contacts: [fixtures.facilitiesFixture.contact]});
         viewPage.get(f.id);
         expect(viewPage.isDisplayed()).toBe(true);
         return f;

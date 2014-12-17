@@ -6,6 +6,7 @@ module.exports.devPage = require('./devPage');
 
 module.exports.authModal = require('./auth/authModal');
 
+module.exports.operatorPage = require('./operators/operatorPage');
 module.exports.contactPage = require('./contacts/contactPage');
 
 module.exports.facilityEditPage = require('./facilities/facilityEditPage');

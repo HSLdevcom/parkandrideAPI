@@ -69,6 +69,7 @@ html, body {
       &,
       &:hover,
       &:focus {
+        cursor: pointer;
         border: 0;
         background-color: $secondarycolor;
       }

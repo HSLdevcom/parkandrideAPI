@@ -34,6 +34,10 @@ tags-input.ng-invalid .tags {
   box-shadow: none;
 }
 
+tags.has-focus .ui-select-multiple {
+  @extend %focused-input;
+}
+
 .input {
   border: none;
 }

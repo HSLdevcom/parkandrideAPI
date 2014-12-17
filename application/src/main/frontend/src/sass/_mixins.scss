@@ -20,3 +20,9 @@
   line-height: 1em;
   color: $primarycolor;
 }
+
+%focused-input {
+  border: 1px solid $secondarycolor;
+  -webkit-box-shadow: none;
+  box-shadow: none;
+}

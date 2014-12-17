@@ -79,7 +79,7 @@ describe('facility view', function () {
             };
         f.toPayload = function() { return f; };
         f = toView(f);
-        viewPage.openPortAt(620, 49);
+        viewPage.openPortAt(592, 109);
         expect(portView.isDisplayed()).toBe(true);
         expect(portView.isEntrySelected()).toBe(true);
         expect(portView.isExitSelected()).toBe(true);

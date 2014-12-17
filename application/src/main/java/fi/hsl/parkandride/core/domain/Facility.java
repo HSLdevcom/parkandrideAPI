@@ -18,8 +18,8 @@ public class Facility {
     @NotNull
     public Geometry location;
 
-//    @NotNull
-//    public Long operatorId;
+    @NotNull
+    public Long operatorId;
 
     @ElementNotBlank
     @ElementLength(min=0, max=255)

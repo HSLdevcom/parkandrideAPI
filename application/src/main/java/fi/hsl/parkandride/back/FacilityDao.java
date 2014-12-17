@@ -127,6 +127,7 @@ public class FacilityDao implements FacilityRepository {
             facility.id = id;
             facility.location = row.get(qFacility.location);
             facility.name = nameMapping.map(row);
+            facility.operatorId = row.get(qFacility.operatorId);
             facility.contacts = new FacilityContacts(
                     row.get(qFacility.emergencyContactId),
                     row.get(qFacility.operatorContactId),
@@ -569,6 +570,7 @@ public class FacilityDao implements FacilityRepository {
         store.set(qFacility.nameSv, facility.name.sv);
         store.set(qFacility.nameEn, facility.name.en);
         store.set(qFacility.location, facility.location);
+        store.set(qFacility.operatorId, facility.operatorId);
 
         FacilityContacts contacts = facility.contacts;
         store.set(qFacility.emergencyContactId, contacts.emergency);

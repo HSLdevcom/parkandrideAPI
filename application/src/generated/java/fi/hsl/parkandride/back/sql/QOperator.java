@@ -37,6 +37,8 @@ public class QOperator extends RelationalPathSpatial<QOperator> {
 
     public final com.mysema.query.sql.PrimaryKey<QOperator> constraint1 = createPrimaryKey(id);
 
+    public final com.mysema.query.sql.ForeignKey<QFacility> _facilityOperatorIdFk = createInvForeignKey(id, "OPERATOR_ID");
+
     public final com.mysema.query.sql.ForeignKey<QAppUser> _userOperatorIdFk = createInvForeignKey(id, "OPERATOR_ID");
 
     public QOperator(String variable) {

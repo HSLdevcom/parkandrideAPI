@@ -1,6 +1,11 @@
 (function() {
     var m = angular.module('parkandride.MapService', []);
 
+    var portResolutionThresholds = {
+        hide: 7,
+        dot: 4
+    };
+
     m.value('MapService', {
             facilityStyle: new ol.style.Style({
                 fill: new ol.style.Fill({
@@ -65,10 +70,10 @@
             },
 
             portsStyle: function(feature, resolution) {
-                if (resolution >= 7) {
+                if (resolution >= portResolutionThresholds.hide) {
                     return [];
                 }
-                else if (resolution >= 4) {
+                else if (resolution >= portResolutionThresholds.dot) {
                     return [new ol.style.Style({
                         image: new ol.style.Circle({
                             radius: 5,
@@ -92,6 +97,9 @@
                         })
                     })];
                 }
+            },
+            isPortStyleIcon: function(resolution) {
+                return resolution < portResolutionThresholds.dot;
             },
 
             hubStyle: new ol.style.Style({

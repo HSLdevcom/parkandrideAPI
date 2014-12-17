@@ -60,55 +60,19 @@ html, body {
       background-color: $primarycolor;
       border-radius: $border-radius;
       border: 0;
-      cursor: pointer;
+      &:hover {
+        background-color: $primarycolor;
+        text-decoration: underline;
+      }
     }
-    > a:hover {
-      font-weight: bold;
-      height: $tab-height;
-      color: #fff;
-      background-color: $primarycolor;
-      border-radius: $border-radius;
-      text-decoration: underline;
-      border: 0px;
-      cursor: pointer;
-    }
-    > a:focus {
-      font-weight: bold;
-      height: $tab-height;
-      color: #fff;
-      background-color: $primarycolor;
-      border-radius: $border-radius;
-      border: 0px;
-      outline: none;
-      cursor: pointer;
-    }
-  }
-  > li.active {
-    > a {
-      font-weight: bold;
-      height: $tab-height;
-      border-radius: $border-radius;
-      background-color: $secondarycolor;
-      border: 0;
-      cursor: pointer;
-    }
-    > a:hover {
-      font-weight: bold;
-      height: $tab-height;
-      border-radius: $border-radius;
-      background-color: $secondarycolor;
-      text-decoration: underline;
-      border: 0;
-      cursor: pointer;
-    }
-    > a:focus {
-      font-weight: bold;
-      height: $tab-height;
-      border-radius: $border-radius;
-      background-color: $secondarycolor;
-      border: 0;
-      outline: none;
-      cursor: pointer;
+    &.active > a {
+      &,
+      &:hover,
+      &:focus {
+        cursor: pointer;
+        border: 0;
+        background-color: $secondarycolor;
+      }
     }
   }
 }

@@ -70,10 +70,10 @@
             },
 
             portsStyle: function(feature, resolution) {
-               if (resolution >= portResolutionThresholds.hide) {
+                if (resolution >= portResolutionThresholds.hide) {
                     return [];
-                } else
-                if (resolution >= portResolutionThresholds.dot) {
+                }
+                else if (resolution >= portResolutionThresholds.dot) {
                     return [new ol.style.Style({
                         image: new ol.style.Circle({
                             radius: 5,

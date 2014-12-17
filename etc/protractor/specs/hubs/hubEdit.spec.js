@@ -117,7 +117,7 @@ describe('edit hub view', function () {
 
         describe('with facilities', function() {
             beforeEach(function () {
-                devApi.resetFacilities([facFull, facCar], [contact]);
+                devApi.resetAll({facilities: [facFull, facCar], contacts: [contact]});
                 hubEditPage.get();
             });
 
@@ -158,7 +158,7 @@ describe('edit hub view', function () {
 
                 hub.location.coordinates = facilities[0].coordinatesFromTopLeft({ x: 30, y: 30 });
                 hub.setFacilities(facilities);
-                devApi.resetAll(hub.facilities, [hub], [contact]);
+                devApi.resetAll({facilities: hub.facilities, hubs: [hub], contacts: [contact]});
             });
 
             it('facility can be removed from hub', function () {

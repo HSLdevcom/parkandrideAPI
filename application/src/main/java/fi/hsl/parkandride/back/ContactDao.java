@@ -18,11 +18,7 @@ import com.mysema.query.types.expr.SimpleExpression;
 
 import fi.hsl.parkandride.back.sql.QContact;
 import fi.hsl.parkandride.core.back.ContactRepository;
-import fi.hsl.parkandride.core.domain.Contact;
-import fi.hsl.parkandride.core.domain.ContactSearch;
-import fi.hsl.parkandride.core.domain.SearchResults;
-import fi.hsl.parkandride.core.domain.Sort;
-import fi.hsl.parkandride.core.domain.Violation;
+import fi.hsl.parkandride.core.domain.*;
 import fi.hsl.parkandride.core.service.TransactionalRead;
 import fi.hsl.parkandride.core.service.TransactionalWrite;
 import fi.hsl.parkandride.core.service.ValidationException;
@@ -97,7 +93,13 @@ public class ContactDao implements ContactRepository {
     public void updateContact(long contactId, Contact contact) {
         SQLUpdateClause update = queryFactory.update(qContact).where(qContact.id.eq(contactId));
         populate(contact, update);
-        update.execute();
+        if (update.execute() != 1) {
+            notFound(contactId);
+        }
+    }
+
+    private void notFound(long contactId) {
+        throw new NotFoundException("Contact by id '%s'", contactId);
     }
 
     @Override

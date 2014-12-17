@@ -6,7 +6,7 @@ var po = require('../../pageobjects/pageobjects.js');
 var devApi = require('../devApi')();
 var common = require('../common');
 
-describe('manage contacts', function () {
+describe('authorization', function () {
 
     var authModal = po.authModal();
     var contactPage = po.contactPage({});

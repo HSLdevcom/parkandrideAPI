@@ -30,7 +30,7 @@ describe('hub list', function () {
     describe('navigation', function () {
 
         beforeEach(function () {
-            devApi.resetAll([f], [h], [c]);
+            devApi.resetAll({facilities: [f], hubs: [h], contacts: [c]});
             hubListPage.get();
         });
 
@@ -69,7 +69,7 @@ describe('hub list', function () {
                     hub.setFacilities(_.map(facilitiesFn(), prependHubName));
                 });
 
-                devApi.resetAll(_.union(facilitiesFn(), hubs[0].facilities, hubs[1].facilities), hubs, [c]);
+                devApi.resetAll({facilities: _.union(facilitiesFn(), hubs[0].facilities, hubs[1].facilities), hubs: hubs, contacts: [c]});
                 hubListPage.get();
             });
 

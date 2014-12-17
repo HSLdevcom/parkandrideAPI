@@ -1,4 +1,24 @@
 {
+    "operators": {
+        "title": "Operaattorit",
+        "label": "Operaattori",
+        "action": {
+            "new": "Lisää uusi operaattori",
+            "edit": "Muokkaa operaattoria"
+        },
+        "name": {
+            "label": "Nimi",
+            "fi": {
+                "label": "Nimi (fi)"
+            },
+            "sv": {
+                "label": "Nimi (sv)"
+            },
+            "en": {
+                "label": "Nimi (en)"
+            }
+        }
+    },
     "contacts": {
         "title": "Yhteystiedot",
         "label": "Yhteystieto",

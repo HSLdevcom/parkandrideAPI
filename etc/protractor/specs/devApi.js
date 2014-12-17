@@ -7,6 +7,7 @@ module.exports = function () {
         facilitiesUrl = devApiUrl + '/facilities',
         hubsUrl = devApiUrl + '/hubs',
         contactsUrl = devApiUrl + '/contacts',
+        operatorsUrl = devApiUrl + '/operators',
         loginUrl = devApiUrl + "/login";
     var flow = protractor.promise.controlFlow();
 
@@ -40,27 +41,32 @@ module.exports = function () {
         flow.execute(function() { return asPromise({ method: 'PUT', url: facilitiesUrl, json: true, body: asPayload(facilities) }); });
     };
 
-    api.resetFacilities = function(facilities, contacts) {
-        api.deleteFacilities();
-        if (contacts) {
-            api.resetContacts(contacts);
-        }
-        if (facilities) {
-            api.insertFacilities(facilities);
-        }
-    };
-
-    api.resetHubs = function(hubs) {
+    api.deleteHubs = function() {
         flow.execute(function() { return asPromise({ method: 'DELETE', url: hubsUrl }); });
+    }
+
+    api.insertHubs = function(hubs) {
         if (hubs) {
             flow.execute(function(){ return asPromise({ method: 'PUT', url: hubsUrl, json: true, body: asPayload(hubs) }); });
         }
     };
 
-    api.resetContacts = function(contacts) {
+    api.deleteContacts = function() {
         flow.execute(function() { return asPromise({ method: 'DELETE', url: contactsUrl }); });
+    }
+
+    api.insertContacts = function(contacts) {
         if (contacts) {
             flow.execute(function(){return asPromise({ method: 'PUT', url: contactsUrl, json: true, body: asPayload(contacts) })});
+        }
+    };
+
+    api.deleteOperators = function() {
+        flow.execute(function() { return asPromise({ method: 'DELETE', url: operatorsUrl }); });
+    }
+    api.insertOperators= function(operators) {
+        if (operators) {
+            flow.execute(function(){return asPromise({ method: 'PUT', url: operatorsUrl, json: true, body: asPayload(operators) })});
         }
     };
 
@@ -88,15 +94,18 @@ module.exports = function () {
         browser.driver.executeScript("sessionStorage.clear();");
     };
 
-    api.resetAll = function(facilities, hubs, contacts) {
-        // Contacts cannot be deleted if there's facilities refering them
+    api.resetAll = function(data) {
+        data = data || {};
+
+        api.deleteHubs();
         api.deleteFacilities();
-        // Facilities may refer to contacts, so insert contacts first
-        api.resetContacts(contacts)
-        if (facilities) {
-            api.insertFacilities(facilities);
-        }
-        api.resetHubs(hubs);
+        api.deleteContacts();
+        api.deleteOperators();
+
+        api.insertOperators(data.operators);
+        api.insertContacts(data.contacts);
+        api.insertFacilities(data.facilities);
+        api.insertHubs(data.hubs);
     };
 
     return api;

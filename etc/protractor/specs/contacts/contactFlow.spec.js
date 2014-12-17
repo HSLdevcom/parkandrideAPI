@@ -13,12 +13,9 @@ describe('manage contacts', function () {
     var editModal = contactPage.editModal;
 
     it('should login as admin', function() {
-        devApi.loginAs('ADMIN');
-    });
-
-    it('should reset data', function() {
-        contactPage.get();
         devApi.resetAll();
+        devApi.loginAs('ADMIN');
+        contactPage.get();
     });
 
     it('no errors shown initially', function() {
@@ -30,6 +27,7 @@ describe('manage contacts', function () {
 
     it('errors shown on save', function() {
         editModal.save();
+        expect(editModal.isDisplayed()).toBe(true);
         expect(editModal.getViolations()).toEqual([{ path: "Yhteystieto", message: "tarkista pakolliset tiedot ja syötteiden muoto" }]);
         expect(editModal.isNameFiRequiredError()).toBe(true);
         expect(editModal.isNameSvRequiredError()).toBe(true);
@@ -47,6 +45,7 @@ describe('manage contacts', function () {
         editModal.setOpeningHours("ma-pe 7-19, la-su 9-17");
         editModal.setInfo("Vieraiden vastaanotto on toisessa kerroksessa.");
         editModal.save();
+        expect(editModal.isDisplayed()).toBe(false);
     });
 
     it('should list created contact', function() {

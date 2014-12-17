@@ -40,6 +40,7 @@ public class DevHelper {
         deleteFacilities();
         deleteContacts();
         deleteUsers();
+        deleteOperators();
     }
 
     @TransactionalWrite

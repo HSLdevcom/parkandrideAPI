@@ -1,9 +1,11 @@
 //angular styles
 
 .form-control:focus {
-  border: 1px solid $secondarycolor;
-  -webkit-box-shadow: none;
-  box-shadow: none;
+  @extend %focused-input;
+}
+
+:focus {
+  outline: none;
 }
 
 .ng-pristine .map {
@@ -15,10 +17,6 @@
 .emergencyContact > .validation-error.ng-invalid > button,
 .operatorContact > .validation-error.ng-invalid  > button {
   border: 2px solid $errorcolor;
-}
-
-:focus {
-  outline: none;
 }
 
 .errorRow {

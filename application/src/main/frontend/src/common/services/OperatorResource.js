@@ -4,6 +4,12 @@
     m.factory('OperatorResource', function($http) {
         var api = {};
 
+        api.getOperator = function(id) {
+            return $http.get("api/v1/operators/" + id).then(function(response){
+                return response.data;
+            });
+        };
+
         api.listOperators = function(search) {
             return $http.get("api/v1/operators", {
                 params: search

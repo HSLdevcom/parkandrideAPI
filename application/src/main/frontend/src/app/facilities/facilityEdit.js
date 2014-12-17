@@ -2,6 +2,7 @@
     var m = angular.module('parkandride.facilityEdit', [
         'ui.router',
         'parkandride.contacts',
+        'parkandride.operators',
         'parkandride.ServiceResource',
         'parkandride.ContactResource',
         'parkandride.FacilityResource',
@@ -38,6 +39,9 @@
                 },
                 contacts: function(ContactResource) {
                     return ContactResource.listContacts().then(function(response) { return response.results; });
+                },
+                operators: function(OperatorResource) {
+                    return OperatorResource.listOperators().then(function(response) { return response.results; });
                 }
             }
         });
@@ -64,17 +68,21 @@
                 },
                 contacts: function(ContactResource) {
                     return ContactResource.listContacts().then(function(response) { return response.results; });
+                },
+                operators: function(OperatorResource) {
+                    return OperatorResource.listOperators().then(function(response) { return response.results; });
                 }
             }
         });
     });
 
-    m.controller('FacilityEditCtrl', function($scope, $state, schema, FacilityResource, facility, aliasesPlaceholder, services, contacts) {
+    m.controller('FacilityEditCtrl', function($scope, $state, schema, FacilityResource, facility, aliasesPlaceholder, services, contacts, operators) {
         var self = this;
         $scope.common.translationPrefix = "facilities";
         self.capacityTypes = schema.capacityTypes;
         self.services = services;
         self.contacts = contacts;
+        self.operators = operators;
         self.aliasesPlaceholder = aliasesPlaceholder;
 
         self.facility = facility;

@@ -154,6 +154,14 @@
                     return modalInstance.result;
                 };
 
+                var adjustResolution = function(view) {
+                    // if ports are shown as icon, increment resolution to prevent port icon from overflowing
+                    var resolution = view.getResolution();
+                    if (MapService.isPortStyleIcon(resolution)) {
+                        view.setResolution(resolution + 1);
+                    }
+                };
+
                 if (editable) {
                     var portsDisabled = false;
 
@@ -271,9 +279,8 @@
                     }
 
                     var extent = ol.extent.extend(portsSource.getExtent(), locationSource.getExtent());
-                    if (!ol.extent.isEmpty(extent)) {
-                        view.fitExtent(extent, map.getSize());
-                    }
+                    view.fitExtent(extent, map.getSize());
+                    adjustResolution(view);
                 } else {
                     ctrl.$setValidity("required", false);
                 }

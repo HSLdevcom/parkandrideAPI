@@ -21,6 +21,7 @@ describe('hub list', function () {
     var f = fixtures.facilitiesFixture.dummies.facFull;
     var h = fixtures.hubsFixture.westend;
     var c = fixtures.facilitiesFixture.contact;
+    var operator = fixtures.facilitiesFixture.operator;
 
     it('is the default view', function () {
         indexPage.get();
@@ -30,7 +31,7 @@ describe('hub list', function () {
     describe('navigation', function () {
 
         beforeEach(function () {
-            devApi.resetAll({facilities: [f], hubs: [h], contacts: [c]});
+            devApi.resetAll({facilities: [f], hubs: [h], contacts: [c], operators: [operator]});
             hubListPage.get();
         });
 
@@ -69,7 +70,7 @@ describe('hub list', function () {
                     hub.setFacilities(_.map(facilitiesFn(), prependHubName));
                 });
 
-                devApi.resetAll({facilities: _.union(facilitiesFn(), hubs[0].facilities, hubs[1].facilities), hubs: hubs, contacts: [c]});
+                devApi.resetAll({facilities: _.union(facilitiesFn(), hubs[0].facilities, hubs[1].facilities), hubs: hubs, contacts: [c], operators: [operator]});
                 hubListPage.get();
             });
 

@@ -15,6 +15,7 @@ describe('edit hub view', function () {
     var facFull = fixtures.facilitiesFixture.dummies.facFull;
     var facCar = fixtures.facilitiesFixture.dummies.facCar;
     var contact = fixtures.facilitiesFixture.contact;
+    var operator = fixtures.facilitiesFixture.operator;
 
     var facilityFactory = fixtures.facilityFactory;
 
@@ -117,7 +118,7 @@ describe('edit hub view', function () {
 
         describe('with facilities', function() {
             beforeEach(function () {
-                devApi.resetAll({facilities: [facFull, facCar], contacts: [contact]});
+                devApi.resetAll({facilities: [facFull, facCar], contacts: [contact], operators: [operator]});
                 hubEditPage.get();
             });
 

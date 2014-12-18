@@ -34,7 +34,7 @@ describe('hub view', function () {
     }
 
     function toView(h) {
-        devApi.resetAll({facilities: h.facilities, hubs: [h], contacts: [fixtures.hubsFixture.contact]});
+        devApi.resetAll({facilities: h.facilities, hubs: [h], contacts: [fixtures.hubsFixture.contact], operators: [fixtures.hubsFixture.operator]});
         viewPage.get(h.id);
         expect(viewPage.isDisplayed()).toBe(true);
         return h;

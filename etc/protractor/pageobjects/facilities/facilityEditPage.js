@@ -5,6 +5,7 @@ module.exports = function(spec) {
 
     that.portEditModal = require('./portEditModal')({});
     that.contactEditModal = require('../contacts/contactEditModal')({});
+    that.operatorEditModal = require('../operators/operatorEditModal')({});
 
     spec.view = $('.wdFacilityEditView');
     spec.map = $('.facility-map .ol-viewport');
@@ -28,6 +29,10 @@ module.exports = function(spec) {
     spec.clearEmergencyContact = $('.emergencyContact .clearContact');
     spec.clearOperatorContact = $('.operatorContact .clearContact');
     spec.clearServiceContact = $('.serviceContact .clearContact');
+
+    spec.operator = element(by.name('operator'));
+    spec.createOperator = $('.operator .createOperator');
+    spec.selectedOperator = $('.operator .ui-select-match');
 
     spec.defineMultilingualAccessors("name");
 
@@ -117,6 +122,23 @@ module.exports = function(spec) {
 
     that.clearServiceContact = function() {
         spec.clearServiceContact.click();
+    };
+
+    that.createOperator = function(name) {
+        spec.createOperator.click();
+        that.operatorEditModal.setName(name);
+        that.operatorEditModal.save();
+    };
+
+    that.selectOperator = function(name) {
+        spec.operator.element(by.css('.ui-select-match')).click();
+        var operatorElement = browser.driver.switchTo().activeElement();
+        operatorElement.sendKeys(name);
+        operatorElement.sendKeys(protractor.Key.ENTER);
+    };
+
+    that.getOperator = function() {
+        return spec.selectedOperator.getText();
     };
 
     that.drawLocation = function (topLeft, w, h) {

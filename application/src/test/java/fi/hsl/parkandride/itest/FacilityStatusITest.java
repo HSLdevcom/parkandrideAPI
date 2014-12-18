@@ -20,6 +20,7 @@ import com.google.common.collect.Lists;
 
 import fi.hsl.parkandride.back.ContactDao;
 import fi.hsl.parkandride.back.FacilityDao;
+import fi.hsl.parkandride.back.OperatorDao;
 import fi.hsl.parkandride.core.domain.*;
 import fi.hsl.parkandride.core.service.ValidationException;
 import fi.hsl.parkandride.front.UrlSchema;
@@ -39,11 +40,18 @@ public class FacilityStatusITest extends AbstractIntegrationTest {
     @Inject
     private FacilityDao facilityDao;
 
+    @Inject
+    private OperatorDao operatorDao;
+
     private Facility f;
 
     @Before
     public void initFixture() {
         devHelper.deleteAll();
+
+        Operator o = new Operator();
+        o.id = 1l;
+        o.name = new MultilingualString("smooth operator");
 
         Contact c = new Contact();
         c.id = 1L;
@@ -52,9 +60,11 @@ public class FacilityStatusITest extends AbstractIntegrationTest {
         f = new Facility();
         f.id = 1L;
         f.name = new MultilingualString("minimal facility");
+        f.operatorId = 1l;
         f.location = Spatial.fromWkt("POLYGON((25.010822 60.25054, 25.010822 60.250023, 25.012479 60.250337, 25.011449 60.250885, 25.010822 60.25054))");
         f.contacts = new FacilityContacts(c.id, c.id);
 
+        operatorDao.insertOperator(o, o.id);
         contactDao.insertContact(c, c.id);
         facilityDao.insertFacility(f, f.id);
     }

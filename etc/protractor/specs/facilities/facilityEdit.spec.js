@@ -23,7 +23,7 @@ describe('edit facility view', function () {
     describe('new facility', function () {
         beforeEach(function () {
             editPage.get();
-            devApi.resetAll({ contacts: [fixtures.facilitiesFixture.contact] });
+            devApi.resetAll({ contacts: [fixtures.facilitiesFixture.contact], operators: [fixtures.facilitiesFixture.operator] });
         });
 
         it('initially no errors exist', function () {
@@ -47,6 +47,10 @@ describe('edit facility view', function () {
             expect(editPage.isNameSvRequiredError()).toBe(true);
             expect(editPage.isNameEnRequiredError()).toBe(true);
             expect(editPage.isFacilityRequiredError()).toBe(true);
+        });
+
+        it('should create and select an operator', function() {
+            editPage.createOperator("smooth operator");
         });
 
         describe('name', function () {
@@ -83,6 +87,7 @@ describe('edit facility view', function () {
         describe('facility', function () {
             it('is required, error is cleared after facility is set', function () {
                 editPage.setName("Facility name");
+                editPage.selectOperator("smooth");
                 editPage.selectEmergencyContact("hsl");
                 editPage.selectOperatorContact("hsl");
                 editPage.save();
@@ -207,6 +212,7 @@ describe('edit facility view', function () {
 
         it('create and edit full', function () {
             editPage.setName(facFull.name);
+            editPage.selectOperator("smooth operator");
             editPage.drawLocation(facFull.locationInput.offset, facFull.locationInput.w, facFull.locationInput.h);
 
             editPage.openPortAt(200, 200);
@@ -245,6 +251,7 @@ describe('edit facility view', function () {
 
         it('create without aliases', function () {
             editPage.setName(facCar.name);
+            editPage.selectOperator("smooth");
             editPage.drawLocation(facCar.locationInput.offset, facCar.locationInput.w, facCar.locationInput.h);
             editPage.setCapacities(facCar.capacities);
             arrayAssert.assertInOrder(editPage.getCapacityTypes(), common.capacityTypeOrder);

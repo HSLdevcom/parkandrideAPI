@@ -28,7 +28,7 @@ module.exports = function(spec) {
 
     that.isLoginError = function() {
         return spec.isDisplayed(spec.loginError);
-    }
+    };
 
     that.getUsername = function() {
         return spec.getValue(spec.username);
@@ -36,11 +36,11 @@ module.exports = function(spec) {
 
     that.isLogoutDisplayed = function() {
         return spec.isDisplayed(spec.logout);
-    }
+    };
 
     that.isLoginDisplayed = function() {
         return spec.isDisplayed(spec.openLoginButton);
-    }
+    };
 
     return that;
 };

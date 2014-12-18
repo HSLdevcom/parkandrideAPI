@@ -15,10 +15,10 @@ describe('manage contacts', function () {
     it('should login as admin', function() {
         devApi.resetAll();
         devApi.loginAs('ADMIN');
-        contactPage.get();
     });
 
     it('no errors shown initially', function() {
+        contactPage.get();
         contactPage.openCreateModal();
         expect(editModal.isNameFiRequiredError()).toBe(false);
         expect(editModal.isNameSvRequiredError()).toBe(false);

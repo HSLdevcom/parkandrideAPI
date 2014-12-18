@@ -8,6 +8,7 @@ var common = require('../common');
 
 describe('authorization', function () {
 
+    var indexPage = po.indexPage({});
     var authModal = po.authModal();
     var contactPage = po.contactPage({});
     var contactEditModal = contactPage.editModal;
@@ -15,23 +16,16 @@ describe('authorization', function () {
     var password = 'very secret password';
     var username = 'testuser';
 
-    it('should got to main page', function() {
-        browser.get('/');
+    beforeEach(function() {
+        devApi.createLogin('ADMIN', username, password);
+        indexPage.get();
+        expect(indexPage.isDisplayed()).toBe(true);
     });
 
     describe('login and logout buttons', function() {
-
-        beforeEach(function() {
-            devApi.softLogout();
-        });
-
-        it('should reset testuser', function () {
-            devApi.loginAs('ADMIN', username, password);
-        });
-
         it('should show login error for wrong password', function() {
             expect(authModal.isDisplayed()).toBe(false);
-            expect(authModal.isLogoutDisplayed()).toBe(false);
+            expect(authModal.isLogoutDisplayed()).toBe(false); // TODO: logout is not on auth modal
 
             authModal.openLoginModal();
             authModal.login(username, "wrong");
@@ -42,7 +36,6 @@ describe('authorization', function () {
         });
 
         it('should show login error for wrong username', function() {
-            browser.get('/');
 
             authModal.openLoginModal();
             authModal.login("wrong", password);
@@ -52,39 +45,30 @@ describe('authorization', function () {
         });
 
         it('should login and logout', function() {
-            browser.get('/');
-
             authModal.openLoginModal();
             authModal.login(username, password);
 
             expect(authModal.isDisplayed()).toBe(false);
-            expect(authModal.isLogoutDisplayed()).toBe(true);
+            expect(authModal.isLogoutDisplayed()).toBe(true); // TODO: logout is not on auth modal
 
             authModal.logout();
-
             expect(authModal.isLoginDisplayed()).toBe(true);
         });
     });
 
     it('should require login on submit', function() {
-        devApi.loginAs('ADMIN', username, password);
-
         contactPage.get();
         contactPage.openCreateModal();
         contactEditModal.setName("HSL");
         contactEditModal.setPhone("(09) 4766 4444");
 
-        devApi.softLogout();
         contactEditModal.save();
-
         expect(authModal.isDisplayed()).toBe(true);
         expect(contactEditModal.isDisplayed()).toBe(true);
 
         authModal.login(username, password);
-
         expect(authModal.isDisplayed()).toBe(false);
         expect(contactEditModal.isDisplayed()).toBe(false);
-
-        expect(authModal.isLogoutDisplayed()).toBe(true);
+        expect(authModal.isLogoutDisplayed()).toBe(true); // TODO: logout is not on auth modal
     });
 });

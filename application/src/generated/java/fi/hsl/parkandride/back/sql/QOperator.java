@@ -41,6 +41,8 @@ public class QOperator extends RelationalPathSpatial<QOperator> {
 
     public final com.mysema.query.sql.ForeignKey<QAppUser> _userOperatorIdFk = createInvForeignKey(id, "OPERATOR_ID");
 
+    public final com.mysema.query.sql.ForeignKey<QContact> _contactOperatorIdFk = createInvForeignKey(id, "OPERATOR_ID");
+
     public QOperator(String variable) {
         super(QOperator.class, forVariable(variable), "PUBLIC", "OPERATOR");
         addMetadata();

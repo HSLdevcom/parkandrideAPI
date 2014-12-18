@@ -5,6 +5,8 @@ create table contact (
   name_sv varchar(255) not null,
   name_en varchar(255) not null,
 
+  operator_id bigint,
+
   phone varchar(255),
   email varchar(255),
 
@@ -27,6 +29,9 @@ create table contact (
   info_en varchar(255),
 
   primary key (id),
+
+  constraint contact_operator_id_fk foreign key (operator_id)
+    references operator (id),
 
   constraint contact_email_or_phone_chk check (email <> null or phone <> null)
 );

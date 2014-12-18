@@ -51,6 +51,7 @@ public class ContactDao implements ContactRepository {
             }
             Contact contact = new Contact();
             contact.id = id;
+            contact.operatorId = row.get(qContact.operatorId);
             contact.email = row.get(qContact.email);
             contact.phone = row.get(qContact.phone);
             contact.name = nameMapping.map(row);
@@ -129,8 +130,11 @@ public class ContactDao implements ContactRepository {
     }
 
     private void populate(Contact contact, StoreClause<?> store) {
-        store.set(qContact.phone, contact.phone)
+        store
+                .set(qContact.operatorId, contact.operatorId)
+                .set(qContact.phone, contact.phone)
                 .set(qContact.email, contact.email);
+        
         nameMapping.populate(contact.name, store);
         addressMapping.populate(contact.address, store);
         openingHoursMapping.populate(contact.openingHours, store);

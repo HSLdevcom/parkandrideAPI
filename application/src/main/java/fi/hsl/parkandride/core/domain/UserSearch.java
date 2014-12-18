@@ -1,6 +1,6 @@
 package fi.hsl.parkandride.core.domain;
 
-public class UserSearch {
+public class UserSearch implements OperatorEntity {
 
     public int limit = 100;
 
@@ -28,4 +28,8 @@ public class UserSearch {
         return operatorId;
     }
 
+    @Override
+    public Long operatorId() {
+        return operatorId;
+    }
 }

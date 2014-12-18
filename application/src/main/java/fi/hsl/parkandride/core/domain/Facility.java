@@ -7,7 +7,7 @@ import javax.validation.constraints.NotNull;
 
 import org.geolatte.geom.Geometry;
 
-public class Facility {
+public class Facility implements OperatorEntity {
 
     public Long id;
 
@@ -70,6 +70,9 @@ public class Facility {
         return contacts;
     }
 
+    public Long operatorId() {
+        return operatorId;
+    }
 //    public Long getOperatorId() {
 //        return operatorId;
 //    }

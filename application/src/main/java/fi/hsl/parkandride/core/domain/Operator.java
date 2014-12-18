@@ -1,6 +1,6 @@
 package fi.hsl.parkandride.core.domain;
 
-public class Operator {
+public class Operator implements OperatorEntity {
 
     public Long id;
 
@@ -11,4 +11,10 @@ public class Operator {
     public Operator(String name) {
         this.name = new MultilingualString(name);
     }
+
+    @Override
+    public Long operatorId() {
+        return id;
+    }
+
 }

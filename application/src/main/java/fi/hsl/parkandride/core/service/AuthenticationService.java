@@ -1,10 +1,12 @@
 package fi.hsl.parkandride.core.service;
 
 import static com.google.common.base.Charsets.UTF_8;
+import static fi.hsl.parkandride.core.domain.Role.ADMIN;
 import static org.joda.time.DateTime.now;
 
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -18,11 +20,7 @@ import org.joda.time.Duration;
 import org.joda.time.Period;
 
 import fi.hsl.parkandride.core.back.UserRepository;
-import fi.hsl.parkandride.core.domain.Login;
-import fi.hsl.parkandride.core.domain.NotFoundException;
-import fi.hsl.parkandride.core.domain.User;
-import fi.hsl.parkandride.core.domain.UserSecret;
-import fi.hsl.parkandride.core.domain.Violation;
+import fi.hsl.parkandride.core.domain.*;
 
 public class AuthenticationService {
 
@@ -75,6 +73,25 @@ public class AuthenticationService {
         this.secret = secret.getBytes(UTF_8);
     }
 
+    public static void authorize(User currentUser, Permission permission) {
+        if (currentUser == null) {
+            throw new AccessDeniedException();
+        }
+        if (!currentUser.role.permissions.contains(permission)) {
+            throw new AccessDeniedException();
+        }
+    }
+
+    public static void authorize(User currentUser, OperatorEntity entity, Permission permission) {
+        authorize(currentUser, permission);
+
+        if (currentUser.role != ADMIN) {
+            if (currentUser.operatorId == null || !currentUser.operatorId.equals(entity.operatorId())) {
+                throw new AccessDeniedException();
+            }
+        }
+    }
+
     @TransactionalRead
     public Login login(String username, String password) {
         try {
@@ -89,6 +106,7 @@ public class AuthenticationService {
             login.token = token(userSecret.user);
             login.username = userSecret.user.username;
             login.role = userSecret.user.role;
+            login.permissions = login.role.permissions;
             return login;
         } catch (NotFoundException e) {
             throw new ValidationException(new Violation("BadCredentials"));

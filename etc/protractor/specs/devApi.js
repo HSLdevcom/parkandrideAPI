@@ -8,6 +8,7 @@ module.exports = function () {
         hubsUrl = devApiUrl + '/hubs',
         contactsUrl = devApiUrl + '/contacts',
         operatorsUrl = devApiUrl + '/operators',
+        usersUrl = devApiUrl + '/users',
         loginUrl = devApiUrl + "/login";
     var flow = protractor.promise.controlFlow();
 
@@ -43,7 +44,7 @@ module.exports = function () {
 
     api.deleteHubs = function() {
         flow.execute(function() { return asPromise({ method: 'DELETE', url: hubsUrl }); });
-    }
+    };
 
     api.insertHubs = function(hubs) {
         if (hubs) {
@@ -53,7 +54,7 @@ module.exports = function () {
 
     api.deleteContacts = function() {
         flow.execute(function() { return asPromise({ method: 'DELETE', url: contactsUrl }); });
-    }
+    };
 
     api.insertContacts = function(contacts) {
         if (contacts) {
@@ -63,11 +64,15 @@ module.exports = function () {
 
     api.deleteOperators = function() {
         flow.execute(function() { return asPromise({ method: 'DELETE', url: operatorsUrl }); });
-    }
+    };
     api.insertOperators= function(operators) {
         if (operators) {
             flow.execute(function(){return asPromise({ method: 'PUT', url: operatorsUrl, json: true, body: asPayload(operators) })});
         }
+    };
+
+    api.deleteUsers = function() {
+        flow.execute(function() { return asPromise({ method: 'DELETE', url: usersUrl }); });
     };
 
     api.loginAs = function(role, username, password) {
@@ -100,6 +105,7 @@ module.exports = function () {
         api.deleteHubs();
         api.deleteFacilities();
         api.deleteContacts();
+        api.deleteUsers();
         api.deleteOperators();
 
         api.insertOperators(data.operators);

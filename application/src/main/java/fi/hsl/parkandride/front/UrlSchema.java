@@ -60,6 +60,8 @@ public class UrlSchema {
 
     public static final String DEV_OPERATORS = DEV_API + "/operators";
 
+    public static final String DEV_USERS = DEV_API + "/users";
+
     public static final String DEV_CONTACTS = DEV_API + "/contacts";
 
     public static final String DEV_FACILITIES = DEV_API + "/facilities";

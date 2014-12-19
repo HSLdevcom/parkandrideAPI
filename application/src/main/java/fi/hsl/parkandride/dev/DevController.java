@@ -5,6 +5,7 @@ import static fi.hsl.parkandride.front.UrlSchema.DEV_FACILITIES;
 import static fi.hsl.parkandride.front.UrlSchema.DEV_HUBS;
 import static fi.hsl.parkandride.front.UrlSchema.DEV_LOGIN;
 import static fi.hsl.parkandride.front.UrlSchema.DEV_OPERATORS;
+import static fi.hsl.parkandride.front.UrlSchema.DEV_USERS;
 import static java.lang.String.format;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
@@ -104,6 +105,13 @@ public class DevController {
     @TransactionalWrite
     public ResponseEntity<Void> deleteOperators() {
         devHelper.deleteOperators();
+        return new ResponseEntity<>(OK);
+    }
+
+    @RequestMapping(method = DELETE, value = DEV_USERS)
+    @TransactionalWrite
+    public ResponseEntity<Void> deleteUsers() {
+        devHelper.deleteUsers();
         return new ResponseEntity<>(OK);
     }
 

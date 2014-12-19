@@ -4,6 +4,8 @@ module.exports = function(spec) {
     spec = spec || {};
     var that = require('../base')(spec);
 
+    that.operatorEditModal = require('../operators/operatorEditModal')({});
+
     spec.view = $("#contactEditModal");
     spec.phone = element(by.model('contact.phone'));
     spec.email = element(by.model('contact.email'));
@@ -17,6 +19,10 @@ module.exports = function(spec) {
     spec.defineMultilingualAccessors("city");
     spec.defineMultilingualAccessors("openingHours");
     spec.defineMultilingualAccessors("info");
+
+    spec.operator = element(by.name('operator'));
+    spec.createOperator = $('.operator .createOperator');
+    spec.selectedOperator = $('.operator .ui-select-match');
 
     that.setPhone = function(phone) {
         spec.sendKeys(spec.phone, phone);
@@ -50,6 +56,23 @@ module.exports = function(spec) {
     that.cancel = function() {
         spec.cancel.click();
         browser.waitForAngular();
+    };
+
+    that.createOperator = function(name) {
+        spec.createOperator.click();
+        that.operatorEditModal.setName(name);
+        that.operatorEditModal.save();
+    };
+
+    that.selectOperator = function(name) {
+        spec.operator.element(by.css('.ui-select-match')).click();
+        var operatorElement = browser.driver.switchTo().activeElement();
+        operatorElement.sendKeys(name);
+        operatorElement.sendKeys(protractor.Key.ENTER);
+    };
+
+    that.getOperator = function() {
+        return spec.selectedOperator.getText();
     };
 
     return that;

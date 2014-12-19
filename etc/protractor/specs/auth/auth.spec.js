@@ -71,6 +71,7 @@ describe('authorization', function () {
 
         contactPage.get();
         contactPage.openCreateModal();
+        contactEditModal.createOperator("smooth");
         contactEditModal.setName("HSL");
         contactEditModal.setPhone("(09) 4766 4444");
 

@@ -15,10 +15,10 @@ describe('manage contacts', function () {
     it('should login as admin', function() {
         devApi.resetAll();
         devApi.loginAs('ADMIN');
-        contactPage.get();
     });
 
     it('no errors shown initially', function() {
+        contactPage.get();
         contactPage.openCreateModal();
         expect(editModal.isNameFiRequiredError()).toBe(false);
         expect(editModal.isNameSvRequiredError()).toBe(false);
@@ -45,6 +45,7 @@ describe('manage contacts', function () {
         editModal.setOpeningHours("ma-pe 7-19, la-su 9-17");
         editModal.setInfo("Vieraiden vastaanotto on toisessa kerroksessa.");
         editModal.save();
+        editModal.waitUntilAbsent();
         expect(editModal.isDisplayed()).toBe(false);
     });
 
@@ -68,6 +69,7 @@ describe('manage contacts', function () {
         editModal.setPhone("(09) 4766 4444");
         expect(editModal.getEmail()).toBe("");
         editModal.save();
+        editModal.waitUntilAbsent();
         expect(editModal.isDisplayed()).toBe(false);
         expect(contactPage.getContacts()).toEqual([["HSL", "09 47664444", ""]]);
     });
@@ -78,6 +80,7 @@ describe('manage contacts', function () {
         editModal.setPhone("+44 343 222 2222");
         editModal.setEmail("hsl@hsl.fi");
         editModal.cancel();
+        editModal.waitUntilAbsent();
         expect(editModal.isDisplayed()).toBe(false);
         expect(contactPage.getContacts()).toEqual([["HSL", "09 47664444", ""]]);
     });

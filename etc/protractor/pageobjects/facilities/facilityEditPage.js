@@ -64,7 +64,7 @@ module.exports = function(spec) {
                     return false;
                 }
             );
-    }
+    };
 
     that.createContact = function(contact) {
         spec.createEmergencyContact.click();
@@ -72,6 +72,7 @@ module.exports = function(spec) {
         that.contactEditModal.setPhone(contact.phone);
         that.contactEditModal.setEmail(contact.email);
         that.contactEditModal.save();
+        that.contactEditModal.waitUntilAbsent();
     };
 
     that.selectEmergencyContact = function(name) {

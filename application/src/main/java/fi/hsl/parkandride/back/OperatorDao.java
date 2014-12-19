@@ -23,7 +23,7 @@ import fi.hsl.parkandride.core.service.ValidationException;
 
 public class OperatorDao implements OperatorRepository {
 
-    public static final String OPERATOR_ID_SEQ = "user_id_seq";
+    public static final String OPERATOR_ID_SEQ = "operator_id_seq";
 
     private static final SimpleExpression<Long> nextOperatorId = SQLExpressions.nextval(OPERATOR_ID_SEQ);
 

@@ -124,5 +124,9 @@ module.exports = function(spec) {
         return spec.isRequiredError(spec.nameEn);
     };
 
+    that.waitUntilAbsent = function() {
+        expect(spec.view.waitAbsent()).toBe(true);
+    };
+
     return that;
 };

@@ -40,6 +40,7 @@ describe('manage operators', function () {
         expect(editModal.isDisplayed()).toBe(true);
         editModal.setName("Operator");
         editModal.save();
+        editModal.waitUntilAbsent();
     });
 
     it('should list created operator', function() {
@@ -51,6 +52,7 @@ describe('manage operators', function () {
         expect(editModal.isDisplayed()).toBe(true);
         editModal.setName("Smooth operator");
         editModal.save();
+        editModal.waitUntilAbsent();
         expect(operatorPage.getOperators()).toEqual([["Smooth operator"]]);
     });
 
@@ -59,6 +61,7 @@ describe('manage operators', function () {
         expect(editModal.isDisplayed()).toBe(true);
         editModal.setName("");
         editModal.cancel();
+        editModal.waitUntilAbsent();
         expect(editModal.isDisplayed()).toBe(false);
         expect(operatorPage.getOperators()).toEqual([["Smooth operator"]]);
     });

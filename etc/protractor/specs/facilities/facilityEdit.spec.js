@@ -129,6 +129,7 @@ describe('edit facility view', function () {
                 editPage.portEditModal.setCity(["kaupunki", "stad", "city"]);
                 editPage.portEditModal.setInfo("info");
                 editPage.portEditModal.ok();
+                editPage.portEditModal.waitUntilAbsent();
                 expect(editPage.portEditModal.isDisplayed()).toBe(false);
 
                 // Edit port -> ok
@@ -147,6 +148,7 @@ describe('edit facility view', function () {
 
                 editPage.portEditModal.setCity("city");
                 editPage.portEditModal.ok();
+                editPage.portEditModal.waitUntilAbsent();
                 expect(editPage.portEditModal.isDisplayed()).toBe(false);
 
                 // Edit port -> cancel
@@ -156,6 +158,7 @@ describe('edit facility view', function () {
                 editPage.portEditModal.togglePedestrian();
                 editPage.portEditModal.toggleBicycle();
                 editPage.portEditModal.cancel();
+                editPage.portEditModal.waitUntilAbsent();
                 expect(editPage.portEditModal.isDisplayed()).toBe(false);
 
                 // Remove port
@@ -165,6 +168,7 @@ describe('edit facility view', function () {
                 expect(editPage.portEditModal.isBicycleSelected()).toBe(true);
                 expect(editPage.portEditModal.getCityFi()).toBe("city");
                 editPage.portEditModal.remove();
+                editPage.portEditModal.waitUntilAbsent();
                 expect(editPage.portEditModal.isDisplayed()).toBe(false);
 
                 // New port with defaults

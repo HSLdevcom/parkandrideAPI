@@ -26,5 +26,7 @@ exports.config = {
             '.', true, true, 'protractor-results', true));
 
         browser.driver.manage().window().setSize(1280, 1024);
+
+        require('./specs/waitAbsent');
     }
 };

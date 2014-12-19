@@ -36,7 +36,6 @@ describe('authorization', function () {
         });
 
         it('should show login error for wrong username', function() {
-
             authModal.openLoginModal();
             authModal.login("wrong", password);
 
@@ -48,6 +47,7 @@ describe('authorization', function () {
             authModal.openLoginModal();
             authModal.login(username, password);
 
+            authModal.waitUntilAbsent();
             expect(authModal.isDisplayed()).toBe(false);
             expect(authModal.isLogoutDisplayed()).toBe(true); // TODO: logout is not on auth modal
 
@@ -67,8 +67,13 @@ describe('authorization', function () {
         expect(contactEditModal.isDisplayed()).toBe(true);
 
         authModal.login(username, password);
+
+        authModal.waitUntilAbsent();
         expect(authModal.isDisplayed()).toBe(false);
+
+        contactEditModal.waitUntilAbsent();
         expect(contactEditModal.isDisplayed()).toBe(false);
+
         expect(authModal.isLogoutDisplayed()).toBe(true); // TODO: logout is not on auth modal
     });
 });

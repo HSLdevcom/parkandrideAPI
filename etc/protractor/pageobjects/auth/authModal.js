@@ -5,6 +5,7 @@ module.exports = function(spec) {
     var that = require('../base')(spec);
 
     spec.view = $("#loginModal");
+    spec.context = spec.view;
     spec.openLoginButton = $("#openLoginPrompt");
     spec.logout = $("#logout");
     spec.username = element(by.model('credentials.username'));
@@ -28,7 +29,7 @@ module.exports = function(spec) {
 
     that.isLoginError = function() {
         return spec.isDisplayed(spec.loginError);
-    }
+    };
 
     that.getUsername = function() {
         return spec.getValue(spec.username);
@@ -36,11 +37,11 @@ module.exports = function(spec) {
 
     that.isLogoutDisplayed = function() {
         return spec.isDisplayed(spec.logout);
-    }
+    };
 
     that.isLoginDisplayed = function() {
         return spec.isDisplayed(spec.openLoginButton);
-    }
+    };
 
     return that;
 };

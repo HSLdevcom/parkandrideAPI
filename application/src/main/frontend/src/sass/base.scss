@@ -162,3 +162,15 @@ input[type=number]::-webkit-outer-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
+
+a {
+  cursor: pointer;
+}
+
+// disable bootstrap modal vertical animation
+.modal {
+  &.fade .modal-dialog {
+    @include translate(0, 0);
+  }
+  &.in .modal-dialog { @include translate(0, 0) }
+}

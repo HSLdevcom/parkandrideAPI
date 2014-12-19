@@ -69,14 +69,16 @@ module.exports = function(spec) {
                     return false;
                 }
             );
-    }
+    };
 
     that.createContact = function(contact) {
         spec.createEmergencyContact.click();
         that.contactEditModal.setName(contact.name);
         that.contactEditModal.setPhone(contact.phone);
         that.contactEditModal.setEmail(contact.email);
+        that.contactEditModal.selectOperator(contact.operator);
         that.contactEditModal.save();
+        that.contactEditModal.waitUntilAbsent();
     };
 
     that.selectEmergencyContact = function(name) {

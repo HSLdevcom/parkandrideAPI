@@ -12,16 +12,16 @@ describe('manage operators', function () {
     var operatorPage = po.operatorPage({});
     var editModal = operatorPage.editModal;
 
+    it('should reset data', function() {
+        devApi.resetAll();
+    });
+
     it('should login as admin', function() {
         devApi.loginAs('ADMIN');
     });
 
-    it('should reset data', function() {
-        operatorPage.get();
-        devApi.resetAll();
-    });
-
     it('no errors shown initially', function() {
+        operatorPage.get();
         operatorPage.openCreateModal();
         expect(editModal.isNameFiRequiredError()).toBe(false);
         expect(editModal.isNameSvRequiredError()).toBe(false);
@@ -40,6 +40,7 @@ describe('manage operators', function () {
         expect(editModal.isDisplayed()).toBe(true);
         editModal.setName("Operator");
         editModal.save();
+        editModal.waitUntilAbsent();
     });
 
     it('should list created operator', function() {
@@ -51,6 +52,7 @@ describe('manage operators', function () {
         expect(editModal.isDisplayed()).toBe(true);
         editModal.setName("Smooth operator");
         editModal.save();
+        editModal.waitUntilAbsent();
         expect(operatorPage.getOperators()).toEqual([["Smooth operator"]]);
     });
 
@@ -59,6 +61,7 @@ describe('manage operators', function () {
         expect(editModal.isDisplayed()).toBe(true);
         editModal.setName("");
         editModal.cancel();
+        editModal.waitUntilAbsent();
         expect(editModal.isDisplayed()).toBe(false);
         expect(operatorPage.getOperators()).toEqual([["Smooth operator"]]);
     });

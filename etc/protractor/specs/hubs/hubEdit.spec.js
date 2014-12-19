@@ -24,13 +24,10 @@ describe('edit hub view', function () {
         arrayAssert.assertInAnyOrder(facilitiesTable.getNames(), expected);
     }
 
-    it('should login as admin', function() {
-        devApi.loginAs('ADMIN');
-    });
-
     describe('new hub', function () {
         beforeEach(function () {
             devApi.resetAll();
+            devApi.loginAs('ADMIN');
             hubEditPage.get();
         });
 
@@ -119,6 +116,7 @@ describe('edit hub view', function () {
         describe('with facilities', function() {
             beforeEach(function () {
                 devApi.resetAll({facilities: [facFull, facCar], contacts: [contact], operators: [operator]});
+                devApi.loginAs('ADMIN');
                 hubEditPage.get();
             });
 

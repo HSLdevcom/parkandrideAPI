@@ -20,9 +20,9 @@ module.exports = function(spec) {
     spec.defineMultilingualAccessors("openingHours");
     spec.defineMultilingualAccessors("info");
 
-    spec.operator = element(by.name('operator'));
-    spec.createOperator = $('.operator .createOperator');
-    spec.selectedOperator = $('.operator .ui-select-match');
+    spec.operator = spec.view.element(by.name('operator'));
+    spec.createOperator = spec.view.element(by.css('.operator .createOperator'));
+    spec.selectedOperator = spec.view.element(by.css('.operator .ui-select-match'));
 
     that.setPhone = function(phone) {
         spec.sendKeys(spec.phone, phone);
@@ -65,10 +65,13 @@ module.exports = function(spec) {
     };
 
     that.selectOperator = function(name) {
+        browser.sleep(2000);
         spec.operator.element(by.css('.ui-select-match')).click();
         var operatorElement = browser.driver.switchTo().activeElement();
         operatorElement.sendKeys(name);
+        browser.sleep(2000);
         operatorElement.sendKeys(protractor.Key.ENTER);
+        browser.sleep(2000);
     };
 
     that.getOperator = function() {

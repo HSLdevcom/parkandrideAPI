@@ -65,38 +65,38 @@ module.exports = function () {
     api.deleteOperators = function() {
         flow.execute(function() { return asPromise({ method: 'DELETE', url: operatorsUrl }); });
     };
+
     api.insertOperators= function(operators) {
         if (operators) {
             flow.execute(function(){return asPromise({ method: 'PUT', url: operatorsUrl, json: true, body: asPayload(operators) })});
         }
     };
 
+
     api.deleteUsers = function() {
         flow.execute(function() { return asPromise({ method: 'DELETE', url: usersUrl }); });
     };
 
-    api.loginAs = function(role, username, password) {
-        browser.get('/');
+    api.createLogin = function(role, username, password) {
         var newUser = {
             username: username || "testuser",
             password: password || "password",
             role: role
         };
-        flow.execute(function() {
-            asPromise({ method: 'POST', url: loginUrl, json: true, body: newUser })
-            .then(function(response) {
-                    var login = response.body;
-                    var script =
-                        "sessionStorage.authToken='"+login.token+"';\n" +
-                        "sessionStorage.authUsername='"+login.username+"';\n" +
-                        "sessionStorage.authRole='"+login.role+"';\n";
-                    return browser.driver.executeScript(script);
-            });
-        });
+        return flow.execute(function() { return asPromise({ method: 'POST', url: loginUrl, json: true, body: newUser }) });
     };
 
-    api.softLogout = function() {
-        browser.driver.executeScript("sessionStorage.clear();");
+    api.loginAs = function(role, username, password) {
+        function storeAuthToSessionStorage(response) {
+            browser.get('/');
+            var login = response.body;
+            var script =
+                "sessionStorage.authToken='"+login.token+"';\n" +
+                "sessionStorage.authUsername='"+login.username+"';\n" +
+                "sessionStorage.authRole='"+login.role+"';\n;";
+            return browser.executeScript(script);
+        }
+        api.createLogin(role, username, password).then(storeAuthToSessionStorage);
     };
 
     api.resetAll = function(data) {

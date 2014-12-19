@@ -16,14 +16,11 @@ describe('edit facility view', function () {
     var facFull = fixtures.facilitiesFixture.dummies.facFull;
     var facCar = fixtures.facilitiesFixture.dummies.facCar;
 
-    it('should login as admin', function() {
-        devApi.loginAs('ADMIN');
-    });
-
     describe('new facility', function () {
         beforeEach(function () {
-            editPage.get();
             devApi.resetAll({ contacts: [fixtures.facilitiesFixture.contact], operators: [fixtures.facilitiesFixture.operator] });
+            devApi.loginAs('ADMIN');
+            editPage.get();
         });
 
         it('initially no errors exist', function () {
@@ -134,6 +131,7 @@ describe('edit facility view', function () {
                 editPage.portEditModal.setCity(["kaupunki", "stad", "city"]);
                 editPage.portEditModal.setInfo("info");
                 editPage.portEditModal.ok();
+                editPage.portEditModal.waitUntilAbsent();
                 expect(editPage.portEditModal.isDisplayed()).toBe(false);
 
                 // Edit port -> ok
@@ -152,6 +150,7 @@ describe('edit facility view', function () {
 
                 editPage.portEditModal.setCity("city");
                 editPage.portEditModal.ok();
+                editPage.portEditModal.waitUntilAbsent();
                 expect(editPage.portEditModal.isDisplayed()).toBe(false);
 
                 // Edit port -> cancel
@@ -161,6 +160,7 @@ describe('edit facility view', function () {
                 editPage.portEditModal.togglePedestrian();
                 editPage.portEditModal.toggleBicycle();
                 editPage.portEditModal.cancel();
+                editPage.portEditModal.waitUntilAbsent();
                 expect(editPage.portEditModal.isDisplayed()).toBe(false);
 
                 // Remove port
@@ -170,6 +170,7 @@ describe('edit facility view', function () {
                 expect(editPage.portEditModal.isBicycleSelected()).toBe(true);
                 expect(editPage.portEditModal.getCityFi()).toBe("city");
                 editPage.portEditModal.remove();
+                editPage.portEditModal.waitUntilAbsent();
                 expect(editPage.portEditModal.isDisplayed()).toBe(false);
 
                 // New port with defaults
@@ -196,7 +197,7 @@ describe('edit facility view', function () {
 
         it('should manage contacts', function() {
             // Create emergency contact on the fly
-            editPage.createContact({name: "new contact", phone: "(09) 4766 4444", email: "hsl@hsl.fi"});
+            editPage.createContact({operator: "smooth", name: "new contact", phone: "(09) 4766 4444", email: "hsl@hsl.fi"});
             expect(editPage.getEmergencyContact()).toBe("new contact (09 47664444 / hsl@hsl.fi)");
 
             // Reload and expect that new contact is still available

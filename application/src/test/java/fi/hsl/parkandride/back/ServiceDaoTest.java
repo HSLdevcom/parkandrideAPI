@@ -28,8 +28,9 @@ public class ServiceDaoTest extends AbstractDaoTest {
     @Test
     public void find_all_defaults() {
         SearchResults<Service> results = serviceDao.findServices(new ServiceSearch());
+        results.results.forEach((s) -> System.out.println("s = " + s));
         assertThat(results.get(0).name.fi).isEqualTo("Autopesu");
-        assertThat(results.get(1).name.fi).isEqualTo("Esteetön WC");
+        assertThat(results.get(1).name.fi).isEqualTo("Ensiapu");
     }
 
     @Test

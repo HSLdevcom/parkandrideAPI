@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import javax.inject.Inject;
 
+import org.assertj.core.api.Assertions;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.SpringApplicationConfiguration;
@@ -27,18 +28,52 @@ public class ServiceDaoTest extends AbstractDaoTest {
 
     @Test
     public void find_all_defaults() {
-        SearchResults<Service> results = serviceDao.findServices(new ServiceSearch());
-        results.results.forEach((s) -> System.out.println("s = " + s));
-        assertThat(results.get(0).name.fi).isEqualTo("Autopesu");
-        assertThat(results.get(1).name.fi).isEqualTo("Ensiapu");
+        assertThat(serviceDao.findServices(new ServiceSearch()).results).extracting("name.fi").containsExactly(
+                "Autopesu",
+                "Ensiapu",
+                "Esteetön WC",
+                "Hissi",
+                "Infopiste",
+                "Inforuudut",
+                "Kameravalvonta",
+                "Katettu",
+                "Kengänkiillotus",
+                "Korjauspalvelu",
+                "Käynnistysapu",
+                "Lastenrattaiden vuokraus",
+                "Lippuautomaatti",
+                "Maksu portilla",
+                "Maksutiski",
+                "Paikkojen varausmahdollisuus",
+                "Sateenvarjovuokraus",
+                "Valaistus",
+                "WC");
     }
 
     @Test
     public void find_all_sort_by_name_en() {
         ServiceSearch search = new ServiceSearch();
         search.sort = new Sort("name.en");
-        SearchResults<Service> results = serviceDao.findServices(search);
-        assertThat(results.get(0).name.en).isEqualTo("Car Wash");
-        assertThat(results.get(1).name.en).isEqualTo("Covered");
+        assertThat(serviceDao.findServices(search).results).extracting("name.en").containsExactly(
+                "Car Wash",
+                "Covered",
+                "Elevator",
+                "Engine ignition aid",
+                "First aid",
+                "Handicapped Toilets",
+                "Information Point",
+                "Info screens",
+                "Lighting",
+                "Parking space reservation",
+                "Pay Desk",
+                "Payment at the gate",
+                "Repair Shop",
+                "Shoe Shine",
+                "Stroller rental",
+                "Surveillance cameras",
+                "Toilets",
+                "Umbrella rental",
+                "Vending Machine"
+        );
     }
 }

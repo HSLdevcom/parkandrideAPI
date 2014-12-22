@@ -18,14 +18,14 @@ import com.mysema.query.spatial.path.*;
 
 
 /**
- * QService is a Querydsl query type for QService
+ * QPaymentMethod is a Querydsl query type for QPaymentMethod
  */
 @Generated("com.mysema.query.sql.codegen.MetaDataSerializer")
-public class QService extends RelationalPathSpatial<QService> {
+public class QPaymentMethod extends RelationalPathSpatial<QPaymentMethod> {
 
-    private static final long serialVersionUID = -1411325302;
+    private static final long serialVersionUID = 1642789532;
 
-    public static final QService service = new QService("SERVICE");
+    public static final QPaymentMethod paymentMethod = new QPaymentMethod("PAYMENT_METHOD");
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
@@ -35,29 +35,25 @@ public class QService extends RelationalPathSpatial<QService> {
 
     public final StringPath nameSv = createString("nameSv");
 
-    public final com.mysema.query.sql.PrimaryKey<QService> constraintA = createPrimaryKey(id);
+    public final com.mysema.query.sql.PrimaryKey<QPaymentMethod> constraintD = createPrimaryKey(id);
 
-    public final com.mysema.query.sql.ForeignKey<QFacilityPaymentMethod> _facilityPaymentMethodPaymentMethodIdFk = createInvForeignKey(id, "PAYMENT_METHOD_ID");
-
-    public final com.mysema.query.sql.ForeignKey<QFacilityService> _facilityServiceServiceIdFk = createInvForeignKey(id, "SERVICE_ID");
-
-    public QService(String variable) {
-        super(QService.class, forVariable(variable), "PUBLIC", "SERVICE");
+    public QPaymentMethod(String variable) {
+        super(QPaymentMethod.class, forVariable(variable), "PUBLIC", "PAYMENT_METHOD");
         addMetadata();
     }
 
-    public QService(String variable, String schema, String table) {
-        super(QService.class, forVariable(variable), schema, table);
+    public QPaymentMethod(String variable, String schema, String table) {
+        super(QPaymentMethod.class, forVariable(variable), schema, table);
         addMetadata();
     }
 
-    public QService(Path<? extends QService> path) {
-        super(path.getType(), path.getMetadata(), "PUBLIC", "SERVICE");
+    public QPaymentMethod(Path<? extends QPaymentMethod> path) {
+        super(path.getType(), path.getMetadata(), "PUBLIC", "PAYMENT_METHOD");
         addMetadata();
     }
 
-    public QService(PathMetadata<?> metadata) {
-        super(QService.class, metadata, "PUBLIC", "SERVICE");
+    public QPaymentMethod(PathMetadata<?> metadata) {
+        super(QPaymentMethod.class, metadata, "PUBLIC", "PAYMENT_METHOD");
         addMetadata();
     }
 

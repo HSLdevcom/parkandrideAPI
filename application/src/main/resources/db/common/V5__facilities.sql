@@ -10,6 +10,14 @@ create table facility (
   operator_contact_id bigint not null,
   service_contact_id bigint,
 
+  park_and_ride_auth_required boolean not null,
+  payment_info_fi varchar(255),
+  payment_info_url_fi varchar(255),
+  payment_info_sv varchar(255),
+  payment_info_url_sv varchar(255),
+  payment_info_en varchar(255),
+  payment_info_url_en varchar(255),
+
   primary key (id),
 
 --   constraint facility_operator_id_fk foreign key (operator_id)
@@ -137,4 +145,17 @@ create table facility_status (
 
   constraint facility_status_facility_status_enum_fk foreign key (status)
     references facility_status_enum (name)
+);
+
+create table facility_payment_method (
+  facility_id bigint not null,
+  payment_method_id bigint not null,
+
+  primary key (facility_id, payment_method_id),
+
+  constraint facility_payment_method_facility_id_fk foreign key (facility_id)
+    references facility (id),
+
+  constraint facility_payment_method_payment_method_id_fk foreign key (payment_method_id)
+    references service (id)
 );

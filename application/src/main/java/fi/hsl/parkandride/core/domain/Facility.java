@@ -74,4 +74,6 @@ public class Facility {
 //        return operatorId;
 //    }
 
+
+    public FacilityPaymentInfo paymentInfo = new FacilityPaymentInfo();
 }

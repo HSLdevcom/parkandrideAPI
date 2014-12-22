@@ -41,6 +41,20 @@ public class QFacility extends RelationalPathSpatial<QFacility> {
 
     public final NumberPath<Long> operatorContactId = createNumber("operatorContactId", Long.class);
 
+    public final BooleanPath parkAndRideAuthRequired = createBoolean("parkAndRideAuthRequired");
+
+    public final StringPath paymentInfoEn = createString("paymentInfoEn");
+
+    public final StringPath paymentInfoFi = createString("paymentInfoFi");
+
+    public final StringPath paymentInfoSv = createString("paymentInfoSv");
+
+    public final StringPath paymentInfoUrlEn = createString("paymentInfoUrlEn");
+
+    public final StringPath paymentInfoUrlFi = createString("paymentInfoUrlFi");
+
+    public final StringPath paymentInfoUrlSv = createString("paymentInfoUrlSv");
+
     public final NumberPath<Long> serviceContactId = createNumber("serviceContactId", Long.class);
 
     public final com.mysema.query.sql.PrimaryKey<QFacility> constraint4 = createPrimaryKey(id);
@@ -58,6 +72,8 @@ public class QFacility extends RelationalPathSpatial<QFacility> {
     public final com.mysema.query.sql.ForeignKey<QCapacity> _capacityFacilityIdFk = createInvForeignKey(id, "FACILITY_ID");
 
     public final com.mysema.query.sql.ForeignKey<QFacilityService> _facilityServiceFacilityIdFk = createInvForeignKey(id, "FACILITY_ID");
+
+    public final com.mysema.query.sql.ForeignKey<QFacilityPaymentMethod> _facilityPaymentMethodFacilityIdFk = createInvForeignKey(id, "FACILITY_ID");
 
     public final com.mysema.query.sql.ForeignKey<QPort> _portFacilityIdFk = createInvForeignKey(id, "FACILITY_ID");
 
@@ -89,6 +105,13 @@ public class QFacility extends RelationalPathSpatial<QFacility> {
         addMetadata(nameFi, ColumnMetadata.named("NAME_FI").withIndex(2).ofType(Types.VARCHAR).withSize(255).notNull());
         addMetadata(nameSv, ColumnMetadata.named("NAME_SV").withIndex(3).ofType(Types.VARCHAR).withSize(255).notNull());
         addMetadata(operatorContactId, ColumnMetadata.named("OPERATOR_CONTACT_ID").withIndex(7).ofType(Types.BIGINT).withSize(19).notNull());
+        addMetadata(parkAndRideAuthRequired, ColumnMetadata.named("PARK_AND_RIDE_AUTH_REQUIRED").withIndex(9).ofType(Types.BOOLEAN).withSize(1).notNull());
+        addMetadata(paymentInfoEn, ColumnMetadata.named("PAYMENT_INFO_EN").withIndex(14).ofType(Types.VARCHAR).withSize(255));
+        addMetadata(paymentInfoFi, ColumnMetadata.named("PAYMENT_INFO_FI").withIndex(10).ofType(Types.VARCHAR).withSize(255));
+        addMetadata(paymentInfoSv, ColumnMetadata.named("PAYMENT_INFO_SV").withIndex(12).ofType(Types.VARCHAR).withSize(255));
+        addMetadata(paymentInfoUrlEn, ColumnMetadata.named("PAYMENT_INFO_URL_EN").withIndex(15).ofType(Types.VARCHAR).withSize(255));
+        addMetadata(paymentInfoUrlFi, ColumnMetadata.named("PAYMENT_INFO_URL_FI").withIndex(11).ofType(Types.VARCHAR).withSize(255));
+        addMetadata(paymentInfoUrlSv, ColumnMetadata.named("PAYMENT_INFO_URL_SV").withIndex(13).ofType(Types.VARCHAR).withSize(255));
         addMetadata(serviceContactId, ColumnMetadata.named("SERVICE_CONTACT_ID").withIndex(8).ofType(Types.BIGINT).withSize(19));
     }
 

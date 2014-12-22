@@ -8,6 +8,7 @@
         'parkandride.ContactResource',
         'parkandride.FacilityResource',
         'parkandride.ServiceResource',
+        'parkandride.PaymentMethodResource',
         'parkandride.layout'
     ]);
 
@@ -32,6 +33,11 @@
                                 return [];
                             }
                         },
+                        paymentMethods: function(PaymentMethodResource) {
+                            return PaymentMethodResource.listPaymentMethods().then(function(results) {
+                                return results.results;
+                            });
+                        },
                         contacts: function(ContactResource, facility)  {
                             var contactIds = _.filter(_.values(facility.contacts));
                             if (!_.isEmpty(contactIds)) {
@@ -49,7 +55,7 @@
         });
     });
 
-    m.controller('FacilityViewCtrl', function(facility, services, contacts) {
+    m.controller('FacilityViewCtrl', function(facility, services, paymentMethods, contacts) {
         this.facility = facility;
         this.services = services;
         this.contacts = contacts;
@@ -62,6 +68,15 @@
         this.getServiceNames = function() {
             return _.map(services, function(service) {
                 return service.name.fi;
+            });
+        };
+        this.getPaymentMethodNames = function() {
+            function hasPaymentMethod(paymentMethod) {
+                return  _.contains(facility.paymentInfo.paymentMethodIds, paymentMethod.id);
+            }
+
+            return _.map(_.filter(paymentMethods, hasPaymentMethod), function(paymentMethod) {
+                return paymentMethod.name.fi;
             });
         };
     });

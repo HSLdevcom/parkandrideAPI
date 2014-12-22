@@ -47,6 +47,11 @@
 				<facility-contact-view contact="viewCtrl.contacts[viewCtrl.facility.contacts.service]" contact-type="service"></facility-contact-view>
 			</div>
 
+			<div class="row">
+				<h3>Maksutavat ja tunnistautuminen (Käännä)</h3>
+				<p>{{viewCtrl.getPaymentMethodNames() | joinBy: ", "}}</p>
+			</div>
+
 			<div class="row wdServices" ng-show="viewCtrl.hasServices()">
 				<h3>{{"facilities.serviceIds.heading" | translate}}</h3>
 				<p class="wdService">{{viewCtrl.getServiceNames() | joinBy: ", "}}</p>

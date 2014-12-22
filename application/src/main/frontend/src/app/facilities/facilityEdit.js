@@ -3,6 +3,7 @@
         'ui.router',
         'parkandride.contacts',
         'parkandride.ServiceResource',
+        'parkandride.PaymentMethodResource',
         'parkandride.ContactResource',
         'parkandride.FacilityResource',
         'parkandride.facilityMap',
@@ -36,6 +37,9 @@
                 services: function(ServiceResource) {
                     return ServiceResource.listServices().then(function(response) { return response.results; });
                 },
+                paymentMethods: function(PaymentMethodResource) {
+                    return PaymentMethodResource.listPaymentMethods().then(function(response) { return response.results; });
+                },
                 contacts: function(ContactResource) {
                     return ContactResource.listContacts().then(function(response) { return response.results; });
                 }
@@ -62,6 +66,9 @@
                 services: function(ServiceResource) {
                     return ServiceResource.listServices().then(function(response) { return response.results; });
                 },
+                paymentMethods: function(PaymentMethodResource) {
+                    return PaymentMethodResource.listPaymentMethods().then(function(response) { return response.results; });
+                },
                 contacts: function(ContactResource) {
                     return ContactResource.listContacts().then(function(response) { return response.results; });
                 }
@@ -69,11 +76,12 @@
         });
     });
 
-    m.controller('FacilityEditCtrl', function($scope, $state, schema, FacilityResource, facility, aliasesPlaceholder, services, contacts) {
+    m.controller('FacilityEditCtrl', function($scope, $state, schema, FacilityResource, facility, aliasesPlaceholder, services, paymentMethods, contacts) {
         var self = this;
         $scope.common.translationPrefix = "facilities";
         self.capacityTypes = schema.capacityTypes;
         self.services = services;
+        self.paymentMethods = paymentMethods;
         self.contacts = contacts;
         self.aliasesPlaceholder = aliasesPlaceholder;
 

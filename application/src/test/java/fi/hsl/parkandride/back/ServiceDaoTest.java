@@ -4,15 +4,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import javax.inject.Inject;
 
-import org.assertj.core.api.Assertions;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.boot.test.SpringApplicationConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import fi.hsl.parkandride.core.back.ServiceRepository;
-import fi.hsl.parkandride.core.domain.*;
-import fi.hsl.parkandride.dev.DevHelper;
+import fi.hsl.parkandride.core.domain.MultilingualString;
+import fi.hsl.parkandride.core.domain.Service;
+import fi.hsl.parkandride.core.domain.ServiceSearch;
+import fi.hsl.parkandride.core.domain.Sort;
 
 public class ServiceDaoTest extends AbstractDaoTest {
 
@@ -47,7 +45,8 @@ public class ServiceDaoTest extends AbstractDaoTest {
                 "Paikkojen varausmahdollisuus",
                 "Sateenvarjovuokraus",
                 "Valaistus",
-                "WC");
+                "WC"
+        );
     }
 
     @Test

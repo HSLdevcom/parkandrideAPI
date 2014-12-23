@@ -19,7 +19,7 @@ module.exports = function(spec) {
 
     that.openEditDialog = function(id) {
         $('.wdContact' + id + " .wdEdit").click();
-    }
+    };
 
     that.getContacts = function() {
         return spec.contactRow.then(function(rows) {

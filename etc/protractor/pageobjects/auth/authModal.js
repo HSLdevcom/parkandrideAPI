@@ -18,6 +18,7 @@ module.exports = function(spec) {
     };
 
     that.login = function(username, password) {
+        expect(that.isDisplayed()).toBe(true);
         spec.username.sendKeys(username);
         spec.password.sendKeys(password);
         spec.doLogin.click();

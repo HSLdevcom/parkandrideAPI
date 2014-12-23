@@ -46,6 +46,7 @@ public class AuthenticationServiceTest {
     @Before
     public void initMocks() {
         MockitoAnnotations.initMocks(this);
+        when(userRepository.getCurrentTime()).thenReturn(DateTime.now());
         this.service = new AuthenticationService(userRepository, passwordEncryptor, "salaisuus", expires);
     }
 

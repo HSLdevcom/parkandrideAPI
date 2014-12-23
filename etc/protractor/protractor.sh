@@ -23,7 +23,7 @@ function run() {
   CMD="$1"; shift
   case "$CMD" in
     start)
-        java -jar $JARFile 2>&1 > $LOGFile &
+        java -jar $JARFile --logging.config="$SCRIPT_DIR/logback-protractor.xml"  2>&1 > $LOGFile &
         ;;
     wait_until_started)
         retryable_condition 'is_server_up' 120 || fail "Failed to start application"

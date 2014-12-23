@@ -13,6 +13,7 @@ module.exports = function(spec) {
     spec.loginError = $("#loginError");
 
     that.openLoginModal = function() {
+        expect(that.isLoginDisplayed()).toBe(true);
         spec.openLoginButton.click();
     };
 
@@ -23,6 +24,7 @@ module.exports = function(spec) {
     };
 
     that.logout = function() {
+        expect(that.isLogoutDisplayed()).toBe(true);
         spec.logout.click();
     };
 

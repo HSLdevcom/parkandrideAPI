@@ -59,12 +59,13 @@ describe('authorization', function () {
     it('should require login on submit', function() {
         contactPage.get();
         contactPage.openCreateModal();
+        expect(contactEditModal.isDisplayed()).toBe(true);
         contactEditModal.setName("HSL");
         contactEditModal.setPhone("(09) 4766 4444");
 
+        expect(authModal.isDisplayed()).toBe(false);
         contactEditModal.save();
         expect(authModal.isDisplayed()).toBe(true);
-        expect(contactEditModal.isDisplayed()).toBe(true);
 
         authModal.login(username, password);
 

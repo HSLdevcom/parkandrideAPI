@@ -53,6 +53,8 @@ public class UserDao implements UserRepository {
             UserSecret userSecret = new UserSecret();
             userSecret.password = row.get(qUser.password);
             userSecret.minTokenTimestamp = row.get(qUser.minTokenTimestamp);
+            System.out.println("timestamp from db is (DateTime)" + userSecret.minTokenTimestamp);
+            System.out.println("timestamp from db is (millis)" + userSecret.minTokenTimestamp.getMillis());
 //            userSecret.secret = row.get(qUser.secret);
             userSecret.user = row.get(userMapping);
             return userSecret;
@@ -96,6 +98,7 @@ public class UserDao implements UserRepository {
     @TransactionalWrite
     @Override
     public void revokeTokens(long userId, DateTime asOf) {
+        System.out.println("revoking token for user " + userId);
         if (queryFactory.update(qUser)
                 .where(qUser.id.eq(userId))
                 .set(qUser.minTokenTimestamp, asOf)
@@ -113,6 +116,8 @@ public class UserDao implements UserRepository {
                 .set(qUser.minTokenTimestamp, currentTime)
                 .execute() != 1) {
             notFound(userId);
+        } else {
+            System.out.println("updated passwd for user " + userId + " new token timestamp is " + currentTime);
         }
     }
 

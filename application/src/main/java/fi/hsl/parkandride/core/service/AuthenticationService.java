@@ -187,7 +187,7 @@ public class AuthenticationService {
 
         // Token revoked?
         if (tokenTimestamp < userSecret.minTokenTimestamp.getMillis()) {
-            System.out.println("auth service: toker revoked tokenTimestamp:" + tokenTimestamp + " exopected:" + userSecret.minTokenTimestamp.getMillis());
+            System.out.println("auth service: token revoked tokenTimestamp:" + tokenTimestamp + " expected:" + userSecret.minTokenTimestamp.getMillis());
             throw new AuthenticationRequiredException();
         }
 

@@ -35,6 +35,7 @@ public class UserArgumentResolver implements HandlerMethodArgumentResolver {
     public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer, NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
         String authorization = webRequest.getHeader(HttpHeaders.AUTHORIZATION);
         if (Strings.isNullOrEmpty(authorization)) {
+            System.out.println("argument resolver: authorization empty");
             throw new AuthenticationRequiredException();
         }
         if (!authorization.startsWith(BEARER_PREFIX)) {

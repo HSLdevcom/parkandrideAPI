@@ -83,6 +83,7 @@ public class AuthenticationService {
                 throw new ValidationException(new Violation("LoginNotAllowed"));
             }
             if (!passwordEncryptor.checkPassword(password, userSecret.password)) {
+                System.out.println("auth service: password check failed for user " + userSecret.user);
                 throw new ValidationException(new Violation("BadCredentials"));
             }
             Login login = new Login();
@@ -91,6 +92,7 @@ public class AuthenticationService {
             login.role = userSecret.user.role;
             return login;
         } catch (NotFoundException e) {
+            System.out.println("auth service: user not found " + username);
             throw new ValidationException(new Violation("BadCredentials"));
         }
     }

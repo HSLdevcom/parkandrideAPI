@@ -61,9 +61,11 @@ public class DevController {
 
     @RequestMapping(method = POST, value = DEV_LOGIN)
     public ResponseEntity<Login> login(@RequestBody NewUser newUser) {
+        System.out.println("dev api: logging in newUser = " + newUser);
         UserSecret userSecret;
         try {
             userSecret = userRepository.getUser(newUser.username);
+            System.out.println("dev api: user found: " + userSecret.user);
             if (newUser.role != userSecret.user.role) {
                 userRepository.updateUser(userSecret.user.id, newUser);
             }
@@ -71,6 +73,8 @@ public class DevController {
         } catch (NotFoundException e) {
             userSecret = new UserSecret();
             userSecret.user = userService.createUserNoValidate(newUser);
+            System.out.println("dev api: user not found, new user created " + userSecret.user);
+
         }
         Login login = new Login();
         login.token = authenticationService.token(userSecret.user);

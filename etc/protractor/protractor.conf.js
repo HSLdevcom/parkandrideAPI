@@ -27,7 +27,7 @@ exports.config = {
 
         var ScreenshotReporter = require('protractor-html-screenshot-reporter');
         jasmine.getEnv().addReporter(new ScreenshotReporter({
-            baseDirectory: process.cwd() + '/screenshots'
+            baseDirectory: process.env.PTOR_DIR + '/screenshots'
         }));
 
         browser.driver.manage().window().setSize(1280, 1024);

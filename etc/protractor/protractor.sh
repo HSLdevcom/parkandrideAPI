@@ -7,7 +7,7 @@ function init() {
   NODE_MODULES="$SCRIPT_DIR/node_modules"
   : ${SERVER_URL:=http://localhost:8080}
 
-  export SERVER_URL
+  export SERVER_URL PTOR_DIR="$SCRIPT_DIR"
 }
 
 function print_process() {

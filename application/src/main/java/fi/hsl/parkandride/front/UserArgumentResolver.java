@@ -39,6 +39,7 @@ public class UserArgumentResolver implements HandlerMethodArgumentResolver {
             throw new AuthenticationRequiredException();
         }
         if (!authorization.startsWith(BEARER_PREFIX)) {
+            System.out.println("argument resolver: no bearer prefix");
             throw new AuthenticationRequiredException();
         }
         String token = authorization.substring(BEARER_PREFIX.length()).trim();

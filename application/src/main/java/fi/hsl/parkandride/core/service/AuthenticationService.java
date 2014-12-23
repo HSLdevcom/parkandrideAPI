@@ -112,6 +112,7 @@ public class AuthenticationService {
         try {
             return userRepository.getUser(id);
         } catch (NotFoundException e) {
+            System.out.println("auth service: load user not found id " + id);
             throw new AuthenticationRequiredException();
         }
     }
@@ -142,11 +143,14 @@ public class AuthenticationService {
 
     @TransactionalRead
     public User authenticate(String token) {
+        System.out.println("auth service: token = " + token);
         if (token == null) {
+            System.out.println("auth service: token null");
             throw new AuthenticationRequiredException();
         }
         Matcher m = TOKEN_PATTERN.matcher(token);
         if (!m.matches()) {
+            System.out.println("auth service: no token match " + token);
             throw new AuthenticationRequiredException();
         }
         String message = m.group("message");
@@ -157,6 +161,7 @@ public class AuthenticationService {
         String expectedMac = hmac(message);
 
         if (!expectedMac.equals(givenMac)) {
+            System.out.println("auth service: mac mismatch expected:" + expectedMac + " actual:" + givenMac);
             throw new AuthenticationRequiredException();
         }
         boolean perpetualToken = false;
@@ -165,24 +170,29 @@ public class AuthenticationService {
                 // Temporal token expired?
                 DateTime expires = new DateTime(tokenTimestamp).plus(expiresDuration);
                 if (expires.isBeforeNow()) {
+                    System.out.println("auth service: token expired");
                     throw new AuthenticationRequiredException();
                 }
                 break;
             case "P":
                 perpetualToken = true;
                 break;
-            default: new AuthenticationRequiredException();
+            default:
+                System.out.println("auth service: unknown token type");
+                new AuthenticationRequiredException();
         }
 
         UserSecret userSecret = loadUser(userId);
 
         // Token revoked?
         if (tokenTimestamp < userSecret.minTokenTimestamp.getMillis()) {
+            System.out.println("auth service: toker revoked");
             throw new AuthenticationRequiredException();
         }
 
         // Token type mismatch
         if (userSecret.user.role.perpetualToken != perpetualToken) {
+            System.out.println("auth service: token type mismatch");
             throw new AuthenticationRequiredException();
         }
 

@@ -21,7 +21,7 @@ public class UserController {
 
     @RequestMapping(value = LOGIN, method = POST, produces = APPLICATION_JSON_VALUE)
     public Login login(@RequestBody Credentials credentials) {
+        System.out.println("login controller: credentials = " + credentials);
         return authenticationService.login(credentials.username, credentials.password);
     }
-
 }

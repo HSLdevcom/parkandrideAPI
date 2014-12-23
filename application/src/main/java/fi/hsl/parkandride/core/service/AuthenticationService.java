@@ -87,6 +87,7 @@ public class AuthenticationService {
                 throw new ValidationException(new Violation("BadCredentials"));
             }
             Login login = new Login();
+            System.out.println("auth service: generating new token for user " + username  + "...");
             login.token = token(userSecret.user);
             login.username = userSecret.user.username;
             login.role = userSecret.user.role;
@@ -122,13 +123,13 @@ public class AuthenticationService {
     }
 
     public String token(User user, DateTime now) {
+        System.out.println("new token timestamp is " + now.getMillis());
         StringBuilder token = new StringBuilder()
                 .append(user.role.perpetualToken ? "P" : "T").append(DELIM)
                 .append(user.id).append(DELIM)
                 .append(now.getMillis()).append(DELIM);
 
         token.append(hmac(token.toString()));
-
         return token.toString();
     }
 
@@ -186,7 +187,7 @@ public class AuthenticationService {
 
         // Token revoked?
         if (tokenTimestamp < userSecret.minTokenTimestamp.getMillis()) {
-            System.out.println("auth service: toker revoked");
+            System.out.println("auth service: toker revoked tokenTimestamp:" + tokenTimestamp + " exopected:" + userSecret.minTokenTimestamp.getMillis());
             throw new AuthenticationRequiredException();
         }
 

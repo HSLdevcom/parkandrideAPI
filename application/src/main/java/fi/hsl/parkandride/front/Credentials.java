@@ -14,4 +14,11 @@ public class Credentials {
         return password;
     }
 
+    @Override
+    public String toString() {
+        return "Credentials{" +
+                "username='" + username + '\'' +
+                ", password='" + password + '\'' +
+                '}';
+    }
 }

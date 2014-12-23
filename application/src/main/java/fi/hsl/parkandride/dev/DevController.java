@@ -77,6 +77,7 @@ public class DevController {
 
         }
         Login login = new Login();
+        System.out.println("dev api: creating new token for user " + userSecret.user.username + "...");
         login.token = authenticationService.token(userSecret.user);
         login.username = userSecret.user.username;
         login.role = userSecret.user.role;

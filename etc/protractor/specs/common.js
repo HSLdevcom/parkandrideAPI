@@ -20,7 +20,7 @@ function spec() {
 function capture() {
     var name = spec().description.split(' ').join('_');
     browser.takeScreenshot().then(function(png){
-        var stream = fs.createWriteStream('screenshots/' + name + '.png');
+        var stream = fs.createWriteStream(name + '.png');
         stream.write(new Buffer(png, 'base64'));
         stream.end();
     });

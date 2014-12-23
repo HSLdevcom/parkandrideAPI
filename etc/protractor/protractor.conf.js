@@ -3,7 +3,7 @@ exports.config = {
     chromeDriver: 'node_modules/protractor/selenium/chromedriver',
     directConnect: true,
     rootElement: 'html',
-    specs: [ 'specs/**/*.spec.js'],
+    specs: [ 'specs/**/auth.spec.js'],
 
     capabilities: {
       'browserName': 'firefox'

@@ -65,6 +65,9 @@
         this.hasServices = function() {
             return services.length > 0;
         };
+        this.hasPaymentInfo = function() {
+            return facility.paymentInfo.paymentMethodIds.length > 0;
+        };
         this.getServiceNames = function() {
             return _.map(services, function(service) {
                 return service.name.fi;

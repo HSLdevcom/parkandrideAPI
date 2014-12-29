@@ -42,7 +42,7 @@ describe('facility view', function () {
         });
     });
 
-    describe('with aliases, capacities and services', function () {
+    describe('with full data', function () {
         beforeEach(function () {
             f = toView(facFull);
         });
@@ -57,7 +57,10 @@ describe('facility view', function () {
             expect(viewPage.capacitiesTable.getCapacities(_.keys(f.capacities))).toEqual(f.capacities);
 
             expect(viewPage.isServicesDisplayed()).toBe(true);
-            expect(viewPage.getServices()).toEqual(["Katettu, Valaistus"]);
+            expect(viewPage.getServices()).toEqual("Katettu, Valaistus");
+
+            expect(viewPage.isPaymentInfoDisplayed()).toBe(true);
+            expect(viewPage.getPaymentMethods()).toEqual("Kolikko, Seteli");
         });
     });
 
@@ -114,6 +117,18 @@ describe('facility view', function () {
 
         it('services are not displayed', function () {
             expect(viewPage.isServicesDisplayed()).toBe(false);
+        });
+    });
+
+    describe('without payment info', function () {
+        beforeEach(function () {
+            f = facFull.copy();
+            f.paymentInfo = {};
+            toView(f);
+        });
+
+        it('payment info is not displayed', function () {
+            expect(viewPage.isPaymentInfoDisplayed()).toBe(false);
         });
     });
 

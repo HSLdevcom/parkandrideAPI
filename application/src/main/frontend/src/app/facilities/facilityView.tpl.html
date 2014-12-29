@@ -47,9 +47,9 @@
 				<facility-contact-view contact="viewCtrl.contacts[viewCtrl.facility.contacts.service]" contact-type="service"></facility-contact-view>
 			</div>
 
-			<div class="row">
+			<div class="row wdPaymentInfo" ng-show="viewCtrl.hasPaymentInfo()">
 				<h3>{{"facilities.paymentInfo.heading" | translate }}</h3>
-				<p>{{viewCtrl.getPaymentMethodNames() | joinBy: ", "}}</p>
+				<p class="wdPaymentMethodNames">{{viewCtrl.getPaymentMethodNames() | joinBy: ", "}}</p>
 			</div>
 
 			<div class="row wdServices" ng-show="viewCtrl.hasServices()">

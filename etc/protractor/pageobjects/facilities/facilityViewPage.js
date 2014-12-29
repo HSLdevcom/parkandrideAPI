@@ -8,8 +8,10 @@ module.exports = function(spec) {
     spec.view = $('.wdFacilityView');
     spec.name = $('.wdFacilityNameFi');
     spec.aliases = $('.wdAliases');
-    spec.services = $$('.wdService');
+    spec.services = $('.wdService');
     spec.servicesBlock = $('.wdServices');
+    spec.paymentMethods = $('.wdPaymentMethodNames');
+    spec.paymentInfoBlock = $('.wdPaymentInfo');
     spec.aliasesBlock = $('.wdAliasesBlock');
     spec.map = $('.facility-map .ol-viewport');
     spec.editViewButton = $$('.wdEditViewButton').first();
@@ -33,19 +35,20 @@ module.exports = function(spec) {
         return spec.services.getText();
     };
 
+    that.getPaymentMethods = function() {
+        return spec.paymentMethods.getText();
+    };
+
     that.isAliasesDisplayed = function () {
         return spec.aliasesBlock.isDisplayed();
     };
 
     that.isServicesDisplayed = function () {
-        return spec.servicesBlock.then(
-            function(elem) {
-                return elem.isDisplayed();
-            },
-            function() {
-                return false;
-            }
-        );
+        return spec.isDisplayed(spec.servicesBlock);
+    };
+
+    that.isPaymentInfoDisplayed = function () {
+        return spec.isDisplayed(spec.paymentInfoBlock);
     };
 
     that.openPortAt = function(x, y) {

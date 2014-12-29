@@ -73,7 +73,7 @@ public class FacilityStatusITest extends AbstractIntegrationTest {
         contactDao.insertContact(c, c.id);
         facilityDao.insertFacility(f, f.id);
 
-//        devHelper.createUser(new NewUser(1l, "admin", ADMIN, "admin"));
+        devHelper.createUser(new NewUser(1l, "admin", ADMIN, "admin"));
         authToken = devHelper.login("admin").token;
     }
 
@@ -158,6 +158,7 @@ public class FacilityStatusITest extends AbstractIntegrationTest {
         List<FacilityStatus> payload = Lists.newArrayList(spacesOnly, statusOnly, spacesAndStatus);
 
         givenWithContent()
+            .header("Authorization", "Bearer " + authToken)
             .body(payload)
         .when()
             .put(UrlSchema.FACILITY_STATUS, f.id)

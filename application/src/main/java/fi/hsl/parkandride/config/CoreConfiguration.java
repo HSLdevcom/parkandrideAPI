@@ -112,4 +112,5 @@ public class CoreConfiguration {
     public HubService hubService() {
         return new HubService(hubRepository(), validationService());
     }
+
 }

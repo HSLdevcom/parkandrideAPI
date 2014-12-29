@@ -20,3 +20,10 @@ insert into service (id, name_fi, name_sv, name_en) values (9, 'Maksutiski', 'Pa
 insert into service (id, name_fi, name_sv, name_en) values (10, 'Autopesu', 'Car Wash', 'Car Wash');
 insert into service (id, name_fi, name_sv, name_en) values (11, 'Korjauspalvelu', 'Repair Shop', 'Repair Shop');
 insert into service (id, name_fi, name_sv, name_en) values (12, 'Kengänkiillotus', 'Shoe Shine', 'Shoe Shine');
+insert into service (id, name_fi, name_sv, name_en) values (13, 'Maksu portilla', 'Payment at the gate', 'Payment at the gate');
+insert into service (id, name_fi, name_sv, name_en) values (14, 'Sateenvarjovuokraus', 'Umbrella rental', 'Umbrella rental');
+insert into service (id, name_fi, name_sv, name_en) values (15, 'Paikkojen varausmahdollisuus', 'Parking space reservation', 'Parking space reservation');
+insert into service (id, name_fi, name_sv, name_en) values (16, 'Käynnistysapu', 'Engine ignition aid', 'Engine ignition aid');
+insert into service (id, name_fi, name_sv, name_en) values (17, 'Ensiapu', 'First aid', 'First aid');
+insert into service (id, name_fi, name_sv, name_en) values (18, 'Lastenrattaiden vuokraus', 'Stroller rental', 'Stroller rental');
+insert into service (id, name_fi, name_sv, name_en) values (19, 'Inforuudut', 'Info screens', 'Info screens');

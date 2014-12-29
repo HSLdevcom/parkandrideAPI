@@ -25,6 +25,11 @@ exports.config = {
         jasmine.getEnv().addReporter(new jasmine.JUnitXmlReporter(
             '.', true, true, 'protractor-results', true));
 
+        var ScreenshotReporter = require('protractor-html-screenshot-reporter');
+        jasmine.getEnv().addReporter(new ScreenshotReporter({
+            baseDirectory: process.env.PTOR_DIR + '/screenshots'
+        }));
+
         browser.driver.manage().window().setSize(1280, 1024);
 
         require('./specs/waitAbsent');

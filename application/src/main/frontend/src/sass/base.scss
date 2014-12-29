@@ -169,8 +169,7 @@ a {
 
 // disable bootstrap modal vertical animation
 .modal {
-  &.fade .modal-dialog {
-    @include translate(0, 0);
+  &.fade, &.in {
+    .modal-dialog { @include translate(0, 0); }
   }
-  &.in .modal-dialog { @include translate(0, 0) }
 }

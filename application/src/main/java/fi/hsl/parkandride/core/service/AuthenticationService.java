@@ -2,11 +2,9 @@ package fi.hsl.parkandride.core.service;
 
 import static com.google.common.base.Charsets.UTF_8;
 import static fi.hsl.parkandride.core.domain.Role.ADMIN;
-import static org.joda.time.DateTime.now;
 
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
-import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -16,7 +14,6 @@ import javax.crypto.spec.SecretKeySpec;
 import org.apache.commons.codec.binary.Base64;
 import org.jasypt.util.password.PasswordEncryptor;
 import org.joda.time.DateTime;
-import org.joda.time.Duration;
 import org.joda.time.Period;
 
 import fi.hsl.parkandride.core.back.UserRepository;
@@ -119,7 +116,7 @@ public class AuthenticationService {
         if (!userSecret.user.role.perpetualToken) {
             throw new ValidationException(new Violation("PerpetualTokenNotAllowed"));
         }
-        DateTime now = userRepository.getCurrentTime();
+        DateTime now = now();
         userRepository.revokeTokens(userId, now);
         return token(userSecret.user, now);
     }
@@ -205,4 +202,7 @@ public class AuthenticationService {
         return userSecret.user;
     }
 
+    private  DateTime now() {
+        return userRepository.getCurrentTime();
+    }
 }

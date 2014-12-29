@@ -69,9 +69,10 @@ html, body {
       &,
       &:hover,
       &:focus {
-        cursor: pointer;
+        cursor: default;
         border: 0;
         background-color: $secondarycolor;
+        text-decoration: none;
       }
     }
   }

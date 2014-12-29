@@ -158,6 +158,7 @@ describe('edit hub view', function () {
                 hub.location.coordinates = facilities[0].coordinatesFromTopLeft({ x: 30, y: 30 });
                 hub.setFacilities(facilities);
                 devApi.resetAll({facilities: hub.facilities, hubs: [hub], contacts: [contact], operators: [operator]});
+                devApi.loginAs('ADMIN');
             });
 
             it('facility can be removed from hub', function () {

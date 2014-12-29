@@ -10,39 +10,32 @@
         'showErrors'
     ]);
 
+    var stateConfigBase = {
+        parent: 'root',
+        views: {
+            "main": {
+                controller: 'HubEditCtrl as editCtrl',
+                templateUrl: 'hubs/hubEdit.tpl.html'
+            }
+        }
+    };
+
     m.config(function($stateProvider) {
-        $stateProvider.state('hub-create', { // dot notation in ui-router indicates nested ui-view
-            parent: 'root',
+        $stateProvider.state('hub-create', _.assign({
             url: '/hubs/create',
-            views: {
-                "main": {
-                    controller: 'HubEditCtrl as editCtrl',
-                    templateUrl: 'hubs/hubEdit.tpl.html'
-                }
-            },
             data: { pageTitle: 'Create Hub' },
             resolve: {
-                hub: function(HubResource) {
-                    return HubResource.newHub();
-                }
+                hub: function(HubResource) { return HubResource.newHub(); }
             }
-        });
-        $stateProvider.state('hub-edit', { // dot notation in ui-router indicates nested ui-view
-            parent: 'root',
+        }, stateConfigBase));
+
+        $stateProvider.state('hub-edit', _.assign({
             url: '/hubs/edit/:id',
-            views: {
-                "main": {
-                    controller: 'HubEditCtrl as editCtrl',
-                    templateUrl: 'hubs/hubEdit.tpl.html'
-                }
-            },
             data: { pageTitle: 'Edit Hub' },
             resolve: {
-                hub: function($stateParams, HubResource) {
-                    return HubResource.getHub($stateParams.id);
-                }
+                hub: function($stateParams, HubResource) { return HubResource.getHub($stateParams.id); }
             }
-        });
+        }, stateConfigBase));
     });
 
     m.controller('HubEditCtrl', function ($scope, $state, HubResource, FacilityResource, hub) {

@@ -80,8 +80,7 @@ public class FacilityStatusITest extends AbstractIntegrationTest {
     @Test
     public void returns_ISO8601_UTC_timestamp() {
         JSONObjectBuilder expected = minValidPayload();
-        givenWithContent()
-            .header("Authorization", "Bearer " + authToken)
+        givenWithContent(authToken)
             .body(expected.asArray())
         .when()
             .put(UrlSchema.FACILITY_STATUS, f.id)
@@ -115,8 +114,7 @@ public class FacilityStatusITest extends AbstractIntegrationTest {
     }
 
     private void test_accept_timestamp(JSONObjectBuilder builder) {
-        givenWithContent()
-            .header("Authorization", "Bearer " + authToken)
+        givenWithContent(authToken)
             .body(builder.asArray())
         .when()
             .put(UrlSchema.FACILITY_STATUS, f.id)
@@ -157,11 +155,10 @@ public class FacilityStatusITest extends AbstractIntegrationTest {
 
         List<FacilityStatus> payload = Lists.newArrayList(spacesOnly, statusOnly, spacesAndStatus);
 
-        givenWithContent()
-            .header("Authorization", "Bearer " + authToken)
+        givenWithContent(authToken)
             .body(payload)
-        .when()
-            .put(UrlSchema.FACILITY_STATUS, f.id)
+                .when()
+                .put(UrlSchema.FACILITY_STATUS, f.id)
         .then()
             .statusCode(HttpStatus.OK.value())
         ;
@@ -186,8 +183,7 @@ public class FacilityStatusITest extends AbstractIntegrationTest {
 
     @Test
     public void timestamp_is_required() {
-        givenWithContent()
-            .header("Authorization", "Bearer " + authToken)
+        givenWithContent(authToken)
             .body(minValidPayload().put(Key.TIMESTAMP, null).asArray())
         .when()
             .put(UrlSchema.FACILITY_STATUS, f.id)
@@ -200,8 +196,7 @@ public class FacilityStatusITest extends AbstractIntegrationTest {
 
     @Test
     public void capacity_type_is_required() {
-        givenWithContent()
-            .header("Authorization", "Bearer " + authToken)
+        givenWithContent(authToken)
             .body(minValidPayload().put(Key.CAPACITY_TYPE, null).asArray())
         .when()
             .put(UrlSchema.FACILITY_STATUS, f.id)
@@ -214,8 +209,7 @@ public class FacilityStatusITest extends AbstractIntegrationTest {
 
     @Test
     public void spaces_or_status_is_required() {
-        givenWithContent()
-            .header("Authorization", "Bearer " + authToken)
+        givenWithContent(authToken)
             .body(minValidPayload()
                     .put(Key.SPACES_AVAILABLE, null)
                     .put(Key.STATUS, null)

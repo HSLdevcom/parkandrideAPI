@@ -69,9 +69,18 @@ public abstract class AbstractIntegrationTest {
     }
 
     public static RequestSpecification givenWithContent() {
-        return given().spec(new RequestSpecBuilder()
+        return givenWithContent(null);
+    }
+
+    public static RequestSpecification givenWithContent(String authToken) {
+        RequestSpecification spec = given().spec(new RequestSpecBuilder()
                 .addHeader("Content-Type", "application/json;charset=UTF-8")
                 .build());
+        if (authToken != null) {
+            return spec.header("Authorization", "Bearer " + authToken);
+        } else {
+            return spec;
+        }
     }
 
     public static ResponseSpecification assertResponse(HttpStatus status, Class<?> exClass) {

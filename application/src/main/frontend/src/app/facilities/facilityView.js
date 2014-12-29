@@ -66,7 +66,10 @@
             return services.length > 0;
         };
         this.hasPaymentInfo = function() {
-            return facility.paymentInfo.paymentMethodIds.length > 0;
+            return facility.paymentInfo.paymentMethodIds.length > 0 ||
+                facility.paymentInfo.parkAndRideAuthRequired ||
+                facility.paymentInfo.info ||
+                facility.paymentInfo.url;
         };
         this.getServiceNames = function() {
             return _.map(services, function(service) {

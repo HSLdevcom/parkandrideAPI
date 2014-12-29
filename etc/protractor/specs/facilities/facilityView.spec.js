@@ -120,15 +120,69 @@ describe('facility view', function () {
         });
     });
 
-    describe('without payment info', function () {
-        beforeEach(function () {
-            f = facFull.copy();
-            f.paymentInfo = {};
-            toView(f);
+    describe('payment info', function () {
+        describe('without any info', function () {
+            beforeEach(function () {
+                f = facFull.copy();
+                f.paymentInfo = {};
+                toView(f);
+            });
+
+            it('payment info is not displayed', function () {
+                expect(viewPage.isPaymentInfoDisplayed()).toBe(false);
+            });
         });
 
-        it('payment info is not displayed', function () {
-            expect(viewPage.isPaymentInfoDisplayed()).toBe(false);
+        describe('with auth required', function () {
+            beforeEach(function () {
+                f = facFull.copy();
+                f.paymentInfo = {};
+                f.paymentInfo.parkAndRideAuthRequired = true;
+                toView(f);
+            });
+
+            it('payment info is displayed', function () {
+                expect(viewPage.isPaymentInfoDisplayed()).toBe(true);
+            });
+        });
+
+        describe('with payment methods', function () {
+            beforeEach(function () {
+                f = facFull.copy();
+                f.paymentInfo = {};
+                f.paymentInfo.paymentMethodIds = [ 1 ];
+                toView(f);
+            });
+
+            it('payment info is displayed', function () {
+                expect(viewPage.isPaymentInfoDisplayed()).toBe(true);
+            });
+        });
+
+        describe('with details', function () {
+            beforeEach(function () {
+                f = facFull.copy();
+                f.paymentInfo = {};
+                f.paymentInfo.info = { fi: "payment info", sv: "payment info", en: "payment info" };
+                toView(f);
+            });
+
+            it('payment info is displayed', function () {
+                expect(viewPage.isPaymentInfoDisplayed()).toBe(true);
+            });
+        });
+
+        describe('with url', function () {
+            beforeEach(function () {
+                f = facFull.copy();
+                f.paymentInfo = {};
+                f.paymentInfo.url = { fi: "url", sv: "url", en: "url" };
+                toView(f);
+            });
+
+            it('payment info is displayed', function () {
+                expect(viewPage.isPaymentInfoDisplayed()).toBe(true);
+            });
         });
     });
 

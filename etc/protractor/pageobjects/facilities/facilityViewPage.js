@@ -11,6 +11,8 @@ module.exports = function(spec) {
     spec.services = $('.wdService');
     spec.servicesBlock = $('.wdServices');
     spec.paymentMethods = $('.wdPaymentMethodNames');
+    spec.paymentInfoDetail = $('.wdPaymentInfoDetail');
+    spec.paymentInfoUrl = $('.wdPaymentInfoUrl');
     spec.paymentInfoBlock = $('.wdPaymentInfo');
     spec.aliasesBlock = $('.wdAliasesBlock');
     spec.map = $('.facility-map .ol-viewport');
@@ -37,6 +39,14 @@ module.exports = function(spec) {
 
     that.getPaymentMethods = function() {
         return spec.paymentMethods.getText();
+    };
+
+    that.getPaymentInfoDetail = function() {
+        return spec.getMultilingualValues(spec.paymentInfoDetail);
+    };
+
+    that.getPaymentInfoUrl = function() {
+        return spec.getMultilingualValues(spec.paymentInfoUrl);
     };
 
     that.isAliasesDisplayed = function () {

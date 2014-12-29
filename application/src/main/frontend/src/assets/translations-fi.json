@@ -139,7 +139,10 @@
         },
         "paymentInfo": {
             "heading": "Maksutavat ja tunnistautuminen",
-            "methodPlaceholder": "Valitse maksutapa..."
+            "methodPlaceholder": "Valitse maksutapa...",
+            "details": {
+                "heading": "Lisätiedot"
+            }
         },
         "ports": {
             "create": "Sisään-/uloskäynti",

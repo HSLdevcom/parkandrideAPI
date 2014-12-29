@@ -143,6 +143,7 @@ describe('facility view', function () {
 
             it('payment info is displayed', function () {
                 expect(viewPage.isPaymentInfoDisplayed()).toBe(true);
+                // TODO verify auth req is displayed
             });
         });
 
@@ -150,12 +151,13 @@ describe('facility view', function () {
             beforeEach(function () {
                 f = facFull.copy();
                 f.paymentInfo = {};
-                f.paymentInfo.paymentMethodIds = [ 1 ];
+                f.paymentInfo.paymentMethodIds = facFull.copy().paymentInfo.paymentMethodIds;
                 toView(f);
             });
 
             it('payment info is displayed', function () {
                 expect(viewPage.isPaymentInfoDisplayed()).toBe(true);
+                expect(viewPage.getPaymentMethods()).toEqual("Kolikko, Seteli");
             });
         });
 
@@ -163,12 +165,13 @@ describe('facility view', function () {
             beforeEach(function () {
                 f = facFull.copy();
                 f.paymentInfo = {};
-                f.paymentInfo.info = { fi: "payment info", sv: "payment info", en: "payment info" };
+                f.paymentInfo.info = facFull.copy().paymentInfo.info;
                 toView(f);
             });
 
             it('payment info is displayed', function () {
                 expect(viewPage.isPaymentInfoDisplayed()).toBe(true);
+                expect(viewPage.getPaymentInfoDetail()).toEqual([f.paymentInfo.info.fi, f.paymentInfo.info.sv, f.paymentInfo.info.en]);
             });
         });
 
@@ -176,12 +179,13 @@ describe('facility view', function () {
             beforeEach(function () {
                 f = facFull.copy();
                 f.paymentInfo = {};
-                f.paymentInfo.url = { fi: "url", sv: "url", en: "url" };
+                f.paymentInfo.url = facFull.copy().paymentInfo.url;
                 toView(f);
             });
 
             it('payment info is displayed', function () {
                 expect(viewPage.isPaymentInfoDisplayed()).toBe(true);
+                expect(viewPage.getPaymentInfoUrl()).toEqual([f.paymentInfo.url.fi, f.paymentInfo.url.sv, f.paymentInfo.url.en]);
             });
         });
     });

@@ -52,7 +52,10 @@ module.exports = function () {
             },
             serviceIds: [4, 5],
             paymentInfo: {
-                paymentMethodIds: [ paymentMethods.coins.id, paymentMethods.notes.id ]
+                parkAndRideAuthRequired: true,
+                paymentMethodIds: [ paymentMethods.coins.id, paymentMethods.notes.id ],
+                info: { fi: "Lisätietoja", sv: "Tilläggsinformation", en: "Additional info"},
+                url: { fi: "http://www.x-park.fi/hinnasto", sv: "http://www.x-park.fi/prislista", en: "http://www.x-park.fi/pricing" }
             }
         }),
         facCar: facility({

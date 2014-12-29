@@ -137,6 +137,10 @@
         "serviceIds": {
             "heading": "Palvelut"
         },
+        "paymentInfo": {
+            "heading": "Maksutavat ja tunnistautuminen",
+            "methodPlaceholder": "Valitse maksutapa..."
+        },
         "ports": {
             "create": "Sisään-/uloskäynti",
             "edit": "Sisään-/uloskäynti",

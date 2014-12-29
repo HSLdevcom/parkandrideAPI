@@ -13,10 +13,12 @@ import java.lang.annotation.Target;
 
 import org.springframework.transaction.annotation.Transactional;
 
+import fi.hsl.parkandride.core.domain.NotFoundException;
+
 @Target({ METHOD, TYPE})
 @Retention(RUNTIME)
 @Inherited
 @Documented
-@Transactional(readOnly = true, isolation = READ_COMMITTED, propagation = REQUIRED)
+@Transactional(readOnly = true, isolation = READ_COMMITTED, propagation = REQUIRED, noRollbackFor= NotFoundException.class)
 public @interface TransactionalRead {
 }

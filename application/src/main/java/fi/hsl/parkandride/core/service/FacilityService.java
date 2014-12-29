@@ -1,8 +1,15 @@
 package fi.hsl.parkandride.core.service;
 
-import java.util.List;
+import static fi.hsl.parkandride.core.domain.Permission.FACILITY_CREATE;
+import static fi.hsl.parkandride.core.domain.Permission.FACILITY_STATUS_UPDATE;
+import static fi.hsl.parkandride.core.domain.Permission.FACILITY_UPDATE;
+import static fi.hsl.parkandride.core.domain.Role.ADMIN;
+import static fi.hsl.parkandride.core.domain.Role.OPERATOR;
+import static fi.hsl.parkandride.core.domain.Role.OPERATOR_API;
+import static fi.hsl.parkandride.core.service.AuthenticationService.authorize;
 
-import com.google.common.collect.Lists;
+import java.util.List;
+import java.util.Objects;
 
 import fi.hsl.parkandride.core.back.FacilityRepository;
 import fi.hsl.parkandride.core.domain.*;
@@ -13,17 +20,15 @@ public class FacilityService {
 
     private final ValidationService validationService;
 
-    private final AuthService authService;
-
-    public FacilityService(FacilityRepository repository, ValidationService validationService, AuthService authService) {
+    public FacilityService(FacilityRepository repository, ValidationService validationService) {
         this.repository = repository;
         this.validationService = validationService;
-        this.authService = authService;
     }
 
     @TransactionalWrite
     public Facility createFacility(Facility facility, User currentUser) {
-        authService.authorize(currentUser);
+        authorize(currentUser, facility, FACILITY_CREATE);
+
         validationService.validate(facility);
         facility.id = repository.insertFacility(facility);
         return facility;
@@ -31,7 +36,8 @@ public class FacilityService {
 
     @TransactionalWrite
     public Facility updateFacility(long facilityId, Facility facility, User currentUser) {
-        authService.authorize(currentUser);
+        authorize(currentUser, facility, FACILITY_UPDATE);
+
         validationService.validate(facility);
         Facility oldFacility = repository.getFacilityForUpdate(facilityId);
         repository.updateFacility(facilityId, facility, oldFacility);
@@ -54,7 +60,9 @@ public class FacilityService {
     }
 
     @TransactionalWrite
-    public void createStatuses(long facilityId, List<FacilityStatus> statuses) {
+    public void createStatuses(long facilityId, List<FacilityStatus> statuses, User currentUser) {
+        // TODO: authorize(currentUser, facility, FACILITY_STATUS_UPDATE);
+
         statuses.forEach((status) -> validationService.validate(status));
         repository.insertStatuses(facilityId, statuses);
     }

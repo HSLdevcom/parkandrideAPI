@@ -36,6 +36,7 @@ describe('manage contacts', function () {
 
     it('should create new contact', function() {
         expect(editModal.isDisplayed()).toBe(true);
+        editModal.createOperator("smooth");
         editModal.setName("HSL");
         editModal.setPhone("+44 343 222 2222");
         editModal.setEmail("hsl@hsl.fi");

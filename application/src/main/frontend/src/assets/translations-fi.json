@@ -359,6 +359,9 @@
         }
     },
     "error": {
+        "403": {
+            "title": "Toiminto ei ole sallittu."
+        },
         "404": {
             "title": "Sivua ei löytynyt. Tarkista osoite."
         },

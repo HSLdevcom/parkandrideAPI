@@ -46,6 +46,7 @@ import com.google.common.base.Preconditions;
 
 import fi.hsl.parkandride.config.SpringNameToSystemNameMapper;
 import fi.hsl.parkandride.core.domain.Phone;
+import fi.hsl.parkandride.dev.DevHelper;
 import fi.hsl.parkandride.front.Features;
 import fi.hsl.parkandride.front.GeojsonDeserializer;
 import fi.hsl.parkandride.front.GeojsonSerializer;
@@ -139,6 +140,7 @@ public class Application {
     @EnableWebMvc
     @Profile({FeatureProfile.DEV})
     public static class DevUIConfig extends WebMvcConfigurerAdapter {
+
         @Override
         public void addResourceHandlers(ResourceHandlerRegistry registry) {
             String projectDir = System.getProperty("user.dir");

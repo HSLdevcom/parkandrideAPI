@@ -14,6 +14,8 @@
         $scope.contact = contact;
         $scope.titleKey = 'contacts.action.' + (create ? 'new' : 'edit');
 
+        $scope.allOperators = [];
+
         function saveContact() {
             ContactResource.save(contact).then(
                 function(contact) {

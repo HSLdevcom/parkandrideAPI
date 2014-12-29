@@ -18,6 +18,7 @@ import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.test.context.web.WebAppConfiguration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -36,6 +37,7 @@ import fi.hsl.parkandride.DevApiProfileAppender;
 import fi.hsl.parkandride.dev.DevHelper;
 
 @RunWith(SpringJUnit4ClassRunner.class)
+@TransactionConfiguration(defaultRollback=false)
 @SpringApplicationConfiguration(classes = Application.class)
 @ActiveProfiles(resolver = DevApiProfileAppender.class)
 @WebAppConfiguration
@@ -67,9 +69,18 @@ public abstract class AbstractIntegrationTest {
     }
 
     public static RequestSpecification givenWithContent() {
-        return given().spec(new RequestSpecBuilder()
+        return givenWithContent(null);
+    }
+
+    public static RequestSpecification givenWithContent(String authToken) {
+        RequestSpecification spec = given().spec(new RequestSpecBuilder()
                 .addHeader("Content-Type", "application/json;charset=UTF-8")
                 .build());
+        if (authToken != null) {
+            return spec.header("Authorization", "Bearer " + authToken);
+        } else {
+            return spec;
+        }
     }
 
     public static ResponseSpecification assertResponse(HttpStatus status, Class<?> exClass) {

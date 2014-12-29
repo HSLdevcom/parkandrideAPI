@@ -10,8 +10,8 @@ describe('authorization', function () {
 
     var indexPage = po.indexPage({});
     var authModal = po.authModal();
-    var contactPage = po.contactPage({});
-    var contactEditModal = contactPage.editModal;
+    var operatorPage = po.operatorPage({});
+    var operatorEditModal = operatorPage.editModal;
 
     var password = 'very secret password';
     var username = 'testuser';
@@ -57,22 +57,20 @@ describe('authorization', function () {
     });
 
     it('should require login on submit', function() {
-        contactPage.get();
-        contactPage.openCreateModal();
-        contactEditModal.setName("HSL");
-        contactEditModal.setPhone("(09) 4766 4444");
-
-        contactEditModal.save();
+        operatorPage.get();
+        operatorPage.openCreateModal();
+        operatorEditModal.setName("smooth");
+        operatorEditModal.save();
         expect(authModal.isDisplayed()).toBe(true);
-        expect(contactEditModal.isDisplayed()).toBe(true);
+        expect(operatorEditModal.isDisplayed()).toBe(true);
 
         authModal.login(username, password);
 
         authModal.waitUntilAbsent();
         expect(authModal.isDisplayed()).toBe(false);
 
-        contactEditModal.waitUntilAbsent();
-        expect(contactEditModal.isDisplayed()).toBe(false);
+        operatorEditModal.waitUntilAbsent();
+        expect(operatorEditModal.isDisplayed()).toBe(false);
 
         expect(authModal.isLogoutDisplayed()).toBe(true); // TODO: logout is not on auth modal
     });

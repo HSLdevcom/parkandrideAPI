@@ -12,16 +12,16 @@ describe('manage operators', function () {
     var operatorPage = po.operatorPage({});
     var editModal = operatorPage.editModal;
 
+    it('should reset data', function() {
+        devApi.resetAll();
+    });
+
     it('should login as admin', function() {
         devApi.loginAs('ADMIN');
     });
 
-    it('should reset data', function() {
-        operatorPage.get();
-        devApi.resetAll();
-    });
-
     it('no errors shown initially', function() {
+        operatorPage.get();
         operatorPage.openCreateModal();
         expect(editModal.isNameFiRequiredError()).toBe(false);
         expect(editModal.isNameSvRequiredError()).toBe(false);

@@ -18,9 +18,6 @@ import org.geolatte.geom.Point;
 import org.geolatte.geom.Polygon;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.boot.test.SpringApplicationConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -29,9 +26,9 @@ import com.google.common.collect.ImmutableSortedSet;
 
 import fi.hsl.parkandride.core.back.ContactRepository;
 import fi.hsl.parkandride.core.back.FacilityRepository;
+import fi.hsl.parkandride.core.back.OperatorRepository;
 import fi.hsl.parkandride.core.domain.*;
 import fi.hsl.parkandride.core.service.ValidationException;
-import fi.hsl.parkandride.dev.DevHelper;
 
 public class FacilityDaoTest extends AbstractDaoTest {
 
@@ -75,11 +72,17 @@ public class FacilityDaoTest extends AbstractDaoTest {
     @Inject
     FacilityRepository facilityDao;
 
+    @Inject
+    OperatorRepository operatorDao;
+
     private FacilityContacts dummyContacts;
+
+    private Long operatorId;
 
     @Before
     public void initialize() {
         dummyContacts = new FacilityContacts(createDummyContact(), createDummyContact());
+        operatorId = createDummyOperator();
     }
 
     @Test
@@ -150,6 +153,11 @@ public class FacilityDaoTest extends AbstractDaoTest {
         return contactDao.insertContact(contact);
     }
 
+    private Long createDummyOperator() {
+        Operator operator = new Operator("SMOOTH");
+        return operatorDao.insertOperator(operator);
+    }
+
     private void assertDefault(Facility facility) {
         assertThat(facility).isNotNull();
         assertThat(facility.location).isEqualTo(LOCATION);
@@ -171,6 +179,7 @@ public class FacilityDaoTest extends AbstractDaoTest {
         facility.id = 0l;
         facility.name = NAME;
         facility.location = LOCATION;
+        facility.operatorId = operatorId;
         facility.aliases = ALIASES;
         facility.capacities = CAPACITIES;
         facility.ports = PORTS;
@@ -194,11 +203,13 @@ public class FacilityDaoTest extends AbstractDaoTest {
         f1.name = new MultilingualString("a", "å", "C");
         f1.location = LOCATION;
         f1.contacts = dummyContacts;
+        f1.operatorId = operatorId;
         f1.id = facilityDao.insertFacility(f1);
 
         Facility f2 = new Facility();
         f2.name = new MultilingualString("D", "Ä", "F");
         f2.location = LOCATION;
+        f2.operatorId = operatorId;
         f2.contacts = dummyContacts;
         f2.id = facilityDao.insertFacility(f2);
 

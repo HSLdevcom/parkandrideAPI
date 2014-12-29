@@ -5,6 +5,7 @@ import static fi.hsl.parkandride.front.UrlSchema.DEV_FACILITIES;
 import static fi.hsl.parkandride.front.UrlSchema.DEV_HUBS;
 import static fi.hsl.parkandride.front.UrlSchema.DEV_LOGIN;
 import static fi.hsl.parkandride.front.UrlSchema.DEV_OPERATORS;
+import static fi.hsl.parkandride.front.UrlSchema.DEV_USERS;
 import static java.lang.String.format;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
@@ -61,21 +62,8 @@ public class DevController {
 
     @RequestMapping(method = POST, value = DEV_LOGIN)
     public ResponseEntity<Login> login(@RequestBody NewUser newUser) {
-        UserSecret userSecret;
-        try {
-            userSecret = userRepository.getUser(newUser.username);
-            if (newUser.role != userSecret.user.role) {
-                userRepository.updateUser(userSecret.user.id, newUser);
-            }
-            userRepository.updatePassword(userSecret.user.id, authenticationService.encryptPassword(newUser.password));
-        } catch (NotFoundException e) {
-            userSecret = new UserSecret();
-            userSecret.user = userService.createUserNoValidate(newUser);
-        }
-        Login login = new Login();
-        login.token = authenticationService.token(userSecret.user);
-        login.username = userSecret.user.username;
-        login.role = userSecret.user.role;
+        User user = devHelper.createUser(newUser);
+        Login login = devHelper.login(user.username);
         return new ResponseEntity<>(login, OK);
     }
 
@@ -104,6 +92,13 @@ public class DevController {
     @TransactionalWrite
     public ResponseEntity<Void> deleteOperators() {
         devHelper.deleteOperators();
+        return new ResponseEntity<>(OK);
+    }
+
+    @RequestMapping(method = DELETE, value = DEV_USERS)
+    @TransactionalWrite
+    public ResponseEntity<Void> deleteUsers() {
+        devHelper.deleteUsers();
         return new ResponseEntity<>(OK);
     }
 

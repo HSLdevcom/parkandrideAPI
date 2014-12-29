@@ -8,6 +8,7 @@ module.exports = function () {
         hubsUrl = devApiUrl + '/hubs',
         contactsUrl = devApiUrl + '/contacts',
         operatorsUrl = devApiUrl + '/operators',
+        usersUrl = devApiUrl + '/users',
         loginUrl = devApiUrl + "/login";
     var flow = protractor.promise.controlFlow();
 
@@ -71,6 +72,11 @@ module.exports = function () {
         }
     };
 
+
+    api.deleteUsers = function() {
+        flow.execute(function() { return asPromise({ method: 'DELETE', url: usersUrl }); });
+    };
+
     api.createLogin = function(role, username, password) {
         var newUser = {
             username: username || "testuser",
@@ -99,6 +105,7 @@ module.exports = function () {
         api.deleteHubs();
         api.deleteFacilities();
         api.deleteContacts();
+        api.deleteUsers();
         api.deleteOperators();
 
         api.insertOperators(data.operators);

@@ -1,6 +1,7 @@
 package fi.hsl.parkandride.itest;
 
 import static com.jayway.restassured.RestAssured.when;
+import static fi.hsl.parkandride.core.domain.Role.ADMIN;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
 import static org.hamcrest.Matchers.is;
@@ -20,7 +21,9 @@ import com.google.common.collect.Lists;
 
 import fi.hsl.parkandride.back.ContactDao;
 import fi.hsl.parkandride.back.FacilityDao;
+import fi.hsl.parkandride.back.OperatorDao;
 import fi.hsl.parkandride.core.domain.*;
+import fi.hsl.parkandride.core.service.TransactionalWrite;
 import fi.hsl.parkandride.core.service.ValidationException;
 import fi.hsl.parkandride.front.UrlSchema;
 
@@ -39,11 +42,21 @@ public class FacilityStatusITest extends AbstractIntegrationTest {
     @Inject
     private FacilityDao facilityDao;
 
+    @Inject
+    private OperatorDao operatorDao;
+
     private Facility f;
 
+    private String authToken;
+
     @Before
+    @TransactionalWrite
     public void initFixture() {
         devHelper.deleteAll();
+
+        Operator o = new Operator();
+        o.id = 1l;
+        o.name = new MultilingualString("smooth operator");
 
         Contact c = new Contact();
         c.id = 1L;
@@ -52,17 +65,22 @@ public class FacilityStatusITest extends AbstractIntegrationTest {
         f = new Facility();
         f.id = 1L;
         f.name = new MultilingualString("minimal facility");
+        f.operatorId = 1l;
         f.location = Spatial.fromWkt("POLYGON((25.010822 60.25054, 25.010822 60.250023, 25.012479 60.250337, 25.011449 60.250885, 25.010822 60.25054))");
         f.contacts = new FacilityContacts(c.id, c.id);
 
+        operatorDao.insertOperator(o, o.id);
         contactDao.insertContact(c, c.id);
         facilityDao.insertFacility(f, f.id);
+
+        devHelper.createUser(new NewUser(1l, "admin", ADMIN, "admin"));
+        authToken = devHelper.login("admin").token;
     }
 
     @Test
     public void returns_ISO8601_UTC_timestamp() {
         JSONObjectBuilder expected = minValidPayload();
-        givenWithContent()
+        givenWithContent(authToken)
             .body(expected.asArray())
         .when()
             .put(UrlSchema.FACILITY_STATUS, f.id)
@@ -96,7 +114,7 @@ public class FacilityStatusITest extends AbstractIntegrationTest {
     }
 
     private void test_accept_timestamp(JSONObjectBuilder builder) {
-        givenWithContent()
+        givenWithContent(authToken)
             .body(builder.asArray())
         .when()
             .put(UrlSchema.FACILITY_STATUS, f.id)
@@ -137,10 +155,10 @@ public class FacilityStatusITest extends AbstractIntegrationTest {
 
         List<FacilityStatus> payload = Lists.newArrayList(spacesOnly, statusOnly, spacesAndStatus);
 
-        givenWithContent()
+        givenWithContent(authToken)
             .body(payload)
-        .when()
-            .put(UrlSchema.FACILITY_STATUS, f.id)
+                .when()
+                .put(UrlSchema.FACILITY_STATUS, f.id)
         .then()
             .statusCode(HttpStatus.OK.value())
         ;
@@ -165,7 +183,7 @@ public class FacilityStatusITest extends AbstractIntegrationTest {
 
     @Test
     public void timestamp_is_required() {
-        givenWithContent()
+        givenWithContent(authToken)
             .body(minValidPayload().put(Key.TIMESTAMP, null).asArray())
         .when()
             .put(UrlSchema.FACILITY_STATUS, f.id)
@@ -178,7 +196,7 @@ public class FacilityStatusITest extends AbstractIntegrationTest {
 
     @Test
     public void capacity_type_is_required() {
-        givenWithContent()
+        givenWithContent(authToken)
             .body(minValidPayload().put(Key.CAPACITY_TYPE, null).asArray())
         .when()
             .put(UrlSchema.FACILITY_STATUS, f.id)
@@ -191,7 +209,7 @@ public class FacilityStatusITest extends AbstractIntegrationTest {
 
     @Test
     public void spaces_or_status_is_required() {
-        givenWithContent()
+        givenWithContent(authToken)
             .body(minValidPayload()
                     .put(Key.SPACES_AVAILABLE, null)
                     .put(Key.STATUS, null)

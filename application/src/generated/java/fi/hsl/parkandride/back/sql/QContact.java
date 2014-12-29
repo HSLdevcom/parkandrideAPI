@@ -55,6 +55,8 @@ public class QContact extends RelationalPathSpatial<QContact> {
 
     public final StringPath openingHoursSv = createString("openingHoursSv");
 
+    public final NumberPath<Long> operatorId = createNumber("operatorId", Long.class);
+
     public final SimplePath<fi.hsl.parkandride.core.domain.Phone> phone = createSimple("phone", fi.hsl.parkandride.core.domain.Phone.class);
 
     public final StringPath postalCode = createString("postalCode");
@@ -66,6 +68,8 @@ public class QContact extends RelationalPathSpatial<QContact> {
     public final StringPath streetAddressSv = createString("streetAddressSv");
 
     public final com.mysema.query.sql.PrimaryKey<QContact> constraint6 = createPrimaryKey(id);
+
+    public final com.mysema.query.sql.ForeignKey<QOperator> contactOperatorIdFk = createForeignKey(operatorId, "ID");
 
     public final com.mysema.query.sql.ForeignKey<QFacility> _facilityOperatorContactIdFk = createInvForeignKey(id, "OPERATOR_CONTACT_ID");
 
@@ -94,25 +98,26 @@ public class QContact extends RelationalPathSpatial<QContact> {
     }
 
     public void addMetadata() {
-        addMetadata(cityEn, ColumnMetadata.named("CITY_EN").withIndex(13).ofType(Types.VARCHAR).withSize(255));
-        addMetadata(cityFi, ColumnMetadata.named("CITY_FI").withIndex(11).ofType(Types.VARCHAR).withSize(255));
-        addMetadata(citySv, ColumnMetadata.named("CITY_SV").withIndex(12).ofType(Types.VARCHAR).withSize(255));
-        addMetadata(email, ColumnMetadata.named("EMAIL").withIndex(6).ofType(Types.VARCHAR).withSize(255));
+        addMetadata(cityEn, ColumnMetadata.named("CITY_EN").withIndex(14).ofType(Types.VARCHAR).withSize(255));
+        addMetadata(cityFi, ColumnMetadata.named("CITY_FI").withIndex(12).ofType(Types.VARCHAR).withSize(255));
+        addMetadata(citySv, ColumnMetadata.named("CITY_SV").withIndex(13).ofType(Types.VARCHAR).withSize(255));
+        addMetadata(email, ColumnMetadata.named("EMAIL").withIndex(7).ofType(Types.VARCHAR).withSize(255));
         addMetadata(id, ColumnMetadata.named("ID").withIndex(1).ofType(Types.BIGINT).withSize(19).notNull());
-        addMetadata(infoEn, ColumnMetadata.named("INFO_EN").withIndex(19).ofType(Types.VARCHAR).withSize(255));
-        addMetadata(infoFi, ColumnMetadata.named("INFO_FI").withIndex(17).ofType(Types.VARCHAR).withSize(255));
-        addMetadata(infoSv, ColumnMetadata.named("INFO_SV").withIndex(18).ofType(Types.VARCHAR).withSize(255));
+        addMetadata(infoEn, ColumnMetadata.named("INFO_EN").withIndex(20).ofType(Types.VARCHAR).withSize(255));
+        addMetadata(infoFi, ColumnMetadata.named("INFO_FI").withIndex(18).ofType(Types.VARCHAR).withSize(255));
+        addMetadata(infoSv, ColumnMetadata.named("INFO_SV").withIndex(19).ofType(Types.VARCHAR).withSize(255));
         addMetadata(nameEn, ColumnMetadata.named("NAME_EN").withIndex(4).ofType(Types.VARCHAR).withSize(255).notNull());
         addMetadata(nameFi, ColumnMetadata.named("NAME_FI").withIndex(2).ofType(Types.VARCHAR).withSize(255).notNull());
         addMetadata(nameSv, ColumnMetadata.named("NAME_SV").withIndex(3).ofType(Types.VARCHAR).withSize(255).notNull());
-        addMetadata(openingHoursEn, ColumnMetadata.named("OPENING_HOURS_EN").withIndex(16).ofType(Types.VARCHAR).withSize(2000));
-        addMetadata(openingHoursFi, ColumnMetadata.named("OPENING_HOURS_FI").withIndex(14).ofType(Types.VARCHAR).withSize(2000));
-        addMetadata(openingHoursSv, ColumnMetadata.named("OPENING_HOURS_SV").withIndex(15).ofType(Types.VARCHAR).withSize(2000));
-        addMetadata(phone, ColumnMetadata.named("PHONE").withIndex(5).ofType(Types.VARCHAR).withSize(255));
-        addMetadata(postalCode, ColumnMetadata.named("POSTAL_CODE").withIndex(10).ofType(Types.VARCHAR).withSize(5));
-        addMetadata(streetAddressEn, ColumnMetadata.named("STREET_ADDRESS_EN").withIndex(9).ofType(Types.VARCHAR).withSize(255));
-        addMetadata(streetAddressFi, ColumnMetadata.named("STREET_ADDRESS_FI").withIndex(7).ofType(Types.VARCHAR).withSize(255));
-        addMetadata(streetAddressSv, ColumnMetadata.named("STREET_ADDRESS_SV").withIndex(8).ofType(Types.VARCHAR).withSize(255));
+        addMetadata(openingHoursEn, ColumnMetadata.named("OPENING_HOURS_EN").withIndex(17).ofType(Types.VARCHAR).withSize(2000));
+        addMetadata(openingHoursFi, ColumnMetadata.named("OPENING_HOURS_FI").withIndex(15).ofType(Types.VARCHAR).withSize(2000));
+        addMetadata(openingHoursSv, ColumnMetadata.named("OPENING_HOURS_SV").withIndex(16).ofType(Types.VARCHAR).withSize(2000));
+        addMetadata(operatorId, ColumnMetadata.named("OPERATOR_ID").withIndex(5).ofType(Types.BIGINT).withSize(19));
+        addMetadata(phone, ColumnMetadata.named("PHONE").withIndex(6).ofType(Types.VARCHAR).withSize(255));
+        addMetadata(postalCode, ColumnMetadata.named("POSTAL_CODE").withIndex(11).ofType(Types.VARCHAR).withSize(5));
+        addMetadata(streetAddressEn, ColumnMetadata.named("STREET_ADDRESS_EN").withIndex(10).ofType(Types.VARCHAR).withSize(255));
+        addMetadata(streetAddressFi, ColumnMetadata.named("STREET_ADDRESS_FI").withIndex(8).ofType(Types.VARCHAR).withSize(255));
+        addMetadata(streetAddressSv, ColumnMetadata.named("STREET_ADDRESS_SV").withIndex(9).ofType(Types.VARCHAR).withSize(255));
     }
 
 }

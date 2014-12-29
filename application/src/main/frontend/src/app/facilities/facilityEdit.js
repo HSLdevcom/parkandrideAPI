@@ -20,6 +20,14 @@
         contacts: function(ContactResource) { return ContactResource.listContacts().then(function(response) { return response.results; }); }
     };
 
+    var resolveOnCreate = _.assign({
+        facility: function(FacilityResource) { return FacilityResource.newFacility(); }
+    }, resolveBase);
+
+    var resolveOnEdit = _.assign({
+        facility: function($stateParams, FacilityResource) { return FacilityResource.getFacility($stateParams.id); }
+    }, resolveBase);
+
     var stateConfigBase = {
         parent: 'root',
         views: {
@@ -30,22 +38,21 @@
         }
     };
 
-    m.config(function($stateProvider) {
-        $stateProvider.state('facility-create', _.assign({
-            url: '/facilities/create',
-            data: { pageTitle: 'Create Facility' },
-            resolve: _.assign({
-                facility: function(FacilityResource) { return FacilityResource.newFacility(); }
-            }, resolveBase)
-        }, stateConfigBase));
+    var createStateConfig = _.assign({
+        url: '/facilities/create',
+        data: { pageTitle: 'Create Facility' },
+        resolve: resolveOnCreate
+    }, stateConfigBase);
 
-        $stateProvider.state('facility-edit', _.assign({
-            url: '/facilities/edit/:id',
-            data: { pageTitle: 'Edit Facility' },
-            resolve: _.assign({
-                facility: function($stateParams, FacilityResource) { return FacilityResource.getFacility($stateParams.id); }
-            }, resolveBase)
-        }, stateConfigBase));
+    var editStateConfig = _.assign({
+        url: '/facilities/edit/:id',
+        data: { pageTitle: 'Edit Facility' },
+        resolve: resolveOnEdit
+    }, stateConfigBase);
+
+    m.config(function($stateProvider) {
+        $stateProvider.state('facility-create', createStateConfig);
+        $stateProvider.state('facility-edit', editStateConfig);
     });
 
     m.controller('FacilityEditCtrl', function($scope, $state, schema, FacilityResource, facility, aliasesPlaceholder, services, contacts) {

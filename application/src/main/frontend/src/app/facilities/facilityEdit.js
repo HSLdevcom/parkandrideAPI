@@ -14,59 +14,38 @@
         'showErrors'
     ]);
 
+    var resolveBase = {
+        aliasesPlaceholder: function($translate) { return $translate("facilities.aliases.placeholder"); },
+        services: function(ServiceResource) { return ServiceResource.listServices().then(function(response) { return response.results; }); },
+        contacts: function(ContactResource) { return ContactResource.listContacts().then(function(response) { return response.results; }); }
+    };
+
+    var stateConfigBase = {
+        parent: 'root',
+        views: {
+            "main": {
+                controller: 'FacilityEditCtrl as editCtrl',
+                templateUrl: 'facilities/facilityEdit.tpl.html'
+            }
+        }
+    };
+
     m.config(function($stateProvider) {
-        $stateProvider.state('facility-create', { // dot notation in ui-router indicates nested ui-view
-            parent: 'root',
-            url: '/facilities/create', // TODO set facilities base path on upper level and say here /create ?
-            views: {
-                "main": {
-                    controller: 'FacilityEditCtrl as editCtrl',
-                    templateUrl: 'facilities/facilityEdit.tpl.html'
-                }
-            },
+        $stateProvider.state('facility-create', _.assign({
+            url: '/facilities/create',
             data: { pageTitle: 'Create Facility' },
-            resolve: {
-                // This is a hack, but I found no other way to ensure that tags-input placeholder translation works on page reload
-                aliasesPlaceholder: function($translate) {
-                    return $translate("facilities.aliases.placeholder");
-                },
-                facility: function(FacilityResource) {
-                    return FacilityResource.newFacility();
-                },
-                services: function(ServiceResource) {
-                    return ServiceResource.listServices().then(function(response) { return response.results; });
-                },
-                contacts: function(ContactResource) {
-                    return ContactResource.listContacts().then(function(response) { return response.results; });
-                }
-            }
-        });
-        $stateProvider.state('facility-edit', { // dot notation in ui-router indicates nested ui-view
-            parent: 'root',
+            resolve: _.assign({
+                facility: function(FacilityResource) { return FacilityResource.newFacility(); }
+            }, resolveBase)
+        }, stateConfigBase));
+
+        $stateProvider.state('facility-edit', _.assign({
             url: '/facilities/edit/:id',
-            views: {
-                "main": {
-                    controller: 'FacilityEditCtrl as editCtrl',
-                    templateUrl: 'facilities/facilityEdit.tpl.html'
-                }
-            },
             data: { pageTitle: 'Edit Facility' },
-            resolve: {
-                // This is a hack, but I found no other way to ensure that tags-input placeholder translation works on page reload
-                aliasesPlaceholder: function($translate) {
-                    return $translate("facilities.aliases.placeholder");
-                },
-                facility: function($stateParams, FacilityResource) {
-                    return FacilityResource.getFacility($stateParams.id);
-                },
-                services: function(ServiceResource) {
-                    return ServiceResource.listServices().then(function(response) { return response.results; });
-                },
-                contacts: function(ContactResource) {
-                    return ContactResource.listContacts().then(function(response) { return response.results; });
-                }
-            }
-        });
+            resolve: _.assign({
+                facility: function($stateParams, FacilityResource) { return FacilityResource.getFacility($stateParams.id); }
+            }, resolveBase)
+        }, stateConfigBase));
     });
 
     m.controller('FacilityEditCtrl', function($scope, $state, schema, FacilityResource, facility, aliasesPlaceholder, services, contacts) {

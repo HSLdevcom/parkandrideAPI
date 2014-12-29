@@ -197,7 +197,7 @@ describe('edit facility view', function () {
 
         it('should manage contacts', function() {
             // Create emergency contact on the fly
-            editPage.createContact({operator: "smooth", name: "new contact", phone: "(09) 4766 4444", email: "hsl@hsl.fi"});
+            editPage.createContact({name: "new contact", phone: "(09) 4766 4444", email: "hsl@hsl.fi"});
             expect(editPage.getEmergencyContact()).toBe("new contact (09 47664444 / hsl@hsl.fi)");
 
             // Reload and expect that new contact is still available

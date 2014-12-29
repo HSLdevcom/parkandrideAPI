@@ -76,7 +76,9 @@ module.exports = function(spec) {
         that.contactEditModal.setName(contact.name);
         that.contactEditModal.setPhone(contact.phone);
         that.contactEditModal.setEmail(contact.email);
-        that.contactEditModal.selectOperator(contact.operator);
+        if (contact.operator) {
+            that.contactEditModal.selectOperator(contact.operator);
+        }
         that.contactEditModal.save();
         that.contactEditModal.waitUntilAbsent();
     };

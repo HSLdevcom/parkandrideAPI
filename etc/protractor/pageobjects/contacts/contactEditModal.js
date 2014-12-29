@@ -65,13 +65,10 @@ module.exports = function(spec) {
     };
 
     that.selectOperator = function(name) {
-        browser.sleep(2000);
         spec.operator.element(by.css('.ui-select-match')).click();
         var operatorElement = browser.driver.switchTo().activeElement();
         operatorElement.sendKeys(name);
-        browser.sleep(2000);
         operatorElement.sendKeys(protractor.Key.ENTER);
-        browser.sleep(2000);
     };
 
     that.getOperator = function() {

@@ -1,6 +1,7 @@
 package fi.hsl.parkandride.itest;
 
 import static com.jayway.restassured.RestAssured.when;
+import static fi.hsl.parkandride.core.domain.Role.ADMIN;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
 import static org.hamcrest.Matchers.is;
@@ -22,6 +23,7 @@ import fi.hsl.parkandride.back.ContactDao;
 import fi.hsl.parkandride.back.FacilityDao;
 import fi.hsl.parkandride.back.OperatorDao;
 import fi.hsl.parkandride.core.domain.*;
+import fi.hsl.parkandride.core.service.TransactionalWrite;
 import fi.hsl.parkandride.core.service.ValidationException;
 import fi.hsl.parkandride.front.UrlSchema;
 
@@ -45,7 +47,10 @@ public class FacilityStatusITest extends AbstractIntegrationTest {
 
     private Facility f;
 
+    private String authToken;
+
     @Before
+    @TransactionalWrite
     public void initFixture() {
         devHelper.deleteAll();
 
@@ -67,12 +72,16 @@ public class FacilityStatusITest extends AbstractIntegrationTest {
         operatorDao.insertOperator(o, o.id);
         contactDao.insertContact(c, c.id);
         facilityDao.insertFacility(f, f.id);
+
+//        devHelper.createUser(new NewUser(1l, "admin", ADMIN, "admin"));
+        authToken = devHelper.login("admin").token;
     }
 
     @Test
     public void returns_ISO8601_UTC_timestamp() {
         JSONObjectBuilder expected = minValidPayload();
         givenWithContent()
+            .header("Authorization", "Bearer " + authToken)
             .body(expected.asArray())
         .when()
             .put(UrlSchema.FACILITY_STATUS, f.id)
@@ -107,6 +116,7 @@ public class FacilityStatusITest extends AbstractIntegrationTest {
 
     private void test_accept_timestamp(JSONObjectBuilder builder) {
         givenWithContent()
+            .header("Authorization", "Bearer " + authToken)
             .body(builder.asArray())
         .when()
             .put(UrlSchema.FACILITY_STATUS, f.id)
@@ -176,6 +186,7 @@ public class FacilityStatusITest extends AbstractIntegrationTest {
     @Test
     public void timestamp_is_required() {
         givenWithContent()
+            .header("Authorization", "Bearer " + authToken)
             .body(minValidPayload().put(Key.TIMESTAMP, null).asArray())
         .when()
             .put(UrlSchema.FACILITY_STATUS, f.id)
@@ -189,6 +200,7 @@ public class FacilityStatusITest extends AbstractIntegrationTest {
     @Test
     public void capacity_type_is_required() {
         givenWithContent()
+            .header("Authorization", "Bearer " + authToken)
             .body(minValidPayload().put(Key.CAPACITY_TYPE, null).asArray())
         .when()
             .put(UrlSchema.FACILITY_STATUS, f.id)
@@ -202,6 +214,7 @@ public class FacilityStatusITest extends AbstractIntegrationTest {
     @Test
     public void spaces_or_status_is_required() {
         givenWithContent()
+            .header("Authorization", "Bearer " + authToken)
             .body(minValidPayload()
                     .put(Key.SPACES_AVAILABLE, null)
                     .put(Key.STATUS, null)

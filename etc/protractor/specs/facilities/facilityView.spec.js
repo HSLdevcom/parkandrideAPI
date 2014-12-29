@@ -112,7 +112,7 @@ describe('facility view', function () {
             toView(f);
         });
 
-        it('aliases are not displayed', function () {
+        it('services are not displayed', function () {
             expect(viewPage.isServicesDisplayed()).toBe(false);
         });
     });

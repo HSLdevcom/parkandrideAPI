@@ -102,6 +102,16 @@ public class DevController {
         return new ResponseEntity<>(OK);
     }
 
+    @RequestMapping(method = PUT, value = DEV_USERS)
+    @TransactionalWrite
+    public ResponseEntity<List<User>> pushUsers(@RequestBody List<NewUser> newUsers) {
+        List<User> users = new ArrayList<>(newUsers.size());
+        for (NewUser newUser : newUsers) {
+            users.add(devHelper.createUser(newUser));
+        }
+        return new ResponseEntity<>(users, OK);
+    }
+
     @RequestMapping(method = PUT, value = DEV_FACILITIES)
     @TransactionalWrite
     public ResponseEntity<List<Facility>> pushFacilities(@RequestBody List<Facility> facilities) {

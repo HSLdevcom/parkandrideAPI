@@ -68,7 +68,7 @@
         this.hasPaymentInfo = function() {
             return facility.paymentInfo.paymentMethodIds.length > 0 ||
                 facility.paymentInfo.parkAndRideAuthRequired ||
-                facility.paymentInfo.info ||
+                facility.paymentInfo.detail ||
                 facility.paymentInfo.url;
         };
         this.getServiceNames = function() {

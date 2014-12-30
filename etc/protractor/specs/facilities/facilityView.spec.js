@@ -165,13 +165,13 @@ describe('facility view', function () {
             beforeEach(function () {
                 f = facFull.copy();
                 f.paymentInfo = {};
-                f.paymentInfo.info = facFull.copy().paymentInfo.info;
+                f.paymentInfo.detail = facFull.copy().paymentInfo.detail;
                 toView(f);
             });
 
             it('payment info is displayed', function () {
                 expect(viewPage.isPaymentInfoDisplayed()).toBe(true);
-                expect(viewPage.getPaymentInfoDetail()).toEqual([f.paymentInfo.info.fi, f.paymentInfo.info.sv, f.paymentInfo.info.en]);
+                expect(viewPage.getPaymentInfoDetail()).toEqual([f.paymentInfo.detail.fi, f.paymentInfo.detail.sv, f.paymentInfo.detail.en]);
             });
         });
 

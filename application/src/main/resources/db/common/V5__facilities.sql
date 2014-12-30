@@ -11,11 +11,11 @@ create table facility (
   service_contact_id bigint,
 
   park_and_ride_auth_required boolean not null,
-  payment_info_fi varchar(255),
+  payment_info_detail_fi varchar(255),
   payment_info_url_fi varchar(255),
-  payment_info_sv varchar(255),
+  payment_info_detail_sv varchar(255),
   payment_info_url_sv varchar(255),
-  payment_info_en varchar(255),
+  payment_info_detail_en varchar(255),
   payment_info_url_en varchar(255),
 
   primary key (id),

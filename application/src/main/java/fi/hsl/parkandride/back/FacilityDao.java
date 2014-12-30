@@ -12,11 +12,8 @@ import static fi.hsl.parkandride.core.domain.Sort.Dir.DESC;
 import java.util.*;
 
 import org.geolatte.geom.Geometry;
-import org.joda.time.DateTime;
-import org.joda.time.Instant;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.mysema.query.ResultTransformer;
 import com.mysema.query.Tuple;
@@ -27,7 +24,6 @@ import com.mysema.query.sql.dml.SQLUpdateClause;
 import com.mysema.query.sql.postgres.PostgresQuery;
 import com.mysema.query.sql.postgres.PostgresQueryFactory;
 import com.mysema.query.types.MappingProjection;
-import com.mysema.query.types.Projections;
 import com.mysema.query.types.expr.ComparableExpression;
 import com.mysema.query.types.expr.NumberExpression;
 import com.mysema.query.types.expr.SimpleExpression;
@@ -118,8 +114,8 @@ public class FacilityDao implements FacilityRepository {
             groupBy(qPort.facilityId).as(list(portMapping));
 
 
-    private static final MultilingualStringMapping paymentInfoMapping =
-            new MultilingualStringMapping(qFacility.paymentInfoFi, qFacility.paymentInfoSv, qFacility.paymentInfoEn);
+    private static final MultilingualStringMapping paymentInfoDetailMapping =
+            new MultilingualStringMapping(qFacility.paymentInfoDetailFi, qFacility.paymentInfoDetailSv, qFacility.paymentInfoDetailEn);
     private static final MultilingualStringMapping paymentInfoUrlMapping =
             new MultilingualStringMapping(qFacility.paymentInfoUrlFi, qFacility.paymentInfoUrlSv, qFacility.paymentInfoUrlEn);
 
@@ -141,7 +137,7 @@ public class FacilityDao implements FacilityRepository {
                     row.get(qFacility.serviceContactId)
             );
             facility.paymentInfo.parkAndRideAuthRequired = row.get(qFacility.parkAndRideAuthRequired);
-            facility.paymentInfo.info = paymentInfoMapping.map(row);
+            facility.paymentInfo.detail = paymentInfoDetailMapping.map(row);
             facility.paymentInfo.url = paymentInfoUrlMapping.map(row);
 
             return facility;
@@ -624,7 +620,7 @@ public class FacilityDao implements FacilityRepository {
 
         FacilityPaymentInfo paymentInfo = facility.paymentInfo;
         store.set(qFacility.parkAndRideAuthRequired, paymentInfo.parkAndRideAuthRequired);
-        paymentInfoMapping.populate(paymentInfo.info, store);
+        paymentInfoDetailMapping.populate(paymentInfo.detail, store);
         paymentInfoUrlMapping.populate(paymentInfo.url, store);
     }
 

@@ -9,7 +9,7 @@ public class FacilityPaymentInfo {
     public boolean parkAndRideAuthRequired;
 
     @Valid
-    public MultilingualString info;
+    public MultilingualString detail;
 
     @Valid
     public MultilingualString url;

@@ -13,7 +13,7 @@ module.exports = function(spec) {
     spec.paymentMethods = $('.wdPaymentMethodNames');
     spec.paymentInfoDetail = $('.wdPaymentInfoDetail');
     spec.paymentInfoUrl = $('.wdPaymentInfoUrl');
-    spec.paymentInfoBlock = $('.wdPaymentInfo');
+    spec.paymentInfo = $('.wdPaymentInfo');
     spec.aliasesBlock = $('.wdAliasesBlock');
     spec.map = $('.facility-map .ol-viewport');
     spec.editViewButton = $$('.wdEditViewButton').first();
@@ -58,7 +58,7 @@ module.exports = function(spec) {
     };
 
     that.isPaymentInfoDisplayed = function () {
-        return spec.isDisplayed(spec.paymentInfoBlock);
+        return spec.isDisplayed(spec.paymentInfo);
     };
 
     that.openPortAt = function(x, y) {

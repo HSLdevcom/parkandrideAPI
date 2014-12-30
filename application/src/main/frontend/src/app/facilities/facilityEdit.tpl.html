@@ -12,32 +12,30 @@
 			<div class="wdFacilityEditView">
 
 				<div class="row">
-					<h3 class="h3-first">{{"operators.label" | translate}} *</h3>
-				</div>
-				<div class="row">
-					<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 column first-column">
-						<operator-select object="editCtrl.facility"></operator-select>
-					</div>
-				</div>
-
-				<div class="row">
-					<h3>{{ "facilities.name.title" | translate }}</h3>
+					<h3 class="h3-first">{{"facilities.basic_info" | translate}}</h3>
 				</div>
 
 				<div class="row">
 					<label>{{ "facilities.name.label" | translate }} *</label>
 				</div>
-
 				<div class="row">
 					<multilingual-edit name="name" ng-model="editCtrl.facility.name" mandatory="true"></multilingual-edit>
 				</div>
-
 				<div class="row">
 						<div class="form-group">
 							<label>{{ "facilities.aliases.label" | translate }}</label>
 							<div class="wdAliases">
 								<tags ng-model="editCtrl.facility.aliases" placeholder="{{ 'facilities.aliases.placeholder' | translate }}"></tags>
 							</div>
+					</div>
+				</div>
+
+				<div class="row">
+					<label>{{"operators.label" | translate}} *</label>
+				</div>
+				<div class="row">
+					<div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 column first-column">
+						<operator-select object="editCtrl.facility"></operator-select>
 					</div>
 				</div>
 

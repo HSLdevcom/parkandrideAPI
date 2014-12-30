@@ -24,6 +24,12 @@ public class User implements OperatorEntity {
         this.role = role;
     }
 
+    public User(User other) {
+        this.username = other.username;
+        this.role = other.role;
+        this.operatorId = other.operatorId;
+    }
+
     @Override
     public Long operatorId() {
         return operatorId;

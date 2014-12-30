@@ -95,7 +95,7 @@ public class CoreConfiguration {
 
     @Bean
     public FacilityService facilityService () {
-        return new FacilityService(facilityRepository(), validationService());
+        return new FacilityService(facilityRepository(), contactRepository(), validationService());
     }
 
     @Bean

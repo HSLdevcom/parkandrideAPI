@@ -120,7 +120,6 @@
             link: function(scope) {
                 scope.allOperators = [];
                 OperatorResource.listOperators().then(function(response) {
-                    console.log(response);
                     scope.allOperators = response.results;
                 });
                 scope.createOperator = function() {

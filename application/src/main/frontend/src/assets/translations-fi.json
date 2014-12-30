@@ -266,7 +266,7 @@
                 "label": "Hätänumero"
             },
             "operator": {
-                "label": "Operaattori"
+                "label": "Operaattorin yhteystieto"
             },
             "service": {
                 "label": "Palveluyhtiö"
@@ -380,6 +380,7 @@
         "TypeMismatch": "tarkista muoto",
         "PhoneOrEmailRequired": "anna vähintään puhelinnumero tai sähköposti",
         "Email": "tarkista muoto",
+        "OperatorMismatch": "yhteystiedon tulee olla joko yleinen tai operaattorin omistama",
         "BasicRequirements": "tarkista pakolliset tiedot ja syötteiden muoto"
     }
 }

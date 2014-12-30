@@ -13,11 +13,13 @@
 		</div>
 		<form name="editContactForm" class="form-horizontal" role="form" novalidate>
 			<div class="row">
-				<h3 class="h3-first">{{"operators.label" | translate}}</h3>
+				<label>{{"operators.label" | translate}}</label>
 			</div>
 			<div class="row">
-				<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 column first-column">
-					<operator-select object="contact" mandatory="false"></operator-select>
+				<div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 column first-column">
+					<div class="form-group">
+						<operator-select object="contact" mandatory="false"></operator-select>
+					</div>
 				</div>
 			</div>
 

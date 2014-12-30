@@ -29,6 +29,11 @@ module.exports = function(spec) {
     spec.clearOperatorContact = $('.operatorContact .clearContact');
     spec.clearServiceContact = $('.serviceContact .clearContact');
 
+    spec.parkAndRideAuthRequired = element(by.model('editCtrl.facility.paymentInfo.parkAndRideAuthRequired'));
+    spec.paymentMethods = element(by.model('editCtrl.facility.paymentInfo.paymentMethodIds'));
+    spec.defineMultilingualAccessors("paymentInfoDetail");
+    spec.defineMultilingualAccessors("paymentInfoUrl");
+
     spec.defineMultilingualAccessors("name");
 
     that.get = function (id) {
@@ -183,10 +188,39 @@ module.exports = function(spec) {
             .mouseMove(spec.map, {x: x, y: y}).click().click().perform();
         // Sleep to prevent interfering with other clicks
         browser.sleep(200);
-    }
+    };
 
     that.toListView = function () {
         return spec.toListButton.click();
+    };
+
+    that.isParkAndRideAuthRequired = function() {
+        return spec.parkAndRideAuthRequired.isSelected();
+    };
+
+    that.setParkAndRideAuthRequired = function(isTrue) {
+        spec.parkAndRideAuthRequired.isSelected().then(function(isSelected) {
+            if (isTrue !== isSelected) {
+                spec.parkAndRideAuthRequired.click();
+            }
+        });
+    };
+
+    that.isPaymentMethodSelected = function(name) {
+        return spec.isDisplayed(spec.paymentMethods.element(by.cssContainingText(".ui-select-match-item", name)));
+    };
+
+    that.selectPaymentMethod = function(name) {
+        spec.paymentMethods.element(by.css('input')).click();
+        var e = browser.driver.switchTo().activeElement();
+        e.sendKeys(name);
+        e.sendKeys(protractor.Key.ENTER);
+    };
+
+    that.removePaymentMethod = function(name) {
+        spec.paymentMethods.element(by.cssContainingText(".ui-select-match-item", name))
+            .element(by.css(".ui-select-match-close"))
+            .click();
     };
 
     return that;

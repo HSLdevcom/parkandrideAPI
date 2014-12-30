@@ -112,6 +112,7 @@
             "name": "Nimi",
             "types": "Tyypit"
         },
+        "basic_info": "Perustiedot",
         "action": {
             "new": "Lisää uusi pysäköintipaikka"
         },

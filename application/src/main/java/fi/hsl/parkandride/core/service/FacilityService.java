@@ -46,6 +46,7 @@ public class FacilityService {
 
         Facility oldFacility = repository.getFacilityForUpdate(facilityId);
         repository.updateFacility(facilityId, facility, oldFacility);
+        facility.id = facilityId;
         return facility;
     }
 

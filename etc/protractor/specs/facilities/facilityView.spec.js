@@ -143,7 +143,9 @@ describe('facility view', function () {
 
             it('payment info is displayed', function () {
                 expect(viewPage.isPaymentInfoDisplayed()).toBe(true);
-                // TODO verify auth req is displayed
+                expect(viewPage.isParkAndRideAuthRequired()).toBe(true);
+                expect(viewPage.isPaymentMethodsDisplayed()).toBe(false);
+                expect(viewPage.isPaymentInfoDetailsDisplayed()).toBe(false);
             });
         });
 
@@ -157,7 +159,9 @@ describe('facility view', function () {
 
             it('payment info is displayed', function () {
                 expect(viewPage.isPaymentInfoDisplayed()).toBe(true);
+                expect(viewPage.isParkAndRideAuthRequired()).toBe(false);
                 expect(viewPage.getPaymentMethods()).toEqual("Kolikko, Seteli");
+                expect(viewPage.isPaymentInfoDetailsDisplayed()).toBe(false);
             });
         });
 
@@ -171,6 +175,9 @@ describe('facility view', function () {
 
             it('payment info is displayed', function () {
                 expect(viewPage.isPaymentInfoDisplayed()).toBe(true);
+                expect(viewPage.isParkAndRideAuthRequired()).toBe(false);
+                expect(viewPage.isPaymentMethodsDisplayed()).toBe(false);
+                expect(viewPage.isPaymentInfoDetailsDisplayed()).toBe(true);
                 expect(viewPage.getPaymentInfoDetail()).toEqual([f.paymentInfo.detail.fi, f.paymentInfo.detail.sv, f.paymentInfo.detail.en]);
             });
         });
@@ -185,6 +192,9 @@ describe('facility view', function () {
 
             it('payment info is displayed', function () {
                 expect(viewPage.isPaymentInfoDisplayed()).toBe(true);
+                expect(viewPage.isParkAndRideAuthRequired()).toBe(false);
+                expect(viewPage.isPaymentMethodsDisplayed()).toBe(false);
+                expect(viewPage.isPaymentInfoDetailsDisplayed()).toBe(true);
                 expect(viewPage.getPaymentInfoUrl()).toEqual([f.paymentInfo.url.fi, f.paymentInfo.url.sv, f.paymentInfo.url.en]);
             });
         });

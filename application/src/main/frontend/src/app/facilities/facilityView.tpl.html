@@ -49,10 +49,15 @@
 
 			<div class="row wdPaymentInfo" ng-show="viewCtrl.hasPaymentInfo()">
 				<h3>{{"facilities.paymentInfo.heading" | translate }}</h3>
-				<p class="wdPaymentMethodNames">{{viewCtrl.getPaymentMethodNames() | joinBy: ", "}}</p>
-				<h4>{{"facilities.paymentInfo.details.heading" | translate }}</h4>
-				<multilingual-view class="wdPaymentInfoDetail" value="viewCtrl.facility.paymentInfo.detail"></multilingual-view>
-				<multilingual-view class="wdPaymentInfoUrl"value="viewCtrl.facility.paymentInfo.url"></multilingual-view>
+				<p class="wdParkAndRideAuthRequired" ng-show="viewCtrl.facility.paymentInfo.parkAndRideAuthRequired">
+					{{ "facilities.paymentInfo.parkAndRideAuthRequired" | translate }}
+				</p>
+				<p class="wdPaymentMethodNames" ng-show="viewCtrl.hasPaymentMethods()">{{viewCtrl.getPaymentMethodNames() | joinBy: ", "}}</p>
+				<div class="wdDetails" ng-show="viewCtrl.hasPaymentInfoDetails()">
+					<h4>{{"facilities.paymentInfo.details.heading" | translate }}</h4>
+					<multilingual-view class="wdDetail" value="viewCtrl.facility.paymentInfo.detail"></multilingual-view>
+					<multilingual-view class="wdUrl"value="viewCtrl.facility.paymentInfo.url"></multilingual-view>
+				</div>
 			</div>
 
 			<div class="row wdServices" ng-show="viewCtrl.hasServices()">

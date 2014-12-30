@@ -139,6 +139,7 @@
         },
         "paymentInfo": {
             "heading": "Maksutavat ja tunnistautuminen",
+            "parkAndRideAuthRequired": "Liityntäpysäköinnin tunnistautumiseen tarvitaan matkakortti",
             "methodPlaceholder": "Valitse maksutapa...",
             "details": {
                 "heading": "Lisätiedot"

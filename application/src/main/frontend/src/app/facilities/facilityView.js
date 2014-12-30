@@ -65,16 +65,17 @@
         this.hasServices = function() {
             return services.length > 0;
         };
-        this.hasPaymentInfo = function() {
-            return facility.paymentInfo.paymentMethodIds.length > 0 ||
-                facility.paymentInfo.parkAndRideAuthRequired ||
-                facility.paymentInfo.detail ||
-                facility.paymentInfo.url;
-        };
         this.getServiceNames = function() {
             return _.map(services, function(service) {
                 return service.name.fi;
             });
+        };
+
+        this.hasPaymentInfo = function() {
+            return facility.paymentInfo.parkAndRideAuthRequired || this.hasPaymentMethods() || this.hasPaymentInfoDetails();
+        };
+        this.hasPaymentMethods = function() {
+            return facility.paymentInfo.paymentMethodIds.length > 0;
         };
         this.getPaymentMethodNames = function() {
             function hasPaymentMethod(paymentMethod) {
@@ -84,6 +85,9 @@
             return _.map(_.filter(paymentMethods, hasPaymentMethod), function(paymentMethod) {
                 return paymentMethod.name.fi;
             });
+        };
+        this.hasPaymentInfoDetails = function() {
+            return facility.paymentInfo.detail || facility.paymentInfo.url;
         };
     });
 

@@ -143,6 +143,12 @@
             "methodPlaceholder": "Valitse maksutapa...",
             "details": {
                 "heading": "Lisätiedot"
+            },
+            "detail": {
+                "label": "Lisätiedot"
+            },
+            "url": {
+                "label": "Lisätiedot, linkki"
             }
         },
         "ports": {

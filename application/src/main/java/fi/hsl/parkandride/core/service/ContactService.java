@@ -36,6 +36,7 @@ public class ContactService {
 
         validationService.validate(contact);
         repository.updateContact(contactId, contact);
+        contact.id = contactId;
         return contact;
     }
 

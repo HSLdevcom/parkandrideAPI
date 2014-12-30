@@ -38,6 +38,7 @@ public class HubService {
 
         validationService.validate(hub);
         repository.updateHub(hubId, hub);
+        hub.id = hubId;
         return hub;
     }
 

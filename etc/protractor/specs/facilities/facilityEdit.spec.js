@@ -270,13 +270,15 @@ describe('edit facility view', function () {
         var f = fixtures.facilitiesFixture.dummies.facFull.copy();
 
         beforeEach(function() {
-            devApi.resetAll({ facilities: [f], contacts: [fixtures.facilitiesFixture.contact] });
+            devApi.resetAll({ facilities: [f], contacts: [fixtures.facilitiesFixture.contact], operators: [fixtures.facilitiesFixture.operator] });
+            devApi.loginAs('ADMIN');
         });
 
         describe('create', function(){
             beforeEach(function() {
                 editPage.get();
                 editPage.setName(facFull.name);
+                editPage.selectOperator("smooth");
                 editPage.drawLocation(facFull.locationInput.offset, facFull.locationInput.w, facFull.locationInput.h);
 
                 editPage.selectEmergencyContact("hsl");

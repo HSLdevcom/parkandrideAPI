@@ -77,7 +77,6 @@
         self.capacityTypes = schema.capacityTypes;
         self.services = services;
         self.paymentMethods = paymentMethods;
-        self.contacts = contacts;
         self.aliasesPlaceholder = aliasesPlaceholder;
 
         self.facility = facility;

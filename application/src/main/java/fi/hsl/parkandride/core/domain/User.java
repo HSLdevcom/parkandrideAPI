@@ -4,7 +4,7 @@ import javax.validation.constraints.NotNull;
 
 import org.hibernate.validator.constraints.NotBlank;
 
-public class User {
+public class User implements OperatorEntity {
 
     public Long id;
 
@@ -23,4 +23,16 @@ public class User {
         this.username = username;
         this.role = role;
     }
+
+    public User(User other) {
+        this.username = other.username;
+        this.role = other.role;
+        this.operatorId = other.operatorId;
+    }
+
+    @Override
+    public Long operatorId() {
+        return operatorId;
+    }
+
 }

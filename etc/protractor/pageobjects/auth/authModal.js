@@ -5,6 +5,7 @@ module.exports = function(spec) {
     var that = require('../base')(spec);
 
     spec.view = $("#loginModal");
+    spec.context = spec.view;
     spec.openLoginButton = $("#openLoginPrompt");
     spec.logout = $("#logout");
     spec.username = element(by.model('credentials.username'));

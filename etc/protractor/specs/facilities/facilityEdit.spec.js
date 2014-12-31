@@ -16,14 +16,11 @@ describe('edit facility view', function () {
     var facFull = fixtures.facilitiesFixture.dummies.facFull;
     var facCar = fixtures.facilitiesFixture.dummies.facCar;
 
-    it('should login as admin', function() {
-        devApi.loginAs('ADMIN');
-    });
-
     describe('new facility', function () {
         beforeEach(function () {
+            devApi.resetAll({ contacts: [fixtures.facilitiesFixture.contact], operators: [fixtures.facilitiesFixture.operator] });
+            devApi.loginAs('ADMIN');
             editPage.get();
-            devApi.resetAll({ contacts: [fixtures.facilitiesFixture.contact] });
         });
 
         it('initially no errors exist', function () {
@@ -47,6 +44,10 @@ describe('edit facility view', function () {
             expect(editPage.isNameSvRequiredError()).toBe(true);
             expect(editPage.isNameEnRequiredError()).toBe(true);
             expect(editPage.isFacilityRequiredError()).toBe(true);
+        });
+
+        it('should create and select an operator', function() {
+            editPage.createOperator("smooth operator");
         });
 
         describe('name', function () {
@@ -83,6 +84,7 @@ describe('edit facility view', function () {
         describe('facility', function () {
             it('is required, error is cleared after facility is set', function () {
                 editPage.setName("Facility name");
+                editPage.selectOperator("smooth");
                 editPage.selectEmergencyContact("hsl");
                 editPage.selectOperatorContact("hsl");
                 editPage.save();
@@ -198,19 +200,16 @@ describe('edit facility view', function () {
             editPage.createContact({name: "new contact", phone: "(09) 4766 4444", email: "hsl@hsl.fi"});
             expect(editPage.getEmergencyContact()).toBe("new contact (09 47664444 / hsl@hsl.fi)");
 
-            // Reload and expect that new contact is still available
+            // Reload and expect that new contact is still available after operator is selected
             editPage.get();
-
+            editPage.selectOperator("smooth operator");
             editPage.selectEmergencyContact("new contact");
             expect(editPage.getEmergencyContact()).toBe("new contact (09 47664444 / hsl@hsl.fi)");
-
-            // Clear emergency contact
-            editPage.clearEmergencyContact();
-            expect(editPage.getEmergencyContact()).toBe("Valitse kontakti...");
         });
 
         it('create and edit full', function () {
             editPage.setName(facFull.name);
+            editPage.selectOperator("smooth operator");
             editPage.drawLocation(facFull.locationInput.offset, facFull.locationInput.w, facFull.locationInput.h);
 
             editPage.openPortAt(200, 200);
@@ -249,6 +248,7 @@ describe('edit facility view', function () {
 
         it('create without aliases', function () {
             editPage.setName(facCar.name);
+            editPage.selectOperator("smooth");
             editPage.drawLocation(facCar.locationInput.offset, facCar.locationInput.w, facCar.locationInput.h);
             editPage.setCapacities(facCar.capacities);
             arrayAssert.assertInOrder(editPage.getCapacityTypes(), common.capacityTypeOrder);

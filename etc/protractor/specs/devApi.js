@@ -8,6 +8,7 @@ module.exports = function () {
         hubsUrl = devApiUrl + '/hubs',
         contactsUrl = devApiUrl + '/contacts',
         operatorsUrl = devApiUrl + '/operators',
+        usersUrl = devApiUrl + '/users',
         loginUrl = devApiUrl + "/login";
     var flow = protractor.promise.controlFlow();
 
@@ -71,6 +72,11 @@ module.exports = function () {
         }
     };
 
+
+    api.deleteUsers = function() {
+        flow.execute(function() { return asPromise({ method: 'DELETE', url: usersUrl }); });
+    };
+
     api.createLogin = function(role, username, password) {
         var newUser = {
             username: username || "testuser",
@@ -84,10 +90,7 @@ module.exports = function () {
         function storeAuthToSessionStorage(response) {
             browser.get('/');
             var login = response.body;
-            var script =
-                "sessionStorage.authToken='"+login.token+"';\n" +
-                "sessionStorage.authUsername='"+login.username+"';\n" +
-                "sessionStorage.authRole='"+login.role+"';\n;";
+            var script = "sessionStorage.login='"+ JSON.stringify(login) + "';\n";
             return browser.executeScript(script);
         }
         api.createLogin(role, username, password).then(storeAuthToSessionStorage);
@@ -99,6 +102,7 @@ module.exports = function () {
         api.deleteHubs();
         api.deleteFacilities();
         api.deleteContacts();
+        api.deleteUsers();
         api.deleteOperators();
 
         api.insertOperators(data.operators);

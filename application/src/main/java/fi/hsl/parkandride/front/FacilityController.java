@@ -14,7 +14,6 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import org.joda.time.Instant;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -23,15 +22,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import com.google.common.collect.Lists;
-
-import fi.hsl.parkandride.core.domain.CapacityType;
-import fi.hsl.parkandride.core.domain.Facility;
-import fi.hsl.parkandride.core.domain.FacilityStatus;
-import fi.hsl.parkandride.core.domain.FacilitySummary;
-import fi.hsl.parkandride.core.domain.SearchResults;
-import fi.hsl.parkandride.core.domain.User;
-import fi.hsl.parkandride.core.service.AuthService;
+import fi.hsl.parkandride.core.domain.*;
 import fi.hsl.parkandride.core.service.FacilityService;
 
 @RestController
@@ -96,8 +87,10 @@ public class FacilityController {
     }
 
     @RequestMapping(method = PUT, value = FACILITY_STATUS, produces = APPLICATION_JSON_VALUE)
-    public void createStatuses(@PathVariable(FACILITY_ID) long facilityId, @RequestBody List<FacilityStatus> statuses) {
-        facilityService.createStatuses(facilityId, statuses);
+    public void createStatuses(@PathVariable(FACILITY_ID) long facilityId,
+                               @RequestBody List<FacilityStatus> statuses,
+                               User currentUser) {
+        facilityService.createStatuses(facilityId, statuses, currentUser);
     }
 
     @RequestMapping(method = GET, value = FACILITY_STATUS, produces = APPLICATION_JSON_VALUE)

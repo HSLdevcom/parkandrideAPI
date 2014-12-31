@@ -39,6 +39,7 @@ public class ViolationTest {
 
     private ConstraintViolation<Facility> nameViolation() {
         Facility f = validFacility();
+        f.operatorId  = 1l;
         f.contacts.emergency = 1l;
         f.contacts.operator = 1l;
         f.name = new MultilingualString("", "Test", "Test");
@@ -53,6 +54,7 @@ public class ViolationTest {
 
     private Facility validFacility() {
         Facility f = new Facility();
+        f.operatorId  = 1l;
         f.contacts.emergency = 1l;
         f.contacts.operator = 1l;
         f.name = new MultilingualString("Test", "Test", "Test");

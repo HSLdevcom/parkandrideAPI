@@ -14,6 +14,8 @@ public class ContactSearch {
 
     public MultilingualString name;
 
+    public Long operatorId;
+
     public int getLimit() {
         return limit;
     }
@@ -52,5 +54,13 @@ public class ContactSearch {
 
     public void setName(MultilingualString name) {
         this.name = name;
+    }
+
+    public Long getOperatorId() {
+        return operatorId;
+    }
+
+    public void setOperatorId(Long operatorId) {
+        this.operatorId = operatorId;
     }
 }

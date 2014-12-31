@@ -1,5 +1,7 @@
 package fi.hsl.parkandride.front;
 
+import static com.google.common.net.HttpHeaders.AUTHORIZATION;
+
 import java.util.Base64;
 
 import javax.annotation.Resource;
@@ -33,7 +35,7 @@ public class UserArgumentResolver implements HandlerMethodArgumentResolver {
 
     @Override
     public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer, NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
-        String authorization = webRequest.getHeader(HttpHeaders.AUTHORIZATION);
+        String authorization = webRequest.getHeader(AUTHORIZATION);
         if (Strings.isNullOrEmpty(authorization)) {
             throw new AuthenticationRequiredException();
         }

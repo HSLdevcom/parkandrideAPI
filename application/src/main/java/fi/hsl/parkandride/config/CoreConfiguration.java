@@ -45,7 +45,7 @@ public class CoreConfiguration {
 
     @Bean
     public UserService userService() {
-        return new UserService(userRepository(), authService(), authenticationService(), validationService());
+        return new UserService(userRepository(), authenticationService(), validationService());
     }
 
     @Bean
@@ -59,11 +59,6 @@ public class CoreConfiguration {
     }
 
     @Bean
-    public AuthService authService() {
-        return new AuthService();
-    }
-
-    @Bean
     public ContactRepository contactRepository() {
         return new ContactDao(queryFactory);
     }
@@ -71,7 +66,7 @@ public class CoreConfiguration {
 
     @Bean
     public ContactService contactService() {
-        return new ContactService(contactRepository(), validationService(), authService());
+        return new ContactService(contactRepository(), validationService());
     }
 
     @Bean
@@ -91,7 +86,7 @@ public class CoreConfiguration {
 
     @Bean
     public OperatorService operatorService() {
-        return new OperatorService(operatorRepository(), validationService(), authService());
+        return new OperatorService(operatorRepository(), validationService());
     }
 
     @Bean
@@ -101,7 +96,7 @@ public class CoreConfiguration {
 
     @Bean
     public FacilityService facilityService () {
-        return new FacilityService(facilityRepository(), validationService(), authService());
+        return new FacilityService(facilityRepository(), contactRepository(), validationService());
     }
 
     @Bean
@@ -116,13 +111,14 @@ public class CoreConfiguration {
 
     @Bean
     public HubService hubService() {
-        return new HubService(hubRepository(), validationService(), authService());
+        return new HubService(hubRepository(), validationService());
     }
 
     @Bean
     public PaymentMethodRepository paymentMethodRepository() {
         return new PaymentMethodDao(queryFactory);
     }
+
     @Bean
     public PaymentMethodService paymentMethodService() {
         return new PaymentMethodService(paymentMethodRepository());

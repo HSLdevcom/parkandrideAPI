@@ -26,6 +26,8 @@ module.exports = function (data) {
 
     self.contact = facilitiesFixture.contact;
 
+    self.operator = facilitiesFixture.operator;
+
     self.all = [
         self.westend
     ];

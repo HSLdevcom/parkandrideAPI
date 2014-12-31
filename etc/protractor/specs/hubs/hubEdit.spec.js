@@ -15,6 +15,7 @@ describe('edit hub view', function () {
     var facFull = fixtures.facilitiesFixture.dummies.facFull;
     var facCar = fixtures.facilitiesFixture.dummies.facCar;
     var contact = fixtures.facilitiesFixture.contact;
+    var operator = fixtures.facilitiesFixture.operator;
 
     var facilityFactory = fixtures.facilityFactory;
 
@@ -23,13 +24,10 @@ describe('edit hub view', function () {
         arrayAssert.assertInAnyOrder(facilitiesTable.getNames(), expected);
     }
 
-    it('should login as admin', function() {
-        devApi.loginAs('ADMIN');
-    });
-
     describe('new hub', function () {
         beforeEach(function () {
             devApi.resetAll();
+            devApi.loginAs('ADMIN');
             hubEditPage.get();
         });
 
@@ -117,7 +115,8 @@ describe('edit hub view', function () {
 
         describe('with facilities', function() {
             beforeEach(function () {
-                devApi.resetAll({facilities: [facFull, facCar], contacts: [contact]});
+                devApi.resetAll({facilities: [facFull, facCar], contacts: [contact], operators: [operator]});
+                devApi.loginAs('ADMIN');
                 hubEditPage.get();
             });
 
@@ -158,7 +157,8 @@ describe('edit hub view', function () {
 
                 hub.location.coordinates = facilities[0].coordinatesFromTopLeft({ x: 30, y: 30 });
                 hub.setFacilities(facilities);
-                devApi.resetAll({facilities: hub.facilities, hubs: [hub], contacts: [contact]});
+                devApi.resetAll({facilities: hub.facilities, hubs: [hub], contacts: [contact], operators: [operator]});
+                devApi.loginAs('ADMIN');
             });
 
             it('facility can be removed from hub', function () {

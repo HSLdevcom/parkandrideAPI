@@ -2,6 +2,7 @@
     var m = angular.module('parkandride.facilityEdit', [
         'ui.router',
         'parkandride.contacts',
+        'parkandride.operators',
         'parkandride.ServiceResource',
         'parkandride.PaymentMethodResource',
         'parkandride.ContactResource',
@@ -39,9 +40,6 @@
                 },
                 paymentMethods: function(PaymentMethodResource) {
                     return PaymentMethodResource.listPaymentMethods().then(function(response) { return response.results; });
-                },
-                contacts: function(ContactResource) {
-                    return ContactResource.listContacts().then(function(response) { return response.results; });
                 }
             }
         });
@@ -68,15 +66,12 @@
                 },
                 paymentMethods: function(PaymentMethodResource) {
                     return PaymentMethodResource.listPaymentMethods().then(function(response) { return response.results; });
-                },
-                contacts: function(ContactResource) {
-                    return ContactResource.listContacts().then(function(response) { return response.results; });
                 }
             }
         });
     });
 
-    m.controller('FacilityEditCtrl', function($scope, $state, schema, FacilityResource, facility, aliasesPlaceholder, services, paymentMethods, contacts) {
+    m.controller('FacilityEditCtrl', function($scope, $state, schema, FacilityResource, Session, facility, aliasesPlaceholder, services, paymentMethods) {
         var self = this;
         $scope.common.translationPrefix = "facilities";
         self.capacityTypes = schema.capacityTypes;
@@ -86,6 +81,11 @@
         self.aliasesPlaceholder = aliasesPlaceholder;
 
         self.facility = facility;
+        if (!self.facility.operatorId) {
+            var login = Session.get();
+            self.facility.operatorId = login && login.operatorId;
+        }
+
         self.editMode = (facility.id ? "ports" : "location");
 
         self.saveFacility = function() {

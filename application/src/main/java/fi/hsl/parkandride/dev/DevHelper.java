@@ -6,10 +6,13 @@ import static fi.hsl.parkandride.back.HubDao.HUB_ID_SEQ;
 import static fi.hsl.parkandride.back.OperatorDao.OPERATOR_ID_SEQ;
 import static fi.hsl.parkandride.back.UserDao.USER_ID_SEQ;
 import static java.lang.String.format;
+import static org.springframework.http.HttpStatus.OK;
 
+import javax.annotation.Resource;
 import javax.inject.Inject;
 
 import org.springframework.context.annotation.Profile;
+import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
@@ -20,13 +23,28 @@ import fi.hsl.parkandride.FeatureProfile;
 import fi.hsl.parkandride.back.OperatorDao;
 import fi.hsl.parkandride.back.UserDao;
 import fi.hsl.parkandride.back.sql.*;
+import fi.hsl.parkandride.core.back.UserRepository;
+import fi.hsl.parkandride.core.domain.Login;
+import fi.hsl.parkandride.core.domain.NewUser;
+import fi.hsl.parkandride.core.domain.NotFoundException;
+import fi.hsl.parkandride.core.domain.User;
+import fi.hsl.parkandride.core.domain.UserSecret;
+import fi.hsl.parkandride.core.service.AuthenticationService;
+import fi.hsl.parkandride.core.service.TransactionalRead;
 import fi.hsl.parkandride.core.service.TransactionalWrite;
+import fi.hsl.parkandride.core.service.UserService;
 
 @Component
 @Profile({ FeatureProfile.DEV_API})
 public class DevHelper {
     private final PostgresQueryFactory queryFactory;
     private final JdbcTemplate jdbcTemplate;
+
+    @Resource UserRepository userRepository;
+
+    @Resource UserService userService;
+
+    @Resource AuthenticationService authenticationService;
 
     @Inject
     public DevHelper(PostgresQueryFactory queryFactory, JdbcTemplate jdbcTemplate) {
@@ -53,6 +71,35 @@ public class DevHelper {
     public void deleteUsers() {
         delete(QAppUser.appUser);
         resetUserSequence();
+    }
+
+    @TransactionalWrite
+    public User createUser(NewUser newUser) {
+        UserSecret userSecret;
+        try {
+            userSecret = userRepository.getUser(newUser.username);
+            if (newUser.role != userSecret.user.role) {
+                userRepository.updateUser(userSecret.user.id, newUser);
+            }
+            if (newUser.password != null) {
+                userRepository.updatePassword(userSecret.user.id, authenticationService.encryptPassword(newUser.password));
+            }
+        } catch (NotFoundException e) {
+            userSecret = new UserSecret();
+            userSecret.user = userService.createUserNoValidate(newUser);
+        }
+        return userSecret.user;
+    }
+
+    @TransactionalRead
+    public Login login(String username) {
+        UserSecret userSecret = userRepository.getUser(username);
+        Login login = new Login();
+        login.token = authenticationService.token(userSecret.user);
+        login.username = userSecret.user.username;
+        login.role = userSecret.user.role;
+        login.permissions = login.role.permissions;
+        return login;
     }
 
     @TransactionalWrite

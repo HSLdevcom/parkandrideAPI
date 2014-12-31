@@ -6,13 +6,15 @@ import javax.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.Email;
 
 @PhoneOrEmailRequired
-public class Contact {
+public class Contact implements OperatorEntity {
 
     public Long id;
 
     @NotNull
     @Valid
     public MultilingualString name;
+
+    public Long operatorId;
 
     public Phone phone;
 
@@ -56,4 +58,8 @@ public class Contact {
         return info;
     }
 
+    @Override
+    public Long operatorId() {
+        return operatorId;
+    }
 }

@@ -5,6 +5,7 @@
         'parkandride.capacities',
         'parkandride.layout',
         'parkandride.address',
+        'parkandride.OperatorResource',
         'parkandride.ContactResource',
         'parkandride.FacilityResource',
         'parkandride.ServiceResource',
@@ -47,6 +48,9 @@
                             } else {
                                 return {};
                             }
+                        },
+                        operator: function(OperatorResource, facility) {
+                            return OperatorResource.getOperator(facility.operatorId);
                         }
                     }
                 }
@@ -55,10 +59,11 @@
         });
     });
 
-    m.controller('FacilityViewCtrl', function(facility, services, paymentMethods, contacts) {
+    m.controller('FacilityViewCtrl', function(facility, services, contacts, operator, paymentMethods) {
         this.facility = facility;
         this.services = services;
         this.contacts = contacts;
+        this.operator = operator;
         this.hasCapacities = function() {
           return _.keys(facility.capacities).length !== 0;
         };

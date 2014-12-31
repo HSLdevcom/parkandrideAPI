@@ -20,7 +20,7 @@ describe('facility view', function () {
     var f;
 
     function toView(f) {
-        devApi.resetAll({ facilities: [f], contacts: [fixtures.facilitiesFixture.contact]});
+        devApi.resetAll({ facilities: [f], contacts: [fixtures.facilitiesFixture.contact], operators: [fixtures.facilitiesFixture.operator]});
         viewPage.get(f.id);
         expect(viewPage.isDisplayed()).toBe(true);
         return f;
@@ -68,6 +68,7 @@ describe('facility view', function () {
         f = {
             "id":1,"name":{"fi":"test","sv":"test","en":"tes"},
             "aliases":[],"capacities":{},"serviceIds":[],
+            "operatorId": 1,
             "contacts":{
                 "emergency": 1,
                 "operator": 1

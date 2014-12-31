@@ -35,6 +35,14 @@ html, body {
   padding-top: 10px;
 }
 
+//header logo column
+.logo-column {
+  @extend .col-lg-4;
+  @extend .col-md-12;
+  @extend .col-sm-12;
+  @extend .col-xs-12;
+}
+
 //header logo
 .logo {
   margin-top: -13px;
@@ -42,6 +50,10 @@ html, body {
 
 //header nav column
 .navi-col {
+  @extend .col-lg-6;
+  @extend .col-md-10;
+  @extend .col-sm-9;
+  @extend .col-xs-12;
   padding-left: 20px;
 }
 
@@ -78,8 +90,12 @@ html, body {
   }
 }
 
-//header logout link
+//header logout link column
 .logout {
+  @extend .col-lg-2;
+  @extend .col-md-2;
+  @extend .col-sm-3;
+  @extend .col-xs-12;
   padding-top: 20px;
 }
 

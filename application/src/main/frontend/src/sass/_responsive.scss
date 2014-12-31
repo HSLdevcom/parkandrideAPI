@@ -1,3 +1,4 @@
+//XS
 @media (max-width: 768px) {
   //footer height
   .page-footer {
@@ -20,10 +21,11 @@
   }
   .modal-dialog {
     width: $modal-sm;
-//    margin: 10px;
+    //    margin: 10px;
   }
 }
 
+//SM
 @media (min-width: 992px) {
   //header nav
   .nav-tabs {
@@ -33,8 +35,13 @@
     width: $modal-md;
 //    margin: auto auto;
   }
+  //header nav column
+  .navi-col {
+    padding-left: 0px;
+  }
 }
 
+//MD
 @media (min-width: 1200px) {
   //header nav
   .nav-tabs {

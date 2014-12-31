@@ -5,7 +5,7 @@
 	<div class="modal-body">
 		<form name="editPortForm" class="form-horizontal" role="form" novalidate>
 			<div class="row">
-				<div class="first-3column">
+				<div class="column3 first-column">
 					<div class="portEntry" ng-show="port.entry">&#x2713; {{ "facilities.ports.entry.label" | translate }}</div>
 					<div class="portExit" ng-show="port.exit">&#x2713; {{ "facilities.ports.exit.label" | translate }}</div>
 					<div class="portPedestrian" ng-show="port.pedestrian">&#x2713; {{ "facilities.ports.pedestrian.label" | translate }}</div>
@@ -28,7 +28,7 @@
 	</div>
 	<div class="modal-footer">
 		<div class="row">
-			<div class="column">
+			<div class="column last-column">
 				<button id="wdPortOk" class="btn btn-xs" ng-click="ok()">{{ "common.action.ok" | translate }}</button>
 			</div>
 		</div>

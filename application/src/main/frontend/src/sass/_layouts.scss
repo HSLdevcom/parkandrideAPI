@@ -37,7 +37,7 @@ html, body {
 
 //header logo
 .logo {
-  margin-top: -15px;
+  margin-top: -13px;
 }
 
 //header nav column
@@ -128,6 +128,51 @@ html, body {
 
 .last-column {
   padding-right: 0px;
+}
+
+.basic-2column {
+  @extend .col-lg-6;
+  @extend .col-md-6;
+  @extend .col-sm-6;
+  @extend .col-xs-12;
+  padding-right: 20px;
+  padding-left: 20px;
+}
+
+.first-2column {
+  @extend .basic-2column;
+  padding-left: 0px;
+}
+
+.last-2column {
+  @extend .basic-2column;
+  padding-right: 0px;
+}
+
+.basic-3column {
+  @extend .col-lg-4;
+  @extend .col-md-4;
+  @extend .col-sm-4;
+  @extend .col-xs-12;
+  padding-right: 20px;
+  padding-left: 20px;
+}
+
+.first-3column {
+  @extend .basic-3column;
+  padding-left: 0px;
+}
+
+.last-3column {
+  @extend .basic-3column;
+  padding-right: 0px;
+}
+
+.secondary-navi-column {
+  @extend .col-lg-6;
+  @extend .col-md-6;
+  @extend .col-sm-12;
+  @extend .col-xs-12;
 }
 
 //panel

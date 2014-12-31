@@ -87,7 +87,14 @@
         });
     });
 
-    m.controller('AppCtrl', function AppCtrl($scope, $location, loginPrompt, Session, EVENTS) {
+    m.controller('AppCtrl', function AppCtrl($scope, $location, loginPrompt, Session, EVENTS, Permission, permit) {
+        $scope.permit = permit;
+
+        // Permission constants
+        for (var permission in Permission) {
+            $scope[permission] = permission;
+        }
+
         $scope.common = {};
         $scope.$on(EVENTS.validationErrors, function(event, violations) {
                 $scope.common.violations = _.map(violations, function(violation) {

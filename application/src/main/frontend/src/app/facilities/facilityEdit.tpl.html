@@ -102,6 +102,33 @@
 											   operator-id="editCtrl.facility.operatorId"></facility-contact-edit>
 					</div>
 				</div>
+
+				<div class="row"><h3>{{"facilities.paymentInfo.heading" | translate }}</h3></div>
+				<div class="row">
+					<div class="form-group">
+						<input type="checkbox" class="checkbox" ng-model="editCtrl.facility.paymentInfo.parkAndRideAuthRequired" />
+						<label class="checkbox-label">{{ "facilities.paymentInfo.parkAndRideAuthRequired" | translate }}</label>
+					</div>
+				</div>
+				<div class="row">
+					<div class="form-group">
+						<ui-select multiple ng-model="editCtrl.facility.paymentInfo.paymentMethodIds" theme="bootstrap" ng-disabled="disabled" reset-search-input="true">
+							<ui-select-match placeholder="{{'facilities.paymentInfo.methodPlaceholder' | translate }}">{{$item.name.fi}}</ui-select-match>
+							<ui-select-choices repeat="paymentMethod.id as paymentMethod in editCtrl.paymentMethods | filter: {name: {fi: $select.search}}">
+								<div ng-bind-html="paymentMethod.name.fi | highlight: $select.search"></div>
+							</ui-select-choices>
+						</ui-select>
+					</div>
+				</div>
+				<div class="row"><label>{{ "facilities.paymentInfo.detail.label" | translate }}</label></div>
+				<div class="row">
+					<long-multilingual-edit name="paymentInfoDetail" ng-model="editCtrl.facility.paymentInfo.detail"></long-multilingual-edit>
+				</div>
+				<div class="row"><label>{{ "facilities.paymentInfo.url.label" | translate }}</label></div>
+				<div class="row">
+					<multilingual-edit name="paymentInfoUrl" ng-model="editCtrl.facility.paymentInfo.url"></multilingual-edit>
+				</div>
+
 				<div class="row">
 					<h3>{{"facilities.serviceIds.heading" | translate}}</h3>
 					<div>

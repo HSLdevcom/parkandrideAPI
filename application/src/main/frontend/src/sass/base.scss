@@ -148,9 +148,48 @@ span > .btn:active:focus {
   color: $primarycolor;
 }
 
+//checkboxes
+input[type="checkbox"]:focus {
+  outline: none;
+}
+
+.form-horizontal .checkbox {
+  min-height: 10px;
+  padding: 9px;
+}
+
+.checkbox {
+  -moz-appearance:none;
+  -webkit-appearance:none;
+  -o-appearance:none;
+  background-color: #fff;
+  border: 1px solid $lightgray;
+  box-shadow:rgba(0,0,0,0.0745098) 0 1px 1px 0 inset;
+  border-radius: 4px;
+  display: inline-block;
+  position: relative;
+}
+
+.checkbox:checked:after {
+  content: '\2714';
+  font-size: $basic-font-size;
+  position: absolute;
+  top: 0px;
+  left: 3px;
+  color: $messagecolor;
+}
+
+.checkbox-label {
+  font-weight: normal;
+  position: relative;
+  top: -3px;
+  margin-left: 5px;
+  margin-bottom: 0px;
+}
+
 //form controls
 .form-control {
-  font-size: 16px;
+  font-size: $basic-font-size;
 }
 
 textarea {

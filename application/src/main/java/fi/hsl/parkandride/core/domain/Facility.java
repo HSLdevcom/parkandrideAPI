@@ -74,4 +74,6 @@ public class Facility implements OperatorEntity {
         return operatorId;
     }
 
+
+    public FacilityPaymentInfo paymentInfo = new FacilityPaymentInfo();
 }

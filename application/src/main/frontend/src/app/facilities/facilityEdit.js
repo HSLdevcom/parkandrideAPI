@@ -4,6 +4,7 @@
         'parkandride.contacts',
         'parkandride.operators',
         'parkandride.ServiceResource',
+        'parkandride.PaymentMethodResource',
         'parkandride.ContactResource',
         'parkandride.FacilityResource',
         'parkandride.facilityMap',
@@ -36,6 +37,9 @@
                 },
                 services: function(ServiceResource) {
                     return ServiceResource.listServices().then(function(response) { return response.results; });
+                },
+                paymentMethods: function(PaymentMethodResource) {
+                    return PaymentMethodResource.listPaymentMethods().then(function(response) { return response.results; });
                 }
             }
         });
@@ -59,16 +63,20 @@
                 },
                 services: function(ServiceResource) {
                     return ServiceResource.listServices().then(function(response) { return response.results; });
+                },
+                paymentMethods: function(PaymentMethodResource) {
+                    return PaymentMethodResource.listPaymentMethods().then(function(response) { return response.results; });
                 }
             }
         });
     });
 
-    m.controller('FacilityEditCtrl', function($scope, $state, schema, FacilityResource, ContactResource, facility, aliasesPlaceholder, services, Session) {
+    m.controller('FacilityEditCtrl', function($scope, $state, schema, FacilityResource, Session, facility, aliasesPlaceholder, services, paymentMethods) {
         var self = this;
         $scope.common.translationPrefix = "facilities";
         self.capacityTypes = schema.capacityTypes;
         self.services = services;
+        self.paymentMethods = paymentMethods;
         self.aliasesPlaceholder = aliasesPlaceholder;
 
         self.facility = facility;

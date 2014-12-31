@@ -9,6 +9,7 @@
         'parkandride.ContactResource',
         'parkandride.FacilityResource',
         'parkandride.ServiceResource',
+        'parkandride.PaymentMethodResource',
         'parkandride.layout'
     ]);
 
@@ -33,6 +34,11 @@
                                 return [];
                             }
                         },
+                        paymentMethods: function(PaymentMethodResource) {
+                            return PaymentMethodResource.listPaymentMethods().then(function(results) {
+                                return results.results;
+                            });
+                        },
                         contacts: function(ContactResource, facility)  {
                             var contactIds = _.filter(_.values(facility.contacts));
                             if (!_.isEmpty(contactIds)) {
@@ -53,7 +59,7 @@
         });
     });
 
-    m.controller('FacilityViewCtrl', function(facility, services, contacts, operator) {
+    m.controller('FacilityViewCtrl', function(facility, services, contacts, operator, paymentMethods) {
         this.facility = facility;
         this.services = services;
         this.contacts = contacts;
@@ -68,6 +74,25 @@
             return _.map(services, function(service) {
                 return service.name.fi;
             });
+        };
+
+        this.hasPaymentInfo = function() {
+            return facility.paymentInfo.parkAndRideAuthRequired || this.hasPaymentMethods() || this.hasPaymentInfoDetails();
+        };
+        this.hasPaymentMethods = function() {
+            return facility.paymentInfo.paymentMethodIds.length > 0;
+        };
+        this.getPaymentMethodNames = function() {
+            function hasPaymentMethod(paymentMethod) {
+                return  _.contains(facility.paymentInfo.paymentMethodIds, paymentMethod.id);
+            }
+
+            return _.map(_.filter(paymentMethods, hasPaymentMethod), function(paymentMethod) {
+                return paymentMethod.name.fi;
+            });
+        };
+        this.hasPaymentInfoDetails = function() {
+            return facility.paymentInfo.detail || facility.paymentInfo.url;
         };
     });
 

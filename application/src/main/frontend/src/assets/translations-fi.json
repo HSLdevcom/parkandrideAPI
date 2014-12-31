@@ -138,6 +138,20 @@
         "serviceIds": {
             "heading": "Palvelut"
         },
+        "paymentInfo": {
+            "heading": "Maksutavat ja tunnistautuminen",
+            "parkAndRideAuthRequired": "Liityntäpysäköinnin tunnistautumiseen tarvitaan matkakortti",
+            "methodPlaceholder": "Valitse maksutapa...",
+            "details": {
+                "heading": "Lisätiedot"
+            },
+            "detail": {
+                "label": "Lisätiedot"
+            },
+            "url": {
+                "label": "Lisätiedot, linkki"
+            }
+        },
         "ports": {
             "create": "Sisään-/uloskäynti",
             "edit": "Sisään-/uloskäynti",

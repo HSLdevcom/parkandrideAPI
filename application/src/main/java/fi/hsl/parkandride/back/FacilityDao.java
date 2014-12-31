@@ -12,11 +12,8 @@ import static fi.hsl.parkandride.core.domain.Sort.Dir.DESC;
 import java.util.*;
 
 import org.geolatte.geom.Geometry;
-import org.joda.time.DateTime;
-import org.joda.time.Instant;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.mysema.query.ResultTransformer;
 import com.mysema.query.Tuple;
@@ -27,7 +24,6 @@ import com.mysema.query.sql.dml.SQLUpdateClause;
 import com.mysema.query.sql.postgres.PostgresQuery;
 import com.mysema.query.sql.postgres.PostgresQueryFactory;
 import com.mysema.query.types.MappingProjection;
-import com.mysema.query.types.Projections;
 import com.mysema.query.types.expr.ComparableExpression;
 import com.mysema.query.types.expr.NumberExpression;
 import com.mysema.query.types.expr.SimpleExpression;
@@ -54,6 +50,8 @@ public class FacilityDao implements FacilityRepository {
     private static final QFacilityService qService = QFacilityService.facilityService;
 
     private static final QFacilityStatus qStatus = QFacilityStatus.facilityStatus;
+
+    private static final QFacilityPaymentMethod  qPaymentMethod = QFacilityPaymentMethod.facilityPaymentMethod;
 
     private static final MappingProjection<Capacity> capacityMapping = new MappingProjection<Capacity>(Capacity.class, qCapacity.built, qCapacity.unavailable) {
         @Override
@@ -115,6 +113,12 @@ public class FacilityDao implements FacilityRepository {
     public static final ResultTransformer<Map<Long, List<Port>>> portsByFacilityIdMapping =
             groupBy(qPort.facilityId).as(list(portMapping));
 
+
+    private static final MultilingualStringMapping paymentInfoDetailMapping =
+            new MultilingualStringMapping(qFacility.paymentInfoDetailFi, qFacility.paymentInfoDetailSv, qFacility.paymentInfoDetailEn);
+    private static final MultilingualStringMapping paymentInfoUrlMapping =
+            new MultilingualStringMapping(qFacility.paymentInfoUrlFi, qFacility.paymentInfoUrlSv, qFacility.paymentInfoUrlEn);
+
     private static final MappingProjection<Facility> facilityMapping = new MappingProjection<Facility>(Facility.class, qFacility.all()) {
         private final MultilingualStringMapping nameMapping = new MultilingualStringMapping(qFacility.nameFi, qFacility.nameSv, qFacility.nameEn);
         @Override
@@ -133,6 +137,10 @@ public class FacilityDao implements FacilityRepository {
                     row.get(qFacility.operatorContactId),
                     row.get(qFacility.serviceContactId)
             );
+            facility.paymentInfo.parkAndRideAuthRequired = row.get(qFacility.parkAndRideAuthRequired);
+            facility.paymentInfo.detail = paymentInfoDetailMapping.map(row);
+            facility.paymentInfo.url = paymentInfoUrlMapping.map(row);
+
             return facility;
         }
     };
@@ -164,6 +172,7 @@ public class FacilityDao implements FacilityRepository {
         insertCapacities(facilityId, facility.capacities);
         insertPorts(facilityId, facility.ports);
         updateServices(facilityId, facility.serviceIds);
+        updatePaymentMethods(facilityId, facility.paymentInfo.paymentMethodIds);
 
         return facilityId;
     }
@@ -190,6 +199,10 @@ public class FacilityDao implements FacilityRepository {
 
         if (!Objects.equals(newFacility.serviceIds, oldFacility.serviceIds)) {
             updateServices(facilityId, newFacility.serviceIds);
+        }
+
+        if (!Objects.equals(newFacility.paymentInfo.paymentMethodIds, oldFacility.paymentInfo.paymentMethodIds)) {
+            updatePaymentMethods(facilityId, newFacility.paymentInfo.paymentMethodIds);
         }
     }
 
@@ -219,6 +232,7 @@ public class FacilityDao implements FacilityRepository {
         fetchCapacities(facilityMap);
         fetchPorts(facilityMap);
         fetchServices(facilityMap);
+        fetchPaymentMethods(facilityMap);
         return facility;
     }
 
@@ -237,6 +251,7 @@ public class FacilityDao implements FacilityRepository {
         fetchCapacities(facilities);
         fetchPorts(facilities);
         fetchServices(facilities);
+        fetchPaymentMethods(facilities);
 
         return SearchResults.of(new ArrayList<>(facilities.values()), search.limit);
     }
@@ -501,6 +516,18 @@ public class FacilityDao implements FacilityRepository {
         }
     }
 
+    private void updatePaymentMethods(long facilityId, Set<Long> paymentMethodIds) {
+        queryFactory.delete(qPaymentMethod).where(qPaymentMethod.facilityId.eq(facilityId)).execute();
+
+        if (paymentMethodIds != null && !paymentMethodIds.isEmpty()) {
+            SQLInsertClause insert = queryFactory.insert(qPaymentMethod);
+            for (Long serviceId : paymentMethodIds) {
+                insert.set(qPaymentMethod.facilityId, facilityId).set(qPaymentMethod.paymentMethodId, serviceId).addBatch();
+            }
+            insert.execute();
+        }
+    }
+
     private void fetchPorts(Map<Long, Facility> facilitiesById) {
         if (!facilitiesById.isEmpty()) {
             Map<Long, List<Port>> ports = findPorts(facilitiesById.keySet());
@@ -533,10 +560,20 @@ public class FacilityDao implements FacilityRepository {
 
     private void fetchServices(Map<Long, Facility> facilitiesById) {
         if (!facilitiesById.isEmpty()) {
-            Map<Long, Set<Long>> capacities = findServices(facilitiesById.keySet());
+            Map<Long, Set<Long>> services = findServices(facilitiesById.keySet());
 
-            for (Map.Entry<Long, Set<Long>> entry : capacities.entrySet()) {
+            for (Map.Entry<Long, Set<Long>> entry : services.entrySet()) {
                 facilitiesById.get(entry.getKey()).serviceIds = entry.getValue();
+            }
+        }
+    }
+
+    private void fetchPaymentMethods(Map<Long, Facility> facilitiesById) {
+        if (!facilitiesById.isEmpty()) {
+            Map<Long, Set<Long>> paymentMethods = findPaymentMethods(facilitiesById.keySet());
+
+            for (Map.Entry<Long, Set<Long>> entry : paymentMethods.entrySet()) {
+                facilitiesById.get(entry.getKey()).paymentInfo.paymentMethodIds = entry.getValue();
             }
         }
     }
@@ -545,6 +582,12 @@ public class FacilityDao implements FacilityRepository {
         return queryFactory.from(qService)
                 .where(qService.facilityId.in(facilityIds))
                 .transform(groupBy(qService.facilityId).as(set(qService.serviceId)));
+    }
+
+    private Map<Long, Set<Long>> findPaymentMethods(Set<Long> facilityIds) {
+        return queryFactory.from(qPaymentMethod)
+                .where(qPaymentMethod.facilityId.in(facilityIds))
+                .transform(groupBy(qPaymentMethod.facilityId).as(set(qPaymentMethod.paymentMethodId)));
     }
 
     private Map<Long, Set<String>> findAliases(Set<Long> facilityIds) {
@@ -576,6 +619,11 @@ public class FacilityDao implements FacilityRepository {
         store.set(qFacility.emergencyContactId, contacts.emergency);
         store.set(qFacility.operatorContactId, contacts.operator);
         store.set(qFacility.serviceContactId, contacts.service);
+
+        FacilityPaymentInfo paymentInfo = facility.paymentInfo;
+        store.set(qFacility.parkAndRideAuthRequired, paymentInfo.parkAndRideAuthRequired);
+        paymentInfoDetailMapping.populate(paymentInfo.detail, store);
+        paymentInfoUrlMapping.populate(paymentInfo.url, store);
     }
 
     private SQLInsertClause insertFacility() {

@@ -1,0 +1,13 @@
+[
+  {
+    "username":"admin",
+    "password":"liipi",
+    "role":"ADMIN"
+  },
+  {
+    "username":"operator",
+    "password":"smooth",
+    "role":"OPERATOR",
+    "operatorId":1
+  }
+]

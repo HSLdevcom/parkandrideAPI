@@ -3,6 +3,7 @@ package fi.hsl.parkandride.back;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
+import java.util.UUID;
 
 import javax.inject.Inject;
 
@@ -15,11 +16,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import fi.hsl.parkandride.DevApiProfileAppender;
 import fi.hsl.parkandride.core.back.ContactRepository;
-import fi.hsl.parkandride.core.domain.Address;
-import fi.hsl.parkandride.core.domain.Contact;
-import fi.hsl.parkandride.core.domain.ContactSearch;
-import fi.hsl.parkandride.core.domain.MultilingualString;
-import fi.hsl.parkandride.core.domain.Phone;
+import fi.hsl.parkandride.core.back.OperatorRepository;
+import fi.hsl.parkandride.core.domain.*;
 import fi.hsl.parkandride.dev.DevHelper;
 
 public class ContactDaoTest extends AbstractDaoTest {
@@ -35,8 +33,12 @@ public class ContactDaoTest extends AbstractDaoTest {
     private static Phone PHONE = new Phone("09 1234567");
 
     private static Address ADDRESS = new Address("street", "12345", "city");
+
     @Inject
     ContactRepository contactDao;
+
+    @Inject
+    OperatorRepository operatorRepository;
 
     @Test
     public void create_read_update() {
@@ -51,6 +53,11 @@ public class ContactDaoTest extends AbstractDaoTest {
         assertThat(contacts).hasSize(1);
         assertDefault(contacts.get(0));
 
+        // Generic contacts are returned with operatoId search option
+        ContactSearch search = new ContactSearch();
+        search.operatorId = -123l;
+        assertThat(contactDao.findContacts(search).results).hasSize(1);
+
         final MultilingualString newName = new MultilingualString("changed name");
         final MultilingualString newOpeningHours = new MultilingualString("changed opening hours");
         final MultilingualString newInfo = new MultilingualString("changed info");
@@ -64,6 +71,7 @@ public class ContactDaoTest extends AbstractDaoTest {
         contact.phone = newPhone;
         contact.address = newAddress;
 
+        contact.operatorId = operatorRepository.insertOperator(new Operator(UUID.randomUUID().toString()));
         contactDao.updateContact(id, contact);
         contact = contactDao.getContact(id);
         assertThat(contact.name).isEqualTo(newName);
@@ -72,6 +80,14 @@ public class ContactDaoTest extends AbstractDaoTest {
         assertThat(contact.address).isEqualTo(newAddress);
         assertThat(contact.openingHours).isEqualTo(newOpeningHours);
         assertThat(contact.info).isEqualTo(newInfo);
+
+        // Matches given operatorId
+        search.operatorId = contact.operatorId;
+        assertThat(contactDao.findContacts(search).results).hasSize(1);
+
+        // But doesn't match other operatorId
+        search.operatorId = -123l;
+        assertThat(contactDao.findContacts(search).results).isEmpty();
     }
 
     private void assertDefault(Contact contact) {

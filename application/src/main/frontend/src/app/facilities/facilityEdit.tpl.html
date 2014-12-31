@@ -12,32 +12,30 @@
 			<div class="wdFacilityEditView">
 
 				<div class="row">
-					<h3 class="h3-first">{{"operators.label" | translate}} *</h3>
-				</div>
-				<div class="row">
-					<div class="column3 first-column">
-						<operator-select object="editCtrl.facility"></operator-select>
-					</div>
-				</div>
-
-				<div class="row">
-					<h3>{{ "facilities.name.title" | translate }}</h3>
+					<h3 class="h3-first">{{"facilities.basic_info" | translate}}</h3>
 				</div>
 
 				<div class="row">
 					<label>{{ "facilities.name.label" | translate }} *</label>
 				</div>
-
 				<div class="row">
 					<multilingual-edit name="name" ng-model="editCtrl.facility.name" mandatory="true"></multilingual-edit>
 				</div>
-
 				<div class="row">
 						<div class="form-group">
 							<label>{{ "facilities.aliases.label" | translate }}</label>
 							<div class="wdAliases">
 								<tags ng-model="editCtrl.facility.aliases" placeholder="{{ 'facilities.aliases.placeholder' | translate }}"></tags>
 							</div>
+					</div>
+				</div>
+
+				<div class="row">
+					<label>{{"operators.label" | translate}} *</label>
+				</div>
+				<div class="row">
+					<div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 column first-column">
+						<operator-select object="editCtrl.facility" mandatory="true"></operator-select>
 					</div>
 				</div>
 
@@ -89,20 +87,48 @@
 				<div class="row">
 					<div class="column3 first-column">
 						<facility-contact-edit contact-type="emergency" facility-contacts="editCtrl.facility.contacts"
-											   mandatory="true"></facility-contact-edit>
+											   operator-id="editCtrl.facility.operatorId" mandatory="true"></facility-contact-edit>
 					</div>
 				</div>
 				<div class="row">
 					<div class="column3 first-column">
 						<facility-contact-edit contact-type="operator" facility-contacts="editCtrl.facility.contacts"
-											   mandatory="true"></facility-contact-edit>
+											   operator-id="editCtrl.facility.operatorId" mandatory="true"></facility-contact-edit>
 					</div>
 				</div>
 				<div class="row">
 					<div class="column3 first-column">
-						<facility-contact-edit contact-type="service" facility-contacts="editCtrl.facility.contacts"></facility-contact-edit>
+						<facility-contact-edit contact-type="service" facility-contacts="editCtrl.facility.contacts"
+											   operator-id="editCtrl.facility.operatorId"></facility-contact-edit>
 					</div>
 				</div>
+
+				<div class="row"><h3>{{"facilities.paymentInfo.heading" | translate }}</h3></div>
+				<div class="row">
+					<div class="form-group">
+						<input type="checkbox" class="checkbox" ng-model="editCtrl.facility.paymentInfo.parkAndRideAuthRequired" />
+						<label class="checkbox-label">{{ "facilities.paymentInfo.parkAndRideAuthRequired" | translate }}</label>
+					</div>
+				</div>
+				<div class="row">
+					<div class="form-group">
+						<ui-select multiple ng-model="editCtrl.facility.paymentInfo.paymentMethodIds" theme="bootstrap" ng-disabled="disabled" reset-search-input="true">
+							<ui-select-match placeholder="{{'facilities.paymentInfo.methodPlaceholder' | translate }}">{{$item.name.fi}}</ui-select-match>
+							<ui-select-choices repeat="paymentMethod.id as paymentMethod in editCtrl.paymentMethods | filter: {name: {fi: $select.search}}">
+								<div ng-bind-html="paymentMethod.name.fi | highlight: $select.search"></div>
+							</ui-select-choices>
+						</ui-select>
+					</div>
+				</div>
+				<div class="row"><label>{{ "facilities.paymentInfo.detail.label" | translate }}</label></div>
+				<div class="row">
+					<long-multilingual-edit name="paymentInfoDetail" ng-model="editCtrl.facility.paymentInfo.detail"></long-multilingual-edit>
+				</div>
+				<div class="row"><label>{{ "facilities.paymentInfo.url.label" | translate }}</label></div>
+				<div class="row">
+					<multilingual-edit name="paymentInfoUrl" ng-model="editCtrl.facility.paymentInfo.url"></multilingual-edit>
+				</div>
+
 				<div class="row">
 					<h3>{{"facilities.serviceIds.heading" | translate}}</h3>
 					<div>

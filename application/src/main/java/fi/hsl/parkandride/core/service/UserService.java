@@ -50,7 +50,7 @@ public class UserService {
             validatePassword(newUser.password);
             userSecret.password = authenticationService.encryptPassword(newUser.password);
         }
-        userSecret.user = newUser;
+        userSecret.user = new User(newUser);
         userSecret.user.id = userRepository.insertUser(userSecret);
         return userSecret.user;
     }

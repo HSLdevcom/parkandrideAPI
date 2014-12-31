@@ -73,8 +73,7 @@ public class Facility implements OperatorEntity {
     public Long operatorId() {
         return operatorId;
     }
-//    public Long getOperatorId() {
-//        return operatorId;
-//    }
 
+
+    public FacilityPaymentInfo paymentInfo = new FacilityPaymentInfo();
 }

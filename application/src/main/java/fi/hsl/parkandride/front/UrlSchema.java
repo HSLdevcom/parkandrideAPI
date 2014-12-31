@@ -53,6 +53,9 @@ public class UrlSchema {
 
     public static final String LOGIN = INTERNAL + "/login";
 
+
+    public static final String PAYMENT_METHODS = API + "/payment-methods";
+
     /**
      * TESTING
      */

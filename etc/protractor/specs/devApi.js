@@ -90,10 +90,7 @@ module.exports = function () {
         function storeAuthToSessionStorage(response) {
             browser.get('/');
             var login = response.body;
-            var script =
-                "sessionStorage.authToken='"+login.token+"';\n" +
-                "sessionStorage.authUsername='"+login.username+"';\n" +
-                "sessionStorage.authRole='"+login.role+"';\n;";
+            var script = "sessionStorage.login='"+ JSON.stringify(login) + "';\n";
             return browser.executeScript(script);
         }
         api.createLogin(role, username, password).then(storeAuthToSessionStorage);

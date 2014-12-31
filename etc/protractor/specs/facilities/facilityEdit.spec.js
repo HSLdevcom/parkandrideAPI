@@ -200,15 +200,11 @@ describe('edit facility view', function () {
             editPage.createContact({name: "new contact", phone: "(09) 4766 4444", email: "hsl@hsl.fi"});
             expect(editPage.getEmergencyContact()).toBe("new contact (09 47664444 / hsl@hsl.fi)");
 
-            // Reload and expect that new contact is still available
+            // Reload and expect that new contact is still available after operator is selected
             editPage.get();
-
+            editPage.selectOperator("smooth operator");
             editPage.selectEmergencyContact("new contact");
             expect(editPage.getEmergencyContact()).toBe("new contact (09 47664444 / hsl@hsl.fi)");
-
-            // Clear emergency contact
-            editPage.clearEmergencyContact();
-            expect(editPage.getEmergencyContact()).toBe("Valitse kontakti...");
         });
 
         it('create and edit full', function () {
@@ -267,6 +263,103 @@ describe('edit facility view', function () {
         it('provides navigation back to hub list', function () {
             editPage.toListView();
             expect(hubListPage.isDisplayed()).toBe(true);
+        });
+    });
+
+    describe('payment info', function() {
+        var f = fixtures.facilitiesFixture.dummies.facFull.copy();
+
+        beforeEach(function() {
+            devApi.resetAll({ facilities: [f], contacts: [fixtures.facilitiesFixture.contact], operators: [fixtures.facilitiesFixture.operator] });
+            devApi.loginAs('ADMIN');
+        });
+
+        describe('create', function(){
+            beforeEach(function() {
+                editPage.get();
+                editPage.setName(facFull.name);
+                editPage.selectOperator("smooth");
+                editPage.drawLocation(facFull.locationInput.offset, facFull.locationInput.w, facFull.locationInput.h);
+
+                editPage.selectEmergencyContact("hsl");
+                editPage.selectOperatorContact("hsl");
+                editPage.selectServiceContact("hsl");
+            });
+
+            it('with auth', function() {
+                editPage.setParkAndRideAuthRequired(true);
+
+                editPage.save();
+                expect(viewPage.isDisplayed()).toBe(true);
+
+                expect(viewPage.isPaymentInfoDisplayed()).toBe(true);
+                expect(viewPage.isParkAndRideAuthRequired()).toBe(true);
+                expect(viewPage.isPaymentMethodsDisplayed()).toBe(false);
+                expect(viewPage.isPaymentInfoDetailsDisplayed()).toBe(false);
+
+            });
+
+            it('with methods', function() {
+                editPage.selectPaymentMethod("Kolikko");
+                editPage.selectPaymentMethod("Seteli");
+
+                editPage.save();
+                expect(viewPage.isDisplayed()).toBe(true);
+
+                expect(viewPage.isPaymentInfoDisplayed()).toBe(true);
+                expect(viewPage.isParkAndRideAuthRequired()).toBe(false);
+                expect(viewPage.getPaymentMethods()).toEqual("Kolikko, Seteli");
+                expect(viewPage.isPaymentInfoDetailsDisplayed()).toBe(false);
+
+            });
+
+            it('with details', function() {
+                editPage.setPaymentInfoDetailFi('fooFi');
+                editPage.setPaymentInfoDetailSv('fooSv');
+                editPage.setPaymentInfoDetailEn('fooEn');
+                editPage.setPaymentInfoUrlFi('barFi');
+                editPage.setPaymentInfoUrlSv('barSv');
+                editPage.setPaymentInfoUrlEn('barEn');
+
+                editPage.save();
+                expect(viewPage.isDisplayed()).toBe(true);
+
+                expect(viewPage.isPaymentInfoDisplayed()).toBe(true);
+                expect(viewPage.isParkAndRideAuthRequired()).toBe(false);
+                expect(viewPage.isPaymentMethodsDisplayed()).toBe(false);
+                expect(viewPage.getPaymentInfoDetail()).toEqual(["fooFi", "fooSv", "fooEn"]);
+                expect(viewPage.getPaymentInfoUrl()).toEqual(["barFi", "barSv", "barEn"]);
+            });
+        });
+
+        describe('edit', function(){
+            beforeEach(function () {
+                editPage.get(f.id);
+            });
+
+            it('initial state', function() {
+                expect(editPage.isParkAndRideAuthRequired()).toBe(true);
+                expect(editPage.isPaymentMethodSelected("Kolikko")).toBe(true);
+                expect(editPage.isPaymentMethodSelected("Seteli")).toBe(true);
+                expect(editPage.getPaymentInfoDetail()).toEqual([f.paymentInfo.detail.fi, f.paymentInfo.detail.sv, f.paymentInfo.detail.en]);
+                expect(editPage.getPaymentInfoUrl()).toEqual([f.paymentInfo.url.fi, f.paymentInfo.url.sv, f.paymentInfo.url.en]);
+            });
+
+            it('modify and save', function() {
+                editPage.setParkAndRideAuthRequired(false);
+                editPage.removePaymentMethod("Kolikko");
+                editPage.setPaymentInfoDetailSv("foo");
+                editPage.setPaymentInfoUrlEn("bar");
+
+                editPage.save();
+                expect(viewPage.isDisplayed()).toBe(true);
+
+                expect(viewPage.isPaymentInfoDisplayed()).toBe(true);
+                expect(viewPage.isParkAndRideAuthRequired()).toBe(false);
+                expect(viewPage.getPaymentMethods()).toEqual("Seteli");
+                expect(viewPage.getPaymentInfoDetail()).toEqual([f.paymentInfo.detail.fi, "foo", f.paymentInfo.detail.en]);
+                expect(viewPage.getPaymentInfoUrl()).toEqual([f.paymentInfo.url.fi, f.paymentInfo.url.sv, "bar"]);
+            });
         });
     });
 });

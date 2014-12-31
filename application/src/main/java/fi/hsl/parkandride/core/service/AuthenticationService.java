@@ -104,6 +104,7 @@ public class AuthenticationService {
             login.username = userSecret.user.username;
             login.role = userSecret.user.role;
             login.permissions = login.role.permissions;
+            login.operatorId = userSecret.user.operatorId;
             return login;
         } catch (NotFoundException e) {
             throw new ValidationException(new Violation("BadCredentials"));

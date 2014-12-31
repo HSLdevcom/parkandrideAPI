@@ -39,6 +39,7 @@ public class OperatorService {
 
         validationService.validate(operator);
         repository.updateOperator(operatorId, operator);
+        operator.id = operatorId;
         return operator;
     }
 

@@ -14,7 +14,7 @@
 		</ui-select>
 		<span class="input-group-btn">
 			<button class="btn btn-default clearContact" type="button" ng-click="facilityContacts[contactType] = undefined"
-					ng-show="facilityContacts[contactType]">x</button>
+					ng-show="!mandatory && facilityContacts[contactType]">x</button>
 			<button class="btn btn-default createContact" type="button" ng-click="createContact(contactType)">+</button>
 		</span>
 	</div>

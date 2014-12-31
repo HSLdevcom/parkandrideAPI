@@ -46,13 +46,17 @@
         };
     });
 
-    m.factory("editContact", function($modal, ContactResource) {
+    m.factory("editContact", function($modal, ContactResource, Session) {
         return function(contact, create) {
             var modalInstance = $modal.open({
                 templateUrl: 'contacts/contactEdit.tpl.html',
                 controller: 'ContactEditCtrl',
                 resolve: {
                     contact: function () {
+                        if (!contact.operatorId) {
+                            var login = Session.get();
+                            contact.operatorId = login && login.operatorId;
+                        }
                         return _.cloneDeep(contact);
                     },
                     create: function() {

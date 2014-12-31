@@ -36,12 +36,6 @@
                 },
                 services: function(ServiceResource) {
                     return ServiceResource.listServices().then(function(response) { return response.results; });
-                },
-                contacts: function(ContactResource) {
-                    return ContactResource.listContacts().then(function(response) { return response.results; });
-                },
-                operators: function(OperatorResource) {
-                    return OperatorResource.listOperators().then(function(response) { return response.results; });
                 }
             }
         });
@@ -65,27 +59,24 @@
                 },
                 services: function(ServiceResource) {
                     return ServiceResource.listServices().then(function(response) { return response.results; });
-                },
-                contacts: function(ContactResource) {
-                    return ContactResource.listContacts().then(function(response) { return response.results; });
-                },
-                operators: function(OperatorResource) {
-                    return OperatorResource.listOperators().then(function(response) { return response.results; });
                 }
             }
         });
     });
 
-    m.controller('FacilityEditCtrl', function($scope, $state, schema, FacilityResource, facility, aliasesPlaceholder, services, contacts, operators) {
+    m.controller('FacilityEditCtrl', function($scope, $state, schema, FacilityResource, ContactResource, facility, aliasesPlaceholder, services, Session) {
         var self = this;
         $scope.common.translationPrefix = "facilities";
         self.capacityTypes = schema.capacityTypes;
         self.services = services;
-        self.contacts = contacts;
-        self.operators = operators;
         self.aliasesPlaceholder = aliasesPlaceholder;
 
         self.facility = facility;
+        if (!self.facility.operatorId) {
+            var login = Session.get();
+            self.facility.operatorId = login && login.operatorId;
+        }
+
         self.editMode = (facility.id ? "ports" : "location");
 
         self.saveFacility = function() {

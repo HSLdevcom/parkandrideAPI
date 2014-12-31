@@ -79,7 +79,6 @@ public class UserDao implements UserRepository {
         insert.set(qUser.id, userId)
                 .set(qUser.password, userSecret.password)
                 .set(qUser.minTokenTimestamp, currentTime)
-
                 .set(qUser.username, userSecret.user.username.toLowerCase())
                 .set(qUser.role, userSecret.user.role)
                 .set(qUser.operatorId, userSecret.user.operatorId);

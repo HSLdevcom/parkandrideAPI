@@ -11,6 +11,8 @@ import static fi.hsl.parkandride.core.service.AuthenticationService.authorize;
 import java.util.List;
 import java.util.Objects;
 
+import fi.hsl.parkandride.back.ContactDao;
+import fi.hsl.parkandride.core.back.ContactRepository;
 import fi.hsl.parkandride.core.back.FacilityRepository;
 import fi.hsl.parkandride.core.domain.*;
 
@@ -20,16 +22,19 @@ public class FacilityService {
 
     private final ValidationService validationService;
 
-    public FacilityService(FacilityRepository repository, ValidationService validationService) {
+    private final ContactRepository contactRepository;
+
+    public FacilityService(FacilityRepository repository, ContactRepository contactRepository, ValidationService validationService) {
         this.repository = repository;
+        this.contactRepository = contactRepository;
         this.validationService = validationService;
     }
 
     @TransactionalWrite
     public Facility createFacility(Facility facility, User currentUser) {
         authorize(currentUser, facility, FACILITY_CREATE);
+        validate(facility);
 
-        validationService.validate(facility);
         facility.id = repository.insertFacility(facility);
         return facility;
     }
@@ -37,11 +42,28 @@ public class FacilityService {
     @TransactionalWrite
     public Facility updateFacility(long facilityId, Facility facility, User currentUser) {
         authorize(currentUser, facility, FACILITY_UPDATE);
+        validate(facility);
 
-        validationService.validate(facility);
         Facility oldFacility = repository.getFacilityForUpdate(facilityId);
         repository.updateFacility(facilityId, facility, oldFacility);
+        facility.id = facilityId;
         return facility;
+    }
+
+    private void validate(Facility facility) {
+        validationService.validate(facility);
+        validateContact(facility.operatorId, facility.contacts.emergency, "emergency");
+        validateContact(facility.operatorId, facility.contacts.operator, "operator");
+        validateContact(facility.operatorId, facility.contacts.service, "service");
+    }
+
+    private void validateContact(Long facilityOperatorId, Long contactId, String contactType) {
+        if (contactId != null) {
+            Contact contact = contactRepository.getContact(contactId);
+            if (contact.operatorId != null && !contact.operatorId.equals(facilityOperatorId)) {
+                throw new ValidationException(new Violation("OperatorMismatch", "contacts." + contactType, "operator should match facility operator"));
+            }
+        }
     }
 
     @TransactionalRead

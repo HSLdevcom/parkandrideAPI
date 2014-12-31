@@ -65,6 +65,20 @@
   margin-bottom: 20px;
 }
 
+.link-btn {
+  background: none;
+  border: none;
+  text-align: center;
+  font-size: 16px;
+  color: $primarycolor;
+  padding: 1px 10px;
+}
+
+.link-btn:hover {
+  color: $primarycolor-light;
+  text-decoration: underline;
+}
+
 //facility contact buttons
 div.ui-select-bootstrap > .btn:hover {
   background-color: #fff;

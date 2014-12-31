@@ -2,27 +2,26 @@
     var m = angular.module('parkandride.auth', []);
 
     m.factory('Session', function() {
+        var storageKey = "login";
+        var loginCache;
         return {
             set: function(login) {
-                sessionStorage.authToken = login.token;
-                sessionStorage.authUsername = login.username;
-                sessionStorage.authRole = login.role;
+                loginCache = login;
+                sessionStorage.setItem(storageKey, angular.toJson(login));
             },
             remove: function() {
-                delete sessionStorage.authToken;
-                delete sessionStorage.authUsername;
-                delete sessionStorage.authRole;
+                loginCache = null;
+                sessionStorage.clear();
             },
             get: function() {
-                if (sessionStorage.authToken) {
-                    return {
-                        token: sessionStorage.authToken,
-                        username: sessionStorage.authUsername,
-                        role: sessionStorage.authRole
-                    };
-                } else {
-                    return null;
+                if (loginCache) {
+                    return loginCache;
                 }
+                var loginData = sessionStorage.getItem(storageKey);
+                if (loginData) {
+                    return angular.fromJson(loginData);
+                }
+                return null;
             }
         };
     });

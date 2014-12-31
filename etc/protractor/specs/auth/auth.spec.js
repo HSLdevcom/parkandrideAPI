@@ -17,6 +17,7 @@ describe('authorization', function () {
     var username = 'testuser';
 
     beforeEach(function() {
+        devApi.resetAll();
         devApi.createLogin('ADMIN', username, password);
         indexPage.get();
         expect(indexPage.isDisplayed()).toBe(true);

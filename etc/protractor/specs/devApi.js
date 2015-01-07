@@ -90,10 +90,18 @@ module.exports = function () {
         function storeAuthToSessionStorage(response) {
             browser.get('/');
             var login = response.body;
-            var script = "sessionStorage.login='"+ JSON.stringify(login) + "';\n";
+            var script = "angular.element(document.body).injector().get('Session').set("+ JSON.stringify(login) + ");\n";
+            //console.log(script);
             return browser.executeScript(script);
         }
         api.createLogin(role, username, password).then(storeAuthToSessionStorage);
+    };
+
+    api.logout = function() {
+        browser.executeAsyncScript(function(callback) {
+            angular.element(document.body).injector().get('Session').remove();
+            callback();
+        });
     };
 
     api.resetAll = function(data) {

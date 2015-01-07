@@ -52,20 +52,28 @@
     });
 
     m.factory('permit', function(Session, Permission) {
-       return function(permission, operatorId) {
-           if (!Permission[permission]) {
-               throw "Unknown permission: " + permission;
+       return function(permissions, operatorId) {
+           if (!_.isArray(permissions)) {
+               permissions = [ permissions ];
            }
 
            var user = Session.get();
            if (user) {
-               if (!user.permissions[permission]) {
-                   return false;
+               for (var i=0; i < permissions.length; i++) {
+                   var permission = permissions[i];
+                   if (!Permission[permission]) {
+                       throw "Unknown permission: " + permission;
+                   }
+
+                   if (user.permissions[permission]) {
+                       if (user.role === 'ADMIN') {
+                           return true;
+                       }
+                       if (typeof operatorId === 'undefined' || operatorId === user.operatorId) {
+                           return true;
+                       }
+                   }
                }
-               if (typeof operatorId !== 'undefined' && user.role !== 'ADMIN') {
-                   return operatorId === user.operatorId;
-               }
-               return true;
            }
            return false;
        };

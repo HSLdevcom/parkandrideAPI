@@ -153,6 +153,10 @@ input[type="checkbox"]:focus {
   outline: none;
 }
 
+input[type="checkbox"][disabled] {
+  cursor: default;
+}
+
 .form-horizontal .checkbox {
   min-height: 10px;
   padding: 9px;

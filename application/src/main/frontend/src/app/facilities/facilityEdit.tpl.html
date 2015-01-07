@@ -112,6 +112,7 @@
 				</div>
 				<div class="row">
 					<div class="form-group">
+						<label>{{ "facilities.paymentInfo.paymentMethods.label" | translate }}</label>
 						<ui-select multiple ng-model="editCtrl.facility.paymentInfo.paymentMethodIds" theme="bootstrap" ng-disabled="disabled" reset-search-input="true">
 							<ui-select-match placeholder="{{'facilities.paymentInfo.methodPlaceholder' | translate }}">{{$item.name.fi}}</ui-select-match>
 							<ui-select-choices repeat="paymentMethod.id as paymentMethod in editCtrl.paymentMethods | filter: {name: {fi: $select.search}}">

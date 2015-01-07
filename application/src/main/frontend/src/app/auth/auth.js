@@ -69,7 +69,7 @@
                        if (user.role === 'ADMIN') {
                            return true;
                        }
-                       if (typeof operatorId === 'undefined' || operatorId === user.operatorId) {
+                       if (arguments.length < 2 || operatorId === user.operatorId) {
                            return true;
                        }
                    }

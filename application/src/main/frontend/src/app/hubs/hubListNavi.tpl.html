@@ -1,6 +1,6 @@
-<a class="btn btn-s" role="button" ui-sref="facility-create">
+<a class="btn btn-s" role="button" ui-sref="facility-create" ng-if="permit(FACILITY_CREATE)">
 	{{ 'facilities.action.new' | translate }}
 </a>
-<a class="btn btn-s" role="button" ui-sref="hub-create">
+<a class="btn btn-s" role="button" ui-sref="hub-create" ng-if="permit(HUB_CREATE)">
 		{{ 'hubs.action.new' | translate }}
 </a>

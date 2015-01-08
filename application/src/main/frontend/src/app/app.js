@@ -87,22 +87,29 @@
         });
     });
 
-    m.controller('AppCtrl', function AppCtrl($scope, $location, loginPrompt, Session, EVENTS) {
-        $scope.common = {};
-        $scope.$on(EVENTS.validationErrors, function(event, violations) {
-                $scope.common.violations = _.map(violations, function(violation) {
+    m.controller('AppCtrl', function AppCtrl($rootScope, $location, loginPrompt, Session, EVENTS, Permission, permit) {
+        $rootScope.permit = permit;
+
+        // Permission constants
+        for (var permission in Permission) {
+            $rootScope[permission] = permission;
+        }
+
+        $rootScope.common = {};
+        $rootScope.$on(EVENTS.validationErrors, function(event, violations) {
+                $rootScope.common.violations = _.map(violations, function(violation) {
                     violation.path = violation.path.replace(/\[\d+\]/, "");
                     return violation;
                 });
             });
 
         this.hasValidationErrors = function() {
-            return !_.isEmpty($scope.violations);
+            return !_.isEmpty($rootScope.violations);
         };
 
-        $scope.$on('$stateChangeSuccess', function (event, toState, toParams, fromState, fromParams) {
+        $rootScope.$on('$stateChangeSuccess', function (event, toState, toParams, fromState, fromParams) {
             if (angular.isDefined(toState.data.pageTitle)) {
-                $scope.pageTitle = toState.data.pageTitle + ' | parkandride';
+                $rootScope.pageTitle = toState.data.pageTitle + ' | parkandride';
             }
         });
 
@@ -119,11 +126,11 @@
         };
 
         this.validateAndSubmit = function(form, submitFn) {
-            $scope.$broadcast(EVENTS.showErrorsCheckValidity);
+            $rootScope.$broadcast(EVENTS.showErrorsCheckValidity);
             if (form.$valid) {
                 submitFn();
             } else {
-                $scope.$broadcast(EVENTS.validationErrors, [
+                $rootScope.$broadcast(EVENTS.validationErrors, [
                     {
                         path: "",
                         type: "BasicRequirements"

@@ -17,7 +17,9 @@
 			</div>
 			<div class="row">
 				<div class="column3 first-column">
-					<operator-select object="contact" mandatory="false"></operator-select>
+					<div class="form-group">
+						<operator-select object="contact" mandatory="false"></operator-select>
+					</div>
 				</div>
 			</div>
 
@@ -71,7 +73,7 @@
 	</div>
 	<div class="modal-footer">
 		<div class="row">
-			<div class="column last-column">
+			<div class="last-column">
 				<button id="wdContactCancel" class="btn btn-xs-secondary" ng-click="cancel()">{{ "common.action.cancel" | translate }}</button>
 				<button id="wdContactOk" class="btn btn-xs" ng-click="ok(editContactForm)"
 						ng-if="permit([CONTACT_CREATE, CONTACT_UPDATE], contact.operatorId)">{{ "common.action.ok" | translate }}</button>

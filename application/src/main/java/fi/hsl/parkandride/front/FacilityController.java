@@ -1,6 +1,6 @@
 package fi.hsl.parkandride.front;
 
-import static fi.hsl.parkandride.front.FeatureCollection.FACILITY_TO_FEATURE;
+import static fi.hsl.parkandride.front.geojson.FeatureCollection.FACILITY_TO_FEATURE;
 import static fi.hsl.parkandride.front.UrlSchema.*;
 import static java.util.Arrays.asList;
 import static org.springframework.http.HttpStatus.CREATED;
@@ -22,15 +22,23 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import com.wordnik.swagger.annotations.Api;
+import com.wordnik.swagger.annotations.ApiOperation;
+import com.wordnik.swagger.annotations.Authorization;
+
 import fi.hsl.parkandride.core.domain.*;
 import fi.hsl.parkandride.core.service.FacilityService;
+import fi.hsl.parkandride.front.geojson.Feature;
+import fi.hsl.parkandride.front.geojson.FeatureCollection;
 
 @RestController
+@Api("facilities")
 public class FacilityController {
 
     @Inject
     FacilityService facilityService;
 
+    @ApiOperation(value = "Create facility", authorizations = @Authorization(API_KEY))
     @RequestMapping(method = POST, value = FACILITIES, produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<Facility> createFacility(@RequestBody Facility facility,
                                                    User currentUser,
@@ -54,6 +62,7 @@ public class FacilityController {
         return new ResponseEntity<Feature>(FACILITY_TO_FEATURE.apply(facility), OK);
     }
 
+    @ApiOperation(value = "Update facility", authorizations = @Authorization(API_KEY))
     @RequestMapping(method = PUT, value = FACILITY, produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<Facility> updateFacility(@PathVariable(FACILITY_ID) long facilityId,
                                                    @RequestBody Facility facility,
@@ -86,6 +95,7 @@ public class FacilityController {
         return new ResponseEntity<>(SearchResults.of(types), OK);
     }
 
+    @ApiOperation(value = "Update facility status", authorizations = @Authorization(API_KEY))
     @RequestMapping(method = PUT, value = FACILITY_STATUS, produces = APPLICATION_JSON_VALUE)
     public void createStatuses(@PathVariable(FACILITY_ID) long facilityId,
                                @RequestBody List<FacilityStatus> statuses,

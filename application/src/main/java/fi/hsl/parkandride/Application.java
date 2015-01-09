@@ -8,6 +8,8 @@ import java.util.List;
 import org.geolatte.common.Feature;
 import org.geolatte.common.dataformats.json.jackson.JsonMapper;
 import org.geolatte.geom.Geometry;
+import org.geolatte.geom.Point;
+import org.geolatte.geom.Polygon;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.actuate.system.ApplicationPidListener;
@@ -37,6 +39,7 @@ import com.fasterxml.jackson.databind.Module;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.google.common.base.Preconditions;
 
+import fi.hsl.parkandride.config.SwaggerConfiguration;
 import fi.hsl.parkandride.core.domain.Phone;
 import fi.hsl.parkandride.front.Features;
 import fi.hsl.parkandride.front.GeojsonDeserializer;
@@ -55,7 +58,7 @@ public class Application {
     }
 
     @Configuration
-    @Import({ WebMvcAutoConfiguration.class, DevUIConfig.class })
+    @Import({ WebMvcAutoConfiguration.class, SwaggerConfiguration.class, DevUIConfig.class })
     public static class UiConfig extends WebMvcAutoConfiguration.WebMvcAutoConfigurationAdapter implements EmbeddedServletContainerCustomizer {
 
         @Autowired
@@ -67,7 +70,12 @@ public class Application {
                 final JsonMapper jsonMapper = new JsonMapper();
 
                 addSerializer(Geometry.class, new GeojsonSerializer<>(jsonMapper));
+                addSerializer(Polygon.class, new GeojsonSerializer<>(jsonMapper));
+                addSerializer(Point.class, new GeojsonSerializer<>(jsonMapper));
+
                 addDeserializer(Geometry.class, new GeojsonDeserializer<>(jsonMapper, Geometry.class));
+                addDeserializer(Polygon.class, new GeojsonDeserializer<>(jsonMapper, Polygon.class));
+                addDeserializer(Point.class, new GeojsonDeserializer<>(jsonMapper, Point.class));
 
                 addSerializer(Feature.class, new GeojsonSerializer<>(jsonMapper));
                 addSerializer(Phone.class, new PhoneSerializer());

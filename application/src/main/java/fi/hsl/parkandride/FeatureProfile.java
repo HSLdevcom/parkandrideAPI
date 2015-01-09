@@ -6,4 +6,5 @@ public interface FeatureProfile {
     String EXPORT_QTYPES = "export_qtypes";
     String PTOR = "protractor";
     String PSQL = "psql";
+    String H2 = "!psql";
 }

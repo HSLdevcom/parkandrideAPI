@@ -2,11 +2,15 @@ package fi.hsl.parkandride.core.domain;
 
 import javax.validation.constraints.Min;
 
+import com.wordnik.swagger.annotations.ApiModelProperty;
+
 public class Capacity {
 
+    @ApiModelProperty(required = true, allowableValues = "range[1, infinity]")
     @Min(1)
     public int built;
 
+    @ApiModelProperty(required = true, allowableValues = "range[0, infinity]")
     @Min(0)
     public int unavailable;
 

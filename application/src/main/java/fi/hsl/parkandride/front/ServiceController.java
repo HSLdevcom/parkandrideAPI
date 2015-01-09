@@ -14,12 +14,15 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.wordnik.swagger.annotations.Api;
+
 import fi.hsl.parkandride.core.domain.SearchResults;
 import fi.hsl.parkandride.core.domain.Service;
 import fi.hsl.parkandride.core.domain.ServiceSearch;
 import fi.hsl.parkandride.core.service.ServiceService;
 
 @RestController
+@Api("services")
 public class ServiceController {
 
     @Inject

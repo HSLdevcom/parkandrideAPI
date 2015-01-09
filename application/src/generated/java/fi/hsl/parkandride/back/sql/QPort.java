@@ -47,7 +47,7 @@ public class QPort extends RelationalPathSpatial<QPort> {
 
     public final StringPath infoSv = createString("infoSv");
 
-    public final GeometryPath<org.geolatte.geom.Geometry> location = createGeometry("location", org.geolatte.geom.Geometry.class);
+    public final PointPath<org.geolatte.geom.Point> location = createPoint("location", org.geolatte.geom.Point.class);
 
     public final BooleanPath pedestrian = createBoolean("pedestrian");
 

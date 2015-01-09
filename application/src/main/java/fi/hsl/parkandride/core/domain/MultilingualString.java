@@ -6,17 +6,21 @@ import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
 
 import com.google.common.base.MoreObjects;
+import com.wordnik.swagger.annotations.ApiModelProperty;
 
 public class MultilingualString {
 
+    @ApiModelProperty(value="Value in Finnish", required = true)
     @NotBlank
     @Length(min=0, max=255)
     public String fi;
 
+    @ApiModelProperty(value="Value in Swedish", required = true)
     @NotBlank
     @Length(min=0, max=255)
     public String sv;
 
+    @ApiModelProperty(value="Value in English", required = true)
     @NotBlank
     @Length(min=0, max=255)
     public String en;

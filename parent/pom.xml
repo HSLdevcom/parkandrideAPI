@@ -127,9 +127,15 @@
       <url>http://repo.spring.io/libs-release</url>
     </repository>
     <repository>
-      <id>jcenter-snapshots</id>
+      <id>jcenter-release</id>
       <name>jcenter</name>
-      <url>http://oss.jfrog.org/artifactory/oss-snapshot-local/</url>
+      <url>http://oss.jfrog.org/artifactory/oss-release-local/</url>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
     </repository>
     <repository>
       <id>querydsl-snapshots</id>

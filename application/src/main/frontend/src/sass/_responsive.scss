@@ -19,9 +19,15 @@
   .navi-col {
     padding-left: 0px;
   }
+
   .modal-dialog {
     width: $modal-sm;
     //    margin: 10px;
+  }
+
+  .btn-s.btn-responsive {
+    @include button($radius:15px, $font-size:16px, $height:30px);
+    padding: 1px 10px;
   }
 }
 

@@ -6,6 +6,8 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.sql.DataSource;
 
+import org.geolatte.geom.Point;
+import org.geolatte.geom.Polygon;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -15,11 +17,14 @@ import org.springframework.transaction.PlatformTransactionManager;
 
 import com.mysema.query.sql.SQLTemplates;
 import com.mysema.query.sql.postgres.PostgresQueryFactory;
+import com.mysema.query.sql.spatial.GeoDBTemplates;
 import com.mysema.query.sql.spatial.PostGISTemplates;
 import com.mysema.query.sql.types.DateTimeType;
 import com.mysema.query.sql.types.EnumByNameType;
 
 import fi.hsl.parkandride.FeatureProfile;
+import fi.hsl.parkandride.back.H2GeometryType;
+import fi.hsl.parkandride.back.PGGeometryType;
 import fi.hsl.parkandride.core.domain.CapacityType;
 import fi.hsl.parkandride.core.domain.FacilityStatusEnum;
 import fi.hsl.parkandride.core.domain.Role;
@@ -28,7 +33,7 @@ import fi.hsl.parkandride.core.domain.Role;
 public class JdbcConfiguration {
 
     @Configuration
-    @Profile({"!" + FeatureProfile.PSQL})
+    @Profile({FeatureProfile.H2})
     public static class H2 {
 
         public H2() {
@@ -37,7 +42,7 @@ public class JdbcConfiguration {
 
         @Bean
         public SQLTemplates sqlTemplates() {
-            return new H2GISTemplates();
+            return new GeoDBTemplates();
         }
 
     }
@@ -57,6 +62,7 @@ public class JdbcConfiguration {
     }
 
     @Inject SQLTemplates sqlTemplates;
+
     @Inject DataSource dataSource;
 
     @Bean
@@ -81,7 +87,26 @@ public class JdbcConfiguration {
     }
 
     @Bean
-    public com.mysema.query.sql.Configuration querydslConfiguration() {
+    @Profile(FeatureProfile.PSQL)
+    public com.mysema.query.sql.Configuration querydslConfigurationPsql() {
+        com.mysema.query.sql.Configuration conf = querydslConfiguration();
+        conf.register("FACILITY", "LOCATION", new PGGeometryType(Polygon.class));
+        conf.register("PORT", "LOCATION", new PGGeometryType(Point.class));
+        conf.register("HUB", "LOCATION", new PGGeometryType(Point.class));
+        return conf;
+    }
+
+    @Bean
+    @Profile({FeatureProfile.H2})
+    public com.mysema.query.sql.Configuration querydslConfigurationH2() {
+        com.mysema.query.sql.Configuration conf = querydslConfiguration();
+        conf.register("FACILITY", "LOCATION", new H2GeometryType(Polygon.class));
+        conf.register("PORT", "LOCATION", new H2GeometryType(Point.class));
+        conf.register("HUB", "LOCATION", new H2GeometryType(Point.class));
+        return conf;
+    }
+
+    private com.mysema.query.sql.Configuration querydslConfiguration() {
         com.mysema.query.sql.Configuration conf = new com.mysema.query.sql.Configuration(sqlTemplates);
         conf.register("CAPACITY", "CAPACITY_TYPE", new EnumByNameType<>(CapacityType.class));
         conf.register("CAPACITY_TYPE", "NAME", new EnumByNameType<>(CapacityType.class));
@@ -89,7 +114,6 @@ public class JdbcConfiguration {
         conf.register("CONTACT", "PHONE", new PhoneType());
 
         conf.register("APP_USER", "ROLE", new EnumByNameType<Role>(Role.class));
-//        conf.register("FACILITY", "BORDER", H2PolygonType.DEFAULT);
 
         conf.register("FACILITY_STATUS", "CAPACITY_TYPE", new EnumByNameType<>(CapacityType.class));
         conf.register("FACILITY_STATUS", "STATUS", new EnumByNameType<>(FacilityStatusEnum.class));

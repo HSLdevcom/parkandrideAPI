@@ -66,7 +66,7 @@ public class FacilityStatusITest extends AbstractIntegrationTest {
         f.id = 1L;
         f.name = new MultilingualString("minimal facility");
         f.operatorId = 1l;
-        f.location = Spatial.fromWkt("POLYGON((25.010822 60.25054, 25.010822 60.250023, 25.012479 60.250337, 25.011449 60.250885, 25.010822 60.25054))");
+        f.location = Spatial.fromWktPolygon("POLYGON((25.010822 60.25054, 25.010822 60.250023, 25.012479 60.250337, 25.011449 60.250885, 25.010822 60.25054))");
         f.contacts = new FacilityContacts(c.id, c.id);
 
         operatorDao.insertOperator(o, o.id);

@@ -20,6 +20,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import com.wordnik.swagger.annotations.Api;
+
 import fi.hsl.parkandride.core.domain.Contact;
 import fi.hsl.parkandride.core.domain.ContactSearch;
 import fi.hsl.parkandride.core.domain.SearchResults;
@@ -27,6 +29,7 @@ import fi.hsl.parkandride.core.domain.User;
 import fi.hsl.parkandride.core.service.ContactService;
 
 @RestController
+@Api("contacts")
 public class ContactController {
 
     @Inject

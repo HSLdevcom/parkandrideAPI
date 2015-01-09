@@ -22,12 +22,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import com.wordnik.swagger.annotations.Api;
+
 import fi.hsl.parkandride.core.domain.Hub;
 import fi.hsl.parkandride.core.domain.SearchResults;
 import fi.hsl.parkandride.core.domain.User;
 import fi.hsl.parkandride.core.service.HubService;
 
 @RestController
+@Api("hubs")
 public class HubController {
 
     @Inject

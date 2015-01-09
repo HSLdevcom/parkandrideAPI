@@ -5,11 +5,15 @@ import javax.validation.constraints.NotNull;
 
 import org.hibernate.validator.constraints.Email;
 
+import com.wordnik.swagger.annotations.ApiModel;
+import com.wordnik.swagger.annotations.ApiModelProperty;
+
 @PhoneOrEmailRequired
 public class Contact implements OperatorEntity {
 
     public Long id;
 
+    @ApiModelProperty(required = true)
     @NotNull
     @Valid
     public MultilingualString name;

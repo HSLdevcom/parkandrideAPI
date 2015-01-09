@@ -9,6 +9,7 @@ import javax.validation.Validation;
 import javax.validation.Validator;
 
 import org.geolatte.geom.Geometry;
+import org.geolatte.geom.Polygon;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -58,7 +59,7 @@ public class ViolationTest {
         f.contacts.emergency = 1l;
         f.contacts.operator = 1l;
         f.name = new MultilingualString("Test", "Test", "Test");
-        f.location = Mockito.mock(Geometry.class);
+        f.location = Mockito.mock(Polygon.class);
 
         Set<ConstraintViolation<Facility>> violations = validator.validate(f);
         assertThat(violations).isEmpty();

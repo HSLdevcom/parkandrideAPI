@@ -19,7 +19,7 @@
         'parkandride.auth'
     ]);
 
-    m.constant('FEATURES_URL', 'api/v1/features');
+    m.constant('FEATURES_URL', 'internal/features');
 
     m.value("schema", { capacityTypes:[] });
 

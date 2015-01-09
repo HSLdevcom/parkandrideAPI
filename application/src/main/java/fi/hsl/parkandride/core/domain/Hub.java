@@ -5,18 +5,22 @@ import java.util.Set;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
-import org.geolatte.geom.Geometry;
+import org.geolatte.geom.Point;
+
+import com.wordnik.swagger.annotations.ApiModelProperty;
 
 public class Hub {
 
     public Long id;
 
+    @ApiModelProperty(required = true)
     @NotNull
     @Valid
     public MultilingualString name;
 
+    @ApiModelProperty(required = true)
     @NotNull
-    public Geometry location;
+    public Point location;
 
     public Set<Long> facilityIds;
 
@@ -31,7 +35,7 @@ public class Hub {
         return name;
     }
 
-    public Geometry getLocation() {
+    public Point getLocation() {
         return location;
     }
 

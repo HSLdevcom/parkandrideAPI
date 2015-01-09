@@ -6,13 +6,14 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import org.geolatte.geom.Geometry;
+import org.geolatte.geom.Point;
 
 import com.google.common.base.MoreObjects;
 
 public class Port {
 
     @NotNull
-    public Geometry location;
+    public Point location;
 
     public boolean entry;
 
@@ -30,11 +31,11 @@ public class Port {
 
     public Port() {}
 
-    public Port(Geometry location, boolean entry, boolean exit, boolean pedestrian, boolean bicycle) {
+    public Port(Point location, boolean entry, boolean exit, boolean pedestrian, boolean bicycle) {
         this(location, entry, exit, pedestrian, bicycle, null, null, null, null);
     }
 
-    public Port(Geometry location, boolean entry, boolean exit, boolean pedestrian, boolean bicycle, String streetAddress, String postalCode, String city, String info) {
+    public Port(Point location, boolean entry, boolean exit, boolean pedestrian, boolean bicycle, String streetAddress, String postalCode, String city, String info) {
         this.location = location;
         this.entry = entry;
         this.exit = exit;
@@ -93,7 +94,7 @@ public class Port {
         return info;
     }
 
-    public Geometry getLocation() {
+    public Point getLocation() {
         return location;
     }
 

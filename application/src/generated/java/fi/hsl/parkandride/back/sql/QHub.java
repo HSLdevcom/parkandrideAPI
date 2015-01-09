@@ -35,7 +35,7 @@ public class QHub extends RelationalPathSpatial<QHub> {
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
-    public final GeometryPath<org.geolatte.geom.Geometry> location = createGeometry("location", org.geolatte.geom.Geometry.class);
+    public final PointPath<org.geolatte.geom.Point> location = createPoint("location", org.geolatte.geom.Point.class);
 
     public final StringPath nameEn = createString("nameEn");
 

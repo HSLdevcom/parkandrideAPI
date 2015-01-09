@@ -12,6 +12,7 @@ import static fi.hsl.parkandride.core.domain.Sort.Dir.DESC;
 import java.util.*;
 
 import org.geolatte.geom.Geometry;
+import org.geolatte.geom.Point;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Sets;
@@ -77,7 +78,7 @@ public class FacilityDao implements FacilityRepository {
             if (entry == null) {
                 return null;
             }
-            Geometry location = row.get(qPort.location);
+            Point location = row.get(qPort.location);
             boolean exit = row.get(qPort.exit);
             boolean pedestrian = row.get(qPort.pedestrian);
             boolean bicycle = row.get(qPort.bicycle);

@@ -31,7 +31,7 @@ public class QFacility extends RelationalPathSpatial<QFacility> {
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
-    public final GeometryPath<org.geolatte.geom.Geometry> location = createGeometry("location", org.geolatte.geom.Geometry.class);
+    public final PolygonPath<org.geolatte.geom.Polygon> location = createPolygon("location", org.geolatte.geom.Polygon.class);
 
     public final StringPath nameEn = createString("nameEn");
 

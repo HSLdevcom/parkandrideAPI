@@ -12,6 +12,7 @@ public class Feature {
 
     public Map<String, Object> properties;
 
+
     public Long getId() {
         return id;
     }

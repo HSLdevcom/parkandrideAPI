@@ -12,9 +12,9 @@ import com.mangofactory.swagger.plugin.SwaggerSpringMvcPlugin;
 
 import fi.hsl.parkandride.core.domain.Phone;
 import fi.hsl.parkandride.core.domain.User;
-import fi.hsl.parkandride.front.geojson.Geometry;
-import fi.hsl.parkandride.front.geojson.Point;
-import fi.hsl.parkandride.front.geojson.Polygon;
+import fi.hsl.parkandride.front.swagger.Geometry;
+import fi.hsl.parkandride.front.swagger.Point;
+import fi.hsl.parkandride.front.swagger.Polygon;
 
 @Configuration
 @EnableSwagger

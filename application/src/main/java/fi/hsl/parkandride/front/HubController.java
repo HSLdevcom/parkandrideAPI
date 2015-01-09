@@ -1,6 +1,6 @@
 package fi.hsl.parkandride.front;
 
-import static fi.hsl.parkandride.front.FeatureCollection.HUB_TO_FEATURE;
+import static fi.hsl.parkandride.front.geojson.FeatureCollection.HUB_TO_FEATURE;
 import static fi.hsl.parkandride.front.UrlSchema.GEOJSON;
 import static fi.hsl.parkandride.front.UrlSchema.HUB;
 import static fi.hsl.parkandride.front.UrlSchema.HUBS;
@@ -28,6 +28,8 @@ import fi.hsl.parkandride.core.domain.Hub;
 import fi.hsl.parkandride.core.domain.SearchResults;
 import fi.hsl.parkandride.core.domain.User;
 import fi.hsl.parkandride.core.service.HubService;
+import fi.hsl.parkandride.front.geojson.Feature;
+import fi.hsl.parkandride.front.geojson.FeatureCollection;
 
 @RestController
 @Api("hubs")

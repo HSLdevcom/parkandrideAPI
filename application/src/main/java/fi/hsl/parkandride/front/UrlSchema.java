@@ -4,6 +4,10 @@ public class UrlSchema {
 
     public static final String GEOJSON = "application/vnd.geo+json";
 
+
+    public static final String DOCS = "/docs";
+
+
     public static final String API = "/api/v1";
 
     public static final String FACILITIES = API + "/facilities";

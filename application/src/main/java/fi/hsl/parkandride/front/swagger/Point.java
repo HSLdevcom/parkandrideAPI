@@ -1,4 +1,4 @@
-package fi.hsl.parkandride.front.geojson;
+package fi.hsl.parkandride.front.swagger;
 
 import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;

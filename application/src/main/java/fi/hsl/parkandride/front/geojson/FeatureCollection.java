@@ -1,6 +1,5 @@
-package fi.hsl.parkandride.front;
+package fi.hsl.parkandride.front.geojson;
 
-import java.util.Collection;
 import java.util.List;
 
 import javax.annotation.Nullable;

@@ -1,6 +1,6 @@
 package fi.hsl.parkandride.front;
 
-import static fi.hsl.parkandride.front.FeatureCollection.FACILITY_TO_FEATURE;
+import static fi.hsl.parkandride.front.geojson.FeatureCollection.FACILITY_TO_FEATURE;
 import static fi.hsl.parkandride.front.UrlSchema.*;
 import static java.util.Arrays.asList;
 import static org.springframework.http.HttpStatus.CREATED;
@@ -26,6 +26,8 @@ import com.wordnik.swagger.annotations.Api;
 
 import fi.hsl.parkandride.core.domain.*;
 import fi.hsl.parkandride.core.service.FacilityService;
+import fi.hsl.parkandride.front.geojson.Feature;
+import fi.hsl.parkandride.front.geojson.FeatureCollection;
 
 @RestController
 @Api("facilities")

@@ -1,4 +1,4 @@
-package fi.hsl.parkandride.front;
+package fi.hsl.parkandride.front.geojson;
 
 import java.util.Map;
 

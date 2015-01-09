@@ -5,8 +5,10 @@ import javax.inject.Inject;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import com.google.common.collect.ImmutableList;
 import com.mangofactory.swagger.configuration.SpringSwaggerConfig;
 import com.mangofactory.swagger.models.dto.ApiInfo;
+import com.mangofactory.swagger.models.dto.ApiKey;
 import com.mangofactory.swagger.plugin.EnableSwagger;
 import com.mangofactory.swagger.plugin.SwaggerSpringMvcPlugin;
 
@@ -31,8 +33,9 @@ public class SwaggerConfiguration {
                 .directModelSubstitute(org.geolatte.geom.Polygon.class, Polygon.class)
                 .directModelSubstitute(org.geolatte.geom.Point.class, Point.class)
                 .directModelSubstitute(Phone.class, String.class)
-                .apiInfo(publicApiInfo())
                 .ignoredParameterTypes(User.class)
+                .authorizationTypes(ImmutableList.of(new ApiKey("Authorization", "header")))
+                .apiInfo(publicApiInfo())
                 .includePatterns("/api/v1/.*");
     }
 

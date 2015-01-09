@@ -1,5 +1,6 @@
 package fi.hsl.parkandride.front;
 
+import static fi.hsl.parkandride.front.UrlSchema.API_KEY;
 import static fi.hsl.parkandride.front.UrlSchema.CONTACT;
 import static fi.hsl.parkandride.front.UrlSchema.CONTACTS;
 import static fi.hsl.parkandride.front.UrlSchema.CONTACT_ID;
@@ -21,6 +22,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import com.wordnik.swagger.annotations.Api;
+import com.wordnik.swagger.annotations.ApiOperation;
+import com.wordnik.swagger.annotations.Authorization;
 
 import fi.hsl.parkandride.core.domain.Contact;
 import fi.hsl.parkandride.core.domain.ContactSearch;
@@ -35,6 +38,7 @@ public class ContactController {
     @Inject
     ContactService contactService;
 
+    @ApiOperation(value = "Create contact", authorizations = @Authorization(API_KEY))
     @RequestMapping(method = POST, value = CONTACTS, produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<Contact> createContact(@RequestBody Contact contact,
                                                  User currentUser,
@@ -52,6 +56,7 @@ public class ContactController {
         return new ResponseEntity<>(contact, OK);
     }
 
+    @ApiOperation(value = "Update contact", authorizations = @Authorization(API_KEY))
     @RequestMapping(method = PUT, value = CONTACT, produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<Contact> updateContact(@PathVariable(CONTACT_ID) long contactId,
                                                    @RequestBody Contact contact,

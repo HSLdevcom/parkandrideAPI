@@ -23,6 +23,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import com.wordnik.swagger.annotations.Api;
+import com.wordnik.swagger.annotations.ApiOperation;
+import com.wordnik.swagger.annotations.Authorization;
 
 import fi.hsl.parkandride.core.domain.*;
 import fi.hsl.parkandride.core.service.FacilityService;
@@ -36,6 +38,7 @@ public class FacilityController {
     @Inject
     FacilityService facilityService;
 
+    @ApiOperation(value = "Create facility", authorizations = @Authorization(API_KEY))
     @RequestMapping(method = POST, value = FACILITIES, produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<Facility> createFacility(@RequestBody Facility facility,
                                                    User currentUser,
@@ -59,6 +62,7 @@ public class FacilityController {
         return new ResponseEntity<Feature>(FACILITY_TO_FEATURE.apply(facility), OK);
     }
 
+    @ApiOperation(value = "Update facility", authorizations = @Authorization(API_KEY))
     @RequestMapping(method = PUT, value = FACILITY, produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<Facility> updateFacility(@PathVariable(FACILITY_ID) long facilityId,
                                                    @RequestBody Facility facility,
@@ -91,6 +95,7 @@ public class FacilityController {
         return new ResponseEntity<>(SearchResults.of(types), OK);
     }
 
+    @ApiOperation(value = "Update facility status", authorizations = @Authorization(API_KEY))
     @RequestMapping(method = PUT, value = FACILITY_STATUS, produces = APPLICATION_JSON_VALUE)
     public void createStatuses(@PathVariable(FACILITY_ID) long facilityId,
                                @RequestBody List<FacilityStatus> statuses,

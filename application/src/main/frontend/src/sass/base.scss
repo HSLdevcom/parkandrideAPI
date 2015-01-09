@@ -149,31 +149,39 @@ span > .btn:active:focus {
 }
 
 //checkboxes
-input[type="checkbox"]:focus {
-  outline: none;
-}
-
-input[type="checkbox"][disabled] {
-  cursor: default;
-}
-
-.form-horizontal .checkbox {
-  min-height: 10px;
-  padding: 9px;
-}
-
-.checkbox {
-  -moz-appearance:none;
+input[type="checkbox"] {
   -webkit-appearance:none;
   -o-appearance:none;
+  //Aligning checkbox and label
+  display: inline-block;
+  position: relative;
+  vertical-align: middle;
+  bottom: 1px;
+  //General
+  min-height: 10px;
+  min-width: 10px;
+  padding: 9px;
+  margin-right: 5px;
   background-color: #fff;
   border: 1px solid $lightgray;
   box-shadow:rgba(0,0,0,0.0745098) 0 1px 1px 0 inset;
   border-radius: 4px;
-  display: inline-block;
-  position: relative;
+  // Firefox uses bootstrap default appearance, thus no -moz-appearance:none;
+  // Firefox to make the checkbox a little bigger
+  -moz-transform: scale(1.5);
 }
 
+input[type="checkbox"]:focus {
+  outline: none;
+}
+
+.form-horizontal .checkbox {
+  min-height: 10px;
+  min-width: 10px;
+  padding: 9px;
+}
+
+//Not used in Firefox
 .checkbox:checked:after {
   content: '\2714';
   font-size: $basic-font-size;
@@ -185,9 +193,6 @@ input[type="checkbox"][disabled] {
 
 .checkbox-label {
   font-weight: normal;
-  position: relative;
-  top: -3px;
-  margin-left: 5px;
   margin-bottom: 0px;
 }
 

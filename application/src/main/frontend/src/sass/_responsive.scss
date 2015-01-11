@@ -1,4 +1,10 @@
-//XS
+@media (min-width: 768px) {
+  //header nav column
+  .navi-col {
+    padding-left: 0px;
+  }
+}
+
 @media (max-width: 768px) {
   //footer height
   .page-footer {
@@ -22,16 +28,20 @@
 
   .modal-dialog {
     width: $modal-sm;
-    //    margin: 10px;
+//    margin: 10px;
   }
 
   .btn-s.btn-responsive {
     @include button($radius:15px, $font-size:16px, $height:30px);
-    padding: 1px 10px;
+    padding: 3px 10px;
+    margin-top: 0;
+  }
+
+  .secondary-navi-column.navi-column-responsive {
+    margin-top: 40px;
   }
 }
 
-//SM
 @media (min-width: 992px) {
   //header nav
   .nav-tabs {
@@ -39,7 +49,7 @@
   }
   .modal-dialog {
     width: $modal-md;
-//    margin: auto auto;
+    //    margin: auto auto;
   }
   //header nav column
   .navi-col {
@@ -47,7 +57,17 @@
   }
 }
 
-//MD
+@media (max-width: 992px) {
+  .btn-s.btn-responsive {
+    @include button($radius:15px, $font-size:16px, $height:30px);
+    padding: 3px 10px;
+    margin-top: 0;
+  }
+  .secondary-navi-column.navi-column-responsive {
+    margin-top: 40px;
+  }
+}
+
 @media (min-width: 1200px) {
   //header nav
   .nav-tabs {

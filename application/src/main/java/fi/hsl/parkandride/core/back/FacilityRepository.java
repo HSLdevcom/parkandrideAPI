@@ -18,8 +18,6 @@ public interface FacilityRepository {
 
     SearchResults<Facility> findFacilities(PageableSpatialSearch search);
 
-    FacilitySummary summarizeFacilities(SpatialSearch search);
-
     void insertStatuses(long facilityId, List<FacilityStatus> statuses);
 
     List<FacilityStatus> getStatuses(long facilityId);

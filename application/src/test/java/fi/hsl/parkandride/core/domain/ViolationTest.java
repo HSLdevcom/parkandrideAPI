@@ -17,25 +17,12 @@ public class ViolationTest {
     private final Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
 
     @Test
-    public void capacityViolation_is_translated() {
-        for (CapacityType ct : CapacityType.values()) {
-            assertThat(path(capacityViolation(ct))).isEqualTo("capacities." + ct.name() + ".built");
-        }
-    }
-
-    @Test
     public void nonCapacityViolation_is_not_translated() {
         assertThat(path(nameViolation())).isEqualTo("name.fi");
     }
 
     private String path(ConstraintViolation<Facility> cv) {
         return new Violation(cv).path;
-    }
-
-    private ConstraintViolation<Facility> capacityViolation(CapacityType t) {
-        Facility f = validFacility();
-        f.capacities.put(t, new Capacity(-1));
-        return toFacilityConstraintViolation(f);
     }
 
     private ConstraintViolation<Facility> nameViolation() {

@@ -1,5 +1,8 @@
 package fi.hsl.parkandride.core.domain;
 
+import static fi.hsl.parkandride.core.domain.CompareUtil.comparingNullsLast;
+
+import java.util.Comparator;
 import java.util.Objects;
 
 import org.hibernate.validator.constraints.Length;
@@ -9,6 +12,11 @@ import com.google.common.base.MoreObjects;
 import com.wordnik.swagger.annotations.ApiModelProperty;
 
 public class MultilingualString {
+
+    public static Comparator<MultilingualString> COMPARATOR =
+            comparingNullsLast((MultilingualString s) -> s.fi)
+            .thenComparing(comparingNullsLast((MultilingualString s) -> s.sv))
+            .thenComparing(comparingNullsLast((MultilingualString s) -> s.en));
 
     @ApiModelProperty(value="Value in Finnish", required = true)
     @NotBlank

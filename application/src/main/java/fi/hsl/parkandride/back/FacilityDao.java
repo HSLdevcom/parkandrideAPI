@@ -6,6 +6,7 @@ import static com.mysema.query.group.GroupBy.groupBy;
 import static com.mysema.query.group.GroupBy.list;
 import static com.mysema.query.group.GroupBy.map;
 import static com.mysema.query.group.GroupBy.set;
+import static fi.hsl.parkandride.back.GSortedSet.sortedSet;
 import static fi.hsl.parkandride.core.domain.Sort.Dir.ASC;
 import static fi.hsl.parkandride.core.domain.Sort.Dir.DESC;
 
@@ -15,6 +16,7 @@ import org.geolatte.geom.Geometry;
 import org.geolatte.geom.Point;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 import com.mysema.query.ResultTransformer;
 import com.mysema.query.Tuple;
@@ -44,8 +46,6 @@ public class FacilityDao implements FacilityRepository {
 
     private static final QFacilityAlias qAlias = QFacilityAlias.facilityAlias;
 
-    private static final QCapacity qCapacity = QCapacity.capacity;
-
     private static final QPort qPort = QPort.port;
 
     private static final QFacilityService qService = QFacilityService.facilityService;
@@ -54,16 +54,11 @@ public class FacilityDao implements FacilityRepository {
 
     private static final QFacilityPaymentMethod  qPaymentMethod = QFacilityPaymentMethod.facilityPaymentMethod;
 
-    private static final MappingProjection<Capacity> capacityMapping = new MappingProjection<Capacity>(Capacity.class, qCapacity.built, qCapacity.unavailable) {
-        @Override
-        protected Capacity map(Tuple row) {
-            Integer built = row.get(qCapacity.built);
-            if (built == null) {
-                return null;
-            }
-            return new Capacity(built, row.get(qCapacity.unavailable));
-        }
-    };
+    private static final QPricing qPricing = QPricing.pricing;
+
+    private static final MultilingualStringMapping pricingPriceMapping =
+            new MultilingualStringMapping(qPricing.priceFi, qPricing.priceSv, qPricing.priceEn);
+
 
     private static final AddressMapping addressMapping = new AddressMapping(qPort);
 
@@ -89,27 +84,27 @@ public class FacilityDao implements FacilityRepository {
         }
     };
 
-    private static final NumberExpression<Integer> capacityBuiltSum = qCapacity.built.sum();
-
-    private static final NumberExpression<Integer> capacityUnavailableSum = qCapacity.unavailable.sum();
-
-    private static final MappingProjection<Capacity> capacitySummaryMapping = new MappingProjection<Capacity>(Capacity.class, capacityBuiltSum,
-            capacityUnavailableSum) {
+    private static final MappingProjection<Pricing> pricingMapping = new MappingProjection<Pricing>(Pricing.class, qPricing.all()) {
         @Override
-        protected Capacity map(Tuple row) {
-            Integer built = row.get(capacityBuiltSum);
-            if (built == null) {
+        protected Pricing map(Tuple row) {
+            CapacityType capacityType = row.get(qPricing.capacityType);
+            if (capacityType == null) {
                 return null;
             }
-            return new Capacity(built, row.get(capacityUnavailableSum));
+            Pricing pricing = new Pricing();
+            pricing.capacityType = capacityType;
+            pricing.usage = row.get(qPricing.usage);
+            pricing.maxCapacity = row.get(qPricing.maxCapacity);
+            pricing.dayType = row.get(qPricing.dayType);
+            pricing.from = row.get(qPricing.fromTime);
+            pricing.until = row.get(qPricing.untilTime);
+            pricing.price = pricingPriceMapping.map(row);
+            return pricing;
         }
     };
 
     public static final ResultTransformer<Map<Long, Set<String>>> aliasesByFacilityIdMapping =
             groupBy(qAlias.facilityId).as(set(qAlias.alias));
-
-    public static final ResultTransformer<Map<Long, Map<CapacityType, Capacity>>> capacitiesByFacilityIdMapping =
-            groupBy(qCapacity.facilityId).as(map(qCapacity.capacityType, capacityMapping));
 
     public static final ResultTransformer<Map<Long, List<Port>>> portsByFacilityIdMapping =
             groupBy(qPort.facilityId).as(list(portMapping));
@@ -170,10 +165,10 @@ public class FacilityDao implements FacilityRepository {
         insert.execute();
 
         insertAliases(facilityId, facility.aliases);
-        insertCapacities(facilityId, facility.capacities);
         insertPorts(facilityId, facility.ports);
         updateServices(facilityId, facility.serviceIds);
         updatePaymentMethods(facilityId, facility.paymentInfo.paymentMethodIds);
+        insertPricing(facilityId, facility.pricing);
 
         return facilityId;
     }
@@ -195,7 +190,6 @@ public class FacilityDao implements FacilityRepository {
         }
 
         updateAliases(facilityId, newFacility.aliases, oldFacility.aliases);
-        updateCapacities(facilityId, newFacility.capacities, oldFacility.capacities);
         updatePorts(facilityId, newFacility.ports, oldFacility.ports);
 
         if (!Objects.equals(newFacility.serviceIds, oldFacility.serviceIds)) {
@@ -204,6 +198,11 @@ public class FacilityDao implements FacilityRepository {
 
         if (!Objects.equals(newFacility.paymentInfo.paymentMethodIds, oldFacility.paymentInfo.paymentMethodIds)) {
             updatePaymentMethods(facilityId, newFacility.paymentInfo.paymentMethodIds);
+        }
+
+        if (!Objects.equals(newFacility.pricing, oldFacility.pricing)) {
+            deletePricing(facilityId);
+            insertPricing(facilityId, newFacility.pricing);
         }
     }
 
@@ -230,10 +229,10 @@ public class FacilityDao implements FacilityRepository {
         }
         ImmutableMap<Long, Facility> facilityMap = ImmutableMap.of(facilityId, facility);
         fetchAliases(facilityMap);
-        fetchCapacities(facilityMap);
         fetchPorts(facilityMap);
         fetchServices(facilityMap);
         fetchPaymentMethods(facilityMap);
+        fetchPricing(facilityMap);
         return facility;
     }
 
@@ -249,29 +248,12 @@ public class FacilityDao implements FacilityRepository {
 
         Map<Long, Facility> facilities = qry.map(qFacility.id, facilityMapping);
         fetchAliases(facilities);
-        fetchCapacities(facilities);
         fetchPorts(facilities);
         fetchServices(facilities);
         fetchPaymentMethods(facilities);
+        fetchPricing(facilities);
 
         return SearchResults.of(new ArrayList<>(facilities.values()), search.limit);
-    }
-
-    @TransactionalRead
-    @Override
-    public FacilitySummary summarizeFacilities(SpatialSearch search) {
-        PostgresQuery qry = fromFacility();
-
-        buildWhere(search, qry);
-
-        long count = qry.singleResult(SQLExpressions.countAll);
-
-        qry.innerJoin(qFacility._capacityFacilityIdFk, qCapacity);
-        qry.groupBy(qCapacity.capacityType);
-
-        Map<CapacityType, Capacity> capacities = qry.map(qCapacity.capacityType, capacitySummaryMapping);
-
-        return new FacilitySummary(count, capacities);
     }
 
     @TransactionalWrite
@@ -305,51 +287,6 @@ public class FacilityDao implements FacilityRepository {
                         return status;
                     }
                 });
-    }
-
-    private void updateCapacities(long facilityId, Map<CapacityType, Capacity> newCapacities, Map<CapacityType, Capacity> oldCapacities) {
-        Map<CapacityType, Capacity> toBeRemoved = new HashMap<>(oldCapacities);
-        Map<CapacityType, Capacity> addedCapacities = new HashMap<>();
-        Map<CapacityType, Capacity> updatedCapacities = new HashMap<>();
-
-        if (newCapacities != null) {
-            for (Map.Entry<CapacityType, Capacity> entry : newCapacities.entrySet()) {
-                CapacityType type = entry.getKey();
-                Capacity newCapacity = entry.getValue();
-                Capacity oldCapacity = toBeRemoved.remove(type);
-                if (oldCapacity == null) {
-                    addedCapacities.put(type, newCapacity);
-                } else if (!newCapacity.equals(oldCapacity)) {
-                    updatedCapacities.put(type, newCapacity);
-                }
-            }
-        }
-
-        insertCapacities(facilityId, addedCapacities);
-        updateCapacities(facilityId, updatedCapacities);
-        deleteCapacities(facilityId, toBeRemoved.keySet());
-    }
-
-    private void updateCapacities(long facilityId, Map<CapacityType, Capacity> updatedCapacities) {
-        if (!updatedCapacities.isEmpty()) {
-            SQLUpdateClause update = queryFactory.update(qCapacity);
-            for (Map.Entry<CapacityType, Capacity> entry : updatedCapacities.entrySet()) {
-                Capacity capacity = entry.getValue();
-                update.where(qCapacity.facilityId.eq(facilityId), qCapacity.capacityType.eq(entry.getKey()));
-                update.set(qCapacity.built, capacity.built);
-                update.set(qCapacity.unavailable, capacity.unavailable);
-                update.addBatch();
-            }
-            update.execute();
-        }
-    }
-
-    private void deleteCapacities(long facilityId, Set<CapacityType> deletedCapacities) {
-        if (!deletedCapacities.isEmpty()) {
-            queryFactory.delete(qCapacity)
-                    .where(qCapacity.facilityId.eq(facilityId), qCapacity.capacityType.in(deletedCapacities))
-                    .execute();
-        }
     }
 
     private void updateAliases(long facilityId, Set<String> newAliases, Set<String> oldAliases) {
@@ -448,6 +385,28 @@ public class FacilityDao implements FacilityRepository {
         queryFactory.delete(qPort).where(qPort.facilityId.eq(facilityId), qPort.portIndex.goe(fromIndex)).execute();
     }
 
+    private void insertPricing(long facilityId, SortedSet<Pricing> pricing) {
+        if (pricing != null && !pricing.isEmpty()) {
+            SQLInsertClause insert = queryFactory.insert(qPricing);
+            for (Pricing price : pricing) {
+                insert.set(qPricing.facilityId, facilityId)
+                        .set(qPricing.capacityType, price.capacityType)
+                        .set(qPricing.usage, price.usage)
+                        .set(qPricing.maxCapacity, price.maxCapacity)
+                        .set(qPricing.dayType, price.dayType)
+                        .set(qPricing.fromTime, price.from)
+                        .set(qPricing.untilTime, price.until);
+                pricingPriceMapping.populate(price.price, insert);
+                insert.addBatch();
+            }
+            insert.execute();
+        }
+    }
+
+    private void deletePricing(long facilityId) {
+        queryFactory.delete(qPricing).where(qPricing.facilityId.eq(facilityId)).execute();
+    }
+
     private void orderBy(Sort sort, PostgresQuery qry) {
         sort = firstNonNull(sort, DEFAULT_SORT);
         ComparableExpression<String> sortField;
@@ -484,21 +443,6 @@ public class FacilityDao implements FacilityRepository {
             for (String alias : aliases) {
                 insertBatch.set(qAlias.facilityId, facilityId);
                 insertBatch.set(qAlias.alias, alias);
-                insertBatch.addBatch();
-            }
-            insertBatch.execute();
-        }
-    }
-
-    private void insertCapacities(long facilityId, Map<CapacityType, Capacity> capacities) {
-        if (capacities != null && !capacities.isEmpty()) {
-            SQLInsertClause insertBatch = queryFactory.insert(qCapacity);
-            for (Map.Entry<CapacityType, Capacity> entry : capacities.entrySet()) {
-                Capacity capacity = entry.getValue();
-                insertBatch.set(qCapacity.facilityId, facilityId);
-                insertBatch.set(qCapacity.capacityType, entry.getKey());
-                insertBatch.set(qCapacity.built, capacity.built);
-                insertBatch.set(qCapacity.unavailable, capacity.unavailable);
                 insertBatch.addBatch();
             }
             insertBatch.execute();
@@ -549,16 +493,6 @@ public class FacilityDao implements FacilityRepository {
         }
     }
 
-    private void fetchCapacities(Map<Long, Facility> facilitiesById) {
-        if (!facilitiesById.isEmpty()) {
-            Map<Long, Map<CapacityType, Capacity>> capacities = findCapacities(facilitiesById.keySet());
-
-            for (Map.Entry<Long, Map<CapacityType, Capacity>> entry : capacities.entrySet()) {
-                facilitiesById.get(entry.getKey()).capacities = entry.getValue();
-            }
-        }
-    }
-
     private void fetchServices(Map<Long, Facility> facilitiesById) {
         if (!facilitiesById.isEmpty()) {
             Map<Long, Set<Long>> services = findServices(facilitiesById.keySet());
@@ -579,6 +513,22 @@ public class FacilityDao implements FacilityRepository {
         }
     }
 
+    private void fetchPricing(Map<Long, Facility> facilitiesById) {
+        if (!facilitiesById.isEmpty()) {
+            Map<Long, SortedSet<Pricing>> pricing = findPricing(facilitiesById.keySet());
+
+            for (Map.Entry<Long, SortedSet<Pricing>> entry : pricing.entrySet()) {
+                facilitiesById.get(entry.getKey()).pricing = entry.getValue();
+            }
+        }
+    }
+
+    private Map<Long, SortedSet<Pricing>> findPricing(Set<Long> facilityIds) {
+        return queryFactory.from(qPricing)
+                .where(qPricing.facilityId.in(facilityIds))
+                .transform(groupBy(qPricing.facilityId).as(sortedSet(pricingMapping)));
+    }
+
     private Map<Long, Set<Long>> findServices(Set<Long> facilityIds) {
         return queryFactory.from(qService)
                 .where(qService.facilityId.in(facilityIds))
@@ -595,12 +545,6 @@ public class FacilityDao implements FacilityRepository {
         return queryFactory.from(qAlias)
                 .where(qAlias.facilityId.in(facilityIds))
                 .transform(aliasesByFacilityIdMapping);
-    }
-
-    private Map<Long, Map<CapacityType, Capacity>> findCapacities(Set<Long> facilitiesById) {
-        return queryFactory.from(qCapacity)
-                .where(qCapacity.facilityId.in(facilitiesById))
-                .transform(capacitiesByFacilityIdMapping);
     }
 
     private Map<Long, List<Port>> findPorts(Set<Long> facilitiesById) {

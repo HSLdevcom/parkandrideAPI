@@ -115,7 +115,7 @@ public class DevHelper {
                 QFacilityService.facilityService,
                 QFacilityPaymentMethod.facilityPaymentMethod,
                 QFacilityAlias.facilityAlias,
-                QCapacity.capacity,
+                QPricing.pricing,
                 QPort.port,
                 QFacility.facility)
         ;

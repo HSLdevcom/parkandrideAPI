@@ -1,10 +1,9 @@
 package fi.hsl.parkandride.core.domain;
 
 public enum CapacityType {
-    PARK_AND_RIDE,
-    BICYCLE,
     CAR,
     DISABLED,
+    ELECTRIC_CAR,
     MOTORCYCLE,
-    ELECTRIC_CAR
+    BICYCLE
 }

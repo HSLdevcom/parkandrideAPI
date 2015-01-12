@@ -59,7 +59,7 @@ public class QFacility extends RelationalPathSpatial<QFacility> {
 
     public final NumberPath<Long> serviceContactId = createNumber("serviceContactId", Long.class);
 
-    public final com.mysema.query.sql.PrimaryKey<QFacility> constraint4 = createPrimaryKey(id);
+    public final com.mysema.query.sql.PrimaryKey<QFacility> constraint4c = createPrimaryKey(id);
 
     public final com.mysema.query.sql.ForeignKey<QContact> facilityOperatorContactIdFk = createForeignKey(operatorContactId, "ID");
 
@@ -73,7 +73,7 @@ public class QFacility extends RelationalPathSpatial<QFacility> {
 
     public final com.mysema.query.sql.ForeignKey<QFacilityStatus> _facilityStatusFacilityIdFk = createInvForeignKey(id, "FACILITY_ID");
 
-    public final com.mysema.query.sql.ForeignKey<QCapacity> _capacityFacilityIdFk = createInvForeignKey(id, "FACILITY_ID");
+    public final com.mysema.query.sql.ForeignKey<QPricing> _pricingFacilityIdFk = createInvForeignKey(id, "FACILITY_ID");
 
     public final com.mysema.query.sql.ForeignKey<QFacilityService> _facilityServiceFacilityIdFk = createInvForeignKey(id, "FACILITY_ID");
 

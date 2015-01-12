@@ -49,11 +49,8 @@
       "emergency": 1,
       "operator": 1
     },
-    "capacities": {
-      "PARK_AND_RIDE": {
-        "built": 100,
-        "unavailable": 0
-      }
+    "builtCapacity": {
+      "CAR": 100
     }
   },
   {
@@ -102,11 +99,8 @@
       "emergency": 1,
       "operator": 1
     },
-    "capacities": {
-      "PARK_AND_RIDE": {
-        "built": 100,
-        "unavailable": 0
-      }
+    "builtCapacity": {
+      "CAR": 100
     }
   },
   {
@@ -155,11 +149,8 @@
       "emergency": 1,
       "operator": 1
     },
-    "capacities": {
-      "PARK_AND_RIDE": {
-        "built": 50,
-        "unavailable": 0
-      }
+    "builtCapacity": {
+      "CAR": 50
     }
   },
   {
@@ -208,15 +199,9 @@
       "emergency": 1,
       "operator": 1
     },
-    "capacities": {
-      "CAR": {
-        "built": 100,
-        "unavailable": 0
-      },
-      "PARK_AND_RIDE": {
-        "built": 50,
-        "unavailable": 0
-      }
+    "builtCapacity": {
+      "CAR": 100,
+      "ELECTRIC_CAR": 50
     }
   },
   {
@@ -265,11 +250,8 @@
       "emergency": 1,
       "operator": 1
     },
-    "capacities": {
-      "PARK_AND_RIDE": {
-        "built": 100,
-        "unavailable": 0
-      }
+    "builtCapacity": {
+      "CAR": 100
     }
   },
   {
@@ -318,15 +300,9 @@
       "emergency": 1,
       "operator": 1
     },
-    "capacities": {
-      "BICYCLE": {
-        "built": 50,
-        "unavailable": 0
-      },
-      "PARK_AND_RIDE": {
-        "built": 100,
-        "unavailable": 0
-      }
+    "builtCapacity": {
+      "BICYCLE": 50,
+      "CAR": 100
     }
   },
   {
@@ -375,15 +351,9 @@
       "emergency": 1,
       "operator": 1
     },
-    "capacities": {
-      "CAR": {
-        "built": 123,
-        "unavailable": 0
-      },
-      "PARK_AND_RIDE": {
-        "built": 123,
-        "unavailable": 0
-      }
+    "builtCapacity": {
+      "CAR": 123,
+      "ELECTRIC_CAR": 123
     }
   },
   {
@@ -432,19 +402,10 @@
       "emergency": 1,
       "operator": 1
     },
-    "capacities": {
-      "DISABLED": {
-        "built": 2,
-        "unavailable": 0
-      },
-      "MOTORCYCLE": {
-        "built": 2,
-        "unavailable": 0
-      },
-      "PARK_AND_RIDE": {
-        "built": 150,
-        "unavailable": 0
-      }
+    "builtCapacity": {
+      "DISABLED": 2,
+      "MOTORCYCLE": 2,
+      "CAR": 150
     }
   },
   {
@@ -505,15 +466,9 @@
       "emergency": 1,
       "operator": 1
     },
-    "capacities": {
-      "CAR": {
-        "built": 100,
-        "unavailable": 0
-      },
-      "PARK_AND_RIDE": {
-        "built": 50,
-        "unavailable": 0
-      }
+    "builtCapacity": {
+      "CAR": 100,
+      "ELECTRIC_CAR": 50
     }
   },
   {
@@ -562,11 +517,8 @@
       "emergency": 1,
       "operator": 1
     },
-    "capacities": {
-      "PARK_AND_RIDE": {
-        "built": 120,
-        "unavailable": 0
-      }
+    "builtCapacity": {
+      "CAR": 120
     }
   },
   {
@@ -627,11 +579,8 @@
       "emergency": 1,
       "operator": 1
     },
-    "capacities": {
-      "CAR": {
-        "built": 100,
-        "unavailable": 0
-      }
+    "builtCapacity": {
+      "CAR": 100
     }
   },
   {
@@ -683,11 +632,8 @@
       "emergency": 1,
       "operator": 1
     },
-    "capacities": {
-      "CAR": {
-        "built": 100,
-        "unavailable": 0
-      }
+    "builtCapacity": {
+      "CAR": 100
     }
   },
   {
@@ -736,11 +682,8 @@
       "emergency": 1,
       "operator": 1
     },
-    "capacities": {
-      "BICYCLE": {
-        "built": 50,
-        "unavailable": 0
-      }
+    "builtCapacity": {
+      "BICYCLE": 50
     }
   },
   {
@@ -789,15 +732,9 @@
       "emergency": 1,
       "operator": 1
     },
-    "capacities": {
-      "CAR": {
-        "built": 200,
-        "unavailable": 10
-      },
-      "PARK_AND_RIDE": {
-        "built": 100,
-        "unavailable": 0
-      }
+    "builtCapacity": {
+      "CAR": 200,
+      "ELECTRIC_CAR": 100
     }
   },
   {
@@ -849,19 +786,10 @@
       "emergency": 1,
       "operator": 1
     },
-    "capacities": {
-      "CAR": {
-        "built": 50,
-        "unavailable": 0
-      },
-      "DISABLED": {
-        "built": 2,
-        "unavailable": 0
-      },
-      "PARK_AND_RIDE": {
-        "built": 100,
-        "unavailable": 0
-      }
+    "builtCapacity": {
+      "CAR": 50,
+      "DISABLED": 2,
+      "CAR": 100
     }
   },
   {
@@ -913,23 +841,11 @@
       "emergency": 1,
       "operator": 1
     },
-    "capacities": {
-      "DISABLED": {
-        "built": 2,
-        "unavailable": 0
-      },
-      "ELECTRIC_CAR": {
-        "built": 1,
-        "unavailable": 0
-      },
-      "MOTORCYCLE": {
-        "built": 5,
-        "unavailable": 0
-      },
-      "PARK_AND_RIDE": {
-        "built": 20,
-        "unavailable": 2
-      }
+    "builtCapacity": {
+      "DISABLED": 2,
+      "ELECTRIC_CAR": 1,
+      "MOTORCYCLE": 5,
+      "CAR": 20
     }
   },
   {
@@ -983,23 +899,11 @@
       "emergency": 1,
       "operator": 1
     },
-    "capacities": {
-      "CAR": {
-        "built": 20,
-        "unavailable": 2
-      },
-      "DISABLED": {
-        "built": 2,
-        "unavailable": 0
-      },
-      "ELECTRIC_CAR": {
-        "built": 1,
-        "unavailable": 0
-      },
-      "MOTORCYCLE": {
-        "built": 5,
-        "unavailable": 0
-      }
+    "builtCapacity": {
+      "CAR": 20,
+      "DISABLED": 2,
+      "ELECTRIC_CAR": 1,
+      "MOTORCYCLE": 5
     }
   },
   {
@@ -1080,27 +984,12 @@
       "emergency": 1,
       "operator": 1
     },
-    "capacities": {
-      "CAR": {
-        "built": 100,
-        "unavailable": 10
-      },
-      "DISABLED": {
-        "built": 5,
-        "unavailable": 0
-      },
-      "ELECTRIC_CAR": {
-        "built": 2,
-        "unavailable": 0
-      },
-      "MOTORCYCLE": {
-        "built": 5,
-        "unavailable": 0
-      },
-      "PARK_AND_RIDE": {
-        "built": 50,
-        "unavailable": 0
-      }
+    "builtCapacity": {
+      "CAR": 100,
+      "DISABLED": 5,
+      "ELECTRIC_CAR": 2,
+      "MOTORCYCLE": 5,
+      "BICYCLE": 50
     }
   },
   {
@@ -1152,23 +1041,11 @@
       "emergency": 1,
       "operator": 1
     },
-    "capacities": {
-      "DISABLED": {
-        "built": 2,
-        "unavailable": 0
-      },
-      "ELECTRIC_CAR": {
-        "built": 2,
-        "unavailable": 0
-      },
-      "MOTORCYCLE": {
-        "built": 10,
-        "unavailable": 0
-      },
-      "PARK_AND_RIDE": {
-        "built": 100,
-        "unavailable": 0
-      }
+    "builtCapacity": {
+      "DISABLED": 2,
+      "ELECTRIC_CAR": 2,
+      "MOTORCYCLE": 10,
+      "CAR": 100
     }
   },
   {
@@ -1220,27 +1097,12 @@
       "emergency": 1,
       "operator": 1
     },
-    "capacities": {
-      "CAR": {
-        "built": 200,
-        "unavailable": 10
-      },
-      "DISABLED": {
-        "built": 5,
-        "unavailable": 1
-      },
-      "ELECTRIC_CAR": {
-        "built": 2,
-        "unavailable": 0
-      },
-      "MOTORCYCLE": {
-        "built": 10,
-        "unavailable": 0
-      },
-      "PARK_AND_RIDE": {
-        "built": 100,
-        "unavailable": 2
-      }
+    "builtCapacity": {
+      "CAR": 200,
+      "DISABLED": 5,
+      "ELECTRIC_CAR": 2,
+      "MOTORCYCLE": 10,
+      "BICYCLE": 100
     }
   },
   {
@@ -1289,27 +1151,12 @@
       "emergency": 1,
       "operator": 1
     },
-    "capacities": {
-      "BICYCLE": {
-        "built": 100,
-        "unavailable": 5
-      },
-      "CAR": {
-        "built": 100,
-        "unavailable": 0
-      },
-      "DISABLED": {
-        "built": 2,
-        "unavailable": 0
-      },
-      "MOTORCYCLE": {
-        "built": 3,
-        "unavailable": 0
-      },
-      "PARK_AND_RIDE": {
-        "built": 120,
-        "unavailable": 10
-      }
+    "builtCapacity": {
+      "BICYCLE": 100,
+      "CAR": 100,
+      "DISABLED": 2,
+      "MOTORCYCLE": 3,
+      "ELECTRIC_CAR": 120
     }
   }
 ]

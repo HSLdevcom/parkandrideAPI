@@ -65,7 +65,7 @@
         this.contacts = contacts;
         this.operator = operator;
         this.hasCapacities = function() {
-          return _.keys(facility.capacities).length !== 0;
+          return !_.isEmpty(facility.builtCapacity);
         };
         this.hasServices = function() {
             return services.length > 0;

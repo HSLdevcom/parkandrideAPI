@@ -78,7 +78,7 @@ public class QPricing extends RelationalPathSpatial<QPricing> {
     }
 
     public void addMetadata() {
-        addMetadata(capacityType, ColumnMetadata.named("CAPACITY_TYPE").withIndex(3).ofType(Types.VARCHAR).withSize(64).notNull());
+        addMetadata(capacityType, ColumnMetadata.named("CAPACITY_TYPE").withIndex(2).ofType(Types.VARCHAR).withSize(64).notNull());
         addMetadata(dayType, ColumnMetadata.named("DAY_TYPE").withIndex(5).ofType(Types.VARCHAR).withSize(64).notNull());
         addMetadata(facilityId, ColumnMetadata.named("FACILITY_ID").withIndex(1).ofType(Types.BIGINT).withSize(19).notNull());
         addMetadata(fromTime, ColumnMetadata.named("FROM_TIME").withIndex(6).ofType(Types.SMALLINT).withSize(5).notNull());
@@ -87,7 +87,7 @@ public class QPricing extends RelationalPathSpatial<QPricing> {
         addMetadata(priceFi, ColumnMetadata.named("PRICE_FI").withIndex(8).ofType(Types.VARCHAR).withSize(255));
         addMetadata(priceSv, ColumnMetadata.named("PRICE_SV").withIndex(9).ofType(Types.VARCHAR).withSize(255));
         addMetadata(untilTime, ColumnMetadata.named("UNTIL_TIME").withIndex(7).ofType(Types.SMALLINT).withSize(5).notNull());
-        addMetadata(usage, ColumnMetadata.named("USAGE").withIndex(2).ofType(Types.VARCHAR).withSize(64).notNull());
+        addMetadata(usage, ColumnMetadata.named("USAGE").withIndex(3).ofType(Types.VARCHAR).withSize(64).notNull());
     }
 
 }

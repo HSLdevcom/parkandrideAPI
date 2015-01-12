@@ -76,6 +76,11 @@ public class FacilityService {
         return repository.findFacilities(search);
     }
 
+    @TransactionalRead
+    public FacilitySummary summarize(SpatialSearch search) {
+        return repository.summarizeFacilities(search);
+    }
+
     @TransactionalWrite
     public void createStatuses(long facilityId, List<FacilityStatus> statuses, User currentUser) {
         // TODO: authorize(currentUser, facility, FACILITY_STATUS_UPDATE);

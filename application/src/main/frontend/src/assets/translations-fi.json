@@ -231,15 +231,6 @@
                 },
                 "label": "Henkilöauto"
             },
-            "PARK_AND_RIDE": {
-                "built":  {
-                    "label": "Liityntäpysäköinti, rakennettu kapasiteetti"
-                },
-                "unavailable": {
-                    "label": "Liityntäpysäköinti, tilapäisesti poissa käytöstä"
-                },
-                "label": "Liityntäpysäköinti"
-            },
             "BICYCLE": {
                 "built":  {
                     "label": "Polkupyörä, rakennettu kapasiteetti"

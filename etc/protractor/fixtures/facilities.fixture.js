@@ -39,13 +39,12 @@ module.exports = function () {
                 h: 60
             },
             aliases: ["alias with spaces", "facFull"],
-            capacities: {
-                "CAR": {"built": 10, "unavailable": 1},
-                "BICYCLE": {"built": 20, "unavailable": 2},
-                "PARK_AND_RIDE": {"built": 30, "unavailable": 3},
-                "DISABLED": {"built": 40, "unavailable": 4},
-                "MOTORCYCLE": {"built": 50, "unavailable": 5},
-                "ELECTRIC_CAR": {"built": 60, "unavailable": 6}
+            builtCapacity: {
+                "CAR": 10,
+                "BICYCLE": 20,
+                "DISABLED": 40,
+                "MOTORCYCLE": 50,
+                "ELECTRIC_CAR":  60
             },
             contacts: {
                 emergency: 1,
@@ -86,8 +85,8 @@ module.exports = function () {
                 emergency: 1,
                 operator: 1
             },
-            capacities: {
-                "CAR": {"built": 10, "unavailable": 1}
+            builtCapacity: {
+                "CAR": 10
             }
         })
     };
@@ -114,11 +113,8 @@ module.exports = function () {
             emergency: 1,
             operator: 1
         },
-        "capacities": {
-            "CAR": {
-                "built": 100,
-                "unavailable": 0
-            }
+        "builtCapacity": {
+            "CAR": 100,
         }
     });
 
@@ -144,11 +140,8 @@ module.exports = function () {
             emergency: 1,
             operator: 1
         },
-        "capacities": {
-            "BICYCLE": {
-                "built": 50,
-                "unavailable": 0
-            }
+        "builtCapacity": {
+            "BICYCLE": 50
         }
     });
 

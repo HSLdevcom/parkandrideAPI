@@ -27,6 +27,16 @@ public class QFacility extends RelationalPathSpatial<QFacility> {
 
     public static final QFacility facility = new QFacility("FACILITY");
 
+    public final NumberPath<Integer> capacityBicycle = createNumber("capacityBicycle", Integer.class);
+
+    public final NumberPath<Integer> capacityCar = createNumber("capacityCar", Integer.class);
+
+    public final NumberPath<Integer> capacityDisabled = createNumber("capacityDisabled", Integer.class);
+
+    public final NumberPath<Integer> capacityElectricCar = createNumber("capacityElectricCar", Integer.class);
+
+    public final NumberPath<Integer> capacityMotorcycle = createNumber("capacityMotorcycle", Integer.class);
+
     public final NumberPath<Long> emergencyContactId = createNumber("emergencyContactId", Long.class);
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
@@ -102,6 +112,11 @@ public class QFacility extends RelationalPathSpatial<QFacility> {
     }
 
     public void addMetadata() {
+        addMetadata(capacityBicycle, ColumnMetadata.named("CAPACITY_BICYCLE").withIndex(21).ofType(Types.INTEGER).withSize(10));
+        addMetadata(capacityCar, ColumnMetadata.named("CAPACITY_CAR").withIndex(17).ofType(Types.INTEGER).withSize(10));
+        addMetadata(capacityDisabled, ColumnMetadata.named("CAPACITY_DISABLED").withIndex(18).ofType(Types.INTEGER).withSize(10));
+        addMetadata(capacityElectricCar, ColumnMetadata.named("CAPACITY_ELECTRIC_CAR").withIndex(19).ofType(Types.INTEGER).withSize(10));
+        addMetadata(capacityMotorcycle, ColumnMetadata.named("CAPACITY_MOTORCYCLE").withIndex(20).ofType(Types.INTEGER).withSize(10));
         addMetadata(emergencyContactId, ColumnMetadata.named("EMERGENCY_CONTACT_ID").withIndex(7).ofType(Types.BIGINT).withSize(19).notNull());
         addMetadata(id, ColumnMetadata.named("ID").withIndex(1).ofType(Types.BIGINT).withSize(19).notNull());
         addMetadata(location, ColumnMetadata.named("LOCATION").withIndex(5).ofType(Types.OTHER).withSize(2147483647).notNull());

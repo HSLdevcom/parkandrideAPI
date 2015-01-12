@@ -60,6 +60,12 @@ create table facility (
   payment_info_detail_en varchar(255),
   payment_info_url_en varchar(255),
 
+  capacity_car int,
+  capacity_disabled int,
+  capacity_electric_car int,
+  capacity_motorcycle int,
+  capacity_bicycle int,
+
   primary key (id),
 
   constraint facility_operator_id_fk foreign key (operator_id)
@@ -88,21 +94,6 @@ create table facility_alias (
     references facility (id)
 );
 
-
--- create table capacity (
---   facility_id bigint not null,
---   capacity_type varchar(64) not null,
---   built int not null,
---   unavailable int not null,
---
---   primary key (facility_id, capacity_type),
---
---   constraint capacity_facility_id_fk foreign key (facility_id)
---     references facility (id),
---
---   constraint capacity_capacity_type_fk foreign key (capacity_type)
---     references capacity_type (name)
--- );
 
 create table port (
   facility_id bigint not null,

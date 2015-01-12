@@ -77,6 +77,12 @@ public class FacilityController {
         return new ResponseEntity<>(results, OK);
     }
 
+    @RequestMapping(method = GET, value = FACILITIES, params = "summary", produces = APPLICATION_JSON_VALUE)
+    public ResponseEntity<FacilitySummary> summarizeFacilities(SpatialSearchDto search) {
+        FacilitySummary summary = facilityService.summarize(search.toSpatialSearch());
+        return new ResponseEntity<>(summary, OK);
+    }
+
     @RequestMapping(method = GET, value = FACILITIES, produces = GEOJSON)
     public ResponseEntity<FeatureCollection> findFacilitiesAsFeatureCollection(PageableSpatialSearchDto search) {
         SearchResults<Facility> results = facilityService.search(search.toSpatialSearch());

@@ -3,6 +3,7 @@ package fi.hsl.parkandride.core.back;
 import java.util.List;
 
 import fi.hsl.parkandride.core.domain.*;
+import fi.hsl.parkandride.core.service.TransactionalRead;
 
 public interface FacilityRepository {
 
@@ -17,6 +18,8 @@ public interface FacilityRepository {
     Facility getFacilityForUpdate(long id);
 
     SearchResults<Facility> findFacilities(PageableSpatialSearch search);
+
+    FacilitySummary summarizeFacilities(SpatialSearch search);
 
     void insertStatuses(long facilityId, List<FacilityStatus> statuses);
 

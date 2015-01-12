@@ -66,9 +66,15 @@ public class FacilityDaoTest extends AbstractDaoTest {
     public static final List<Port> PORTS = ImmutableList.of(new Port(PORT_LOCATION1, true, false, true, false, "street", "00100", "city", "info"));
 
     public static final Set<Long> SERVICES = ImmutableSet.of(1l, 2l, 3l);
+
     public static final Pricing PRICING1 = new Pricing(PARK_AND_RIDE, CAR, 50, BUSINESS_DAY, "8", "18", "2 EUR/H");
+
     public static final Pricing PRICING2 = new Pricing(PARK_AND_RIDE, CAR, 50, BUSINESS_DAY, "18", "24", "1 EUR/H");
 
+    public static final Map<CapacityType, Integer> BUILT_CAPACITY = ImmutableMap.of(
+            CAR, 50,
+            ELECTRIC_CAR, 2
+    );
 
     @Inject
     ContactRepository contactDao;
@@ -167,6 +173,7 @@ public class FacilityDaoTest extends AbstractDaoTest {
         assertThat(facility.aliases).isEqualTo(ALIASES);
         assertThat(facility.ports).isEqualTo(PORTS);
         assertThat(facility.serviceIds).isEqualTo(SERVICES);
+        assertThat(facility.builtCapacity).isEqualTo(BUILT_CAPACITY);
         assertThat(facility.pricing).isEqualTo(ImmutableSortedSet.of(PRICING1, PRICING2));
     }
 
@@ -187,6 +194,7 @@ public class FacilityDaoTest extends AbstractDaoTest {
         facility.serviceIds = SERVICES;
         facility.contacts = dummyContacts;
 
+        facility.builtCapacity = BUILT_CAPACITY;
         facility.pricing.add(PRICING1);
         facility.pricing.add(PRICING2);
 

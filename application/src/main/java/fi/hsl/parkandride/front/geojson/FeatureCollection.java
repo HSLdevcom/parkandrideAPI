@@ -23,7 +23,8 @@ public class FeatureCollection {
             feature.id = facility.id;
             feature.properties = ImmutableMap.of(
                     "name", facility.name,
-                    "aliases", facility.aliases
+                    "aliases", facility.aliases,
+                    "builtCapacity", facility.builtCapacity
             );
             return feature;
         }

@@ -1,7 +1,7 @@
 package fi.hsl.parkandride.core.domain;
 
-import static fi.hsl.parkandride.core.domain.CompareUtil.comparingNullsLast;
 import static java.util.Comparator.comparing;
+import static java.util.Comparator.naturalOrder;
 import static java.util.Comparator.nullsLast;
 
 import java.util.Comparator;
@@ -12,13 +12,13 @@ import javax.validation.constraints.NotNull;
 public class Pricing implements Comparable<Pricing> {
 
     public static Comparator<Pricing> COMPARATOR =
-            comparingNullsLast((Pricing p) -> p.capacityType)
-            .thenComparing(comparingNullsLast((Pricing p) -> p.usage))
-            .thenComparing(comparingNullsLast((Pricing p) -> p.dayType))
-            .thenComparing(comparingNullsLast((Pricing p) -> p.from))
-            .thenComparing(comparingNullsLast((Pricing p) -> p.until))
-            .thenComparing(comparing((Pricing p) -> p.maxCapacity))
-            .thenComparing(nullsLast((Pricing p1, Pricing p2) -> MultilingualString.COMPARATOR.compare(p1.price, p2.price)));
+            comparing(((Pricing p) -> p.capacityType), nullsLast(naturalOrder()))
+            .thenComparing(((Pricing p) -> p.usage), nullsLast(naturalOrder()))
+            .thenComparing(((Pricing p) -> p.dayType), nullsLast(naturalOrder()))
+            .thenComparing(((Pricing p) -> p.from), nullsLast(naturalOrder()))
+            .thenComparing(((Pricing p) -> p.until), nullsLast(naturalOrder()))
+            .thenComparing(((Pricing p) -> p.maxCapacity), naturalOrder())
+            .thenComparing(((Pricing p) -> p.price), nullsLast(MultilingualString.COMPARATOR));
 
     @NotNull
     public Usage usage;

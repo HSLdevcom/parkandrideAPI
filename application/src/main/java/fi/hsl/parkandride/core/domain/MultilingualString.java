@@ -1,6 +1,8 @@
 package fi.hsl.parkandride.core.domain;
 
-import static fi.hsl.parkandride.core.domain.CompareUtil.comparingNullsLast;
+import static java.util.Comparator.comparing;
+import static java.util.Comparator.naturalOrder;
+import static java.util.Comparator.nullsLast;
 
 import java.util.Comparator;
 import java.util.Objects;
@@ -14,9 +16,9 @@ import com.wordnik.swagger.annotations.ApiModelProperty;
 public class MultilingualString {
 
     public static Comparator<MultilingualString> COMPARATOR =
-            comparingNullsLast((MultilingualString s) -> s.fi)
-            .thenComparing(comparingNullsLast((MultilingualString s) -> s.sv))
-            .thenComparing(comparingNullsLast((MultilingualString s) -> s.en));
+            comparing(((MultilingualString s) -> s.fi), nullsLast(naturalOrder()))
+            .thenComparing(((MultilingualString s) -> s.sv), nullsLast(naturalOrder()))
+            .thenComparing(((MultilingualString s) -> s.en), nullsLast(naturalOrder()));
 
     @ApiModelProperty(value="Value in Finnish", required = true)
     @NotBlank

@@ -11,4 +11,5 @@ public class PricingTest {
     public void all_nulls() {
         assertThat(COMPARATOR.compare(new Pricing(), new Pricing())).isEqualTo(0);
     }
+    
 }

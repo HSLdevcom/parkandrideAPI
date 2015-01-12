@@ -110,6 +110,10 @@
         });
     });
 
+    m.run(function($rootScope, $state) {
+        $rootScope.$state = $state;
+    });
+
     m.controller('AppCtrl', function AppCtrl($rootScope, $location, loginPrompt, Session, EVENTS, Permission, permit) {
         $rootScope.permit = permit;
 

@@ -113,6 +113,7 @@ public class DevHelper {
         delete(
                 QFacilityStatus.facilityStatus,
                 QFacilityService.facilityService,
+                QFacilityPaymentMethod.facilityPaymentMethod,
                 QFacilityAlias.facilityAlias,
                 QCapacity.capacity,
                 QPort.port,

@@ -63,6 +63,7 @@ public class CoreConfiguration {
         return new ContactDao(queryFactory);
     }
 
+
     @Bean
     public ContactService contactService() {
         return new ContactService(contactRepository(), validationService());
@@ -111,6 +112,16 @@ public class CoreConfiguration {
     @Bean
     public HubService hubService() {
         return new HubService(hubRepository(), validationService());
+    }
+
+    @Bean
+    public PaymentMethodRepository paymentMethodRepository() {
+        return new PaymentMethodDao(queryFactory);
+    }
+
+    @Bean
+    public PaymentMethodService paymentMethodService() {
+        return new PaymentMethodService(paymentMethodRepository());
     }
 
 }

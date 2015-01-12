@@ -37,6 +37,8 @@ public class QService extends RelationalPathSpatial<QService> {
 
     public final com.mysema.query.sql.PrimaryKey<QService> constraintA = createPrimaryKey(id);
 
+    public final com.mysema.query.sql.ForeignKey<QFacilityPaymentMethod> _facilityPaymentMethodPaymentMethodIdFk = createInvForeignKey(id, "PAYMENT_METHOD_ID");
+
     public final com.mysema.query.sql.ForeignKey<QFacilityService> _facilityServiceServiceIdFk = createInvForeignKey(id, "SERVICE_ID");
 
     public QService(String variable) {

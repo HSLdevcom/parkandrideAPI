@@ -4,11 +4,15 @@ import java.util.Objects;
 
 import javax.validation.constraints.NotNull;
 
+import com.wordnik.swagger.annotations.ApiModelProperty;
+
 public class FacilityContacts {
 
+    @ApiModelProperty(required = true)
     @NotNull
     public Long emergency;
 
+    @ApiModelProperty(required = true)
     @NotNull
     public Long operator;
 

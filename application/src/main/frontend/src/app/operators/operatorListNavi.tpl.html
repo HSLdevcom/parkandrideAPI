@@ -1,3 +1,3 @@
-<a class="btn btn-s btn-responsive wdCreate" role="button" ng-click="listCtrl.create()">
+<a class="btn btn-s btn-responsive wdCreate" role="button" ng-click="listCtrl.create()" ng-if="permit(OPERATOR_CREATE)">
 {{'operators.action.new' | translate }}
 </a>

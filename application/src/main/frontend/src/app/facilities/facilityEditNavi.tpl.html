@@ -4,6 +4,7 @@
 <a class="btn btn-s btn-responsive" role="button" ng-show="editCtrl.facility.id" ui-sref="facility-view({ id: editCtrl.facility.id })">
 	{{'common.action.cancel' | translate }}
 </a>
-<a class="btn btn-s btn-responsive wdSave" role="button" ng-click="appCtrl.validateAndSubmit(editFacilityForm,  editCtrl.saveFacility)">
+<a class="btn btn-s btn-responsive wdSave" role="button" ng-click="appCtrl.validateAndSubmit(editFacilityForm,  editCtrl.saveFacility)"
+   ng-if="permit([FACILITY_CREATE, FACILITY_UPDATE], editCtrl.facility.operatorId)">
 {{'common.action.save' | translate }}
 </a>

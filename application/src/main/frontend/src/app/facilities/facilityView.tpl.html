@@ -16,7 +16,7 @@
 				<multilingual-view value="viewCtrl.facility.name"></multilingual-view>
 			</div>
 			<div class="row">
-				<div class="first-3column wdAliasesBlock" ng-show="viewCtrl.facility.aliases.length !== 0">
+				<div class="column3 first-column wdAliasesBlock" ng-show="viewCtrl.facility.aliases.length !== 0">
 					<h4>{{ "facilities.aliases.label" | translate }}</h4>
 					<p class="wdAliases">{{viewCtrl.facility.aliases | joinBy: ", "}}</p>
 				</div>
@@ -45,6 +45,20 @@
 				<facility-contact-view contact="viewCtrl.contacts[viewCtrl.facility.contacts.emergency]" contact-type="emergency"></facility-contact-view>
 				<facility-contact-view contact="viewCtrl.contacts[viewCtrl.facility.contacts.operator]" contact-type="operator"></facility-contact-view>
 				<facility-contact-view contact="viewCtrl.contacts[viewCtrl.facility.contacts.service]" contact-type="service"></facility-contact-view>
+			</div>
+
+			<div class="wdPaymentInfo" ng-show="viewCtrl.hasPaymentInfo()">
+				<div class="row"><h3>{{"facilities.paymentInfo.heading" | translate }}</h3></div>
+				<div class="row wdParkAndRideAuthRequired" ng-show="viewCtrl.facility.paymentInfo.parkAndRideAuthRequired">
+					&#x2713; {{ "facilities.paymentInfo.parkAndRideAuthRequired" | translate }}
+				</div>
+				<div class="row" ng-show="viewCtrl.hasPaymentMethods()"><h4>{{"facilities.paymentInfo.paymentMethods.label" | translate }}</h4></div>
+				<div class="row wdPaymentMethodNames" ng-show="viewCtrl.hasPaymentMethods()">{{viewCtrl.getPaymentMethodNames() | joinBy: ", "}}</div>
+				<div class="wdDetails" ng-show="viewCtrl.hasPaymentInfoDetails()">
+					<div class="row"><h4>{{"facilities.paymentInfo.details.heading" | translate }}</h4></div>
+					<div class="row"><multilingual-view class="wdDetail" value="viewCtrl.facility.paymentInfo.detail"></multilingual-view></div>
+					<div class="row"><multilingual-view class="wdUrl"value="viewCtrl.facility.paymentInfo.url"></multilingual-view></div>
+				</div>
 			</div>
 
 			<div class="row wdServices" ng-show="viewCtrl.hasServices()">

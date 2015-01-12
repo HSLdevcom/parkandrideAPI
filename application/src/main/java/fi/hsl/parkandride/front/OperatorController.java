@@ -1,5 +1,6 @@
 package fi.hsl.parkandride.front;
 
+import static fi.hsl.parkandride.front.UrlSchema.API_KEY;
 import static fi.hsl.parkandride.front.UrlSchema.OPERATOR;
 import static fi.hsl.parkandride.front.UrlSchema.OPERATORS;
 import static fi.hsl.parkandride.front.UrlSchema.OPERATOR_ID;
@@ -20,6 +21,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import com.wordnik.swagger.annotations.Api;
+import com.wordnik.swagger.annotations.ApiOperation;
+import com.wordnik.swagger.annotations.Authorization;
+
 import fi.hsl.parkandride.core.domain.Operator;
 import fi.hsl.parkandride.core.domain.OperatorSearch;
 import fi.hsl.parkandride.core.domain.SearchResults;
@@ -27,11 +32,13 @@ import fi.hsl.parkandride.core.domain.User;
 import fi.hsl.parkandride.core.service.OperatorService;
 
 @RestController
+@Api("operators")
 public class OperatorController {
 
     @Inject
     OperatorService operatorService;
 
+    @ApiOperation(value = "Create operator", authorizations = @Authorization(API_KEY))
     @RequestMapping(method = POST, value = OPERATORS, produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<Operator> createOperator(@RequestBody Operator operator,
                                                    User currentUser,
@@ -43,6 +50,7 @@ public class OperatorController {
         return new ResponseEntity<>(newOperator, headers, CREATED);
     }
 
+    @ApiOperation(value = "Update operator", authorizations = @Authorization(API_KEY))
     @RequestMapping(method = PUT, value = OPERATOR, produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<Operator> updateContact(@PathVariable(OPERATOR_ID) long operatorId,
                                                  @RequestBody Operator operator,

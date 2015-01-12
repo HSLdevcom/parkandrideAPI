@@ -1,4 +1,4 @@
-package fi.hsl.parkandride.front;
+package fi.hsl.parkandride.front.geojson;
 
 import java.util.Map;
 
@@ -11,6 +11,7 @@ public class Feature {
     public Geometry geometry;
 
     public Map<String, Object> properties;
+
 
     public Long getId() {
         return id;

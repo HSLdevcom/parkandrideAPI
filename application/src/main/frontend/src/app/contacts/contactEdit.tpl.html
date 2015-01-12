@@ -16,8 +16,10 @@
 				<label>{{"operators.label" | translate}}</label>
 			</div>
 			<div class="row">
-				<div class="first-2column">
-					<operator-select object="contact" mandatory="false"></operator-select>
+				<div class="column3 first-column">
+					<div class="form-group">
+						<operator-select object="contact" mandatory="false"></operator-select>
+					</div>
 				</div>
 			</div>
 
@@ -29,7 +31,7 @@
 			</div>
 
 			<div class="row">
-				<div class="first-3column">
+				<div class="column3 first-column">
 					<div class="form-group">
 						<label>{{ "contacts.phone.label" | translate }} (*)</label>
 						<div>
@@ -40,7 +42,7 @@
 			</div>
 
 			<div class="row">
-				<div class="first-3column">
+				<div class="column3 first-column">
 					<div class="form-group">
 						<label>{{ "contacts.email.label" | translate }} (*)</label>
 						<div>
@@ -73,7 +75,8 @@
 		<div class="row">
 			<div class="last-column">
 				<button id="wdContactCancel" class="btn btn-xs-secondary" ng-click="cancel()">{{ "common.action.cancel" | translate }}</button>
-				<button id="wdContactOk" class="btn btn-xs" ng-click="ok(editContactForm)">{{ "common.action.ok" | translate }}</button>
+				<button id="wdContactOk" class="btn btn-xs" ng-click="ok(editContactForm)"
+						ng-if="permit([CONTACT_CREATE, CONTACT_UPDATE], contact.operatorId)">{{ "common.action.ok" | translate }}</button>
 			</div>
 		</div>
 	</div>

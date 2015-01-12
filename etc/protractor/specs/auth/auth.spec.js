@@ -17,6 +17,7 @@ describe('authorization', function () {
     var username = 'testuser';
 
     beforeEach(function() {
+        devApi.resetAll();
         devApi.createLogin('ADMIN', username, password);
         indexPage.get();
         expect(indexPage.isDisplayed()).toBe(true);
@@ -46,8 +47,8 @@ describe('authorization', function () {
         it('should login and logout', function() {
             authModal.openLoginModal();
             authModal.login(username, password);
-
             authModal.waitUntilAbsent();
+
             expect(authModal.isDisplayed()).toBe(false);
             expect(authModal.isLogoutDisplayed()).toBe(true); // TODO: logout is not on auth modal
 
@@ -56,9 +57,19 @@ describe('authorization', function () {
         });
     });
 
-    it('should require login on submit', function() {
+    xit('should require login on submit', function() {
+        // XXX: Test this using a mock backend returning 401
+        // 1) operatorEditModal.save() is not shown if user is not logged in
+        // 2) if Session uses loginCache, we cannot logout without Angular noticing it
+        // 3) waiting for the session to actually expire would take too long
+
+        authModal.openLoginModal();
+        authModal.login(username, password);
+        authModal.waitUntilAbsent();
+
         operatorPage.get();
         operatorPage.openCreateModal();
+        devApi.logout();
         operatorEditModal.setName("smooth");
         operatorEditModal.save();
         expect(authModal.isDisplayed()).toBe(true);

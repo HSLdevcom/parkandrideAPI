@@ -8,11 +8,11 @@ import java.util.List;
 import org.geolatte.common.Feature;
 import org.geolatte.common.dataformats.json.jackson.JsonMapper;
 import org.geolatte.geom.Geometry;
-import org.springframework.beans.factory.BeanFactory;
+import org.geolatte.geom.Point;
+import org.geolatte.geom.Polygon;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.actuate.system.ApplicationPidListener;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.web.HttpMessageConverters;
 import org.springframework.boot.autoconfigure.web.WebMvcAutoConfiguration;
@@ -20,12 +20,10 @@ import org.springframework.boot.context.embedded.ConfigurableEmbeddedServletCont
 import org.springframework.boot.context.embedded.EmbeddedServletContainerCustomizer;
 import org.springframework.boot.context.embedded.FilterRegistrationBean;
 import org.springframework.boot.context.embedded.MimeMappings;
-import org.springframework.boot.context.event.ApplicationEnvironmentPreparedEvent;
-import org.springframework.context.ApplicationEvent;
-import org.springframework.context.annotation.*;
-import org.springframework.context.event.SmartApplicationListener;
-import org.springframework.core.Ordered;
-import org.springframework.core.env.ConfigurableEnvironment;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.Profile;
 import org.springframework.http.MediaType;
 import org.springframework.web.filter.CharacterEncodingFilter;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
@@ -36,17 +34,13 @@ import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import org.springframework.web.servlet.mvc.method.annotation.ExceptionHandlerExceptionResolver;
-import org.springframework.web.servlet.view.ContentNegotiatingViewResolver;
 
 import com.fasterxml.jackson.databind.Module;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.google.common.base.Preconditions;
 
-import fi.hsl.parkandride.config.SpringNameToSystemNameMapper;
+import fi.hsl.parkandride.config.SwaggerConfiguration;
 import fi.hsl.parkandride.core.domain.Phone;
-import fi.hsl.parkandride.dev.DevHelper;
 import fi.hsl.parkandride.front.Features;
 import fi.hsl.parkandride.front.GeojsonDeserializer;
 import fi.hsl.parkandride.front.GeojsonSerializer;
@@ -60,12 +54,11 @@ public class Application {
     public static void main(String[] args) {
         SpringApplication app = new SpringApplication(Application.class);
         app.addListeners(new ApplicationPidListener());
-        app.addListeners(new SpringNameToSystemNameMapper());
         app.run(args);
     }
 
     @Configuration
-    @Import({ WebMvcAutoConfiguration.class, DevUIConfig.class })
+    @Import({ WebMvcAutoConfiguration.class, SwaggerConfiguration.class, DevUIConfig.class })
     public static class UiConfig extends WebMvcAutoConfiguration.WebMvcAutoConfigurationAdapter implements EmbeddedServletContainerCustomizer {
 
         @Autowired
@@ -77,7 +70,12 @@ public class Application {
                 final JsonMapper jsonMapper = new JsonMapper();
 
                 addSerializer(Geometry.class, new GeojsonSerializer<>(jsonMapper));
+                addSerializer(Polygon.class, new GeojsonSerializer<>(jsonMapper));
+                addSerializer(Point.class, new GeojsonSerializer<>(jsonMapper));
+
                 addDeserializer(Geometry.class, new GeojsonDeserializer<>(jsonMapper, Geometry.class));
+                addDeserializer(Polygon.class, new GeojsonDeserializer<>(jsonMapper, Polygon.class));
+                addDeserializer(Point.class, new GeojsonDeserializer<>(jsonMapper, Point.class));
 
                 addSerializer(Feature.class, new GeojsonSerializer<>(jsonMapper));
                 addSerializer(Phone.class, new PhoneSerializer());

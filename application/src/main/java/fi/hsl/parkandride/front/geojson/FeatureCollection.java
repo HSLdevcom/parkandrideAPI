@@ -1,6 +1,6 @@
-package fi.hsl.parkandride.front;
+package fi.hsl.parkandride.front.geojson;
 
-import java.util.Collection;
+import java.util.List;
 
 import javax.annotation.Nullable;
 
@@ -56,9 +56,10 @@ public class FeatureCollection {
 
     public final boolean hasMore;
 
-    private final Collection<Feature> features;
+    private final List<Feature> features;
 
-    public FeatureCollection(Collection<Feature> features, boolean hasMore) {
+
+    public FeatureCollection(List<Feature> features, boolean hasMore) {
         this.hasMore = hasMore;
         this.features = features;
     }
@@ -72,7 +73,7 @@ public class FeatureCollection {
         return "FeatureCollection";
     }
 
-    public Collection<Feature> getFeatures() {
+    public List<Feature> getFeatures() {
         return features;
     }
 }

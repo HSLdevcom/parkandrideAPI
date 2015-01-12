@@ -42,7 +42,7 @@ describe('facility view', function () {
         });
     });
 
-    describe('with aliases, capacities and services', function () {
+    describe('with full data', function () {
         beforeEach(function () {
             f = toView(facFull);
         });
@@ -57,7 +57,10 @@ describe('facility view', function () {
             expect(viewPage.capacitiesTable.getCapacities(_.keys(f.capacities))).toEqual(f.capacities);
 
             expect(viewPage.isServicesDisplayed()).toBe(true);
-            expect(viewPage.getServices()).toEqual(["Katettu, Valaistus"]);
+            expect(viewPage.getServices()).toEqual("Katettu, Valaistus");
+
+            expect(viewPage.isPaymentInfoDisplayed()).toBe(true);
+            expect(viewPage.getPaymentMethods()).toEqual("Kolikko, Seteli");
         });
     });
 
@@ -115,6 +118,86 @@ describe('facility view', function () {
 
         it('services are not displayed', function () {
             expect(viewPage.isServicesDisplayed()).toBe(false);
+        });
+    });
+
+    describe('payment info', function () {
+        describe('without any info', function () {
+            beforeEach(function () {
+                f = facFull.copy();
+                f.paymentInfo = {};
+                toView(f);
+            });
+
+            it('payment info is not displayed', function () {
+                expect(viewPage.isPaymentInfoDisplayed()).toBe(false);
+            });
+        });
+
+        describe('with auth required', function () {
+            beforeEach(function () {
+                f = facFull.copy();
+                f.paymentInfo = {};
+                f.paymentInfo.parkAndRideAuthRequired = true;
+                toView(f);
+            });
+
+            it('payment info is displayed', function () {
+                expect(viewPage.isPaymentInfoDisplayed()).toBe(true);
+                expect(viewPage.isParkAndRideAuthRequired()).toBe(true);
+                expect(viewPage.isPaymentMethodsDisplayed()).toBe(false);
+                expect(viewPage.isPaymentInfoDetailsDisplayed()).toBe(false);
+            });
+        });
+
+        describe('with payment methods', function () {
+            beforeEach(function () {
+                f = facFull.copy();
+                f.paymentInfo = {};
+                f.paymentInfo.paymentMethodIds = facFull.copy().paymentInfo.paymentMethodIds;
+                toView(f);
+            });
+
+            it('payment info is displayed', function () {
+                expect(viewPage.isPaymentInfoDisplayed()).toBe(true);
+                expect(viewPage.isParkAndRideAuthRequired()).toBe(false);
+                expect(viewPage.getPaymentMethods()).toEqual("Kolikko, Seteli");
+                expect(viewPage.isPaymentInfoDetailsDisplayed()).toBe(false);
+            });
+        });
+
+        describe('with details', function () {
+            beforeEach(function () {
+                f = facFull.copy();
+                f.paymentInfo = {};
+                f.paymentInfo.detail = facFull.copy().paymentInfo.detail;
+                toView(f);
+            });
+
+            it('payment info is displayed', function () {
+                expect(viewPage.isPaymentInfoDisplayed()).toBe(true);
+                expect(viewPage.isParkAndRideAuthRequired()).toBe(false);
+                expect(viewPage.isPaymentMethodsDisplayed()).toBe(false);
+                expect(viewPage.isPaymentInfoDetailsDisplayed()).toBe(true);
+                expect(viewPage.getPaymentInfoDetail()).toEqual([f.paymentInfo.detail.fi, f.paymentInfo.detail.sv, f.paymentInfo.detail.en]);
+            });
+        });
+
+        describe('with url', function () {
+            beforeEach(function () {
+                f = facFull.copy();
+                f.paymentInfo = {};
+                f.paymentInfo.url = facFull.copy().paymentInfo.url;
+                toView(f);
+            });
+
+            it('payment info is displayed', function () {
+                expect(viewPage.isPaymentInfoDisplayed()).toBe(true);
+                expect(viewPage.isParkAndRideAuthRequired()).toBe(false);
+                expect(viewPage.isPaymentMethodsDisplayed()).toBe(false);
+                expect(viewPage.isPaymentInfoDetailsDisplayed()).toBe(true);
+                expect(viewPage.getPaymentInfoUrl()).toEqual([f.paymentInfo.url.fi, f.paymentInfo.url.sv, f.paymentInfo.url.en]);
+            });
         });
     });
 

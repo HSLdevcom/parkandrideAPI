@@ -7,8 +7,9 @@
 		</ui-select-choices>
 	</ui-select>
 	<span class="input-group-btn">
-		<button class="btn btn-default clearOperator" type="button" ng-click="object.operatorId = undefined"
+		<button class="btn btn-default clearOperator" ng-click="object.operatorId = undefined"
 				ng-show="!mandatory && object.operatorId">x</button>
-		<button class="btn btn-default createOperator" type="button" ng-click="createOperator()">+</button>
+		<button class="btn btn-default createOperator" ng-click="createOperator()"
+				ng-disabled="!$parent.permit($parent.OPERATOR_CREATE)">+</button>
 	</span>
 </div>

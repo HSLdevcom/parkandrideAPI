@@ -2,6 +2,7 @@
     "operators": {
         "title": "Operaattorit",
         "label": "Operaattori",
+        "select": "Valitse operaattori...",
         "action": {
             "new": "Lisää uusi operaattori",
             "edit": "Muokkaa operaattoria"
@@ -22,6 +23,7 @@
     "contacts": {
         "title": "Yhteystiedot",
         "label": "Yhteystieto",
+        "select": "Valitse yhteystieto...",
         "action": {
             "new": "Lisää uusi yhteystieto",
             "edit": "Muokkaa yhteystietoa"

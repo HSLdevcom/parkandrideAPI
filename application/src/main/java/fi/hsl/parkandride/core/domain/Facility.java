@@ -8,6 +8,9 @@ import javax.validation.constraints.NotNull;
 import org.geolatte.geom.Geometry;
 import org.geolatte.geom.Polygon;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import com.wordnik.swagger.annotations.ApiModelProperty;
 
 public class Facility implements OperatorEntity {
@@ -27,13 +30,14 @@ public class Facility implements OperatorEntity {
     @NotNull
     public Long operatorId;
 
+    public Map<CapacityType, Integer> builtCapacity = Maps.newHashMap();
+
+    @Valid
+    public SortedSet<Pricing> pricing = Sets.newTreeSet();
+
     @ElementNotBlank
     @ElementLength(min=0, max=255)
     public Set<String> aliases = new HashSet<>();
-
-    @ApiModelProperty("NOTE: Swagger definition is broken... but this modeling is already deprecated")
-    @Valid
-    public Map<CapacityType, Capacity> capacities = new HashMap<>();
 
     @Valid
     public List<Port> ports = new ArrayList<>();
@@ -62,10 +66,6 @@ public class Facility implements OperatorEntity {
 
     public Set<String> getAliases() {
         return aliases;
-    }
-
-    public Map<CapacityType, Capacity> getCapacities() {
-        return capacities;
     }
 
     public List<Port> getPorts() {

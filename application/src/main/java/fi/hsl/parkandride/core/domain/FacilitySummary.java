@@ -6,9 +6,9 @@ public class FacilitySummary {
 
     public final long facilityCount;
 
-    public final Map<CapacityType, Capacity> capacities;
+    public final Map<CapacityType, Integer> capacities;
 
-    public FacilitySummary(long facilityCount, Map<CapacityType, Capacity> capacities) {
+    public FacilitySummary(long facilityCount, Map<CapacityType, Integer> capacities) {
         this.facilityCount = facilityCount;
         this.capacities = capacities;
     }
@@ -17,7 +17,7 @@ public class FacilitySummary {
         return facilityCount;
     }
 
-    public Map<CapacityType, Capacity> getCapacities() {
+    public Map<CapacityType, Integer> getCapacities() {
         return capacities;
     }
 

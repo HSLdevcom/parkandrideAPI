@@ -2,6 +2,7 @@
     "operators": {
         "title": "Operaattorit",
         "label": "Operaattori",
+        "select": "Valitse operaattori...",
         "action": {
             "new": "Lisää uusi operaattori",
             "edit": "Muokkaa operaattoria"
@@ -22,6 +23,7 @@
     "contacts": {
         "title": "Yhteystiedot",
         "label": "Yhteystieto",
+        "select": "Valitse yhteystieto...",
         "action": {
             "new": "Lisää uusi yhteystieto",
             "edit": "Muokkaa yhteystietoa"
@@ -103,6 +105,23 @@
                     "label": "Kaupunki (en)"
                 }
             }
+        }
+    },
+    "capacity-types": {
+        "CAR": {
+            "label": "Henkilöauto"
+        },
+        "BICYCLE": {
+            "label": "Polkupyörä"
+        },
+        "DISABLED": {
+            "label": "Invapaikka"
+        },
+        "MOTORCYCLE": {
+            "label": "Moottoripyörä"
+        },
+        "ELECTRIC_CAR": {
+            "label": "Sähköauto"
         }
     },
     "facilities": {
@@ -221,60 +240,21 @@
             "built": "Rakennettu kapasiteetti",
             "unavailable": "Tilapäisesti poissa käytöstä"
         },
-        "capacities": {
+        "builtCapacity": {
             "CAR": {
-                "built":  {
-                    "label": "Henkilöauto, rakennettu kapasiteetti"
-                },
-                "unavailable": {
-                    "label": "Henkilöauto, tilapäisesti poissa käytöstä"
-                },
-                "label": "Henkilöauto"
-            },
-            "PARK_AND_RIDE": {
-                "built":  {
-                    "label": "Liityntäpysäköinti, rakennettu kapasiteetti"
-                },
-                "unavailable": {
-                    "label": "Liityntäpysäköinti, tilapäisesti poissa käytöstä"
-                },
-                "label": "Liityntäpysäköinti"
+                "label": "Henkilöauto, rakennettu kapasiteetti"
             },
             "BICYCLE": {
-                "built":  {
-                    "label": "Polkupyörä, rakennettu kapasiteetti"
-                },
-                "unavailable": {
-                    "label": "Polkupyörä, tilapäisesti poissa käytöstä"
-                },
-                "label": "Polkupyörä"
+                "label": "Polkupyörä, rakennettu kapasiteetti"
             },
             "DISABLED": {
-                "built":  {
-                    "label": "Invapaikka, rakennettu kapasiteetti"
-                },
-                "unavailable": {
-                    "label": "Invapaikka, tilapäisesti poissa käytöstä"
-                },
-                "label": "Invapaikka"
+                "label": "Invapaikka, rakennettu kapasiteetti"
             },
             "MOTORCYCLE": {
-                "built":  {
-                    "label": "Moottoripyörä, rakennettu kapasiteetti"
-                },
-                "unavailable": {
-                    "label": "Moottoripyörä, tilapäisesti poissa käytöstä"
-                },
-                "label": "Moottoripyörä"
+                "label": "Moottoripyörä, rakennettu kapasiteetti"
             },
             "ELECTRIC_CAR": {
-                "built":  {
-                    "label": "Sähköauto, rakennettu kapasiteetti"
-                },
-                "unavailable": {
-                    "label": "Sähköauto, tilapäisesti poissa käytöstä"
-                },
-                "label": "Sähköauto"
+                "label": "Sähköauto, rakennettu kapasiteetti"
             }
         },
         "contacts": {

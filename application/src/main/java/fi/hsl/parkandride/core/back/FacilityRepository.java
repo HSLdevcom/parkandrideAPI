@@ -3,6 +3,7 @@ package fi.hsl.parkandride.core.back;
 import java.util.List;
 
 import fi.hsl.parkandride.core.domain.*;
+import fi.hsl.parkandride.core.service.TransactionalRead;
 
 public interface FacilityRepository {
 

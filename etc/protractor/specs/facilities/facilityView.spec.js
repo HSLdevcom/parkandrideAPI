@@ -216,7 +216,7 @@ describe('facility view', function () {
     describe('without capacities', function () {
         beforeEach(function () {
             f = facFull.copy();
-            f.capacities = {};
+            f.builtCapacity = {};
             toView(f);
         });
 

@@ -7,7 +7,7 @@
 
         function cleanupCapacities(capacities) {
             for (var capacityType in capacities) {
-                if (!(capacities[capacityType] &&  capacities[capacityType].built && capacities[capacityType].built >= 1)) {
+                if (!capacities[capacityType]) {
                     delete capacities[capacityType];
                 }
             }
@@ -75,7 +75,7 @@
         };
 
         api.save = function(facility) {
-            cleanupCapacities(facility.capacities);
+            cleanupCapacities(facility.builtCapacity);
             cleanupPorts(facility.ports);
             if (facility.id) {
                 return $http.put("api/v1/facilities/" + facility.id, facility).then(function(response){

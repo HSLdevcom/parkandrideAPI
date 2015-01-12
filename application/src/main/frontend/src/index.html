@@ -26,10 +26,10 @@
 		<div class="page-header navbar-static-top" role="navigation">
 			<div class="container">
 				<div class="row">
-					<div class="col-lg-4 col-md-5 col-sm-5 col-xs-12 first-column">
+					<div class="logo-column first-column">
 						<img class="img-responsive logo" src="assets/hsl-liipi-logo2.png" alt="{{ 'header.logodesc' | translate }}">
 					</div>
-					<div class="col-lg-6 col-md-5 col-sm-4 col-xs-8 navi-col">
+					<div class="navi-col">
 						<tabset>
 							<tab heading="{{ 'hubs.title' | translate }}" ui-sref="hub-list" ui-sref-active="active"></tab>
 							<tab heading="{{ 'contacts.title' | translate }}" ui-sref="contact-list" ui-sref-active="active"></tab>
@@ -37,7 +37,7 @@
 							<tab heading="Dev" ui-sref="dev-page" ui-sref-active="active"></tab>
 						</tabset>
 					</div>
-					<div class="col-lg-2 col-md-2 col-sm-3 col-xs-4 logout last-column">
+					<div class="logout last-column">
 						<div class="pull-right">
 							<button id="openLoginPrompt" class="link-btn" ng-click="appCtrl.openLoginPrompt()"
 									ng-if="!appCtrl.isUserLoggedIn()">Kirjaudu sisään</button>

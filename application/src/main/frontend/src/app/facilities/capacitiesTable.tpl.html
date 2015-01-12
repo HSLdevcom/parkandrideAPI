@@ -8,7 +8,7 @@
 		</thead>
 		<tbody>
 		<tr ng-repeat="capacityType in capacityTypes | filter:hasCapacity">
-			<td class="wdCapacityType">{{'facilities.capacities.' + capacityType + '.label' | translate}}</td>
+			<td class="wdCapacityType">{{'capacity-types.' + capacityType + '.label' | translate}}</td>
 			<td class="wdBuiltCapacity{{capacityType}}">
 				{{capacities[capacityType]}}
 			</td>

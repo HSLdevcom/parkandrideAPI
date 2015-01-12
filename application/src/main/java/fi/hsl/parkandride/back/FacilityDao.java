@@ -33,6 +33,7 @@ import com.mysema.query.sql.postgres.PostgresQueryFactory;
 import com.mysema.query.types.MappingProjection;
 import com.mysema.query.types.expr.ComparableExpression;
 import com.mysema.query.types.expr.SimpleExpression;
+import com.mysema.query.types.path.NumberPath;
 
 import fi.hsl.parkandride.back.sql.*;
 import fi.hsl.parkandride.core.back.FacilityRepository;
@@ -115,11 +116,13 @@ public class FacilityDao implements FacilityRepository {
 
     private static final MultilingualStringMapping paymentInfoDetailMapping =
             new MultilingualStringMapping(qFacility.paymentInfoDetailFi, qFacility.paymentInfoDetailSv, qFacility.paymentInfoDetailEn);
+
     private static final MultilingualStringMapping paymentInfoUrlMapping =
             new MultilingualStringMapping(qFacility.paymentInfoUrlFi, qFacility.paymentInfoUrlSv, qFacility.paymentInfoUrlEn);
 
+    private static final MultilingualStringMapping nameMapping = new MultilingualStringMapping(qFacility.nameFi, qFacility.nameSv, qFacility.nameEn);
+
     private static final MappingProjection<Facility> facilityMapping = new MappingProjection<Facility>(Facility.class, qFacility.all()) {
-        private final MultilingualStringMapping nameMapping = new MultilingualStringMapping(qFacility.nameFi, qFacility.nameSv, qFacility.nameEn);
         @Override
         protected Facility map(Tuple row) {
             Long id = row.get(qFacility.id);
@@ -594,27 +597,35 @@ public class FacilityDao implements FacilityRepository {
     }
 
     private void populate(Facility facility, StoreClause store) {
-        store.set(qFacility.nameFi, facility.name.fi);
-        store.set(qFacility.nameSv, facility.name.sv);
-        store.set(qFacility.nameEn, facility.name.en);
+        nameMapping.populate(facility.name, store);
         store.set(qFacility.location, facility.location);
         store.set(qFacility.operatorId, facility.operatorId);
 
-        FacilityContacts contacts = facility.contacts;
+        FacilityContacts contacts = facility.contacts != null ? facility.contacts : new FacilityContacts();
         store.set(qFacility.emergencyContactId, contacts.emergency);
         store.set(qFacility.operatorContactId, contacts.operator);
         store.set(qFacility.serviceContactId, contacts.service);
 
-        store.set(qFacility.capacityCar, facility.builtCapacity.get(CAR));
-        store.set(qFacility.capacityDisabled, facility.builtCapacity.get(DISABLED));
-        store.set(qFacility.capacityElectricCar, facility.builtCapacity.get(ELECTRIC_CAR));
-        store.set(qFacility.capacityMotorcycle, facility.builtCapacity.get(MOTORCYCLE));
-        store.set(qFacility.capacityBicycle, facility.builtCapacity.get(BICYCLE));
+
+        Map<CapacityType, Integer> builtCapacity = facility.builtCapacity != null ? facility.builtCapacity : ImmutableMap.of();
+        populateCapacity(qFacility.capacityCar, builtCapacity.get(CAR), store);
+        populateCapacity(qFacility.capacityDisabled, builtCapacity.get(DISABLED), store);
+        populateCapacity(qFacility.capacityElectricCar, builtCapacity.get(ELECTRIC_CAR), store);
+        populateCapacity(qFacility.capacityMotorcycle, builtCapacity.get(MOTORCYCLE), store);
+        populateCapacity(qFacility.capacityBicycle, builtCapacity.get(BICYCLE), store);
 
         FacilityPaymentInfo paymentInfo = facility.paymentInfo;
         store.set(qFacility.parkAndRideAuthRequired, paymentInfo.parkAndRideAuthRequired);
         paymentInfoDetailMapping.populate(paymentInfo.detail, store);
         paymentInfoUrlMapping.populate(paymentInfo.url, store);
+    }
+
+    private void populateCapacity(NumberPath<Integer> path, Integer value, StoreClause store) {
+        if (value == null || value.intValue() < 1) {
+            store.setNull(path);
+        } else {
+            store.set(path, value);
+        }
     }
 
     private SQLInsertClause insertFacility() {

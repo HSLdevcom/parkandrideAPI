@@ -112,6 +112,10 @@
 
     m.run(function($rootScope, $state) {
         $rootScope.$state = $state;
+
+        $rootScope.$on("$stateChangeSuccess", function () {
+            window.scrollTo(0, 0);
+        });
     });
 
     m.controller('AppCtrl', function AppCtrl($rootScope, $location, loginPrompt, Session, EVENTS, Permission, permit) {

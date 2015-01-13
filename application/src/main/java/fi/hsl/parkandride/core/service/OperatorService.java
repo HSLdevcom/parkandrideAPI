@@ -35,6 +35,7 @@ public class OperatorService {
 
     @TransactionalWrite
     public Operator updateOperator(long operatorId, Operator operator, User currentUser) {
+        operator.id = operatorId;
         authorize(currentUser, operator, OPERATOR_UPDATE);
 
         validationService.validate(operator);

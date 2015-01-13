@@ -10,6 +10,8 @@ public interface ContactRepository {
 
     Contact getContact(long contactId);
 
+    Contact getContactForUpdate(long contactId);
+
     void updateContact(long contactId, Contact contact);
 
     SearchResults<Contact> findContacts(ContactSearch search);

@@ -86,7 +86,21 @@ public class ContactDao implements ContactRepository {
     @Override
     @TransactionalRead
     public Contact getContact(long contactId) {
-        return queryFactory.from(qContact).where(qContact.id.eq(contactId)).singleResult(contactMapping);
+        return getContact(contactId, false);
+    }
+
+    @Override
+    @TransactionalRead
+    public Contact getContactForUpdate(long contactId) {
+        return getContact(contactId, true);
+    }
+
+    private Contact getContact(long contactId, boolean forUpdate) {
+        PostgresQuery qry = queryFactory.from(qContact).where(qContact.id.eq(contactId));
+        if (forUpdate) {
+            qry.forUpdate();
+        }
+        return qry.singleResult(contactMapping);
     }
 
     @Override

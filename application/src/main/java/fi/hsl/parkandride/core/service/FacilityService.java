@@ -45,6 +45,8 @@ public class FacilityService {
         validate(facility);
 
         Facility oldFacility = repository.getFacilityForUpdate(facilityId);
+        authorize(currentUser, oldFacility, FACILITY_UPDATE);
+
         repository.updateFacility(facilityId, facility, oldFacility);
         facility.id = facilityId;
         return facility;

@@ -98,6 +98,7 @@ public class DevHelper {
         login.token = authenticationService.token(userSecret.user);
         login.username = userSecret.user.username;
         login.role = userSecret.user.role;
+        login.operatorId = userSecret.user.operatorId;
         login.permissions = login.role.permissions;
         return login;
     }

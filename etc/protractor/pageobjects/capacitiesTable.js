@@ -27,17 +27,11 @@ module.exports = function (spec) {
     };
 
     that.getBuilt = function(type) {
-        return spec.getTypeProperty(type, 'built');
-    };
-
-    that.getUnavailable = function(type) {
-        return spec.getTypeProperty(type, 'unavailable');
+        return $('.wdCapacityType' + type);
     };
 
     that.getCapacity = function (type) {
-        var p1 = that.getBuilt(type).then(function (value) { return spec.parseInt(value); });
-        var p2 = that.getUnavailable(type).then(function (value) { return spec.parseInt(value); });
-        return protractor.promise.all([p1, p2]).then(function (value) { return  {built: value[0], unavailable: value[1]} });
+        return that.getBuilt(type).then(function (value) { return spec.parseInt(value); });
     };
 
     that.getCapacities = function(types) {

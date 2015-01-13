@@ -8,7 +8,7 @@
 				<!-- Unattached facilities -->
 				<tr ng-repeat="facility in hubsCtrl.getUnattachedFacilities()" class="facilityRow wdFacility{{facility.id}}">
 					<td class="wdNameFi"><a ui-sref="facility-view({id: facility.id})">{{facility.name.fi}}</a></td>
-					<td><capacities-list capacities="facility.capacities"></capacities-list></td>
+					<td><capacities-list capacities="facility.builtCapacity"></capacities-list></td>
 				</tr>
 				<!-- Facilities by hubs -->
 				<tr ng-repeat-start="hub in hubsCtrl.hubs" class="hubRow wdHub{{hub.id}}">
@@ -17,7 +17,7 @@
 				<tr ng-repeat="facility in hubsCtrl.getFacilities(hub) | orderBy:'_index'" class="facilityRow wdFacility{{facility.id}}"
 					ng-repeat-end>
 					<td class="wdNameFi"><a ui-sref="facility-view({id: facility.id})">{{facility.name.fi}}</a></td>
-					<td><capacities-list capacities="facility.capacities"></capacities-list></td>
+					<td><capacities-list capacities="facility.builtCapacity"></capacities-list></td>
 				</tr>
 				</tbody>
 			</table>

@@ -13,9 +13,7 @@
             ]
         ]
     },
-    "capacities": {
-        "CAR": {
-            "built": "abc"
-        }
+    "builtCapacity": {
+        "CAR": "abc"
     }
 }

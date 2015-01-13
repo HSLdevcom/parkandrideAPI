@@ -32,7 +32,7 @@
             link: function(scope) {
                 scope.capacitiesList = [];
                 _.forEach(schema.capacityTypes, function(type) {
-                    if (scope.capacities && scope.capacities[type] && scope.capacities[type].built) {
+                    if (scope.capacities && scope.capacities[type]) {
                         scope.capacitiesList.push(_.extend({capacityType: type}, scope.capacities[type]));
                     }
                 });

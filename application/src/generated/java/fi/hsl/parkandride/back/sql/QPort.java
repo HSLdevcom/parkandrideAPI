@@ -61,7 +61,7 @@ public class QPort extends RelationalPathSpatial<QPort> {
 
     public final StringPath streetAddressSv = createString("streetAddressSv");
 
-    public final com.mysema.query.sql.PrimaryKey<QPort> constraint25 = createPrimaryKey(facilityId, portIndex);
+    public final com.mysema.query.sql.PrimaryKey<QPort> constraint2 = createPrimaryKey(facilityId, portIndex);
 
     public final com.mysema.query.sql.ForeignKey<QFacility> portFacilityIdFk = createForeignKey(facilityId, "ID");
 

@@ -151,7 +151,7 @@ public class FacilityStatusITest extends AbstractIntegrationTest {
         spacesAndStatus.timestamp = now.minusSeconds(20);
         spacesAndStatus.spacesAvailable = 2;
         spacesAndStatus.status = FacilityStatusEnum.SPACES_AVAILABLE;
-        spacesAndStatus.capacityType = CapacityType.PARK_AND_RIDE;
+        spacesAndStatus.capacityType = CapacityType.ELECTRIC_CAR;
 
         List<FacilityStatus> payload = Lists.newArrayList(spacesOnly, statusOnly, spacesAndStatus);
 

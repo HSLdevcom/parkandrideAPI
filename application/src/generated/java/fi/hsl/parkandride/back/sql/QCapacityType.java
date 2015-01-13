@@ -31,9 +31,9 @@ public class QCapacityType extends RelationalPathSpatial<QCapacityType> {
 
     public final com.mysema.query.sql.PrimaryKey<QCapacityType> constraint5 = createPrimaryKey(name);
 
-    public final com.mysema.query.sql.ForeignKey<QFacilityStatus> _facilityStatusCapacityTypeFk = createInvForeignKey(name, "CAPACITY_TYPE");
+    public final com.mysema.query.sql.ForeignKey<QPricing> _pricingCapacityTypeFk = createInvForeignKey(name, "CAPACITY_TYPE");
 
-    public final com.mysema.query.sql.ForeignKey<QCapacity> _capacityCapacityTypeFk = createInvForeignKey(name, "CAPACITY_TYPE");
+    public final com.mysema.query.sql.ForeignKey<QFacilityStatus> _facilityStatusCapacityTypeFk = createInvForeignKey(name, "CAPACITY_TYPE");
 
     public QCapacityType(String variable) {
         super(QCapacityType.class, forVariable(variable), "PUBLIC", "CAPACITY_TYPE");

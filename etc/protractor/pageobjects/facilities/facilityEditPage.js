@@ -177,9 +177,7 @@ module.exports = function(spec) {
     that.setCapacities = function (capacities, doBlur) {
         for (var capacityType in capacities) {
             var capacity = capacities[capacityType];
-            for (var prop in capacity) {
-                $("input[name='" + capacityType + prop + "']").sendKeys(capacity[prop]);
-            }
+            $("input[name='builtCapacity" + capacityType + "']").sendKeys(capacity);
         }
 
         if (doBlur) {

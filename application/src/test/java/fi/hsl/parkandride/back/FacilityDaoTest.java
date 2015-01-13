@@ -1,10 +1,13 @@
 package fi.hsl.parkandride.back;
 
-import static fi.hsl.parkandride.core.domain.CapacityType.BICYCLE;
 import static fi.hsl.parkandride.core.domain.CapacityType.CAR;
-import static fi.hsl.parkandride.core.domain.CapacityType.PARK_AND_RIDE;
+import static fi.hsl.parkandride.core.domain.CapacityType.BICYCLE;
+import static fi.hsl.parkandride.core.domain.CapacityType.ELECTRIC_CAR;
+import static fi.hsl.parkandride.core.domain.DayType.BUSINESS_DAY;
 import static fi.hsl.parkandride.core.domain.Sort.Dir.ASC;
 import static fi.hsl.parkandride.core.domain.Sort.Dir.DESC;
+import static fi.hsl.parkandride.core.domain.Usage.COMMERCIAL;
+import static fi.hsl.parkandride.core.domain.Usage.PARK_AND_RIDE;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
@@ -23,6 +26,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSortedSet;
+import com.google.common.collect.Sets;
 
 import fi.hsl.parkandride.core.back.ContactRepository;
 import fi.hsl.parkandride.core.back.FacilityRepository;
@@ -61,10 +65,16 @@ public class FacilityDaoTest extends AbstractDaoTest {
 
     public static final List<Port> PORTS = ImmutableList.of(new Port(PORT_LOCATION1, true, false, true, false, "street", "00100", "city", "info"));
 
-    public static final Map<CapacityType, Capacity> CAPACITIES = ImmutableMap.of(CAR, new Capacity(100, 1), BICYCLE, new Capacity(10, 0));
-
     public static final Set<Long> SERVICES = ImmutableSet.of(1l, 2l, 3l);
 
+    public static final Pricing PRICING1 = new Pricing(PARK_AND_RIDE, CAR, 50, BUSINESS_DAY, "8", "18", "2 EUR/H");
+
+    public static final Pricing PRICING2 = new Pricing(PARK_AND_RIDE, CAR, 50, BUSINESS_DAY, "18", "24", "1 EUR/H");
+
+    public static final Map<CapacityType, Integer> BUILT_CAPACITY = ImmutableMap.of(
+            CAR, 50,
+            ELECTRIC_CAR, 2
+    );
 
     @Inject
     ContactRepository contactDao;
@@ -106,27 +116,26 @@ public class FacilityDaoTest extends AbstractDaoTest {
         // Update
         final MultilingualString newName = new MultilingualString("changed name");
         final SortedSet<String> newAliases = ImmutableSortedSet.of("clias");
-        final Map<CapacityType, Capacity> newCapacities = ImmutableMap.of(CAR, new Capacity(100, 50), PARK_AND_RIDE, new Capacity(5, 0));
         final List<Port> newPorts = ImmutableList.of(new Port(PORT_LOCATION2, true, true, true, true), new Port(PORT_LOCATION1, false, false, false, false));
         final Set<Long> newServices = ImmutableSet.of(4l);
+        final SortedSet<Pricing> newPricing = ImmutableSortedSet.of(new Pricing(COMMERCIAL, CAR, 50, BUSINESS_DAY, "8", "18", "10 EUR/H"));
 
         facility.name = newName;
         facility.aliases = newAliases;
-        facility.capacities = newCapacities;
         facility.ports = newPorts;
         facility.serviceIds = newServices;
+        facility.pricing = newPricing;
 
         facilityDao.updateFacility(id, facility);
         facility = facilityDao.getFacility(id);
         assertThat(facility.name).isEqualTo(newName);
         assertThat(facility.aliases).isEqualTo(newAliases);
-        assertThat(facility.capacities).isEqualTo(newCapacities);
         assertThat(facility.ports).isEqualTo(newPorts);
         assertThat(facility.serviceIds).isEqualTo(newServices);
+        assertThat(facility.pricing).isEqualTo(newPricing);
 
         // Remove aliases, capacities and ports
         facility.aliases = null;
-        facility.capacities = null;
         facility.ports = null;
         facility.serviceIds = null;
         facility.contacts.service = null;
@@ -136,7 +145,6 @@ public class FacilityDaoTest extends AbstractDaoTest {
         List<Facility> facilities = findByGeometry(OVERLAPPING_AREA);
         assertThat(facilities).hasSize(1);
         assertThat(facilities.get(0).aliases).isEmpty();
-        assertThat(facilities.get(0).capacities).isEmpty();
         assertThat(facilities.get(0).ports).isEmpty();
         assertThat(facilities.get(0).serviceIds).isEmpty();
         assertThat(facilities.get(0).contacts).isNotNull();
@@ -163,9 +171,10 @@ public class FacilityDaoTest extends AbstractDaoTest {
         assertThat(facility.location).isEqualTo(LOCATION);
         assertThat(facility.name).isEqualTo(NAME);
         assertThat(facility.aliases).isEqualTo(ALIASES);
-        assertThat(facility.capacities).isEqualTo(CAPACITIES);
         assertThat(facility.ports).isEqualTo(PORTS);
         assertThat(facility.serviceIds).isEqualTo(SERVICES);
+        assertThat(facility.builtCapacity).isEqualTo(BUILT_CAPACITY);
+        assertThat(facility.pricing).isEqualTo(ImmutableSortedSet.of(PRICING1, PRICING2));
     }
 
     private List<Facility> findByGeometry(Polygon geometry) {
@@ -181,20 +190,15 @@ public class FacilityDaoTest extends AbstractDaoTest {
         facility.location = LOCATION;
         facility.operatorId = operatorId;
         facility.aliases = ALIASES;
-        facility.capacities = CAPACITIES;
         facility.ports = PORTS;
         facility.serviceIds = SERVICES;
         facility.contacts = dummyContacts;
-        return facility;
-    }
 
-    @Test
-    public void summary_with_no_capacities() {
-        Facility facility = createFacility();
-        facility.capacities = ImmutableMap.of();
-        facilityDao.insertFacility(facility);
-        FacilitySummary summary = facilityDao.summarizeFacilities(new SpatialSearch());
-        assertThat(summary.capacities).isEmpty();
+        facility.builtCapacity = BUILT_CAPACITY;
+        facility.pricing.add(PRICING1);
+        facility.pricing.add(PRICING2);
+
+        return facility;
     }
 
     @Test
@@ -252,17 +256,5 @@ public class FacilityDaoTest extends AbstractDaoTest {
     @Test(expected = NotFoundException.class)
     public void update_throws_an_exception_if_not_found() {
         facilityDao.updateFacility(0, createFacility());
-    }
-
-    @Test
-    public void summarize_facilities() {
-        facilityDao.insertFacility(createFacility());
-        facilityDao.insertFacility(createFacility());
-        FacilitySummary summary = facilityDao.summarizeFacilities(new SpatialSearch()); // all
-
-        assertThat(summary.facilityCount).isEqualTo(2);
-        assertThat(summary.capacities).hasSize(2);
-        assertThat(summary.capacities.get(CAR)).isEqualTo(new Capacity(200, 2));
-        assertThat(summary.capacities.get(BICYCLE)).isEqualTo(new Capacity(20, 0));
     }
 }

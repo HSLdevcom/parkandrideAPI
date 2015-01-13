@@ -1,0 +1,60 @@
+<td>
+	<ui-select ng-model="pricing.capacityType" theme="bootstrap" reset-search-input="true">
+		<ui-select-match placeholder="{{'facilities.pricing.capacityTypePlaceholder' | translate }}">
+			{{'capacity-types.' + $select.selected + '.label' | translate}}
+		</ui-select-match>
+		<ui-select-choices repeat="capacityType in capacityTypes">
+			<div ng-bind-html="'capacity-types.' + capacityType + '.label' | translate"></div>
+		</ui-select-choices>
+	</ui-select>
+</td>
+<td>
+	<ui-select ng-model="pricing.usage" theme="bootstrap" reset-search-input="true">
+		<ui-select-match placeholder="{{'facilities.pricing.usagePlaceholder' | translate }}">
+			{{'usages.' + $select.selected + '.label' | translate}}
+		</ui-select-match>
+		<ui-select-choices repeat="usage in usages">
+			<div ng-bind-html="'usages.' + usage + '.label' | translate"></div>
+		</ui-select-choices>
+	</ui-select>
+</td>
+<td>
+	<input name="pricingMaxCapacity" type="number" class="form-control" ng-required
+		   ng-model="pricing.maxCapacity" min="1" show-errors>
+</td>
+
+<td>
+	<ui-select ng-model="pricing.dayType" theme="bootstrap" reset-search-input="true">
+		<ui-select-match placeholder="{{'facilities.pricing.dayTypePlaceholder' | translate }}">
+			{{'day-types.' + $select.selected + '.label' | translate}}
+		</ui-select-match>
+		<ui-select-choices repeat="dayType in dayTypes">
+			<div ng-bind-html="'day-types.' + dayType + '.label' | translate"></div>
+		</ui-select-choices>
+	</ui-select>
+</td>
+<td>
+	<input type="checkbox" class="checkbox" ng-model="h24" />
+</td>
+<td>
+	<input name="pricingFrom" type="text" class="form-control" maxlength="5" ng-required
+		   ng-model="pricing.from" ng-pattern="/^\d?\d(?::\d\d)?$/" show-errors>
+</td>
+<td>
+	<input name="pricingUntil" type="text" class="form-control" maxlength="5" ng-required
+		   ng-model="pricing.until" ng-pattern="/^\d?\d(?::\d\d)?$/" show-errors>
+</td>
+
+<td>
+	<input type="checkbox" class="checkbox" ng-model="free" />
+</td>
+<td>
+	<input name="pricingPriceFi" type="text" class="form-control" ng-model="pricing.price.fi" show-errors>
+</td>
+<td>
+	<input name="pricingPriceSv" type="text" class="form-control" ng-model="pricing.price.sv" show-errors>
+</td>
+<td>
+	<input name="pricingPriceEn" type="text" class="form-control" ng-model="pricing.price.en" show-errors>
+</td>
+

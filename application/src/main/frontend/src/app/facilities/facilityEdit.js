@@ -11,6 +11,7 @@
         'parkandride.layout',
         'parkandride.multilingual',
         'parkandride.facilityContacts',
+        'parkandride.pricingEdit',
         'parkandride.tags',
         'parkandride.address',
         'showErrors'
@@ -75,6 +76,8 @@
         var self = this;
         $scope.common.translationPrefix = "facilities";
         self.capacityTypes = schema.capacityTypes;
+        self.usages = schema.usages;
+        self.dayTypes = schema.dayTypes;
         self.services = services;
         self.paymentMethods = paymentMethods;
         self.aliasesPlaceholder = aliasesPlaceholder;
@@ -86,6 +89,8 @@
         }
 
         self.editMode = (facility.id ? "ports" : "location");
+
+        self.newPricing = {};
 
         self.saveFacility = function() {
             var facility = _.cloneDeep(self.facility);

@@ -107,6 +107,31 @@
             }
         }
     },
+    "usages": {
+        "PARK_AND_RIDE": {
+            "label": "Liityntä"
+        },
+        "COMMERCIAL": {
+            "label": "Kaupallinen"
+        }
+    },
+    "day-types": {
+        "BUSINESS_DAY": {
+            "label": "Arkipäivä"
+        },
+        "SATURDAY": {
+            "label": "Lauantai"
+        },
+        "SUNDAY": {
+            "label": "Sunnuntai"
+        },
+        "HOLIDAY": {
+            "label": "Arkipyhä"
+        },
+        "EVE": {
+            "label": "Aatto"
+        }
+    },
     "capacity-types": {
         "CAR": {
             "label": "Henkilöauto"
@@ -255,6 +280,24 @@
             },
             "ELECTRIC_CAR": {
                 "label": "Sähköauto, rakennettu kapasiteetti"
+            }
+        },
+        "pricing": {
+            "capacityTypePlaceholder": "Valitse...",
+            "capacityType": "Tyyppi",
+            "usagePlaceholder": "Valitse...",
+            "usage": "Käyttö",
+            "maxCapacity": "Maksimi",
+            "dayTypePlaceholder": "Valitse...",
+            "dayType": "Päivätyyppi",
+            "h24": "24h",
+            "from": "Alku",
+            "until": "Loppu",
+            "free": "0€",
+            "price": {
+                "fi": "Hinta fi",
+                "sv": "Hinta sv",
+                "en": "Hinta en"
             }
         },
         "contacts": {

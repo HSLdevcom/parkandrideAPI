@@ -55,7 +55,8 @@
                     create: function() {
                         return create;
                     }
-                }
+                },
+                backdrop: 'static'
             });
             return modalInstance.result;
         };

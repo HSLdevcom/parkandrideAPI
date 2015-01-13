@@ -240,7 +240,7 @@ describe('edit facility view', function () {
             // TODO: other expectations & modifications
 
             editPage.clearServiceContact();
-            expect(editPage.getServiceContact()).toBe("Valitse kontakti...");
+            expect(editPage.getServiceContact()).toBe("Valitse yhteystieto...");
 
             editPage.save();
             expect(viewPage.isDisplayed()).toBe(true);

@@ -70,7 +70,7 @@
 
     m.config(function($stateProvider) {
         $stateProvider.state('contact-list', {
-            parent: 'root',
+            parent: 'contactstab',
             url: '/contacts',
             views: {
                 "main": {

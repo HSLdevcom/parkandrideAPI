@@ -63,7 +63,7 @@
 
     m.config(function($stateProvider) {
         $stateProvider.state('operator-list', {
-            parent: 'root',
+            parent: 'operatorstab',
             url: '/operators',
             views: {
                 "main": {

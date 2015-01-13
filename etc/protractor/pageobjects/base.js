@@ -38,6 +38,10 @@ module.exports = function(spec) {
         );
     };
 
+    spec.parent = function(element) {
+        return element.element(by.xpath('..'));
+    };
+
     var that = {};
 
     function capitaliseFirstLetter(string) {

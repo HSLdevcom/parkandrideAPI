@@ -11,7 +11,7 @@
 
     m.config(function config($stateProvider) {
             $stateProvider.state('hub-list', {
-                parent: 'root',
+                parent: 'hubstab',
                 url: '/hubs',
                 views: {
                     "main": {

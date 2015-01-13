@@ -39,3 +39,7 @@ a:hover {
 a:focus {
   outline: none;
 }
+
+.nav > li > a:focus {
+  background-color: $primarycolor;
+}

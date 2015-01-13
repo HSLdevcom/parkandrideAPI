@@ -50,6 +50,29 @@
             }
         });
 
+        $stateProvider.state('hubstab', {
+            abstract: true,
+            parent: 'root',
+            views: { "main": { template: '<div ui-view="main"></div>' } }
+        });
+        $stateProvider.state('contactstab', {
+            abstract: true,
+            parent: 'root',
+            views: { "main": { template: '<div ui-view="main"></div>' } }
+        });
+
+        $stateProvider.state('operatorstab', {
+            abstract: true,
+            parent: 'root',
+            views: { "main": { template: '<div ui-view="main"></div>' } }
+        });
+
+        $stateProvider.state('devtab', {
+            abstract: true,
+            parent: 'root',
+            views: { "main": { template: '<div ui-view="main"></div>' } }
+        });
+
         $httpProvider.interceptors.push(function($q, $translate, $rootScope, Session, $injector, EVENTS) {
             return {
                 responseError: function(rejection) {
@@ -85,6 +108,10 @@
                 }
             };
         });
+    });
+
+    m.run(function($rootScope, $state) {
+        $rootScope.$state = $state;
     });
 
     m.controller('AppCtrl', function AppCtrl($rootScope, $location, loginPrompt, Session, EVENTS, Permission, permit) {

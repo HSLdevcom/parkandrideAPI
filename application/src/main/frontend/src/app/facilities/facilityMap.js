@@ -149,7 +149,8 @@
                             mode: function() {
                                 return mode;
                             }
-                        }
+                        },
+                        backdrop: 'static'
                     });
                     return modalInstance.result;
                 };

@@ -22,11 +22,11 @@
 					<multilingual-edit name="name" ng-model="editCtrl.facility.name" mandatory="true"></multilingual-edit>
 				</div>
 				<div class="row">
-						<div class="form-group">
-							<label>{{ "facilities.aliases.label" | translate }}</label>
-							<div class="wdAliases">
-								<tags ng-model="editCtrl.facility.aliases" placeholder="{{ 'facilities.aliases.placeholder' | translate }}"></tags>
-							</div>
+					<div class="form-group">
+						<label>{{ "facilities.aliases.label" | translate }}</label>
+						<div class="wdAliases">
+							<tags ng-model="editCtrl.facility.aliases" placeholder="{{ 'facilities.aliases.placeholder' | translate }}"></tags>
+						</div>
 					</div>
 				</div>
 
@@ -53,66 +53,65 @@
 
 				<div class="row">
 					<h3>{{"facilities.capacity.heading" | translate}}</h3>
-
-					<div class="panel panel-default">
-						<table class="table table-bordered table-striped table-condensed">
-							<thead>
-							<tr>
-								<th translate="facilities.capacity.type"></th>
-								<th translate="facilities.capacity.built"></th>
-							</tr>
-							</thead>
-							<tbody>
-							<tr ng-repeat="capacityType in editCtrl.capacityTypes">
-								<td class="wdCapacityType">{{'capacity-types.' + capacityType + '.label' | translate}}</td>
-								<td>
-									<input name="builtCapacity{{capacityType}}" type="number" class="form-control capacityInput"
-										   ng-model="editCtrl.facility.builtCapacity[capacityType]"
-										   min="0" show-errors>
-								</td>
-							</tr>
-							</tbody>
-						</table>
-					</div>
+				</div>
+				<div class="panel panel-default">
+					<table class="table table-bordered table-striped table-condensed">
+						<thead>
+						<tr>
+							<th translate="facilities.capacity.type"></th>
+							<th translate="facilities.capacity.built"></th>
+						</tr>
+						</thead>
+						<tbody>
+						<tr ng-repeat="capacityType in editCtrl.capacityTypes">
+							<td class="wdCapacityType">{{'capacity-types.' + capacityType + '.label' | translate}}</td>
+							<td>
+								<input name="builtCapacity{{capacityType}}" type="number" class="form-control capacityInput"
+									   ng-model="editCtrl.facility.builtCapacity[capacityType]"
+									   min="0" show-errors>
+							</td>
+						</tr>
+						</tbody>
+					</table>
 				</div>
 
-				<div class="row">
-					<div class="panel panel-default">
-						<table class="table table-bordered table-striped table-condensed">
-							<thead>
-							<tr>
-								<th colspan="3">
-									Kapasiteetti
-								</th>
-								<th colspan="4">
-									Aukioloaika
-								</th>
-								<th colspan="4">
-									Hinta
-								</th>
-							</tr>
-							<tr>
-								<th translate="facilities.pricing.capacityType"></th>
-								<th translate="facilities.pricing.usage"></th>
-								<th translate="facilities.pricing.maxCapacity"></th>
 
-								<th translate="facilities.pricing.dayType"></th>
-								<th translate="facilities.pricing.h24"></th>
-								<th translate="facilities.pricing.from"></th>
-								<th translate="facilities.pricing.until"></th>
+				<div class="panel panel-default">
+					<table class="table table-bordered table-striped table-condensed">
+						<thead>
+						<tr>
+							<th colspan="3">
+								Kapasiteetti
+							</th>
+							<th colspan="4">
+								Aukioloaika
+							</th>
+							<th colspan="4">
+								Hinta
+							</th>
+						</tr>
+						<tr>
+							<th id="facilities-pricing-capacityType" translate="facilities.pricing.capacityType"></th>
+							<th id="facilities-pricing-usage" translate="facilities.pricing.usage"></th>
+							<th id="facilities-pricing-maxCapacity" translate="facilities.pricing.maxCapacity"></th>
 
-								<th translate="facilities.pricing.free"></th>
-								<th translate="facilities.pricing.price.fi"></th>
-								<th translate="facilities.pricing.price.sv"></th>
-								<th translate="facilities.pricing.price.en"></th>
-							</tr>
-							</thead>
-							<tbody>
-								<tr pricing-edit pricing="editCtrl.newPricing"></tr>
-							</tbody>
-						</table>
-					</div>
+							<th id="facilities-pricing-dayType" translate="facilities.pricing.dayType"></th>
+							<th translate="facilities.pricing.h24"></th>
+							<th id="facilities-pricing-from" translate="facilities.pricing.from"></th>
+							<th id="facilities-pricing-until" translate="facilities.pricing.until"></th>
+
+							<th translate="facilities.pricing.free"></th>
+							<th translate="facilities.pricing.price.fi"></th>
+							<th translate="facilities.pricing.price.sv"></th>
+							<th translate="facilities.pricing.price.en"></th>
+						</tr>
+						</thead>
+						<tbody>
+						<tr pricing-edit pricing="editCtrl.newPricing"></tr>
+						</tbody>
+					</table>
 				</div>
+
 
 				<div class="row">
 					<h3>{{"facilities.contacts.heading" | translate}}</h3>

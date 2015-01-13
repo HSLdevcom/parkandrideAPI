@@ -176,6 +176,10 @@ html, body {
   margin-bottom:0px;
 }
 
+div.panel + div.panel {
+  margin-top: 30px;
+}
+
 //form controls
 .form-horizontal .form-group {
   margin-left: 0px;

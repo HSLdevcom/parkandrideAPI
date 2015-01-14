@@ -19,6 +19,10 @@
         'parkandride.auth'
     ]);
 
+    function scrollToTop() {
+        window.scrollTo(0, 0);
+    }
+
     m.constant('FEATURES_URL', 'internal/features');
 
     m.value("schema", { capacityTypes:[] });
@@ -110,12 +114,11 @@
         });
     });
 
-    m.run(function($rootScope, $state) {
+    m.run(function($rootScope, $state, EVENTS) {
         $rootScope.$state = $state;
 
-        $rootScope.$on("$stateChangeSuccess", function () {
-            window.scrollTo(0, 0);
-        });
+        $rootScope.$on("$stateChangeSuccess", scrollToTop);
+        $rootScope.$on(EVENTS.validationErrors, scrollToTop);
     });
 
     m.controller('AppCtrl', function AppCtrl($rootScope, $location, loginPrompt, Session, EVENTS, Permission, permit) {

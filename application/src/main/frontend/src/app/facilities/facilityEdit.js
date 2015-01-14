@@ -72,7 +72,7 @@
         });
     });
 
-    m.controller('FacilityEditCtrl', function($scope, $state, schema, FacilityResource, Session, facility, aliasesPlaceholder, services, paymentMethods) {
+    m.controller('FacilityEditCtrl', function($scope, $state, schema, FacilityResource, Session, Sequence, facility, aliasesPlaceholder, services, paymentMethods) {
         var self = this;
         $scope.common.translationPrefix = "facilities";
         self.capacityTypes = schema.capacityTypes;
@@ -89,8 +89,59 @@
         }
 
         self.editMode = (facility.id ? "ports" : "location");
+        self.selected = {};
 
-        self.newPricing = {};
+        _.forEach(self.facility.pricing, function(pricing) {
+            pricing._id = Sequence.nextval();
+        });
+
+        self.addPricingRow = function() {
+            var newPricing = {};
+            newPricing._id = Sequence.nextval();
+            self.facility.pricing.push(newPricing);
+        };
+        self.removePricingRows = function() {
+            var pricingRows = self.facility.pricing;
+            for (var i=pricingRows.length - 1; i >= 0; i--) {
+                var id = pricingRows[i]._id;
+                if (self.selected[id]) {
+                    pricingRows.splice(i, 1);
+                    delete self.selected[id];
+                }
+            }
+        };
+        self.clonePricingRows = function() {
+            var pricingRows = self.facility.pricing;
+            var len = pricingRows.length;
+            for (var i=0; i < len; i++) {
+                var id = pricingRows[i]._id;
+                if (self.selected[id]) {
+                    delete self.selected[id];
+                    var newPricing = _.cloneDeep(pricingRows[i]);
+                    delete newPricing.$$hashKey;
+
+                    id = Sequence.nextval();
+                    newPricing._id = id;
+                    self.selected[id] = true;
+                    pricingRows.push(newPricing);
+                }
+            }
+        };
+        self.selectAllPricingRows = function() {
+            var pricingRows = self.facility.pricing;
+            for (var i = pricingRows.length - 1; i >= 0; i--) {
+                var id = pricingRows[i]._id;
+                self.selected[id] = true;
+            }
+        };
+        self.unselectAllPricingRows = function() {
+            for (var id in self.selected) {
+                delete self.selected[id];
+            }
+        };
+        self.hasPricingRows = function() {
+            return self.facility.pricing.length > 0;
+        };
 
         self.saveFacility = function() {
             var facility = _.cloneDeep(self.facility);

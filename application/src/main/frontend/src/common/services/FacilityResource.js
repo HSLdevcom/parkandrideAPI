@@ -46,9 +46,10 @@
         api.newFacility = function() {
             return {
                 aliases: [],
-                capacities: {},
+                builtCapacity: {},
                 ports: [],
-                contacts: {}
+                contacts: {},
+                pricing: []
             };
         };
 

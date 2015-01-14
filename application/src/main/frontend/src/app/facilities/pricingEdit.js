@@ -8,7 +8,8 @@
         return {
             restrict: 'A',
             scope: {
-                pricing: '='
+                pricing: '=',
+                selected: '='
             },
             templateUrl: 'facilities/pricingEdit.tpl.html',
             transclude: false,
@@ -18,7 +19,6 @@
                 scope.dayTypes = schema.dayTypes;
                 scope.h24 = is24h();
                 scope.free = isFree();
-                console.log("isFree: " + scope.free);
 
                 scope.$watch("h24", function(newValue) {
                     var h24 = is24h();

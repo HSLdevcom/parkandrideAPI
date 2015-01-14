@@ -158,7 +158,10 @@
         },
         "basic_info": "Perustiedot",
         "action": {
-            "new": "Lisää uusi pysäköintipaikka"
+            "new": "Lisää uusi pysäköintipaikka",
+            "addPricingRow": "+ Lisää rivi",
+            "removePricingRows": "Poista valitut",
+            "clonePricingRows": "Kopioi valitut"
         },
         "name" : {
             "title": "Nimitiedot",

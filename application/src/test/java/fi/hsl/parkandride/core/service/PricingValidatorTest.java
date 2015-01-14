@@ -22,8 +22,6 @@ public class PricingValidatorTest {
     private static final CapacityType[] capacities = new CapacityType[] {  CapacityType.CAR, CapacityType.BICYCLE };
     private static final DayType[] days = new DayType[] {  DayType.BUSINESS_DAY, DayType.SATURDAY };
 
-    private static final int DEFAULT_CAPACITY = 42;
-
     @Test
     public void hours_can_overlap_for_different_usages() {
         Pricing a = pricing(usages[0], capacities[0], days[0], 7, 17);
@@ -66,19 +64,17 @@ public class PricingValidatorTest {
 
     @Test(expected = ValidationException.class)
     public void built_capacity_must_exist_for_pricing_capacity() {
-        Pricing a = pricing(usages[0], capacities[0], days[0], 7, 17, 2);
+        Pricing a = pricing(usages[0], capacities[0], days[0], 7, 17);
 
-        Map<CapacityType, Integer> builtCapacity = Maps.newHashMap();
-
-        PricingValidator.validate(builtCapacity, ImmutableSet.of(a));
+        PricingValidator.validate(Maps.newHashMap(), ImmutableSet.of(a));
     }
 
     @Test(expected = ValidationException.class)
     public void single_pricing_capacity_cannot_be_larger_than_build_capacity() {
-        Pricing a = pricing(usages[0], capacities[0], days[0], 7, 17, 2);
+        Pricing a = pricing(usages[0], capacities[0], days[0], 7, 17);
 
         Map<CapacityType, Integer> builtCapacity = Maps.newHashMap();
-        builtCapacity.put(capacities[0], 1);
+        builtCapacity.put(capacities[0], a.maxCapacity-1);
 
         PricingValidator.validate(builtCapacity, ImmutableSet.of(a));
     }
@@ -125,10 +121,6 @@ public class PricingValidatorTest {
     }
 
     private static Pricing pricing(Usage usage, CapacityType capacity, DayType day, int from, int until) {
-        return pricing(usage, capacity, day, from, until, DEFAULT_CAPACITY);
-    }
-
-    private static Pricing pricing(Usage usage, CapacityType capacity, DayType day, int from, int until, int maxCapacity) {
-        return new Pricing(usage, capacity, maxCapacity, day, String.valueOf(from), String.valueOf(until), "42");
+        return new Pricing(usage, capacity, 42, day, String.valueOf(from), String.valueOf(until), "42");
     }
 }

@@ -54,6 +54,7 @@ public class FacilityService {
 
     private void validate(Facility facility) {
         validationService.validate(facility);
+        PricingValidator.validate(facility.pricing);
         validateContact(facility.operatorId, facility.contacts.emergency, "emergency");
         validateContact(facility.operatorId, facility.contacts.operator, "operator");
         validateContact(facility.operatorId, facility.contacts.service, "service");

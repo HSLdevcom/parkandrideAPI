@@ -54,6 +54,13 @@ public class Pricing implements Comparable<Pricing> {
         this.price = (price != null ? new MultilingualString(price) : null);
     }
 
+    public boolean overlaps(Pricing that) {
+        if (usage == that.usage && capacityType == that.capacityType && dayType == that.dayType) {
+            return from.getMinuteOfDay() < that.until.getMinuteOfDay() && that.from.getMinuteOfDay() < until.getMinuteOfDay();
+        }
+        return false;
+    }
+
     @Override
     public int compareTo(Pricing other) {
         return COMPARATOR.compare(this, other);
@@ -86,5 +93,4 @@ public class Pricing implements Comparable<Pricing> {
             return false;
         }
     }
-
 }

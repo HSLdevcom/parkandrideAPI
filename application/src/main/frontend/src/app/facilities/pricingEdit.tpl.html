@@ -4,20 +4,20 @@
 <td>
 	<ui-select ng-model="pricing.capacityType" theme="bootstrap" reset-search-input="true">
 		<ui-select-match placeholder="{{'facilities.pricing.capacityTypePlaceholder' | translate }}">
-			{{'capacity-types.' + $select.selected + '.label' | translate}}
+			{{$select.selected.label}}
 		</ui-select-match>
-		<ui-select-choices repeat="capacityType in capacityTypes">
-			<div ng-bind-html="'capacity-types.' + capacityType + '.label' | translate"></div>
+		<ui-select-choices repeat="capacityType.id as capacityType in capacityTypes | filter: {label: $select.search}">
+			<div ng-bind-html="capacityType.label | highlight: $select.search"></div>
 		</ui-select-choices>
 	</ui-select>
 </td>
 <td>
 	<ui-select ng-model="pricing.usage" theme="bootstrap" reset-search-input="true">
 		<ui-select-match placeholder="{{'facilities.pricing.usagePlaceholder' | translate }}">
-			{{'usages.' + $select.selected + '.label' | translate}}
+			{{$select.selected.label}}
 		</ui-select-match>
-		<ui-select-choices repeat="usage in usages">
-			<div ng-bind-html="'usages.' + usage + '.label' | translate"></div>
+		<ui-select-choices repeat="usage.id as usage in usages | filter: {label: $select.search}">
+			<div ng-bind-html="usage.label | highlight: $select.search"></div>
 		</ui-select-choices>
 	</ui-select>
 </td>
@@ -29,10 +29,10 @@
 <td>
 	<ui-select ng-model="pricing.dayType" theme="bootstrap" reset-search-input="true">
 		<ui-select-match placeholder="{{'facilities.pricing.dayTypePlaceholder' | translate }}">
-			{{'day-types.' + $select.selected + '.label' | translate}}
+			{{$select.selected.label}}
 		</ui-select-match>
-		<ui-select-choices repeat="dayType in dayTypes">
-			<div ng-bind-html="'day-types.' + dayType + '.label' | translate"></div>
+		<ui-select-choices repeat="dayType.id as dayType in dayTypes | filter: {label: $select.search}">
+			<div ng-bind-html="dayType.label | highlight: $select.search"></div>
 		</ui-select-choices>
 	</ui-select>
 </td>

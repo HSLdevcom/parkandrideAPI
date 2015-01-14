@@ -4,7 +4,17 @@
         'showErrors'
     ]);
 
-    m.directive('pricingEdit', function (schema) {
+    m.directive('pricingEdit', function (schema, $translate) {
+
+        function translatedEnumValues(prefix, values) {
+            return _.map(values, function(v) {
+                return {
+                    id: v,
+                    label: $translate.instant(prefix + "." + v + ".label")
+                };
+            });
+        }
+
         return {
             restrict: 'A',
             scope: {
@@ -14,9 +24,9 @@
             templateUrl: 'facilities/pricingEdit.tpl.html',
             transclude: false,
             link: function(scope) {
-                scope.capacityTypes = schema.capacityTypes;
-                scope.usages = schema.usages;
-                scope.dayTypes = schema.dayTypes;
+                scope.capacityTypes = translatedEnumValues("capacity-types", schema.capacityTypes);
+                scope.usages = translatedEnumValues("usages", schema.usages);
+                scope.dayTypes = translatedEnumValues("day-types", schema.dayTypes);
                 scope.h24 = is24h();
                 scope.free = isFree();
 

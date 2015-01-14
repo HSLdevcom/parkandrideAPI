@@ -117,7 +117,8 @@
 							</tr>
 						</thead>
 						<tbody>
-							<tr ng-repeat="pricing in editCtrl.facility.pricing" pricing-edit pricing="pricing" selected="editCtrl.selected"></tr>
+							<tr ng-repeat="pricing in editCtrl.facility.pricing" pricing-edit pricing="pricing" selected="editCtrl.selected"
+									class="{{editCtrl.selected[pricing._id] ? 'selected' : 'unselected'}}"></tr>
 						</tbody>
 						<tfoot>
 							<tr>

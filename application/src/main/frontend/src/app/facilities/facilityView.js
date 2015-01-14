@@ -16,7 +16,7 @@
 
     m.config(function config($stateProvider) {
         $stateProvider.state('facility-view', { // dot notation in ui-router indicates nested ui-view
-            parent: 'root',
+            parent: 'hubstab',
             url: '/facilities/view/:id', // TODO set facilities base path on upper level and say here /create ?
             views: {
                 "main": {

@@ -55,7 +55,8 @@
                     create: function() {
                         return create;
                     }
-                }
+                },
+                backdrop: 'static'
             });
             return modalInstance.result;
         };
@@ -63,7 +64,7 @@
 
     m.config(function($stateProvider) {
         $stateProvider.state('operator-list', {
-            parent: 'root',
+            parent: 'operatorstab',
             url: '/operators',
             views: {
                 "main": {

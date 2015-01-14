@@ -30,12 +30,12 @@
 						<img class="img-responsive logo" src="assets/hsl-liipi-logo2.png" alt="{{ 'header.logodesc' | translate }}">
 					</div>
 					<div class="navi-col">
-						<tabset>
-							<tab heading="{{ 'hubs.title' | translate }}" ui-sref="hub-list" ui-sref-active="active"></tab>
-							<tab heading="{{ 'contacts.title' | translate }}" ui-sref="contact-list" ui-sref-active="active"></tab>
-							<tab heading="{{ 'operators.title' | translate }}" ui-sref="operator-list" ui-sref-active="active"></tab>
-							<tab heading="Dev" ui-sref="dev-page" ui-sref-active="active"></tab>
-						</tabset>
+						<ul class="nav nav-tabs">
+							<li ng-class="{active: $state.includes('hubstab')}"><a ui-sref="hub-list" translate="hubs.title"></a></li>
+							<li ng-class="{active: $state.includes('contactstab')}"><a ui-sref="contact-list" translate="contacts.title"></a></li>
+							<li ng-class="{active: $state.includes('operatorstab')}"><a ui-sref="operator-list" translate="operators.title"></a></li>
+							<li ng-class="{active: $state.includes('devtab')}" toggle feature="dev"><a ui-sref="dev-page">Dev</a></li>
+						</ul>
 					</div>
 					<div class="logout last-column">
 						<div class="pull-right">

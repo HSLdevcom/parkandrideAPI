@@ -51,6 +51,18 @@ public class Pricing {
         this.price = (price != null ? new MultilingualString(price) : null);
     }
 
+    public boolean overlaps(Pricing that) {
+        if (usage == that.usage && capacityType == that.capacityType && dayType == that.dayType) {
+            return from.getMinuteOfDay() < that.until.getMinuteOfDay() && that.from.getMinuteOfDay() < until.getMinuteOfDay();
+        }
+        return false;
+    }
+
+    @Override
+    public int compareTo(Pricing other) {
+        return COMPARATOR.compare(this, other);
+    }
+
     public int hashCode() {
         int hashCode = (capacityType == null ? 0 : capacityType.hashCode());
         hashCode = 31*hashCode + (usage == null ? 0 : usage.hashCode());
@@ -78,5 +90,4 @@ public class Pricing {
             return false;
         }
     }
-
 }

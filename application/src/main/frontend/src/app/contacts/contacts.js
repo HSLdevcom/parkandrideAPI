@@ -62,7 +62,8 @@
                     create: function() {
                         return create;
                     }
-                }
+                },
+                backdrop: 'static'
             });
             return modalInstance.result;
         };
@@ -70,7 +71,7 @@
 
     m.config(function($stateProvider) {
         $stateProvider.state('contact-list', {
-            parent: 'root',
+            parent: 'contactstab',
             url: '/contacts',
             views: {
                 "main": {

@@ -132,6 +132,10 @@ html, body {
   margin-top: -140px;
 }
 
+.rowWithMargin {
+  margin-top: 20px;
+}
+
 //columns
 .column {
   padding-right: 20px;
@@ -174,10 +178,6 @@ html, body {
 //panel
 .panel {
   margin-bottom:0px;
-}
-
-div.panel + div.panel {
-  margin-top: 30px;
 }
 
 //form controls

@@ -1,17 +1,11 @@
 package fi.hsl.parkandride.core.service;
 
 import static fi.hsl.parkandride.core.domain.Permission.FACILITY_CREATE;
-import static fi.hsl.parkandride.core.domain.Permission.FACILITY_STATUS_UPDATE;
 import static fi.hsl.parkandride.core.domain.Permission.FACILITY_UPDATE;
-import static fi.hsl.parkandride.core.domain.Role.ADMIN;
-import static fi.hsl.parkandride.core.domain.Role.OPERATOR;
-import static fi.hsl.parkandride.core.domain.Role.OPERATOR_API;
 import static fi.hsl.parkandride.core.service.AuthenticationService.authorize;
 
 import java.util.List;
-import java.util.Objects;
 
-import fi.hsl.parkandride.back.ContactDao;
 import fi.hsl.parkandride.core.back.ContactRepository;
 import fi.hsl.parkandride.core.back.FacilityRepository;
 import fi.hsl.parkandride.core.domain.*;
@@ -54,7 +48,7 @@ public class FacilityService {
 
     private void validate(Facility facility) {
         validationService.validate(facility);
-        PricingValidator.validate(facility.pricing);
+        PricingValidator.validate(facility.builtCapacity, facility.pricing);
         validateContact(facility.operatorId, facility.contacts.emergency, "emergency");
         validateContact(facility.operatorId, facility.contacts.operator, "operator");
         validateContact(facility.operatorId, facility.contacts.service, "service");

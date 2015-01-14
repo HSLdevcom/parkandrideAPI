@@ -7,6 +7,8 @@ import java.util.Set;
 import fi.hsl.parkandride.core.domain.*;
 
 public final class PricingValidator {
+    private PricingValidator() {}
+
     public static void validate(Set<Pricing> pricing) {
         List<Violation> violations = new ArrayList<>();
         validateHourOverlap(pricing.toArray(new Pricing[pricing.size()]), violations);

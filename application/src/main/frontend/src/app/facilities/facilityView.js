@@ -10,6 +10,7 @@
         'parkandride.FacilityResource',
         'parkandride.ServiceResource',
         'parkandride.PaymentMethodResource',
+        'parkandride.pricing',
         'parkandride.layout'
     ]);
 
@@ -59,11 +60,17 @@
         });
     });
 
-    m.controller('FacilityViewCtrl', function(facility, services, contacts, operator, paymentMethods) {
+    m.controller('FacilityViewCtrl', function(PricingService, facility, services, contacts, operator, paymentMethods) {
         this.facility = facility;
         this.services = services;
         this.contacts = contacts;
         this.operator = operator;
+        this.isFree = function(pricing) {
+            return PricingService.isFree(pricing);
+        };
+        this.is24h = function(pricing) {
+            return PricingService.is24h(pricing);
+        };
         this.hasCapacities = function() {
           return !_.isEmpty(facility.builtCapacity);
         };

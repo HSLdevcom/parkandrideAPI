@@ -11,7 +11,7 @@
         'parkandride.layout',
         'parkandride.multilingual',
         'parkandride.facilityContacts',
-        'parkandride.pricingEdit',
+        'parkandride.pricing',
         'parkandride.tags',
         'parkandride.address',
         'showErrors'

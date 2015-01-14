@@ -1,10 +1,40 @@
 (function() {
-    var m = angular.module('parkandride.pricingEdit', [
+    var m = angular.module('parkandride.pricing', [
         'parkandride.multilingual',
         'showErrors'
     ]);
 
-    m.directive('pricingEdit', function (schema, $translate) {
+    m.value('PricingService', {
+        is24h: function(pricing) {
+            return (/^0?0(?::00)?$/).test(pricing.from) && (/^24(?::00)?$/).test(pricing.until);
+        },
+        isFree: function(pricing) {
+            return !(pricing.price && (pricing.price.fi || pricing.price.sv || pricing.price.en));
+        }
+    });
+
+    m.directive('pricingView', function (schema, $translate, PricingService) {
+        return {
+            restrict: 'A',
+            scope: {
+                pricing: '='
+            },
+            templateUrl: 'facilities/pricingView.tpl.html',
+            transclude: false,
+            link: function(scope) {
+                scope.is24h = function() {
+                    return PricingService.is24h(scope.pricing);
+                };
+                scope.isFree = function() {
+                    var free = PricingService.isFree(scope.pricing);
+                    console.log("isFree: " + free);
+                    return free;
+                };
+            }
+        };
+    });
+
+    m.directive('pricingEdit', function (schema, $translate, PricingService) {
 
         function translatedEnumValues(prefix, values) {
             return _.map(values, function(v) {
@@ -56,10 +86,10 @@
                 });
 
                 function is24h() {
-                    return (/^0?0(?::00)?$/).test(scope.pricing.from) && (/^24(?::00)?$/).test(scope.pricing.until);
+                    return PricingService.is24h(scope.pricing);
                 }
                 function isFree() {
-                    return !(scope.pricing.price && (scope.pricing.price.fi || scope.pricing.price.sv || scope.pricing.price.en));
+                    return PricingService.isFree(scope.pricing);
                 }
             }
         };

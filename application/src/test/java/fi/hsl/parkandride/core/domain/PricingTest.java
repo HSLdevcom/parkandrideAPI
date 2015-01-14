@@ -8,7 +8,7 @@ public class PricingTest {
 
     @Test
     public void all_nulls() {
-        assertThat(new Pricing().compareTo(new Pricing())).isEqualTo(0);
+        assertThat(Pricing.COMPARATOR.compare(new Pricing(), new Pricing())).isEqualTo(0);
     }
 
 }

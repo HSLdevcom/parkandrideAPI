@@ -7,7 +7,9 @@ import static fi.hsl.parkandride.core.domain.Role.ADMIN;
 import static fi.hsl.parkandride.core.domain.Role.OPERATOR;
 import static fi.hsl.parkandride.core.domain.Role.OPERATOR_API;
 import static fi.hsl.parkandride.core.service.AuthenticationService.authorize;
+import static java.util.Collections.sort;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -34,6 +36,7 @@ public class FacilityService {
     public Facility createFacility(Facility facility, User currentUser) {
         authorize(currentUser, facility, FACILITY_CREATE);
         validate(facility);
+        sort(facility.pricing, Pricing.COMPARATOR);
 
         facility.id = repository.insertFacility(facility);
         return facility;
@@ -43,6 +46,7 @@ public class FacilityService {
     public Facility updateFacility(long facilityId, Facility facility, User currentUser) {
         authorize(currentUser, facility, FACILITY_UPDATE);
         validate(facility);
+        sort(facility.pricing, Pricing.COMPARATOR);
 
         Facility oldFacility = repository.getFacilityForUpdate(facilityId);
         repository.updateFacility(facilityId, facility, oldFacility);

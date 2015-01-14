@@ -33,7 +33,7 @@ public class Facility implements OperatorEntity {
     public Map<CapacityType, Integer> builtCapacity = Maps.newHashMap();
 
     @Valid
-    public SortedSet<Pricing> pricing = Sets.newTreeSet();
+    public List<Pricing> pricing = Lists.newArrayList();
 
     @ElementNotBlank
     @ElementLength(min=0, max=255)
@@ -51,34 +51,6 @@ public class Facility implements OperatorEntity {
 
     public FacilityPaymentInfo paymentInfo = new FacilityPaymentInfo();
 
-
-    public Long getId() {
-        return id;
-    }
-
-    public MultilingualString getName() {
-        return name;
-    }
-
-    public Polygon getLocation() {
-        return location;
-    }
-
-    public Set<String> getAliases() {
-        return aliases;
-    }
-
-    public List<Port> getPorts() {
-        return ports;
-    }
-
-    public Set<Long> getServiceIds() {
-        return serviceIds;
-    }
-
-    public FacilityContacts getContacts() {
-        return contacts;
-    }
 
     public Long operatorId() {
         return operatorId;

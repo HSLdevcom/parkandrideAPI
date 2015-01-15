@@ -58,11 +58,6 @@ public class Pricing {
         return false;
     }
 
-    @Override
-    public int compareTo(Pricing other) {
-        return COMPARATOR.compare(this, other);
-    }
-
     public int hashCode() {
         int hashCode = (capacityType == null ? 0 : capacityType.hashCode());
         hashCode = 31*hashCode + (usage == null ? 0 : usage.hashCode());

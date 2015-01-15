@@ -5,7 +5,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.mysema.query.group.GroupBy.groupBy;
 import static com.mysema.query.group.GroupBy.list;
 import static com.mysema.query.group.GroupBy.set;
-import static fi.hsl.parkandride.back.GSortedSet.sortedSet;
 import static fi.hsl.parkandride.core.domain.CapacityType.BICYCLE;
 import static fi.hsl.parkandride.core.domain.CapacityType.CAR;
 import static fi.hsl.parkandride.core.domain.CapacityType.DISABLED;
@@ -13,6 +12,7 @@ import static fi.hsl.parkandride.core.domain.CapacityType.ELECTRIC_CAR;
 import static fi.hsl.parkandride.core.domain.CapacityType.MOTORCYCLE;
 import static fi.hsl.parkandride.core.domain.Sort.Dir.ASC;
 import static fi.hsl.parkandride.core.domain.Sort.Dir.DESC;
+import static java.util.Collections.sort;
 
 import java.util.*;
 import java.util.Map.Entry;
@@ -428,7 +428,7 @@ public class FacilityDao implements FacilityRepository {
         queryFactory.delete(qPort).where(qPort.facilityId.eq(facilityId), qPort.portIndex.goe(fromIndex)).execute();
     }
 
-    private void insertPricing(long facilityId, SortedSet<Pricing> pricing) {
+    private void insertPricing(long facilityId, List<Pricing> pricing) {
         if (pricing != null && !pricing.isEmpty()) {
             SQLInsertClause insert = queryFactory.insert(qPricing);
             for (Pricing price : pricing) {
@@ -558,18 +558,20 @@ public class FacilityDao implements FacilityRepository {
 
     private void fetchPricing(Map<Long, Facility> facilitiesById) {
         if (!facilitiesById.isEmpty()) {
-            Map<Long, SortedSet<Pricing>> pricing = findPricing(facilitiesById.keySet());
+            Map<Long, List<Pricing>> pricing = findPricing(facilitiesById.keySet());
 
-            for (Entry<Long, SortedSet<Pricing>> entry : pricing.entrySet()) {
-                facilitiesById.get(entry.getKey()).pricing = entry.getValue();
+            for (Entry<Long, List<Pricing>> entry : pricing.entrySet()) {
+                Facility facility = facilitiesById.get(entry.getKey());
+                facility.pricing = entry.getValue();
+                sort(facility.pricing, Pricing.COMPARATOR);
             }
         }
     }
 
-    private Map<Long, SortedSet<Pricing>> findPricing(Set<Long> facilityIds) {
+    private Map<Long, List<Pricing>> findPricing(Set<Long> facilityIds) {
         return queryFactory.from(qPricing)
                 .where(qPricing.facilityId.in(facilityIds))
-                .transform(groupBy(qPricing.facilityId).as(sortedSet(pricingMapping)));
+                .transform(groupBy(qPricing.facilityId).as(list(pricingMapping)));
     }
 
     private Map<Long, Set<Long>> findServices(Set<Long> facilityIds) {

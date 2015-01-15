@@ -3,7 +3,10 @@ package fi.hsl.parkandride.core.service;
 import static fi.hsl.parkandride.core.domain.Permission.FACILITY_CREATE;
 import static fi.hsl.parkandride.core.domain.Permission.FACILITY_UPDATE;
 import static fi.hsl.parkandride.core.service.AuthenticationService.authorize;
+import static java.util.Collections.sort;
 
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 
 import fi.hsl.parkandride.core.back.ContactRepository;
@@ -28,6 +31,7 @@ public class FacilityService {
     public Facility createFacility(Facility facility, User currentUser) {
         authorize(currentUser, facility, FACILITY_CREATE);
         validate(facility);
+        sort(facility.pricing, Pricing.COMPARATOR);
 
         facility.id = repository.insertFacility(facility);
         return facility;
@@ -37,6 +41,7 @@ public class FacilityService {
     public Facility updateFacility(long facilityId, Facility facility, User currentUser) {
         authorize(currentUser, facility, FACILITY_UPDATE);
         validate(facility);
+        sort(facility.pricing, Pricing.COMPARATOR);
 
         Facility oldFacility = repository.getFacilityForUpdate(facilityId);
         authorize(currentUser, oldFacility, FACILITY_UPDATE);
@@ -48,7 +53,7 @@ public class FacilityService {
 
     private void validate(Facility facility) {
         validationService.validate(facility);
-        PricingValidator.validate(facility.builtCapacity, facility.pricing);
+        PricingValidator.validate(facility.builtCapacity, new HashSet<>(facility.pricing));
         validateContact(facility.operatorId, facility.contacts.emergency, "emergency");
         validateContact(facility.operatorId, facility.contacts.operator, "operator");
         validateContact(facility.operatorId, facility.contacts.service, "service");

@@ -1,0 +1,17 @@
+<td>{{ 'capacity-types.' + pricing.capacityType + '.label' | translate }}</td>
+<td>{{ 'usages.' + pricing.usage + '.label' | translate }}</td>
+<td>{{ pricing.maxCapacity }}</td>
+
+<td>{{ 'day-types.' + pricing.dayType + '.label' | translate }}</td>
+<td>
+	<div ng-show="is24h()">&#x2713;</div>
+</td>
+<td>{{ pricing.from }}</td>
+<td>{{ pricing.until }}</td>
+
+<td>
+	<div ng-show="isFree()">&#x2713;</div>
+</td>
+<td>{{ pricing.price.fi }}</td>
+<td>{{ pricing.price.sv }}</td>
+<td>{{ pricing.price.en }}</td>

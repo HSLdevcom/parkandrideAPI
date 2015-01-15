@@ -41,6 +41,11 @@ public class TimeTest {
     }
 
     @Test
+    public void afternoon() {
+        assertThat(new Time("16").getMinuteOfDay()).isEqualTo(16*60);
+    }
+
+    @Test
     public void beginning_of_day_is_before_end_of_day() {
         assertThat(new Time("00").compareTo(new Time("24"))).isLessThan(0);
     }

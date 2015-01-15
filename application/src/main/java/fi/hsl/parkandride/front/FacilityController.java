@@ -95,6 +95,18 @@ public class FacilityController {
         return new ResponseEntity<>(SearchResults.of(types), OK);
     }
 
+    @RequestMapping(method = GET, value = USAGES)
+    public ResponseEntity<SearchResults<Usage>> usages() {
+        List<Usage> types = asList(Usage.values());
+        return new ResponseEntity<>(SearchResults.of(types), OK);
+    }
+
+    @RequestMapping(method = GET, value = DAY_TYPES)
+    public ResponseEntity<SearchResults<DayType>> dayTypes() {
+        List<DayType> types = asList(DayType.values());
+        return new ResponseEntity<>(SearchResults.of(types), OK);
+    }
+
     @ApiOperation(value = "Update facility status", authorizations = @Authorization(API_KEY))
     @RequestMapping(method = PUT, value = FACILITY_STATUS, produces = APPLICATION_JSON_VALUE)
     public void createStatuses(@PathVariable(FACILITY_ID) long facilityId,

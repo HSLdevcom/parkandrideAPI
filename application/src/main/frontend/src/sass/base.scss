@@ -9,6 +9,7 @@
 @import 'map';
 @import 'tags';
 @import 'dialogs';
+@import 'capacity_table';
 
 //buttons
 .btn-xs {
@@ -77,6 +78,10 @@
 .link-btn:hover {
   color: $primarycolor-light;
   text-decoration: underline;
+}
+
+div.dropdown > .btn {
+  padding: 6px 5px;
 }
 
 //facility contact buttons
@@ -196,9 +201,17 @@ input[type="checkbox"]:focus {
   margin-bottom: 0px;
 }
 
+td > input[type="checkbox"] {
+  margin: 0;
+}
+
 //form controls
 .form-control {
   font-size: $basic-font-size;
+}
+
+td > .form-control {
+  padding: 6px 5px;
 }
 
 textarea {
@@ -209,6 +222,14 @@ textarea {
 .hubRow {
   background-color: #f9f9f9;
   font-size: 20px;
+}
+
+.table > tbody > tr > td {
+  vertical-align: middle;
+}
+
+.centeredCell {
+  text-align: center;
 }
 
 //capacity table inputs
@@ -234,4 +255,13 @@ a {
   &.fade, &.in {
     .modal-dialog { @include translate(0, 0); }
   }
+}
+
+
+tr.selected {
+  background-color: #ECECEC;
+}
+
+.table-striped > tbody > tr.selected:nth-child(2n+1) > td, .table-striped > tbody > tr.selected:nth-child(2n+1) > th {
+  background-color: #E0E0E0;
 }

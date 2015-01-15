@@ -21,6 +21,10 @@ public class UrlSchema {
 
     public static final String CAPACITY_TYPES = API + "/capacity-types";
 
+    public static final String USAGES = API + "/usages";
+
+    public static final String DAY_TYPES = API + "/day-types";
+
 
     public static final String HUBS = API + "/hubs";
 

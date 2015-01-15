@@ -25,7 +25,7 @@
 
     m.constant('FEATURES_URL', 'internal/features');
 
-    m.value("schema", { capacityTypes:[] });
+    m.value("schema", { capacityTypes:[], usages: [], dayTypes: [] });
 
     m.value("EVENTS", {
         validationErrors: "validation-errors-updated",
@@ -45,6 +45,18 @@
                 capacityTypes: function(schema, FacilityResource) {
                     return FacilityResource.getCapacityTypes().then(function(types) {
                         schema.capacityTypes = types;
+                        return types;
+                    });
+                },
+                usages: function(schema, FacilityResource) {
+                    return FacilityResource.getUsages().then(function(types) {
+                        schema.usages = types;
+                        return types;
+                    });
+                },
+                dayTypes: function(schema, FacilityResource) {
+                    return FacilityResource.getDayTypes().then(function(types) {
+                        schema.dayTypes = types;
                         return types;
                     });
                 }

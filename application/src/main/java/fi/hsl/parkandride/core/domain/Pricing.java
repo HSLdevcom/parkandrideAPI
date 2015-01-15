@@ -9,16 +9,13 @@ import java.util.Objects;
 
 import javax.validation.constraints.NotNull;
 
-public class Pricing implements Comparable<Pricing> {
+public class Pricing {
 
     public static Comparator<Pricing> COMPARATOR =
             comparing(((Pricing p) -> p.capacityType), nullsLast(naturalOrder()))
             .thenComparing(((Pricing p) -> p.usage), nullsLast(naturalOrder()))
             .thenComparing(((Pricing p) -> p.dayType), nullsLast(naturalOrder()))
-            .thenComparing(((Pricing p) -> p.from), nullsLast(naturalOrder()))
-            .thenComparing(((Pricing p) -> p.until), nullsLast(naturalOrder()))
-            .thenComparing(((Pricing p) -> p.maxCapacity), naturalOrder())
-            .thenComparing(((Pricing p) -> p.price), nullsLast(MultilingualString.COMPARATOR));
+            .thenComparing(((Pricing p) -> p.from), nullsLast(naturalOrder()));
 
     @NotNull
     public Usage usage;
@@ -59,11 +56,6 @@ public class Pricing implements Comparable<Pricing> {
             return from.getMinuteOfDay() < that.until.getMinuteOfDay() && that.from.getMinuteOfDay() < until.getMinuteOfDay();
         }
         return false;
-    }
-
-    @Override
-    public int compareTo(Pricing other) {
-        return COMPARATOR.compare(this, other);
     }
 
     public int hashCode() {

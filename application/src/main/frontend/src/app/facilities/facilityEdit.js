@@ -89,7 +89,37 @@
         }
 
         self.editMode = (facility.id ? "ports" : "location");
-        self.selected = {};
+
+        $scope.allSelected = false;
+        $scope.selected = {
+            count: 0
+        };
+        $scope.$watch("allSelected", function(newValue) {
+            var pricingRows = self.facility.pricing;
+            if (newValue) {
+                if ($scope.selected.count === pricingRows.length) {
+                    return;
+                }
+            } else if ($scope.selected.count < pricingRows.length) {
+                return;
+            }
+            for (var i = pricingRows.length - 1; i >= 0; i--) {
+                var id = pricingRows[i]._id;
+                $scope.selected[id] = newValue;
+            }
+            if (newValue) {
+                $scope.selected.count = pricingRows.length;
+            } else {
+                $scope.selected.count = 0;
+            }
+        });
+        $scope.$watch("selected.count", function(newCount) {
+            if (newCount === self.facility.pricing.length) {
+                $scope.allSelected = true;
+            } else if (newCount > 0) {
+                $scope.allSelected = false;
+            }
+        });
 
         _.forEach(self.facility.pricing, function(pricing) {
             pricing._id = Sequence.nextval();
@@ -99,45 +129,37 @@
             var newPricing = {};
             newPricing._id = Sequence.nextval();
             self.facility.pricing.push(newPricing);
+            $scope.allSelected = false;
         };
         self.removePricingRows = function() {
             var pricingRows = self.facility.pricing;
             for (var i=pricingRows.length - 1; i >= 0; i--) {
                 var id = pricingRows[i]._id;
-                if (self.selected[id]) {
+                if ($scope.selected[id]) {
                     pricingRows.splice(i, 1);
-                    delete self.selected[id];
+                    delete $scope.selected[id];
+                    $scope.selected.count--;
                 }
             }
+            $scope.allSelected = false;
         };
         self.clonePricingRows = function() {
             var pricingRows = self.facility.pricing;
             var len = pricingRows.length;
             for (var i=0; i < len; i++) {
                 var id = pricingRows[i]._id;
-                if (self.selected[id]) {
-                    delete self.selected[id];
+                if ($scope.selected[id]) {
+                    $scope.selected[id] = false;
                     var newPricing = _.cloneDeep(pricingRows[i]);
                     delete newPricing.$$hashKey;
 
                     id = Sequence.nextval();
                     newPricing._id = id;
-                    self.selected[id] = true;
                     pricingRows.push(newPricing);
+                    $scope.selected[id] = true;
                 }
             }
-        };
-        self.selectAllPricingRows = function() {
-            var pricingRows = self.facility.pricing;
-            for (var i = pricingRows.length - 1; i >= 0; i--) {
-                var id = pricingRows[i]._id;
-                self.selected[id] = true;
-            }
-        };
-        self.unselectAllPricingRows = function() {
-            for (var id in self.selected) {
-                delete self.selected[id];
-            }
+            $scope.allSelected = false;
         };
         self.hasPricingRows = function() {
             return self.facility.pricing.length > 0;

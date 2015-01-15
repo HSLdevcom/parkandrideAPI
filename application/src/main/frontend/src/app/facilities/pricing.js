@@ -59,6 +59,7 @@
                 scope.dayTypes = translatedEnumValues("day-types", schema.dayTypes);
                 scope.h24 = is24h();
                 scope.free = isFree();
+                scope.rowSelected = scope.selected[scope.pricing._id];
 
                 scope.$watch("h24", function(newValue) {
                     var h24 = is24h();
@@ -83,6 +84,20 @@
                 });
                 scope.$watchGroup(["pricing.price.fi", "pricing.price.sv", "pricing.price.en"], function() {
                     scope.free = isFree();
+                });
+                scope.$watch("rowSelected", function(value) {
+                    if (scope.rowSelected != scope.selected[scope.pricing._id]) {
+                        scope.selected[scope.pricing._id] = scope.rowSelected;
+                        if (scope.rowSelected) {
+                            scope.selected.count++;
+                        } else {
+                            scope.selected.count--;
+                        }
+                        console.log("selected.count: " + scope.selected.count);
+                    }
+                });
+                scope.$watchCollection("selected", function() {
+                    scope.rowSelected = scope.selected[scope.pricing._id];
                 });
 
                 function is24h() {

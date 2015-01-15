@@ -117,7 +117,7 @@
 				</thead>
 				<tbody>
 				<tr ng-repeat="pricing in editCtrl.facility.pricing" pricing-edit pricing="pricing" selections="selections"
-					class="{{selected[pricing._id] ? 'selected' : 'unselected'}}"></tr>
+					class="{{selections['_' + pricing._id] ? 'selected' : 'unselected'}}"></tr>
 				</tbody>
 			</table>
 		</div>

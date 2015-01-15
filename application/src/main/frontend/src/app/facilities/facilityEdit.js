@@ -149,6 +149,41 @@
             }
             $scope.allSelected = false;
         };
+
+        $scope.pricingClipboard = [];
+        $scope.pricingClipboardIds = {};
+        self.copyPricingValues = function() {
+            var pricingRows = self.facility.pricing;
+            self.clearClipboard();
+            for (var i=0; i < pricingRows.length; i++) {
+                var id = pricingRows[i]._id;
+                if (isSelected(id)) {
+                    setSelected(id, false);
+                    $scope.pricingClipboard.push(pricingRows[i]);
+                    $scope.pricingClipboardIds[id] = true;
+                }
+            }
+        };
+        self.clearClipboard = function() {
+            $scope.pricingClipboard = [];
+            $scope.pricingClipboardIds = {};
+        };
+        self.paste = function(property) {
+            var len = $scope.pricingClipboard.length;
+            if (len === 0) {
+                return;
+            }
+            var pricingRows = self.facility.pricing;
+            var j=0;
+            for (var i=0; i < pricingRows.length; i++) {
+                var id = pricingRows[i]._id;
+                if (isSelected(id)) {
+                    var value = $scope.pricingClipboard[j++ % len][property];
+                    pricingRows[i][property] = _.cloneDeep(value);
+                }
+            }
+        };
+
         self.hasPricingRows = function() {
             return self.facility.pricing.length > 0;
         };

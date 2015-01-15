@@ -100,8 +100,7 @@ public class FacilityDao implements FacilityRepository {
             pricing.usage = row.get(qPricing.usage);
             pricing.maxCapacity = row.get(qPricing.maxCapacity);
             pricing.dayType = row.get(qPricing.dayType);
-            pricing.from = row.get(qPricing.fromTime);
-            pricing.until = row.get(qPricing.untilTime);
+            pricing.time = new TimeDuration(row.get(qPricing.fromTime), row.get(qPricing.untilTime));
             pricing.price = pricingPriceMapping.map(row);
             return pricing;
         }
@@ -437,8 +436,8 @@ public class FacilityDao implements FacilityRepository {
                         .set(qPricing.usage, price.usage)
                         .set(qPricing.maxCapacity, price.maxCapacity)
                         .set(qPricing.dayType, price.dayType)
-                        .set(qPricing.fromTime, price.from)
-                        .set(qPricing.untilTime, price.until);
+                        .set(qPricing.fromTime, price.time.from)
+                        .set(qPricing.untilTime, price.time.until);
                 pricingPriceMapping.populate(price.price, insert);
                 insert.addBatch();
             }

@@ -100,6 +100,7 @@
 				</tr>
 				<tr>
 					<th class="centeredCell"><input type="checkbox" ng-model="allSelected" class="checkbox"/></th>
+
 					<th id="facilities-pricing-capacityType" translate="facilities.pricing.capacityType"></th>
 					<th id="facilities-pricing-usage" translate="facilities.pricing.usage"></th>
 					<th id="facilities-pricing-maxCapacity" translate="facilities.pricing.maxCapacity"></th>
@@ -117,8 +118,48 @@
 				</thead>
 				<tbody>
 				<tr ng-repeat="pricing in editCtrl.facility.pricing" pricing-edit pricing="pricing" selections="selections"
-					class="{{selections[pricing._id] ? 'selected' : 'unselected'}}"></tr>
+					class="{{selections[pricing._id] ? 'selected' : 'unselected'}}{{pricingClipboardIds[pricing._id] ? ' on-clipboard': ''}}"></tr>
 				</tbody>
+				<tfoot ng-show="pricingClipboard.length > 0 && selections.count > 0">
+				<tr>
+					<td></td>
+
+					<td>
+						<a class="btn btn-xs btn-responsive" role="button" ng-click="editCtrl.paste('capacityType')">
+							Liitä
+						</a>
+					</td>
+					<td>
+						<a class="btn btn-xs btn-responsive" role="button" ng-click="editCtrl.paste('usage')">
+							Liitä
+						</a>
+					</td>
+					<td>
+						<a class="btn btn-xs btn-responsive" role="button" ng-click="editCtrl.paste('maxCapacity')">
+							Liitä
+						</a>
+					</td>
+
+					<td>
+						<a class="btn btn-xs btn-responsive" role="button" ng-click="editCtrl.paste('dayType')">
+							Liitä
+						</a>
+					</td>
+					<td></td>
+					<td colspan="2">
+						<a class="btn btn-xs btn-responsive" role="button" ng-click="editCtrl.paste('time')">
+							Liitä
+						</a>
+					</td>
+
+					<td></td>
+					<td colspan="3">
+						<a class="btn btn-xs btn-responsive" role="button" ng-click="editCtrl.paste('price')">
+							Liitä
+						</a>
+					</td>
+				</tr>
+				</tfoot>
 			</table>
 		</div>
 </div>
@@ -129,12 +170,20 @@
 			{{'facilities.action.addPricingRow' | translate }}
 		</a>
 		<a class="btn btn-xs btn-responsive" role="button" ng-click="editCtrl.clonePricingRows()"
-		   ng-show="editCtrl.hasPricingRows()">
+		   ng-show="selections.count > 0">
 			{{'facilities.action.clonePricingRows' | translate }}
 		</a>
 		<a class="btn btn-xs btn-responsive" role="button" ng-click="editCtrl.removePricingRows()"
-		   ng-show="editCtrl.hasPricingRows()">
+		   ng-show="selections.count > 0">
 			{{'facilities.action.removePricingRows' | translate }}
+		</a>
+		<a class="btn btn-xs btn-responsive" role="button" ng-click="editCtrl.copyPricingValues()"
+		   ng-show="selections.count > 0">
+			Kopioi arvot
+		</a>
+		<a class="btn btn-xs btn-responsive" role="button" ng-click="editCtrl.clearClipboard()"
+		   ng-show="pricingClipboard.length > 0">
+			Tyhjennä arvot
 		</a>
 	</div>
 </div>

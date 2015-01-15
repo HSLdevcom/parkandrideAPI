@@ -7,6 +7,7 @@ import static java.util.Comparator.nullsLast;
 import java.util.Comparator;
 import java.util.Objects;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 public class Pricing {
@@ -15,7 +16,7 @@ public class Pricing {
             comparing(((Pricing p) -> p.capacityType), nullsLast(naturalOrder()))
             .thenComparing(((Pricing p) -> p.usage), nullsLast(naturalOrder()))
             .thenComparing(((Pricing p) -> p.dayType), nullsLast(naturalOrder()))
-            .thenComparing(((Pricing p) -> p.from), nullsLast(naturalOrder()));
+            .thenComparing(((Pricing p) -> p.time), nullsLast(naturalOrder()));
 
     @NotNull
     public Usage usage;
@@ -28,13 +29,11 @@ public class Pricing {
 
 
     @NotNull
+    @Valid
     public DayType dayType;
 
     @NotNull
-    public Time from;
-
-    @NotNull
-    public Time until;
+    public TimeDuration time;
 
 
     public MultilingualString price;
@@ -46,14 +45,13 @@ public class Pricing {
         this.capacityType = capacityType;
         this.maxCapacity = maxCapacity;
         this.dayType = dayType;
-        this.from = new Time(from);
-        this.until = new Time(until);
+        this.time = new TimeDuration(new Time(from), new Time(until));
         this.price = (price != null ? new MultilingualString(price) : null);
     }
 
     public boolean overlaps(Pricing that) {
         if (usage == that.usage && capacityType == that.capacityType && dayType == that.dayType) {
-            return from.getMinuteOfDay() < that.until.getMinuteOfDay() && that.from.getMinuteOfDay() < until.getMinuteOfDay();
+            return this.time.overlaps(that.time);
         }
         return false;
     }
@@ -62,8 +60,7 @@ public class Pricing {
         int hashCode = (capacityType == null ? 0 : capacityType.hashCode());
         hashCode = 31*hashCode + (usage == null ? 0 : usage.hashCode());
         hashCode = 31*hashCode + (dayType == null ? 0 : dayType.hashCode());
-        hashCode = 31*hashCode + (from == null ? 0 : from.hashCode());
-        hashCode = 31*hashCode + (until == null ? 0 : until.hashCode());
+        hashCode = 31*hashCode + (time == null ? 0 : time.hashCode());
         hashCode = 31*hashCode + maxCapacity;
         hashCode = 31*hashCode + (price == null ? 0 : price.hashCode());
         return hashCode;
@@ -77,8 +74,7 @@ public class Pricing {
             return Objects.equals(this.capacityType, other.capacityType) &&
                     Objects.equals(this.usage, other.usage) &&
                     Objects.equals(this.dayType, other.dayType) &&
-                    Objects.equals(this.from, other.from) &&
-                    Objects.equals(this.until, other.until) &&
+                    Objects.equals(this.time, other.time) &&
                     Objects.equals(this.maxCapacity, other.maxCapacity) &&
                     Objects.equals(this.price, other.price);
         } else {

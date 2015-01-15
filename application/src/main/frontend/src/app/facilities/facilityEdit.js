@@ -92,7 +92,7 @@
 
         $scope.allSelected = false;
         $scope.selections = {
-            // Selected IDs as properties: _xx so that they may be individually listened
+            // Selected pricing IDs as boolean-values properties
             count: 0 // Selected row count for efficient "if all selected" check
         };
         $scope.$watch("allSelected", function(checked) {

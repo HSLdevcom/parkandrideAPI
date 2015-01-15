@@ -286,10 +286,11 @@
             }
         },
         "pricing": {
+            "label": "Pysäköintihinnoittelu",
             "capacityTypePlaceholder": "Valitse...",
             "capacityType": "Tyyppi",
             "usagePlaceholder": "Valitse...",
-            "usage": "Käyttö",
+            "usage": "Käyttötapa",
             "maxCapacity": "Maksimi",
             "dayTypePlaceholder": "Valitse...",
             "dayType": "Päivätyyppi",

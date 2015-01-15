@@ -49,16 +49,19 @@
             restrict: 'A',
             scope: {
                 pricing: '=',
-                selected: '='
+                selections: '='
             },
             templateUrl: 'facilities/pricingEdit.tpl.html',
             transclude: false,
             link: function(scope) {
+                var pricingId = scope.pricing._id;
+
                 scope.capacityTypes = translatedEnumValues("capacity-types", schema.capacityTypes);
                 scope.usages = translatedEnumValues("usages", schema.usages);
                 scope.dayTypes = translatedEnumValues("day-types", schema.dayTypes);
                 scope.h24 = is24h();
                 scope.free = isFree();
+                scope.rowSelected = scope.selections[pricingId];
 
                 scope.$watch("h24", function(newValue) {
                     var h24 = is24h();
@@ -83,6 +86,20 @@
                 });
                 scope.$watchGroup(["pricing.price.fi", "pricing.price.sv", "pricing.price.en"], function() {
                     scope.free = isFree();
+                });
+
+                scope.$watch("rowSelected", function(value) {
+                    if (scope.rowSelected != scope.selections[pricingId]) {
+                        scope.selections[pricingId] = scope.rowSelected;
+                        if (scope.rowSelected) {
+                            scope.selections.count++;
+                        } else {
+                            scope.selections.count--;
+                        }
+                    }
+                });
+                scope.$watch("selections[" + pricingId + "]", function() {
+                    scope.rowSelected = scope.selections[pricingId];
                 });
 
                 function is24h() {

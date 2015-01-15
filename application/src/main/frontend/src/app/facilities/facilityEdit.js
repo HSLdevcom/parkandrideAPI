@@ -91,32 +91,33 @@
         self.editMode = (facility.id ? "ports" : "location");
 
         $scope.allSelected = false;
-        $scope.selected = {
-            count: 0
+        $scope.selections = {
+            // Selected IDs as properties: _xx so that they may be individually listened
+            count: 0 // Selected row count for efficient "if all selected" check
         };
         $scope.$watch("allSelected", function(newValue) {
             var pricingRows = self.facility.pricing;
             if (newValue) {
-                if ($scope.selected.count === pricingRows.length) {
+                if ($scope.selections.count === pricingRows.length) {
                     return;
                 }
-            } else if ($scope.selected.count < pricingRows.length) {
+            } else if ($scope.selections.count < pricingRows.length) {
                 return;
             }
             for (var i = pricingRows.length - 1; i >= 0; i--) {
                 var id = pricingRows[i]._id;
-                $scope.selected[id] = newValue;
+                setSelected(id, newValue);
             }
             if (newValue) {
-                $scope.selected.count = pricingRows.length;
+                $scope.selections.count = pricingRows.length;
             } else {
-                $scope.selected.count = 0;
+                $scope.selections.count = 0;
             }
         });
-        $scope.$watch("selected.count", function(newCount) {
+        $scope.$watch("selections.count", function(newCount) {
             if (newCount === self.facility.pricing.length) {
                 $scope.allSelected = true;
-            } else if (newCount > 0) {
+            } else {
                 $scope.allSelected = false;
             }
         });
@@ -135,10 +136,10 @@
             var pricingRows = self.facility.pricing;
             for (var i=pricingRows.length - 1; i >= 0; i--) {
                 var id = pricingRows[i]._id;
-                if ($scope.selected[id]) {
+                if (isSelected(id)) {
                     pricingRows.splice(i, 1);
-                    delete $scope.selected[id];
-                    $scope.selected.count--;
+                    setSelected(id, false);
+                    $scope.selections.count--;
                 }
             }
             $scope.allSelected = false;
@@ -148,15 +149,14 @@
             var len = pricingRows.length;
             for (var i=0; i < len; i++) {
                 var id = pricingRows[i]._id;
-                if ($scope.selected[id]) {
-                    $scope.selected[id] = false;
+                if (isSelected(id)) {
+                    setSelected(id, false);
                     var newPricing = _.cloneDeep(pricingRows[i]);
                     delete newPricing.$$hashKey;
 
-                    id = Sequence.nextval();
-                    newPricing._id = id;
+                    newPricing._id = Sequence.nextval();
                     pricingRows.push(newPricing);
-                    $scope.selected[id] = true;
+                    setSelected(newPricing._id, true);
                 }
             }
             $scope.allSelected = false;
@@ -171,6 +171,13 @@
                 $state.go('facility-view', { "id": id });
             });
         };
+
+        function isSelected(pricingId) {
+            return $scope.selections["_" + pricingId];
+        }
+        function setSelected(pricingId, selected) {
+            $scope.selections["_" + pricingId] = selected;
+        }
     });
 
     m.directive('aliases', function() {

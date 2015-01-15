@@ -6,6 +6,7 @@ import static fi.hsl.parkandride.core.service.AuthenticationService.authorize;
 import static java.util.Collections.sort;
 
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 
 import fi.hsl.parkandride.core.back.ContactRepository;
@@ -52,7 +53,7 @@ public class FacilityService {
 
     private void validate(Facility facility) {
         validationService.validate(facility);
-        PricingValidator.validate(facility.builtCapacity, facility.pricing);
+        PricingValidator.validate(facility.builtCapacity, new HashSet<>(facility.pricing));
         validateContact(facility.operatorId, facility.contacts.emergency, "emergency");
         validateContact(facility.operatorId, facility.contacts.operator, "operator");
         validateContact(facility.operatorId, facility.contacts.service, "service");

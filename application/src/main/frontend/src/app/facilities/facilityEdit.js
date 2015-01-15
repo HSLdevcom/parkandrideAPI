@@ -95,31 +95,19 @@
             // Selected IDs as properties: _xx so that they may be individually listened
             count: 0 // Selected row count for efficient "if all selected" check
         };
-        $scope.$watch("allSelected", function(newValue) {
-            var pricingRows = self.facility.pricing;
-            if (newValue) {
-                if ($scope.selections.count === pricingRows.length) {
-                    return;
-                }
-            } else if ($scope.selections.count < pricingRows.length) {
+        $scope.$watch("allSelected", function(checked) {
+            if (checked === isAllRowsSelected()) {
                 return;
             }
+            var pricingRows = self.facility.pricing;
             for (var i = pricingRows.length - 1; i >= 0; i--) {
                 var id = pricingRows[i]._id;
-                setSelected(id, newValue);
+                setSelected(id, checked);
             }
-            if (newValue) {
-                $scope.selections.count = pricingRows.length;
-            } else {
-                $scope.selections.count = 0;
-            }
+            $scope.selections.count = checked ? pricingRows.length : 0;
         });
         $scope.$watch("selections.count", function(newCount) {
-            if (newCount === self.facility.pricing.length) {
-                $scope.allSelected = true;
-            } else {
-                $scope.allSelected = false;
-            }
+            $scope.allSelected = newCount === self.facility.pricing.length;
         });
 
         _.forEach(self.facility.pricing, function(pricing) {
@@ -172,11 +160,14 @@
             });
         };
 
+        function isAllRowsSelected() {
+            return $scope.selections.count === self.facility.pricing.length;
+        }
         function isSelected(pricingId) {
-            return $scope.selections["_" + pricingId];
+            return $scope.selections[pricingId];
         }
         function setSelected(pricingId, selected) {
-            $scope.selections["_" + pricingId] = selected;
+            $scope.selections[pricingId] = selected;
         }
     });
 

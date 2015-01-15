@@ -54,7 +54,7 @@
             templateUrl: 'facilities/pricingEdit.tpl.html',
             transclude: false,
             link: function(scope) {
-                var pricingId = "_" + scope.pricing._id;
+                var pricingId = scope.pricing._id;
 
                 scope.capacityTypes = translatedEnumValues("capacity-types", schema.capacityTypes);
                 scope.usages = translatedEnumValues("usages", schema.usages);
@@ -87,6 +87,7 @@
                 scope.$watchGroup(["pricing.price.fi", "pricing.price.sv", "pricing.price.en"], function() {
                     scope.free = isFree();
                 });
+
                 scope.$watch("rowSelected", function(value) {
                     if (scope.rowSelected != scope.selections[pricingId]) {
                         scope.selections[pricingId] = scope.rowSelected;
@@ -97,7 +98,7 @@
                         }
                     }
                 });
-                scope.$watch("selections." + pricingId , function() {
+                scope.$watch("selections[" + pricingId + "]", function() {
                     scope.rowSelected = scope.selections[pricingId];
                 });
 

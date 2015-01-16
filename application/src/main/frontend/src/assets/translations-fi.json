@@ -288,23 +288,54 @@
         "pricing": {
             "label": "Pysäköintihinnoittelu",
             "capacityTypePlaceholder": "Valitse...",
-            "capacityType": "Tyyppi",
+            "capacity": "Kapasiteetti",
+            "capacityType": {
+                "title": "Tyyppi",
+                "label": "Hinnoittelu / Tyyppi"
+            },
             "usagePlaceholder": "Valitse...",
-            "usage": "Käyttötapa",
-            "maxCapacity": "Maksimi",
+            "usage": {
+                "title": "Käyttötapa",
+                "label": "Hinnoittelu / Käyttötapa"
+            },
+            "maxCapacity": {
+                "title": "Maksimi",
+                "label": "Hinnoittelu / Maksimi"
+            },
             "dayTypePlaceholder": "Valitse...",
-            "dayType": "Päivätyyppi",
+            "dayType": {
+                "title": "Päivätyyppi",
+                "label": "Hinnoittelu / Päivätyyppi"
+            },
             "h24": "24h",
             "time": {
-                "label": "Aukioloaika",
-                "from": "Alku",
-                "until": "Loppu"
+                "title": "Aukioloaika",
+                "label": "Hinnoittelu / Aukioloaika",
+                "from": {
+                    "title": "Alku",
+                    "label": "Hinnoittelu / Alku"
+                },
+                "until": {
+                    "title": "Loppu",
+                    "label": "Hinnoittelun / Loppu"
+                }
             },
             "free": "0€",
             "price": {
-                "fi": "Hinta fi",
-                "sv": "Hinta sv",
-                "en": "Hinta en"
+                "title": "Hinta",
+                "label": "Hinnoittelu / Hinta",
+                "fi": {
+                    "title": "Hinta fi",
+                    "label": "Hinnoittelu / Hinta fi"
+                },
+                "sv":  {
+                    "title": "Hinta sv",
+                    "label": "Hinnoittelu / Hinta sv"
+                },
+                "en":  {
+                    "title": "Hinta en",
+                    "label": "Hinnoittelu / Hinta en"
+                }
             }
         },
         "contacts": {
@@ -429,6 +460,10 @@
         "PhoneOrEmailRequired": "anna vähintään puhelinnumero tai sähköposti",
         "Email": "tarkista muoto",
         "OperatorMismatch": "yhteystiedon tulee olla joko yleinen tai operaattorin omistama",
-        "BasicRequirements": "tarkista pakolliset tiedot ja syötteiden muoto"
+        "BasicRequirements": "tarkista pakolliset tiedot ja syötteiden muoto",
+        "ValidTimeDuration": "aikavälin alku tulee olla ennen loppua",
+        "PricingOverlap": "aikavälit eivät saa olla päällekkäisiä",
+        "BuiltCapacityNotFound": "rakennettua kapasiteettia ei löydy",
+        "CapacityOverflow": "ei voi olla enemmän kuin rakennettu kapasiteetti"
     }
 }

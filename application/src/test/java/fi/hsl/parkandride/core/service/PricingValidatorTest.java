@@ -1,5 +1,6 @@
 package fi.hsl.parkandride.core.service;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
 
 import java.util.Map;
@@ -8,7 +9,7 @@ import org.assertj.core.api.Assertions;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
 
 import fi.hsl.parkandride.core.domain.CapacityType;
@@ -27,7 +28,7 @@ public class PricingValidatorTest {
         Pricing a = pricing(usages[0], capacities[0], days[0], 7, 17);
         Pricing b = pricing(usages[1], capacities[0], days[0], 8, 18);
 
-        PricingValidator.validate(maxCapacities(a, b), ImmutableSet.of(a, b));
+        PricingValidator.validate(maxCapacities(a, b), ImmutableList.of(a, b));
     }
 
     @Test
@@ -35,7 +36,7 @@ public class PricingValidatorTest {
         Pricing a = pricing(usages[0], capacities[0], days[0], 7, 17);
         Pricing b = pricing(usages[0], capacities[1], days[0], 8, 18);
 
-        PricingValidator.validate(maxCapacities(a, b), ImmutableSet.of(a, b));
+        PricingValidator.validate(maxCapacities(a, b), ImmutableList.of(a, b));
     }
 
     @Test
@@ -43,7 +44,7 @@ public class PricingValidatorTest {
         Pricing a = pricing(usages[0], capacities[0], days[0], 7, 17);
         Pricing b = pricing(usages[0], capacities[0], days[1], 8, 18);
 
-        PricingValidator.validate(maxCapacities(a, b), ImmutableSet.of(a, b));
+        PricingValidator.validate(maxCapacities(a, b), ImmutableList.of(a, b));
     }
 
     @Test(expected = ValidationException.class)
@@ -51,7 +52,7 @@ public class PricingValidatorTest {
         Pricing a = pricing(usages[0], capacities[0], days[0], 7, 17);
         Pricing b = pricing(usages[0], capacities[0], days[0], 8, 18);
 
-        PricingValidator.validate(maxCapacities(a, b), ImmutableSet.of(a, b));
+        PricingValidator.validate(maxCapacities(a, b), ImmutableList.of(a, b));
     }
 
     @Test
@@ -59,14 +60,14 @@ public class PricingValidatorTest {
         Pricing a = pricing(usages[0], capacities[0], days[0], 8, 9);
         Pricing b = pricing(usages[0], capacities[0], days[0], 9, 10);
 
-        PricingValidator.validate(maxCapacities(a, b), ImmutableSet.of(a, b));
+        PricingValidator.validate(maxCapacities(a, b), ImmutableList.of(a, b));
     }
 
     @Test(expected = ValidationException.class)
     public void built_capacity_must_exist_for_pricing_capacity() {
         Pricing a = pricing(usages[0], capacities[0], days[0], 7, 17);
 
-        PricingValidator.validate(Maps.newHashMap(), ImmutableSet.of(a));
+        PricingValidator.validate(Maps.newHashMap(), ImmutableList.of(a));
     }
 
     @Test(expected = ValidationException.class)
@@ -76,7 +77,7 @@ public class PricingValidatorTest {
         Map<CapacityType, Integer> builtCapacity = Maps.newHashMap();
         builtCapacity.put(capacities[0], a.maxCapacity-1);
 
-        PricingValidator.validate(builtCapacity, ImmutableSet.of(a));
+        PricingValidator.validate(builtCapacity, ImmutableList.of(a));
     }
 
     @Test
@@ -92,19 +93,22 @@ public class PricingValidatorTest {
             builtCapacity.put(a.capacityType, a.maxCapacity-1);
             builtCapacity.put(c.capacityType, c.maxCapacity-1);
 
-            PricingValidator.validate(builtCapacity, ImmutableSet.of(a, b, c, d, e));
+            PricingValidator.validate(builtCapacity, ImmutableList.of(a, b, c, d, e));
             Assert.fail();
         } catch (Exception ex) {
             ValidationException expected = (ValidationException) ex;
 
             String pricingOverlapMessage = "hour intervals cannot overlap when usage, capacity type and day type are the same";
             String capacityOverflowMessage = "pricing capacity cannot exceed built capacity";
-            Assertions.assertThat(expected.violations).extracting("type", "path", "message").contains(
-                    tuple("PricingOverlap", "pricing.PARK_AND_RIDE.CAR.BUSINESS_DAY", pricingOverlapMessage),
-                    tuple("PricingOverlap", "pricing.COMMERCIAL.CAR.BUSINESS_DAY", pricingOverlapMessage),
-                    tuple("CapacityOverflow", "pricing.PARK_AND_RIDE.CAR.BUSINESS_DAY", capacityOverflowMessage),
-                    tuple("CapacityOverflow", "pricing.COMMERCIAL.CAR.BUSINESS_DAY", capacityOverflowMessage),
-                    tuple("BuiltCapacityNotFound", "pricing.COMMERCIAL.MOTORCYCLE.BUSINESS_DAY", "no corresponding built capacity found for pricing capacity")
+            assertThat(expected.violations.size()).isEqualTo(7);
+            assertThat(expected.violations).extracting("type", "path", "message").contains(
+                    tuple("PricingOverlap", "pricing[1].time", pricingOverlapMessage),
+                    tuple("PricingOverlap", "pricing[3].time", pricingOverlapMessage),
+                    tuple("CapacityOverflow", "pricing[0].maxCapacity", capacityOverflowMessage),
+                    tuple("CapacityOverflow", "pricing[1].maxCapacity", capacityOverflowMessage),
+                    tuple("CapacityOverflow", "pricing[2].maxCapacity", capacityOverflowMessage),
+                    tuple("CapacityOverflow", "pricing[3].maxCapacity", capacityOverflowMessage),
+                    tuple("BuiltCapacityNotFound", "pricing[4].capacityType", "no corresponding built capacity found for pricing capacity")
             );
         }
     }

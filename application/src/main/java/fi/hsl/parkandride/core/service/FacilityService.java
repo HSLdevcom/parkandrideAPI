@@ -5,9 +5,7 @@ import static fi.hsl.parkandride.core.domain.Permission.FACILITY_UPDATE;
 import static fi.hsl.parkandride.core.service.AuthenticationService.authorize;
 import static java.util.Collections.sort;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 
 import fi.hsl.parkandride.core.back.ContactRepository;
 import fi.hsl.parkandride.core.back.FacilityRepository;
@@ -52,18 +50,22 @@ public class FacilityService {
     }
 
     private void validate(Facility facility) {
-        validationService.validate(facility);
-        PricingValidator.validate(facility.builtCapacity, new HashSet<>(facility.pricing));
-        validateContact(facility.operatorId, facility.contacts.emergency, "emergency");
-        validateContact(facility.operatorId, facility.contacts.operator, "operator");
-        validateContact(facility.operatorId, facility.contacts.service, "service");
+        Collection<Violation> violations = new ArrayList<>();
+        validationService.validate(facility, violations);
+        PricingValidator.validate(facility.builtCapacity, facility.pricing, violations);
+        validateContact(facility.operatorId, facility.contacts.emergency, "emergency", violations);
+        validateContact(facility.operatorId, facility.contacts.operator, "operator", violations);
+        validateContact(facility.operatorId, facility.contacts.service, "service", violations);
+        if (!violations.isEmpty()) {
+            throw new ValidationException(violations);
+        }
     }
 
-    private void validateContact(Long facilityOperatorId, Long contactId, String contactType) {
+    private void validateContact(Long facilityOperatorId, Long contactId, String contactType, Collection<Violation> violations) {
         if (contactId != null) {
             Contact contact = contactRepository.getContact(contactId);
             if (contact.operatorId != null && !contact.operatorId.equals(facilityOperatorId)) {
-                throw new ValidationException(new Violation("OperatorMismatch", "contacts." + contactType, "operator should match facility operator"));
+                violations.add(new Violation("OperatorMismatch", "contacts." + contactType, "operator should match facility operator"));
             }
         }
     }

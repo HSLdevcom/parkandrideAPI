@@ -37,6 +37,7 @@ public class Pricing {
     public TimeDuration time;
 
 
+    @Valid
     public MultilingualString price;
 
     public Pricing() {}

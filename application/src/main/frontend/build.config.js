@@ -73,9 +73,9 @@ module.exports = {
       'vendor/sweetalert/lib/sweet-alert.js'
     ],
     css: [
+        'vendor/font-awesome/css/font-awesome.min.css',
         'vendor/angular-ui-select/dist/select.min.css',
         'vendor/openlayers3/css/ol.css',
-        'vendor/ng-tags-input/ng-tags-input.css',
         'vendor/sweetalert/lib/sweet-alert.css'
     ],
     assets: [

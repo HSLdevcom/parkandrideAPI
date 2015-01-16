@@ -145,8 +145,9 @@
             for (var i=pricingRows.length - 1; i >= 0; i--) {
                 var id = pricingRows[i]._id;
                 if (isSelected(id)) {
-                    $scope.pricingClipboard.push(pricingRows[i]);
-                    $scope.pricingClipboardIds[id] = true;
+                    $scope.pricingClipboard.splice(0, 0, pricingRows[i]);
+                    // No need to register pricingClipboardIds: if rows are pasted back, they get new id's
+                    // $scope.pricingClipboardIds[id] = true;
                     pricingRows.splice(i, 1);
                     setSelected(id, false);
                 }
@@ -161,6 +162,7 @@
 
                 newPricing._id = Sequence.nextval();
                 self.facility.pricing.push(newPricing);
+                setSelected(newPricing._id, true);
             }
             $scope.allSelected = false;
         };
@@ -186,6 +188,24 @@
 
         self.hasPricingRows = function() {
             return self.facility.pricing.length > 0;
+        };
+        self.isNewPricingGroup = function(i) {
+            if (i === 0) {
+                return false;
+            }
+            var pricingRows = self.facility.pricing;
+            return pricingRows[i-1].capacityType !== pricingRows[i].capacityType ||
+                pricingRows[i-1].usage !== pricingRows[i].usage;
+        };
+        self.getPricingRowClasses = function(pricing, i) {
+            var classes = ($scope.selections[pricing._id] ? 'selected' : 'unselected');
+            if ($scope.pricingClipboardIds[pricing._id]) {
+                classes += ' on-clipboard';
+            }
+            if (self.isNewPricingGroup(i)) {
+                classes += ' new-pricing-group';
+            }
+            return classes;
         };
 
         self.saveFacility = function() {

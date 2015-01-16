@@ -125,36 +125,36 @@
 					<td></td>
 
 					<td>
-						<a class="btn btn-xs btn-responsive" role="button" ng-click="editCtrl.paste('capacityType')">
+						<a class="btn btn-xs btn-responsive" role="button" ng-click="editCtrl.pastePricingValues('capacityType')">
 							Liitä
 						</a>
 					</td>
 					<td>
-						<a class="btn btn-xs btn-responsive" role="button" ng-click="editCtrl.paste('usage')">
+						<a class="btn btn-xs btn-responsive" role="button" ng-click="editCtrl.pastePricingValues('usage')">
 							Liitä
 						</a>
 					</td>
 					<td>
-						<a class="btn btn-xs btn-responsive" role="button" ng-click="editCtrl.paste('maxCapacity')">
+						<a class="btn btn-xs btn-responsive" role="button" ng-click="editCtrl.pastePricingValues('maxCapacity')">
 							Liitä
 						</a>
 					</td>
 
 					<td>
-						<a class="btn btn-xs btn-responsive" role="button" ng-click="editCtrl.paste('dayType')">
+						<a class="btn btn-xs btn-responsive" role="button" ng-click="editCtrl.pastePricingValues('dayType')">
 							Liitä
 						</a>
 					</td>
 					<td></td>
 					<td colspan="2">
-						<a class="btn btn-xs btn-responsive" role="button" ng-click="editCtrl.paste('time')">
+						<a class="btn btn-xs btn-responsive" role="button" ng-click="editCtrl.pastePricingValues('time')">
 							Liitä
 						</a>
 					</td>
 
 					<td></td>
 					<td colspan="3">
-						<a class="btn btn-xs btn-responsive" role="button" ng-click="editCtrl.paste('price')">
+						<a class="btn btn-xs btn-responsive" role="button" ng-click="editCtrl.pastePricingValues('price')">
 							Liitä
 						</a>
 					</td>
@@ -169,21 +169,25 @@
 		<a class="btn btn-xs btn-responsive" role="button" ng-click="editCtrl.addPricingRow()">
 			{{'facilities.action.addPricingRow' | translate }}
 		</a>
-		<a class="btn btn-xs btn-responsive" role="button" ng-click="editCtrl.clonePricingRows()"
-		   ng-show="selections.count > 0">
-			{{'facilities.action.clonePricingRows' | translate }}
+		<a class="btn btn-xs btn-responsive" role="button" ng-click="editCtrl.pastePricingRows()"
+		   ng-show="pricingClipboard.length > 0">
+			Liitä
 		</a>
-		<a class="btn btn-xs btn-responsive" role="button" ng-click="editCtrl.removePricingRows()"
+		<a class="btn btn-xs btn-responsive" role="button" ng-click="editCtrl.copyPricingRows()"
 		   ng-show="selections.count > 0">
-			{{'facilities.action.removePricingRows' | translate }}
+			Kopioi valitut
 		</a>
-		<a class="btn btn-xs btn-responsive" role="button" ng-click="editCtrl.copyPricingValues()"
+		<a class="btn btn-xs btn-responsive" role="button" ng-click="editCtrl.copyPricingRows(true)"
+		   ng-show="selections.count > 1">
+			Kopioi 1.
+		</a>
+		<a class="btn btn-xs btn-responsive" role="button" ng-click="editCtrl.cutPricingRows()"
 		   ng-show="selections.count > 0">
-			Kopioi arvot
+			Leikkaa
 		</a>
 		<a class="btn btn-xs btn-responsive" role="button" ng-click="editCtrl.clearClipboard()"
 		   ng-show="pricingClipboard.length > 0">
-			Tyhjennä arvot
+			Tyhjennä leikepöytä ({{pricingClipboard.length}})
 		</a>
 	</div>
 </div>

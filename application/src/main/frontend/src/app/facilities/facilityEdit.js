@@ -104,7 +104,6 @@
                 var id = pricingRows[i]._id;
                 setSelected(id, checked);
             }
-            $scope.selections.count = checked ? pricingRows.length : 0;
         });
         $scope.$watch("selections.count", function(newCount) {
             $scope.allSelected = newCount === self.facility.pricing.length;
@@ -120,39 +119,11 @@
             self.facility.pricing.push(newPricing);
             $scope.allSelected = false;
         };
-        self.removePricingRows = function() {
-            var pricingRows = self.facility.pricing;
-            for (var i=pricingRows.length - 1; i >= 0; i--) {
-                var id = pricingRows[i]._id;
-                if (isSelected(id)) {
-                    pricingRows.splice(i, 1);
-                    setSelected(id, false);
-                    $scope.selections.count--;
-                }
-            }
-            $scope.allSelected = false;
-        };
-        self.clonePricingRows = function() {
-            var pricingRows = self.facility.pricing;
-            var len = pricingRows.length;
-            for (var i=0; i < len; i++) {
-                var id = pricingRows[i]._id;
-                if (isSelected(id)) {
-                    setSelected(id, false);
-                    var newPricing = _.cloneDeep(pricingRows[i]);
-                    delete newPricing.$$hashKey;
-
-                    newPricing._id = Sequence.nextval();
-                    pricingRows.push(newPricing);
-                    setSelected(newPricing._id, true);
-                }
-            }
-            $scope.allSelected = false;
-        };
 
         $scope.pricingClipboard = [];
         $scope.pricingClipboardIds = {};
-        self.copyPricingValues = function() {
+
+        self.copyPricingRows = function(firstOnly) {
             var pricingRows = self.facility.pricing;
             self.clearClipboard();
             for (var i=0; i < pricingRows.length; i++) {
@@ -161,14 +132,40 @@
                     setSelected(id, false);
                     $scope.pricingClipboard.push(pricingRows[i]);
                     $scope.pricingClipboardIds[id] = true;
+                    if (firstOnly) {
+                        return;
+                    }
                 }
             }
         };
-        self.clearClipboard = function() {
+        self.cutPricingRows = function() {
             $scope.pricingClipboard = [];
             $scope.pricingClipboardIds = {};
+            var pricingRows = self.facility.pricing;
+            for (var i=pricingRows.length - 1; i >= 0; i--) {
+                var id = pricingRows[i]._id;
+                if (isSelected(id)) {
+                    $scope.pricingClipboard.push(pricingRows[i]);
+                    $scope.pricingClipboardIds[id] = true;
+                    pricingRows.splice(i, 1);
+                    setSelected(id, false);
+                }
+            }
+            $scope.allSelected = false;
         };
-        self.paste = function(property) {
+        self.pastePricingRows = function() {
+            for (var i=0; i < $scope.pricingClipboard.length; i++) {
+                var id = $scope.pricingClipboard[i]._id;
+                var newPricing = _.cloneDeep($scope.pricingClipboard[i]);
+                delete newPricing.$$hashKey;
+
+                newPricing._id = Sequence.nextval();
+                self.facility.pricing.push(newPricing);
+                setSelected(newPricing._id, true);
+            }
+            $scope.allSelected = false;
+        };
+        self.pastePricingValues = function(property) {
             var len = $scope.pricingClipboard.length;
             if (len === 0) {
                 return;
@@ -182,6 +179,10 @@
                     pricingRows[i][property] = _.cloneDeep(value);
                 }
             }
+        };
+        self.clearClipboard = function() {
+            $scope.pricingClipboard = [];
+            $scope.pricingClipboardIds = {};
         };
 
         self.hasPricingRows = function() {
@@ -202,6 +203,9 @@
             return $scope.selections[pricingId];
         }
         function setSelected(pricingId, selected) {
+            if ($scope.selections[pricingId] !== selected) {
+                $scope.selections.count += (selected ? +1 : -1);
+            }
             $scope.selections[pricingId] = selected;
         }
     });

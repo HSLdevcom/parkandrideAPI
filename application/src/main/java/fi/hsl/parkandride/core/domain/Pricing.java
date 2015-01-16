@@ -33,6 +33,7 @@ public class Pricing {
     public DayType dayType;
 
     @NotNull
+    @Valid
     public TimeDuration time;
 
 

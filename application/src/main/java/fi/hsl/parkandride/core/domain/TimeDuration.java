@@ -9,6 +9,7 @@ import java.util.Objects;
 
 import javax.validation.constraints.NotNull;
 
+@ValidTimeDuration
 public class TimeDuration implements Comparable<TimeDuration> {
 
     public static Comparator<TimeDuration> COMPARATOR =

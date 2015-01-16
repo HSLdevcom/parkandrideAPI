@@ -295,8 +295,11 @@
             "dayTypePlaceholder": "Valitse...",
             "dayType": "Päivätyyppi",
             "h24": "24h",
-            "from": "Alku",
-            "until": "Loppu",
+            "time": {
+                "label": "Aukioloaika",
+                "from": "Alku",
+                "until": "Loppu"
+            },
             "free": "0€",
             "price": {
                 "fi": "Hinta fi",

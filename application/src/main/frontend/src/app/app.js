@@ -143,11 +143,18 @@
 
         $rootScope.common = {};
         $rootScope.$on(EVENTS.validationErrors, function(event, violations) {
-                $rootScope.common.violations = _.map(violations, function(violation) {
-                    violation.path = violation.path.replace(/\[\d+\]/, "");
-                    return violation;
-                });
-            });
+            $rootScope.common.violations = [];
+            var duplicates = {};
+            for (var i=0; i < violations.length; i++) {
+                var violation = violations[i];
+                violation.path = violation.path.replace(/\[\d+\]/, "");
+                var violationKey = violation.path + "/" + violation.type;
+                if (!duplicates[violationKey]) {
+                    duplicates[violationKey] = true;
+                    $rootScope.common.violations.push(violation);
+                }
+            }
+        });
 
         this.hasValidationErrors = function() {
             return !_.isEmpty($rootScope.violations);

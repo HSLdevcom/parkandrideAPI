@@ -41,11 +41,11 @@
 </td>
 <td>
 	<input name="pricingFrom{{pricing._id}}" type="text" class="form-control" maxlength="5" ng-required="true"
-		   ng-model="pricing.from" ng-pattern="/^(?:(?:0?\d|1\d|2[0-3])(?::[0-5]\d)?|24(?::00)?)$/" show-errors>
+		   ng-model="pricing.time.from" ng-pattern="/^(?:(?:0?\d|1\d|2[0-3])(?::[0-5]\d)?|24(?::00)?)$/" show-errors>
 </td>
 <td>
 	<input name="pricingUntil{{pricing._id}}" type="text" class="form-control" maxlength="5" ng-required="true"
-		   ng-model="pricing.until" ng-pattern="/^(?:(?:0?\d|1\d|2[0-3])(?::[0-5]\d)?|24(?::00)?)$/" show-errors>
+		   ng-model="pricing.time.until" ng-pattern="/^(?:(?:0?\d|1\d|2[0-3])(?::[0-5]\d)?|24(?::00)?)$/" show-errors>
 </td>
 
 <td class="centeredCell">

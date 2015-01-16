@@ -161,7 +161,7 @@
             "new": "Lisää uusi pysäköintipaikka",
             "addPricingRow": "+ Lisää rivi",
             "removePricingRows": "Poista valitut",
-            "clonePricingRows": "Kopioi valitut"
+            "clonePricingRows": "Kloonaa valitut"
         },
         "name" : {
             "title": "Nimitiedot",

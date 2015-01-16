@@ -262,6 +262,14 @@ tr.selected {
   background-color: #ECECEC;
 }
 
+tr.on-clipboard {
+  border-left: 3px solid $k80;
+}
+
 .table-striped > tbody > tr.selected:nth-child(2n+1) > td, .table-striped > tbody > tr.selected:nth-child(2n+1) > th {
   background-color: #E0E0E0;
+}
+
+#pricing-edit > table > tbody > tr.new-pricing-group > td {
+  border-top-width: 5px;
 }

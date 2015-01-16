@@ -193,6 +193,33 @@
 </div>
 
 <div class="row">
+	<div class="column2 first-column">
+		<div class="panel panel-default">
+			<table class="table table-bordered table-striped table-condensed">
+				<thead>
+				<tr>
+					<th translate="facilities.unavailableCapacities.capacityType.label"></th>
+					<th translate="facilities.unavailableCapacities.usage.label"></th>
+					<th translate="facilities.unavailableCapacities.capacity.label"></th>
+				</tr>
+				</thead>
+				<tbody>
+				<tr ng-repeat="unavailableCapacity in editCtrl.facility.unavailableCapacities">
+					<td>{{'capacity-types.' + unavailableCapacity.capacityType + '.label' | translate}}</td>
+					<td>{{'usages.' + unavailableCapacity.usage + '.label' | translate}}</td>
+					<td>
+						<input name="unavailableCapacity{{unavailableCapacity.capacityType}}{{unavailableCapacity.usage}}" type="number" class="form-control capacityInput"
+							   ng-model="unavailableCapacity.capacity"
+							   min="0" show-errors>
+					</td>
+				</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+</div>
+
+<div class="row">
 	<h3>{{"facilities.contacts.heading" | translate}}</h3>
 </div>
 <div class="row">

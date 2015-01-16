@@ -338,6 +338,17 @@
                 }
             }
         },
+        "unavailableCapacities": {
+            "capacityType": {
+                "label": "Tyyppi"
+            },
+            "usage": {
+                "label": "Käyttö"
+            },
+            "capacity": {
+                "label": "Tilapäisesti pois käytöstä"
+            }
+        },
         "contacts": {
             "create": "Uusi yhteystieto",
             "heading": "Yhteystiedot",

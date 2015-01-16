@@ -111,11 +111,14 @@ public class JdbcConfiguration {
 
     private com.mysema.query.sql.Configuration querydslConfiguration() {
         com.mysema.query.sql.Configuration conf = new com.mysema.query.sql.Configuration(sqlTemplates);
+        conf.register("PRICING", "CAPACITY_TYPE", new EnumByNameType<>(CapacityType.class));
+        conf.register("PRICING", "USAGE", new EnumByNameType<>(Usage.class));
+        conf.register("PRICING", "DAY_TYPE", new EnumByNameType<>(DayType.class));
         conf.register("PRICING", "FROM_TIME", new TimeType());
         conf.register("PRICING", "UNTIL_TIME", new TimeType());
-        conf.register("PRICING", "USAGE", new EnumByNameType<>(Usage.class));
-        conf.register("PRICING", "CAPACITY_TYPE", new EnumByNameType<>(CapacityType.class));
-        conf.register("PRICING", "DAY_TYPE", new EnumByNameType<>(DayType.class));
+
+        conf.register("UNAVAILABLE_CAPACITY", "CAPACITY_TYPE", new EnumByNameType<>(CapacityType.class));
+        conf.register("UNAVAILABLE_CAPACITY", "USAGE", new EnumByNameType<>(Usage.class));
 
         conf.register("CAPACITY_TYPE", "NAME", new EnumByNameType<>(CapacityType.class));
 

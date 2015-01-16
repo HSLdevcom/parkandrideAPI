@@ -34,7 +34,7 @@ public class Pricing {
 
     @NotNull
     @Valid
-    public TimeDuration time;
+    public TimeDuration time = new TimeDuration();
 
 
     @Valid

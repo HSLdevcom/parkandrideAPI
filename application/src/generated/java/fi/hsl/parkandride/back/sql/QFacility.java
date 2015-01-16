@@ -87,6 +87,8 @@ public class QFacility extends RelationalPathSpatial<QFacility> {
 
     public final com.mysema.query.sql.ForeignKey<QFacilityService> _facilityServiceFacilityIdFk = createInvForeignKey(id, "FACILITY_ID");
 
+    public final com.mysema.query.sql.ForeignKey<QUnavailableCapacity> _unavailableCapacityFacilityIdFk = createInvForeignKey(id, "FACILITY_ID");
+
     public final com.mysema.query.sql.ForeignKey<QFacilityPaymentMethod> _facilityPaymentMethodFacilityIdFk = createInvForeignKey(id, "FACILITY_ID");
 
     public final com.mysema.query.sql.ForeignKey<QPort> _portFacilityIdFk = createInvForeignKey(id, "FACILITY_ID");

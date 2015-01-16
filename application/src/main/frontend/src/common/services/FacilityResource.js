@@ -47,9 +47,10 @@
             return {
                 aliases: [],
                 builtCapacity: {},
+                pricing: [],
+                unavailableCapacities: [],
                 ports: [],
-                contacts: {},
-                pricing: []
+                contacts: {}
             };
         };
 

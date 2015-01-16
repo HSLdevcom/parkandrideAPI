@@ -171,19 +171,23 @@
 		</a>
 		<a class="btn btn-xs btn-responsive" role="button" ng-click="editCtrl.pastePricingRows()"
 		   ng-show="pricingClipboard.length > 0">
-			Liitä
-		</a>
-		<a class="btn btn-xs btn-responsive" role="button" ng-click="editCtrl.copyPricingRows()"
-		   ng-show="selections.count > 0">
-			Kopioi valitut
-		</a>
-		<a class="btn btn-xs btn-responsive" role="button" ng-click="editCtrl.copyPricingRows(true)"
-		   ng-show="selections.count > 1">
-			Kopioi 1.
+			Liitä {{pricingClipboard.length}}
 		</a>
 		<a class="btn btn-xs btn-responsive" role="button" ng-click="editCtrl.cutPricingRows()"
 		   ng-show="selections.count > 0">
-			Leikkaa
+			Leikkaa {{selections.count}}
+		</a>
+	</div>
+</div>
+<div class="rowWithMargin">
+	<div class="column first-column">
+		<a class="btn btn-xs btn-responsive" role="button" ng-click="editCtrl.copyPricingRows()"
+		   ng-show="selections.count > 1">
+			Kopioi {{selections.count}}
+		</a>
+		<a class="btn btn-xs btn-responsive" role="button" ng-click="editCtrl.copyPricingRows(true)"
+		   ng-show="selections.count > 0">
+			Kopioi 1.
 		</a>
 		<a class="btn btn-xs btn-responsive" role="button" ng-click="editCtrl.clearClipboard()"
 		   ng-show="pricingClipboard.length > 0">

@@ -49,6 +49,7 @@ public class Facility implements OperatorEntity {
     @Valid
     public FacilityContacts contacts = new FacilityContacts();
 
+    @Valid
     public FacilityPaymentInfo paymentInfo = new FacilityPaymentInfo();
 
 

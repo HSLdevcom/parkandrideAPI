@@ -161,7 +161,6 @@
 
                 newPricing._id = Sequence.nextval();
                 self.facility.pricing.push(newPricing);
-                setSelected(newPricing._id, true);
             }
             $scope.allSelected = false;
         };

@@ -170,7 +170,7 @@
 			{{'facilities.action.addPricingRow' | translate }}
 		</a>
 		<a class="btn btn-xs btn-responsive" role="button" ng-click="editCtrl.pastePricingRows()"
-		   ng-show="pricingClipboard.length > 0">
+		   ng-show="pricingClipboard.length > 0 && selections.count == 0">
 			Liitä {{pricingClipboard.length}}
 		</a>
 		<a class="btn btn-xs btn-responsive" role="button" ng-click="editCtrl.cutPricingRows()"

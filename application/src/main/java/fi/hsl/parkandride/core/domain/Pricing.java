@@ -42,7 +42,7 @@ public class Pricing {
 
     public Pricing() {}
 
-    public Pricing(Usage usage, CapacityType capacityType, int maxCapacity, DayType dayType, String from, String until, String price) {
+    public Pricing(CapacityType capacityType, Usage usage, int maxCapacity, DayType dayType, String from, String until, String price) {
         this.usage = usage;
         this.capacityType = capacityType;
         this.maxCapacity = maxCapacity;

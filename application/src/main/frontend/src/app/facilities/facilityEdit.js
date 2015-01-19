@@ -81,6 +81,10 @@
         self.services = services;
         self.paymentMethods = paymentMethods;
         self.aliasesPlaceholder = aliasesPlaceholder;
+        self.showUnavailableCapacityType = function(i) {
+            var ucs = self.facility.unavailableCapacities;
+            return i === 0 || ucs[i - 1].capacityType != ucs[i].capacityType;
+        };
 
         self.facility = facility;
         if (!self.facility.operatorId) {
@@ -229,6 +233,7 @@
             }
             $scope.selections[pricingId] = selected;
         }
+
     });
 
     m.directive('aliases', function() {

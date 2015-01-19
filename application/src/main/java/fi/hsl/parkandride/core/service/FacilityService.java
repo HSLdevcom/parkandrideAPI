@@ -38,11 +38,11 @@ public class FacilityService {
     @TransactionalWrite
     public Facility updateFacility(long facilityId, Facility facility, User currentUser) {
         authorize(currentUser, facility, FACILITY_UPDATE);
-        validate(facility);
-        sort(facility.pricing, Pricing.COMPARATOR);
-
         Facility oldFacility = repository.getFacilityForUpdate(facilityId);
         authorize(currentUser, oldFacility, FACILITY_UPDATE);
+
+        validate(facility);
+        sort(facility.pricing, Pricing.COMPARATOR);
 
         repository.updateFacility(facilityId, facility, oldFacility);
         facility.id = facilityId;
@@ -52,7 +52,7 @@ public class FacilityService {
     private void validate(Facility facility) {
         Collection<Violation> violations = new ArrayList<>();
         validationService.validate(facility, violations);
-        PricingValidator.validate(facility.builtCapacity, facility.pricing, violations);
+        CapacityPricingValidator.validate(facility.builtCapacity, facility.pricing, facility.unavailableCapacities, violations);
         validateContact(facility.operatorId, facility.contacts.emergency, "emergency", violations);
         validateContact(facility.operatorId, facility.contacts.operator, "operator", violations);
         validateContact(facility.operatorId, facility.contacts.service, "service", violations);

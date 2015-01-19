@@ -21,6 +21,22 @@
             }
         }
 
+        function typeUsageKey(capacityType, usage) {
+            return capacityType + "/" + usage;
+        }
+
+        function cleanupUnavailableCapacities(unavailableCapacities, pricing) {
+            if (unavailableCapacities && unavailableCapacities.length > 0) {
+                var typeUsages = {};
+                _.forEach(pricing, function(p) {
+                    typeUsages[typeUsageKey(p.capacityType, p.usage)] = true;
+                });
+                _.remove(unavailableCapacities, function(uc) {
+                    return !typeUsages[typeUsageKey(uc.capacityType, uc.usage)];
+                });
+            }
+        }
+
         function assignPortIds(facility) {
             for (var i = 0; i < facility.ports.length; i++) {
                 facility.ports[i]._id = Sequence.nextval();
@@ -81,6 +97,7 @@
         api.save = function(facility) {
             cleanupCapacities(facility.builtCapacity);
             cleanupPorts(facility.ports);
+            cleanupUnavailableCapacities(facility.unavailableCapacities, facility.pricing);
             if (facility.id) {
                 return $http.put("api/v1/facilities/" + facility.id, facility).then(function(response){
                     return response.data.id;

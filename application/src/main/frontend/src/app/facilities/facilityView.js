@@ -61,35 +61,40 @@
     });
 
     m.controller('FacilityViewCtrl', function(PricingService, facility, services, contacts, operator, paymentMethods) {
-        this.facility = facility;
-        this.services = services;
-        this.contacts = contacts;
-        this.operator = operator;
-        this.isFree = function(pricing) {
+        var self = this;
+        self.facility = facility;
+        self.services = services;
+        self.contacts = contacts;
+        self.operator = operator;
+        self.isFree = function(pricing) {
             return PricingService.isFree(pricing);
         };
-        this.is24h = function(pricing) {
+        self.is24h = function(pricing) {
             return PricingService.is24h(pricing);
         };
-        this.hasCapacities = function() {
+        self.hasCapacities = function() {
           return !_.isEmpty(facility.builtCapacity);
         };
-        this.hasServices = function() {
+        self.hasServices = function() {
             return services.length > 0;
         };
-        this.getServiceNames = function() {
+        self.getServiceNames = function() {
             return _.map(services, function(service) {
                 return service.name.fi;
             });
         };
-
-        this.hasPaymentInfo = function() {
-            return facility.paymentInfo.parkAndRideAuthRequired || this.hasPaymentMethods() || this.hasPaymentInfoDetails();
+        self.showUnavailableCapacityType = function(i) {
+            var ucs = self.facility.unavailableCapacities;
+            return i === 0 || ucs[i - 1].capacityType != ucs[i].capacityType;
         };
-        this.hasPaymentMethods = function() {
+
+        self.hasPaymentInfo = function() {
+            return facility.paymentInfo.parkAndRideAuthRequired || self.hasPaymentMethods() || self.hasPaymentInfoDetails();
+        };
+        self.hasPaymentMethods = function() {
             return facility.paymentInfo.paymentMethodIds.length > 0;
         };
-        this.getPaymentMethodNames = function() {
+        self.getPaymentMethodNames = function() {
             function hasPaymentMethod(paymentMethod) {
                 return  _.contains(facility.paymentInfo.paymentMethodIds, paymentMethod.id);
             }
@@ -98,7 +103,7 @@
                 return paymentMethod.name.fi;
             });
         };
-        this.hasPaymentInfoDetails = function() {
+        self.hasPaymentInfoDetails = function() {
             return facility.paymentInfo.detail || facility.paymentInfo.url;
         };
     });

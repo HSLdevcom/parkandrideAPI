@@ -1,11 +1,20 @@
 package fi.hsl.parkandride.core.domain;
 
+import static java.util.Comparator.comparing;
+import static java.util.Comparator.naturalOrder;
+import static java.util.Comparator.nullsLast;
+
+import java.util.Comparator;
 import java.util.Objects;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 public class UnavailableCapacity {
+
+    public static Comparator<UnavailableCapacity> COMPARATOR =
+            comparing(((UnavailableCapacity uc) -> uc.capacityType), nullsLast(naturalOrder()))
+            .thenComparing(((UnavailableCapacity uc) -> uc.usage), nullsLast(naturalOrder()));
 
     @NotNull
     public CapacityType capacityType;
@@ -15,6 +24,14 @@ public class UnavailableCapacity {
 
     @Min(0)
     public int capacity;
+
+    public UnavailableCapacity() {}
+
+    public UnavailableCapacity(CapacityType capacityType, Usage usage, int capacity) {
+        this.capacityType = capacityType;
+        this.usage = usage;
+        this.capacity = capacity;
+    }
 
     public int hashCode() {
         int hashCode = (capacityType == null ? 0 : capacityType.hashCode());

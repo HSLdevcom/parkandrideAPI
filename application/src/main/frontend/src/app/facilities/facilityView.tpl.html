@@ -76,6 +76,35 @@
 				</div>
 			</div>
 
+			<div class="row">
+				<div class="column2 first-column">
+					<div class="panel panel-default">
+						<table class="table table-bordered table-striped table-condensed">
+							<thead>
+							<tr>
+								<th translate="facilities.unavailableCapacities.capacityType.label"></th>
+								<th translate="facilities.unavailableCapacities.usage.label"></th>
+								<th translate="facilities.unavailableCapacities.capacity.label"></th>
+							</tr>
+							</thead>
+							<tbody>
+							<tr ng-repeat="unavailableCapacity in viewCtrl.facility.unavailableCapacities">
+								<td>
+									<div ng-show="viewCtrl.showUnavailableCapacityType($index)">
+										{{'capacity-types.' + unavailableCapacity.capacityType + '.label' | translate}}
+									</div>
+								</td>
+								<td>{{'usages.' + unavailableCapacity.usage + '.label' | translate}}</td>
+								<td>
+									{{ unavailableCapacity.capacity }}
+								</td>
+							</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+
 			<div class="row contacts">
 				<h3>{{"facilities.contacts.heading" | translate}}</h3>
 				<facility-contact-view contact="viewCtrl.contacts[viewCtrl.facility.contacts.emergency]" contact-type="emergency"></facility-contact-view>

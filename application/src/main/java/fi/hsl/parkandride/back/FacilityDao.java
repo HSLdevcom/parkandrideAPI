@@ -25,12 +25,16 @@ import com.google.common.collect.Sets;
 import com.mysema.query.ResultTransformer;
 import com.mysema.query.Tuple;
 import com.mysema.query.dml.StoreClause;
+import com.mysema.query.group.QPair;
 import com.mysema.query.sql.SQLExpressions;
+import com.mysema.query.sql.SQLSubQuery;
 import com.mysema.query.sql.dml.SQLInsertClause;
 import com.mysema.query.sql.dml.SQLUpdateClause;
+import com.mysema.query.sql.mssql.SQLServerSubQuery;
 import com.mysema.query.sql.postgres.PostgresQuery;
 import com.mysema.query.sql.postgres.PostgresQueryFactory;
 import com.mysema.query.types.MappingProjection;
+import com.mysema.query.types.QList;
 import com.mysema.query.types.expr.ComparableExpression;
 import com.mysema.query.types.expr.SimpleExpression;
 import com.mysema.query.types.path.NumberPath;
@@ -619,6 +623,7 @@ public class FacilityDao implements FacilityRepository {
             for (Entry<Long, List<UnavailableCapacity>> entry : pricing.entrySet()) {
                 Facility facility = facilitiesById.get(entry.getKey());
                 facility.unavailableCapacities = entry.getValue();
+                sort(facility.unavailableCapacities, UnavailableCapacity.COMPARATOR);
             }
         }
     }

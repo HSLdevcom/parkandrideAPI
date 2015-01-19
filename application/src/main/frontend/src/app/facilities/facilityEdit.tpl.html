@@ -205,7 +205,11 @@
 				</thead>
 				<tbody>
 				<tr ng-repeat="unavailableCapacity in editCtrl.facility.unavailableCapacities">
-					<td>{{'capacity-types.' + unavailableCapacity.capacityType + '.label' | translate}}</td>
+					<td>
+						<div ng-show="editCtrl.showUnavailableCapacityType($index)">
+							{{'capacity-types.' + unavailableCapacity.capacityType + '.label' | translate}}
+						</div>
+					</td>
 					<td>{{'usages.' + unavailableCapacity.usage + '.label' | translate}}</td>
 					<td>
 						<input name="unavailableCapacity{{unavailableCapacity.capacityType}}{{unavailableCapacity.usage}}" type="number" class="form-control capacityInput"

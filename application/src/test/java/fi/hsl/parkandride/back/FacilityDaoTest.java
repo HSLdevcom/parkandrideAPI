@@ -1,11 +1,9 @@
 package fi.hsl.parkandride.back;
 
 import static fi.hsl.parkandride.core.domain.CapacityType.CAR;
-import static fi.hsl.parkandride.core.domain.CapacityType.BICYCLE;
 import static fi.hsl.parkandride.core.domain.CapacityType.ELECTRIC_CAR;
 import static fi.hsl.parkandride.core.domain.DayType.BUSINESS_DAY;
 import static fi.hsl.parkandride.core.domain.DayType.EVE;
-import static fi.hsl.parkandride.core.domain.DayType.SATURDAY;
 import static fi.hsl.parkandride.core.domain.DayType.SUNDAY;
 import static fi.hsl.parkandride.core.domain.Sort.Dir.ASC;
 import static fi.hsl.parkandride.core.domain.Sort.Dir.DESC;
@@ -14,7 +12,6 @@ import static fi.hsl.parkandride.core.domain.Usage.PARK_AND_RIDE;
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -31,7 +28,6 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSortedSet;
-import com.google.common.collect.Sets;
 
 import fi.hsl.parkandride.core.back.ContactRepository;
 import fi.hsl.parkandride.core.back.FacilityRepository;
@@ -72,9 +68,9 @@ public class FacilityDaoTest extends AbstractDaoTest {
 
     public static final Set<Long> SERVICES = ImmutableSet.of(1l, 2l, 3l);
 
-    public static final Pricing PRICING1 = new Pricing(PARK_AND_RIDE, CAR, 50, SUNDAY, "8", "18", "2 EUR/H");
+    public static final Pricing PRICING1 = new Pricing(CAR, PARK_AND_RIDE, 50, SUNDAY, "8", "18", "2 EUR/H");
 
-    public static final Pricing PRICING2 = new Pricing(PARK_AND_RIDE, CAR, 50, EVE, "8", "18", "1 EUR/H");
+    public static final Pricing PRICING2 = new Pricing(CAR, PARK_AND_RIDE, 50, EVE, "8", "18", "1 EUR/H");
 
     public static final Map<CapacityType, Integer> BUILT_CAPACITY = ImmutableMap.of(
             CAR, 50,
@@ -123,7 +119,7 @@ public class FacilityDaoTest extends AbstractDaoTest {
         final SortedSet<String> newAliases = ImmutableSortedSet.of("clias");
         final List<Port> newPorts = ImmutableList.of(new Port(PORT_LOCATION2, true, true, true, true), new Port(PORT_LOCATION1, false, false, false, false));
         final Set<Long> newServices = ImmutableSet.of(4l);
-        final List<Pricing> newPricing = asList(new Pricing(COMMERCIAL, CAR, 50, BUSINESS_DAY, "8", "18", "10 EUR/H"));
+        final List<Pricing> newPricing = asList(new Pricing(CAR, COMMERCIAL, 50, BUSINESS_DAY, "8", "18", "10 EUR/H"));
 
         facility.name = newName;
         facility.aliases = newAliases;

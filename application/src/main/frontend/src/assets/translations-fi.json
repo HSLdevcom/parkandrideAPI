@@ -339,6 +339,7 @@
             }
         },
         "unavailableCapacities": {
+            "label": "Tilapäisesti pois käytöstä",
             "capacityType": {
                 "label": "Tyyppi"
             },
@@ -475,6 +476,7 @@
         "ValidTimeDuration": "aikavälin alku tulee olla ennen loppua",
         "PricingOverlap": "aikavälit eivät saa olla päällekkäisiä",
         "BuiltCapacityNotFound": "rakennettua kapasiteettia ei löydy",
-        "CapacityOverflow": "ei voi olla enemmän kuin rakennettu kapasiteetti"
+        "PricingCapacityOverflow": "ei voi olla enemmän kuin rakennettu kapasiteetti",
+        "UnavailableCapacityOverflow": "ei voi olla enemmän kuin pysäköintihinnoittelun maksimi"
     }
 }

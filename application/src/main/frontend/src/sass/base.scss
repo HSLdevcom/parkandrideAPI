@@ -268,7 +268,7 @@ a {
 
 #pricing-edit > table > tbody > tr > td.clipboard-indicator,
 #pricing-edit > table > thead > tr > th.clipboard-indicator,
-#pricing-edit > table > tfoot > tr > th.clipboard-indicator{
+#pricing-edit > table > tfoot > tr > th.clipboard-indicator {
   width: 5px;
   padding: 0px;
   border-right: 0px none transparent;
@@ -286,5 +286,5 @@ a {
 }
 
 #pricing-edit > table > tbody > tr.new-pricing-group > td {
-  border-top-width: 5px;
+  border-top-width: 8px;
 }

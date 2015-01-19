@@ -13,26 +13,6 @@
         }
     });
 
-    m.directive('pricingView', function (schema, $translate, PricingService) {
-        return {
-            restrict: 'A',
-            scope: {
-                pricing: '='
-            },
-            templateUrl: 'facilities/pricingView.tpl.html',
-            transclude: false,
-            link: function(scope) {
-                scope.is24h = function() {
-                    return PricingService.is24h(scope.pricing);
-                };
-                scope.isFree = function() {
-                    var free = PricingService.isFree(scope.pricing);
-                    return free;
-                };
-            }
-        };
-    });
-
     m.directive('pricingEdit', function (schema, $translate, PricingService) {
 
         function translatedEnumValues(prefix, values) {

@@ -83,9 +83,19 @@
                 return service.name.fi;
             });
         };
-        self.showUnavailableCapacityType = function(i) {
-            var ucs = self.facility.unavailableCapacities;
-            return i === 0 || ucs[i - 1].capacityType != ucs[i].capacityType;
+        self.isRepeatingValue = function(collection, i, properties) {
+            if (!_.isArray(properties)) {
+                properties = [properties];
+            }
+            if (i === 0) {
+                return false;
+            }
+            return _.reduce(
+                properties,
+                function(and, property) {
+                    return and && collection[i - 1][property] === collection[i][property];
+                },
+                true);
         };
 
         self.hasPaymentInfo = function() {

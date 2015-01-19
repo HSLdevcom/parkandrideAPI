@@ -69,7 +69,33 @@
 							</tr>
 							</thead>
 							<tbody>
-								<tr ng-repeat="pricing in viewCtrl.facility.pricing" pricing-view pricing="pricing"></tr>
+							<tr ng-repeat="pricing in viewCtrl.facility.pricing">
+								<td>
+									<div ng-hide="viewCtrl.isRepeatingValue(viewCtrl.facility.pricing, $index, 'capacityType')">
+										{{ 'capacity-types.' + pricing.capacityType + '.label' | translate }}
+									</div>
+								</td>
+								<td>
+									<div ng-hide="viewCtrl.isRepeatingValue(viewCtrl.facility.pricing, $index, ['capacityType', 'usage'])">
+										{{ 'usages.' + pricing.usage + '.label' | translate }}
+									</div>
+								</td>
+								<td>{{ pricing.maxCapacity }}</td>
+
+								<td>{{ 'day-types.' + pricing.dayType + '.label' | translate }}</td>
+								<td>
+									<div ng-show="is24h(pricing)">&#x2713;</div>
+								</td>
+								<td>{{ pricing.from }}</td>
+								<td>{{ pricing.until }}</td>
+
+								<td>
+									<div ng-show="isFree(pricing)">&#x2713;</div>
+								</td>
+								<td>{{ pricing.price.fi }}</td>
+								<td>{{ pricing.price.sv }}</td>
+								<td>{{ pricing.price.en }}</td>
+							</tr>
 							</tbody>
 						</table>
 					</div>
@@ -90,7 +116,7 @@
 							<tbody>
 							<tr ng-repeat="unavailableCapacity in viewCtrl.facility.unavailableCapacities">
 								<td>
-									<div ng-show="viewCtrl.showUnavailableCapacityType($index)">
+									<div ng-hide="viewCtrl.isRepeatingValue(viewCtrl.facility.unavailableCapacities, $index, 'capacityType')">
 										{{'capacity-types.' + unavailableCapacity.capacityType + '.label' | translate}}
 									</div>
 								</td>

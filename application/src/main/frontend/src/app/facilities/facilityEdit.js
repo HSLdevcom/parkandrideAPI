@@ -142,16 +142,13 @@
                 }
             }
         };
-        self.cutPricingRows = function() {
+        self.deletePricingRows = function() {
             $scope.pricingClipboard = [];
             $scope.pricingClipboardIds = {};
             var pricingRows = self.facility.pricing;
             for (var i=pricingRows.length - 1; i >= 0; i--) {
                 var id = pricingRows[i]._id;
                 if (isSelected(id)) {
-                    $scope.pricingClipboard.splice(0, 0, pricingRows[i]);
-                    // No need to register pricingClipboardIds: if rows are pasted back, they get new id's
-                    // $scope.pricingClipboardIds[id] = true;
                     pricingRows.splice(i, 1);
                     setSelected(id, false);
                 }

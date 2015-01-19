@@ -80,7 +80,7 @@
 	</div>
 </div>
 
-<div class="rowWithMargin">
+<div class="row rowWithLargeMargin">
 	<h4 translate="facilities.pricing.label"></h4>
 	<p  ng-hide="editCtrl.hasPricingRows()">Pysäköintipaikkaan ei ole lisätty kapasiteettirivejä</p>
 	<div id="pricing-edit" class="panel panel-default row" ng-show="editCtrl.hasPricingRows()">
@@ -160,34 +160,33 @@
 	</div>
 </div>
 
-<div class="rowWithMargin">
+<div class="row rowWithSmallMargin">
 	<div class="column first-column">
 		<a class="btn btn-xs btn-responsive" role="button" ng-click="editCtrl.addPricingRow()">
 			{{'facilities.action.addPricingRow' | translate }}
 		</a>
 		<a class="btn btn-xs btn-responsive" role="button" ng-click="editCtrl.pastePricingRows()"
 		   ng-show="pricingClipboard.length > 0 && selections.count == 0">
-			Liitä {{pricingClipboard.length}}
+			Liitä
 		</a>
-		<a class="btn btn-xs btn-responsive" role="button" ng-click="editCtrl.deletePricingRows()"
-		   ng-show="selections.count > 0">
-			Poista {{selections.count}}
-		</a>
-	</div>
-</div>
-<div class="rowWithMargin">
-	<div class="column first-column">
 		<a class="btn btn-xs btn-responsive" role="button" ng-click="editCtrl.copyPricingRows()"
-		   ng-show="selections.count > 1">
-			Kopioi {{selections.count}}
+		   ng-show="editCtrl.hasPricingRows()">
+			Kopioi
 		</a>
 		<a class="btn btn-xs btn-responsive" role="button" ng-click="editCtrl.copyPricingRows(true)"
-		   ng-show="selections.count > 0">
+		   ng-show="editCtrl.hasPricingRows()">
 			Kopioi ensimmäinen
+		</a>
+		<a class="btn btn-xs btn-responsive" role="button" ng-click="editCtrl.deletePricingRows()"
+		   ng-show="editCtrl.hasPricingRows()">
+			Poista
 		</a>
 	</div>
 </div>
 
+<div class="row rowWithSmallMargin">
+	<h4>Kapasiteetti tilapäisesti pois käytöstä</h4>
+</div>
 <div class="row">
 	<div class="column2 first-column">
 		<div class="panel panel-default">

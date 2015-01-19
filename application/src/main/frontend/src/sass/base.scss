@@ -256,35 +256,3 @@ a {
     .modal-dialog { @include translate(0, 0); }
   }
 }
-
-
-#pricing-edit > table > tbody > tr.selected:nth-child(2n) > td, #pricing-edit > table > thead > tr.selected:nth-child(2n) > th {
-  background-color: #ECECEC;
-}
-
-#pricing-edit > table > tbody > tr.selected:nth-child(2n+1) > td, #pricing-edit > table > thead > tr.selected:nth-child(2n+1) > th {
-  background-color: #E0E0E0;
-}
-
-#pricing-edit > table > tbody > tr > td.clipboard-indicator,
-#pricing-edit > table > thead > tr > th.clipboard-indicator,
-#pricing-edit > table > tfoot > tr > th.clipboard-indicator {
-  width: 5px;
-  padding: 0px;
-  border-right: 0px none transparent;
-}
-
-#pricing-edit > table > tbody > tr.on-clipboard > td.clipboard-indicator {
-  background-color:  $k60;
-}
-
-#pricing-edit > table > tbody > tr > td.pricing-select,
-#pricing-edit > table > thead > tr > th.pricing-select,
-#pricing-edit > table > tfoot > tr > th.pricing-select{
-  border-left:  0px none transparent;
-  padding-right: 10px;
-}
-
-#pricing-edit > table > tbody > tr.new-pricing-group > td {
-  border-top-width: 8px;
-}

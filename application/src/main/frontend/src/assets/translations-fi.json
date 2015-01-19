@@ -196,10 +196,28 @@
                 "heading": "Lisätiedot"
             },
             "detail": {
-                "label": "Lisätiedot"
+                "label": "Lisätiedot",
+                "fi": {
+                    "label": "Lisätiedot (fi)"
+                },
+                "sv": {
+                    "label": "Lisätiedot (sv)"
+                },
+                "en": {
+                    "label": "Lisätiedot (en)"
+                }
             },
             "url": {
-                "label": "Lisätiedot, linkki"
+                "label": "Lisätiedot, linkki",
+                "fi": {
+                    "label": "Lisätiedot, linkki (fi)"
+                },
+                "sv": {
+                    "label": "Lisätiedot, linkki (sv)"
+                },
+                "en": {
+                    "label": "Lisätiedot, linkki (en)"
+                }
             }
         },
         "ports": {

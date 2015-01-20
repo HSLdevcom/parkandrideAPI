@@ -119,8 +119,8 @@
 			<tr ng-repeat="pricing in editCtrl.facility.pricing" pricing-edit pricing="pricing" selections="selections"
 				class="{{ editCtrl.getPricingRowClasses(pricing, $index) }}"></tr>
 			</tbody>
-			<tfoot ng-show="pricingClipboard.length > 0 && selections.count > 0">
-			<tr>
+			<tfoot>
+			<tr ng-show="pricingClipboard.length > 0 && selections.count > 0">
 				<th class="clipboard-indicator"></th>
 				<th class="pricing-select"></th>
 
@@ -170,19 +170,19 @@
 			{{'facilities.action.addPricingRow' | translate }}
 		</a>
 		<a class="btn btn-xs btn-responsive" role="button" ng-click="editCtrl.pastePricingRows()"
-		   ng-show="editCtrl.hasPricingRows()">
+		   ng-disabled="pricingClipboard.length == 0" ng-show="editCtrl.hasPricingRows()">
 			Liitä
 		</a>
 		<a class="btn btn-xs btn-responsive" role="button" ng-click="editCtrl.copyPricingRows()"
-		   ng-show="editCtrl.hasPricingRows()">
+		   ng-disabled="selections.count == 0" ng-show="editCtrl.hasPricingRows()">
 			Kopioi
 		</a>
 		<a class="btn btn-xs btn-responsive" role="button" ng-click="editCtrl.copyPricingRows(true)"
-		   ng-show="editCtrl.hasPricingRows()">
+		   ng-disabled="selections.count < 2" ng-show="editCtrl.hasPricingRows()">
 			Kopioi ensimmäinen
 		</a>
 		<a class="btn btn-xs btn-responsive" role="button" ng-click="editCtrl.deletePricingRows()"
-		   ng-show="editCtrl.hasPricingRows()">
+		   ng-disabled="selections.count == 0" ng-show="editCtrl.hasPricingRows()">
 			Poista
 		</a>
 	</div>

@@ -96,13 +96,17 @@
                 }
             );
         };
+        $scope.cancel = function () {
+            $modalInstance.dismiss('cancel');
+        };
     });
 
     m.factory("loginPrompt", function($modal) {
         return function() {
             var modalInstance = $modal.open({
                 templateUrl: 'auth/login.tpl.html',
-                controller: 'LoginController'
+                controller: 'LoginController',
+                backdrop: 'static'
             });
             return modalInstance.result;
         };

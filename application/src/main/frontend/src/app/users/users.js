@@ -3,7 +3,6 @@
         'ui.router',
         'parkandride.UserResource',
         'parkandride.layout',
-        'parkandride.util',
         'showErrors'
     ]);
 
@@ -25,14 +24,10 @@
             }
         });
     })
-    .controller('UserListCtrl', function(users) {
+    .controller('UserListCtrl', function(users, userModal) {
         var vm = this;
         vm.users = users.results;
-        vm.create = create;
-        vm.edit = edit;
-
-        function create() {}
-        function edit() {}
+        vm.openModal = userModal;
     });
 
     m.directive('userListNavi', function() {
@@ -40,6 +35,34 @@
             restrict: 'E',
             templateUrl: 'users/userListNavi.tpl.html'
         };
+    });
+
+    m.factory('userModal', function($modal) {
+        return function(user) {
+            var modalInstance = $modal.open({
+                templateUrl: 'users/userModal.tpl.html',
+                controller: 'UserModalCtrl as ctrl',
+                resolve: {
+                    user: function () {
+                        return _.cloneDeep(user);
+                    }
+                },
+                backdrop: 'static'
+            });
+            return modalInstance.result;
+        };
+    })
+    .controller('UserModalCtrl', function($modalInstance, user) {
+        var vm = this;
+        vm.titleKey = 'users.action.' + (user ? 'edit' : 'new');
+        vm.user = user;
+        vm.save = save;
+        vm.cancel = cancel;
+
+        function save(form) {}
+        function cancel() {
+            $modalInstance.dismiss('cancel');
+        }
     });
 
 })();

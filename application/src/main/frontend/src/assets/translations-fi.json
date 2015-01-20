@@ -457,7 +457,8 @@
             "label": "Käyttäjätunnus"
         },
         "action": {
-            "new": "Lisää uusi käyttäjä"
+            "new": "Lisää uusi käyttäjä",
+            "edit": "Muokkaa käyttäjää"
         }
     },
     "common": {

@@ -21,16 +21,6 @@ public final class CapacityPricingValidator {
 
     public static void validate(Map<CapacityType, Integer> builtCapacity,
                                 List<Pricing> pricing,
-                                List<UnavailableCapacity> unavailableCapacities) {
-        List<Violation> violations = new ArrayList<>();
-        validate(builtCapacity, pricing, unavailableCapacities, violations);
-        if (!violations.isEmpty()) {
-            throw new ValidationException(violations);
-        }
-    }
-
-    public static void validate(Map<CapacityType, Integer> builtCapacity,
-                                List<Pricing> pricing,
                                 List<UnavailableCapacity> unavailableCapacities,
                                 Collection<Violation> violations) {
         Map<Pair<CapacityType, Usage>, Integer> typeUsageMax = Maps.newHashMap();

@@ -8,22 +8,22 @@ import static fi.hsl.parkandride.core.domain.DayType.BUSINESS_DAY;
 import static fi.hsl.parkandride.core.domain.DayType.SATURDAY;
 import static fi.hsl.parkandride.core.domain.Usage.COMMERCIAL;
 import static fi.hsl.parkandride.core.domain.Usage.PARK_AND_RIDE;
+import static java.lang.Enum.valueOf;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
+import org.assertj.core.api.Assertions;
 import org.junit.Assert;
 import org.junit.Test;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
 
-import fi.hsl.parkandride.core.domain.CapacityType;
-import fi.hsl.parkandride.core.domain.DayType;
-import fi.hsl.parkandride.core.domain.Pricing;
-import fi.hsl.parkandride.core.domain.UnavailableCapacity;
-import fi.hsl.parkandride.core.domain.Usage;
+import fi.hsl.parkandride.core.domain.*;
 
 
 public class CapacityPricingValidatorTest {
@@ -33,7 +33,9 @@ public class CapacityPricingValidatorTest {
         Pricing a = pricing(CAR, PARK_AND_RIDE, BUSINESS_DAY, 7, 17);
         Pricing b = pricing(CAR, COMMERCIAL, BUSINESS_DAY, 8, 18);
 
-        CapacityPricingValidator.validate(maxCapacities(a, b), ImmutableList.of(a, b), ImmutableList.of());
+        List<Violation> violations = new ArrayList<>();
+        CapacityPricingValidator.validate(maxCapacities(a, b), ImmutableList.of(a, b), ImmutableList.of(), violations);
+        Assertions.assertThat(violations).isEmpty();
     }
 
     @Test
@@ -41,7 +43,9 @@ public class CapacityPricingValidatorTest {
         Pricing a = pricing(CAR, PARK_AND_RIDE, BUSINESS_DAY, 7, 17);
         Pricing b = pricing(BICYCLE, PARK_AND_RIDE, BUSINESS_DAY, 8, 18);
 
-        CapacityPricingValidator.validate(maxCapacities(a, b), ImmutableList.of(a, b), ImmutableList.of());
+        List<Violation> violations = new ArrayList<>();
+        CapacityPricingValidator.validate(maxCapacities(a, b), ImmutableList.of(a, b), ImmutableList.of(), violations);
+        Assertions.assertThat(violations).isEmpty();
     }
 
     @Test
@@ -49,15 +53,19 @@ public class CapacityPricingValidatorTest {
         Pricing a = pricing(CAR, PARK_AND_RIDE, BUSINESS_DAY, 7, 17);
         Pricing b = pricing(CAR, PARK_AND_RIDE, SATURDAY, 8, 18);
 
-        CapacityPricingValidator.validate(maxCapacities(a, b), ImmutableList.of(a, b), ImmutableList.of());
+        List<Violation> violations = new ArrayList<>();
+        CapacityPricingValidator.validate(maxCapacities(a, b), ImmutableList.of(a, b), ImmutableList.of(), violations);
+        Assertions.assertThat(violations).isEmpty();
     }
 
-    @Test(expected = ValidationException.class)
+    @Test
     public void hours_cannot_overlap_for_same_usage_capacity_day() {
         Pricing a = pricing(CAR, PARK_AND_RIDE, BUSINESS_DAY, 7, 17);
         Pricing b = pricing(CAR, PARK_AND_RIDE, BUSINESS_DAY, 8, 18);
 
-        CapacityPricingValidator.validate(maxCapacities(a, b), ImmutableList.of(a, b), ImmutableList.of());
+        List<Violation> violations = new ArrayList<>();
+        CapacityPricingValidator.validate(maxCapacities(a, b), ImmutableList.of(a, b), ImmutableList.of(), violations);
+        Assertions.assertThat(violations).extracting("type", "path").contains(tuple("PricingOverlap", "pricing[1].time"));
     }
 
     @Test
@@ -68,7 +76,9 @@ public class CapacityPricingValidatorTest {
         b.maxCapacity = 10;
         UnavailableCapacity uc = new UnavailableCapacity(CAR, PARK_AND_RIDE, 10);
 
-        CapacityPricingValidator.validate(maxCapacities(a, b), ImmutableList.of(a, b), ImmutableList.of(uc));
+        List<Violation> violations = new ArrayList<>();
+        CapacityPricingValidator.validate(maxCapacities(a, b), ImmutableList.of(a, b), ImmutableList.of(uc), violations);
+        Assertions.assertThat(violations).isEmpty();
     }
 
     @Test
@@ -79,10 +89,12 @@ public class CapacityPricingValidatorTest {
         b.maxCapacity = 10;
         UnavailableCapacity uc = new UnavailableCapacity(CAR, PARK_AND_RIDE, 10);
 
-        CapacityPricingValidator.validate(maxCapacities(a, b), ImmutableList.of(b, a), ImmutableList.of(uc));
+        List<Violation> violations = new ArrayList<>();
+        CapacityPricingValidator.validate(maxCapacities(a, b), ImmutableList.of(b, a), ImmutableList.of(uc), violations);
+        Assertions.assertThat(violations).isEmpty();
     }
 
-    @Test(expected = ValidationException.class)
+    @Test
     public void pricing_not_found_with_wrong_capacity_type() {
         Pricing a = pricing(CAR, PARK_AND_RIDE, BUSINESS_DAY, 0, 24);
         a.maxCapacity = 5;
@@ -90,10 +102,12 @@ public class CapacityPricingValidatorTest {
         b.maxCapacity = 10;
         UnavailableCapacity uc = new UnavailableCapacity(BICYCLE, PARK_AND_RIDE, 10);
 
-        CapacityPricingValidator.validate(maxCapacities(a, b), ImmutableList.of(a, b), ImmutableList.of(uc));
+        List<Violation> violations = new ArrayList<>();
+        CapacityPricingValidator.validate(maxCapacities(a, b), ImmutableList.of(a, b), ImmutableList.of(uc), violations);
+        Assertions.assertThat(violations).extracting("type", "path").contains(tuple("PricingNotFound", "unavailableCapacities[0]"));
     }
 
-    @Test(expected = ValidationException.class)
+    @Test
     public void pricing_not_found_with_wrong_usage() {
         Pricing a = pricing(CAR, PARK_AND_RIDE, BUSINESS_DAY, 0, 24);
         a.maxCapacity = 5;
@@ -101,10 +115,12 @@ public class CapacityPricingValidatorTest {
         b.maxCapacity = 10;
         UnavailableCapacity uc = new UnavailableCapacity(CAR, COMMERCIAL, 10);
 
-        CapacityPricingValidator.validate(maxCapacities(a, b), ImmutableList.of(a, b), ImmutableList.of(uc));
+        List<Violation> violations = new ArrayList<>();
+        CapacityPricingValidator.validate(maxCapacities(a, b), ImmutableList.of(a, b), ImmutableList.of(uc), violations);
+        Assertions.assertThat(violations).extracting("type", "path").contains(tuple("PricingNotFound", "unavailableCapacities[0]"));
     }
 
-    @Test(expected = ValidationException.class)
+    @Test
     public void unavailable_capacity_overflow() {
         Pricing a = pricing(CAR, PARK_AND_RIDE, BUSINESS_DAY, 0, 24);
         a.maxCapacity = 5;
@@ -112,10 +128,12 @@ public class CapacityPricingValidatorTest {
         b.maxCapacity = 10;
         UnavailableCapacity uc = new UnavailableCapacity(CAR, PARK_AND_RIDE, 11);
 
-        CapacityPricingValidator.validate(maxCapacities(a, b), ImmutableList.of(a, b), ImmutableList.of(uc));
+        List<Violation> violations = new ArrayList<>();
+        CapacityPricingValidator.validate(maxCapacities(a, b), ImmutableList.of(a, b), ImmutableList.of(uc), violations);
+        Assertions.assertThat(violations).extracting("type", "path").contains(tuple("UnavailableCapacityOverflow", "unavailableCapacities[0].capacity"));
     }
 
-    @Test(expected = ValidationException.class)
+    @Test
     public void duplicate_unavailable_capacity() {
         Pricing a = pricing(CAR, PARK_AND_RIDE, BUSINESS_DAY, 0, 24);
         a.maxCapacity = 5;
@@ -123,7 +141,9 @@ public class CapacityPricingValidatorTest {
         b.maxCapacity = 10;
         UnavailableCapacity uc = new UnavailableCapacity(CAR, PARK_AND_RIDE, 5);
 
-        CapacityPricingValidator.validate(maxCapacities(a, b), ImmutableList.of(a, b), ImmutableList.of(uc, uc));
+        List<Violation> violations = new ArrayList<>();
+        CapacityPricingValidator.validate(maxCapacities(a, b), ImmutableList.of(a, b), ImmutableList.of(uc, uc), violations);
+        Assertions.assertThat(violations).extracting("type", "path").contains(tuple("DuplicateUnavailableCapacity", "unavailableCapacities[1]"));
     }
 
     @Test
@@ -131,24 +151,30 @@ public class CapacityPricingValidatorTest {
         Pricing a = pricing(CAR, PARK_AND_RIDE, BUSINESS_DAY, 8, 9);
         Pricing b = pricing(CAR, PARK_AND_RIDE, BUSINESS_DAY, 9, 10);
 
-        CapacityPricingValidator.validate(maxCapacities(a, b), ImmutableList.of(a, b), ImmutableList.of());
+        List<Violation> violations = new ArrayList<>();
+        CapacityPricingValidator.validate(maxCapacities(a, b), ImmutableList.of(a, b), ImmutableList.of(), violations);
+        Assertions.assertThat(violations).isEmpty();
     }
 
-    @Test(expected = ValidationException.class)
+    @Test
     public void built_capacity_must_exist_for_pricing_capacity() {
         Pricing a = pricing(CAR, PARK_AND_RIDE, BUSINESS_DAY, 7, 17);
 
-        CapacityPricingValidator.validate(Maps.newHashMap(), ImmutableList.of(a), ImmutableList.of());
+        List<Violation> violations = new ArrayList<>();
+        CapacityPricingValidator.validate(Maps.newHashMap(), ImmutableList.of(a), ImmutableList.of(), violations);
+        Assertions.assertThat(violations).extracting("type", "path").contains(tuple("BuiltCapacityNotFound", "pricing[0].capacityType"));
     }
 
-    @Test(expected = ValidationException.class)
+    @Test
     public void single_pricing_capacity_cannot_be_larger_than_build_capacity() {
         Pricing a = pricing(CAR, PARK_AND_RIDE, BUSINESS_DAY, 7, 17);
 
         Map<CapacityType, Integer> builtCapacity = Maps.newHashMap();
         builtCapacity.put(CAR, a.maxCapacity-1);
 
-        CapacityPricingValidator.validate(builtCapacity, ImmutableList.of(a), ImmutableList.of());
+        List<Violation> violations = new ArrayList<>();
+        CapacityPricingValidator.validate(builtCapacity, ImmutableList.of(a), ImmutableList.of(), violations);
+        Assertions.assertThat(violations).extracting("type", "path").contains(tuple("PricingCapacityOverflow", "pricing[0].maxCapacity"));
     }
 
     @Test
@@ -163,32 +189,28 @@ public class CapacityPricingValidatorTest {
         UnavailableCapacity uc2 = new UnavailableCapacity(CAR, PARK_AND_RIDE, 43);
         UnavailableCapacity uc3 = new UnavailableCapacity(CAR, PARK_AND_RIDE, 0);
 
-        try {
-            Map<CapacityType, Integer> builtCapacity = Maps.newHashMap();
-            builtCapacity.put(a.capacityType, a.maxCapacity-1);
-            builtCapacity.put(c.capacityType, c.maxCapacity-1);
+        Map<CapacityType, Integer> builtCapacity = Maps.newHashMap();
+        builtCapacity.put(a.capacityType, a.maxCapacity-1);
+        builtCapacity.put(c.capacityType, c.maxCapacity-1);
 
-            CapacityPricingValidator.validate(builtCapacity,
-                    ImmutableList.of(a, b, c, d, e),
-                    ImmutableList.of(uc1, uc2, uc3));
-            Assert.fail();
-        } catch (Exception ex) {
-            ValidationException expected = (ValidationException) ex;
+        List<Violation> violations = new ArrayList<>();
+        CapacityPricingValidator.validate(builtCapacity,
+                ImmutableList.of(a, b, c, d, e),
+                ImmutableList.of(uc1, uc2, uc3), violations);
 
-            assertThat(expected.violations.size()).isEqualTo(10);
-            assertThat(expected.violations).extracting("type", "path").contains(
-                    tuple("PricingOverlap", "pricing[1].time"),
-                    tuple("PricingOverlap", "pricing[3].time"),
-                    tuple("PricingCapacityOverflow", "pricing[0].maxCapacity"),
-                    tuple("PricingCapacityOverflow", "pricing[1].maxCapacity"),
-                    tuple("PricingCapacityOverflow", "pricing[2].maxCapacity"),
-                    tuple("PricingCapacityOverflow", "pricing[3].maxCapacity"),
-                    tuple("BuiltCapacityNotFound", "pricing[4].capacityType"),
-                    tuple("PricingNotFound", "unavailableCapacities[0]"),
-                    tuple("UnavailableCapacityOverflow", "unavailableCapacities[1].capacity"),
-                    tuple("DuplicateUnavailableCapacity", "unavailableCapacities[2]")
-                    );
-        }
+        assertThat(violations.size()).isEqualTo(10);
+        assertThat(violations).extracting("type", "path").containsOnly(
+                tuple("PricingOverlap", "pricing[1].time"),
+                tuple("PricingOverlap", "pricing[3].time"),
+                tuple("PricingCapacityOverflow", "pricing[0].maxCapacity"),
+                tuple("PricingCapacityOverflow", "pricing[1].maxCapacity"),
+                tuple("PricingCapacityOverflow", "pricing[2].maxCapacity"),
+                tuple("PricingCapacityOverflow", "pricing[3].maxCapacity"),
+                tuple("BuiltCapacityNotFound", "pricing[4].capacityType"),
+                tuple("PricingNotFound", "unavailableCapacities[0]"),
+                tuple("UnavailableCapacityOverflow", "unavailableCapacities[1].capacity"),
+                tuple("DuplicateUnavailableCapacity", "unavailableCapacities[2]")
+                );
     }
 
     private static Map<CapacityType, Integer> maxCapacities(Pricing... pricing) {

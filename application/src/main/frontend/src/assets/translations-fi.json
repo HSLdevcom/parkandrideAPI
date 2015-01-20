@@ -451,6 +451,15 @@
         "noAssociatedFacilities": "Alueeseen ei ole lisätty pysäköintipaikkoja",
         "facilitiesTotal": "Pysäköintipaikkoja yhteensä"
     },
+    "users": {
+        "title": "Käyttäjät",
+        "username": {
+            "label": "Käyttäjätunnus"
+        },
+        "action": {
+            "new": "Lisää uusi käyttäjä"
+        }
+    },
     "common": {
         "action": {
             "back": "Takaisin listaukseen",

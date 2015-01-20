@@ -15,6 +15,7 @@
         'parkandride.contacts',
         'parkandride.operators',
         'parkandride.hubList',
+        'parkandride.users',
         'parkandride.dev',
         'parkandride.auth'
     ]);
@@ -78,6 +79,12 @@
         });
 
         $stateProvider.state('operatorstab', {
+            abstract: true,
+            parent: 'root',
+            views: { "main": { template: '<div ui-view="main"></div>' } }
+        });
+
+        $stateProvider.state('userstab', {
             abstract: true,
             parent: 'root',
             views: { "main": { template: '<div ui-view="main"></div>' } }

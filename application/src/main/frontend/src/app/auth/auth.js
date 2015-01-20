@@ -96,6 +96,9 @@
                 }
             );
         };
+        $scope.cancel = function () {
+            $modalInstance.dismiss('cancel');
+        };
     });
 
     m.factory("loginPrompt", function($modal) {

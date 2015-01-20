@@ -1,24 +1,19 @@
 package fi.hsl.parkandride.back;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.fail;
 
 import java.util.List;
 import java.util.UUID;
 
 import javax.inject.Inject;
 
-import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.boot.test.SpringApplicationConfiguration;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import fi.hsl.parkandride.DevApiProfileAppender;
 import fi.hsl.parkandride.core.back.ContactRepository;
 import fi.hsl.parkandride.core.back.OperatorRepository;
 import fi.hsl.parkandride.core.domain.*;
-import fi.hsl.parkandride.dev.DevHelper;
+import fi.hsl.parkandride.core.service.ValidationException;
 
 public class ContactDaoTest extends AbstractDaoTest {
 
@@ -88,6 +83,27 @@ public class ContactDaoTest extends AbstractDaoTest {
         // But doesn't match other operatorId
         search.operatorId = -123l;
         assertThat(contactDao.findContacts(search).results).isEmpty();
+    }
+
+    @Test
+    public void unique_name() {
+        Contact contact = createContact();
+        contactDao.insertContact(contact);
+        verifyUniqueName(contact, "fi");
+        verifyUniqueName(contact, "sv");
+        verifyUniqueName(contact, "en");
+    }
+
+    private void verifyUniqueName(Contact contact, String lang) {
+        contact.name = new MultilingualString("something else");
+        try {
+            contact.name.asMap().put(lang, NAME.asMap().get(lang));
+            contactDao.insertContact(contact);
+            fail("should not allow duplicate names");
+        } catch (ValidationException e) {
+            assertThat(e.violations).hasSize(1);
+            assertThat(e.violations.get(0).path).isEqualTo("name." + lang);
+        }
     }
 
     private void assertDefault(Contact contact) {

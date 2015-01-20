@@ -250,14 +250,20 @@ public class FacilityDaoTest extends AbstractDaoTest {
     public void unique_name() {
         Facility facility = createFacility();
         facilityDao.insertFacility(facility);
+        verifyUniqueName(facility, "fi");
+        verifyUniqueName(facility, "sv");
+        verifyUniqueName(facility, "en");
+    }
+
+    private void verifyUniqueName(Facility facility, String lang) {
+        facility.name = new MultilingualString("something else");
         try {
+            facility.name.asMap().put(lang, NAME.asMap().get(lang));
             facilityDao.insertFacility(facility);
-            fail("Expected unique constraint violation on name");
+            fail("should not allow duplicate names");
         } catch (ValidationException e) {
             assertThat(e.violations).hasSize(1);
-            Violation v = e.violations.get(0);
-            assertThat(v.type).isEqualTo("Unique");
-            assertThat(v.path).startsWith("name.");
+            assertThat(e.violations.get(0).path).isEqualTo("name." + lang);
         }
     }
 

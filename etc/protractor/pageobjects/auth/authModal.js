@@ -12,6 +12,7 @@ module.exports = function(spec) {
     spec.password = element(by.model('credentials.password'));
     spec.doLogin = $("#doLogin");
     spec.loginError = $("#loginError");
+    spec.cancel = $("#loginModal .wdCancel");
 
     that.openLoginModal = function() {
         spec.openLoginButton.click();
@@ -25,6 +26,10 @@ module.exports = function(spec) {
 
     that.logout = function() {
         spec.logout.click();
+    };
+
+    that.cancel = function() {
+        spec.cancel.click();
     };
 
     that.isLoginError = function() {

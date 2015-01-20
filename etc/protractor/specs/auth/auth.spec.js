@@ -16,6 +16,15 @@ describe('authorization', function () {
     var password = 'very secret password';
     var username = 'testuser';
 
+    function openLoginModal() {
+        expect(authModal.isDisplayed()).toBe(false);
+        expect(authModal.isLogoutDisplayed()).toBe(false); // TODO: logout is not on auth modal
+
+        authModal.openLoginModal();
+        expect(authModal.isDisplayed()).toBe(true);
+    }
+
+
     beforeEach(function() {
         devApi.resetAll();
         devApi.createLogin('ADMIN', username, password);
@@ -23,12 +32,17 @@ describe('authorization', function () {
         expect(indexPage.isDisplayed()).toBe(true);
     });
 
+    it('login modal can be closed', function() {
+        openLoginModal();
+
+        authModal.cancel();
+        expect(authModal.isDisplayed()).toBe(false);
+    });
+
     describe('login and logout buttons', function() {
         it('should show login error for wrong password', function() {
-            expect(authModal.isDisplayed()).toBe(false);
-            expect(authModal.isLogoutDisplayed()).toBe(false); // TODO: logout is not on auth modal
+            openLoginModal();
 
-            authModal.openLoginModal();
             authModal.login(username, "wrong");
 
             expect(authModal.isDisplayed()).toBe(true);
@@ -37,7 +51,8 @@ describe('authorization', function () {
         });
 
         it('should show login error for wrong username', function() {
-            authModal.openLoginModal();
+            openLoginModal();
+
             authModal.login("wrong", password);
 
             expect(authModal.isDisplayed()).toBe(true);
@@ -45,7 +60,8 @@ describe('authorization', function () {
         });
 
         it('should login and logout', function() {
-            authModal.openLoginModal();
+            openLoginModal();
+
             authModal.login(username, password);
             authModal.waitUntilAbsent();
 

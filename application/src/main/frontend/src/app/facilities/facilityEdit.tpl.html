@@ -82,7 +82,11 @@
 
 <div class="row rowWithLargeMargin">
 	<h4 translate="facilities.pricing.label"></h4>
-	<p  ng-hide="editCtrl.hasPricingRows()">Pysäköintipaikkaan ei ole lisätty kapasiteettirivejä</p>
+</div>
+<div class="row">
+	<p  ng-hide="editCtrl.hasPricingRows()">Pysäköintipaikkaan ei ole lisätty pysäköintihinnoittelua</p>
+</div>
+<div class="row">
 	<div id="pricing-edit" class="panel panel-default row" ng-show="editCtrl.hasPricingRows()">
 		<table class="table table-bordered table-striped table-condensed">
 			<thead>
@@ -166,7 +170,7 @@
 			{{'facilities.action.addPricingRow' | translate }}
 		</a>
 		<a class="btn btn-xs btn-responsive" role="button" ng-click="editCtrl.pastePricingRows()"
-		   ng-show="pricingClipboard.length > 0 && selections.count == 0">
+		   ng-show="editCtrl.hasPricingRows()">
 			Liitä
 		</a>
 		<a class="btn btn-xs btn-responsive" role="button" ng-click="editCtrl.copyPricingRows()"
@@ -185,7 +189,10 @@
 </div>
 
 <div class="row rowWithSmallMargin">
-	<h4>Kapasiteetti tilapäisesti pois käytöstä</h4>
+	<h4>Tilapäisesti pois käytöstä</h4>
+</div>
+<div class="row">
+	<p  ng-hide="">Pysäköintipaikkaan ei ole lisätty pysäköintihinnoittelua</p>
 </div>
 <div class="row">
 	<div class="column2 first-column">

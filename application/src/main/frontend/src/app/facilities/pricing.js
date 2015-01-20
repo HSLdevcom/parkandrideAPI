@@ -6,32 +6,11 @@
 
     m.value('PricingService', {
         is24h: function(pricing) {
-            return (/^0?0(?::00)?$/).test(pricing.from) && (/^24(?::00)?$/).test(pricing.until);
+            return pricing.time != null && (/^0?0(?::00)?$/).test(pricing.time.from) && (/^24(?::00)?$/).test(pricing.time.until);
         },
         isFree: function(pricing) {
             return !(pricing.price && (pricing.price.fi || pricing.price.sv || pricing.price.en));
         }
-    });
-
-    m.directive('pricingView', function (schema, $translate, PricingService) {
-        return {
-            restrict: 'A',
-            scope: {
-                pricing: '='
-            },
-            templateUrl: 'facilities/pricingView.tpl.html',
-            transclude: false,
-            link: function(scope) {
-                scope.is24h = function() {
-                    return PricingService.is24h(scope.pricing);
-                };
-                scope.isFree = function() {
-                    var free = PricingService.isFree(scope.pricing);
-                    console.log("isFree: " + free);
-                    return free;
-                };
-            }
-        };
     });
 
     m.directive('pricingEdit', function (schema, $translate, PricingService) {
@@ -66,13 +45,15 @@
                 scope.$watch("h24", function(newValue) {
                     var h24 = is24h();
                     if (newValue && !h24) {
-                        scope.pricing.from = "00";
-                        scope.pricing.until = "24";
+                        scope.pricing.time = {
+                            from: "00",
+                            until: "24"
+                        };
                     } else if (h24) {
                         scope.h24 = true;
                     }
                 });
-                scope.$watchGroup(["pricing.from", "pricing.until"], function() {
+                scope.$watchGroup(["pricing.time.from", "pricing.time.until"], function() {
                     scope.h24 = is24h();
                 });
 

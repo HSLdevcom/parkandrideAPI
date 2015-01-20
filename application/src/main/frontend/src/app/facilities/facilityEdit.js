@@ -81,6 +81,10 @@
         self.services = services;
         self.paymentMethods = paymentMethods;
         self.aliasesPlaceholder = aliasesPlaceholder;
+        self.showUnavailableCapacityType = function(i) {
+            var ucs = self.facility.unavailableCapacities;
+            return i === 0 || ucs[i - 1].capacityType != ucs[i].capacityType;
+        };
 
         self.facility = facility;
         if (!self.facility.operatorId) {
@@ -104,7 +108,6 @@
                 var id = pricingRows[i]._id;
                 setSelected(id, checked);
             }
-            $scope.selections.count = checked ? pricingRows.length : 0;
         });
         $scope.$watch("selections.count", function(newCount) {
             $scope.allSelected = newCount === self.facility.pricing.length;
@@ -120,37 +123,92 @@
             self.facility.pricing.push(newPricing);
             $scope.allSelected = false;
         };
-        self.removePricingRows = function() {
+
+        $scope.pricingClipboard = [];
+        $scope.pricingClipboardIds = {};
+
+        self.copyPricingRows = function(firstOnly) {
+            var pricingRows = self.facility.pricing;
+            self.clearClipboard();
+            for (var i=0; i < pricingRows.length; i++) {
+                var id = pricingRows[i]._id;
+                if (isSelected(id)) {
+                    setSelected(id, false);
+                    $scope.pricingClipboard.push(pricingRows[i]);
+                    $scope.pricingClipboardIds[id] = true;
+                    if (firstOnly) {
+                        return;
+                    }
+                }
+            }
+        };
+        self.deletePricingRows = function() {
+            $scope.pricingClipboard = [];
+            $scope.pricingClipboardIds = {};
             var pricingRows = self.facility.pricing;
             for (var i=pricingRows.length - 1; i >= 0; i--) {
                 var id = pricingRows[i]._id;
                 if (isSelected(id)) {
                     pricingRows.splice(i, 1);
                     setSelected(id, false);
-                    $scope.selections.count--;
                 }
             }
             $scope.allSelected = false;
         };
-        self.clonePricingRows = function() {
-            var pricingRows = self.facility.pricing;
-            var len = pricingRows.length;
-            for (var i=0; i < len; i++) {
-                var id = pricingRows[i]._id;
-                if (isSelected(id)) {
-                    setSelected(id, false);
-                    var newPricing = _.cloneDeep(pricingRows[i]);
-                    delete newPricing.$$hashKey;
+        self.pastePricingRows = function() {
+            for (var i=0; i < $scope.pricingClipboard.length; i++) {
+                var id = $scope.pricingClipboard[i]._id;
+                var newPricing = _.cloneDeep($scope.pricingClipboard[i]);
+                delete newPricing.$$hashKey;
 
-                    newPricing._id = Sequence.nextval();
-                    pricingRows.push(newPricing);
+                newPricing._id = Sequence.nextval();
+                self.facility.pricing.push(newPricing);
+                if ($scope.pricingClipboard.length > 1) {
                     setSelected(newPricing._id, true);
                 }
             }
             $scope.allSelected = false;
         };
+        self.pastePricingValues = function(property) {
+            var len = $scope.pricingClipboard.length;
+            if (len === 0) {
+                return;
+            }
+            var pricingRows = self.facility.pricing;
+            var j=0;
+            for (var i=0; i < pricingRows.length; i++) {
+                var id = pricingRows[i]._id;
+                if (isSelected(id)) {
+                    var value = $scope.pricingClipboard[j++ % len][property];
+                    pricingRows[i][property] = _.cloneDeep(value);
+                }
+            }
+        };
+        self.clearClipboard = function() {
+            $scope.pricingClipboard = [];
+            $scope.pricingClipboardIds = {};
+        };
+
         self.hasPricingRows = function() {
             return self.facility.pricing.length > 0;
+        };
+        self.isNewPricingGroup = function(i) {
+            if (i === 0) {
+                return false;
+            }
+            var pricingRows = self.facility.pricing;
+            return pricingRows[i-1].capacityType !== pricingRows[i].capacityType ||
+                pricingRows[i-1].usage !== pricingRows[i].usage;
+        };
+        self.getPricingRowClasses = function(pricing, i) {
+            var classes = ($scope.selections[pricing._id] ? 'selected' : 'unselected');
+            if ($scope.pricingClipboardIds[pricing._id]) {
+                classes += ' on-clipboard';
+            }
+            if (self.isNewPricingGroup(i)) {
+                classes += ' new-pricing-group';
+            }
+            return classes;
         };
 
         self.saveFacility = function() {
@@ -167,8 +225,12 @@
             return $scope.selections[pricingId];
         }
         function setSelected(pricingId, selected) {
+            if ($scope.selections[pricingId] !== selected) {
+                $scope.selections.count += (selected ? +1 : -1);
+            }
             $scope.selections[pricingId] = selected;
         }
+
     });
 
     m.directive('aliases', function() {

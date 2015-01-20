@@ -1,5 +1,9 @@
 package fi.hsl.parkandride.core.domain;
 
+import static com.google.common.collect.Lists.newArrayList;
+import static com.google.common.collect.Maps.newHashMap;
+import static com.google.common.collect.Sets.newHashSet;
+
 import java.util.*;
 
 import javax.validation.Valid;
@@ -30,19 +34,22 @@ public class Facility implements OperatorEntity {
     @NotNull
     public Long operatorId;
 
-    public Map<CapacityType, Integer> builtCapacity = Maps.newHashMap();
+    public Map<CapacityType, Integer> builtCapacity = newHashMap();
 
     @Valid
-    public List<Pricing> pricing = Lists.newArrayList();
+    public List<Pricing> pricing = newArrayList();
+
+    @Valid
+    public List<UnavailableCapacity> unavailableCapacities = newArrayList();
 
     @ElementNotBlank
     @ElementLength(min=0, max=255)
-    public Set<String> aliases = new HashSet<>();
+    public Set<String> aliases = newHashSet();
 
     @Valid
-    public List<Port> ports = new ArrayList<>();
+    public List<Port> ports = newArrayList();
 
-    public Set<Long> serviceIds = new HashSet<>();
+    public Set<Long> serviceIds = newHashSet();
 
     @ApiModelProperty(required = true)
     @NotNull

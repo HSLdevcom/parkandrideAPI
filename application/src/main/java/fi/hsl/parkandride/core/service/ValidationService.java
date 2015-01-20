@@ -1,5 +1,6 @@
 package fi.hsl.parkandride.core.service;
 
+import java.util.Collection;
 import java.util.Set;
 
 import javax.annotation.Nullable;
@@ -31,4 +32,10 @@ public class ValidationService {
         }
     }
 
+    public void validate(Object object, Collection<Violation> violations) {
+        Set<ConstraintViolation<Object>> constraintViolations = validator.validate(object);
+        for (ConstraintViolation<Object> constraintViolation : constraintViolations) {
+            violations.add(TO_VIOLATION.apply(constraintViolation));
+        }
+    }
 }

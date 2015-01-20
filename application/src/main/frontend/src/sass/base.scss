@@ -256,12 +256,3 @@ a {
     .modal-dialog { @include translate(0, 0); }
   }
 }
-
-
-tr.selected {
-  background-color: #ECECEC;
-}
-
-.table-striped > tbody > tr.selected:nth-child(2n+1) > td, .table-striped > tbody > tr.selected:nth-child(2n+1) > th {
-  background-color: #E0E0E0;
-}

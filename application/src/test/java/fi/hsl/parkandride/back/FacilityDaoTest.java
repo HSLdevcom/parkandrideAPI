@@ -70,9 +70,9 @@ public class FacilityDaoTest extends AbstractDaoTest {
 
     public static final Set<Long> SERVICES = ImmutableSet.of(1l, 2l, 3l);
 
-    public static final Pricing PRICING1 = new Pricing(PARK_AND_RIDE, CAR, 50, SUNDAY, "8", "18", "2 EUR/H");
+    public static final Pricing PRICING1 = new Pricing(CAR, PARK_AND_RIDE, 50, SUNDAY, "8", "18", "2 EUR/H");
 
-    public static final Pricing PRICING2 = new Pricing(PARK_AND_RIDE, CAR, 50, EVE, "8", "18", "1 EUR/H");
+    public static final Pricing PRICING2 = new Pricing(CAR, PARK_AND_RIDE, 50, EVE, "8", "18", "1 EUR/H");
 
     public static final Map<CapacityType, Integer> BUILT_CAPACITY = ImmutableMap.of(
             CAR, 50,
@@ -121,7 +121,7 @@ public class FacilityDaoTest extends AbstractDaoTest {
         final SortedSet<String> newAliases = ImmutableSortedSet.of("clias");
         final List<Port> newPorts = ImmutableList.of(new Port(PORT_LOCATION2, true, true, true, true), new Port(PORT_LOCATION1, false, false, false, false));
         final Set<Long> newServices = ImmutableSet.of(4l);
-        final List<Pricing> newPricing = asList(new Pricing(COMMERCIAL, CAR, 50, BUSINESS_DAY, "8", "18", "10 EUR/H"));
+        final List<Pricing> newPricing = asList(new Pricing(CAR, COMMERCIAL, 50, BUSINESS_DAY, "8", "18", "10 EUR/H"));
 
         facility.name = newName;
         facility.aliases = newAliases;

@@ -186,19 +186,38 @@ create table pricing (
   price_sv varchar(255),
   price_en varchar(255),
 
-  primary key (facility_id, usage, capacity_type, day_type, from_time),
+  primary key (facility_id, capacity_type, usage, day_type, from_time),
 
   constraint pricing_facility_id_fk foreign key (facility_id)
   references facility (id),
 
-  constraint pricing_usage_fk foreign key (usage)
-  references usage (name),
-
   constraint pricing_capacity_type_fk foreign key (capacity_type)
   references capacity_type (name),
+
+  constraint pricing_usage_fk foreign key (usage)
+  references usage (name),
 
   constraint pricing_day_type_fk foreign key (day_type)
   references day_type (name)
 );
 
 create sequence pricing_id_seq increment by 1 start with 1;
+
+
+create table unavailable_capacity (
+  facility_id bigint not null,
+  capacity_type varchar(64) not null,
+  usage varchar(64) not null,
+  capacity int not null,
+
+  primary key (facility_id, capacity_type, usage),
+
+  constraint unavailable_capacity_facility_id_fk foreign key (facility_id)
+  references facility (id),
+
+  constraint unavailable_capacity_usage_fk foreign key (usage)
+  references usage (name),
+
+  constraint unavailable_capacity_capacity_type_fk foreign key (capacity_type)
+  references capacity_type (name)
+);

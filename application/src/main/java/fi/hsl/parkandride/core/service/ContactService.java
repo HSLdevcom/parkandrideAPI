@@ -33,10 +33,10 @@ public class ContactService {
     @TransactionalWrite
     public Contact updateContact(long contactId, Contact contact, User currentUser) {
         authorize(currentUser, contact, CONTACT_UPDATE);
-        validationService.validate(contact);
-
         Contact oldContact = repository.getContactForUpdate(contactId);
         authorize(currentUser, oldContact, CONTACT_UPDATE);
+
+        validationService.validate(contact);
 
         repository.updateContact(contactId, contact);
         contact.id = contactId;

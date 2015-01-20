@@ -100,4 +100,9 @@ public class Time implements Comparable<Time> {
         }
         sb.append(val);
     }
+
+    public boolean isBefore(Time other) {
+        return this.time < other.time;
+    }
+
 }

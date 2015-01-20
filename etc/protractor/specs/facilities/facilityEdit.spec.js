@@ -267,15 +267,12 @@ describe('edit facility view', function () {
     });
 
     describe('payment info', function() {
-        var f = fixtures.facilitiesFixture.dummies.facFull.copy();
-
-        beforeEach(function() {
-            devApi.resetAll({ facilities: [f], contacts: [fixtures.facilitiesFixture.contact], operators: [fixtures.facilitiesFixture.operator] });
-            devApi.loginAs('ADMIN');
-        });
 
         describe('create', function(){
             beforeEach(function() {
+                devApi.resetAll({ facilities: [], contacts: [fixtures.facilitiesFixture.contact], operators: [fixtures.facilitiesFixture.operator] });
+                devApi.loginAs('ADMIN');
+
                 editPage.get();
                 editPage.setName(facFull.name);
                 editPage.selectOperator("smooth");
@@ -333,7 +330,10 @@ describe('edit facility view', function () {
         });
 
         describe('edit', function(){
+            var f = fixtures.facilitiesFixture.dummies.facFull.copy();
             beforeEach(function () {
+                devApi.resetAll({ facilities: [f], contacts: [fixtures.facilitiesFixture.contact], operators: [fixtures.facilitiesFixture.operator] });
+                devApi.loginAs('ADMIN');
                 editPage.get(f.id);
             });
 

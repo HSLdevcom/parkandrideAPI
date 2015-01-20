@@ -1,11 +1,9 @@
 package fi.hsl.parkandride.back;
 
 import static fi.hsl.parkandride.core.domain.CapacityType.CAR;
-import static fi.hsl.parkandride.core.domain.CapacityType.BICYCLE;
 import static fi.hsl.parkandride.core.domain.CapacityType.ELECTRIC_CAR;
 import static fi.hsl.parkandride.core.domain.DayType.BUSINESS_DAY;
 import static fi.hsl.parkandride.core.domain.DayType.EVE;
-import static fi.hsl.parkandride.core.domain.DayType.SATURDAY;
 import static fi.hsl.parkandride.core.domain.DayType.SUNDAY;
 import static fi.hsl.parkandride.core.domain.Sort.Dir.ASC;
 import static fi.hsl.parkandride.core.domain.Sort.Dir.DESC;
@@ -13,12 +11,13 @@ import static fi.hsl.parkandride.core.domain.Usage.COMMERCIAL;
 import static fi.hsl.parkandride.core.domain.Usage.PARK_AND_RIDE;
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.fail;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
+import java.util.UUID;
 
 import javax.inject.Inject;
 
@@ -31,7 +30,6 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSortedSet;
-import com.google.common.collect.Sets;
 
 import fi.hsl.parkandride.core.back.ContactRepository;
 import fi.hsl.parkandride.core.back.FacilityRepository;
@@ -161,7 +159,7 @@ public class FacilityDaoTest extends AbstractDaoTest {
 
     private Long createDummyContact() {
         Contact contact = new Contact();
-        contact.name = new MultilingualString("TEST");
+        contact.name = new MultilingualString("TEST " + UUID.randomUUID());
         contact.email = "test@example.com";
         return contactDao.insertContact(contact);
     }
@@ -246,6 +244,21 @@ public class FacilityDaoTest extends AbstractDaoTest {
         PageableSpatialSearch search = new PageableSpatialSearch();
         search.sort = new Sort("foobar");
         facilityDao.findFacilities(search);
+    }
+
+    @Test
+    public void unique_name() {
+        Facility facility = createFacility();
+        facilityDao.insertFacility(facility);
+        try {
+            facilityDao.insertFacility(facility);
+            fail("Expected unique constraint violation on name");
+        } catch (ValidationException e) {
+            assertThat(e.violations).hasSize(1);
+            Violation v = e.violations.get(0);
+            assertThat(v.type).isEqualTo("Unique");
+            assertThat(v.path).startsWith("name.");
+        }
     }
 
     private void assertResultOrder(SearchResults<Facility> results, long id1, long id2) {

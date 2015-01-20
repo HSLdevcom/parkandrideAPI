@@ -65,7 +65,7 @@ public class CapacityPricingValidatorTest {
 
         List<Violation> violations = new ArrayList<>();
         CapacityPricingValidator.validate(maxCapacities(a, b), ImmutableList.of(a, b), ImmutableList.of(), violations);
-        Assertions.assertThat(violations).extracting("type", "path").contains(tuple("PricingOverlap", "pricing[1].time"));
+        Assertions.assertThat(violations).extracting("type", "path").containsOnly(tuple("PricingOverlap", "pricing[1].time"));
     }
 
     @Test
@@ -104,7 +104,7 @@ public class CapacityPricingValidatorTest {
 
         List<Violation> violations = new ArrayList<>();
         CapacityPricingValidator.validate(maxCapacities(a, b), ImmutableList.of(a, b), ImmutableList.of(uc), violations);
-        Assertions.assertThat(violations).extracting("type", "path").contains(tuple("PricingNotFound", "unavailableCapacities[0]"));
+        Assertions.assertThat(violations).extracting("type", "path").containsOnly(tuple("PricingNotFound", "unavailableCapacities[0]"));
     }
 
     @Test
@@ -117,7 +117,7 @@ public class CapacityPricingValidatorTest {
 
         List<Violation> violations = new ArrayList<>();
         CapacityPricingValidator.validate(maxCapacities(a, b), ImmutableList.of(a, b), ImmutableList.of(uc), violations);
-        Assertions.assertThat(violations).extracting("type", "path").contains(tuple("PricingNotFound", "unavailableCapacities[0]"));
+        Assertions.assertThat(violations).extracting("type", "path").containsOnly(tuple("PricingNotFound", "unavailableCapacities[0]"));
     }
 
     @Test
@@ -130,7 +130,7 @@ public class CapacityPricingValidatorTest {
 
         List<Violation> violations = new ArrayList<>();
         CapacityPricingValidator.validate(maxCapacities(a, b), ImmutableList.of(a, b), ImmutableList.of(uc), violations);
-        Assertions.assertThat(violations).extracting("type", "path").contains(tuple("UnavailableCapacityOverflow", "unavailableCapacities[0].capacity"));
+        Assertions.assertThat(violations).extracting("type", "path").containsOnly(tuple("UnavailableCapacityOverflow", "unavailableCapacities[0].capacity"));
     }
 
     @Test
@@ -143,7 +143,7 @@ public class CapacityPricingValidatorTest {
 
         List<Violation> violations = new ArrayList<>();
         CapacityPricingValidator.validate(maxCapacities(a, b), ImmutableList.of(a, b), ImmutableList.of(uc, uc), violations);
-        Assertions.assertThat(violations).extracting("type", "path").contains(tuple("DuplicateUnavailableCapacity", "unavailableCapacities[1]"));
+        Assertions.assertThat(violations).extracting("type", "path").containsOnly(tuple("DuplicateUnavailableCapacity", "unavailableCapacities[1]"));
     }
 
     @Test
@@ -162,7 +162,7 @@ public class CapacityPricingValidatorTest {
 
         List<Violation> violations = new ArrayList<>();
         CapacityPricingValidator.validate(Maps.newHashMap(), ImmutableList.of(a), ImmutableList.of(), violations);
-        Assertions.assertThat(violations).extracting("type", "path").contains(tuple("BuiltCapacityNotFound", "pricing[0].capacityType"));
+        Assertions.assertThat(violations).extracting("type", "path").containsOnly(tuple("BuiltCapacityNotFound", "pricing[0].capacityType"));
     }
 
     @Test
@@ -174,7 +174,7 @@ public class CapacityPricingValidatorTest {
 
         List<Violation> violations = new ArrayList<>();
         CapacityPricingValidator.validate(builtCapacity, ImmutableList.of(a), ImmutableList.of(), violations);
-        Assertions.assertThat(violations).extracting("type", "path").contains(tuple("PricingCapacityOverflow", "pricing[0].maxCapacity"));
+        Assertions.assertThat(violations).extracting("type", "path").containsOnly(tuple("PricingCapacityOverflow", "pricing[0].maxCapacity"));
     }
 
     @Test
@@ -198,7 +198,6 @@ public class CapacityPricingValidatorTest {
                 ImmutableList.of(a, b, c, d, e),
                 ImmutableList.of(uc1, uc2, uc3), violations);
 
-        assertThat(violations.size()).isEqualTo(10);
         assertThat(violations).extracting("type", "path").containsOnly(
                 tuple("PricingOverlap", "pricing[1].time"),
                 tuple("PricingOverlap", "pricing[3].time"),

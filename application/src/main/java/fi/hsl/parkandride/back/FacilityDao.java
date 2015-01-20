@@ -25,6 +25,7 @@ import com.google.common.collect.Sets;
 import com.mysema.query.ResultTransformer;
 import com.mysema.query.Tuple;
 import com.mysema.query.dml.StoreClause;
+import com.mysema.query.group.GroupBy;
 import com.mysema.query.group.QPair;
 import com.mysema.query.sql.SQLExpressions;
 import com.mysema.query.sql.SQLSubQuery;
@@ -33,6 +34,8 @@ import com.mysema.query.sql.dml.SQLUpdateClause;
 import com.mysema.query.sql.mssql.SQLServerSubQuery;
 import com.mysema.query.sql.postgres.PostgresQuery;
 import com.mysema.query.sql.postgres.PostgresQueryFactory;
+import com.mysema.query.types.ConstructorExpression;
+import com.mysema.query.types.Expression;
 import com.mysema.query.types.MappingProjection;
 import com.mysema.query.types.QList;
 import com.mysema.query.types.expr.ComparableExpression;
@@ -47,6 +50,13 @@ import fi.hsl.parkandride.core.service.TransactionalWrite;
 import fi.hsl.parkandride.core.service.ValidationException;
 
 public class FacilityDao implements FacilityRepository {
+
+    public static class QTimeDuration extends ConstructorExpression<TimeDuration> {
+
+        public QTimeDuration(Expression<Time> from, Expression<Time> until) {
+            super(TimeDuration.class, new Class<?>[] { Time.class, Time.class }, from, until);
+        }
+    }
 
     private static final Sort DEFAULT_SORT = new Sort("name.fi", ASC);
 
@@ -65,6 +75,8 @@ public class FacilityDao implements FacilityRepository {
     private static final QUnavailableCapacity qUnavailableCapacity = QUnavailableCapacity.unavailableCapacity;
 
     private static final QPricing qPricing = QPricing.pricing;
+
+    public static final QTimeDuration openingHoursMapping = new QTimeDuration(qPricing.fromTime.min(), qPricing.untilTime.max());
 
     private static final MultilingualStringMapping pricingPriceMapping =
             new MultilingualStringMapping(qPricing.priceFi, qPricing.priceSv, qPricing.priceEn);
@@ -360,6 +372,16 @@ public class FacilityDao implements FacilityRepository {
                         return status;
                     }
                 });
+    }
+
+    @TransactionalRead
+    @Override
+    public Map<DayType, TimeDuration> getOpeningHours(long facilityId) {
+        return queryFactory
+                .from(qPricing)
+                .where(qPricing.facilityId.eq(facilityId))
+                .groupBy(qPricing.dayType)
+                .transform(GroupBy.groupBy(qPricing.dayType).as(openingHoursMapping));
     }
 
     private void updateAliases(long facilityId, Set<String> newAliases, Set<String> oldAliases) {

@@ -185,6 +185,9 @@
         "serviceIds": {
             "heading": "Palvelut"
         },
+        "openingHours": {
+            "heading": "Aukioloajat"
+        },
         "paymentInfo": {
             "heading": "Maksutavat ja tunnistautuminen",
             "parkAndRideAuthRequired": "Liityntäpysäköinnin tunnistautumiseen tarvitaan HSL matkakortti",

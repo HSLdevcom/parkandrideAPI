@@ -94,6 +94,12 @@
             });
         };
 
+        api.getOpeningHours = function(id) {
+            return $http.get("api/v1/facilities/" + id + "/opening-hours").then(function(response){
+                return response.data;
+            });
+        };
+
         api.save = function(facility) {
             cleanupCapacities(facility.builtCapacity);
             cleanupPorts(facility.ports);

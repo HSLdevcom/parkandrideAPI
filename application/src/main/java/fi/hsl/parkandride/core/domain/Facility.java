@@ -9,12 +9,8 @@ import java.util.*;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
-import org.geolatte.geom.Geometry;
 import org.geolatte.geom.Polygon;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 import com.wordnik.swagger.annotations.ApiModelProperty;
 
 public class Facility implements OperatorEntity {
@@ -58,6 +54,9 @@ public class Facility implements OperatorEntity {
 
     @Valid
     public FacilityPaymentInfo paymentInfo = new FacilityPaymentInfo();
+
+    @Valid
+    public OpeningHours openingHours = new OpeningHours();
 
 
     public Long operatorId() {

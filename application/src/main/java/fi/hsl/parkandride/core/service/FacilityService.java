@@ -85,6 +85,11 @@ public class FacilityService {
         return repository.summarizeFacilities(search);
     }
 
+    @TransactionalRead
+    public Map<DayType, TimeDuration> getOpeningHours(long facilityId) {
+        return repository.getOpeningHours(facilityId);
+    }
+
     @TransactionalWrite
     public void createStatuses(long facilityId, List<FacilityStatus> statuses, User currentUser) {
         // TODO: authorize(currentUser, facility, FACILITY_STATUS_UPDATE);

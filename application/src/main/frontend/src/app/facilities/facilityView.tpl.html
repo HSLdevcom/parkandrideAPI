@@ -35,6 +35,33 @@
 				</div>
 			</div>
 
+			<div ng-show="viewCtrl.hasOpeningHours()">
+				<div class="row">
+					<h3>{{"facilities.openingHours.heading" | translate}}</h3>
+				</div>
+				<div class="row">
+					<div class="column2 first-column">
+						<div class="panel panel-default row">
+							<table class="table table-bordered table-striped table-condensed">
+								<tbody>
+								<tr ng-repeat="dayType in viewCtrl.dayTypes">
+									<td>
+										{{ 'day-types.' + dayType + '.label' | translate }}
+									</td>
+									<td>
+										<span ng-if="viewCtrl.openingHours[dayType]">
+											{{viewCtrl.openingHours[dayType].from}} - {{viewCtrl.openingHours[dayType].until}}
+										</span>
+										<span ng-if="!viewCtrl.openingHours[dayType]">-</span>
+									</td>
+								</tr>
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+			</div>
+
 			<div class="row" ng-show="viewCtrl.hasCapacities()">
 				<h3>{{"facilities.capacity.heading" | translate}}</h3>
 				<div class="column2 first-column">
@@ -42,7 +69,7 @@
 				</div>
 			</div>
 
-			<div class="row">
+			<div class="row" ng-show="viewCtrl.facility.pricing.length > 0">
 				<div class="column first-column">
 					<div class="panel panel-default row">
 						<table class="table table-bordered table-striped table-condensed">
@@ -102,7 +129,7 @@
 				</div>
 			</div>
 
-			<div class="row">
+			<div class="row" ng-show="viewCtrl.facility.unavailableCapacities.length > 0">
 				<div class="column2 first-column">
 					<div class="panel panel-default">
 						<table class="table table-bordered table-striped table-condensed">

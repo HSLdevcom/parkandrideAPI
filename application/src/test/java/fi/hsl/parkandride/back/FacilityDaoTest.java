@@ -11,11 +11,13 @@ import static fi.hsl.parkandride.core.domain.Usage.COMMERCIAL;
 import static fi.hsl.parkandride.core.domain.Usage.PARK_AND_RIDE;
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.fail;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
+import java.util.UUID;
 
 import javax.inject.Inject;
 
@@ -157,7 +159,7 @@ public class FacilityDaoTest extends AbstractDaoTest {
 
     private Long createDummyContact() {
         Contact contact = new Contact();
-        contact.name = new MultilingualString("TEST");
+        contact.name = new MultilingualString("TEST " + UUID.randomUUID());
         contact.email = "test@example.com";
         return contactDao.insertContact(contact);
     }
@@ -242,6 +244,27 @@ public class FacilityDaoTest extends AbstractDaoTest {
         PageableSpatialSearch search = new PageableSpatialSearch();
         search.sort = new Sort("foobar");
         facilityDao.findFacilities(search);
+    }
+
+    @Test
+    public void unique_name() {
+        Facility facility = createFacility();
+        facilityDao.insertFacility(facility);
+        verifyUniqueName(facility, "fi");
+        verifyUniqueName(facility, "sv");
+        verifyUniqueName(facility, "en");
+    }
+
+    private void verifyUniqueName(Facility facility, String lang) {
+        facility.name = new MultilingualString("something else");
+        try {
+            facility.name.asMap().put(lang, NAME.asMap().get(lang));
+            facilityDao.insertFacility(facility);
+            fail("should not allow duplicate names");
+        } catch (ValidationException e) {
+            assertThat(e.violations).hasSize(1);
+            assertThat(e.violations.get(0).path).isEqualTo("name." + lang);
+        }
     }
 
     private void assertResultOrder(SearchResults<Facility> results, long id1, long id2) {

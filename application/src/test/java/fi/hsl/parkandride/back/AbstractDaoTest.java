@@ -22,4 +22,5 @@ public abstract class AbstractDaoTest {
     public void cleanup() {
         devHelper.deleteAll();
     }
+
 }

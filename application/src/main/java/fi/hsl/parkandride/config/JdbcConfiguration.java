@@ -15,6 +15,7 @@ import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.jdbc.datasource.DataSourceUtils;
 import org.springframework.transaction.PlatformTransactionManager;
 
+import com.mysema.query.sql.SQLExceptionTranslator;
 import com.mysema.query.sql.SQLTemplates;
 import com.mysema.query.sql.postgres.PostgresQueryFactory;
 import com.mysema.query.sql.spatial.GeoDBTemplates;
@@ -24,6 +25,7 @@ import com.mysema.query.sql.types.EnumByNameType;
 
 import fi.hsl.parkandride.FeatureProfile;
 import fi.hsl.parkandride.back.H2GeometryType;
+import fi.hsl.parkandride.back.LiipiSQLExceptionTranslator;
 import fi.hsl.parkandride.back.PGGeometryType;
 import fi.hsl.parkandride.back.TimeType;
 import fi.hsl.parkandride.core.domain.CapacityType;
@@ -111,6 +113,8 @@ public class JdbcConfiguration {
 
     private com.mysema.query.sql.Configuration querydslConfiguration() {
         com.mysema.query.sql.Configuration conf = new com.mysema.query.sql.Configuration(sqlTemplates);
+        conf.setExceptionTranslator(sqlExceptionTranslator());
+
         conf.register("PRICING", "CAPACITY_TYPE", new EnumByNameType<>(CapacityType.class));
         conf.register("PRICING", "USAGE", new EnumByNameType<>(Usage.class));
         conf.register("PRICING", "DAY_TYPE", new EnumByNameType<>(DayType.class));
@@ -132,5 +136,9 @@ public class JdbcConfiguration {
 
         conf.register(new DateTimeType());
         return conf;
+    }
+
+    private SQLExceptionTranslator sqlExceptionTranslator() {
+        return new LiipiSQLExceptionTranslator();
     }
 }

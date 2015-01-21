@@ -21,17 +21,26 @@
             resolve: {
                 users: function(UserResource) {
                     return UserResource.listUsers();
+                },
+                operators: function(OperatorResource) {
+                    return OperatorResource.listOperators();
                 }
             }
         });
     });
-    m.controller('UserListCtrl', function($state, users, userModal) {
+    m.controller('UserListCtrl', function($state, users, operators, userModal) {
         var vm = this;
         vm.users = users.results;
         vm.openModal = openModal;
+        vm.operatorName = operatorName;
 
         function openModal(user) {
             userModal.open(user).result.then(function() { $state.reload(); });
+        }
+
+        function operatorName(user) {
+             var operator = _.find(operators.results, function(o) { return o.id === user.operatorId; });
+            return operator ? operator.name.fi : "";
         }
     });
 

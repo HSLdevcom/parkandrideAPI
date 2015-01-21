@@ -7,6 +7,8 @@
 				<thead>
 				<tr>
 					<th>{{ "users.username.label" | translate }}</th>
+					<th>{{ "users.operator.label" | translate }}</th>
+					<th>{{ "users.role.label" | translate }}</th>
 				</tr>
 				</thead>
 				<tbody>
@@ -16,6 +18,8 @@
 							{{ user.username }}
 						</a>
 					</td>
+					<td>{{ ctrl.operatorName(user) }}</td>
+					<td>{{ "roles." + user.role + ".label" | translate }}</td>
 				</tr>
 				</tbody>
 			</table>

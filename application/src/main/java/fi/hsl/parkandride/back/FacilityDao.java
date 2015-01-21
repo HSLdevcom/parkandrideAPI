@@ -12,7 +12,6 @@ import static fi.hsl.parkandride.core.domain.CapacityType.ELECTRIC_CAR;
 import static fi.hsl.parkandride.core.domain.CapacityType.MOTORCYCLE;
 import static fi.hsl.parkandride.core.domain.Sort.Dir.ASC;
 import static fi.hsl.parkandride.core.domain.Sort.Dir.DESC;
-import static java.util.Collections.sort;
 
 import java.util.*;
 import java.util.Map.Entry;
@@ -25,16 +24,12 @@ import com.google.common.collect.Sets;
 import com.mysema.query.ResultTransformer;
 import com.mysema.query.Tuple;
 import com.mysema.query.dml.StoreClause;
-import com.mysema.query.group.QPair;
 import com.mysema.query.sql.SQLExpressions;
-import com.mysema.query.sql.SQLSubQuery;
 import com.mysema.query.sql.dml.SQLInsertClause;
 import com.mysema.query.sql.dml.SQLUpdateClause;
-import com.mysema.query.sql.mssql.SQLServerSubQuery;
 import com.mysema.query.sql.postgres.PostgresQuery;
 import com.mysema.query.sql.postgres.PostgresQueryFactory;
 import com.mysema.query.types.MappingProjection;
-import com.mysema.query.types.QList;
 import com.mysema.query.types.expr.ComparableExpression;
 import com.mysema.query.types.expr.SimpleExpression;
 import com.mysema.query.types.path.NumberPath;
@@ -63,6 +58,12 @@ public class FacilityDao implements FacilityRepository {
     private static final QFacilityPaymentMethod  qPaymentMethod = QFacilityPaymentMethod.facilityPaymentMethod;
 
     private static final QUnavailableCapacity qUnavailableCapacity = QUnavailableCapacity.unavailableCapacity;
+
+    private static final MultilingualStringMapping openingHoursInfoMapping =
+            new MultilingualStringMapping(qFacility.openingHoursInfoFi, qFacility.openingHoursInfoSv, qFacility.openingHoursInfoEn);
+
+    private static final MultilingualUrlMapping openingHoursUrlMapping =
+            new MultilingualUrlMapping(qFacility.openingHoursUrlFi, qFacility.openingHoursUrlSv, qFacility.openingHoursUrlEn);
 
     private static final QPricing qPricing = QPricing.pricing;
 
@@ -139,8 +140,8 @@ public class FacilityDao implements FacilityRepository {
     private static final MultilingualStringMapping paymentInfoDetailMapping =
             new MultilingualStringMapping(qFacility.paymentInfoDetailFi, qFacility.paymentInfoDetailSv, qFacility.paymentInfoDetailEn);
 
-    private static final MultilingualStringMapping paymentInfoUrlMapping =
-            new MultilingualStringMapping(qFacility.paymentInfoUrlFi, qFacility.paymentInfoUrlSv, qFacility.paymentInfoUrlEn);
+    private static final MultilingualUrlMapping paymentInfoUrlMapping =
+            new MultilingualUrlMapping(qFacility.paymentInfoUrlFi, qFacility.paymentInfoUrlSv, qFacility.paymentInfoUrlEn);
 
     private static final MultilingualStringMapping nameMapping = new MultilingualStringMapping(qFacility.nameFi, qFacility.nameSv, qFacility.nameEn);
 
@@ -164,6 +165,9 @@ public class FacilityDao implements FacilityRepository {
             facility.paymentInfo.parkAndRideAuthRequired = row.get(qFacility.parkAndRideAuthRequired);
             facility.paymentInfo.detail = paymentInfoDetailMapping.map(row);
             facility.paymentInfo.url = paymentInfoUrlMapping.map(row);
+
+            facility.openingHours.info = openingHoursInfoMapping.map(row);
+            facility.openingHours.url = openingHoursUrlMapping.map(row);
 
             mapCapacity(facility.builtCapacity, CAR, row.get(qFacility.capacityCar));
             mapCapacity(facility.builtCapacity, DISABLED, row.get(qFacility.capacityDisabled));
@@ -280,6 +284,8 @@ public class FacilityDao implements FacilityRepository {
         fetchPaymentMethods(facilityMap);
         fetchPricing(facilityMap);
         fetchUnavailableCapacity(facilityMap);
+
+        facility.initialize();
         return facility;
     }
 
@@ -298,9 +304,10 @@ public class FacilityDao implements FacilityRepository {
         fetchPorts(facilities);
         fetchServices(facilities);
         fetchPaymentMethods(facilities);
-        fetchPricing(facilities);
         fetchUnavailableCapacity(facilities);
+        fetchPricing(facilities);
 
+        facilities.values().forEach(f -> f.initialize());
         return SearchResults.of(new ArrayList<>(facilities.values()), search.limit);
     }
 
@@ -611,7 +618,6 @@ public class FacilityDao implements FacilityRepository {
             for (Entry<Long, List<Pricing>> entry : pricing.entrySet()) {
                 Facility facility = facilitiesById.get(entry.getKey());
                 facility.pricing = entry.getValue();
-                sort(facility.pricing, Pricing.COMPARATOR);
             }
         }
     }
@@ -623,7 +629,6 @@ public class FacilityDao implements FacilityRepository {
             for (Entry<Long, List<UnavailableCapacity>> entry : pricing.entrySet()) {
                 Facility facility = facilitiesById.get(entry.getKey());
                 facility.unavailableCapacities = entry.getValue();
-                sort(facility.unavailableCapacities, UnavailableCapacity.COMPARATOR);
             }
         }
     }
@@ -678,6 +683,8 @@ public class FacilityDao implements FacilityRepository {
         store.set(qFacility.operatorContactId, contacts.operator);
         store.set(qFacility.serviceContactId, contacts.service);
 
+        openingHoursInfoMapping.populate(facility.openingHours.info, store);
+        openingHoursUrlMapping.populate(facility.openingHours.url, store);
 
         Map<CapacityType, Integer> builtCapacity = facility.builtCapacity != null ? facility.builtCapacity : ImmutableMap.of();
         populateCapacity(qFacility.capacityCar, builtCapacity.get(CAR), store);

@@ -41,6 +41,10 @@ public class FacilityDaoTest extends AbstractDaoTest {
 
     public static final MultilingualString NAME = new MultilingualString("Facility");
 
+    public static final MultilingualString OPENING_HOURS_INFO = new MultilingualString("Opening Hours");
+
+    public static final MultilingualUrl OPENING_HOURS_URL = new MultilingualUrl("http://www.hsl.fi");
+
     private static final Point PORT_LOCATION1 = (Point) Spatial.fromWkt("POINT(25.010822 60.25054)");
 
     private static final Point PORT_LOCATION2 = (Point) Spatial.fromWkt("POINT(25.012479 60.250337)");
@@ -178,6 +182,12 @@ public class FacilityDaoTest extends AbstractDaoTest {
         assertThat(facility.serviceIds).isEqualTo(SERVICES);
         assertThat(facility.builtCapacity).isEqualTo(BUILT_CAPACITY);
         assertThat(facility.pricing).isEqualTo(asList(PRICING1, PRICING2));
+        assertThat(facility.openingHours.byDayType).isEqualTo(ImmutableMap.of(
+                SUNDAY, new TimeDuration("8", "18"),
+                EVE, new TimeDuration("8", "18")
+        ));
+        assertThat(facility.openingHours.info).isEqualTo(OPENING_HOURS_INFO);
+        assertThat(facility.openingHours.url).isEqualTo(OPENING_HOURS_URL);
     }
 
     private List<Facility> findByGeometry(Polygon geometry) {
@@ -201,6 +211,9 @@ public class FacilityDaoTest extends AbstractDaoTest {
         // pricing in wrong order should be sorted on load
         facility.pricing.add(PRICING2);
         facility.pricing.add(PRICING1);
+
+        facility.openingHours.info = OPENING_HOURS_INFO;
+        facility.openingHours.url = OPENING_HOURS_URL;
 
         return facility;
     }

@@ -1,5 +1,6 @@
 package fi.hsl.parkandride.core.domain;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import static java.util.Comparator.comparing;
 import static java.util.Comparator.naturalOrder;
 import static java.util.Comparator.nullsLast;
@@ -9,12 +10,14 @@ import java.util.Objects;
 
 import javax.validation.constraints.NotNull;
 
+import com.google.common.base.Preconditions;
+
 @ValidTimeDuration
 public class TimeDuration implements Comparable<TimeDuration> {
 
     public static Comparator<TimeDuration> COMPARATOR =
-            comparing(((TimeDuration d) -> d.from), nullsLast(naturalOrder()))
-                    .thenComparing(((TimeDuration d) -> d.until), nullsLast(naturalOrder()));
+            comparing(TimeDuration::getFrom, nullsLast(naturalOrder()))
+                    .thenComparing(TimeDuration::getUntil, nullsLast(naturalOrder()));
 
     @NotNull
     public Time from;
@@ -24,9 +27,13 @@ public class TimeDuration implements Comparable<TimeDuration> {
 
     public TimeDuration() {}
 
+    public TimeDuration(String from, String until) {
+        this(new Time(from), new Time(until));
+    }
+
     public TimeDuration(Time from, Time until) {
-        this.from = from;
-        this.until = until;
+        this.from = checkNotNull(from);
+        this.until = checkNotNull(until);
     }
 
     public boolean overlaps(TimeDuration that) {
@@ -54,4 +61,19 @@ public class TimeDuration implements Comparable<TimeDuration> {
     public int compareTo(TimeDuration o) {
         return COMPARATOR.compare(this, o);
     }
+
+    public Time getFrom() {
+        return from;
+    }
+
+    public Time getUntil() {
+        return until;
+    }
+
+    public static TimeDuration add(TimeDuration td1, TimeDuration td2) {
+        Time from = td1.from.isBefore(td2.from) ? td1.from : td2.from;
+        Time until = td1.until.isAfter(td2.until) ? td1.until : td2.until;
+        return new TimeDuration(from, until);
+    }
+
 }

@@ -115,6 +115,8 @@ public class JdbcConfiguration {
         com.mysema.query.sql.Configuration conf = new com.mysema.query.sql.Configuration(sqlTemplates);
         conf.setExceptionTranslator(sqlExceptionTranslator());
 
+        conf.register(new TimeType());
+
         conf.register("PRICING", "CAPACITY_TYPE", new EnumByNameType<>(CapacityType.class));
         conf.register("PRICING", "USAGE", new EnumByNameType<>(Usage.class));
         conf.register("PRICING", "DAY_TYPE", new EnumByNameType<>(DayType.class));

@@ -33,7 +33,7 @@ public class QPricing extends RelationalPathSpatial<QPricing> {
 
     public final NumberPath<Long> facilityId = createNumber("facilityId", Long.class);
 
-    public final SimplePath<fi.hsl.parkandride.core.domain.Time> fromTime = createSimple("fromTime", fi.hsl.parkandride.core.domain.Time.class);
+    public final NumberPath<fi.hsl.parkandride.core.domain.Time> fromTime = createNumber("fromTime", fi.hsl.parkandride.core.domain.Time.class);
 
     public final NumberPath<Integer> maxCapacity = createNumber("maxCapacity", Integer.class);
 
@@ -43,7 +43,7 @@ public class QPricing extends RelationalPathSpatial<QPricing> {
 
     public final StringPath priceSv = createString("priceSv");
 
-    public final SimplePath<fi.hsl.parkandride.core.domain.Time> untilTime = createSimple("untilTime", fi.hsl.parkandride.core.domain.Time.class);
+    public final NumberPath<fi.hsl.parkandride.core.domain.Time> untilTime = createNumber("untilTime", fi.hsl.parkandride.core.domain.Time.class);
 
     public final EnumPath<fi.hsl.parkandride.core.domain.Usage> usage = createEnum("usage", fi.hsl.parkandride.core.domain.Usage.class);
 

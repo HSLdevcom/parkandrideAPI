@@ -2,7 +2,9 @@ package fi.hsl.parkandride.front;
 
 import static fi.hsl.parkandride.front.UrlSchema.LOGIN;
 import static fi.hsl.parkandride.front.UrlSchema.ROLES;
+import static fi.hsl.parkandride.front.UrlSchema.USER;
 import static fi.hsl.parkandride.front.UrlSchema.USERS;
+import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
@@ -12,16 +14,14 @@ import java.util.Arrays;
 
 import javax.annotation.Resource;
 
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.util.UriComponentsBuilder;
 
-import fi.hsl.parkandride.core.domain.Login;
-import fi.hsl.parkandride.core.domain.Role;
-import fi.hsl.parkandride.core.domain.SearchResults;
-import fi.hsl.parkandride.core.domain.User;
-import fi.hsl.parkandride.core.domain.UserSearch;
+import fi.hsl.parkandride.core.domain.*;
 import fi.hsl.parkandride.core.service.AuthenticationService;
 import fi.hsl.parkandride.core.service.UserService;
 
@@ -39,6 +39,11 @@ public class UserController {
         return authenticationService.login(credentials.username, credentials.password);
     }
 
+    @RequestMapping(method = GET, value = ROLES, produces = APPLICATION_JSON_VALUE)
+    public ResponseEntity<Results<Role>> roles() {
+        return new ResponseEntity<>(Results.of(Arrays.asList(Role.values())), OK);
+    }
+
     @RequestMapping(method = GET, value = USERS, produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<SearchResults<User>> findUsers(User currentUser) {
         UserSearch search = new UserSearch();
@@ -47,8 +52,15 @@ public class UserController {
         return new ResponseEntity<>(results, OK);
     }
 
-    @RequestMapping(method = GET, value = ROLES, produces = APPLICATION_JSON_VALUE)
-    public ResponseEntity<Results<Role>> roles() {
-        return new ResponseEntity<>(Results.of(Arrays.asList(Role.values())), OK);
+    @RequestMapping(method = POST, value = USERS, produces = APPLICATION_JSON_VALUE)
+    public ResponseEntity<User> createUser(@RequestBody NewUser newUser,
+                                                   User creator,
+                                                   UriComponentsBuilder builder) {
+        newUser.password = "todo";
+        User createdUser = userService.createUser(newUser, creator);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setLocation(builder.path(USER).buildAndExpand(createdUser.id).toUri());
+        return new ResponseEntity<>(createdUser, headers, CREATED);
     }
 }

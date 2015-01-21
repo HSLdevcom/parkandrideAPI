@@ -58,7 +58,7 @@
             }
         };
     });
-    m.controller('UserModalCtrl', function($modalInstance, $translate, schema, user) {
+    m.controller('UserModalCtrl', function($scope, $modalInstance, $translate, schema, user, EVENTS, UserResource) {
         var vm = this;
         vm.titleKey = 'users.action.' + (user ? 'edit' : 'new');
         vm.user = user;
@@ -67,7 +67,9 @@
         vm.roles = translatedEnumValues("roles", schema.roles);
 
         function save(form) {
-            $modalInstance.close();
+            validateAndSubmit(form, function() {
+                UserResource.save(vm.user).then(handleSubmitSuccess, handleSubmitReject);
+            });
         }
 
         function cancel() {
@@ -81,6 +83,28 @@
                     label: $translate.instant(prefix + "." + v + ".label")
                 };
             });
+        }
+
+        function handleSubmitSuccess(success) {
+            $modalInstance.close(success);
+        }
+
+        function handleSubmitReject(rejection) {
+            if (rejection.status == 400 && rejection.data.violations) {
+                $scope.violations = rejection.data.violations;
+            }
+        }
+
+        function validateAndSubmit(form, saveFn) {
+            $scope.$broadcast(EVENTS.showErrorsCheckValidity);
+            if (form.$valid) {
+                saveFn();
+            } else {
+                $scope.violations = [{
+                    path: "",
+                    type: "BasicRequirements"
+                }];
+            }
         }
     });
 

@@ -16,6 +16,18 @@
             });
         };
 
+        api.save = function(data) {
+            var config = {"skipDefaultViolationsHandling": true};
+            if (data.id) {
+                return $http.put('internal/users/' + data.id, data, config).then(processResponse);
+            }
+            return $http.post('internal/users', data, config).then(processResponse);
+
+            function processResponse(response) {
+                return response.data;
+            }
+        };
+
         return api;
     });
 })();

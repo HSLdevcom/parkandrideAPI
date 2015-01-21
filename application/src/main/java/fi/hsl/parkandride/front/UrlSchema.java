@@ -61,7 +61,11 @@ public class UrlSchema {
 
     public static final String LOGIN = INTERNAL + "/login";
 
+    public static final String USER_ID = "userId";
+
     public static final String USERS = INTERNAL + "/users";
+
+    public static final String USER = USERS + "/{" + USER_ID + "}";
 
     public static final String ROLES = INTERNAL + "/roles";
 

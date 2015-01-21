@@ -47,7 +47,7 @@
 		<div class="last-column">
 			<button class="btn btn-xs-secondary" ng-click="ctrl.cancel()">{{ "common.action.cancel" | translate }}</button>
 			<button class="btn btn-xs" ng-click="ctrl.save(userForm)"
-					ng-if="permit([USER_CREATE, USER_UPDATE], operator.id)">{{ "common.action.ok" | translate }}</button>
+					ng-if="permit([USER_CREATE, USER_UPDATE], ctrl.user.operatorId)">{{ "common.action.ok" | translate }}</button>
 		</div>
 	</div>
 </div>

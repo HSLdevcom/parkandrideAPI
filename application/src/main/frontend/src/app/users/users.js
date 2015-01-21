@@ -1,6 +1,7 @@
 (function() {
     var m = angular.module('parkandride.users', [
         'ui.router',
+        'parkandride.operators',
         'parkandride.UserResource',
         'parkandride.layout',
         'showErrors'
@@ -57,12 +58,13 @@
             }
         };
     });
-    m.controller('UserModalCtrl', function($modalInstance, user) {
+    m.controller('UserModalCtrl', function($modalInstance, $translate, schema, user) {
         var vm = this;
         vm.titleKey = 'users.action.' + (user ? 'edit' : 'new');
         vm.user = user;
         vm.save = save;
         vm.cancel = cancel;
+        vm.roles = translatedEnumValues("roles", schema.roles);
 
         function save(form) {
             $modalInstance.close();
@@ -70,6 +72,15 @@
 
         function cancel() {
             $modalInstance.dismiss();
+        }
+
+        function translatedEnumValues(prefix, values) {
+            return _.map(values, function(v) {
+                return {
+                    id: v,
+                    label: $translate.instant(prefix + "." + v + ".label")
+                };
+            });
         }
     });
 

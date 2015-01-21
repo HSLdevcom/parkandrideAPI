@@ -10,6 +10,12 @@
             });
         };
 
+        api.listRoles = function() {
+            return $http.get("internal/roles").then(function(response) {
+                return response.data.results;
+            });
+        };
+
         return api;
     });
 })();

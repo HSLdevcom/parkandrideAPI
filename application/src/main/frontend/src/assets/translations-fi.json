@@ -149,6 +149,17 @@
             "label": "Sähköauto"
         }
     },
+    "roles": {
+        "ADMIN": {
+            "label": "admin"
+        },
+        "OPERATOR": {
+            "label": "operaattori"
+        },
+        "OPERATOR_API": {
+            "label": "API"
+        }
+    },
     "facilities": {
         "title": "Pysäköintipaikat",
         "label": "Pysäköintipaikka",
@@ -455,6 +466,13 @@
         "title": "Käyttäjät",
         "username": {
             "label": "Käyttäjätunnus"
+        },
+        "operator": {
+            "label": "Operaattori"
+        },
+        "role": {
+            "label": "Rooli",
+            "placeholder": "Valitse rooli..."
         },
         "action": {
             "new": "Lisää uusi käyttäjä",

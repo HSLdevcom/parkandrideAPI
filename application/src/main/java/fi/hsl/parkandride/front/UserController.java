@@ -1,11 +1,14 @@
 package fi.hsl.parkandride.front;
 
 import static fi.hsl.parkandride.front.UrlSchema.LOGIN;
+import static fi.hsl.parkandride.front.UrlSchema.ROLES;
 import static fi.hsl.parkandride.front.UrlSchema.USERS;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
+
+import java.util.Arrays;
 
 import javax.annotation.Resource;
 
@@ -15,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import fi.hsl.parkandride.core.domain.Login;
+import fi.hsl.parkandride.core.domain.Role;
 import fi.hsl.parkandride.core.domain.SearchResults;
 import fi.hsl.parkandride.core.domain.User;
 import fi.hsl.parkandride.core.domain.UserSearch;
@@ -41,5 +45,10 @@ public class UserController {
         search.operatorId = currentUser.operatorId;
         SearchResults<User> results = userService.findUsers(search, currentUser);
         return new ResponseEntity<>(results, OK);
+    }
+
+    @RequestMapping(method = GET, value = ROLES, produces = APPLICATION_JSON_VALUE)
+    public ResponseEntity<Results<Role>> roles() {
+        return new ResponseEntity<>(Results.of(Arrays.asList(Role.values())), OK);
     }
 }

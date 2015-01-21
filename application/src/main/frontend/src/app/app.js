@@ -60,6 +60,12 @@
                         schema.dayTypes = types;
                         return types;
                     });
+                },
+                roles: function(schema, UserResource) {
+                    return UserResource.listRoles().then(function(roles) {
+                        schema.roles = roles;
+                        return roles;
+                    });
                 }
             },
             controller: function($scope, features) {

@@ -19,6 +19,27 @@
 			<div class="row">
 				<input name="username" type="input" ng-model="ctrl.user.username" class="form-control">
 			</div>
+
+			<div class="row">
+				<label>{{ "users.operator.label" | translate }} *</label>
+			</div>
+			<div class="row">
+				<operator-select object="ctrl.user" mandatory="true"></operator-select>
+			</div>
+
+			<div class="row">
+				<label>{{ "users.role.label" | translate }} *</label>
+			</div>
+			<div class="row">
+				<ui-select ng-model="ctrl.user.role" theme="bootstrap" reset-search-input="true" name="role" show-errors ng-required="true">
+					<ui-select-match placeholder="{{'users.role.placeholder' | translate}}">
+						{{$select.selected.label}}
+					</ui-select-match>
+					<ui-select-choices repeat="role.id as role in ctrl.roles | filter: {label: $select.search}">
+						<div ng-bind-html="role.label | highlight: $select.search"></div>
+					</ui-select-choices>
+				</ui-select>
+			</div>
 		</form>
 	</div>
 

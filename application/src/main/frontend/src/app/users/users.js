@@ -23,11 +23,15 @@
                 }
             }
         });
-    })
-    .controller('UserListCtrl', function(users, userModal) {
+    });
+    m.controller('UserListCtrl', function($state, users, userModal) {
         var vm = this;
         vm.users = users.results;
-        vm.openModal = userModal;
+        vm.openModal = openModal;
+
+        function openModal(user) {
+            userModal.open(user).result.then(function() { $state.reload(); });
+        }
     });
 
     m.directive('userListNavi', function() {
@@ -38,30 +42,34 @@
     });
 
     m.factory('userModal', function($modal) {
-        return function(user) {
-            var modalInstance = $modal.open({
-                templateUrl: 'users/userModal.tpl.html',
-                controller: 'UserModalCtrl as ctrl',
-                resolve: {
-                    user: function () {
-                        return _.cloneDeep(user);
-                    }
-                },
-                backdrop: 'static'
-            });
-            return modalInstance.result;
+        return {
+            open: function(user) {
+                return $modal.open({
+                    templateUrl: 'users/userModal.tpl.html',
+                    controller: 'UserModalCtrl as ctrl',
+                    resolve: {
+                        user: function () {
+                            return _.cloneDeep(user);
+                        }
+                    },
+                    backdrop: 'static'
+                });
+            }
         };
-    })
-    .controller('UserModalCtrl', function($modalInstance, user) {
+    });
+    m.controller('UserModalCtrl', function($modalInstance, user) {
         var vm = this;
         vm.titleKey = 'users.action.' + (user ? 'edit' : 'new');
         vm.user = user;
         vm.save = save;
         vm.cancel = cancel;
 
-        function save(form) {}
+        function save(form) {
+            $modalInstance.close();
+        }
+
         function cancel() {
-            $modalInstance.dismiss('cancel');
+            $modalInstance.dismiss();
         }
     });
 

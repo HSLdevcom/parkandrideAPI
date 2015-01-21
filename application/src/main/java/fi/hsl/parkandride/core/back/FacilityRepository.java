@@ -26,6 +26,4 @@ public interface FacilityRepository {
 
     List<FacilityStatus> getStatuses(long facilityId);
 
-    Map<DayType, TimeDuration> getOpeningHours(long facilityId);
-
 }

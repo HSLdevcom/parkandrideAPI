@@ -52,9 +52,6 @@
                         },
                         operator: function(OperatorResource, facility) {
                             return OperatorResource.getOperator(facility.operatorId);
-                        },
-                        openingHours: function(FacilityResource, facility) {
-                            return FacilityResource.getOpeningHours(facility.id);
                         }
                     }
                 }
@@ -63,22 +60,24 @@
         });
     });
 
-    m.controller('FacilityViewCtrl', function(PricingService, schema, facility, services, contacts, operator, paymentMethods, openingHours) {
+    m.controller('FacilityViewCtrl', function(PricingService, schema, facility, services, contacts, operator, paymentMethods) {
         var self = this;
         self.dayTypes = schema.dayTypes;
         self.facility = facility;
         self.services = services;
         self.contacts = contacts;
         self.operator = operator;
-        self.openingHours = openingHours;
         self.isFree = function(pricing) {
             return PricingService.isFree(pricing);
         };
         self.is24h = function(pricing) {
             return PricingService.is24h(pricing);
         };
-        self.hasOpeningHours = function() {
-            return !_.isEmpty(openingHours);
+        self.hasOpeningHoursByDayType = function() {
+            return !_.isEmpty(self.facility.openingHours.byDayType);
+        };
+        self.hasOpeningHoursInfo= function() {
+            return !_.isEmpty(self.facility.openingHours.info) || !_.isEmpty(self.facility.openingHours.url);
         };
         self.hasCapacities = function() {
           return !_.isEmpty(facility.builtCapacity);

@@ -13,10 +13,10 @@ import javax.validation.constraints.NotNull;
 public class Pricing {
 
     public static Comparator<Pricing> COMPARATOR =
-            comparing(((Pricing p) -> p.capacityType), nullsLast(naturalOrder()))
-            .thenComparing(((Pricing p) -> p.usage), nullsLast(naturalOrder()))
-            .thenComparing(((Pricing p) -> p.dayType), nullsLast(naturalOrder()))
-            .thenComparing(((Pricing p) -> p.time), nullsLast(naturalOrder()));
+            comparing(Pricing::getCapacityType, nullsLast(naturalOrder()))
+            .thenComparing(Pricing::getUsage, nullsLast(naturalOrder()))
+            .thenComparing(Pricing::getDayType, nullsLast(naturalOrder()))
+            .thenComparing(Pricing::getTime, nullsLast(naturalOrder()));
 
     @NotNull
     public Usage usage;
@@ -82,5 +82,29 @@ public class Pricing {
         } else {
             return false;
         }
+    }
+
+    public MultilingualString getPrice() {
+        return price;
+    }
+
+    public TimeDuration getTime() {
+        return time;
+    }
+
+    public DayType getDayType() {
+        return dayType;
+    }
+
+    public int getMaxCapacity() {
+        return maxCapacity;
+    }
+
+    public CapacityType getCapacityType() {
+        return capacityType;
+    }
+
+    public Usage getUsage() {
+        return usage;
     }
 }

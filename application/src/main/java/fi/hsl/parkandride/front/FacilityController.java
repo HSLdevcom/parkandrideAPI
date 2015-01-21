@@ -72,13 +72,6 @@ public class FacilityController {
         return new ResponseEntity<>(facility, OK);
     }
 
-    @ApiOperation(value = "Get facility opening hours", authorizations = @Authorization(API_KEY))
-    @RequestMapping(method = GET, value = FACILITY_OPENING_HOURS, produces = APPLICATION_JSON_VALUE)
-    public ResponseEntity<Map<DayType, TimeDuration>> updateFacility(@PathVariable(FACILITY_ID) long facilityId) {
-        Map<DayType, TimeDuration> response = facilityService.getOpeningHours(facilityId);
-        return new ResponseEntity<>(response, OK);
-    }
-
     @RequestMapping(method = GET, value = FACILITIES, produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<SearchResults<Facility>> findFacilities(PageableSpatialSearchDto search) {
         SearchResults<Facility> results = facilityService.search(search.toSpatialSearch());

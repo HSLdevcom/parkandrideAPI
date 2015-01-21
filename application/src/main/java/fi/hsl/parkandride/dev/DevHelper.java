@@ -118,6 +118,7 @@ public class DevHelper {
                 QFacilityAlias.facilityAlias,
                 QPricing.pricing,
                 QPort.port,
+                QUnavailableCapacity.unavailableCapacity,
                 QFacility.facility)
         ;
         resetFacilitySequence();

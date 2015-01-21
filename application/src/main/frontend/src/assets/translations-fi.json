@@ -186,7 +186,34 @@
             "heading": "Palvelut"
         },
         "openingHours": {
-            "heading": "Aukioloajat"
+            "heading": "Aukioloajat",
+            "info": {
+                "label": "Lisätiedot",
+                "fi": {
+                    "label": "Aukioloajat / Lisätiedot (fi)"
+                },
+                "sv": {
+                    "label": "Aukioloajat / Lisätiedot (sv)"
+                },
+                "en": {
+                    "label": "Aukioloajat / Lisätiedot (en)"
+                }
+            },
+            "url": {
+                "label": "Lisätiedot, linkki",
+                "fi": {
+                    "label": "Aukioloajat / Lisätiedot, linkki (fi)"
+                },
+                "sv": {
+                    "label": "Aukioloajat / Lisätiedot, linkki (sv)"
+                },
+                "en": {
+                    "label": "Aukioloajat / Lisätiedot, linkki (en)"
+                }
+            },
+            "byDayType": {
+                "disclaimer": "Huom! Päivätyyppikohtaiset aukioloajat lasketaan pysäköintihinnoittelusta"
+            }
         },
         "paymentInfo": {
             "heading": "Maksutavat ja tunnistautuminen",

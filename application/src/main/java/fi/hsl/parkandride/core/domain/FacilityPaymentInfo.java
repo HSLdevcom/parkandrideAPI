@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 
 public class FacilityPaymentInfo {
     public boolean parkAndRideAuthRequired;
@@ -14,5 +15,6 @@ public class FacilityPaymentInfo {
     @Valid
     public MultilingualString url;
 
+    @NotNull
     public Set<Long> paymentMethodIds = new HashSet<>();
 }

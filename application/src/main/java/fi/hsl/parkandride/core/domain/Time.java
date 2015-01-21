@@ -105,6 +105,10 @@ public class Time extends Number implements Comparable<Time> {
         return this.time < other.time;
     }
 
+    public boolean isAfter(Time other) {
+        return this.time > other.time;
+    }
+
     @Override
     public int intValue() {
         return time;

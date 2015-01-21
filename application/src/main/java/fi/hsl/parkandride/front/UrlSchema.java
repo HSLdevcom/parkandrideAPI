@@ -17,8 +17,6 @@ public class UrlSchema {
 
     public static final String FACILITY = FACILITIES + "/{" + FACILITY_ID + "}" ;
 
-    public static final String FACILITY_OPENING_HOURS = FACILITY + "/opening-hours" ;
-
     public static final String FACILITY_STATUS = FACILITY + "/status" ;
 
     public static final String CAPACITY_TYPES = API + "/capacity-types";

@@ -54,11 +54,20 @@ create table facility (
 
   park_and_ride_auth_required boolean not null,
   payment_info_detail_fi varchar(255),
-  payment_info_url_fi varchar(255),
   payment_info_detail_sv varchar(255),
-  payment_info_url_sv varchar(255),
   payment_info_detail_en varchar(255),
+
+  payment_info_url_fi varchar(255),
+  payment_info_url_sv varchar(255),
   payment_info_url_en varchar(255),
+
+  opening_hours_info_fi varchar(255),
+  opening_hours_info_sv varchar(255),
+  opening_hours_info_en varchar(255),
+
+  opening_hours_url_fi varchar(255),
+  opening_hours_url_sv varchar(255),
+  opening_hours_url_en varchar(255),
 
   capacity_car int,
   capacity_disabled int,

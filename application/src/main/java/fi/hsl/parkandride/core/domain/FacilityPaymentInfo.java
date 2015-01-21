@@ -13,7 +13,7 @@ public class FacilityPaymentInfo {
     public MultilingualString detail;
 
     @Valid
-    public MultilingualString url;
+    public MultilingualUrl url;
 
     @NotNull
     public Set<Long> paymentMethodIds = new HashSet<>();

@@ -12,6 +12,6 @@ public class OpeningHours {
     public MultilingualString info;
 
     @Valid
-    public MultilingualString url;
+    public MultilingualUrl url;
 
 }

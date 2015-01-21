@@ -66,7 +66,10 @@ public class FacilityService {
     private void validateContact(Long facilityOperatorId, Long contactId, String contactType, Collection<Violation> violations) {
         if (contactId != null) {
             Contact contact = contactRepository.getContact(contactId);
-            if (contact.operatorId != null && !contact.operatorId.equals(facilityOperatorId)) {
+            if (contact == null) {
+                violations.add(new Violation("NotFound", "contacts." + contactType, "contact not found"));
+            }
+            else if (contact.operatorId != null && !contact.operatorId.equals(facilityOperatorId)) {
                 violations.add(new Violation("OperatorMismatch", "contacts." + contactType, "operator should match facility operator"));
             }
         }

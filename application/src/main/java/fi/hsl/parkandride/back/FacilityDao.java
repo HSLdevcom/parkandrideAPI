@@ -12,7 +12,6 @@ import static fi.hsl.parkandride.core.domain.CapacityType.ELECTRIC_CAR;
 import static fi.hsl.parkandride.core.domain.CapacityType.MOTORCYCLE;
 import static fi.hsl.parkandride.core.domain.Sort.Dir.ASC;
 import static fi.hsl.parkandride.core.domain.Sort.Dir.DESC;
-import static java.util.Collections.sort;
 
 import java.util.*;
 import java.util.Map.Entry;
@@ -63,8 +62,8 @@ public class FacilityDao implements FacilityRepository {
     private static final MultilingualStringMapping openingHoursInfoMapping =
             new MultilingualStringMapping(qFacility.openingHoursInfoFi, qFacility.openingHoursInfoSv, qFacility.openingHoursInfoEn);
 
-    private static final MultilingualStringMapping openingHoursUrlMapping =
-            new MultilingualStringMapping(qFacility.openingHoursUrlFi, qFacility.openingHoursUrlSv, qFacility.openingHoursUrlEn);
+    private static final MultilingualUrlMapping openingHoursUrlMapping =
+            new MultilingualUrlMapping(qFacility.openingHoursUrlFi, qFacility.openingHoursUrlSv, qFacility.openingHoursUrlEn);
 
     private static final QPricing qPricing = QPricing.pricing;
 
@@ -141,8 +140,8 @@ public class FacilityDao implements FacilityRepository {
     private static final MultilingualStringMapping paymentInfoDetailMapping =
             new MultilingualStringMapping(qFacility.paymentInfoDetailFi, qFacility.paymentInfoDetailSv, qFacility.paymentInfoDetailEn);
 
-    private static final MultilingualStringMapping paymentInfoUrlMapping =
-            new MultilingualStringMapping(qFacility.paymentInfoUrlFi, qFacility.paymentInfoUrlSv, qFacility.paymentInfoUrlEn);
+    private static final MultilingualUrlMapping paymentInfoUrlMapping =
+            new MultilingualUrlMapping(qFacility.paymentInfoUrlFi, qFacility.paymentInfoUrlSv, qFacility.paymentInfoUrlEn);
 
     private static final MultilingualStringMapping nameMapping = new MultilingualStringMapping(qFacility.nameFi, qFacility.nameSv, qFacility.nameEn);
 

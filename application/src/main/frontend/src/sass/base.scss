@@ -66,6 +66,12 @@
   margin-bottom: 20px;
 }
 
+.btn.disabled, .btn[disabled] {
+  background-color: $k10;
+  opacity: 1;
+  filter: alpha(opacity=100);
+}
+
 .link-btn {
   background: none;
   border: none;
@@ -82,11 +88,16 @@
 
 div.dropdown > .btn {
   padding: 6px 5px;
+  background-color: transparent;
+}
+
+tr.selected > td > div.dropdown > .btn {
+  background-color: #fff;
 }
 
 //facility contact buttons
 div.ui-select-bootstrap > .btn:hover {
-  background-color: #fff;
+  background-color: transparent;
   color: $k80;
   border-color: $lightgray;
 }
@@ -234,10 +245,19 @@ textarea {
 
 //capacity table inputs
 .capacityInput {
-  border: none;
   background-color: transparent;
-  -webkit-box-shadow: none;
-  box-shadow: none;
+}
+
+.capacityInput:active {
+   background-color: #fff;
+ }
+
+.capacityInput:focus {
+  background-color: #fff;
+}
+
+tr.selected > td > .capacityInput {
+  background-color: #fff;
 }
 
 input[type=number]::-webkit-inner-spin-button,

@@ -32,15 +32,19 @@
         var vm = this;
         vm.users = users.results;
         vm.openModal = openModal;
-        vm.operatorName = operatorName;
+
+        initialize();
+
+        function initialize() {
+            var operatorsById = _.indexBy(operators.results, "id");
+            _.forEach(vm.users, function(user) {
+                var operator = operatorsById[user.operatorId];
+                user.operatorNameFi = operator ? operator.name.fi : "";
+            });
+        }
 
         function openModal(user) {
             userModal.open(user).result.then(function() { $state.reload(); });
-        }
-
-        function operatorName(user) {
-             var operator = _.find(operators.results, function(o) { return o.id === user.operatorId; });
-            return operator ? operator.name.fi : "";
         }
     });
 

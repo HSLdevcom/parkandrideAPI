@@ -5,8 +5,6 @@
 
     m.factory('FacilityResource', function($http, $q, Sequence) {
 
-        var capacityTypesCached, usagesCached, dayTypesCached;
-
         function cleanupCapacities(capacities) {
             for (var capacityType in capacities) {
                 if (!capacities[capacityType]) {
@@ -63,7 +61,13 @@
             return {
                 aliases: [],
                 builtCapacity: {},
-                pricing: [],
+                pricing: [
+                    { dayType: 'BUSINESS_DAY' },
+                    { dayType: 'SATURDAY' },
+                    { dayType: 'SUNDAY' },
+                    { dayType: 'HOLIDAY' },
+                    { dayType: 'EVE' }
+                ],
                 unavailableCapacities: [],
                 ports: [],
                 contacts: {}
@@ -137,27 +141,6 @@
                 params: { summary: true, ids: facilityIds }
             }).then(function(response) {
                 return response.data;
-            });
-        };
-
-        api.getCapacityTypes = function() {
-            return $http.get("api/v1/capacity-types").then(function(response) {
-                capacityTypesCached = response.data.results;
-                return capacityTypesCached;
-            });
-        };
-
-        api.getUsages = function() {
-            return $http.get("api/v1/usages").then(function(response) {
-                usagesCached = response.data.results;
-                return usagesCached;
-            });
-        };
-
-        api.getDayTypes = function() {
-            return $http.get("api/v1/day-types").then(function(response) {
-                dayTypesCached = response.data.results;
-                return dayTypesCached;
             });
         };
 

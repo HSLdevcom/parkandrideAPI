@@ -27,15 +27,11 @@ public class QPaymentMethod extends RelationalPathSpatial<QPaymentMethod> {
 
     public static final QPaymentMethod paymentMethod = new QPaymentMethod("PAYMENT_METHOD");
 
-    public final NumberPath<Long> id = createNumber("id", Long.class);
+    public final StringPath name = createString("name");
 
-    public final StringPath nameEn = createString("nameEn");
+    public final com.mysema.query.sql.PrimaryKey<QPaymentMethod> constraintD = createPrimaryKey(name);
 
-    public final StringPath nameFi = createString("nameFi");
-
-    public final StringPath nameSv = createString("nameSv");
-
-    public final com.mysema.query.sql.PrimaryKey<QPaymentMethod> constraintD = createPrimaryKey(id);
+    public final com.mysema.query.sql.ForeignKey<QFacilityPaymentMethod> _facilityPaymentMethodPaymentMethodFk = createInvForeignKey(name, "PAYMENT_METHOD");
 
     public QPaymentMethod(String variable) {
         super(QPaymentMethod.class, forVariable(variable), "PUBLIC", "PAYMENT_METHOD");
@@ -58,10 +54,7 @@ public class QPaymentMethod extends RelationalPathSpatial<QPaymentMethod> {
     }
 
     public void addMetadata() {
-        addMetadata(id, ColumnMetadata.named("ID").withIndex(1).ofType(Types.BIGINT).withSize(19).notNull());
-        addMetadata(nameEn, ColumnMetadata.named("NAME_EN").withIndex(4).ofType(Types.VARCHAR).withSize(255).notNull());
-        addMetadata(nameFi, ColumnMetadata.named("NAME_FI").withIndex(2).ofType(Types.VARCHAR).withSize(255).notNull());
-        addMetadata(nameSv, ColumnMetadata.named("NAME_SV").withIndex(3).ofType(Types.VARCHAR).withSize(255).notNull());
+        addMetadata(name, ColumnMetadata.named("NAME").withIndex(1).ofType(Types.VARCHAR).withSize(64).notNull());
     }
 
 }

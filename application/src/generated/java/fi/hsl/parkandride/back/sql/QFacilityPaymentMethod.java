@@ -29,11 +29,11 @@ public class QFacilityPaymentMethod extends RelationalPathSpatial<QFacilityPayme
 
     public final NumberPath<Long> facilityId = createNumber("facilityId", Long.class);
 
-    public final NumberPath<Long> paymentMethodId = createNumber("paymentMethodId", Long.class);
+    public final EnumPath<fi.hsl.parkandride.core.domain.PaymentMethod> paymentMethod = createEnum("paymentMethod", fi.hsl.parkandride.core.domain.PaymentMethod.class);
 
-    public final com.mysema.query.sql.PrimaryKey<QFacilityPaymentMethod> constraint31 = createPrimaryKey(facilityId, paymentMethodId);
+    public final com.mysema.query.sql.PrimaryKey<QFacilityPaymentMethod> constraint31 = createPrimaryKey(facilityId, paymentMethod);
 
-    public final com.mysema.query.sql.ForeignKey<QService> facilityPaymentMethodPaymentMethodIdFk = createForeignKey(paymentMethodId, "ID");
+    public final com.mysema.query.sql.ForeignKey<QPaymentMethod> facilityPaymentMethodPaymentMethodFk = createForeignKey(paymentMethod, "NAME");
 
     public final com.mysema.query.sql.ForeignKey<QFacility> facilityPaymentMethodFacilityIdFk = createForeignKey(facilityId, "ID");
 
@@ -59,7 +59,7 @@ public class QFacilityPaymentMethod extends RelationalPathSpatial<QFacilityPayme
 
     public void addMetadata() {
         addMetadata(facilityId, ColumnMetadata.named("FACILITY_ID").withIndex(1).ofType(Types.BIGINT).withSize(19).notNull());
-        addMetadata(paymentMethodId, ColumnMetadata.named("PAYMENT_METHOD_ID").withIndex(2).ofType(Types.BIGINT).withSize(19).notNull());
+        addMetadata(paymentMethod, ColumnMetadata.named("PAYMENT_METHOD").withIndex(2).ofType(Types.VARCHAR).withSize(64).notNull());
     }
 
 }

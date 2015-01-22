@@ -70,16 +70,6 @@ public class CoreConfiguration {
     }
 
     @Bean
-    public ServiceRepository serviceRepository() {
-        return new ServiceDao(queryFactory);
-    }
-
-    @Bean
-    public ServiceService serviceService() {
-        return new ServiceService(serviceRepository());
-    }
-
-    @Bean
     public OperatorRepository operatorRepository() {
         return new OperatorDao(queryFactory);
     }
@@ -112,16 +102,6 @@ public class CoreConfiguration {
     @Bean
     public HubService hubService() {
         return new HubService(hubRepository(), validationService());
-    }
-
-    @Bean
-    public PaymentMethodRepository paymentMethodRepository() {
-        return new PaymentMethodDao(queryFactory);
-    }
-
-    @Bean
-    public PaymentMethodService paymentMethodService() {
-        return new PaymentMethodService(paymentMethodRepository());
     }
 
 }

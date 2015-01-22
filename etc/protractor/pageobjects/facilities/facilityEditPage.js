@@ -18,7 +18,7 @@ module.exports = function(spec) {
     spec.zoomOut = element(by.css('button.ol-zoom-in'));
     spec.editModePorts = element(by.id('editModePorts'));
     spec.editModeLocation = element(by.id('editModeLocation'));
-    spec.services = element(by.model('editCtrl.facility.serviceIds'));
+    spec.services = element(by.model('editCtrl.facility.services'));
     spec.emergencyContact = element(by.name('emergencyContact'));
     spec.operatorContact = element(by.name('operatorContact'));
     spec.serviceContact = element(by.name('serviceContact'));
@@ -31,7 +31,7 @@ module.exports = function(spec) {
     spec.clearServiceContact = $('.serviceContact .clearContact');
 
     spec.parkAndRideAuthRequired = element(by.model('editCtrl.facility.paymentInfo.parkAndRideAuthRequired'));
-    spec.paymentMethods = element(by.model('editCtrl.facility.paymentInfo.paymentMethodIds'));
+    spec.paymentMethods = element(by.model('editCtrl.facility.paymentInfo.paymentMethods'));
     spec.defineMultilingualAccessors("paymentInfoDetail");
     spec.defineMultilingualAccessors("paymentInfoUrl");
 

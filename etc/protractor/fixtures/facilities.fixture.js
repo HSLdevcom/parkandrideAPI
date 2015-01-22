@@ -10,11 +10,6 @@ module.exports = function () {
     ids._3 = 3;
     ids._4 = 4;
 
-    var paymentMethods = {
-        coins: { id: 1 }, 
-        notes: { id: 2 }
-    };
-
     var dummies = {
         facFull: facility({
             "id": ids._3,
@@ -50,10 +45,10 @@ module.exports = function () {
                 emergency: 1,
                 operator: 1
             },
-            serviceIds: [4, 5],
+            services: [ 'LIGHTING','COVERED' ],
             paymentInfo: {
                 parkAndRideAuthRequired: true,
-                paymentMethodIds: [ paymentMethods.coins.id, paymentMethods.notes.id ],
+                paymentMethods: [ 'COINS', 'NOTES' ],
                 detail: { fi: "Lisätietoja", sv: "Tilläggsinformation", en: "Additional info"},
                 url: { fi: "http://www.x-park.fi/hinnasto", sv: "http://www.x-park.fi/prislista", en: "http://www.x-park.fi/pricing" }
             }
@@ -114,7 +109,7 @@ module.exports = function () {
             operator: 1
         },
         "builtCapacity": {
-            "CAR": 100,
+            "CAR": 100
         }
     });
 

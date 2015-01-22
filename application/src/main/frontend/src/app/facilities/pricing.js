@@ -15,15 +15,6 @@
 
     m.directive('pricingEdit', function (schema, $translate, PricingService) {
 
-        function translatedEnumValues(prefix, values) {
-            return _.map(values, function(v) {
-                return {
-                    id: v,
-                    label: $translate.instant(prefix + "." + v + ".label")
-                };
-            });
-        }
-
         return {
             restrict: 'A',
             scope: {
@@ -35,9 +26,9 @@
             link: function(scope) {
                 var pricingId = scope.pricing._id;
 
-                scope.capacityTypes = translatedEnumValues("capacity-types", schema.capacityTypes);
-                scope.usages = translatedEnumValues("usages", schema.usages);
-                scope.dayTypes = translatedEnumValues("day-types", schema.dayTypes);
+                scope.capacityTypes = schema.capacityTypes.values;
+                scope.usages = schema.usages.values;
+                scope.dayTypes = schema.dayTypes.values;
                 scope.h24 = is24h();
                 scope.free = isFree();
                 scope.rowSelected = scope.selections[pricingId];

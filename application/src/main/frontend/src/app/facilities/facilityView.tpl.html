@@ -41,21 +41,21 @@
 				</div>
 				<div ng-show="viewCtrl.hasOpeningHoursByDayType()">
 					<div class="row">
-						<div class="column2 first-column">
+						<div class="column3 first-column">
 							<div class="panel panel-default row">
 								<table class="table table-bordered table-striped table-condensed">
 									<tbody>
 									<tr ng-repeat="dayType in viewCtrl.dayTypes">
-										<td>
+										<th>
 											{{ 'day-types.' + dayType + '.label' | translate }}
-										</td>
+										</th>
 										<td>
 											<span ng-if="viewCtrl.facility.openingHours.byDayType[dayType]">
 												{{viewCtrl.facility.openingHours.byDayType[dayType].from}}
 												-
 												{{viewCtrl.facility.openingHours.byDayType[dayType].until}}
 											</span>
-											<span ng-if="!viewCtrl.facility.openingHours.byDayType[dayType]">-</span>
+											<span ng-if="!viewCtrl.facility.openingHours.byDayType[dayType]">{{'facilities.openingHours.closed' | translate }}</span>
 										</td>
 									</tr>
 									</tbody>

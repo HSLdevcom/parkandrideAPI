@@ -26,7 +26,6 @@
   width: 6%;
 }
 
-
 #facilities-pricing-free {
   width: 3%;
 }
@@ -61,4 +60,8 @@
 #pricing-edit > table > tbody > tr.new-pricing-group > td {
   border-top-width: 4px;
   border-top-color: $secondarycolor;
+}
+
+.tableText {
+  white-space: pre-wrap;
 }

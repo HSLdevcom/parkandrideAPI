@@ -2,6 +2,8 @@ package fi.hsl.parkandride.core.domain;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -16,5 +18,6 @@ public class FacilityPaymentInfo {
     public MultilingualUrl url;
 
     @NotNull
-    public Set<PaymentMethod> paymentMethods = new HashSet<>();
+    public SortedSet<PaymentMethod> paymentMethods = new TreeSet<>();
+
 }

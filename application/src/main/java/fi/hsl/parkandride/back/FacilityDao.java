@@ -5,6 +5,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.mysema.query.group.GroupBy.groupBy;
 import static com.mysema.query.group.GroupBy.list;
 import static com.mysema.query.group.GroupBy.set;
+import static fi.hsl.parkandride.back.GSortedSet.sortedSet;
 import static fi.hsl.parkandride.core.domain.CapacityType.BICYCLE;
 import static fi.hsl.parkandride.core.domain.CapacityType.CAR;
 import static fi.hsl.parkandride.core.domain.CapacityType.DISABLED;
@@ -593,9 +594,9 @@ public class FacilityDao implements FacilityRepository {
 
     private void fetchServices(Map<Long, Facility> facilitiesById) {
         if (!facilitiesById.isEmpty()) {
-            Map<Long, Set<Service>> services = findServices(facilitiesById.keySet());
+            Map<Long, SortedSet<Service>> services = findServices(facilitiesById.keySet());
 
-            for (Entry<Long, Set<Service>> entry : services.entrySet()) {
+            for (Entry<Long, SortedSet<Service>> entry : services.entrySet()) {
                 facilitiesById.get(entry.getKey()).services = entry.getValue();
             }
         }
@@ -603,9 +604,9 @@ public class FacilityDao implements FacilityRepository {
 
     private void fetchPaymentMethods(Map<Long, Facility> facilitiesById) {
         if (!facilitiesById.isEmpty()) {
-            Map<Long, Set<PaymentMethod>> paymentMethods = findPaymentMethods(facilitiesById.keySet());
+            Map<Long, SortedSet<PaymentMethod>> paymentMethods = findPaymentMethods(facilitiesById.keySet());
 
-            for (Entry<Long, Set<PaymentMethod>> entry : paymentMethods.entrySet()) {
+            for (Entry<Long, SortedSet<PaymentMethod>> entry : paymentMethods.entrySet()) {
                 facilitiesById.get(entry.getKey()).paymentInfo.paymentMethods = entry.getValue();
             }
         }
@@ -649,16 +650,16 @@ public class FacilityDao implements FacilityRepository {
                 .transform(groupBy(qPricing.facilityId).as(list(unavailableCapacityMapping)));
     }
 
-    private Map<Long, Set<Service>> findServices(Set<Long> facilityIds) {
+    private Map<Long, SortedSet<Service>> findServices(Set<Long> facilityIds) {
         return queryFactory.from(qService)
                 .where(qService.facilityId.in(facilityIds))
-                .transform(groupBy(qService.facilityId).as(set(qService.service)));
+                .transform(groupBy(qService.facilityId).as(sortedSet(qService.service)));
     }
 
-    private Map<Long, Set<PaymentMethod>> findPaymentMethods(Set<Long> facilityIds) {
+    private Map<Long, SortedSet<PaymentMethod>> findPaymentMethods(Set<Long> facilityIds) {
         return queryFactory.from(qPaymentMethod)
                 .where(qPaymentMethod.facilityId.in(facilityIds))
-                .transform(groupBy(qPaymentMethod.facilityId).as(set(qPaymentMethod.paymentMethod)));
+                .transform(groupBy(qPaymentMethod.facilityId).as(sortedSet(qPaymentMethod.paymentMethod)));
     }
 
     private Map<Long, Set<String>> findAliases(Set<Long> facilityIds) {

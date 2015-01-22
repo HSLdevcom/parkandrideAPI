@@ -38,6 +38,7 @@ describe('facility view', function () {
 
         it('to edit view', function () {
             devApi.loginAs('ADMIN');
+            viewPage.get(f.id);
             viewPage.toEditView();
             expect(editPage.isDisplayed()).toBe(true);
         });
@@ -58,7 +59,7 @@ describe('facility view', function () {
             expect(viewPage.capacitiesTable.getCapacities(_.keys(f.capacities))).toEqual(f.capacities);
 
             expect(viewPage.isServicesDisplayed()).toBe(true);
-            expect(viewPage.getServices()).toEqual("Katettu, Valaistus");
+            expect(viewPage.getServices()).toEqual("Valaistus, Katettu");
 
             expect(viewPage.isPaymentInfoDisplayed()).toBe(true);
             expect(viewPage.getPaymentMethods()).toEqual("Kolikko, Seteli");

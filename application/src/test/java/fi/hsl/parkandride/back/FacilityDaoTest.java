@@ -76,7 +76,7 @@ public class FacilityDaoTest extends AbstractDaoTest {
 
     public static final List<Port> PORTS = ImmutableList.of(new Port(PORT_LOCATION1, true, false, true, false, "street", "00100", "city", "info"));
 
-    public static final Set<Service> SERVICES = ImmutableSet.of(ELEVATOR, TOILETS, ACCESSIBLE_TOILETS);
+    public static final SortedSet<Service> SERVICES = ImmutableSortedSet.of(ELEVATOR, TOILETS, ACCESSIBLE_TOILETS);
 
     public static final Pricing PRICING1 = new Pricing(CAR, PARK_AND_RIDE, 50, SUNDAY, "8", "18", "2 EUR/H");
 
@@ -128,7 +128,7 @@ public class FacilityDaoTest extends AbstractDaoTest {
         final MultilingualString newName = new MultilingualString("changed name");
         final SortedSet<String> newAliases = ImmutableSortedSet.of("clias");
         final List<Port> newPorts = ImmutableList.of(new Port(PORT_LOCATION2, true, true, true, true), new Port(PORT_LOCATION1, false, false, false, false));
-        final Set<Service> newServices = ImmutableSet.of(LIGHTING);
+        final SortedSet<Service> newServices = ImmutableSortedSet.of(LIGHTING);
         final List<Pricing> newPricing = asList(new Pricing(CAR, COMMERCIAL, 50, BUSINESS_DAY, "8", "18", "10 EUR/H"));
 
         facility.name = newName;

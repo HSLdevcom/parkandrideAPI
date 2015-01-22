@@ -2,7 +2,9 @@ package fi.hsl.parkandride.core.domain;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Maps.newHashMap;
+import static com.google.common.collect.Maps.newTreeMap;
 import static com.google.common.collect.Sets.newHashSet;
+import static com.google.common.collect.Sets.newTreeSet;
 import static java.util.Collections.sort;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.mapping;
@@ -11,6 +13,7 @@ import static java.util.stream.Collectors.reducing;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.SortedSet;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -18,6 +21,7 @@ import javax.validation.constraints.NotNull;
 import org.geolatte.geom.Polygon;
 
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import com.wordnik.swagger.annotations.ApiModelProperty;
 
 public class Facility implements OperatorEntity {
@@ -58,7 +62,7 @@ public class Facility implements OperatorEntity {
     public List<Port> ports = newArrayList();
 
     @NotNull
-    public Set<Service> services = newHashSet();
+    public SortedSet<Service> services = newTreeSet();
 
     @NotNull
     @Valid

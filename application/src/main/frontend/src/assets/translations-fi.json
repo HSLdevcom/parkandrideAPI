@@ -467,6 +467,9 @@
         "username": {
             "label": "Käyttäjätunnus"
         },
+        "password": {
+            "label": "Salasana"
+        },
         "operator": {
             "label": "Operaattori"
         },

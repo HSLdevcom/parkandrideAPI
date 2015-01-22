@@ -14,13 +14,6 @@
 		</div>
 		<form name="userForm" class="form-horizontal" role="form" novalidate>
 			<div class="row">
-				<label>{{ "users.username.label" | translate }} *</label>
-			</div>
-			<div class="row">
-				<input name="username" type="input" ng-model="ctrl.user.username" class="form-control">
-			</div>
-
-			<div class="row">
 				<label>{{ "users.role.label" | translate }} *</label>
 			</div>
 			<div class="row">
@@ -32,6 +25,22 @@
 						<div ng-bind-html="role.label | highlight: $select.search"></div>
 					</ui-select-choices>
 				</ui-select>
+			</div>
+
+			<div class="row">
+				<label>{{ "users.username.label" | translate }} *</label>
+			</div>
+			<div class="row">
+				<input name="username" type="input" ng-model="ctrl.user.username" class="form-control">
+			</div>
+
+			<div ng-show="ctrl.isNewUser">
+				<div class="row">
+					<label>{{ "users.password.label" | translate }} *</label>
+				</div>
+				<div class="row">
+					<input name="password" type="password" ng-model="ctrl.user.password" class="form-control">
+				</div>
 			</div>
 
 			<div ng-show="ctrl.user.role !== 'ADMIN'">

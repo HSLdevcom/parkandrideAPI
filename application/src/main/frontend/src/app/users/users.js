@@ -79,7 +79,8 @@
     m.controller('UserModalCtrl', function($scope, $modalInstance, $translate, schema, user, EVENTS, UserResource, operators, Session) {
         var vm = this;
         vm.titleKey = 'users.action.' + (user ? 'edit' : 'new');
-        vm.user = user || {};
+        vm.isNewUser = !user;
+        vm.user = user || {};
         vm.save = save;
         vm.cancel = cancel;
         vm.roles = translatedEnumValues("roles", schema.roles);

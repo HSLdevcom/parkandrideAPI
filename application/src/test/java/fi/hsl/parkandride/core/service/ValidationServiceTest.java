@@ -1,8 +1,13 @@
 package fi.hsl.parkandride.core.service;
 
+import static com.google.common.collect.Lists.newArrayList;
+import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.fail;
 
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -12,9 +17,12 @@ import javax.validation.constraints.Min;
 import org.junit.Test;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
-import fi.hsl.parkandride.core.domain.Violation;
+import fi.hsl.parkandride.back.FacilityDao;
+import fi.hsl.parkandride.back.FacilityDaoTest;
+import fi.hsl.parkandride.core.domain.*;
 
 public class ValidationServiceTest {
 
@@ -63,9 +71,38 @@ public class ValidationServiceTest {
         }
     }
 
+    @Test
+    public void valid_facility() {
+        Facility facility = FacilityDaoTest.createFacility(1l, new FacilityContacts(1l, 1l, 1l));
+        validationService.validate(facility);
+    }
+
+    @Test
+    public void null_elements() {
+        try {
+            Facility facility = FacilityDaoTest.createFacility(1l, new FacilityContacts(1l, 1l, 1l));
+            facility.aliases = new HashSet<>(asList(""));
+            facility.pricing = withNull(newArrayList());
+            facility.services = withNull(new NullSafeSortedSet<>());
+            facility.unavailableCapacities = withNull(newArrayList());
+            facility.paymentInfo.paymentMethods = withNull(new NullSafeSortedSet<>());
+            validationService.validate(facility);
+            fail("Expected ValidationException");
+        } catch (ValidationException e) {
+            List<Violation> violations = e.violations;
+            assertThat(violations).hasSize(5);
+        }
+    }
+
+    private static <T, C extends Collection<T>> C withNull(C coll) {
+        coll.add(null);
+        return coll;
+    }
+
     private void assertMinViolation(Violation violation) {
         assertMinViolation(violation, "");
     }
+
     private void assertMinViolation(Violation violation, String pathPrefix) {
         assertThat(violation.type).isEqualTo("Min");
         assertThat(violation.args).isEqualTo(ImmutableMap.of("value", 1l));

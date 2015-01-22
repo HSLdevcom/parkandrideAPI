@@ -2,7 +2,6 @@ package fi.hsl.parkandride.core.domain;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Maps.newHashMap;
-import static com.google.common.collect.Maps.newTreeMap;
 import static com.google.common.collect.Sets.newHashSet;
 import static com.google.common.collect.Sets.newTreeSet;
 import static java.util.Collections.sort;
@@ -13,7 +12,6 @@ import static java.util.stream.Collectors.reducing;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.SortedSet;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -21,7 +19,6 @@ import javax.validation.constraints.NotNull;
 import org.geolatte.geom.Polygon;
 
 import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 import com.wordnik.swagger.annotations.ApiModelProperty;
 
 public class Facility implements OperatorEntity {
@@ -45,10 +42,12 @@ public class Facility implements OperatorEntity {
     public Map<CapacityType, Integer> builtCapacity = newHashMap();
 
     @NotNull
+    @ElementNotNull
     @Valid
     public List<Pricing> pricing = newArrayList();
 
     @NotNull
+    @ElementNotNull
     @Valid
     public List<UnavailableCapacity> unavailableCapacities = newArrayList();
 
@@ -58,11 +57,13 @@ public class Facility implements OperatorEntity {
     public Set<String> aliases = newHashSet();
 
     @NotNull
+    @ElementNotNull
     @Valid
     public List<Port> ports = newArrayList();
 
     @NotNull
-    public SortedSet<Service> services = newTreeSet();
+    @ElementNotNull
+    public NullSafeSortedSet<Service> services = new NullSafeSortedSet<>();
 
     @NotNull
     @Valid

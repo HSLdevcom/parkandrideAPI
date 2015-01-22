@@ -95,12 +95,12 @@ public class ExceptionHandlers {
     private String getPath(JsonMappingException jsonEx) {
         StringBuilder path = new StringBuilder();
         for (JsonMappingException.Reference ref : jsonEx.getPath()) {
-            if (path.length() > 0) {
-                path.append('.');
-            }
             String field = ref.getFieldName();
             int index = ref.getIndex();
             if (field != null) {
+                if (path.length() > 0) {
+                    path.append('.');
+                }
                 path.append(field);
             }
             if (index >= 0) {

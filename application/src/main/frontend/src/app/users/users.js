@@ -93,9 +93,12 @@
         function initialize() {
             var login = Session.get();
             if (login && login.operatorId) {
+                vm.isOperatorCreator = true;
+
                 vm.operators = _.filter(vm.operators, function(o) { return o.id === login.operatorId; });
                 vm.user.operatorId = login.operatorId;
-                vm.isOperatorCreator = true;
+
+                vm.roles = _.filter(vm.roles, function(r) { return r.id !== 'ADMIN'; });
             }
         }
 

@@ -238,11 +238,11 @@ public class FacilityDao implements FacilityRepository {
         updatePorts(facilityId, newFacility.ports, oldFacility.ports);
 
         if (!Objects.equals(newFacility.services, oldFacility.services)) {
-//            updateServices(facilityId, newFacility.services);
+            updateServices(facilityId, newFacility.services);
         }
 
         if (!Objects.equals(newFacility.paymentInfo.paymentMethods, oldFacility.paymentInfo.paymentMethods)) {
-//            updatePaymentMethods(facilityId, newFacility.paymentInfo.paymentMethods);
+            updatePaymentMethods(facilityId, newFacility.paymentInfo.paymentMethods);
         }
 
         if (!Objects.equals(newFacility.pricing, oldFacility.pricing)) {
@@ -596,7 +596,7 @@ public class FacilityDao implements FacilityRepository {
             Map<Long, Set<Service>> services = findServices(facilitiesById.keySet());
 
             for (Entry<Long, Set<Service>> entry : services.entrySet()) {
-//                facilitiesById.get(entry.getKey()).services = entry.getValue();
+                facilitiesById.get(entry.getKey()).services = entry.getValue();
             }
         }
     }

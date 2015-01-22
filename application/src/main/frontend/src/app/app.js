@@ -36,17 +36,23 @@
     m.config(function myAppConfig($stateProvider, $urlRouterProvider, $httpProvider) {
         $urlRouterProvider.otherwise('/hubs');
 
-        function registerEnumValues(schema, type, values, $translate) {
-            schema[type] = { values: [] };
-            _.forEach(values, function(value) {
-                var enumObject = {
-                    id: value,
-                    label: $translate.instant(type + "." + value + ".label")
-                };
-                schema[type].values.push(enumObject);
-                schema[type][value] = enumObject;
+        function registerEnumValues(schema, type, values, $translate, $q) {
+            var translationPromises = _.map(values, function(value) {
+                return $translate(type + "." + value + ".label");
             });
-            return schema[type];
+
+            return $q.all(translationPromises).then(function(translations) {
+                schema[type] = { values: [] };
+                _.forEach(values, function(value, index) {
+                    var enumObject = {
+                        id: value,
+                        label: translations[index]
+                    };
+                    schema[type].values.push(enumObject);
+                    schema[type][value] = enumObject;
+                });
+                return schema[type];
+            });
         }
 
         $stateProvider.state('root', {
@@ -56,29 +62,29 @@
                 features: function(FeatureResource) {
                     return FeatureResource.getFeatures();
                 },
-                capacityTypes: function(schema, SchemaResource, $translate) {
+                capacityTypes: function(schema, SchemaResource, $translate, $q) {
                     return SchemaResource.getCapacityTypes().then(function(types) {
-                        return registerEnumValues(schema, "capacityTypes", types, $translate);
+                        return registerEnumValues(schema, "capacityTypes", types, $translate, $q);
                     });
                 },
-                usages: function(schema, SchemaResource, $translate) {
+                usages: function(schema, SchemaResource, $translate, $q) {
                     return SchemaResource.getUsages().then(function(types) {
-                        return registerEnumValues(schema, "usages", types, $translate);
+                        return registerEnumValues(schema, "usages", types, $translate, $q);
                     });
                 },
-                dayTypes: function(schema, SchemaResource, $translate) {
+                dayTypes: function(schema, SchemaResource, $translate, $q) {
                     return SchemaResource.getDayTypes().then(function(types) {
-                        return registerEnumValues(schema, "dayTypes", types, $translate);
+                        return registerEnumValues(schema, "dayTypes", types, $translate, $q);
                     });
                 },
-                services: function(schema, SchemaResource, $translate) {
+                services: function(schema, SchemaResource, $translate, $q) {
                     return SchemaResource.getServices().then(function(types) {
-                        return registerEnumValues(schema, "services", types, $translate);
+                        return registerEnumValues(schema, "services", types, $translate, $q);
                     });
                 },
-                paymentMethods: function(schema, SchemaResource, $translate) {
+                paymentMethods: function(schema, SchemaResource, $translate, $q) {
                     return SchemaResource.getPaymentMethods().then(function(types) {
-                        return registerEnumValues(schema, "paymentMethods", types, $translate);
+                        return registerEnumValues(schema, "paymentMethods", types, $translate, $q);
                     });
                 }
             },

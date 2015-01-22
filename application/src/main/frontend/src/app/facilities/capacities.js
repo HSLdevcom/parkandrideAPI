@@ -12,7 +12,7 @@
             link: function(scope) {
                 scope.capacityTypes = schema.capacityTypes.values;
                 scope.hasCapacity = function(capacityType) {
-                    return scope.capacities[capacityType];
+                    return scope.capacities[capacityType.id];
                 };
                 scope.thereAreCapacities = function() {
                     return !_.isEmpty(scope.capacities);

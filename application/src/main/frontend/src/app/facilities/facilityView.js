@@ -93,11 +93,11 @@
             return facility.paymentInfo.parkAndRideAuthRequired || self.hasPaymentMethods() || self.hasPaymentInfoDetails();
         };
         self.hasPaymentMethods = function() {
-            return facility.paymentInfo.paymentMethod.length > 0;
+            return facility.paymentInfo.paymentMethods.length > 0;
         };
         self.getPaymentMethodNames = function() {
             function hasPaymentMethod(paymentMethod) {
-                return  _.contains(facility.paymentInfo.paymentMethod, paymentMethod.id);
+                return  _.contains(facility.paymentInfo.paymentMethods, paymentMethod.id);
             }
 
             return _.map(_.filter(schema.paymentMethods.values, hasPaymentMethod), function(paymentMethod) {

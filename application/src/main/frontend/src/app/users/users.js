@@ -78,8 +78,9 @@
     });
     m.controller('UserModalCtrl', function($scope, $modalInstance, $translate, schema, user, EVENTS, UserResource, operators, Session) {
         var vm = this;
-        vm.titleKey = 'users.action.' + (user ? 'edit' : 'new');
-        vm.isNewUser = !user;
+        var isNewUser = !user;
+
+        vm.titleKey = 'users.action.' + (isNewUser ? 'new' : 'edit');
         vm.user = user || {};
         vm.save = save;
         vm.cancel = cancel;
@@ -88,6 +89,8 @@
         vm.onOperatorSelect = onOperatorSelect;
         vm.onRoleSelect = onRoleSelect;
         vm.isOperatorCreator = false;
+        vm.isPasswordRequired = isPasswordRequired;
+        vm.isAdmin = isAdmin;
 
         initialize();
 
@@ -99,18 +102,25 @@
                 vm.operators = _.filter(vm.operators, function(o) { return o.id === login.operatorId; });
                 vm.user.operatorId = login.operatorId;
 
-                vm.roles = _.filter(vm.roles, function(r) { return r.id !== 'ADMIN'; });
+                vm.roles = _.filter(vm.roles, function(r) { return !isAdmin(r.id); });
             }
         }
 
+        function isAdmin(role) { return (role || vm.user.role) === 'ADMIN'; }
+        function isApi() { return vm.user.role === 'OPERATOR_API';}
+
+        function isPasswordRequired() {
+            return isNewUser && !isApi();
+        }
+
         function onOperatorSelect(item, model) {
-            if (vm.user.role === 'ADMIN') {
+            if (isAdmin()) {
                 vm.user.role = undefined;
             }
         }
 
         function onRoleSelect(item, model) {
-            if (model === 'ADMIN') {
+            if (isAdmin(model)) {
                 vm.user.operatorId = undefined;
             }
         }

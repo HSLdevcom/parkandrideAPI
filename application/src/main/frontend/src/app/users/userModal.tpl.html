@@ -34,7 +34,7 @@
 				<input name="username" type="input" ng-model="ctrl.user.username" class="form-control">
 			</div>
 
-			<div ng-show="ctrl.isNewUser">
+			<div ng-show="ctrl.isPasswordRequired()">
 				<div class="row">
 					<label>{{ "users.password.label" | translate }} *</label>
 				</div>
@@ -43,7 +43,7 @@
 				</div>
 			</div>
 
-			<div ng-show="ctrl.user.role !== 'ADMIN'">
+			<div ng-show="!ctrl.isAdmin()">
 				<div class="row">
 					<label>{{ "users.operator.label" | translate }} *</label>
 				</div>

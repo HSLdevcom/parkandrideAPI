@@ -1,15 +1,12 @@
 package fi.hsl.parkandride.core.service;
 
 import static com.google.common.collect.Lists.newArrayList;
+import static fi.hsl.parkandride.core.domain.CapacityType.CAR;
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.fail;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
@@ -81,6 +78,8 @@ public class ValidationServiceTest {
     public void null_elements() {
         try {
             Facility facility = FacilityDaoTest.createFacility(1l, new FacilityContacts(1l, 1l, 1l));
+            facility.builtCapacity = new HashMap<>();
+            facility.builtCapacity.put(CAR, null);
             facility.aliases = new HashSet<>(asList(""));
             facility.pricing = withNull(newArrayList());
             facility.services = withNull(new NullSafeSortedSet<>());
@@ -90,7 +89,7 @@ public class ValidationServiceTest {
             fail("Expected ValidationException");
         } catch (ValidationException e) {
             List<Violation> violations = e.violations;
-            assertThat(violations).hasSize(5);
+            assertThat(violations).hasSize(6);
         }
     }
 

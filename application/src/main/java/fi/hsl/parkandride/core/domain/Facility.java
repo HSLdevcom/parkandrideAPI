@@ -38,6 +38,7 @@ public class Facility implements OperatorEntity {
     @NotNull
     public Long operatorId;
 
+    @ElementNotNull
     @NotNull
     public Map<CapacityType, Integer> builtCapacity = newHashMap();
 

@@ -21,18 +21,11 @@
 			</div>
 
 			<div class="row">
-				<label>{{ "users.operator.label" | translate }} *</label>
-			</div>
-			<div class="row">
-				<operator-select object="ctrl.user" mandatory="true"></operator-select>
-			</div>
-
-			<div class="row">
 				<label>{{ "users.role.label" | translate }} *</label>
 			</div>
 			<div class="row">
-				<ui-select ng-model="ctrl.user.role" theme="bootstrap" reset-search-input="true" name="role" show-errors ng-required="true">
-					<ui-select-match placeholder="{{'users.role.placeholder' | translate}}">
+				<ui-select name="role" ng-model="ctrl.user.role" on-select="ctrl.onRoleSelect($item, $model)" theme="bootstrap" reset-search-input="true">
+					<ui-select-match placeholder="{{'users.role.placeholder' | translate}}" allow-clear="true">
 						{{$select.selected.label}}
 					</ui-select-match>
 					<ui-select-choices repeat="role.id as role in ctrl.roles | filter: {label: $select.search}">
@@ -40,6 +33,24 @@
 					</ui-select-choices>
 				</ui-select>
 			</div>
+
+			<div ng-show="ctrl.user.role !== 'ADMIN'">
+				<div class="row">
+					<label>{{ "users.operator.label" | translate }} *</label>
+				</div>
+				<div class="row">
+					<ui-select name="operator" ng-model="ctrl.user.operatorId" on-select="ctrl.onOperatorSelect($item, $model)" theme="bootstrap"
+							   reset-search-input="true" >
+						<ui-select-match placeholder="{{'operators.select' | translate}}" allow-clear="true">
+							{{$select.selected.name.fi}}
+						</ui-select-match>
+						<ui-select-choices repeat="operator.id as operator in ctrl.operators | filter: {name: {fi: $select.search}}">
+							<div ng-bind-html="operator.name.fi | highlight: $select.search"></div>
+						</ui-select-choices>
+					</ui-select>
+				</div>
+			</div>
+
 		</form>
 	</div>
 

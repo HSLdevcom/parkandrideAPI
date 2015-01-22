@@ -24,7 +24,7 @@
                 },
                 operatorsById: function(OperatorResource) {
                     return OperatorResource.listOperators().then(function(operators) {
-                        return _.indexBy(operators.results, "id")
+                        return _.indexBy(operators.results, "id");
                     });
                 }
             }
@@ -56,7 +56,7 @@
         };
     });
 
-    m.factory('userModal', function($modal) {
+    m.factory('userModal', function($modal, OperatorResource) {
         return {
             open: function(user) {
                 return $modal.open({
@@ -65,6 +65,9 @@
                     resolve: {
                         user: function () {
                             return _.cloneDeep(user);
+                        },
+                        operators: function() {
+                            return OperatorResource.listOperators();
                         }
                     },
                     backdrop: 'static'
@@ -72,13 +75,28 @@
             }
         };
     });
-    m.controller('UserModalCtrl', function($scope, $modalInstance, $translate, schema, user, EVENTS, UserResource) {
+    m.controller('UserModalCtrl', function($scope, $modalInstance, $translate, schema, user, EVENTS, UserResource, operators) {
         var vm = this;
         vm.titleKey = 'users.action.' + (user ? 'edit' : 'new');
-        vm.user = user;
+        vm.user = user || {};
         vm.save = save;
         vm.cancel = cancel;
         vm.roles = translatedEnumValues("roles", schema.roles);
+        vm.operators = operators.results;
+        vm.onOperatorSelect = onOperatorSelect;
+        vm.onRoleSelect = onRoleSelect;
+
+        function onOperatorSelect(item, model) {
+            if (vm.user.role === 'ADMIN') {
+                vm.user.role = undefined;
+            }
+        }
+
+        function onRoleSelect(item, model) {
+            if (model === 'ADMIN') {
+                vm.user.operatorId = undefined;
+            }
+        }
 
         function save(form) {
             validateAndSubmit(form, function() {

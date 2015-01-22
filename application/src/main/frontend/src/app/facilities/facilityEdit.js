@@ -3,8 +3,7 @@
         'ui.router',
         'parkandride.contacts',
         'parkandride.operators',
-        'parkandride.ServiceResource',
-        'parkandride.PaymentMethodResource',
+        'parkandride.SchemaResource',
         'parkandride.ContactResource',
         'parkandride.FacilityResource',
         'parkandride.facilityMap',
@@ -35,12 +34,6 @@
                 },
                 facility: function(FacilityResource) {
                     return FacilityResource.newFacility();
-                },
-                services: function(ServiceResource) {
-                    return ServiceResource.listServices().then(function(response) { return response.results; });
-                },
-                paymentMethods: function(PaymentMethodResource) {
-                    return PaymentMethodResource.listPaymentMethods().then(function(response) { return response.results; });
                 }
             }
         });
@@ -61,25 +54,19 @@
                 },
                 facility: function($stateParams, FacilityResource) {
                     return FacilityResource.getFacility($stateParams.id);
-                },
-                services: function(ServiceResource) {
-                    return ServiceResource.listServices().then(function(response) { return response.results; });
-                },
-                paymentMethods: function(PaymentMethodResource) {
-                    return PaymentMethodResource.listPaymentMethods().then(function(response) { return response.results; });
                 }
             }
         });
     });
 
-    m.controller('FacilityEditCtrl', function($scope, $state, schema, FacilityResource, Session, Sequence, facility, aliasesPlaceholder, services, paymentMethods) {
+    m.controller('FacilityEditCtrl', function($scope, $state, schema, FacilityResource, Session, Sequence, facility, aliasesPlaceholder) {
         var self = this;
         $scope.common.translationPrefix = "facilities";
-        self.capacityTypes = schema.capacityTypes;
-        self.usages = schema.usages;
-        self.dayTypes = schema.dayTypes;
-        self.services = services;
-        self.paymentMethods = paymentMethods;
+        self.capacityTypes = schema.capacityTypes.values;
+        self.usages = schema.usages.values;
+        self.dayTypes = schema.dayTypes.values;
+        self.services = schema.services.values;
+        self.paymentMethods = schema.paymentMethods.values;
         self.aliasesPlaceholder = aliasesPlaceholder;
         self.showUnavailableCapacityType = function(i) {
             var ucs = self.facility.unavailableCapacities;

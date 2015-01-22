@@ -8,9 +8,9 @@
 		</thead>
 		<tbody>
 		<tr ng-repeat="capacityType in capacityTypes | filter:hasCapacity">
-			<td class="wdCapacityType">{{'capacity-types.' + capacityType + '.label' | translate}}</td>
-			<td class="wdBuiltCapacity{{capacityType}}">
-				{{capacities[capacityType]}}
+			<td class="wdCapacityType">{{capacityType.label}}</td>
+			<td class="wdBuiltCapacity{{capacityType.id}}">
+				{{capacities[capacityType.id]}}
 			</td>
 		</tr>
 		</tbody>

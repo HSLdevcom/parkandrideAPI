@@ -31,14 +31,16 @@ describe('facility view', function () {
             f = toView(facFull);
         });
 
-        it('to edit view', function () {
-            viewPage.toEditView();
-            expect(editPage.isDisplayed()).toBe(true);
-        });
-
         it('to hub list', function () {
             viewPage.toListView();
             expect(listPage.isDisplayed()).toBe(true);
+        });
+
+        it('to edit view', function () {
+            devApi.loginAs('ADMIN');
+            viewPage.get(f.id);
+            viewPage.toEditView();
+            expect(editPage.isDisplayed()).toBe(true);
         });
     });
 
@@ -57,7 +59,7 @@ describe('facility view', function () {
             expect(viewPage.capacitiesTable.getCapacities(_.keys(f.capacities))).toEqual(f.capacities);
 
             expect(viewPage.isServicesDisplayed()).toBe(true);
-            expect(viewPage.getServices()).toEqual("Katettu, Valaistus");
+            expect(viewPage.getServices()).toEqual("Valaistus, Katettu");
 
             expect(viewPage.isPaymentInfoDisplayed()).toBe(true);
             expect(viewPage.getPaymentMethods()).toEqual("Kolikko, Seteli");
@@ -67,7 +69,7 @@ describe('facility view', function () {
     it('view port', function() {
         f = {
             "id":1,"name":{"fi":"test","sv":"test","en":"tes"},
-            "aliases":[],"capacities":{},"serviceIds":[],
+            "aliases":[],"capacities":{},"services":[],
             "operatorId": 1,
             "contacts":{
                 "emergency": 1,
@@ -112,7 +114,7 @@ describe('facility view', function () {
     describe('without services', function () {
         beforeEach(function () {
             f = facFull.copy();
-            f.serviceIds = [];
+            f.services = [];
             toView(f);
         });
 
@@ -154,7 +156,7 @@ describe('facility view', function () {
             beforeEach(function () {
                 f = facFull.copy();
                 f.paymentInfo = {};
-                f.paymentInfo.paymentMethodIds = facFull.copy().paymentInfo.paymentMethodIds;
+                f.paymentInfo.paymentMethods = facFull.copy().paymentInfo.paymentMethods;
                 toView(f);
             });
 

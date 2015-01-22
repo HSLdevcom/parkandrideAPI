@@ -28,11 +28,7 @@ import fi.hsl.parkandride.back.H2GeometryType;
 import fi.hsl.parkandride.back.LiipiSQLExceptionTranslator;
 import fi.hsl.parkandride.back.PGGeometryType;
 import fi.hsl.parkandride.back.TimeType;
-import fi.hsl.parkandride.core.domain.CapacityType;
-import fi.hsl.parkandride.core.domain.DayType;
-import fi.hsl.parkandride.core.domain.FacilityStatusEnum;
-import fi.hsl.parkandride.core.domain.Role;
-import fi.hsl.parkandride.core.domain.Usage;
+import fi.hsl.parkandride.core.domain.*;
 
 @Configuration
 public class JdbcConfiguration {
@@ -135,6 +131,10 @@ public class JdbcConfiguration {
         conf.register("FACILITY_STATUS", "CAPACITY_TYPE", new EnumByNameType<>(CapacityType.class));
         conf.register("FACILITY_STATUS", "STATUS", new EnumByNameType<>(FacilityStatusEnum.class));
         conf.register("FACILITY_STATUS_ENUM", "NAME", new EnumByNameType<>(FacilityStatusEnum.class));
+
+        conf.register("FACILITY_SERVICE", "SERVICE", new EnumByNameType<>(Service.class));
+
+        conf.register("FACILITY_PAYMENT_METHOD", "PAYMENT_METHOD", new EnumByNameType<>(PaymentMethod.class));
 
         conf.register(new DateTimeType());
         return conf;

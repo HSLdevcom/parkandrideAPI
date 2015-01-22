@@ -18,7 +18,7 @@ create table hub (
   primary key (id)
 );
 
-create sequence hub_id_seq increment by 1 start with 100000;
+create sequence hub_id_seq increment by 1 start with 1;
 
 create table hub_facility (
   hub_id bigint not null,

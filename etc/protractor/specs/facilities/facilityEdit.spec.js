@@ -21,6 +21,8 @@ describe('edit facility view', function () {
             devApi.resetAll({ contacts: [fixtures.facilitiesFixture.contact], operators: [fixtures.facilitiesFixture.operator] });
             devApi.loginAs('ADMIN');
             editPage.get();
+            editPage.pricingSelectAll();
+            editPage.pricingRemoveRows();
         });
 
         it('initially no errors exist', function () {
@@ -202,6 +204,8 @@ describe('edit facility view', function () {
 
             // Reload and expect that new contact is still available after operator is selected
             editPage.get();
+            editPage.pricingSelectAll();
+            editPage.pricingRemoveRows();
             editPage.selectOperator("smooth operator");
             editPage.selectEmergencyContact("new contact");
             expect(editPage.getEmergencyContact()).toBe("new contact (09 47664444 / hsl@hsl.fi)");
@@ -274,6 +278,8 @@ describe('edit facility view', function () {
                 devApi.loginAs('ADMIN');
 
                 editPage.get();
+                editPage.pricingSelectAll();
+                editPage.pricingRemoveRows();
                 editPage.setName(facFull.name);
                 editPage.selectOperator("smooth");
                 editPage.drawLocation(facFull.locationInput.offset, facFull.locationInput.w, facFull.locationInput.h);

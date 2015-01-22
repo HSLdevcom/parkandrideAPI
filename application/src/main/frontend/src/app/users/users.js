@@ -1,6 +1,7 @@
 (function() {
     var m = angular.module('parkandride.users', [
         'ui.router',
+        'parkandride.auth',
         'parkandride.operators',
         'parkandride.UserResource',
         'parkandride.layout',
@@ -75,7 +76,7 @@
             }
         };
     });
-    m.controller('UserModalCtrl', function($scope, $modalInstance, $translate, schema, user, EVENTS, UserResource, operators) {
+    m.controller('UserModalCtrl', function($scope, $modalInstance, $translate, schema, user, EVENTS, UserResource, operators, Session) {
         var vm = this;
         vm.titleKey = 'users.action.' + (user ? 'edit' : 'new');
         vm.user = user || {};
@@ -85,6 +86,18 @@
         vm.operators = operators.results;
         vm.onOperatorSelect = onOperatorSelect;
         vm.onRoleSelect = onRoleSelect;
+        vm.isOperatorCreator = false;
+
+        initialize();
+
+        function initialize() {
+            var login = Session.get();
+            if (login && login.operatorId) {
+                vm.operators = _.filter(vm.operators, function(o) { return o.id === login.operatorId; });
+                vm.user.operatorId = login.operatorId;
+                vm.isOperatorCreator = true;
+            }
+        }
 
         function onOperatorSelect(item, model) {
             if (vm.user.role === 'ADMIN') {

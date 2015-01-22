@@ -25,7 +25,7 @@
 			</div>
 			<div class="row">
 				<ui-select name="role" ng-model="ctrl.user.role" on-select="ctrl.onRoleSelect($item, $model)" theme="bootstrap" reset-search-input="true">
-					<ui-select-match placeholder="{{'users.role.placeholder' | translate}}" allow-clear="true">
+					<ui-select-match placeholder="{{'users.role.placeholder' | translate}}">
 						{{$select.selected.label}}
 					</ui-select-match>
 					<ui-select-choices repeat="role.id as role in ctrl.roles | filter: {label: $select.search}">
@@ -40,7 +40,7 @@
 				</div>
 				<div class="row">
 					<ui-select name="operator" ng-model="ctrl.user.operatorId" on-select="ctrl.onOperatorSelect($item, $model)" theme="bootstrap"
-							   reset-search-input="true" >
+							   reset-search-input="true" ng-disabled="ctrl.isOperatorCreator">
 						<ui-select-match placeholder="{{'operators.select' | translate}}" allow-clear="true">
 							{{$select.selected.name.fi}}
 						</ui-select-match>

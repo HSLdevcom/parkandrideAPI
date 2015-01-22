@@ -22,13 +22,15 @@
                 users: function(UserResource) {
                     return UserResource.listUsers();
                 },
-                operators: function(OperatorResource) {
-                    return OperatorResource.listOperators();
+                operatorsById: function(OperatorResource) {
+                    return OperatorResource.listOperators().then(function(operators) {
+                        return _.indexBy(operators.results, "id")
+                    });
                 }
             }
         });
     });
-    m.controller('UserListCtrl', function($state, users, operators, userModal) {
+    m.controller('UserListCtrl', function($state, users, operatorsById, userModal) {
         var vm = this;
         vm.users = users.results;
         vm.openModal = openModal;
@@ -36,7 +38,6 @@
         initialize();
 
         function initialize() {
-            var operatorsById = _.indexBy(operators.results, "id");
             _.forEach(vm.users, function(user) {
                 var operator = operatorsById[user.operatorId];
                 user.operatorNameFi = operator ? operator.name.fi : "";

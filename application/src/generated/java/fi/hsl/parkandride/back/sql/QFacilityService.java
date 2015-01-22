@@ -29,13 +29,13 @@ public class QFacilityService extends RelationalPathSpatial<QFacilityService> {
 
     public final NumberPath<Long> facilityId = createNumber("facilityId", Long.class);
 
-    public final NumberPath<Long> serviceId = createNumber("serviceId", Long.class);
+    public final EnumPath<fi.hsl.parkandride.core.domain.Service> service = createEnum("service", fi.hsl.parkandride.core.domain.Service.class);
 
-    public final com.mysema.query.sql.PrimaryKey<QFacilityService> constraint3 = createPrimaryKey(facilityId, serviceId);
+    public final com.mysema.query.sql.PrimaryKey<QFacilityService> constraint3 = createPrimaryKey(facilityId, service);
+
+    public final com.mysema.query.sql.ForeignKey<QService> facilityServiceServiceFk = createForeignKey(service, "NAME");
 
     public final com.mysema.query.sql.ForeignKey<QFacility> facilityServiceFacilityIdFk = createForeignKey(facilityId, "ID");
-
-    public final com.mysema.query.sql.ForeignKey<QService> facilityServiceServiceIdFk = createForeignKey(serviceId, "ID");
 
     public QFacilityService(String variable) {
         super(QFacilityService.class, forVariable(variable), "PUBLIC", "FACILITY_SERVICE");
@@ -59,7 +59,7 @@ public class QFacilityService extends RelationalPathSpatial<QFacilityService> {
 
     public void addMetadata() {
         addMetadata(facilityId, ColumnMetadata.named("FACILITY_ID").withIndex(1).ofType(Types.BIGINT).withSize(19).notNull());
-        addMetadata(serviceId, ColumnMetadata.named("SERVICE_ID").withIndex(2).ofType(Types.BIGINT).withSize(19).notNull());
+        addMetadata(service, ColumnMetadata.named("SERVICE").withIndex(2).ofType(Types.VARCHAR).withSize(64).notNull());
     }
 
 }

@@ -1,45 +1,3 @@
-create table capacity_type (
-  name varchar(64) not null,
-  primary key (name)
-);
-
-insert into capacity_type values ('CAR');
-insert into capacity_type values ('BICYCLE');
-insert into capacity_type values ('DISABLED');
-insert into capacity_type values ('MOTORCYCLE');
-insert into capacity_type values ('ELECTRIC_CAR');
-
-
-create table day_type (
-  name varchar(64) not null,
-  primary key (name)
-);
-
-insert into day_type values ('BUSINESS_DAY');
-insert into day_type values ('SATURDAY');
-insert into day_type values ('SUNDAY');
-insert into day_type values ('HOLIDAY');
-insert into day_type values ('EVE');
-
-
-create table usage (
-  name varchar(64) not null,
-  primary key (name)
-);
-insert into usage values ('PARK_AND_RIDE');
-insert into usage values ('COMMERCIAL');
-
-
-create table facility_status_enum (
-  name varchar(64) not null,
-
-  primary key (name)
-);
-
-insert into facility_status_enum values ('FULL');
-insert into facility_status_enum values ('SPACES_AVAILABLE');
-
-
 create table facility (
   id bigint not null,
   name_fi varchar(255) not null,
@@ -135,15 +93,15 @@ create table port (
 
 create table facility_service (
   facility_id bigint not null,
-  service_id bigint not null,
+  service varchar(64) not null,
 
-  primary key (facility_id, service_id),
+  primary key (facility_id, service),
 
   constraint facility_service_facility_id_fk foreign key (facility_id)
     references facility (id),
 
-  constraint facility_service_service_id_fk foreign key (service_id)
-    references service (id)
+  constraint facility_service_service_fk foreign key (service)
+    references service (name)
 );
 
 
@@ -168,15 +126,15 @@ create table facility_status (
 
 create table facility_payment_method (
   facility_id bigint not null,
-  payment_method_id bigint not null,
+  payment_method varchar(64) not null,
 
-  primary key (facility_id, payment_method_id),
+  primary key (facility_id, payment_method),
 
   constraint facility_payment_method_facility_id_fk foreign key (facility_id)
     references facility (id),
 
-  constraint facility_payment_method_payment_method_id_fk foreign key (payment_method_id)
-    references service (id)
+  constraint facility_payment_method_payment_method_fk foreign key (payment_method)
+    references payment_method (name)
 );
 
 

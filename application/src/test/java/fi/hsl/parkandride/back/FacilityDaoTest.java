@@ -5,6 +5,10 @@ import static fi.hsl.parkandride.core.domain.CapacityType.ELECTRIC_CAR;
 import static fi.hsl.parkandride.core.domain.DayType.BUSINESS_DAY;
 import static fi.hsl.parkandride.core.domain.DayType.EVE;
 import static fi.hsl.parkandride.core.domain.DayType.SUNDAY;
+import static fi.hsl.parkandride.core.domain.Service.ACCESSIBLE_TOILETS;
+import static fi.hsl.parkandride.core.domain.Service.ELEVATOR;
+import static fi.hsl.parkandride.core.domain.Service.LIGHTING;
+import static fi.hsl.parkandride.core.domain.Service.TOILETS;
 import static fi.hsl.parkandride.core.domain.Sort.Dir.ASC;
 import static fi.hsl.parkandride.core.domain.Sort.Dir.DESC;
 import static fi.hsl.parkandride.core.domain.Usage.COMMERCIAL;
@@ -72,7 +76,7 @@ public class FacilityDaoTest extends AbstractDaoTest {
 
     public static final List<Port> PORTS = ImmutableList.of(new Port(PORT_LOCATION1, true, false, true, false, "street", "00100", "city", "info"));
 
-    public static final Set<Long> SERVICES = ImmutableSet.of(1l, 2l, 3l);
+    public static final Set<Service> SERVICES = ImmutableSet.of(ELEVATOR, TOILETS, ACCESSIBLE_TOILETS);
 
     public static final Pricing PRICING1 = new Pricing(CAR, PARK_AND_RIDE, 50, SUNDAY, "8", "18", "2 EUR/H");
 
@@ -124,13 +128,13 @@ public class FacilityDaoTest extends AbstractDaoTest {
         final MultilingualString newName = new MultilingualString("changed name");
         final SortedSet<String> newAliases = ImmutableSortedSet.of("clias");
         final List<Port> newPorts = ImmutableList.of(new Port(PORT_LOCATION2, true, true, true, true), new Port(PORT_LOCATION1, false, false, false, false));
-        final Set<Long> newServices = ImmutableSet.of(4l);
+        final Set<Service> newServices = ImmutableSet.of(LIGHTING);
         final List<Pricing> newPricing = asList(new Pricing(CAR, COMMERCIAL, 50, BUSINESS_DAY, "8", "18", "10 EUR/H"));
 
         facility.name = newName;
         facility.aliases = newAliases;
         facility.ports = newPorts;
-        facility.serviceIds = newServices;
+        facility.services = newServices;
         facility.pricing = newPricing;
 
         facilityDao.updateFacility(id, facility);
@@ -138,13 +142,13 @@ public class FacilityDaoTest extends AbstractDaoTest {
         assertThat(facility.name).isEqualTo(newName);
         assertThat(facility.aliases).isEqualTo(newAliases);
         assertThat(facility.ports).isEqualTo(newPorts);
-        assertThat(facility.serviceIds).isEqualTo(newServices);
+        assertThat(facility.services).isEqualTo(newServices);
         assertThat(facility.pricing).isEqualTo(newPricing);
 
         // Remove aliases, capacities and ports
         facility.aliases = null;
         facility.ports = null;
-        facility.serviceIds = null;
+        facility.services = null;
         facility.contacts.service = null;
         facilityDao.updateFacility(id, facility);
 
@@ -153,7 +157,7 @@ public class FacilityDaoTest extends AbstractDaoTest {
         assertThat(facilities).hasSize(1);
         assertThat(facilities.get(0).aliases).isEmpty();
         assertThat(facilities.get(0).ports).isEmpty();
-        assertThat(facilities.get(0).serviceIds).isEmpty();
+        assertThat(facilities.get(0).services).isEmpty();
         assertThat(facilities.get(0).contacts).isNotNull();
         assertThat(facilities.get(0).contacts.service).isNull();
 
@@ -179,7 +183,7 @@ public class FacilityDaoTest extends AbstractDaoTest {
         assertThat(facility.name).isEqualTo(NAME);
         assertThat(facility.aliases).isEqualTo(ALIASES);
         assertThat(facility.ports).isEqualTo(PORTS);
-        assertThat(facility.serviceIds).isEqualTo(SERVICES);
+        assertThat(facility.services).isEqualTo(SERVICES);
         assertThat(facility.builtCapacity).isEqualTo(BUILT_CAPACITY);
         assertThat(facility.pricing).isEqualTo(asList(PRICING1, PRICING2));
         assertThat(facility.openingHours.byDayType).isEqualTo(ImmutableMap.of(
@@ -204,7 +208,7 @@ public class FacilityDaoTest extends AbstractDaoTest {
         facility.operatorId = operatorId;
         facility.aliases = ALIASES;
         facility.ports = PORTS;
-        facility.serviceIds = SERVICES;
+        facility.services = SERVICES;
         facility.contacts = dummyContacts;
 
         facility.builtCapacity = BUILT_CAPACITY;

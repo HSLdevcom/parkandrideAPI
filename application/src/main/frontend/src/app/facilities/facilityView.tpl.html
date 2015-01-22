@@ -47,13 +47,13 @@
 									<tbody>
 									<tr ng-repeat="dayType in viewCtrl.dayTypes">
 										<td>
-											{{ 'day-types.' + dayType + '.label' | translate }}
+											{{ dayType.label }}
 										</td>
 										<td>
 											<span ng-if="viewCtrl.facility.openingHours.byDayType[dayType]">
-												{{viewCtrl.facility.openingHours.byDayType[dayType].from}}
+												{{viewCtrl.facility.openingHours.byDayType[dayType.id].from}}
 												-
-												{{viewCtrl.facility.openingHours.byDayType[dayType].until}}
+												{{viewCtrl.facility.openingHours.byDayType[dayType.id].until}}
 											</span>
 											<span ng-if="!viewCtrl.facility.openingHours.byDayType[dayType]">-</span>
 										</td>
@@ -118,7 +118,7 @@
 									<tr ng-repeat="pricing in viewCtrl.facility.pricing">
 										<td>
 											<div ng-hide="viewCtrl.isRepeatingValue(viewCtrl.facility.pricing, $index, 'capacityType')">
-												{{ 'capacity-types.' + pricing.capacityType + '.label' | translate }}
+												{{ 'capacityTypes.' + pricing.capacityType + '.label' | translate }}
 											</div>
 										</td>
 										<td>
@@ -128,7 +128,7 @@
 										</td>
 										<td class="text-right">{{ pricing.maxCapacity }}</td>
 
-										<td>{{ 'day-types.' + pricing.dayType + '.label' | translate }}</td>
+										<td>{{ 'dayTypes.' + pricing.dayType + '.label' | translate }}</td>
 										<td>
 											<div ng-show="viewCtrl.is24h(pricing)">&#x2713;</div>
 										</td>
@@ -167,7 +167,7 @@
 									<tr ng-repeat="unavailableCapacity in viewCtrl.facility.unavailableCapacities">
 										<td>
 											<div ng-hide="viewCtrl.isRepeatingValue(viewCtrl.facility.unavailableCapacities, $index, 'capacityType')">
-												{{'capacity-types.' + unavailableCapacity.capacityType + '.label' | translate}}
+												{{'capacityTypes.' + unavailableCapacity.capacityType + '.label' | translate}}
 											</div>
 										</td>
 										<td>{{'usages.' + unavailableCapacity.usage + '.label' | translate}}</td>
@@ -205,7 +205,7 @@
 			</div>
 
 			<div class="row wdServices" ng-show="viewCtrl.hasServices()">
-				<h3>{{"facilities.serviceIds.heading" | translate}}</h3>
+				<h3>{{"facilities.services.heading" | translate}}</h3>
 				<p class="wdService">{{viewCtrl.getServiceNames() | joinBy: ", "}}</p>
 			</div>
 		</div>

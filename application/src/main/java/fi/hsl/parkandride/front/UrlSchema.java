@@ -42,10 +42,6 @@ public class UrlSchema {
 
     public static final String SERVICES = API + "/services";
 
-    public static final String SERVICE_ID = "serviceId";
-
-    public static final String SERVICE = SERVICES + "/{" + SERVICE_ID + "}" ;
-
 
     public static final String OPERATORS = API + "/operators";
 

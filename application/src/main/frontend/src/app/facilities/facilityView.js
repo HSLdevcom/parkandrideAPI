@@ -8,8 +8,6 @@
         'parkandride.OperatorResource',
         'parkandride.ContactResource',
         'parkandride.FacilityResource',
-        'parkandride.ServiceResource',
-        'parkandride.PaymentMethodResource',
         'parkandride.pricing',
         'parkandride.layout'
     ]);
@@ -25,20 +23,6 @@
                     resolve: {
                         facility: function($stateParams, FacilityResource) {
                             return FacilityResource.getFacility($stateParams.id);
-                        },
-                        services: function(ServiceResource, facility) {
-                            if (!_.isEmpty(facility.serviceIds)) {
-                                return ServiceResource.listServices({ids: facility.serviceIds}).then(function(results) {
-                                    return results.results;
-                                });
-                            } else {
-                                return [];
-                            }
-                        },
-                        paymentMethods: function(PaymentMethodResource) {
-                            return PaymentMethodResource.listPaymentMethods().then(function(results) {
-                                return results.results;
-                            });
                         },
                         contacts: function(ContactResource, facility)  {
                             var contactIds = _.filter(_.values(facility.contacts));
@@ -60,11 +44,11 @@
         });
     });
 
-    m.controller('FacilityViewCtrl', function(PricingService, schema, facility, services, contacts, operator, paymentMethods) {
+    m.controller('FacilityViewCtrl', function(PricingService, schema, facility, contacts, operator) {
         var self = this;
-        self.dayTypes = schema.dayTypes;
+        self.services = schema.services.values;
+        self.dayTypes = schema.dayTypes.values;
         self.facility = facility;
-        self.services = services;
         self.contacts = contacts;
         self.operator = operator;
         self.isFree = function(pricing) {
@@ -83,11 +67,11 @@
           return !_.isEmpty(facility.builtCapacity);
         };
         self.hasServices = function() {
-            return services.length > 0;
+            return self.facility.services.length > 0;
         };
         self.getServiceNames = function() {
-            return _.map(services, function(service) {
-                return service.name.fi;
+            return _.map(self.facility.services, function(service) {
+                return schema.services[service].label;
             });
         };
         self.isRepeatingValue = function(collection, i, properties) {
@@ -109,15 +93,15 @@
             return facility.paymentInfo.parkAndRideAuthRequired || self.hasPaymentMethods() || self.hasPaymentInfoDetails();
         };
         self.hasPaymentMethods = function() {
-            return facility.paymentInfo.paymentMethodIds.length > 0;
+            return facility.paymentInfo.paymentMethod.length > 0;
         };
         self.getPaymentMethodNames = function() {
             function hasPaymentMethod(paymentMethod) {
-                return  _.contains(facility.paymentInfo.paymentMethodIds, paymentMethod.id);
+                return  _.contains(facility.paymentInfo.paymentMethod, paymentMethod.id);
             }
 
-            return _.map(_.filter(paymentMethods, hasPaymentMethod), function(paymentMethod) {
-                return paymentMethod.name.fi;
+            return _.map(_.filter(schema.paymentMethods.values, hasPaymentMethod), function(paymentMethod) {
+                return paymentMethod.label;
             });
         };
         self.hasPaymentInfoDetails = function() {

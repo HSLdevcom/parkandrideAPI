@@ -29,7 +29,7 @@ public class QDayType extends RelationalPathSpatial<QDayType> {
 
     public final StringPath name = createString("name");
 
-    public final com.mysema.query.sql.PrimaryKey<QDayType> constraintA3 = createPrimaryKey(name);
+    public final com.mysema.query.sql.PrimaryKey<QDayType> constraintA = createPrimaryKey(name);
 
     public final com.mysema.query.sql.ForeignKey<QPricing> _pricingDayTypeFk = createInvForeignKey(name, "DAY_TYPE");
 

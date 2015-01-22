@@ -210,8 +210,8 @@ public class FacilityDao implements FacilityRepository {
 
         insertAliases(facilityId, facility.aliases);
         insertPorts(facilityId, facility.ports);
-        updateServices(facilityId, facility.serviceIds);
-        updatePaymentMethods(facilityId, facility.paymentInfo.paymentMethodIds);
+        updateServices(facilityId, facility.services);
+        updatePaymentMethods(facilityId, facility.paymentInfo.paymentMethods);
         insertPricing(facilityId, facility.pricing);
         insertUnavailableCapacity(facilityId, facility.unavailableCapacities);
 
@@ -237,12 +237,12 @@ public class FacilityDao implements FacilityRepository {
         updateAliases(facilityId, newFacility.aliases, oldFacility.aliases);
         updatePorts(facilityId, newFacility.ports, oldFacility.ports);
 
-        if (!Objects.equals(newFacility.serviceIds, oldFacility.serviceIds)) {
-            updateServices(facilityId, newFacility.serviceIds);
+        if (!Objects.equals(newFacility.services, oldFacility.services)) {
+//            updateServices(facilityId, newFacility.services);
         }
 
-        if (!Objects.equals(newFacility.paymentInfo.paymentMethodIds, oldFacility.paymentInfo.paymentMethodIds)) {
-            updatePaymentMethods(facilityId, newFacility.paymentInfo.paymentMethodIds);
+        if (!Objects.equals(newFacility.paymentInfo.paymentMethods, oldFacility.paymentInfo.paymentMethods)) {
+//            updatePaymentMethods(facilityId, newFacility.paymentInfo.paymentMethods);
         }
 
         if (!Objects.equals(newFacility.pricing, oldFacility.pricing)) {
@@ -547,25 +547,25 @@ public class FacilityDao implements FacilityRepository {
         }
     }
 
-    private void updateServices(long facilityId, Set<Long> serviceIds) {
+    private void updateServices(long facilityId, Set<Service> services) {
         queryFactory.delete(qService).where(qService.facilityId.eq(facilityId)).execute();
 
-        if (serviceIds != null && !serviceIds.isEmpty()) {
+        if (services != null && !services.isEmpty()) {
             SQLInsertClause insert = queryFactory.insert(qService);
-            for (Long serviceId : serviceIds) {
-                insert.set(qService.facilityId, facilityId).set(qService.serviceId, serviceId).addBatch();
+            for (Service service : services) {
+                insert.set(qService.facilityId, facilityId).set(qService.service, service).addBatch();
             }
             insert.execute();
         }
     }
 
-    private void updatePaymentMethods(long facilityId, Set<Long> paymentMethodIds) {
+    private void updatePaymentMethods(long facilityId, Set<PaymentMethod> paymentMethods) {
         queryFactory.delete(qPaymentMethod).where(qPaymentMethod.facilityId.eq(facilityId)).execute();
 
-        if (paymentMethodIds != null && !paymentMethodIds.isEmpty()) {
+        if (paymentMethods != null && !paymentMethods.isEmpty()) {
             SQLInsertClause insert = queryFactory.insert(qPaymentMethod);
-            for (Long serviceId : paymentMethodIds) {
-                insert.set(qPaymentMethod.facilityId, facilityId).set(qPaymentMethod.paymentMethodId, serviceId).addBatch();
+            for (PaymentMethod paymentMethod : paymentMethods) {
+                insert.set(qPaymentMethod.facilityId, facilityId).set(qPaymentMethod.paymentMethod, paymentMethod).addBatch();
             }
             insert.execute();
         }
@@ -593,20 +593,20 @@ public class FacilityDao implements FacilityRepository {
 
     private void fetchServices(Map<Long, Facility> facilitiesById) {
         if (!facilitiesById.isEmpty()) {
-            Map<Long, Set<Long>> services = findServices(facilitiesById.keySet());
+            Map<Long, Set<Service>> services = findServices(facilitiesById.keySet());
 
-            for (Entry<Long, Set<Long>> entry : services.entrySet()) {
-                facilitiesById.get(entry.getKey()).serviceIds = entry.getValue();
+            for (Entry<Long, Set<Service>> entry : services.entrySet()) {
+//                facilitiesById.get(entry.getKey()).services = entry.getValue();
             }
         }
     }
 
     private void fetchPaymentMethods(Map<Long, Facility> facilitiesById) {
         if (!facilitiesById.isEmpty()) {
-            Map<Long, Set<Long>> paymentMethods = findPaymentMethods(facilitiesById.keySet());
+            Map<Long, Set<PaymentMethod>> paymentMethods = findPaymentMethods(facilitiesById.keySet());
 
-            for (Entry<Long, Set<Long>> entry : paymentMethods.entrySet()) {
-                facilitiesById.get(entry.getKey()).paymentInfo.paymentMethodIds = entry.getValue();
+            for (Entry<Long, Set<PaymentMethod>> entry : paymentMethods.entrySet()) {
+                facilitiesById.get(entry.getKey()).paymentInfo.paymentMethods = entry.getValue();
             }
         }
     }
@@ -649,16 +649,16 @@ public class FacilityDao implements FacilityRepository {
                 .transform(groupBy(qPricing.facilityId).as(list(unavailableCapacityMapping)));
     }
 
-    private Map<Long, Set<Long>> findServices(Set<Long> facilityIds) {
+    private Map<Long, Set<Service>> findServices(Set<Long> facilityIds) {
         return queryFactory.from(qService)
                 .where(qService.facilityId.in(facilityIds))
-                .transform(groupBy(qService.facilityId).as(set(qService.serviceId)));
+                .transform(groupBy(qService.facilityId).as(set(qService.service)));
     }
 
-    private Map<Long, Set<Long>> findPaymentMethods(Set<Long> facilityIds) {
+    private Map<Long, Set<PaymentMethod>> findPaymentMethods(Set<Long> facilityIds) {
         return queryFactory.from(qPaymentMethod)
                 .where(qPaymentMethod.facilityId.in(facilityIds))
-                .transform(groupBy(qPaymentMethod.facilityId).as(set(qPaymentMethod.paymentMethodId)));
+                .transform(groupBy(qPaymentMethod.facilityId).as(set(qPaymentMethod.paymentMethod)));
     }
 
     private Map<Long, Set<String>> findAliases(Set<Long> facilityIds) {

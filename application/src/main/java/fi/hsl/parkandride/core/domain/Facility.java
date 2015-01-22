@@ -58,7 +58,7 @@ public class Facility implements OperatorEntity {
     public List<Port> ports = newArrayList();
 
     @NotNull
-    public Set<Long> serviceIds = newHashSet();
+    public Set<Service> services = newHashSet();
 
     @NotNull
     @Valid

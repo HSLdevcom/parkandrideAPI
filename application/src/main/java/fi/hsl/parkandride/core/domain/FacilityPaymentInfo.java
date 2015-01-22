@@ -16,5 +16,5 @@ public class FacilityPaymentInfo {
     public MultilingualUrl url;
 
     @NotNull
-    public Set<Long> paymentMethodIds = new HashSet<>();
+    public Set<PaymentMethod> paymentMethods = new HashSet<>();
 }

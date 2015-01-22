@@ -27,19 +27,11 @@ public class QService extends RelationalPathSpatial<QService> {
 
     public static final QService service = new QService("SERVICE");
 
-    public final NumberPath<Long> id = createNumber("id", Long.class);
+    public final StringPath name = createString("name");
 
-    public final StringPath nameEn = createString("nameEn");
+    public final com.mysema.query.sql.PrimaryKey<QService> constraintA1 = createPrimaryKey(name);
 
-    public final StringPath nameFi = createString("nameFi");
-
-    public final StringPath nameSv = createString("nameSv");
-
-    public final com.mysema.query.sql.PrimaryKey<QService> constraintA = createPrimaryKey(id);
-
-    public final com.mysema.query.sql.ForeignKey<QFacilityPaymentMethod> _facilityPaymentMethodPaymentMethodIdFk = createInvForeignKey(id, "PAYMENT_METHOD_ID");
-
-    public final com.mysema.query.sql.ForeignKey<QFacilityService> _facilityServiceServiceIdFk = createInvForeignKey(id, "SERVICE_ID");
+    public final com.mysema.query.sql.ForeignKey<QFacilityService> _facilityServiceServiceFk = createInvForeignKey(name, "SERVICE");
 
     public QService(String variable) {
         super(QService.class, forVariable(variable), "PUBLIC", "SERVICE");
@@ -62,10 +54,7 @@ public class QService extends RelationalPathSpatial<QService> {
     }
 
     public void addMetadata() {
-        addMetadata(id, ColumnMetadata.named("ID").withIndex(1).ofType(Types.BIGINT).withSize(19).notNull());
-        addMetadata(nameEn, ColumnMetadata.named("NAME_EN").withIndex(4).ofType(Types.VARCHAR).withSize(255).notNull());
-        addMetadata(nameFi, ColumnMetadata.named("NAME_FI").withIndex(2).ofType(Types.VARCHAR).withSize(255).notNull());
-        addMetadata(nameSv, ColumnMetadata.named("NAME_SV").withIndex(3).ofType(Types.VARCHAR).withSize(255).notNull());
+        addMetadata(name, ColumnMetadata.named("NAME").withIndex(1).ofType(Types.VARCHAR).withSize(64).notNull());
     }
 
 }

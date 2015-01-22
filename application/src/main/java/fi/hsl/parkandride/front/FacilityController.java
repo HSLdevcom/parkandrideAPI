@@ -11,6 +11,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 import static org.springframework.web.bind.annotation.RequestMethod.PUT;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -88,25 +89,6 @@ public class FacilityController {
         SearchResults<Facility> results = facilityService.search(search.toSpatialSearch());
         return new ResponseEntity<>(FeatureCollection.ofFacilities(results), OK);
     }
-
-    @RequestMapping(method = GET, value = CAPACITY_TYPES)
-    public ResponseEntity<SearchResults<CapacityType>> capacityTypes() {
-        List<CapacityType> types = asList(CapacityType.values());
-        return new ResponseEntity<>(SearchResults.of(types), OK);
-    }
-
-    @RequestMapping(method = GET, value = USAGES)
-    public ResponseEntity<SearchResults<Usage>> usages() {
-        List<Usage> types = asList(Usage.values());
-        return new ResponseEntity<>(SearchResults.of(types), OK);
-    }
-
-    @RequestMapping(method = GET, value = DAY_TYPES)
-    public ResponseEntity<SearchResults<DayType>> dayTypes() {
-        List<DayType> types = asList(DayType.values());
-        return new ResponseEntity<>(SearchResults.of(types), OK);
-    }
-
     @ApiOperation(value = "Update facility status", authorizations = @Authorization(API_KEY))
     @RequestMapping(method = PUT, value = FACILITY_STATUS, produces = APPLICATION_JSON_VALUE)
     public void createStatuses(@PathVariable(FACILITY_ID) long facilityId,

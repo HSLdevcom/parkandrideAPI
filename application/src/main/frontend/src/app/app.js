@@ -1,6 +1,7 @@
 (function() {
     var m = angular.module('parkandride', [
         'ui.bootstrap',
+        'parkandride.i18n',
 
         'templates-app',
         'templates-common',
@@ -26,7 +27,7 @@
 
     m.constant('FEATURES_URL', 'internal/features');
 
-    m.value("schema", { capacityTypes:[], usages: [], dayTypes: [] });
+    m.value("schema", {});
 
     m.value("EVENTS", {
         validationErrors: "validation-errors-updated",
@@ -36,6 +37,25 @@
     m.config(function myAppConfig($stateProvider, $urlRouterProvider, $httpProvider) {
         $urlRouterProvider.otherwise('/hubs');
 
+        function registerEnumValues(schema, type, values, $translate, $q) {
+            var translationPromises = _.map(values, function(value) {
+                return $translate(type + "." + value + ".label");
+            });
+
+            return $q.all(translationPromises).then(function(translations) {
+                schema[type] = { values: [] };
+                _.forEach(values, function(value, index) {
+                    var enumObject = {
+                        id: value,
+                        label: translations[index]
+                    };
+                    schema[type].values.push(enumObject);
+                    schema[type][value] = enumObject;
+                });
+                return schema[type];
+            });
+        }
+
         $stateProvider.state('root', {
             abstract: true,
             template: '<div ui-view="main"></div>',
@@ -43,22 +63,29 @@
                 features: function(FeatureResource) {
                     return FeatureResource.getFeatures();
                 },
-                capacityTypes: function(schema, FacilityResource) {
-                    return FacilityResource.getCapacityTypes().then(function(types) {
-                        schema.capacityTypes = types;
-                        return types;
+                capacityTypes: function(schema, SchemaResource, $translate, $q) {
+                    return SchemaResource.getCapacityTypes().then(function(types) {
+                        return registerEnumValues(schema, "capacityTypes", types, $translate, $q);
                     });
                 },
-                usages: function(schema, FacilityResource) {
-                    return FacilityResource.getUsages().then(function(types) {
-                        schema.usages = types;
-                        return types;
+                usages: function(schema, SchemaResource, $translate, $q) {
+                    return SchemaResource.getUsages().then(function(types) {
+                        return registerEnumValues(schema, "usages", types, $translate, $q);
                     });
                 },
-                dayTypes: function(schema, FacilityResource) {
-                    return FacilityResource.getDayTypes().then(function(types) {
-                        schema.dayTypes = types;
-                        return types;
+                dayTypes: function(schema, SchemaResource, $translate, $q) {
+                    return SchemaResource.getDayTypes().then(function(types) {
+                        return registerEnumValues(schema, "dayTypes", types, $translate, $q);
+                    });
+                },
+                services: function(schema, SchemaResource, $translate, $q) {
+                    return SchemaResource.getServices().then(function(types) {
+                        return registerEnumValues(schema, "services", types, $translate, $q);
+                    });
+                },
+                paymentMethods: function(schema, SchemaResource, $translate, $q) {
+                    return SchemaResource.getPaymentMethods().then(function(types) {
+                        return registerEnumValues(schema, "paymentMethods", types, $translate, $q);
                     });
                 },
                 roles: function(schema, UserResource) {
@@ -146,7 +173,7 @@
         $rootScope.$on(EVENTS.validationErrors, scrollToTop);
     });
 
-    m.controller('AppCtrl', function AppCtrl($rootScope, $location, loginPrompt, Session, EVENTS, Permission, permit) {
+    m.controller('AppCtrl', function AppCtrl($rootScope, $location, loginPrompt, Session, EVENTS, Permission, permit, schema) {
         $rootScope.permit = permit;
 
         // Permission constants

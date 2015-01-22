@@ -52,7 +52,23 @@
 </div>
 
 <div class="row">
+	<h3>{{ "facilities.openingHours.heading" | translate }}</h3>
+</div>
+<div class="row">{{ "facilities.openingHours.byDayType.disclaimer" | translate }}</div>
+<div class="row"><label>{{ "facilities.openingHours.info.label" | translate }}</label></div>
+<div class="row">
+	<long-multilingual-edit name="openingHoursInfo" ng-model="editCtrl.facility.openingHours.info"></long-multilingual-edit>
+</div>
+<div class="row"><label>{{ "facilities.openingHours.url.label" | translate }}</label></div>
+<div class="row">
+	<multilingual-edit name="openingHoursUrl" ng-model="editCtrl.facility.openingHours.url"></multilingual-edit>
+</div>
+
+
+<div class="row">
 	<h3>{{"facilities.capacity.heading" | translate}}</h3>
+</div>
+<div class="row">
 	<h4>{{"facilities.capacity.built" | translate}}</h4>
 </div>
 <div class="row">
@@ -67,10 +83,10 @@
 				</thead>
 				<tbody>
 				<tr ng-repeat="capacityType in editCtrl.capacityTypes">
-					<td class="wdCapacityType">{{'capacity-types.' + capacityType + '.label' | translate}}</td>
+					<td class="wdCapacityType">{{capacityType.label}}</td>
 					<td>
-						<input name="builtCapacity{{capacityType}}" type="number" class="form-control capacityInput"
-							   ng-model="editCtrl.facility.builtCapacity[capacityType]"
+						<input name="builtCapacity{{capacityType.id}}" type="number" class="form-control capacityInput"
+							   ng-model="editCtrl.facility.builtCapacity[capacityType.id]"
 							   min="0" show-errors>
 					</td>
 				</tr>
@@ -189,12 +205,12 @@
 </div>
 
 <div class="row rowWithSmallMargin">
-	<h4>Tilapäisesti pois käytöstä</h4>
+	<h4 translate="facilities.unavailableCapacities.capacity.label"></h4>
 </div>
-<div class="row">
-	<p  ng-hide="">Pysäköintipaikkaan ei ole lisätty pysäköintihinnoittelua</p>
+<div class="row" ng-show="editCtrl.facility.unavailableCapacities.length == 0">
+	<p>Pysäköintipaikkaan ei ole tallennettu pysäköintihinnoittelua</p>
 </div>
-<div class="row">
+<div class="row" ng-hide="editCtrl.facility.unavailableCapacities.length == 0">
 	<div class="column2 first-column">
 		<div class="panel panel-default">
 			<table class="table table-bordered table-striped table-condensed">
@@ -209,7 +225,7 @@
 				<tr ng-repeat="unavailableCapacity in editCtrl.facility.unavailableCapacities">
 					<td>
 						<div ng-show="editCtrl.showUnavailableCapacityType($index)">
-							{{'capacity-types.' + unavailableCapacity.capacityType + '.label' | translate}}
+							{{'capacityTypes.' + unavailableCapacity.capacityType + '.label' | translate}}
 						</div>
 					</td>
 					<td>{{'usages.' + unavailableCapacity.usage + '.label' | translate}}</td>
@@ -259,10 +275,10 @@
 <div class="row">
 	<div class="form-group">
 		<label>{{ "facilities.paymentInfo.paymentMethods.label" | translate }}</label>
-		<ui-select multiple ng-model="editCtrl.facility.paymentInfo.paymentMethodIds" theme="bootstrap" ng-disabled="disabled" reset-search-input="true">
-			<ui-select-match placeholder="{{'facilities.paymentInfo.methodPlaceholder' | translate }}">{{$item.name.fi}}</ui-select-match>
-			<ui-select-choices repeat="paymentMethod.id as paymentMethod in editCtrl.paymentMethods | filter: {name: {fi: $select.search}}">
-				<div ng-bind-html="paymentMethod.name.fi | highlight: $select.search"></div>
+		<ui-select multiple ng-model="editCtrl.facility.paymentInfo.paymentMethods" theme="bootstrap" ng-disabled="disabled" reset-search-input="true">
+			<ui-select-match placeholder="{{'facilities.paymentInfo.methodPlaceholder' | translate }}">{{$item.label}}</ui-select-match>
+			<ui-select-choices repeat="paymentMethod.id as paymentMethod in editCtrl.paymentMethods | filter: {label: $select.search}">
+				<div ng-bind-html="paymentMethod.label | highlight: $select.search"></div>
 			</ui-select-choices>
 		</ui-select>
 	</div>
@@ -277,12 +293,12 @@
 </div>
 
 <div class="row">
-	<h3>{{"facilities.serviceIds.heading" | translate}}</h3>
+	<h3>{{"facilities.services.heading" | translate}}</h3>
 	<div>
-		<ui-select multiple ng-model="editCtrl.facility.serviceIds" theme="bootstrap" ng-disabled="disabled" reset-search-input="true">
-			<ui-select-match placeholder="Valitse palvelut...">{{$item.name.fi}}</ui-select-match>
-			<ui-select-choices repeat="service.id as service in editCtrl.services | filter: {name: {fi: $select.search}}">
-				<div ng-bind-html="service.name.fi | highlight: $select.search"></div>
+		<ui-select multiple ng-model="editCtrl.facility.services" theme="bootstrap" ng-disabled="disabled" reset-search-input="true">
+			<ui-select-match placeholder="Valitse palvelut...">{{$item.label}}</ui-select-match>
+			<ui-select-choices repeat="service.id as service in editCtrl.services | filter: {label: $select.search}">
+				<div ng-bind-html="service.label | highlight: $select.search"></div>
 			</ui-select-choices>
 		</ui-select>
 	</div>

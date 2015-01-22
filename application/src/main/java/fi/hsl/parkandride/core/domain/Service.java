@@ -1,22 +1,23 @@
 package fi.hsl.parkandride.core.domain;
 
-import javax.validation.constraints.NotNull;
-
-import com.wordnik.swagger.annotations.ApiModelProperty;
-
-public class Service {
-
-    public Long id;
-
-    @ApiModelProperty(required = true)
-    @NotNull
-    public MultilingualString name;
-
-    public Long getId() {
-        return id;
-    }
-
-    public MultilingualString getName() {
-        return name;
-    }
+public enum Service {
+    ELEVATOR,
+    TOILETS,
+    ACCESSIBLE_TOILETS,
+    LIGHTING,
+    COVERED,
+    SURVEILLANCE_CAMERAS,
+    VENDING_MACHINE,
+    INFORMATION_POINT,
+    PAY_DESK,
+    CAR_WASH,
+    REPAIR_SHOP,
+    SHOE_SHINE,
+    PAYMENT_AT_GATE,
+    UMBRELLA_RENTAL,
+    PARKING_SPACE_RESERVATION,
+    ENGINE_IGNITION_AID,
+    FIRST_AID,
+    STROLLER_RENTAL,
+    INFO_SCREENS
 }

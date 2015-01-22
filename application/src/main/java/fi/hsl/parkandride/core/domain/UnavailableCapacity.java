@@ -13,8 +13,8 @@ import javax.validation.constraints.NotNull;
 public class UnavailableCapacity {
 
     public static Comparator<UnavailableCapacity> COMPARATOR =
-            comparing(((UnavailableCapacity uc) -> uc.capacityType), nullsLast(naturalOrder()))
-            .thenComparing(((UnavailableCapacity uc) -> uc.usage), nullsLast(naturalOrder()));
+            comparing(UnavailableCapacity::getCapacityType, nullsLast(naturalOrder()))
+            .thenComparing(UnavailableCapacity::getUsage, nullsLast(naturalOrder()));
 
     @NotNull
     public CapacityType capacityType;
@@ -53,4 +53,15 @@ public class UnavailableCapacity {
         }
     }
 
+    public CapacityType getCapacityType() {
+        return capacityType;
+    }
+
+    public Usage getUsage() {
+        return usage;
+    }
+
+    public int getCapacity() {
+        return capacity;
+    }
 }

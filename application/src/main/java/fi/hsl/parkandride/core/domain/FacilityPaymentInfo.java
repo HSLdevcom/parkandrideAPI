@@ -2,8 +2,11 @@ package fi.hsl.parkandride.core.domain;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 
 public class FacilityPaymentInfo {
     public boolean parkAndRideAuthRequired;
@@ -12,7 +15,9 @@ public class FacilityPaymentInfo {
     public MultilingualString detail;
 
     @Valid
-    public MultilingualString url;
+    public MultilingualUrl url;
 
-    public Set<Long> paymentMethodIds = new HashSet<>();
+    @NotNull
+    public SortedSet<PaymentMethod> paymentMethods = new TreeSet<>();
+
 }

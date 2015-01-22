@@ -6,7 +6,7 @@ import static java.lang.Integer.compare;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class Time implements Comparable<Time> {
+public class Time extends Number implements Comparable<Time> {
 
     public static final int MAX = 24 * 60;  // 1440
 
@@ -105,4 +105,27 @@ public class Time implements Comparable<Time> {
         return this.time < other.time;
     }
 
+    public boolean isAfter(Time other) {
+        return this.time > other.time;
+    }
+
+    @Override
+    public int intValue() {
+        return time;
+    }
+
+    @Override
+    public long longValue() {
+        return time;
+    }
+
+    @Override
+    public float floatValue() {
+        return time;
+    }
+
+    @Override
+    public double doubleValue() {
+        return time;
+    }
 }

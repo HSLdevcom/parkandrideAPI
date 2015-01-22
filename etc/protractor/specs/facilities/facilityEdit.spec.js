@@ -314,9 +314,9 @@ describe('edit facility view', function () {
                 editPage.setPaymentInfoDetailFi('fooFi');
                 editPage.setPaymentInfoDetailSv('fooSv');
                 editPage.setPaymentInfoDetailEn('fooEn');
-                editPage.setPaymentInfoUrlFi('barFi');
-                editPage.setPaymentInfoUrlSv('barSv');
-                editPage.setPaymentInfoUrlEn('barEn');
+                editPage.setPaymentInfoUrlFi('http://www.hsl.fi');
+                editPage.setPaymentInfoUrlSv('http://www.hsl.fi');
+                editPage.setPaymentInfoUrlEn('http://www.hsl.fi');
 
                 editPage.save();
                 expect(viewPage.isDisplayed()).toBe(true);
@@ -325,7 +325,7 @@ describe('edit facility view', function () {
                 expect(viewPage.isParkAndRideAuthRequired()).toBe(false);
                 expect(viewPage.isPaymentMethodsDisplayed()).toBe(false);
                 expect(viewPage.getPaymentInfoDetail()).toEqual(["fooFi", "fooSv", "fooEn"]);
-                expect(viewPage.getPaymentInfoUrl()).toEqual(["barFi", "barSv", "barEn"]);
+                expect(viewPage.getPaymentInfoUrl()).toEqual(["http://www.hsl.fi", "http://www.hsl.fi", "http://www.hsl.fi"]);
             });
         });
 
@@ -349,7 +349,7 @@ describe('edit facility view', function () {
                 editPage.setParkAndRideAuthRequired(false);
                 editPage.removePaymentMethod("Kolikko");
                 editPage.setPaymentInfoDetailSv("foo");
-                editPage.setPaymentInfoUrlEn("bar");
+                editPage.setPaymentInfoUrlEn("http://www.hsl.fi");
 
                 editPage.save();
                 expect(viewPage.isDisplayed()).toBe(true);
@@ -358,7 +358,7 @@ describe('edit facility view', function () {
                 expect(viewPage.isParkAndRideAuthRequired()).toBe(false);
                 expect(viewPage.getPaymentMethods()).toEqual("Seteli");
                 expect(viewPage.getPaymentInfoDetail()).toEqual([f.paymentInfo.detail.fi, "foo", f.paymentInfo.detail.en]);
-                expect(viewPage.getPaymentInfoUrl()).toEqual([f.paymentInfo.url.fi, f.paymentInfo.url.sv, "bar"]);
+                expect(viewPage.getPaymentInfoUrl()).toEqual([f.paymentInfo.url.fi, f.paymentInfo.url.sv, "http://www.hsl.fi"]);
             });
         });
     });

@@ -29,23 +29,25 @@ public class FacilityService {
     public Facility createFacility(Facility facility, User currentUser) {
         authorize(currentUser, facility, FACILITY_CREATE);
         validate(facility);
-        sort(facility.pricing, Pricing.COMPARATOR);
 
         facility.id = repository.insertFacility(facility);
+        facility.initialize();
         return facility;
     }
 
     @TransactionalWrite
     public Facility updateFacility(long facilityId, Facility facility, User currentUser) {
+        // User has update right to the input data...
         authorize(currentUser, facility, FACILITY_UPDATE);
+        // ...and to the facility being updated
         Facility oldFacility = repository.getFacilityForUpdate(facilityId);
         authorize(currentUser, oldFacility, FACILITY_UPDATE);
 
         validate(facility);
-        sort(facility.pricing, Pricing.COMPARATOR);
 
         repository.updateFacility(facilityId, facility, oldFacility);
         facility.id = facilityId;
+        facility.initialize();
         return facility;
     }
 
@@ -64,7 +66,10 @@ public class FacilityService {
     private void validateContact(Long facilityOperatorId, Long contactId, String contactType, Collection<Violation> violations) {
         if (contactId != null) {
             Contact contact = contactRepository.getContact(contactId);
-            if (contact.operatorId != null && !contact.operatorId.equals(facilityOperatorId)) {
+            if (contact == null) {
+                violations.add(new Violation("NotFound", "contacts." + contactType, "contact not found"));
+            }
+            else if (contact.operatorId != null && !contact.operatorId.equals(facilityOperatorId)) {
                 violations.add(new Violation("OperatorMismatch", "contacts." + contactType, "operator should match facility operator"));
             }
         }

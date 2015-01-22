@@ -1,18 +1,16 @@
 package fi.hsl.parkandride.core.domain;
 
-import javax.validation.constraints.NotNull;
-
-public class PaymentMethod {
-    public Long id;
-
-    @NotNull
-    public MultilingualString name;
-
-    public Long getId() {
-        return id;
-    }
-
-    public MultilingualString getName() {
-        return name;
-    }
+public enum PaymentMethod {
+    COINS,
+    NOTES,
+    VISA_DEBIT,
+    VISA_ELECTRON,
+    AMERICAN_EXPRESS,
+    MASTERCARD,
+    DINERS_CLUB,
+    HSL_TRAVEL_CARD,
+    HSL_SINGLE_TICKET,
+    VR_CARD,
+    VR_SINGLE_TICKET,
+    OTHER
 }

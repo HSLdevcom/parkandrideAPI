@@ -593,6 +593,7 @@
     "PricingOverlap": "aikavälit eivät saa olla päällekkäisiä",
     "BuiltCapacityNotFound": "rakennettua kapasiteettia ei löydy",
     "PricingCapacityOverflow": "ei voi olla enemmän kuin rakennettu kapasiteetti",
-    "UnavailableCapacityOverflow": "ei voi olla enemmän kuin pysäköintihinnoittelun maksimi"
+    "UnavailableCapacityOverflow": "ei voi olla enemmän kuin pysäköintihinnoittelun maksimi",
+    "OperatorRequired": "anna operaattori"
   }
 }

@@ -56,7 +56,6 @@ public class UserController {
     public ResponseEntity<User> createUser(@RequestBody NewUser newUser,
                                                    User creator,
                                                    UriComponentsBuilder builder) {
-        newUser.password = "todo";
         User createdUser = userService.createUser(newUser, creator);
 
         HttpHeaders headers = new HttpHeaders();

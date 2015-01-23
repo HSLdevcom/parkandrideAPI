@@ -49,10 +49,19 @@ public class UserService {
         if (!newUser.role.perpetualToken) {
             validatePassword(newUser.password);
             userSecret.password = authenticationService.encryptPassword(newUser.password);
+
         }
+        validateOperator(newUser);
+
         userSecret.user = new User(newUser);
         userSecret.user.id = userRepository.insertUser(userSecret);
         return userSecret.user;
+    }
+
+    private void validateOperator(NewUser newUser) {
+        if (isOperatorRole(newUser.role) && newUser.operatorId == null) {
+            throw new ValidationException(new Violation("OperatorRequired", "operator", "Operator is required for operator user"));
+        }
     }
 
     private void validatePassword(String password) {

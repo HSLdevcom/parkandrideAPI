@@ -35,11 +35,7 @@ public class UserService {
     public User createUser(NewUser newUser, User currentUser) {
         authorize(currentUser, newUser, USER_CREATE);
 
-        if (currentUser.role != ADMIN && !isOperatorRole(newUser.role)) {
-            throw new ValidationException(new Violation("IllegalRole", "role", "Expected an operator role, got " + newUser.role));
-        }
-
-        validationService.validate(newUser);
+        validate(currentUser, newUser);
         return createUserNoValidate(newUser);
     }
 
@@ -47,15 +43,23 @@ public class UserService {
     public User createUserNoValidate(NewUser newUser) {
         UserSecret userSecret = new UserSecret();
         if (!newUser.role.perpetualToken) {
-            validatePassword(newUser.password);
             userSecret.password = authenticationService.encryptPassword(newUser.password);
-
         }
-        validateOperator(newUser);
-
         userSecret.user = new User(newUser);
         userSecret.user.id = userRepository.insertUser(userSecret);
         return userSecret.user;
+    }
+
+    private void validate(User currentUser, NewUser newUser) {
+        if (currentUser.role != ADMIN && !isOperatorRole(newUser.role)) {
+            throw new ValidationException(new Violation("IllegalRole", "role", "Expected an operator role, got " + newUser.role));
+        }
+
+        validationService.validate(newUser);
+        if (!newUser.role.perpetualToken) {
+            validatePassword(newUser.password);
+        }
+        validateOperator(newUser);
     }
 
     private void validateOperator(NewUser newUser) {

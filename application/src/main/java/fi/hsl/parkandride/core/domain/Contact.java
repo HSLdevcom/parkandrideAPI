@@ -5,8 +5,9 @@ import javax.validation.constraints.NotNull;
 
 import org.hibernate.validator.constraints.Email;
 
-import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;
+
+import fi.hsl.parkandride.core.domain.validation.PhoneOrEmailRequired;
 
 @PhoneOrEmailRequired
 public class Contact implements OperatorEntity {

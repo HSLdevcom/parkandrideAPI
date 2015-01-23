@@ -1,7 +1,9 @@
-package fi.hsl.parkandride.core.domain;
+package fi.hsl.parkandride.core.domain.validation;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
+
+import fi.hsl.parkandride.core.domain.TimeDuration;
 
 public class ValidTimeDurationValidator implements ConstraintValidator<ValidTimeDuration, TimeDuration> {
 

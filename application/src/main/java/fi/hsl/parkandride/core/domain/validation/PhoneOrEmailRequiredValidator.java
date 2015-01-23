@@ -1,9 +1,11 @@
-package fi.hsl.parkandride.core.domain;
+package fi.hsl.parkandride.core.domain.validation;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
+
+import fi.hsl.parkandride.core.domain.Contact;
 
 public class PhoneOrEmailRequiredValidator implements ConstraintValidator<PhoneOrEmailRequired, Contact> {
 

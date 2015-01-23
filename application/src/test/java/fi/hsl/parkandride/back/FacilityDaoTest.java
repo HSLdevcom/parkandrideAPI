@@ -173,7 +173,7 @@ public class FacilityDaoTest extends AbstractDaoTest {
         assertThat(facility.operatorId).isEqualTo(operatorId);
         assertThat(facility.name).isEqualTo(NAME);
         assertThat(facility.builtCapacity).isEqualTo(BUILT_CAPACITY);
-
+        assertThat(facility.usages).isEqualTo(ImmutableSet.of(PARK_AND_RIDE));
     }
 
     private void assertDefault(Facility facility) {

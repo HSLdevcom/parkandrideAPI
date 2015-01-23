@@ -1,5 +1,6 @@
 package fi.hsl.parkandride.core.domain;
 
+import static java.util.Comparator.nullsFirst;
 import static java.util.Comparator.nullsLast;
 
 import java.util.Collection;
@@ -10,11 +11,11 @@ import java.util.TreeSet;
 public class NullSafeSortedSet<E> extends TreeSet<E> {
 
     public NullSafeSortedSet() {
-        super((Comparator<? super E>) nullsLast(Comparator.naturalOrder()));
+        super((Comparator<? super E>) nullsFirst(Comparator.naturalOrder()));
     }
 
     public NullSafeSortedSet(Comparator<? super E> comparator) {
-        super(nullsLast(comparator));
+        super(nullsFirst(comparator));
     }
 
     public NullSafeSortedSet(Collection<? extends E> c) {

@@ -10,7 +10,7 @@ import org.geolatte.geom.Point;
 import com.google.common.collect.Sets;
 import com.wordnik.swagger.annotations.ApiModelProperty;
 
-import fi.hsl.parkandride.core.domain.validation.ElementNotNull;
+import fi.hsl.parkandride.core.domain.validation.NotNullElement;
 
 public class Hub {
 
@@ -26,7 +26,7 @@ public class Hub {
     public Point location;
 
     @NotNull
-    @ElementNotNull
+    @NotNullElement
     public Set<Long> facilityIds = Sets.newHashSet();
 
     @Valid

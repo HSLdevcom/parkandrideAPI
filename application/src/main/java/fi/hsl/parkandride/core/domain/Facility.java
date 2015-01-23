@@ -3,6 +3,7 @@ package fi.hsl.parkandride.core.domain;
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Maps.newHashMap;
 import static com.google.common.collect.Sets.newHashSet;
+import static com.google.common.collect.Sets.newLinkedHashSet;
 import static com.google.common.collect.Sets.newTreeSet;
 import static java.util.Collections.sort;
 import static java.util.stream.Collectors.groupingBy;
@@ -22,8 +23,8 @@ import com.google.common.collect.Maps;
 import com.wordnik.swagger.annotations.ApiModelProperty;
 
 import fi.hsl.parkandride.core.domain.validation.ElementLength;
-import fi.hsl.parkandride.core.domain.validation.ElementNotBlank;
-import fi.hsl.parkandride.core.domain.validation.ElementNotNull;
+import fi.hsl.parkandride.core.domain.validation.NotBlankElement;
+import fi.hsl.parkandride.core.domain.validation.NotNullElement;
 
 public class Facility implements OperatorEntity {
 
@@ -42,32 +43,32 @@ public class Facility implements OperatorEntity {
     @NotNull
     public Long operatorId;
 
-    @ElementNotNull
+    @NotNullElement
     @NotNull
     public Map<CapacityType, Integer> builtCapacity = newHashMap();
 
     @NotNull
-    @ElementNotNull
+    @NotNullElement
     @Valid
     public List<Pricing> pricing = newArrayList();
 
     @NotNull
-    @ElementNotNull
+    @NotNullElement
     @Valid
     public List<UnavailableCapacity> unavailableCapacities = newArrayList();
 
     @NotNull
-    @ElementNotBlank
+    @NotBlankElement
     @ElementLength(min=0, max=255)
-    public Set<String> aliases = newHashSet();
+    public Set<String> aliases = newLinkedHashSet();
 
     @NotNull
-    @ElementNotNull
+    @NotNullElement
     @Valid
     public List<Port> ports = newArrayList();
 
     @NotNull
-    @ElementNotNull
+    @NotNullElement
     public NullSafeSortedSet<Service> services = new NullSafeSortedSet<>();
 
     @NotNull

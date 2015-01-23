@@ -15,10 +15,10 @@ import javax.validation.Constraint;
 import javax.validation.Payload;
 
 @Documented
-@Constraint(validatedBy = { CollectionElementNotNullValidator.class, MapElementNotNullValidator.class })
+@Constraint(validatedBy = { NotNullElementCollectionValidator.class, NotNullElementMapValidator.class })
 @Target({ METHOD, FIELD, ANNOTATION_TYPE, CONSTRUCTOR, PARAMETER })
 @Retention(RUNTIME)
-public @interface ElementNotNull {
+public @interface NotNullElement {
 
     String message() default "{org.hibernate.validator.constraints.NotNull.message}";
 

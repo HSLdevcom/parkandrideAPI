@@ -3,7 +3,7 @@ package fi.hsl.parkandride.core.domain;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
-import fi.hsl.parkandride.core.domain.validation.ElementNotNull;
+import fi.hsl.parkandride.core.domain.validation.NotNullElement;
 
 public class FacilityPaymentInfo {
     public boolean parkAndRideAuthRequired;
@@ -15,7 +15,7 @@ public class FacilityPaymentInfo {
     public MultilingualUrl url;
 
     @NotNull
-    @ElementNotNull
+    @NotNullElement
     public NullSafeSortedSet<PaymentMethod> paymentMethods = new NullSafeSortedSet<>();
 
 }

@@ -5,7 +5,7 @@ import java.util.Set;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
-public class SetElementLengthValidator implements ConstraintValidator<ElementLength, Set<? extends CharSequence>> {
+public class ElementLengthSetValidator implements ConstraintValidator<ElementLength, Set<? extends CharSequence>> {
 
     private int min;
 

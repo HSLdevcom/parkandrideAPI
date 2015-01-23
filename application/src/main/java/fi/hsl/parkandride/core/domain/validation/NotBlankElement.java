@@ -15,10 +15,10 @@ import javax.validation.Constraint;
 import javax.validation.Payload;
 
 @Documented
-@Constraint(validatedBy = { SetElementNotBlankValidator.class })
+@Constraint(validatedBy = { NotBlankElementSetValidator.class })
 @Target({ METHOD, FIELD, ANNOTATION_TYPE, CONSTRUCTOR, PARAMETER })
 @Retention(RUNTIME)
-public @interface ElementNotBlank {
+public @interface NotBlankElement {
 
     String message() default "{org.hibernate.validator.constraints.NotBlank.message}";
 

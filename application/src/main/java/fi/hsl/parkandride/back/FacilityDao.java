@@ -594,9 +594,9 @@ public class FacilityDao implements FacilityRepository {
 
     private void fetchServices(Map<Long, Facility> facilitiesById) {
         if (!facilitiesById.isEmpty()) {
-            Map<Long, SortedSet<Service>> services = findServices(facilitiesById.keySet());
+            Map<Long, NullSafeSortedSet<Service>> services = findServices(facilitiesById.keySet());
 
-            for (Entry<Long, SortedSet<Service>> entry : services.entrySet()) {
+            for (Entry<Long, NullSafeSortedSet<Service>> entry : services.entrySet()) {
                 facilitiesById.get(entry.getKey()).services = entry.getValue();
             }
         }
@@ -604,9 +604,9 @@ public class FacilityDao implements FacilityRepository {
 
     private void fetchPaymentMethods(Map<Long, Facility> facilitiesById) {
         if (!facilitiesById.isEmpty()) {
-            Map<Long, SortedSet<PaymentMethod>> paymentMethods = findPaymentMethods(facilitiesById.keySet());
+            Map<Long, NullSafeSortedSet<PaymentMethod>> paymentMethods = findPaymentMethods(facilitiesById.keySet());
 
-            for (Entry<Long, SortedSet<PaymentMethod>> entry : paymentMethods.entrySet()) {
+            for (Entry<Long, NullSafeSortedSet<PaymentMethod>> entry : paymentMethods.entrySet()) {
                 facilitiesById.get(entry.getKey()).paymentInfo.paymentMethods = entry.getValue();
             }
         }
@@ -650,13 +650,13 @@ public class FacilityDao implements FacilityRepository {
                 .transform(groupBy(qPricing.facilityId).as(list(unavailableCapacityMapping)));
     }
 
-    private Map<Long, SortedSet<Service>> findServices(Set<Long> facilityIds) {
+    private Map<Long, NullSafeSortedSet<Service>> findServices(Set<Long> facilityIds) {
         return queryFactory.from(qService)
                 .where(qService.facilityId.in(facilityIds))
                 .transform(groupBy(qService.facilityId).as(sortedSet(qService.service)));
     }
 
-    private Map<Long, SortedSet<PaymentMethod>> findPaymentMethods(Set<Long> facilityIds) {
+    private Map<Long, NullSafeSortedSet<PaymentMethod>> findPaymentMethods(Set<Long> facilityIds) {
         return queryFactory.from(qPaymentMethod)
                 .where(qPaymentMethod.facilityId.in(facilityIds))
                 .transform(groupBy(qPaymentMethod.facilityId).as(sortedSet(qPaymentMethod.paymentMethod)));

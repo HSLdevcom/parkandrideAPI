@@ -1,7 +1,9 @@
-package fi.hsl.parkandride.core.domain;
+package fi.hsl.parkandride.core.domain.validation;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
+
+import fi.hsl.parkandride.core.domain.FacilityStatus;
 
 public class SpacesAvailableOrStatusRequiredValidator implements ConstraintValidator<SpacesAvailableOrStatusRequired, FacilityStatus> {
     @Override

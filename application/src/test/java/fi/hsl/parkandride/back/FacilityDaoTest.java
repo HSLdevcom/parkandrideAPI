@@ -76,7 +76,7 @@ public class FacilityDaoTest extends AbstractDaoTest {
 
     public static final List<Port> PORTS = ImmutableList.of(new Port(PORT_LOCATION1, true, false, true, false, "street", "00100", "city", "info"));
 
-    public static final SortedSet<Service> SERVICES = ImmutableSortedSet.of(ELEVATOR, TOILETS, ACCESSIBLE_TOILETS);
+    public static final NullSafeSortedSet<Service> SERVICES = new NullSafeSortedSet<>(asList(ELEVATOR, TOILETS, ACCESSIBLE_TOILETS));
 
     public static final Pricing PRICING1 = new Pricing(CAR, PARK_AND_RIDE, 50, SUNDAY, "8", "18", "2 EUR/H");
 
@@ -128,7 +128,7 @@ public class FacilityDaoTest extends AbstractDaoTest {
         final MultilingualString newName = new MultilingualString("changed name");
         final SortedSet<String> newAliases = ImmutableSortedSet.of("clias");
         final List<Port> newPorts = ImmutableList.of(new Port(PORT_LOCATION2, true, true, true, true), new Port(PORT_LOCATION1, false, false, false, false));
-        final SortedSet<Service> newServices = ImmutableSortedSet.of(LIGHTING);
+        final NullSafeSortedSet<Service> newServices = new NullSafeSortedSet<>(asList(LIGHTING));
         final List<Pricing> newPricing = asList(new Pricing(CAR, COMMERCIAL, 50, BUSINESS_DAY, "8", "18", "10 EUR/H"));
 
         facility.name = newName;
@@ -201,6 +201,10 @@ public class FacilityDaoTest extends AbstractDaoTest {
     }
 
     private Facility createFacility() {
+        return createFacility(operatorId, dummyContacts);
+    }
+
+    public static Facility createFacility(Long operatorId, FacilityContacts contacts) {
         Facility facility = new Facility();
         facility.id = 0l;
         facility.name = NAME;
@@ -209,7 +213,7 @@ public class FacilityDaoTest extends AbstractDaoTest {
         facility.aliases = ALIASES;
         facility.ports = PORTS;
         facility.services = SERVICES;
-        facility.contacts = dummyContacts;
+        facility.contacts = contacts;
 
         facility.builtCapacity = BUILT_CAPACITY;
         // pricing in wrong order should be sorted on load

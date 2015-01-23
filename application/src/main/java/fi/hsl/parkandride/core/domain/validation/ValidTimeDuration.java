@@ -1,4 +1,4 @@
-package fi.hsl.parkandride.core.domain;
+package fi.hsl.parkandride.core.domain.validation;
 
 import static java.lang.annotation.ElementType.*;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
@@ -16,7 +16,7 @@ import javax.validation.Payload;
 @Retention(RUNTIME)
 public @interface ValidTimeDuration {
 
-    String message() default "{fi.hsl.parkandride.core.domain.ValidTimeDuration.message}";
+    String message() default "{fi.hsl.parkandride.core.domain.validation.ValidTimeDuration.message}";
 
     Class<?>[] groups() default { };
 

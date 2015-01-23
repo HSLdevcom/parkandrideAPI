@@ -1,4 +1,4 @@
-package fi.hsl.parkandride.core.domain;
+package fi.hsl.parkandride.core.domain.validation;
 
 import static java.lang.annotation.ElementType.ANNOTATION_TYPE;
 import static java.lang.annotation.ElementType.CONSTRUCTOR;
@@ -15,16 +15,12 @@ import javax.validation.Constraint;
 import javax.validation.Payload;
 
 @Documented
-@Constraint(validatedBy = { SetElementLengthValidator.class })
+@Constraint(validatedBy = { NotBlankElementSetValidator.class })
 @Target({ METHOD, FIELD, ANNOTATION_TYPE, CONSTRUCTOR, PARAMETER })
 @Retention(RUNTIME)
-public @interface ElementLength {
+public @interface NotBlankElement {
 
-    int min() default 0;
-
-    int max() default Integer.MAX_VALUE;
-
-    String message() default "{org.hibernate.validator.constraints.Length.message}";
+    String message() default "{org.hibernate.validator.constraints.NotBlank.message}";
 
     Class<?>[] groups() default { };
 

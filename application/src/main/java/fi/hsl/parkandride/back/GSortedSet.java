@@ -1,30 +1,30 @@
 package fi.hsl.parkandride.back;
 
-import java.util.Set;
 import java.util.SortedSet;
-import java.util.TreeSet;
 
 import com.mysema.query.group.AbstractGroupExpression;
 import com.mysema.query.group.GroupCollector;
 import com.mysema.query.types.Expression;
 
-public class GSortedSet<T> extends AbstractGroupExpression<T, SortedSet<T>> {
+import fi.hsl.parkandride.core.domain.NullSafeSortedSet;
 
-    public static <E> AbstractGroupExpression<E, SortedSet<E>> sortedSet(Expression<E> expression) {
+public class GSortedSet<T extends Comparable<? super T>> extends AbstractGroupExpression<T, NullSafeSortedSet<T>> {
+
+    public static <E extends Comparable<? super E>> AbstractGroupExpression<E, NullSafeSortedSet<E>> sortedSet(Expression<E> expression) {
         return new GSortedSet<E>(expression);
     }
 
     private static final long serialVersionUID = -1575808026237160843L;
 
     public GSortedSet(Expression<T> expr) {
-        super(Set.class, expr);
+        super(SortedSet.class, expr);
     }
 
     @Override
-    public GroupCollector<T,SortedSet<T>> createGroupCollector() {
-        return new GroupCollector<T,SortedSet<T>>() {
+    public GroupCollector<T, NullSafeSortedSet<T>> createGroupCollector() {
+        return new GroupCollector<T, NullSafeSortedSet<T>>() {
 
-            private final TreeSet<T> set = new TreeSet<T>();
+            private final NullSafeSortedSet<T> set = new NullSafeSortedSet<T>();
 
             @Override
             public void add(T o) {
@@ -34,7 +34,7 @@ public class GSortedSet<T> extends AbstractGroupExpression<T, SortedSet<T>> {
             }
 
             @Override
-            public SortedSet<T> get() {
+            public NullSafeSortedSet<T> get() {
                 return set;
             }
 

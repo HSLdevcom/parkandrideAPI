@@ -1,12 +1,9 @@
 package fi.hsl.parkandride.core.domain;
 
-import java.util.HashSet;
-import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeSet;
-
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+
+import fi.hsl.parkandride.core.domain.validation.NotNullElement;
 
 public class FacilityPaymentInfo {
     public boolean parkAndRideAuthRequired;
@@ -18,6 +15,7 @@ public class FacilityPaymentInfo {
     public MultilingualUrl url;
 
     @NotNull
-    public SortedSet<PaymentMethod> paymentMethods = new TreeSet<>();
+    @NotNullElement
+    public NullSafeSortedSet<PaymentMethod> paymentMethods = new NullSafeSortedSet<>();
 
 }

@@ -26,9 +26,11 @@ public final class CapacityPricingValidator {
         Map<Pair<CapacityType, Usage>, Integer> typeUsageMax = Maps.newHashMap();
         for (int i=0; i < pricing.size(); i++) {
             Pricing p = pricing.get(i);
-            registerTypeUsageMaxCapacity(p, typeUsageMax);
-            validateTotalCapacity(builtCapacity.get(p.capacityType), p, i, violations);
-            validateHourOverlap(pricing, i, violations);
+            if (p != null) {
+                registerTypeUsageMaxCapacity(p, typeUsageMax);
+                validateTotalCapacity(builtCapacity.get(p.capacityType), p, i, violations);
+                validateHourOverlap(pricing, i, violations);
+            }
         }
         validateUnavailableCapacities(unavailableCapacities, typeUsageMax, violations);
     }
@@ -52,7 +54,9 @@ public final class CapacityPricingValidator {
 
     private static void validateHourOverlap(List<Pricing> pricing, int i, Collection<Violation> violations) {
         for (int j = i + 1; j < pricing.size(); ++j) {
-            if (pricing.get(i).overlaps(pricing.get(j))) {
+            Pricing pi = pricing.get(i);
+            Pricing pj = pricing.get(j);
+            if (pi != null && pj != null && pi.overlaps(pj)) {
                 violations.add(pricingOverlap(j));
             }
         }
@@ -64,16 +68,18 @@ public final class CapacityPricingValidator {
         Set<Pair<CapacityType, Usage>> uniqueTypeUsage = Sets.newHashSet();
         for (int i=0; i < unavailableCapacities.size(); i++) {
             UnavailableCapacity uc = unavailableCapacities.get(i);
-            Pair<CapacityType, Usage> typeUsage = new Pair(uc.capacityType, uc.usage);
-            if (uniqueTypeUsage.add(typeUsage)) {
-                Integer max = typeUsageMax.get(typeUsage);
-                if (max == null) {
-                    violations.add(pricingNotFound(i));
-                } else if (uc.capacity > max.intValue()) {
-                    violations.add(unavailableCapacityOverflow(i));
+            if (uc != null) {
+                Pair<CapacityType, Usage> typeUsage = new Pair(uc.capacityType, uc.usage);
+                if (uniqueTypeUsage.add(typeUsage)) {
+                    Integer max = typeUsageMax.get(typeUsage);
+                    if (max == null) {
+                        violations.add(pricingNotFound(i));
+                    } else if (uc.capacity > max.intValue()) {
+                        violations.add(unavailableCapacityOverflow(i));
+                    }
+                } else {
+                    violations.add(duplicateUnavailableCapacity(i));
                 }
-            } else {
-                violations.add(duplicateUnavailableCapacity(i));
             }
         }
     }

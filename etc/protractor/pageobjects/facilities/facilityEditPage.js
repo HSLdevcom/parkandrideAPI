@@ -39,6 +39,9 @@ module.exports = function(spec) {
     spec.createOperator = $('.operator .createOperator');
     spec.selectedOperator = $('.operator .ui-select-match');
 
+    spec.pricingSelectAll = $("#pricingSelectAll");
+    spec.pricingRemoveRows = $('#pricingRemoveRows');
+
     spec.defineMultilingualAccessors("name");
 
     that.get = function (id) {
@@ -245,6 +248,14 @@ module.exports = function(spec) {
             .element(by.css(".ui-select-match-close"))
             .click();
     };
+
+    that.pricingSelectAll = function() {
+        spec.pricingSelectAll.click();
+    };
+
+    that.pricingRemoveRows = function() {
+        spec.pricingRemoveRows.click();
+    }
 
     return that;
 };

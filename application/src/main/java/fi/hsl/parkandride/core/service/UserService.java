@@ -7,6 +7,11 @@ import static fi.hsl.parkandride.core.domain.Role.OPERATOR;
 import static fi.hsl.parkandride.core.domain.Role.OPERATOR_API;
 import static fi.hsl.parkandride.core.service.AuthenticationService.authorize;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
+import org.springframework.util.StringUtils;
+
 import fi.hsl.parkandride.core.back.UserRepository;
 import fi.hsl.parkandride.core.domain.*;
 
@@ -51,31 +56,44 @@ public class UserService {
     }
 
     private void validate(User currentUser, NewUser newUser) {
-        if (currentUser.role != ADMIN && !isOperatorRole(newUser.role)) {
-            throw new ValidationException(new Violation("IllegalRole", "role", "Expected an operator role, got " + newUser.role));
+        Collection<Violation> violations = new ArrayList<>();
+
+        if (!isAdminRole(currentUser.role) && !isOperatorRole(newUser.role)) {
+            violations.add(new Violation("IllegalRole", "role", "Expected an operator role, got " + newUser.role));
         }
 
-        validationService.validate(newUser);
-        if (!newUser.role.perpetualToken) {
-            validatePassword(newUser.password);
+        validationService.validate(newUser, violations);
+        // cannot continue if e.g. role is not provided
+        if (violations.isEmpty()) {
+            if (!newUser.role.perpetualToken) {
+                validatePassword(newUser.password, violations);
+            }
+            validateOperator(newUser, violations);
         }
-        validateOperator(newUser);
+
+        if (!violations.isEmpty()) {
+            throw new ValidationException(violations);
+        }
     }
 
-    private void validateOperator(NewUser newUser) {
+    private void validateOperator(NewUser newUser, Collection<Violation> violations) {
         if (isOperatorRole(newUser.role) && newUser.operatorId == null) {
-            throw new ValidationException(new Violation("OperatorRequired", "operator", "Operator is required for operator user"));
+            violations.add(new Violation("OperatorRequired", "operator", "Operator is required for operator user"));
+        }
+
+        if (isAdminRole(newUser.role) && newUser.operatorId != null) {
+            violations.add(new Violation("OperatorNotAllowed", "operator", "Operator is not allowed for admin user"));
         }
     }
 
-    private void validatePassword(String password) {
+    private void validatePassword(String password, Collection<Violation> violations) {
         if (!isValidPassword(password)) {
-            throw new ValidationException(new Violation("BadPassword", "password", "Expected a password of length >= 8"));
+            violations.add(new Violation("BadPassword", "password", "Expected a password of length >= 8"));
         }
     }
 
     private boolean isValidPassword(String password) {
-        if (password == null) {
+        if (!StringUtils.hasText(password)) {
             return false;
         }
         // TODO
@@ -84,5 +102,9 @@ public class UserService {
 
     private boolean isOperatorRole(Role role) {
         return role == OPERATOR || role == OPERATOR_API;
+    }
+
+    private boolean isAdminRole(Role role) {
+        return role == ADMIN;
     }
 }

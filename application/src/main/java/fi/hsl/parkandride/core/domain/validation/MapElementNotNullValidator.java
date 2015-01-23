@@ -1,11 +1,11 @@
-package fi.hsl.parkandride.core.domain;
+package fi.hsl.parkandride.core.domain.validation;
 
-import java.util.Collection;
+import java.util.Map;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
-public class CollectionElementNotNullValidator implements ConstraintValidator<ElementNotNull, Collection<?>> {
+public class MapElementNotNullValidator implements ConstraintValidator<ElementNotNull, Map<?, ?>> {
 
     private String message;
 
@@ -15,15 +15,15 @@ public class CollectionElementNotNullValidator implements ConstraintValidator<El
     }
 
     @Override
-    public boolean isValid(Collection<?> collection, ConstraintValidatorContext context) {
+    public boolean isValid(Map<?, ?> map, ConstraintValidatorContext context) {
         context.disableDefaultConstraintViolation();
         boolean ok = true;
-        if (collection != null) {
+        if (map != null) {
             int i = 0;
-            for (Object val : collection) {
-                if (val == null) {
+            for (Map.Entry<?, ?> entry: map.entrySet()) {
+                if (entry.getValue() == null) {
                     context.buildConstraintViolationWithTemplate(message)
-                            .addBeanNode().inIterable().atIndex(i).addConstraintViolation();
+                            .addBeanNode().inIterable().atKey(entry.getKey()).addConstraintViolation();
                     ok=false;
                 }
                 i++;

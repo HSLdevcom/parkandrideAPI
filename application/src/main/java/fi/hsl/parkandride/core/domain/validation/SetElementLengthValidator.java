@@ -1,16 +1,22 @@
-package fi.hsl.parkandride.core.domain;
+package fi.hsl.parkandride.core.domain.validation;
 
 import java.util.Set;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
-public class SetElementNotBlankValidator implements ConstraintValidator<ElementNotBlank, Set<? extends CharSequence>> {
+public class SetElementLengthValidator implements ConstraintValidator<ElementLength, Set<? extends CharSequence>> {
+
+    private int min;
+
+    private int max;
 
     private String message;
 
     @Override
-    public void initialize(ElementNotBlank constraintAnnotation) {
+    public void initialize(ElementLength constraintAnnotation) {
+        this.min = constraintAnnotation.min();
+        this.max = constraintAnnotation.max();
         this.message = constraintAnnotation.message();
     }
 
@@ -21,7 +27,7 @@ public class SetElementNotBlankValidator implements ConstraintValidator<ElementN
         if (set != null) {
             int i = 0;
             for (CharSequence val : set) {
-                if (val == null || val.toString().trim().length() == 0) {
+                if (val != null && (val.length() < min || val.length() > max)) {
                     context.buildConstraintViolationWithTemplate(message)
                             .addBeanNode().inIterable().atIndex(i).addConstraintViolation();
                     ok=false;

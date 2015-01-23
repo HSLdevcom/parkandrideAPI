@@ -1,4 +1,4 @@
-package fi.hsl.parkandride.core.domain;
+package fi.hsl.parkandride.core.domain.validation;
 
 import static java.lang.annotation.ElementType.ANNOTATION_TYPE;
 import static java.lang.annotation.ElementType.CONSTRUCTOR;
@@ -15,12 +15,12 @@ import javax.validation.Constraint;
 import javax.validation.Payload;
 
 @Documented
-@Constraint(validatedBy = { CollectionElementNotNullValidator.class, MapElementNotNullValidator.class })
+@Constraint(validatedBy = { SetElementNotBlankValidator.class })
 @Target({ METHOD, FIELD, ANNOTATION_TYPE, CONSTRUCTOR, PARAMETER })
 @Retention(RUNTIME)
-public @interface ElementNotNull {
+public @interface ElementNotBlank {
 
-    String message() default "{org.hibernate.validator.constraints.NotNull.message}";
+    String message() default "{org.hibernate.validator.constraints.NotBlank.message}";
 
     Class<?>[] groups() default { };
 

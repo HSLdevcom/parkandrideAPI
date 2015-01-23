@@ -10,7 +10,7 @@ import java.util.Objects;
 
 import javax.validation.constraints.NotNull;
 
-import com.google.common.base.Preconditions;
+import fi.hsl.parkandride.core.domain.validation.ValidTimeDuration;
 
 @ValidTimeDuration
 public class TimeDuration implements Comparable<TimeDuration> {

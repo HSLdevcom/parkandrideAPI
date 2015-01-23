@@ -21,6 +21,10 @@ import org.geolatte.geom.Polygon;
 import com.google.common.collect.Maps;
 import com.wordnik.swagger.annotations.ApiModelProperty;
 
+import fi.hsl.parkandride.core.domain.validation.ElementLength;
+import fi.hsl.parkandride.core.domain.validation.ElementNotBlank;
+import fi.hsl.parkandride.core.domain.validation.ElementNotNull;
+
 public class Facility implements OperatorEntity {
 
     public Long id;

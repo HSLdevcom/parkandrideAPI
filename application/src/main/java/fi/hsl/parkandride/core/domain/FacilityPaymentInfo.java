@@ -3,6 +3,8 @@ package fi.hsl.parkandride.core.domain;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
+import fi.hsl.parkandride.core.domain.validation.ElementNotNull;
+
 public class FacilityPaymentInfo {
     public boolean parkAndRideAuthRequired;
 

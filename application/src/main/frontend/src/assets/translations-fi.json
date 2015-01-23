@@ -222,6 +222,7 @@
     },
     "openingHours": {
       "heading": "Aukioloajat",
+      "closed": "Kiinni",
       "info": {
         "label": "Lisätiedot",
         "fi": {
@@ -247,7 +248,7 @@
         }
       },
       "byDayType": {
-        "disclaimer": "Huom! Päivätyyppikohtaiset aukioloajat lasketaan pysäköintihinnoittelusta"
+        "disclaimer": "Päivätyyppikohtaiset aukioloajat muodostetaan automaattisesti pysäköintihinnoittelusta."
       }
     },
     "paymentInfo": {
@@ -423,6 +424,7 @@
     },
     "unavailableCapacities": {
       "label": "Tilapäisesti pois käytöstä",
+      "disclaimer": "Pysäköintipaikkaan ei ole tallennettu pysäköintihinnoittelua",
       "capacityType": {
         "label": "Tyyppi"
       },

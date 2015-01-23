@@ -14,12 +14,20 @@
   width: 11%;
 }
 
+#facilities-pricing-h24 {
+  width: 3%;
+}
+
 #facilities-pricing-from {
   width: 6%;
 }
 
 #facilities-pricing-until {
   width: 6%;
+}
+
+#facilities-pricing-free {
+  width: 3%;
 }
 
 #pricing-edit > table > tbody > tr.selected:nth-child(2n) > td, #pricing-edit > table > thead > tr.selected:nth-child(2n) > th {
@@ -52,4 +60,8 @@
 #pricing-edit > table > tbody > tr.new-pricing-group > td {
   border-top-width: 4px;
   border-top-color: $secondarycolor;
+}
+
+.tableText {
+  white-space: pre-wrap;
 }

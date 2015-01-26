@@ -9,10 +9,12 @@ import static java.util.Collections.sort;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.mapping;
 import static java.util.stream.Collectors.reducing;
+import static java.util.stream.Collectors.toSet;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -26,26 +28,7 @@ import fi.hsl.parkandride.core.domain.validation.ElementLength;
 import fi.hsl.parkandride.core.domain.validation.NotBlankElement;
 import fi.hsl.parkandride.core.domain.validation.NotNullElement;
 
-public class Facility implements OperatorEntity {
-
-    public Long id;
-
-    @ApiModelProperty(required = true)
-    @NotNull
-    @Valid
-    public MultilingualString name;
-
-    @ApiModelProperty(required = true)
-    @NotNull
-    public Polygon location;
-
-    @ApiModelProperty(required = true)
-    @NotNull
-    public Long operatorId;
-
-    @NotNullElement
-    @NotNull
-    public Map<CapacityType, Integer> builtCapacity = newHashMap();
+public class Facility extends FacilityInfo {
 
     @NotNull
     @NotNullElement
@@ -85,10 +68,6 @@ public class Facility implements OperatorEntity {
     public OpeningHours openingHours = new OpeningHours();
 
 
-    public Long operatorId() {
-        return operatorId;
-    }
-
     /**
      * Expects a valid facility
      */
@@ -100,6 +79,10 @@ public class Facility implements OperatorEntity {
         pricing.stream().collect(groupingBy(Pricing::getDayType,
                 mapping(Pricing::getTime, reducing(TimeDuration::add))))
                 .forEach((dayType, time) -> openingHours.byDayType.put(dayType, time.get()));
+    }
+
+    public Set<Usage> analyzeUsages() {
+        return pricing.stream().collect(mapping(Pricing::getUsage, toSet()));
     }
 
 }

@@ -54,8 +54,8 @@
 <div class="row">
 	<h3>{{ "facilities.openingHours.heading" | translate }}</h3>
 </div>
-<div class="row">{{ "facilities.openingHours.byDayType.disclaimer" | translate }}</div>
-<div class="row"><label>{{ "facilities.openingHours.info.label" | translate }}</label></div>
+<div class="row"><p>{{ "facilities.openingHours.byDayType.disclaimer" | translate }}</p></div>
+<div class="row rowWithSmallMargin"><label>{{ "facilities.openingHours.info.label" | translate }}</label></div>
 <div class="row">
 	<long-multilingual-edit name="openingHoursInfo" ng-model="editCtrl.facility.openingHours.info"></long-multilingual-edit>
 </div>
@@ -144,36 +144,36 @@
 
 				<th>
 					<a class="btn btn-xs btn-responsive" role="button" ng-click="editCtrl.pastePricingValues('capacityType')">
-						Liitä
+						Liitä arvo
 					</a>
 				</th>
 				<th>
 					<a class="btn btn-xs btn-responsive" role="button" ng-click="editCtrl.pastePricingValues('usage')">
-						Liitä
+						Liitä arvo
 					</a>
 				</th>
 				<th>
 					<a class="btn btn-xs btn-responsive" role="button" ng-click="editCtrl.pastePricingValues('maxCapacity')">
-						Liitä
+						Liitä arvo
 					</a>
 				</th>
 
 				<th>
 					<a class="btn btn-xs btn-responsive" role="button" ng-click="editCtrl.pastePricingValues('dayType')">
-						Liitä
+						Liitä arvo
 					</a>
 				</th>
 				<th></th>
 				<th colspan="2">
 					<a class="btn btn-xs btn-responsive" role="button" ng-click="editCtrl.pastePricingValues('time')">
-						Liitä
+						Liitä arvot
 					</a>
 				</th>
 
 				<th></th>
 				<th colspan="3">
 					<a class="btn btn-xs btn-responsive" role="button" ng-click="editCtrl.pastePricingValues('price')">
-						Liitä
+						Liitä arvot
 					</a>
 				</th>
 			</tr>
@@ -210,7 +210,7 @@
 	<h4 translate="facilities.unavailableCapacities.capacity.label"></h4>
 </div>
 <div class="row" ng-show="editCtrl.facility.unavailableCapacities.length == 0">
-	<p>Pysäköintipaikkaan ei ole tallennettu pysäköintihinnoittelua</p>
+	<p>{{ "facilities.unavailableCapacities.disclaimer" | translate }}</p>
 </div>
 <div class="row" ng-hide="editCtrl.facility.unavailableCapacities.length == 0">
 	<div class="column2 first-column">

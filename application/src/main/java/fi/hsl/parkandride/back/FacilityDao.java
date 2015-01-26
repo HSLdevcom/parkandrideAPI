@@ -13,6 +13,8 @@ import static fi.hsl.parkandride.core.domain.CapacityType.ELECTRIC_CAR;
 import static fi.hsl.parkandride.core.domain.CapacityType.MOTORCYCLE;
 import static fi.hsl.parkandride.core.domain.Sort.Dir.ASC;
 import static fi.hsl.parkandride.core.domain.Sort.Dir.DESC;
+import static fi.hsl.parkandride.core.domain.Usage.COMMERCIAL;
+import static fi.hsl.parkandride.core.domain.Usage.PARK_AND_RIDE;
 
 import java.util.*;
 import java.util.Map.Entry;
@@ -146,18 +148,43 @@ public class FacilityDao implements FacilityRepository {
 
     private static final MultilingualStringMapping nameMapping = new MultilingualStringMapping(qFacility.nameFi, qFacility.nameSv, qFacility.nameEn);
 
+    private static final MappingProjection<FacilityInfo> facilityInfoMapping = new MappingProjection<FacilityInfo>(FacilityInfo.class, qFacility.all()) {
+        @Override
+        protected FacilityInfo map(Tuple row) {
+            return mapFacility(row, new FacilityInfo());
+        }
+    };
+
+    private static <T extends FacilityInfo> T mapFacility(Tuple row, T facility) {
+        Long id = row.get(qFacility.id);
+        if (id == null) {
+            return null;
+        }
+        facility.id = id;
+        facility.location = row.get(qFacility.location);
+        facility.name = nameMapping.map(row);
+        facility.operatorId = row.get(qFacility.operatorId);
+
+        if (row.get(qFacility.usageParkAndRide)) {
+            facility.usages.add(PARK_AND_RIDE);
+        }
+        if (row.get(qFacility.usageCommercial)) {
+            facility.usages.add(COMMERCIAL);
+        }
+
+        mapCapacity(facility.builtCapacity, CAR, row.get(qFacility.capacityCar));
+        mapCapacity(facility.builtCapacity, DISABLED, row.get(qFacility.capacityDisabled));
+        mapCapacity(facility.builtCapacity, ELECTRIC_CAR, row.get(qFacility.capacityElectricCar));
+        mapCapacity(facility.builtCapacity, MOTORCYCLE, row.get(qFacility.capacityMotorcycle));
+        mapCapacity(facility.builtCapacity, BICYCLE, row.get(qFacility.capacityBicycle));
+
+        return facility;
+    }
+
     private static final MappingProjection<Facility> facilityMapping = new MappingProjection<Facility>(Facility.class, qFacility.all()) {
         @Override
         protected Facility map(Tuple row) {
-            Long id = row.get(qFacility.id);
-            if (id == null) {
-                return null;
-            }
-            Facility facility = new Facility();
-            facility.id = id;
-            facility.location = row.get(qFacility.location);
-            facility.name = nameMapping.map(row);
-            facility.operatorId = row.get(qFacility.operatorId);
+            Facility facility = mapFacility(row, new Facility());
             facility.contacts = new FacilityContacts(
                     row.get(qFacility.emergencyContactId),
                     row.get(qFacility.operatorContactId),
@@ -169,12 +196,6 @@ public class FacilityDao implements FacilityRepository {
 
             facility.openingHours.info = openingHoursInfoMapping.map(row);
             facility.openingHours.url = openingHoursUrlMapping.map(row);
-
-            mapCapacity(facility.builtCapacity, CAR, row.get(qFacility.capacityCar));
-            mapCapacity(facility.builtCapacity, DISABLED, row.get(qFacility.capacityDisabled));
-            mapCapacity(facility.builtCapacity, ELECTRIC_CAR, row.get(qFacility.capacityElectricCar));
-            mapCapacity(facility.builtCapacity, MOTORCYCLE, row.get(qFacility.capacityMotorcycle));
-            mapCapacity(facility.builtCapacity, BICYCLE, row.get(qFacility.capacityBicycle));
 
             return facility;
         }
@@ -292,7 +313,7 @@ public class FacilityDao implements FacilityRepository {
 
     @TransactionalRead
     @Override
-    public SearchResults<Facility> findFacilities(PageableSpatialSearch search) {
+    public SearchResults<FacilityInfo> findFacilities(PageableSpatialSearch search) {
         PostgresQuery qry = fromFacility();
         qry.limit(search.limit + 1);
         qry.offset(search.offset);
@@ -300,15 +321,7 @@ public class FacilityDao implements FacilityRepository {
         buildWhere(search, qry);
         orderBy(search.sort, qry);
 
-        Map<Long, Facility> facilities = qry.map(qFacility.id, facilityMapping);
-        fetchAliases(facilities);
-        fetchPorts(facilities);
-        fetchServices(facilities);
-        fetchPaymentMethods(facilities);
-        fetchUnavailableCapacity(facilities);
-        fetchPricing(facilities);
-
-        facilities.values().forEach(f -> f.initialize());
+        Map<Long, FacilityInfo> facilities = qry.map(qFacility.id, facilityInfoMapping);
         return SearchResults.of(new ArrayList<>(facilities.values()), search.limit);
     }
 
@@ -686,6 +699,10 @@ public class FacilityDao implements FacilityRepository {
 
         openingHoursInfoMapping.populate(facility.openingHours.info, store);
         openingHoursUrlMapping.populate(facility.openingHours.url, store);
+
+        Set<Usage> usages = facility.analyzeUsages();
+        store.set(qFacility.usageParkAndRide, usages.contains(PARK_AND_RIDE));
+        store.set(qFacility.usageCommercial, usages.contains(COMMERCIAL));
 
         Map<CapacityType, Integer> builtCapacity = facility.builtCapacity != null ? facility.builtCapacity : ImmutableMap.of();
         populateCapacity(qFacility.capacityCar, builtCapacity.get(CAR), store);

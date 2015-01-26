@@ -1,6 +1,8 @@
 (function() {
     var m = angular.module('parkandride.facilitiesTable', [
-        'parkandride.i18n'
+        'parkandride.i18n',
+        'parkandride.capacities',
+        'parkandride.usages'
     ]);
 
     m.directive('facilitiesTable', function () {

@@ -86,7 +86,7 @@ public class FacilityController {
 
     @RequestMapping(method = GET, value = FACILITIES, produces = GEOJSON)
     public ResponseEntity<FeatureCollection> findFacilitiesAsFeatureCollection(PageableSpatialSearchDto search) {
-        SearchResults<Facility> results = facilityService.search(search.toSpatialSearch());
+        SearchResults<FacilityInfo> results = facilityService.search(search.toSpatialSearch());
         return new ResponseEntity<>(FeatureCollection.ofFacilities(results), OK);
     }
     @ApiOperation(value = "Update facility status", authorizations = @Authorization(API_KEY))

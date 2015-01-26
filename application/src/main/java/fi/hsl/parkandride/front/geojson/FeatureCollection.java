@@ -9,22 +9,23 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 
 import fi.hsl.parkandride.core.domain.Facility;
+import fi.hsl.parkandride.core.domain.FacilityInfo;
 import fi.hsl.parkandride.core.domain.Hub;
 import fi.hsl.parkandride.core.domain.SearchResults;
 
 public class FeatureCollection {
 
-    public static final Function<Facility, Feature> FACILITY_TO_FEATURE = new Function<Facility, Feature>() {
+    public static final Function<FacilityInfo, Feature> FACILITY_TO_FEATURE = new Function<FacilityInfo, Feature>() {
         @Nullable
         @Override
-        public Feature apply(@Nullable Facility facility) {
+        public Feature apply(@Nullable FacilityInfo facility) {
             Feature feature = new Feature();
             feature.geometry = facility.location;
             feature.id = facility.id;
             feature.properties = ImmutableMap.of(
                     "name", facility.name,
-                    "aliases", facility.aliases,
-                    "builtCapacity", facility.builtCapacity
+                    "builtCapacity", facility.builtCapacity,
+                    "usages", facility.usages
             );
             return feature;
         }
@@ -45,7 +46,7 @@ public class FeatureCollection {
         }
     };
 
-    public static FeatureCollection ofFacilities(SearchResults<Facility> searchResults) {
+    public static FeatureCollection ofFacilities(SearchResults<FacilityInfo> searchResults) {
         return new FeatureCollection(Lists.transform(searchResults.results, FACILITY_TO_FEATURE), searchResults.hasMore);
     }
 

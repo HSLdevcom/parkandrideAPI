@@ -33,6 +33,9 @@ create table facility (
   capacity_motorcycle int,
   capacity_bicycle int,
 
+  usage_park_and_ride boolean not null,
+  usage_commercial boolean not null,
+
   primary key (id),
 
   constraint facility_operator_id_fk foreign key (operator_id)

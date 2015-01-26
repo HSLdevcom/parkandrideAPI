@@ -189,7 +189,8 @@
     "label": "Pysäköintipaikka",
     "list": {
       "name": "Nimi",
-      "types": "Tyypit"
+      "types": "Tyypit",
+      "usages": "Käyttö"
     },
     "basic_info": "Perustiedot",
     "action": {

@@ -1,9 +1,7 @@
 (function() {
     var m = angular.module('parkandride.users.userList', [
-        'ui.router',
-        'parkandride.users.userModal',
-        'parkandride.i18n',
-        'showErrors'
+        'parkandride.users.userListRow',
+        'parkandride.i18n'
     ]);
 
     m.directive('userList', function() {
@@ -20,14 +18,5 @@
         };
     });
 
-    m.controller('UserListCtrl', function($state, userModal) {
-        var vm = this;
-        vm.openModal = openModal;
-
-        console.log("users ", vm.users);
-
-        function openModal(user) {
-            userModal.open(user).result.then(function() { $state.reload(); });
-        }
-    });
+    m.controller('UserListCtrl', function() {});
 })();

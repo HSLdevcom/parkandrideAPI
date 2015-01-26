@@ -6,8 +6,7 @@
         'parkandride.users.userList',
         'parkandride.UserResource',
         'parkandride.OperatorResource',
-        'parkandride.layout',
-        'showErrors'
+        'parkandride.layout'
     ]);
 
     m.config(function($stateProvider) {

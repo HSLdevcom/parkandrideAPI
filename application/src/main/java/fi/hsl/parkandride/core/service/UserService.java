@@ -1,6 +1,7 @@
 package fi.hsl.parkandride.core.service;
 
 import static fi.hsl.parkandride.core.domain.Permission.USER_CREATE;
+import static fi.hsl.parkandride.core.domain.Permission.USER_UPDATE;
 import static fi.hsl.parkandride.core.domain.Permission.USER_VIEW;
 import static fi.hsl.parkandride.core.domain.Role.ADMIN;
 import static fi.hsl.parkandride.core.domain.Role.OPERATOR;
@@ -53,6 +54,12 @@ public class UserService {
         userSecret.user = new User(newUser);
         userSecret.user.id = userRepository.insertUser(userSecret);
         return userSecret.user;
+    }
+
+    @TransactionalWrite
+    public String resetToken(Long userId, User currentUser) {
+        authorize(currentUser, userRepository.getUser(userId).user, USER_UPDATE);
+        return authenticationService.resetToken(userId);
     }
 
     private void validate(User currentUser, NewUser newUser) {

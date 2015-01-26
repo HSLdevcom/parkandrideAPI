@@ -1,9 +1,6 @@
 package fi.hsl.parkandride.front;
 
-import static fi.hsl.parkandride.front.UrlSchema.LOGIN;
-import static fi.hsl.parkandride.front.UrlSchema.ROLES;
-import static fi.hsl.parkandride.front.UrlSchema.USER;
-import static fi.hsl.parkandride.front.UrlSchema.USERS;
+import static fi.hsl.parkandride.front.UrlSchema.*;
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
@@ -16,6 +13,7 @@ import javax.annotation.Resource;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -61,5 +59,11 @@ public class UserController {
         HttpHeaders headers = new HttpHeaders();
         headers.setLocation(builder.path(USER).buildAndExpand(createdUser.id).toUri());
         return new ResponseEntity<>(createdUser, headers, CREATED);
+    }
+
+    @RequestMapping(method = POST, value = TOKEN, produces = APPLICATION_JSON_VALUE)
+    public ResponseEntity<ValueHolder<String>> resetToken(@PathVariable(USER_ID) long facilityId, User updater) {
+        String token = userService.resetToken(facilityId, updater);
+        return new ResponseEntity<>(ValueHolder.of(token), OK);
     }
 }

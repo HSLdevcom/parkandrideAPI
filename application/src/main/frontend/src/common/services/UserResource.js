@@ -28,6 +28,12 @@
             }
         };
 
+        api.resetToken = function(user) {
+            return $http.post('internal/users/' + user.id + '/token').then(function(response){
+                return response.data.value;
+            });
+        };
+
         return api;
     });
 })();

@@ -2,11 +2,13 @@ package fi.hsl.parkandride.core.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
+import static org.mockito.Mockito.when;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.jasypt.util.password.PasswordEncryptor;
+import org.joda.time.DateTime;
 import org.joda.time.Period;
 import org.junit.Before;
 import org.junit.Test;
@@ -17,6 +19,7 @@ import fi.hsl.parkandride.core.back.UserRepository;
 import fi.hsl.parkandride.core.domain.NewUser;
 import fi.hsl.parkandride.core.domain.Role;
 import fi.hsl.parkandride.core.domain.User;
+import fi.hsl.parkandride.core.domain.UserSecret;
 import fi.hsl.parkandride.core.domain.Violation;
 
 public class UserServiceTest {
@@ -140,6 +143,45 @@ public class UserServiceTest {
     public void operator_api_cannot_create_other_operators_user() {
         operator.operatorId = DEFAULT_OPERATOR + 1;
         userService.createUser(operator, operatorAPICreator);
+    }
+
+    @Test
+    public void api_token_can_be_reset() {
+        when(userRepository.getUser(operatorAPI.id)).thenReturn(secretUser(operatorAPI));
+        when(userRepository.getCurrentTime()).thenReturn(DateTime.now());
+
+        userService.resetToken(operatorAPI.id, adminCreator);
+        userService.resetToken(operatorAPI.id, operatorCreator);
+    }
+
+    @Test
+    public void non_api_token_cannot_be_reset() {
+        when(userRepository.getUser(admin.id)).thenReturn(secretUser(admin));
+        when(userRepository.getUser(operator.id)).thenReturn(secretUser(operator));
+        when(userRepository.getCurrentTime()).thenReturn(DateTime.now());
+
+        Runnable resetFn = () -> userService.resetToken(admin.id, adminCreator);
+        assertThat(violations(resetFn)).extracting("type", "path").containsOnly(tuple("PerpetualTokenNotAllowed", ""));
+
+        resetFn = () -> userService.resetToken(operator.id, operatorCreator);
+        assertThat(violations(resetFn)).extracting("type", "path").containsOnly(tuple("PerpetualTokenNotAllowed", ""));
+    }
+
+    @Test(expected = AccessDeniedException.class)
+    public void operator_cannot_reset_other_operators_api_token() {
+        NewUser other = input("other operator", Role.OPERATOR, DEFAULT_PASSWORD);
+        other.operatorId = DEFAULT_OPERATOR + 1;
+
+        when(userRepository.getUser(other.id)).thenReturn(secretUser(other));
+        when(userRepository.getCurrentTime()).thenReturn(DateTime.now());
+
+        userService.resetToken(other.id, operatorCreator);
+    }
+
+    private UserSecret secretUser(User u) {
+        UserSecret us = new UserSecret();
+        us.user = u;
+        return us;
     }
 
     private NewUser input(String username, Role role, String pass) {

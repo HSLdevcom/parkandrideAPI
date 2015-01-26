@@ -545,6 +545,16 @@
       "label": "Rooli",
       "placeholder": "Valitse rooli..."
     },
+    "listActions": {
+      "label": "Toiminnot",
+      "updateToken": {
+        "label": "Päivitä token",
+        "successMessage": "Uusi token on"
+      },
+      "updatePass": {
+        "label": "Päivitä salasana"
+      }
+    },
     "action": {
       "new": "Lisää uusi käyttäjä",
       "edit": "Muokkaa käyttäjää"

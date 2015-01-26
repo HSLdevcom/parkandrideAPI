@@ -4,6 +4,7 @@ module.exports = function(spec) {
     var that = require('../base')(spec);
     var capacitiesTable = require('../capacitiesTable')({});
     var portView = require('./portViewModal')();
+    var _ = require('lodash');
 
     spec.view = $('.wdFacilityView');
     spec.name = $('.wdFacilityNameFi');
@@ -18,9 +19,11 @@ module.exports = function(spec) {
     spec.paymentInfo = $('.wdPaymentInfo');
     spec.parkAndRideAuthRequired = $('.wdPaymentInfo .wdParkAndRideAuthRequired');
     spec.paymentMethods = $('.wdPaymentInfo .wdPaymentMethodNames');
-    spec.paymentInfoDetails = $('.wdPaymentInfo .wdDetails');
-    spec.paymentInfoDetail = $('.wdPaymentInfo .wdDetail');
-    spec.paymentInfoUrl = $('.wdPaymentInfo .wdUrl');
+    spec.paymentInfoDetails = $('.wdPaymentInfo .wdPaymentInfoDetails');
+    spec.paymentInfoDetail = $('.wdPaymentInfo .wdPaymentInfoDetail');
+    spec.paymentInfoUrl = $('.wdPaymentInfo .wdPaymentInfoUrl');
+
+    spec.openingHourRows = $$('#opening-hours tr');
 
     that.get = function (id) {
         browser.get('/#/facilities/view/' + id);
@@ -87,6 +90,23 @@ module.exports = function(spec) {
 
     that.getPaymentInfoUrl = function() {
         return spec.getMultilingualValues(spec.paymentInfoUrl);
+    };
+
+    that.getOpeningHours = function() {
+        return spec.openingHourRows.then(function(rows) {
+            return protractor.promise.all(
+                _.map(rows, function(row) {
+                    return row.all(by.css("td")).then(function(columns) {
+                        return protractor.promise.all([ columns[0].getText(), columns[1].getText() ]);
+                    });
+                }))
+                .then(function(openingHourRows) {
+                    return _.reduce(openingHourRows, function(acc, row) {
+                        acc[row[0]] = row[1];
+                        return acc;
+                    }, {});
+                });
+        });
     };
 
     that.portView = portView;

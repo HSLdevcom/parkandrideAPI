@@ -63,6 +63,14 @@ describe('facility view', function () {
 
             expect(viewPage.isPaymentInfoDisplayed()).toBe(true);
             expect(viewPage.getPaymentMethods()).toEqual("Kolikko, Seteli");
+
+            expect(viewPage.getOpeningHours()).toEqual({
+                "Arkipäivä": "00 - 24",
+                "Lauantai": "00 - 24",
+                "Sunnuntai": "08 - 18",
+                "Arkipyhä": "00 - 24",
+                "Aatto": "Kiinni"
+            });
         });
     });
 

@@ -41,6 +41,23 @@ module.exports = function () {
                 "MOTORCYCLE": 50,
                 "ELECTRIC_CAR":  60
             },
+            "pricing": [
+                {"capacityType":"CAR","usage":"PARK_AND_RIDE","maxCapacity":10,"dayType":"BUSINESS_DAY",
+                    "time":{"from":"00","until":"24"},"price":null},
+                {"capacityType":"DISABLED","usage":"COMMERCIAL","maxCapacity":40,"dayType":"SATURDAY",
+                    "time":{"from":"00","until":"24"},"price":null},
+                {"capacityType":"ELECTRIC_CAR","usage":"PARK_AND_RIDE","maxCapacity":60,"dayType":"SUNDAY",
+                    "time":{"from":"08","until":"18"},"price":null},
+                {"capacityType":"MOTORCYCLE","usage":"PARK_AND_RIDE","maxCapacity":50,"dayType":"HOLIDAY",
+                    "time":{"from":"00","until":"24"},"price":{"fi":"1 eur/h","sv":"1 eur/h","en":"1 eur/h"}}
+                // closed on EVE
+            ],
+            "unavailableCapacities": [
+                {"capacityType":"CAR","usage":"PARK_AND_RIDE","capacity":1},
+                {"capacityType":"DISABLED","usage":"COMMERCIAL","capacity":2},
+                {"capacityType":"ELECTRIC_CAR","usage":"PARK_AND_RIDE","capacity":3}
+                // Implicit MOTORCYCLE/PARK_AND_RIDE: 4
+            ],
             contacts: {
                 emergency: 1,
                 operator: 1

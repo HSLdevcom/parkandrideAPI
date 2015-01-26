@@ -147,7 +147,7 @@ public class UserServiceTest {
 
     @Test
     public void api_token_can_be_reset() {
-        when(userRepository.getUser(operatorAPI.id)).thenReturn(secretUser(operatorAPI));
+        when(userRepository.getUser(operatorAPI.id)).thenReturn(userSecret(operatorAPI));
         when(userRepository.getCurrentTime()).thenReturn(DateTime.now());
 
         userService.resetToken(operatorAPI.id, adminCreator);
@@ -156,8 +156,8 @@ public class UserServiceTest {
 
     @Test
     public void non_api_token_cannot_be_reset() {
-        when(userRepository.getUser(admin.id)).thenReturn(secretUser(admin));
-        when(userRepository.getUser(operator.id)).thenReturn(secretUser(operator));
+        when(userRepository.getUser(admin.id)).thenReturn(userSecret(admin));
+        when(userRepository.getUser(operator.id)).thenReturn(userSecret(operator));
         when(userRepository.getCurrentTime()).thenReturn(DateTime.now());
 
         Runnable resetFn = () -> userService.resetToken(admin.id, adminCreator);
@@ -169,16 +169,16 @@ public class UserServiceTest {
 
     @Test(expected = AccessDeniedException.class)
     public void operator_cannot_reset_other_operators_api_token() {
-        NewUser other = input("other operator", Role.OPERATOR, DEFAULT_PASSWORD);
-        other.operatorId = DEFAULT_OPERATOR + 1;
+        NewUser otherAPI = input("other_operator_api", Role.OPERATOR_API, DEFAULT_PASSWORD);
+        otherAPI.operatorId = DEFAULT_OPERATOR + 1;
 
-        when(userRepository.getUser(other.id)).thenReturn(secretUser(other));
+        when(userRepository.getUser(otherAPI.id)).thenReturn(userSecret(otherAPI));
         when(userRepository.getCurrentTime()).thenReturn(DateTime.now());
 
-        userService.resetToken(other.id, operatorCreator);
+        userService.resetToken(otherAPI.id, operatorCreator);
     }
 
-    private UserSecret secretUser(User u) {
+    private UserSecret userSecret(User u) {
         UserSecret us = new UserSecret();
         us.user = u;
         return us;

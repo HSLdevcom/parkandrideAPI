@@ -4,6 +4,7 @@
         'ui.router',
         'ui.select',
         'parkandride.auth',
+        'parkandride.modalUtil',
         'parkandride.UserResource',
         'parkandride.OperatorResource',
         'parkandride.i18n',
@@ -30,9 +31,10 @@
         };
     });
 
-    m.controller('UserModalCtrl', function($scope, $modalInstance, $translate, schema, user, EVENTS, UserResource, operators, Session) {
+    m.controller('UserModalCtrl', function($scope, $modalInstance, $translate, schema, user, EVENTS, UserResource, operators, Session, modalUtilFactory) {
         var vm = this;
         var isNewUser = !user;
+        var modalUtil = modalUtilFactory($scope, $modalInstance);
 
         vm.titleKey = 'users.action.' + (isNewUser ? 'new' : 'edit');
         vm.user = user || {};
@@ -80,9 +82,7 @@
         }
 
         function save(form) {
-            validateAndSubmit(form, function() {
-                UserResource.save(vm.user).then(handleSubmitSuccess, handleSubmitReject);
-            });
+            modalUtil.validateAndSubmit(form, function() { return UserResource.save(vm.user); });
         }
 
         function cancel() {
@@ -96,28 +96,6 @@
                     label: $translate.instant(prefix + "." + v + ".label")
                 };
             });
-        }
-
-        function handleSubmitSuccess(success) {
-            $modalInstance.close(success);
-        }
-
-        function handleSubmitReject(rejection) {
-            if (rejection.status == 400 && rejection.data.violations) {
-                $scope.violations = rejection.data.violations;
-            }
-        }
-
-        function validateAndSubmit(form, saveFn) {
-            $scope.$broadcast(EVENTS.showErrorsCheckValidity);
-            if (form.$valid) {
-                saveFn();
-            } else {
-                $scope.violations = [{
-                    path: "",
-                    type: "BasicRequirements"
-                }];
-            }
         }
     });
 })();

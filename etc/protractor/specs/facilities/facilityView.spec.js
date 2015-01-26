@@ -68,9 +68,24 @@ describe('facility view', function () {
                 "Arkipäivä": "00 - 24",
                 "Lauantai": "00 - 24",
                 "Sunnuntai": "08 - 18",
-                "Arkipyhä": "00 - 24",
+                "Arkipyhä": "14 - 24",
                 "Aatto": "Kiinni"
             });
+
+            expect(viewPage.getPricing()).toEqual([
+                {capacityType: "Henkilöauto", usage: "Liityntä", maxCapacity: "10",
+                    dayType: "Arkipäivä", is24h: "✓", from: "", until: "",
+                    isFree: "✓", priceFi: "", priceSv: "", priceEn: ""},
+                {capacityType: "Invapaikka", usage: "Kaupallinen", maxCapacity: "40",
+                    dayType: "Lauantai", is24h: "✓", from: "", until: "",
+                    isFree: "✓", priceFi: "", priceSv: "", priceEn: ""},
+                {capacityType: "Sähköauto", usage: "Liityntä", maxCapacity: "60",
+                    dayType: "Sunnuntai", is24h: "", from: "08", until: "18",
+                    isFree: "✓", priceFi: "", priceSv: "", priceEn: ""},
+                {capacityType: "Moottoripyörä", usage: "Liityntä", maxCapacity: "50",
+                    dayType: "Arkipyhä", is24h: "", from: "14", until: "24",
+                    isFree: "", priceFi: "price fi", priceSv: "price sv", priceEn: "price en"}
+            ]);
         });
     });
 

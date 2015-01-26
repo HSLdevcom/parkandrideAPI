@@ -49,7 +49,7 @@ module.exports = function () {
                 {"capacityType":"ELECTRIC_CAR","usage":"PARK_AND_RIDE","maxCapacity":60,"dayType":"SUNDAY",
                     "time":{"from":"08","until":"18"},"price":null},
                 {"capacityType":"MOTORCYCLE","usage":"PARK_AND_RIDE","maxCapacity":50,"dayType":"HOLIDAY",
-                    "time":{"from":"00","until":"24"},"price":{"fi":"1 eur/h","sv":"1 eur/h","en":"1 eur/h"}}
+                    "time":{"from":"14","until":"24"},"price":{"fi":"price fi","sv":"price sv","en":"price en"}}
                 // closed on EVE
             ],
             "unavailableCapacities": [

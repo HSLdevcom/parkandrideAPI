@@ -25,6 +25,8 @@ module.exports = function(spec) {
 
     spec.openingHourColumns = $$('#opening-hours tr td');
 
+    spec.pricingColumns = $$('#pricing tbody tr td');
+
     that.get = function (id) {
         browser.get('/#/facilities/view/' + id);
     };
@@ -103,6 +105,34 @@ module.exports = function(spec) {
                 hours[columnTexts[i]] = columnTexts[i+1];
             }
             return hours;
+        });
+    };
+
+    that.getPricing = function() {
+        return spec.pricingColumns.then(function(columns) {
+            return protractor.promise.all(_.map(columns, function(column) {
+                return column.getText();
+            }));
+        }).then(function(columnTexts) {
+            var pricing = [];
+            for (var i=0; i < columnTexts.length; i+=11) {
+                pricing.push({
+                    capacityType: columnTexts[i],
+                    usage: columnTexts[i + 1],
+                    maxCapacity: columnTexts[i + 2],
+
+                    dayType: columnTexts[i + 3],
+                    is24h: columnTexts[i + 4],
+                    from: columnTexts[i + 5],
+                    until: columnTexts[i + 6],
+
+                    isFree: columnTexts[i + 7],
+                    priceFi: columnTexts[i + 8],
+                    priceSv: columnTexts[i + 9],
+                    priceEn: columnTexts[i + 10]
+                });
+            }
+            return pricing;
         });
     };
 

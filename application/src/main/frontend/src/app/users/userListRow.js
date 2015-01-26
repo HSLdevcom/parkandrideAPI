@@ -22,8 +22,8 @@
         var vm = this;
         vm.openModal = openModal;
 
-        function openModal(user) {
-            userModal.open(user).result.then(function() { $state.reload(); });
+        function openModal() {
+            userModal.open(vm.user).result.then(function() { $state.reload(); });
         }
     });
 })();

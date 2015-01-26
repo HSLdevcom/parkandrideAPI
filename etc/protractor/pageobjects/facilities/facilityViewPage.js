@@ -27,6 +27,8 @@ module.exports = function(spec) {
 
     spec.pricingColumns = $$('#pricing tbody tr td');
 
+    spec.unavailableCapacityColumns = $$('#unavailable-capacities tbody tr td');
+
     that.get = function (id) {
         browser.get('/#/facilities/view/' + id);
     };
@@ -133,6 +135,24 @@ module.exports = function(spec) {
                 });
             }
             return pricing;
+        });
+    };
+
+    that.getUnavailableCapacities = function() {
+        return spec.unavailableCapacityColumns.then(function(columns) {
+            return protractor.promise.all(_.map(columns, function(column) {
+                return column.getText();
+            }));
+        }).then(function(columnTexts) {
+            var rows = [];
+            for (var i=0; i < columnTexts.length; i+=3) {
+                rows.push({
+                    capacityType: columnTexts[i],
+                    usage: columnTexts[i + 1],
+                    capacity: columnTexts[i + 2]
+                });
+            }
+            return rows;
         });
     };
 

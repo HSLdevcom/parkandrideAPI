@@ -86,6 +86,13 @@ describe('facility view', function () {
                     dayType: "Arkipyhä", is24h: "", from: "14", until: "24",
                     isFree: "", priceFi: "price fi", priceSv: "price sv", priceEn: "price en"}
             ]);
+
+            expect(viewPage.getUnavailableCapacities()).toEqual([
+                {capacityType: "Henkilöauto", usage: "Liityntä", capacity: "1"},
+                {capacityType: "Invapaikka", usage: "Kaupallinen", capacity: "2"},
+                {capacityType: "Sähköauto", usage: "Liityntä", capacity: "3"},
+                {capacityType: "Moottoripyörä", usage: "Liityntä", capacity: "0"}
+            ]);
         });
     });
 

@@ -18,7 +18,7 @@ public interface FacilityRepository {
 
     Facility getFacilityForUpdate(long id);
 
-    SearchResults<Facility> findFacilities(PageableSpatialSearch search);
+    SearchResults<FacilityInfo> findFacilities(PageableSpatialSearch search);
 
     FacilitySummary summarizeFacilities(SpatialSearch search);
 

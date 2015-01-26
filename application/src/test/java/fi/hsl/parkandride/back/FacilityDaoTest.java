@@ -121,8 +121,7 @@ public class FacilityDaoTest extends AbstractDaoTest {
         assertThat(facility.contacts).isEqualTo(dummyContacts);
 
         // Search
-        facility = facilityDao.findFacilities(new PageableSpatialSearch()).get(0);
-        assertDefault(facility);
+        assertDefault(facilityDao.findFacilities(new PageableSpatialSearch()).get(0));
 
         // Update
         final MultilingualString newName = new MultilingualString("changed name");
@@ -149,20 +148,15 @@ public class FacilityDaoTest extends AbstractDaoTest {
         ));
 
         // Remove aliases, capacities and ports
-        facility.aliases = null;
-        facility.ports = null;
-        facility.services = null;
+        facility.aliases = new HashSet<>();
+        facility.ports = new ArrayList<>();
+        facility.services = new NullSafeSortedSet<>();
         facility.contacts.service = null;
         facilityDao.updateFacility(id, facility);
 
         // Find by geometry
-        List<Facility> facilities = findByGeometry(OVERLAPPING_AREA);
+        List<FacilityInfo> facilities = findByGeometry(OVERLAPPING_AREA);
         assertThat(facilities).hasSize(1);
-        assertThat(facilities.get(0).aliases).isEmpty();
-        assertThat(facilities.get(0).ports).isEmpty();
-        assertThat(facilities.get(0).services).isEmpty();
-        assertThat(facilities.get(0).contacts).isNotNull();
-        assertThat(facilities.get(0).contacts.service).isNull();
 
         // Not found by geometry
         assertThat(findByGeometry(NON_OVERLAPPING_AREA)).isEmpty();
@@ -180,14 +174,20 @@ public class FacilityDaoTest extends AbstractDaoTest {
         return operatorDao.insertOperator(operator);
     }
 
-    private void assertDefault(Facility facility) {
+    private void assertDefault(FacilityInfo facility) {
         assertThat(facility).isNotNull();
         assertThat(facility.location).isEqualTo(LOCATION);
+        assertThat(facility.operatorId).isEqualTo(operatorId);
         assertThat(facility.name).isEqualTo(NAME);
+        assertThat(facility.builtCapacity).isEqualTo(BUILT_CAPACITY);
+        assertThat(facility.usages).isEqualTo(ImmutableSet.of(PARK_AND_RIDE));
+    }
+
+    private void assertDefault(Facility facility) {
+        assertDefault((FacilityInfo) facility);
         assertThat(facility.aliases).isEqualTo(ALIASES);
         assertThat(facility.ports).isEqualTo(PORTS);
         assertThat(facility.services).isEqualTo(SERVICES);
-        assertThat(facility.builtCapacity).isEqualTo(BUILT_CAPACITY);
         assertThat(facility.pricing).isEqualTo(asList(PRICING1, PRICING2));
         assertThat(facility.unavailableCapacities).isEqualTo(UNAVAILABLE_CAPACITIES);
         assertThat(facility.openingHours.byDayType).isEqualTo(ImmutableMap.of(
@@ -198,7 +198,7 @@ public class FacilityDaoTest extends AbstractDaoTest {
         assertThat(facility.openingHours.url).isEqualTo(OPENING_HOURS_URL);
     }
 
-    private List<Facility> findByGeometry(Polygon geometry) {
+    private List<FacilityInfo> findByGeometry(Polygon geometry) {
         PageableSpatialSearch search = new PageableSpatialSearch();
         search.intersecting = geometry;
         return facilityDao.findFacilities(search).results;
@@ -293,7 +293,7 @@ public class FacilityDaoTest extends AbstractDaoTest {
         }
     }
 
-    private void assertResultOrder(SearchResults<Facility> results, long id1, long id2) {
+    private void assertResultOrder(SearchResults<FacilityInfo> results, long id1, long id2) {
         assertThat(results.size()).isEqualTo(2);
         assertThat(results.get(0).id).isEqualTo(id1);
         assertThat(results.get(1).id).isEqualTo(id2);

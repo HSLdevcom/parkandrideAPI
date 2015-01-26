@@ -81,6 +81,10 @@ public class QFacility extends RelationalPathSpatial<QFacility> {
 
     public final NumberPath<Long> serviceContactId = createNumber("serviceContactId", Long.class);
 
+    public final BooleanPath usageCommercial = createBoolean("usageCommercial");
+
+    public final BooleanPath usageParkAndRide = createBoolean("usageParkAndRide");
+
     public final com.mysema.query.sql.PrimaryKey<QFacility> constraint4c = createPrimaryKey(id);
 
     public final com.mysema.query.sql.ForeignKey<QContact> facilityOperatorContactIdFk = createForeignKey(operatorContactId, "ID");
@@ -153,6 +157,8 @@ public class QFacility extends RelationalPathSpatial<QFacility> {
         addMetadata(paymentInfoUrlFi, ColumnMetadata.named("PAYMENT_INFO_URL_FI").withIndex(14).ofType(Types.VARCHAR).withSize(255));
         addMetadata(paymentInfoUrlSv, ColumnMetadata.named("PAYMENT_INFO_URL_SV").withIndex(15).ofType(Types.VARCHAR).withSize(255));
         addMetadata(serviceContactId, ColumnMetadata.named("SERVICE_CONTACT_ID").withIndex(9).ofType(Types.BIGINT).withSize(19));
+        addMetadata(usageCommercial, ColumnMetadata.named("USAGE_COMMERCIAL").withIndex(29).ofType(Types.BOOLEAN).withSize(1).notNull());
+        addMetadata(usageParkAndRide, ColumnMetadata.named("USAGE_PARK_AND_RIDE").withIndex(28).ofType(Types.BOOLEAN).withSize(1).notNull());
     }
 
 }

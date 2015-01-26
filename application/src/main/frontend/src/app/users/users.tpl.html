@@ -3,26 +3,7 @@
 	<actions><users-navi></users-navi></actions>
 	<content>
 		<div class="panel panel-default wdUsersView">
-			<table class="table table-bordered table-condensed">
-				<thead>
-				<tr>
-					<th>{{ "users.username.label" | translate }}</th>
-					<th>{{ "users.operator.label" | translate }}</th>
-					<th>{{ "users.role.label" | translate }}</th>
-				</tr>
-				</thead>
-				<tbody>
-				<tr ng-repeat="user in ctrl.users | orderBy: [ 'operatorNameFi', 'role', 'username' ] " class="userRow wdUser{{user.username}}">
-					<td class="wdUsername">
-						<a class="wdEdit" ng-click="ctrl.openModal(user)">
-							{{ user.username }}
-						</a>
-					</td>
-					<td>{{ user.operatorNameFi }}</td>
-					<td>{{ "roles." + user.role + ".label" | translate }}</td>
-				</tr>
-				</tbody>
-			</table>
+			<user-list users="ctrl.users"></user-list>
 		</div>
 	</content>
 </main-layout>

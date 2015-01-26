@@ -6,7 +6,6 @@
         'parkandride.auth',
         'parkandride.UserResource',
         'parkandride.OperatorResource',
-        'parkandride.layout',
         'parkandride.i18n',
         'showErrors'
     ]);

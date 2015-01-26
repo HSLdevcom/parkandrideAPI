@@ -2,10 +2,11 @@
     var m = angular.module('parkandride.users', [
         'ui.router',
         'parkandride.auth',
-        'parkandride.operators',
-        'parkandride.UserResource',
-        'parkandride.layout',
         'parkandride.users.userModal',
+        'parkandride.users.userList',
+        'parkandride.UserResource',
+        'parkandride.OperatorResource',
+        'parkandride.layout',
         'showErrors'
     ]);
 
@@ -15,7 +16,7 @@
             url: '/users',
             views: {
                 "main": {
-                    controller: 'UserListCtrl as ctrl',
+                    controller: 'UsersCtrl as ctrl',
                     templateUrl: 'users/users.tpl.html'
                 }
             },
@@ -32,7 +33,8 @@
             }
         });
     });
-    m.controller('UserListCtrl', function($state, users, operatorsById, userModal) {
+
+    m.controller('UsersCtrl', function($state, users, operatorsById, userModal) {
         var vm = this;
         vm.users = users.results;
         vm.openModal = openModal;

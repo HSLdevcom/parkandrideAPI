@@ -199,7 +199,7 @@
 				</div>
 				<div class="row" ng-show="viewCtrl.hasPaymentMethods()"><h4>{{"facilities.paymentInfo.paymentMethods.label" | translate }}</h4></div>
 				<div class="row wdPaymentMethodNames" ng-show="viewCtrl.hasPaymentMethods()">{{viewCtrl.getPaymentMethodNames() | joinBy: ", "}}</div>
-				<div class="wdDetails" ng-show="viewCtrl.hasPaymentInfoDetails()">
+				<div class="wdPaymentInfoDetails" ng-show="viewCtrl.hasPaymentInfoDetails()">
 					<div class="row"><h4>{{"facilities.paymentInfo.details.heading" | translate }}</h4></div>
 					<div class="row"><multilingual-view class="wdPaymentInfoDetail" value="viewCtrl.facility.paymentInfo.detail"></multilingual-view></div>
 					<div class="row"><multilingual-view class="wdPaymentInfoUrl"value="viewCtrl.facility.paymentInfo.url"></multilingual-view></div>

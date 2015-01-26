@@ -23,7 +23,7 @@ module.exports = function(spec) {
     spec.paymentInfoDetail = $('.wdPaymentInfo .wdPaymentInfoDetail');
     spec.paymentInfoUrl = $('.wdPaymentInfo .wdPaymentInfoUrl');
 
-    spec.openingHourRows = $$('#opening-hours tr');
+    spec.openingHourColumns = $$('#opening-hours tr td');
 
     that.get = function (id) {
         browser.get('/#/facilities/view/' + id);
@@ -93,19 +93,16 @@ module.exports = function(spec) {
     };
 
     that.getOpeningHours = function() {
-        return spec.openingHourRows.then(function(rows) {
-            return protractor.promise.all(
-                _.map(rows, function(row) {
-                    return row.all(by.css("td")).then(function(columns) {
-                        return protractor.promise.all([ columns[0].getText(), columns[1].getText() ]);
-                    });
-                }))
-                .then(function(openingHourRows) {
-                    return _.reduce(openingHourRows, function(acc, row) {
-                        acc[row[0]] = row[1];
-                        return acc;
-                    }, {});
-                });
+        return spec.openingHourColumns.then(function(columns) {
+            return protractor.promise.all(_.map(columns, function(column) {
+                    return column.getText();
+            }));
+        }).then(function(columnTexts) {
+            var hours = {};
+            for (var i=0; i < columnTexts.length; i+=2) {
+                hours[columnTexts[i]] = columnTexts[i+1];
+            }
+            return hours;
         });
     };
 

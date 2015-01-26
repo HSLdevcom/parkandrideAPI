@@ -16,7 +16,7 @@
             views: {
                 "main": {
                     controller: 'UserListCtrl as ctrl',
-                    templateUrl: 'users/userList.tpl.html'
+                    templateUrl: 'users/users.tpl.html'
                 }
             },
             data: { pageTitle: 'Users' },
@@ -51,10 +51,10 @@
         }
     });
 
-    m.directive('userListNavi', function() {
+    m.directive('usersNavi', function() {
         return {
             restrict: 'E',
-            templateUrl: 'users/userListNavi.tpl.html'
+            templateUrl: 'users/usersNavi.tpl.html'
         };
     });
 

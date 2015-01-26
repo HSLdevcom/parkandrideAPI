@@ -44,8 +44,12 @@
             if (vm.newPassword === vm.newPassword2) {
                 vm.user.password = vm.newPassword;
                 modalUtil.submit(function() { return UserResource.updatePassword(user); });
+            } else {
+                $scope.violations = [{
+                    path: "newPassword",
+                    type: "PasswordConfirmationMismatch"
+                }];
             }
-            // TODO notify user on pass conflict
         }
 
         function cancel() {

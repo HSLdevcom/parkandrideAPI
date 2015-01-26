@@ -612,6 +612,7 @@
     "BuiltCapacityNotFound": "rakennettua kapasiteettia ei löydy",
     "PricingCapacityOverflow": "ei voi olla enemmän kuin rakennettu kapasiteetti",
     "UnavailableCapacityOverflow": "ei voi olla enemmän kuin pysäköintihinnoittelun maksimi",
-    "OperatorRequired": "anna operaattori"
+    "OperatorRequired": "anna operaattori",
+    "PasswordConfirmationMismatch": "tarkista, että salasanat ovat identtiset"
   }
 }

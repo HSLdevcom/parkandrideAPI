@@ -62,6 +62,15 @@ public class UserService {
         return authenticationService.resetToken(userId);
     }
 
+    @TransactionalWrite
+    public void updatePassword(Long userId, String newPassword, User updater) {
+        User user = userRepository.getUser(userId).user;
+        authorize(updater, user, USER_UPDATE);
+
+        // TODO don't allow api user
+        userRepository.updatePassword(userId, authenticationService.encryptPassword(newPassword));
+    }
+
     private void validate(User currentUser, NewUser newUser) {
         Collection<Violation> violations = new ArrayList<>();
 

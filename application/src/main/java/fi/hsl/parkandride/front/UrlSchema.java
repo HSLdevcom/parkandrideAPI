@@ -65,6 +65,8 @@ public class UrlSchema {
 
     public static final String TOKEN = USERS + "/{" + USER_ID + "}/token";
 
+    public static final String PASSWORD = USERS + "/{" + USER_ID + "}/password";
+
     public static final String ROLES = INTERNAL + "/roles";
 
 

@@ -3,6 +3,7 @@
         'ui.router',
         'parkandride.auth',
         'parkandride.users.userModal',
+        'parkandride.users.userPasswordModal',
         'parkandride.UserResource',
         'parkandride.i18n'
     ]);
@@ -20,7 +21,7 @@
         };
     });
 
-    m.controller('UserListRowCtrl', function($state, $translate, UserResource, userModal, permit, Permission) {
+    m.controller('UserListRowCtrl', function($state, $translate, UserResource, userModal, userPasswordModal, permit, Permission) {
         var vm = this;
         vm.openModal = openModal;
         vm.isApi = isApi;
@@ -35,13 +36,13 @@
             userModal.open(vm.user).result.then(function() { $state.reload(); });
         }
 
-        function isApi() { return vm.user.role === 'OPERATOR_API';}
+        function isApi() { return vm.user.role === 'OPERATOR_API'; }
 
         function updateSecret() {
             if (isApi()) {
                 updateToken();
             } else {
-                updatePass();
+                updatePassword();
             }
         }
 
@@ -56,8 +57,8 @@
             });
         }
 
-        function updatePass() {
-
+        function updatePassword() {
+            userPasswordModal.open(vm.user).result.then(function() { $state.reload(); });
         }
     });
 })();

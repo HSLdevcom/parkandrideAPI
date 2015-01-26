@@ -1,6 +1,8 @@
 package fi.hsl.parkandride.front;
 
 public class ValueHolder<T> {
+    public ValueHolder() {}
+
     public ValueHolder(T t) {
         value = t;
     }

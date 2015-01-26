@@ -29,9 +29,15 @@
         };
 
         api.resetToken = function(user) {
-            return $http.post('internal/users/' + user.id + '/token').then(function(response){
+            return $http.put('internal/users/' + user.id + '/token').then(function(response){
                 return response.data.value;
             });
+        };
+
+        api.updatePassword = function(user) {
+            var config = {"skipDefaultViolationsHandling": true};
+            var data = {value: user.password};
+            return $http.put('internal/users/' + user.id + '/password', data, config);
         };
 
         return api;

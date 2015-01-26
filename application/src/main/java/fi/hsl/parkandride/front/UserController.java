@@ -6,6 +6,7 @@ import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
+import static org.springframework.web.bind.annotation.RequestMethod.PUT;
 
 import java.util.Arrays;
 
@@ -61,9 +62,17 @@ public class UserController {
         return new ResponseEntity<>(createdUser, headers, CREATED);
     }
 
-    @RequestMapping(method = POST, value = TOKEN, produces = APPLICATION_JSON_VALUE)
-    public ResponseEntity<ValueHolder<String>> resetToken(@PathVariable(USER_ID) long facilityId, User updater) {
-        String token = userService.resetToken(facilityId, updater);
+    @RequestMapping(method = PUT, value = TOKEN, produces = APPLICATION_JSON_VALUE)
+    public ResponseEntity<ValueHolder<String>> resetToken(@PathVariable(USER_ID) long userId, User updater) {
+        String token = userService.resetToken(userId, updater);
         return new ResponseEntity<>(ValueHolder.of(token), OK);
+    }
+
+    @RequestMapping(method = PUT, value = PASSWORD, produces = APPLICATION_JSON_VALUE)
+    public void updatePassword(
+            @PathVariable(USER_ID) long userId,
+            @RequestBody ValueHolder<String> newPassword,
+            User updater) {
+        userService.updatePassword(userId, newPassword.value, updater);
     }
 }

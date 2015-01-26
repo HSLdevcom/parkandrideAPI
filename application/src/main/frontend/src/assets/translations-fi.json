@@ -538,6 +538,11 @@
     "password": {
       "label": "Salasana"
     },
+    "newPassword": {
+      "title": "Päivitä salasana",
+      "label": "Uusi salasana",
+      "label2": "Uusi salasana uudelleen"
+    },
     "operator": {
       "label": "Operaattori"
     },

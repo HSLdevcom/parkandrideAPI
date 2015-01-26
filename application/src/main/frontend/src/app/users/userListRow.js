@@ -1,6 +1,7 @@
 (function() {
     var m = angular.module('parkandride.users.userListRow', [
         'ui.router',
+        'parkandride.auth',
         'parkandride.users.userModal',
         'parkandride.UserResource',
         'parkandride.i18n'
@@ -19,11 +20,16 @@
         };
     });
 
-    m.controller('UserListRowCtrl', function($state, $translate, UserResource, userModal) {
+    m.controller('UserListRowCtrl', function($state, $translate, UserResource, userModal, permit, Permission) {
         var vm = this;
         vm.openModal = openModal;
         vm.isApi = isApi;
         vm.updateSecret = updateSecret;
+        vm.permitUpdateUser = permitUpdateUser;
+
+        function permitUpdateUser() {
+            return permit(Permission.USER_UPDATE);
+        }
 
         function openModal() {
             userModal.open(vm.user).result.then(function() { $state.reload(); });

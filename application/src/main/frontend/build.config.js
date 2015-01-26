@@ -70,13 +70,13 @@ module.exports = {
       'vendor/angular-sanitize/angular-sanitize.min.js',
       'vendor/angular-translate-loader-static-files/angular-translate-loader-static-files.js',
       'vendor/openlayers3/build/ol.js',
-      'vendor/sweetalert/lib/sweet-alert.js'
+      'vendor/sweetalert2/dist/sweetalert2.min.js'
     ],
     css: [
         'vendor/font-awesome/css/font-awesome.min.css',
         'vendor/angular-ui-select/dist/select.min.css',
         'vendor/openlayers3/css/ol.css',
-        'vendor/sweetalert/lib/sweet-alert.css'
+        'vendor/sweetalert2/dist/sweetalert2.css'
     ],
     assets: [
     ]

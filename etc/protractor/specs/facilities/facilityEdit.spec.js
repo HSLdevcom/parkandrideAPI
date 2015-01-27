@@ -340,17 +340,13 @@ describe('edit facility view', function () {
         it('should remove last row', function() {
             editPage.togglePricingRow(4);
             editPage.pricingRemoveRows();
-            editPage.getPricing().then(function(actualRows) {
-                expect(actualRows.length).toEqual(4);
-            });
+            expect(editPage.getPricingCount()).toBe(4);
         });
 
         it('should remove all rows', function() {
             editPage.pricingSelectAll();
             editPage.pricingRemoveRows();
-            editPage.getPricing().then(function(actualRows) {
-                expect(actualRows.length).toEqual(0);
-            });
+            expect(editPage.getPricingCount()).toBe(0);
         });
 
         it('should add a new row', function() {
@@ -392,6 +388,56 @@ describe('edit facility view', function () {
                 expect(row.is24h).toBeTruthy();
                 expect(row.from).toBe("00");
                 expect(row.until).toBe("24");
+            });
+        });
+    });
+
+    describe('unavailable capacity', function() {
+        var facility;
+
+        beforeEach(function () {
+            facility = facFull.copy();
+        });
+
+        it('should show no unavailable capacity rows', function() {
+            facility.pricing = [];
+            facility.unavailableCapacities = [];
+            devApi.resetAll({ facilities: [facility], contacts: [fixtures.facilitiesFixture.contact], operators: [fixtures.facilitiesFixture.operator] });
+            devApi.loginAs('ADMIN');
+
+            editPage.get(facility.id);
+            browser.debugger();
+            expect(editPage.getUnavailableCapacitiesCount()).toBe(0);
+        });
+
+        it('should show no unavailable capacity rows', function() {
+            facility.pricing =
+                [{"capacityType":"CAR","usage":"PARK_AND_RIDE","maxCapacity":10,"dayType":"BUSINESS_DAY","time":{"from":"00","until":"24"},"price":null},
+                    {"capacityType":"CAR","usage":"COMMERCIAL","maxCapacity":10,"dayType":"BUSINESS_DAY","time":{"from":"00","until":"24"},"price":null},
+                    {"capacityType":"DISABLED","usage":"PARK_AND_RIDE","maxCapacity":1,"dayType":"BUSINESS_DAY","time":{"from":"00","until":"24"},"price":null}];
+            facility.unavailableCapacities =
+                [{"capacityType":"CAR","usage":"PARK_AND_RIDE","capacity":3},
+                    {"capacityType":"CAR","usage":"COMMERCIAL","capacity":2},
+                    {"capacityType":"DISABLED","usage":"PARK_AND_RIDE","capacity":1}];
+
+            devApi.resetAll({ facilities: [facility], contacts: [fixtures.facilitiesFixture.contact], operators: [fixtures.facilitiesFixture.operator] });
+            devApi.loginAs('ADMIN');
+
+            editPage.get(facility.id);
+            browser.debugger();
+            editPage.getUnavailableCapacities().then(function(ucs) {
+                expect(ucs.length).toBe(3);
+                expect(ucs[0].capacityType).toBe("Henkilöauto");
+                expect(ucs[0].usage).toBe("Liityntä");
+                expect(ucs[0].capacity).toBe("3");
+
+                expect(ucs[1].capacityType).toBe("");
+                expect(ucs[1].usage).toBe("Kaupallinen");
+                expect(ucs[1].capacity).toBe("2");
+
+                expect(ucs[2].capacityType).toBe("Invapaikka");
+                expect(ucs[2].usage).toBe("Liityntä");
+                expect(ucs[2].capacity).toBe("1");
             });
         });
     });

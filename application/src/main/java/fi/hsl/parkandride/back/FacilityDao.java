@@ -656,6 +656,7 @@ public class FacilityDao implements FacilityRepository {
     private Map<Long, List<UnavailableCapacity>> findUnavailableCapacity(Set<Long> facilityIds) {
         return queryFactory.from(qPricing)
                 .leftJoin(qUnavailableCapacity).on(
+                        qPricing.facilityId.eq(qUnavailableCapacity.facilityId),
                         qPricing.capacityType.eq(qUnavailableCapacity.capacityType),
                         qPricing.usage.eq(qUnavailableCapacity.usage))
                 .distinct()

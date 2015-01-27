@@ -49,6 +49,8 @@ module.exports = function(spec) {
     spec.pricingRows = $$('#pricing-edit tbody tr');
     spec.pricingColumns = $$('#pricing-edit tbody tr td');
 
+    spec.unavailableCapacityColumns = $$('#unavailable-capacities tbody tr td');
+
     spec.defineMultilingualAccessors("name");
 
     that.get = function (id) {
@@ -316,6 +318,12 @@ module.exports = function(spec) {
         });
     };
 
+    that.getPricingCount = function() {
+        return spec.pricingColumns.count().then(function(count) {
+            return count / 13;
+        });
+    };
+
     that.getPricing = function() {
         return spec.pricingColumns.then(function(columns) {
             return protractor.promise.all(_.map(columns, getColumnValue));
@@ -379,6 +387,37 @@ module.exports = function(spec) {
             return pricing;
         }
 
+    };
+
+    that.getUnavailableCapacitiesCount = function() {
+        return spec.unavailableCapacityColumns.count().then(function(count) {
+            return count / 3;
+        });
+    };
+
+    that.getUnavailableCapacities = function() {
+        return spec.unavailableCapacityColumns.then(function(columns) {
+            return protractor.promise.all(_.map(columns, function(column) {
+                return column.element(by.css("input")).then(
+                    function(input) {
+                        return input.getAttribute("value");
+                    },
+                    function() {
+                        return column.getText();
+                    }
+                )
+            }));
+        }).then(function(columnValues) {
+            var rows = [];
+            for (var i=0; i < columnValues.length; i+=3) {
+                rows.push({
+                    capacityType: columnValues[i],
+                    usage: columnValues[i + 1],
+                    capacity: columnValues[i + 2]
+                });
+            }
+            return rows;
+        });
     };
 
 

@@ -175,6 +175,12 @@ public class UserServiceTest {
         userService.resetToken(otherAPI.id, operatorCreator);
     }
 
+    @Test(expected = AccessDeniedException.class)
+    public void operator_api_cannot_reset_tokens() {
+        when(userRepository.getUser(operatorAPI.id)).thenReturn(userSecret(operatorAPI));
+        userService.resetToken(operatorAPI.id, operatorAPI);
+    }
+
     private UserSecret userSecret(User u) {
         UserSecret us = new UserSecret();
         us.user = u;

@@ -6,6 +6,8 @@ module.exports = function(spec) {
     spec.hubs = element.all(by.linkUiSref('hub-list')).first();
     spec.contacts = element.all(by.linkUiSref('contact-list')).first();
     spec.operators = element.all(by.linkUiSref('operator-list')).first();
+    spec.users = element.all(by.linkUiSref('users-list')).first();
+
 
     spec.isActive = function(link) {
         return spec.hasClasses(spec.parent(link), ['active']);
@@ -23,6 +25,10 @@ module.exports = function(spec) {
         return spec.operators.click();
     };
 
+    that.toUsers = function () {
+        return spec.users.click();
+    };
+
     that.isHubsActive = function() {
         return spec.isActive(spec.hubs);
     };
@@ -33,6 +39,10 @@ module.exports = function(spec) {
 
     that.isOperatorsActive = function() {
         return spec.isActive(spec.operators);
+    };
+
+    that.isUsersActive = function() {
+        return spec.isActive(spec.users);
     };
 
     return that;

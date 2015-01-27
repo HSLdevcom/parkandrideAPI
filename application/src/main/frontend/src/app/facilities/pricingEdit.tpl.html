@@ -13,7 +13,7 @@
 	</ui-select>
 </td>
 <td>
-	<ui-select ng-model="pricing.usage" theme="bootstrap" reset-search-input="true">
+	<ui-select class="usageInput" ng-model="pricing.usage" theme="bootstrap" reset-search-input="true">
 		<ui-select-match placeholder="{{'facilities.pricing.usagePlaceholder' | translate }}">
 			{{$select.selected.label}}
 		</ui-select-match>

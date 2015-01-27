@@ -2,6 +2,7 @@
 
 module.exports = function(spec) {
     var that = require('../base')(spec);
+    var _ = require('lodash');
 
     that.portEditModal = require('./portEditModal')({});
     that.contactEditModal = require('../contacts/contactEditModal')({});
@@ -40,7 +41,15 @@ module.exports = function(spec) {
     spec.selectedOperator = $('.operator .ui-select-match');
 
     spec.pricingSelectAll = $("#pricingSelectAll");
+    spec.pricingAddRow = $('#pricingAddRow');
+    spec.pricingPasteRows = $('#pricingPasteRows');
+    spec.pricingCopyRows = $('#pricingCopyRows');
+    spec.pricingCopyFirst = $('#pricingCopyFirst');
     spec.pricingRemoveRows = $('#pricingRemoveRows');
+    spec.pricingRows = $$('#pricing-edit tbody tr');
+    spec.pricingColumns = $$('#pricing-edit tbody tr td');
+
+    spec.unavailableCapacityColumns = $$('#unavailable-capacities tbody tr td');
 
     spec.defineMultilingualAccessors("name");
 
@@ -92,10 +101,7 @@ module.exports = function(spec) {
     };
 
     that.selectEmergencyContact = function(name) {
-        spec.emergencyContact.element(by.css('.ui-select-match')).click();
-        var contactElement = browser.driver.switchTo().activeElement();
-        contactElement.sendKeys(name);
-        contactElement.sendKeys(protractor.Key.ENTER);
+        spec.select(spec.emergencyContact, name);
     };
 
     that.getEmergencyContact = function() {
@@ -103,10 +109,7 @@ module.exports = function(spec) {
     };
 
     that.selectOperatorContact = function(name) {
-        spec.operatorContact.element(by.css('.ui-select-match')).click();
-        var contactElement = browser.driver.switchTo().activeElement();
-        contactElement.sendKeys(name);
-        contactElement.sendKeys(protractor.Key.ENTER);
+        spec.select(spec.operatorContact, name);
     };
 
     that.getOperatorContact = function() {
@@ -114,10 +117,7 @@ module.exports = function(spec) {
     };
 
     that.selectServiceContact = function(name) {
-        spec.serviceContact.element(by.css('.ui-select-match')).click();
-        var contactElement = browser.driver.switchTo().activeElement();
-        contactElement.sendKeys(name);
-        contactElement.sendKeys(protractor.Key.ENTER);
+        spec.select(spec.serviceContact, name);
     };
 
     that.getServiceContact = function() {
@@ -143,10 +143,7 @@ module.exports = function(spec) {
     };
 
     that.selectOperator = function(name) {
-        spec.operator.element(by.css('.ui-select-match')).click();
-        var operatorElement = browser.driver.switchTo().activeElement();
-        operatorElement.sendKeys(name);
-        operatorElement.sendKeys(protractor.Key.ENTER);
+        spec.select(spec.operator, name);
     };
 
     that.getOperator = function() {
@@ -253,9 +250,176 @@ module.exports = function(spec) {
         spec.pricingSelectAll.click();
     };
 
+    that.pricingAddRow = function() {
+        spec.pricingAddRow.click();
+    };
+
+    that.pricingPasteRows = function() {
+        spec.pricingPasteRows.click();
+    };
+
+    that.pricingCopyRows = function() {
+        spec.pricingCopyRows.click();
+    };
+
+    that.pricingCopyFirst = function() {
+        spec.pricingCopyFirst.click();
+    };
+
     that.pricingRemoveRows = function() {
         spec.pricingRemoveRows.click();
-    }
+    };
+
+    that.togglePricingRow = function(index) {
+        spec.pricingRows.get(index).then(function(row) {
+            row.element(by.model('rowSelected')).click();
+        });
+    };
+
+    that.setPricing = function(index, pricing) {
+        spec.pricingRows.get(index).then(function(row) {
+            for (var prop in pricing) {
+                switch (prop) {
+                    case 'capacityType':
+                        spec.select(row.element(by.model('pricing.capacityType')), pricing[prop]);
+                        break;
+                    case 'usage':
+                        spec.select(row.element(by.model('pricing.usage')), pricing[prop]);
+                        break;
+                    case 'maxCapacity':
+                        row.element(by.model('pricing.maxCapacity')).sendKeys(pricing[prop]);
+                        break;
+                    case 'dayType':
+                        spec.select(row.element(by.model('pricing.dayType')), pricing[prop]);
+                        break;
+                    case 'is24h':
+                        row.element(by.model('h24')).click();
+                        break;
+                    case 'from':
+                        row.element(by.model('pricing.time.from')).sendKeys(pricing[prop]);
+                        break;
+                    case 'until':
+                        row.element(by.model('pricing.time.until')).sendKeys(pricing[prop]);
+                        break;
+                    case 'isFree':
+                        row.element(by.model('free')).click();
+                        break;
+                    case 'priceFi':
+                        row.element(by.model('pricing.price.fi')).sendKeys(pricing[prop]);
+                        break;
+                    case 'priceSv':
+                        row.element(by.model('pricing.price.sv')).sendKeys(pricing[prop]);
+                        break;
+                    case 'priceEn':
+                        row.element(by.model('pricing.price.en')).sendKeys(pricing[prop]);
+                        break;
+                }
+            }
+        });
+    };
+
+    that.getPricingCount = function() {
+        return spec.pricingColumns.count().then(function(count) {
+            return count / 13;
+        });
+    };
+
+    that.getPricing = function() {
+        return spec.pricingColumns.then(function(columns) {
+            return protractor.promise.all(_.map(columns, getColumnValue));
+        }).then(getPricingRows);
+
+        function getColumnValue(column) {
+            return ifSelect()
+                .then(null, ifTextarea)
+                .then(null, ifInput)
+                .then(null, otherwiseGetText);
+
+            function ifSelect() {
+                return column.element(by.css(".ui-select-match")).then(
+                    function(selected) {
+                        return selected.getText();
+                    });
+            }
+            function ifTextarea() {
+                return column.element(by.css("textarea")).then(
+                    function(textarea) {
+                        return textarea.getAttribute("value");
+                    });
+            }
+            function ifInput() {
+                return column.element(by.css("input")).then(
+                    function(input) {
+                        return input.getAttribute('type').then(function(type) {
+                            if (type === "checkbox") {
+                                return input.isSelected();
+                            } else {
+                                return input.getAttribute('value');
+                            }
+                        });
+                    });
+            }
+            function otherwiseGetText() {
+                return column.getText();
+            }
+        }
+
+        function getPricingRows(columnValues) {
+            var pricing = [];
+            for (var i=0; i < columnValues.length; i+=13) {
+                pricing.push({
+                    selected: columnValues[i+1],
+                    capacityType: columnValues[i+2],
+                    usage: columnValues[i + 3],
+                    maxCapacity: columnValues[i + 4],
+
+                    dayType: columnValues[i + 5],
+                    is24h: columnValues[i + 6],
+                    from: columnValues[i + 7],
+                    until: columnValues[i + 8],
+
+                    isFree: columnValues[i + 9],
+                    priceFi: columnValues[i + 10],
+                    priceSv: columnValues[i + 11],
+                    priceEn: columnValues[i + 12]
+                });
+            }
+            return pricing;
+        }
+
+    };
+
+    that.getUnavailableCapacitiesCount = function() {
+        return spec.unavailableCapacityColumns.count().then(function(count) {
+            return count / 3;
+        });
+    };
+
+    that.getUnavailableCapacities = function() {
+        return spec.unavailableCapacityColumns.then(function(columns) {
+            return protractor.promise.all(_.map(columns, function(column) {
+                return column.element(by.css("input")).then(
+                    function(input) {
+                        return input.getAttribute("value");
+                    },
+                    function() {
+                        return column.getText();
+                    }
+                )
+            }));
+        }).then(function(columnValues) {
+            var rows = [];
+            for (var i=0; i < columnValues.length; i+=3) {
+                rows.push({
+                    capacityType: columnValues[i],
+                    usage: columnValues[i + 1],
+                    capacity: columnValues[i + 2]
+                });
+            }
+            return rows;
+        });
+    };
+
 
     return that;
 };

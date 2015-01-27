@@ -190,6 +190,10 @@ html, body {
   margin-bottom: 0px;
 }
 
+.form-group .input-group textarea {
+  position: static;
+}
+
 .divider {
   border-bottom: 2px solid #BEE4F8;
   margin-top: 40px;

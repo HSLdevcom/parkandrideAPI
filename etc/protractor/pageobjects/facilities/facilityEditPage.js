@@ -60,7 +60,10 @@ module.exports = function(spec) {
     };
 
     that.selectService = function(name) {
-        spec.select(spec.services.element(by.css('input')), name);
+        spec.services.element(by.css('input')).click();
+        var servicesElement = browser.driver.switchTo().activeElement();
+        servicesElement.sendKeys(name);
+        servicesElement.sendKeys(protractor.Key.ENTER);
     };
 
     that.removeService = function(name) {

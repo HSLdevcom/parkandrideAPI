@@ -8,6 +8,8 @@ import static org.mockito.Mockito.when;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 
+import org.assertj.core.api.ListAssert;
+import org.assertj.core.groups.Tuple;
 import org.jasypt.util.password.PasswordEncryptor;
 import org.joda.time.DateTime;
 import org.joda.time.Period;
@@ -62,13 +64,13 @@ public class UserServiceTest {
         createFn.run();
 
         operator.password = null;
-        assertThat(violations(createFn)).extracting("type", "path").containsOnly(tuple("BadPassword", "password"));
+        assertBadPassword(createFn);
 
         operator.password = "";
-        assertThat(violations(createFn)).extracting("type", "path").containsOnly(tuple("BadPassword", "password"));
+        assertBadPassword(createFn);
 
         operator.password = " ";
-        assertThat(violations(createFn)).extracting("type", "path").containsOnly(tuple("BadPassword", "password"));
+        assertBadPassword(createFn);
     }
 
     @Test
@@ -84,7 +86,7 @@ public class UserServiceTest {
         createFn.run();
 
         admin.password = null;
-        assertThat(violations(createFn)).extracting("type", "path").containsOnly(tuple("BadPassword", "password"));
+        assertBadPassword(createFn);
     }
 
     @Test
@@ -94,7 +96,7 @@ public class UserServiceTest {
         createFn.run();
 
         operator.operatorId = null;
-        assertThat(violations(createFn)).extracting("type", "path").containsOnly(tuple("OperatorRequired", "operator"));
+        assertOperatorRequired(createFn);
     }
 
     @Test
@@ -104,7 +106,7 @@ public class UserServiceTest {
         createFn.run();
 
         operatorAPI.operatorId = null;
-        assertThat(violations(createFn)).extracting("type", "path").containsOnly(tuple("OperatorRequired", "operator"));
+        assertOperatorRequired(createFn);
     }
 
     @Test
@@ -114,15 +116,13 @@ public class UserServiceTest {
         createFn.run();
 
         admin.operatorId = DEFAULT_OPERATOR;
-        assertThat(violations(createFn)).extracting("type", "path").containsOnly(tuple("OperatorNotAllowed", "operator"));
+        assertOperatorNotAllowed(createFn);
     }
 
     @Test
     public void role_is_required() {
-        Runnable createFn = () -> userService.createUser(operator, adminCreator);
-
         operator.role = null;
-        assertThat(violations(createFn)).extracting("type", "path").containsOnly(tuple("NotNull", "role"));
+        assertNotNull(() -> userService.createUser(operator, adminCreator));
     }
 
     @Test(expected = AccessDeniedException.class)
@@ -158,11 +158,8 @@ public class UserServiceTest {
         when(userRepository.getUser(operator.id)).thenReturn(userSecret(operator));
         when(userRepository.getCurrentTime()).thenReturn(DateTime.now());
 
-        Runnable resetFn = () -> userService.resetToken(admin.id, adminCreator);
-        assertThat(violations(resetFn)).extracting("type", "path").containsOnly(tuple("PerpetualTokenNotAllowed", ""));
-
-        resetFn = () -> userService.resetToken(operator.id, operatorCreator);
-        assertThat(violations(resetFn)).extracting("type", "path").containsOnly(tuple("PerpetualTokenNotAllowed", ""));
+        assertPerpetualTokenNotAllowed(() -> userService.resetToken(admin.id, adminCreator));
+        assertPerpetualTokenNotAllowed(() -> userService.resetToken(operator.id, operatorCreator));
     }
 
     @Test(expected = AccessDeniedException.class)
@@ -206,10 +203,10 @@ public class UserServiceTest {
         userService.updatePassword(admin.id, "newPass", adminCreator);
     }
 
-    @Test
+    @Test(expected = AccessDeniedException.class)
     public void operator_api_cannot_update_passwords() {
         when(userRepository.getUser(operator.id)).thenReturn(userSecret(operator));
-        assertAccessDenied(() -> userService.updatePassword(operator.id, "newPass", operatorAPICreator));
+        userService.updatePassword(operator.id, "newPass", operatorAPICreator);
     }
 
     @Test(expected = AccessDeniedException.class)
@@ -222,10 +219,8 @@ public class UserServiceTest {
 
     @Test
     public void operator_api_password_cannot_be_updated() {
-        Runnable updateFn = () -> userService.updatePassword(operatorAPI.id, "newPass", adminCreator);
-
         when(userRepository.getUser(operatorAPI.id)).thenReturn(userSecret(operatorAPI));
-        assertThat(violations(updateFn)).extracting("type", "path").containsOnly(tuple("PasswordUpdateNotApplicable", ""));
+        assertPasswordUpdateNotApplicable(() -> userService.updatePassword(operatorAPI.id, "newPass", adminCreator));
     }
 
     @Test
@@ -274,5 +269,29 @@ public class UserServiceTest {
             r.run();
             Assert.fail("did not throw AcceddDeniedException");
         } catch (AccessDeniedException expected) {}
+    }
+
+    private ListAssert<Tuple> assertOperatorRequired(Runnable createFn) {
+        return assertThat(violations(createFn)).extracting("type", "path").containsOnly(tuple("OperatorRequired", "operator"));
+    }
+
+    private void assertBadPassword(Runnable createFn) {
+        assertThat(violations(createFn)).extracting("type", "path").containsOnly(tuple("BadPassword", "password"));
+    }
+
+    private ListAssert<Tuple> assertOperatorNotAllowed(Runnable createFn) {
+        return assertThat(violations(createFn)).extracting("type", "path").containsOnly(tuple("OperatorNotAllowed", "operator"));
+    }
+
+    private void assertNotNull(Runnable createFn) {
+        assertThat(violations(createFn)).extracting("type", "path").containsOnly(tuple("NotNull", "role"));
+    }
+
+    private void assertPerpetualTokenNotAllowed(Runnable resetFn) {
+        assertThat(violations(resetFn)).extracting("type", "path").containsOnly(tuple("PerpetualTokenNotAllowed", ""));
+    }
+
+    private void assertPasswordUpdateNotApplicable(Runnable updateFn) {
+        assertThat(violations(updateFn)).extracting("type", "path").containsOnly(tuple("PasswordUpdateNotApplicable", ""));
     }
 }

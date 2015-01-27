@@ -17,6 +17,7 @@ describe('menu', function () {
     var contactPage = po.contactPage({});
     var operatorPage = po.operatorPage({});
     var usersPage = po.usersPage({});
+    var authModal = po.authModal();
 
     var h = fixtures.hubsFixture.westend;
 
@@ -120,14 +121,15 @@ describe('menu', function () {
 
         describe('requires authentication', function () {
             beforeEach(function () {
-
+                expect(menu.canLogout()).toBe(true);
+                menu.logout();
+                expect(menu.canLogin()).toBe(true);
             });
 
-            it('', function () {
-
-
+            it('displays login modal when tab is accessed without session', function () {
+                usersPage.get();
+                expect(authModal.isDisplayed()).toBe(true);
             });
         });
-
     });
 });

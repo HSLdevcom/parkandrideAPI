@@ -6,7 +6,7 @@ module.exports = function(spec) {
     spec.hubs = element.all(by.linkUiSref('hub-list')).first();
     spec.contacts = element.all(by.linkUiSref('contact-list')).first();
     spec.operators = element.all(by.linkUiSref('operator-list')).first();
-    spec.users = element.all(by.linkUiSref('users-list')).first();
+    spec.users = element.all(by.linkUiSref('user-list')).first();
 
 
     spec.loginLink = $("#openLoginPrompt");

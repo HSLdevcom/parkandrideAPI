@@ -1,6 +1,6 @@
 "use strict";
 
-module.exports = function () {
+module.exports = function (spec) {
     var that = require('../base')(spec);
 
     spec.view = $('.wdUsersView');

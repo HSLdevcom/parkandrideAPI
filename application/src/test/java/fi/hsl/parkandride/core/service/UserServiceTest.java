@@ -10,6 +10,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import org.jasypt.util.password.PasswordEncryptor;
 import org.joda.time.DateTime;
 import org.joda.time.Period;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -129,20 +130,16 @@ public class UserServiceTest {
     }
 
     @Test(expected = AccessDeniedException.class)
-    public void operator_api_cannot_create_admin() {
-        userService.createUser(admin, operatorAPICreator);
-    }
-
-    @Test(expected = AccessDeniedException.class)
     public void operator_cannot_create_other_operators_user() {
         operatorAPI.operatorId = DEFAULT_OPERATOR + 1;
         userService.createUser(operatorAPI, operatorCreator);
     }
 
-    @Test(expected = AccessDeniedException.class)
-    public void operator_api_cannot_create_other_operators_user() {
-        operator.operatorId = DEFAULT_OPERATOR + 1;
-        userService.createUser(operator, operatorAPICreator);
+    @Test
+    public void operator_api_cannot_create_users() {
+        assertAccessDenied(() -> userService.createUser(admin, operatorAPICreator));
+        assertAccessDenied(() -> userService.createUser(operator, operatorAPICreator));
+        assertAccessDenied(() -> userService.createUser(input("same_operator__other_api", Role.OPERATOR_API, null), operatorAPICreator));
     }
 
     @Test
@@ -207,5 +204,12 @@ public class UserServiceTest {
         } catch (ValidationException e) {
             return e.violations;
         }
+    }
+
+    private void assertAccessDenied(Runnable r) {
+        try {
+            r.run();
+            Assert.fail("did not throw AcceddDeniedException");
+        } catch (AccessDeniedException expected) {}
     }
 }

@@ -9,6 +9,7 @@ var common = require('../common');
 describe('authorization', function () {
 
     var indexPage = po.indexPage({});
+    var menu = po.menu({});
     var authModal = po.authModal();
     var operatorPage = po.operatorPage({});
     var operatorEditModal = operatorPage.editModal;
@@ -18,12 +19,9 @@ describe('authorization', function () {
 
     function openLoginModal() {
         expect(authModal.isDisplayed()).toBe(false);
-        expect(authModal.isLogoutDisplayed()).toBe(false); // TODO: logout is not on auth modal
-
-        authModal.openLoginModal();
+        menu.openLoginModal();
         expect(authModal.isDisplayed()).toBe(true);
     }
-
 
     beforeEach(function() {
         devApi.resetAll();
@@ -66,10 +64,10 @@ describe('authorization', function () {
             authModal.waitUntilAbsent();
 
             expect(authModal.isDisplayed()).toBe(false);
-            expect(authModal.isLogoutDisplayed()).toBe(true); // TODO: logout is not on auth modal
 
-            authModal.logout();
-            expect(authModal.isLoginDisplayed()).toBe(true);
+            expect(menu.canLogin()).toBe(false);
+            menu.logout();
+            expect(menu.canLogin()).toBe(true);
         });
     });
 
@@ -79,7 +77,7 @@ describe('authorization', function () {
         // 2) if Session uses loginCache, we cannot logout without Angular noticing it
         // 3) waiting for the session to actually expire would take too long
 
-        authModal.openLoginModal();
+        menu.openLoginModal();
         authModal.login(username, password);
         authModal.waitUntilAbsent();
 
@@ -99,6 +97,6 @@ describe('authorization', function () {
         operatorEditModal.waitUntilAbsent();
         expect(operatorEditModal.isDisplayed()).toBe(false);
 
-        expect(authModal.isLogoutDisplayed()).toBe(true); // TODO: logout is not on auth modal
+        expect(menu.canLogout()).toBe(true);
     });
 });

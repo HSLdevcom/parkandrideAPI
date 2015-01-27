@@ -7,6 +7,10 @@ module.exports = function(spec) {
     spec.contacts = element.all(by.linkUiSref('contact-list')).first();
     spec.operators = element.all(by.linkUiSref('operator-list')).first();
 
+    spec.loginLink = $("#openLoginPrompt");
+    spec.logoutLink = $("#logout");
+
+
     spec.isActive = function(link) {
         return spec.hasClasses(spec.parent(link), ['active']);
     };
@@ -33,6 +37,25 @@ module.exports = function(spec) {
 
     that.isOperatorsActive = function() {
         return spec.isActive(spec.operators);
+    };
+
+
+    that.openLoginModal = function() {
+        expect(that.canLogin()).toBe(true);
+        spec.loginLink.click();
+    };
+
+    that.logout = function() {
+        expect(that.canLogout()).toBe(true);
+        spec.logoutLink.click();
+    };
+
+    that.canLogout = function() {
+        return spec.isDisplayed(spec.logoutLink);
+    };
+
+    that.canLogin = function() {
+        return spec.isDisplayed(spec.loginLink);
     };
 
     return that;

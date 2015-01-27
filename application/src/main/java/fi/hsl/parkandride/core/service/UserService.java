@@ -67,7 +67,10 @@ public class UserService {
         User user = userRepository.getUser(userId).user;
         authorize(updater, user, USER_UPDATE);
 
-        // TODO don't allow api user
+        if (user.role == Role.OPERATOR_API) {
+            throw new ValidationException(new Violation("PasswordUpdateNotApplicable", "", "Password update is not applicable for api user"));
+        }
+
         userRepository.updatePassword(userId, authenticationService.encryptPassword(newPassword));
     }
 

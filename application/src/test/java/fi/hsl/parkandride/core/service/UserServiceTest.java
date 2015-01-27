@@ -2,6 +2,7 @@ package fi.hsl.parkandride.core.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.List;
@@ -14,6 +15,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 import fi.hsl.parkandride.core.back.UserRepository;
@@ -71,9 +73,8 @@ public class UserServiceTest {
 
     @Test
     public void password_is_not_required_for_operator_api() {
-        Runnable createFn = () -> userService.createUser(operatorAPI, adminCreator);
         operatorAPI.password = null;
-        createFn.run();
+        userService.createUser(operatorAPI, adminCreator);
     }
 
     @Test
@@ -179,6 +180,62 @@ public class UserServiceTest {
     public void operator_api_cannot_reset_tokens() {
         when(userRepository.getUser(operatorAPI.id)).thenReturn(userSecret(operatorAPI));
         userService.resetToken(operatorAPI.id, operatorAPI);
+    }
+
+    @Test
+    public void operator_can_update_operator_password() {
+        when(userRepository.getUser(operator.id)).thenReturn(userSecret(operator));
+        userService.updatePassword(operator.id, "newPass", operatorCreator);
+    }
+
+    @Test(expected = AccessDeniedException.class)
+    public void operator_cannot_update_admin_password() {
+        when(userRepository.getUser(admin.id)).thenReturn(userSecret(admin));
+        userService.updatePassword(admin.id, "newPass", operatorCreator);
+    }
+
+    @Test
+    public void admin_can_update_operator_password() {
+        when(userRepository.getUser(operator.id)).thenReturn(userSecret(operator));
+        userService.updatePassword(operator.id, "newPass", adminCreator);
+    }
+
+    @Test
+    public void admin_can_update_admin_password() {
+        when(userRepository.getUser(admin.id)).thenReturn(userSecret(admin));
+        userService.updatePassword(admin.id, "newPass", adminCreator);
+    }
+
+    @Test
+    public void operator_api_cannot_update_passwords() {
+        when(userRepository.getUser(operator.id)).thenReturn(userSecret(operator));
+        assertAccessDenied(() -> userService.updatePassword(operator.id, "newPass", operatorAPICreator));
+    }
+
+    @Test(expected = AccessDeniedException.class)
+    public void operator_cannot_update_other_operators_password() {
+        operator.operatorId = DEFAULT_OPERATOR + 1;
+
+        when(userRepository.getUser(operator.id)).thenReturn(userSecret(operator));
+        userService.updatePassword(operator.id, "newPass", operatorAPICreator);
+    }
+
+    @Test
+    public void operator_api_password_cannot_be_updated() {
+        Runnable updateFn = () -> userService.updatePassword(operatorAPI.id, "newPass", adminCreator);
+
+        when(userRepository.getUser(operatorAPI.id)).thenReturn(userSecret(operatorAPI));
+        assertThat(violations(updateFn)).extracting("type", "path").containsOnly(tuple("PasswordUpdateNotApplicable", ""));
+    }
+
+    @Test
+    public void password_is_stored_encrypted() {
+        when(userRepository.getUser(operator.id)).thenReturn(userSecret(operator));
+        when(passwordEncryptor.encryptPassword("newPass")).thenReturn("newPassEncrypted");
+
+        userService.updatePassword(operator.id, "newPass", adminCreator);
+
+        verify(userRepository).updatePassword(operator.id, "newPassEncrypted");
     }
 
     private UserSecret userSecret(User u) {

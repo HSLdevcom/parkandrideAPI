@@ -91,6 +91,13 @@ module.exports = function(spec) {
             ]);
     };
 
+    spec.select = function(element, name) {
+        element.element(by.css('.ui-select-match')).click();
+        element = browser.driver.switchTo().activeElement();
+        element.sendKeys(name);
+        element.sendKeys(protractor.Key.ENTER);
+    };
+
     that.isDisplayed = function() {
         return spec.isDisplayed(spec.view);
     };

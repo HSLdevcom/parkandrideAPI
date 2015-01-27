@@ -105,11 +105,7 @@ describe('edit facility view', function () {
             }
 
             it('build value must be positive', function () {
-                testCapacityMustBePositive({ "CAR": {"built": -1 }});
-            });
-
-            it('unavailable value must be positive', function () {
-                testCapacityMustBePositive({ "CAR": {"unavailable": -1 }});
+                testCapacityMustBePositive({ "CAR": -1 });
             });
         });
 
@@ -270,8 +266,137 @@ describe('edit facility view', function () {
         });
     });
 
-    describe('payment info', function() {
+    describe('pricing flow', function() {
 
+        it('should not create empty rows', function() {
+            devApi.resetAll({ facilities: [], contacts: [fixtures.facilitiesFixture.contact], operators: [fixtures.facilitiesFixture.operator] });
+            devApi.loginAs('ADMIN');
+
+            editPage.get();
+            editPage.setName("test");
+            editPage.selectOperator("smooth");
+            editPage.drawLocation(facFull.locationInput.offset, facFull.locationInput.w, facFull.locationInput.h);
+
+            editPage.selectEmergencyContact("hsl");
+            editPage.selectOperatorContact("hsl");
+            editPage.selectServiceContact("hsl");
+            editPage.setCapacities({ CAR: 10 }, true);
+            editPage.save();
+            expect(editPage.hasNoValidationErrors()).toBe(false);
+        });
+
+        it('should fill default rows with free 24h', function () {
+            var rows = [];
+            rows[0] =  {capacityType: "Henkilöauto", usage: "Liityntä", maxCapacity: "10",
+                    dayType: "Arkipäivä", is24h: true, isFree: true};
+
+            rows[1] = _.assign({}, rows[0], { dayType: 'Lauantai' });
+            rows[2] = _.assign({}, rows[0], { dayType: 'Sunnuntai' });
+            rows[3] = _.assign({}, rows[0], { dayType: 'Arkipyhä' });
+            rows[4] = _.assign({}, rows[0], { dayType: 'Aatto' });
+
+            editPage.setPricing(0, rows[0]);
+            editPage.setPricing(1, rows[1]);
+            editPage.setPricing(2, rows[2]);
+            editPage.setPricing(3, rows[3]);
+            editPage.setPricing(4, rows[4]);
+
+            editPage.save();
+            expect(viewPage.isDisplayed()).toBe(true);
+            viewPage.toEditView();
+            editPage.getPricing().then(function(actualRows) {
+                expect(actualRows.length).toEqual(5);
+                for (var i=0; i < actualRows.length; i++) {
+                    expect(actualRows[i].capacityType).toEqual(rows[i].capacityType);
+                    expect(actualRows[i].usage).toEqual(rows[i].usage);
+                    expect(actualRows[i].maxCapacity).toEqual(rows[i].maxCapacity);
+                    expect(actualRows[i].dayType).toEqual(rows[i].dayType);
+                    expect(actualRows[i].is24h).toBeTruthy();
+                    expect(actualRows[i].isFree).toBeTruthy();
+                }
+            });
+        });
+
+        it('should select all', function() {
+            editPage.pricingSelectAll();
+            editPage.getPricing().then(function(actualRows) {
+                expect(actualRows.length).toEqual(5);
+                for (var i = 0; i < actualRows.length; i++) {
+                    expect(actualRows[i].selected).toBeTruthy();
+                }
+            });
+        });
+
+        it('should unselect all', function() {
+            editPage.pricingSelectAll();
+            editPage.getPricing().then(function(actualRows) {
+                expect(actualRows.length).toEqual(5);
+                for (var i = 0; i < actualRows.length; i++) {
+                    expect(actualRows[i].selected).toBeFalsy();
+                }
+            });
+        });
+
+        it('should remove last row', function() {
+            editPage.togglePricingRow(4);
+            editPage.pricingRemoveRows();
+            editPage.getPricing().then(function(actualRows) {
+                expect(actualRows.length).toEqual(4);
+            });
+        });
+
+        it('should remove all rows', function() {
+            editPage.pricingSelectAll();
+            editPage.pricingRemoveRows();
+            editPage.getPricing().then(function(actualRows) {
+                expect(actualRows.length).toEqual(0);
+            });
+        });
+
+        it('should add a new row', function() {
+            editPage.pricingAddRow();
+            editPage.setPricing(0,
+                {capacityType: "Henkilöauto", usage: "Liityntä", maxCapacity: "10",
+                    dayType: "Aatto", from: "8", until: "18",
+                    priceFi: "price fi", priceSv: "price sv", priceEn: "price en"});
+
+            editPage.getPricing().then(function(actualRows) {
+                var row = actualRows[0];
+                expect(row.is24h).toBeFalsy();
+                expect(row.from).toBe("8");
+                expect(row.until).toBe("18");
+                expect(row.isFree).toBeFalsy();
+                expect(row.priceFi).toBe("price fi");
+                expect(row.priceSv).toBe("price sv");
+                expect(row.priceEn).toBe("price en");
+            });
+        });
+
+        it('should clear price', function() {
+            editPage.setPricing(0, { isFree:true });
+
+            editPage.getPricing().then(function(actualRows) {
+                var row = actualRows[0];
+                expect(row.isFree).toBeTruthy();
+                expect(row.priceFi).toBe("");
+                expect(row.priceSv).toBe("");
+                expect(row.priceEn).toBe("");
+            });
+        });
+
+        it('should set 24h', function() {
+            editPage.setPricing(0, { is24h:true });
+
+            editPage.getPricing().then(function(actualRows) {
+                var row = actualRows[0];
+                expect(row.is24h).toBeTruthy();
+                expect(row.from).toBe("00");
+                expect(row.until).toBe("24");
+            });
+        });
+    });
+
+    describe('payment info', function() {
         describe('create', function(){
             beforeEach(function() {
                 devApi.resetAll({ facilities: [], contacts: [fixtures.facilitiesFixture.contact], operators: [fixtures.facilitiesFixture.operator] });

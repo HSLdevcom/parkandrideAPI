@@ -9,6 +9,10 @@ module.exports = function(spec) {
     spec.users = element.all(by.linkUiSref('users-list')).first();
 
 
+    spec.loginLink = $("#openLoginPrompt");
+    spec.logoutLink = $("#logout");
+
+
     spec.isActive = function(link) {
         return spec.hasClasses(spec.parent(link), ['active']);
     };
@@ -43,6 +47,24 @@ module.exports = function(spec) {
 
     that.isUsersActive = function() {
         return spec.isActive(spec.users);
+    };
+
+    that.openLoginModal = function() {
+        expect(that.canLogin()).toBe(true);
+        spec.loginLink.click();
+    };
+
+    that.logout = function() {
+        expect(that.canLogout()).toBe(true);
+        spec.logoutLink.click();
+    };
+
+    that.canLogout = function() {
+        return spec.isDisplayed(spec.logoutLink);
+    };
+
+    that.canLogin = function() {
+        return spec.isDisplayed(spec.loginLink);
     };
 
     return that;

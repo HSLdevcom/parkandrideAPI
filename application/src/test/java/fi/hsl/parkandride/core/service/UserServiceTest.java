@@ -1,15 +1,11 @@
 package fi.hsl.parkandride.core.service;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.tuple;
+import static fi.hsl.parkandride.core.ViolationAssert.*;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 
-import org.assertj.core.api.ListAssert;
-import org.assertj.core.groups.Tuple;
 import org.jasypt.util.password.PasswordEncryptor;
 import org.joda.time.DateTime;
 import org.joda.time.Period;
@@ -17,7 +13,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 import fi.hsl.parkandride.core.back.UserRepository;
@@ -25,7 +20,6 @@ import fi.hsl.parkandride.core.domain.NewUser;
 import fi.hsl.parkandride.core.domain.Role;
 import fi.hsl.parkandride.core.domain.User;
 import fi.hsl.parkandride.core.domain.UserSecret;
-import fi.hsl.parkandride.core.domain.Violation;
 
 public class UserServiceTest {
     @Mock
@@ -255,43 +249,11 @@ public class UserServiceTest {
         return creator;
     }
 
-    private List<Violation> violations(Runnable r) {
-        try {
-            r.run();
-            throw new AssertionError("did not throw ValidationException");
-        } catch (ValidationException e) {
-            return e.violations;
-        }
-    }
-
-    private void assertAccessDenied(Runnable r) {
+    private static void assertAccessDenied(Runnable r) {
         try {
             r.run();
             Assert.fail("did not throw AcceddDeniedException");
         } catch (AccessDeniedException expected) {}
     }
 
-    private ListAssert<Tuple> assertOperatorRequired(Runnable createFn) {
-        return assertThat(violations(createFn)).extracting("type", "path").containsOnly(tuple("OperatorRequired", "operator"));
-    }
-
-    private void assertBadPassword(Runnable createFn) {
-        assertThat(violations(createFn)).extracting("type", "path").containsOnly(tuple("BadPassword", "password"));
-    }
-
-    private ListAssert<Tuple> assertOperatorNotAllowed(Runnable createFn) {
-        return assertThat(violations(createFn)).extracting("type", "path").containsOnly(tuple("OperatorNotAllowed", "operator"));
-    }
-
-    private void assertNotNull(Runnable createFn) {
-        assertThat(violations(createFn)).extracting("type", "path").containsOnly(tuple("NotNull", "role"));
-    }
-
-    private void assertPerpetualTokenNotAllowed(Runnable resetFn) {
-        assertThat(violations(resetFn)).extracting("type", "path").containsOnly(tuple("PerpetualTokenNotAllowed", ""));
-    }
-
-    private void assertPasswordUpdateNotApplicable(Runnable updateFn) {
-        assertThat(violations(updateFn)).extracting("type", "path").containsOnly(tuple("PasswordUpdateNotApplicable", ""));
-    }
 }

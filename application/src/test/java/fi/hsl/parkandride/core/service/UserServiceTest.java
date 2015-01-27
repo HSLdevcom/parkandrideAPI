@@ -252,7 +252,7 @@ public class UserServiceTest {
     private static void assertAccessDenied(Runnable r) {
         try {
             r.run();
-            Assert.fail("did not throw AcceddDeniedException");
+            Assert.fail("did not throw AccessDeniedException");
         } catch (AccessDeniedException expected) {}
     }
 

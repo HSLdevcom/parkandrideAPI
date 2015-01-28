@@ -77,7 +77,7 @@ describe('users', function () {
         beforeEach(function () {
             devApi.resetAll({
                 operators: [operatorX, operatorY],
-                users: [operatorX_user, operatorX_api, operatorY_user]
+                users: _.shuffle([operatorX_user, operatorX_api, operatorY_user])
             });
             devApi.loginAs(admin.role, admin.username, admin.password);
             usersPage.get();

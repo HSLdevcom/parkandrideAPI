@@ -77,9 +77,14 @@ module.exports = function () {
         }
     };
 
-
     api.deleteUsers = function() {
         execute({method: 'DELETE', url: usersUrl});
+    };
+
+    api.insertUsers = function(users) {
+        if (users) {
+            execute({ method: 'PUT', url: usersUrl, json: true, body: asPayload(users) });
+        }
     };
 
     api.createLogin = function(role, username, password) {
@@ -119,6 +124,7 @@ module.exports = function () {
         api.deleteOperators();
 
         api.insertOperators(data.operators);
+        api.insertUsers(data.users);
         api.insertContacts(data.contacts);
         api.insertFacilities(data.facilities);
         api.insertHubs(data.hubs);

@@ -1,6 +1,7 @@
 package fi.hsl.parkandride.front.geojson;
 
 import java.util.List;
+import java.util.Objects;
 
 import javax.annotation.Nullable;
 
@@ -22,14 +23,18 @@ public class FeatureCollection {
             Feature feature = new Feature();
             feature.geometry = facility.location;
             feature.id = facility.id;
-            feature.properties = ImmutableMap.<String, Object>builder()
-                    .put("name", facility.name)
-                    .put("status", facility.status)
-                    .put("statusDescription", facility.statusDescription)
-                    .put("operatorId", facility.operatorId)
-                    .put("builtCapacity", facility.builtCapacity)
-                    .put("usages", facility.usages)
-                    .build();
+
+            ImmutableMap.Builder<String, Object> builder = ImmutableMap.builder();
+            builder.put("name", facility.name);
+            builder.put("status", facility.status);
+            builder.put("operatorId", facility.operatorId);
+            builder.put("builtCapacity", facility.builtCapacity);
+            builder.put("usages", facility.usages);
+            if (facility.statusDescription != null) {
+                builder.put("statusDescription", facility.statusDescription);
+            }
+            feature.properties = builder.build();
+
             return feature;
         }
     };

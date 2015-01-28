@@ -54,6 +54,12 @@
 		</ui-select>
 	</div>
 </div>
+<div class="row">
+	<label>{{ "facilities.statusDescription.label" | translate }}</label>
+</div>
+<div class="row">
+	<multilingual-edit name="statusDescription" ng-model="editCtrl.facility.statusDescription"></multilingual-edit>
+</div>
 
 <div class="row">
 	<h3>{{"facilities.location" | translate}} *</h3>

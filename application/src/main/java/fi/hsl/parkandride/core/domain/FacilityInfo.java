@@ -35,6 +35,10 @@ public class FacilityInfo implements OperatorEntity {
     @NotNull
     public FacilityStatus status = IN_OPERATION;
 
+    @ApiModelProperty(required = true)
+    @Valid
+    public MultilingualString statusDescription;
+
     @NotNullElement
     @NotNull
     public Map<CapacityType, Integer> builtCapacity = newHashMap();

@@ -62,6 +62,9 @@ public class FacilityDao implements FacilityRepository {
 
     private static final QUnavailableCapacity qUnavailableCapacity = QUnavailableCapacity.unavailableCapacity;
 
+    private static final MultilingualStringMapping statusDescriptionMapping =
+            new MultilingualStringMapping(qFacility.statusDescriptionFi, qFacility.statusDescriptionSv, qFacility.statusDescriptionEn);
+
     private static final MultilingualStringMapping openingHoursInfoMapping =
             new MultilingualStringMapping(qFacility.openingHoursInfoFi, qFacility.openingHoursInfoSv, qFacility.openingHoursInfoEn);
 
@@ -165,6 +168,7 @@ public class FacilityDao implements FacilityRepository {
         facility.name = nameMapping.map(row);
         facility.operatorId = row.get(qFacility.operatorId);
         facility.status = row.get(qFacility.status);
+        facility.statusDescription = statusDescriptionMapping.map(row);
 
         if (row.get(qFacility.usageParkAndRide)) {
             facility.usages.add(PARK_AND_RIDE);
@@ -698,6 +702,7 @@ public class FacilityDao implements FacilityRepository {
         store.set(qFacility.location, facility.location);
         store.set(qFacility.operatorId, facility.operatorId);
         store.set(qFacility.status, facility.status);
+        statusDescriptionMapping.populate(facility.statusDescription, store);
 
         FacilityContacts contacts = facility.contacts != null ? facility.contacts : new FacilityContacts();
         store.set(qFacility.emergencyContactId, contacts.emergency);

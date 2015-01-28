@@ -231,6 +231,18 @@
       "label": "Status",
       "placeholder": "Valitse status..."
     },
+    "statusDescription": {
+      "label": "Poikkeustiedote / Statuksen lisätiedot",
+      "fi": {
+        "label": "Poikkeustiedote / Statuksen lisätiedot (fi)"
+      },
+      "sv": {
+        "label": "Poikkeustiedote / Statuksen lisätiedot (sv)"
+      },
+      "en": {
+        "label": "Poikkeustiedote / Statuksen lisätiedot (en)"
+      }
+    },
     "aliases": {
       "label": "Aliakset",
       "placeholder": "Lisää alias"

@@ -7,6 +7,10 @@ create table facility (
   operator_id bigint not null,
   status varchar(64) not null,
 
+  status_description_fi varchar(255),
+  status_description_sv varchar(255),
+  status_description_en varchar(255),
+
   emergency_contact_id bigint not null,
   operator_contact_id bigint not null,
   service_contact_id bigint,

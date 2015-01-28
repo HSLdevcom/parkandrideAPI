@@ -65,15 +65,14 @@
   "paymentMethods": {
     "COINS": { "label": "Kolikko" },
     "NOTES": { "label": "Seteli" },
-    "VISA_DEBIT": { "label": "Visa Debit" },
+    "DEBIT_CARD": { "label": "Pankkikortti" },
+    "VISA_CREDIT": { "label": "Visa" },
     "VISA_ELECTRON": { "label": "Visa Electron" },
     "AMERICAN_EXPRESS": { "label": "American Express" },
     "MASTERCARD": { "label": "MasterCard" },
     "DINERS_CLUB": { "label": "Diners Club" },
     "HSL_TRAVEL_CARD": { "label": "HSL matkakortti" },
-    "HSL_SINGLE_TICKET": { "label": "HSL kertalippu" },
     "VR_CARD": { "label": "VR matkakortti" },
-    "VR_SINGLE_TICKET": { "label": "VR kertalipppu" },
     "OTHER": { "label": "Muu" }
   },
   "operators": {

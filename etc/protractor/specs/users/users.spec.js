@@ -13,14 +13,15 @@ describe('users', function () {
         object.id = ++seq;
         object.toPayload = function() { return this; };
 
-        if (object.operatorId) {
-            object.operator = operators[object.operatorId];
-        }
-
         if (object.role) {
-            if (object.role === 'ADMIN') object.roleFi = 'admin';
+            if (object.role === 'ADMIN') object.username = object.password = object.roleFi = 'admin';
             if (object.role === 'OPERATOR') object.roleFi = 'operaattori';
             if (object.role === 'OPERATOR_API') object.roleFi = 'API';
+
+            if (object.operatorId) {
+                object.operator = operators[object.operatorId];
+                object.username = object.password =  object.operator.name.fi + object.id
+            }
         }
 
         return object;
@@ -32,10 +33,10 @@ describe('users', function () {
     var operatorY = create({ name: { fi: "y-operator", sv: "y-operator", en: "y-operator"}});
     var operators = _.indexBy([operatorX, operatorY], "id");
 
-    var admin = create({ username: "admin", password: "admin_pass", role: "ADMIN"});
-    var operatorX_user = create({ username: "operator_x_user", password: "operator_x_user_pass", role: "OPERATOR", operatorId: operatorX.id });
-    var operatorX_api = create({ username: "operator_x_api", role: "OPERATOR_API", operatorId: operatorX.id});
-    var operatorY_user = create({ username: "operator_y_user", password: "operator_y_user_pass", role: "OPERATOR", operatorId: operatorY.id});
+    var admin = create({ role: "ADMIN"});
+    var operatorX_user = create({ role: "OPERATOR", operatorId: operatorX.id });
+    var operatorX_api = create({ role: "OPERATOR_API", operatorId: operatorX.id});
+    var operatorY_user = create({ role: "OPERATOR", operatorId: operatorY.id});
 
     var usersPage = po.usersPage({});
     var menu = po.menu({});

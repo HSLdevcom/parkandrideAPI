@@ -158,7 +158,7 @@ module.exports = function(spec) {
     };
 
     that.getStatus = function() {
-        return spec.facilityStatus.element('.ui-select-match').getText();
+        return spec.facilityStatus.element(by.css('.ui-select-match')).getText();
     };
 
     that.drawLocation = function (topLeft, w, h) {

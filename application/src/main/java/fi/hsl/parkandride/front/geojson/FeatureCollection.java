@@ -22,11 +22,14 @@ public class FeatureCollection {
             Feature feature = new Feature();
             feature.geometry = facility.location;
             feature.id = facility.id;
-            feature.properties = ImmutableMap.of(
-                    "name", facility.name,
-                    "builtCapacity", facility.builtCapacity,
-                    "usages", facility.usages
-            );
+            feature.properties = ImmutableMap.<String, Object>builder()
+                    .put("name", facility.name)
+                    .put("status", facility.status)
+                    .put("statusDescription", facility.statusDescription)
+                    .put("operatorId", facility.operatorId)
+                    .put("builtCapacity", facility.builtCapacity)
+                    .put("usages", facility.usages)
+                    .build();
             return feature;
         }
     };

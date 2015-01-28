@@ -10,19 +10,32 @@ var common = require('../common');
 describe('users', function () {
 
     function create(object) {
-        return _.assign(object, { id: ++seq, toPayload: function() { return this; }});
+        object.id = ++seq;
+        object.toPayload = function() { return this; };
+
+        if (object.operatorId) {
+            object.operator = operators[object.operatorId];
+        }
+
+        if (object.role) {
+            if (object.role === 'ADMIN') object.roleFi = 'admin';
+            if (object.role === 'OPERATOR') object.roleFi = 'operaattori';
+            if (object.role === 'OPERATOR_API') object.roleFi = 'API';
+        }
+
+        return object;
     }
+
     var seq = 0;
-    var operator = create;
-    var user = create;
 
-    var operatorX = operator({ name: { fi: "x-operator", sv: "x-operator", en: "x-operator"}});
-    var operatorY = operator({ name: { fi: "y-operator", sv: "y-operator", en: "y-operator"}});
+    var operatorX = create({ name: { fi: "x-operator", sv: "x-operator", en: "x-operator"}});
+    var operatorY = create({ name: { fi: "y-operator", sv: "y-operator", en: "y-operator"}});
+    var operators = _.indexBy([operatorX, operatorY], "id");
 
-    var admin = user({ username: "admin", password: "admin_pass", role: "ADMIN"});
-    var operatorX_user = user({ username: "operator_x_user", password: "operator_x_user_pass", role: "OPERATOR", operatorId: operatorX.id });
-    var operatorX_api = user({ username: "operator_x_api", role: "OPERATOR_API", operatorId: operatorX.id});
-    var operatorY_user = user({ username: "operator_y_user", password: "operator_y_user_pass", role: "OPERATOR", operatorId: operatorY.id});
+    var admin = create({ username: "admin", password: "admin_pass", role: "ADMIN"});
+    var operatorX_user = create({ username: "operator_x_user", password: "operator_x_user_pass", role: "OPERATOR", operatorId: operatorX.id });
+    var operatorX_api = create({ username: "operator_x_api", role: "OPERATOR_API", operatorId: operatorX.id});
+    var operatorY_user = create({ username: "operator_y_user", password: "operator_y_user_pass", role: "OPERATOR", operatorId: operatorY.id});
 
     var usersPage = po.usersPage({});
     var menu = po.menu({});
@@ -34,9 +47,15 @@ describe('users', function () {
         menu.canLogout().then(function(canLogout) { if (canLogout) menu.logout(); });
         menu.openLoginModal();
         authModal.login(user.username,  user.password);
-        
+
         menu.toUsers();
         expect(usersPage.isDisplayed()).toBe(true);
+    }
+
+    function assertUser(actual, expected) {
+        expect(actual.username).toEqual(expected.username);
+        expect(actual.operator).toEqual(expected.operator ? expected.operator.name.fi : '');
+        expect(actual.role).toEqual(expected.roleFi);
     }
 
     describe('navigation', function () {
@@ -49,7 +68,7 @@ describe('users', function () {
             usersPage.toCreateUser();
             expect(usersPage.userModal.isDisplayed()).toBe(true);
         });
-        
+
         // TODO: edit pending, let's see it this is even needed
     });
 
@@ -61,27 +80,15 @@ describe('users', function () {
             });
             devApi.loginAs(admin.role, admin.username, admin.password);
             usersPage.get();
+            expect(usersPage.isDisplayed()).toBe(true);
         });
 
         it('by name, role and username', function () {
-            expect(usersPage.isDisplayed()).toBe(true);
-
             usersPage.getUsers().then(function (actual){
-                expect(actual[0].username).toEqual(admin.username);
-                expect(actual[0].operator).toEqual("");
-                expect(actual[0].role).toEqual("admin");
-
-                expect(actual[1].username).toEqual(operatorX_user.username);
-                expect(actual[1].operator).toEqual(operatorX.name.fi);
-                expect(actual[1].role).toEqual("operaattori");
-
-                expect(actual[2].username).toEqual(operatorX_api.username);
-                expect(actual[2].operator).toEqual(operatorX.name.fi);
-                expect(actual[2].role).toEqual("API");
-
-                expect(actual[3].username).toEqual(operatorY_user.username);
-                expect(actual[3].operator).toEqual(operatorY.name.fi);
-                expect(actual[3].role).toEqual("operaattori");
+                assertUser(actual[0], admin);
+                assertUser(actual[1], operatorX_user);
+                assertUser(actual[2], operatorX_api);
+                assertUser(actual[3], operatorY_user);
             });
         });
 
@@ -89,14 +96,8 @@ describe('users', function () {
             toUsersAs(operatorX_user);
             usersPage.getUsers().then(function (actual){
                 expect(actual.length).toBe(2);
-
-                expect(actual[0].username).toEqual(operatorX_user.username);
-                expect(actual[0].operator).toEqual(operatorX.name.fi);
-                expect(actual[0].role).toEqual("operaattori");
-
-                expect(actual[1].username).toEqual(operatorX_api.username);
-                expect(actual[1].operator).toEqual(operatorX.name.fi);
-                expect(actual[1].role).toEqual("API");
+                assertUser(actual[0], operatorX_user);
+                assertUser(actual[1], operatorX_api);
             });
         });
     });

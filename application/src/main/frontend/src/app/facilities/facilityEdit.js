@@ -67,6 +67,8 @@
         self.dayTypes = schema.dayTypes.values;
         self.services = schema.services.values;
         self.paymentMethods = schema.paymentMethods.values;
+        self.facilityStatuses = schema.facilityStatuses.values;
+
         self.aliasesPlaceholder = aliasesPlaceholder;
         self.showUnavailableCapacityType = function(i) {
             var ucs = self.facility.unavailableCapacities;

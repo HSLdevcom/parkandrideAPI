@@ -31,7 +31,7 @@ public class QHubFacility extends RelationalPathSpatial<QHubFacility> {
 
     public final NumberPath<Long> hubId = createNumber("hubId", Long.class);
 
-    public final com.mysema.query.sql.PrimaryKey<QHubFacility> constraintE = createPrimaryKey(facilityId, hubId);
+    public final com.mysema.query.sql.PrimaryKey<QHubFacility> constraintE6 = createPrimaryKey(facilityId, hubId);
 
     public final com.mysema.query.sql.ForeignKey<QHub> hubFacilityHubIdFk = createForeignKey(hubId, "ID");
 

@@ -5,6 +5,11 @@ create table facility (
   name_en varchar(255) not null,
   location geometry not null,
   operator_id bigint not null,
+  status varchar(64) not null,
+
+  status_description_fi varchar(255),
+  status_description_sv varchar(255),
+  status_description_en varchar(255),
 
   emergency_contact_id bigint not null,
   operator_contact_id bigint not null,
@@ -40,6 +45,9 @@ create table facility (
 
   constraint facility_operator_id_fk foreign key (operator_id)
     references operator (id),
+
+  constraint facility_status_fk foreign key (status)
+    references facility_status (name),
 
   constraint facility_emergency_contact_id_fk foreign key (emergency_contact_id)
     references contact (id),
@@ -108,7 +116,7 @@ create table facility_service (
 );
 
 
-create table facility_status (
+create table facility_utilization (
   facility_id bigint not null,
   capacity_type varchar(64) not null,
   ts timestamp,
@@ -117,14 +125,14 @@ create table facility_status (
 
   primary key (facility_id, capacity_type, ts),
 
-  constraint facility_status_facility_id_fk foreign key (facility_id)
+  constraint facility_utilization_facility_id_fk foreign key (facility_id)
     references facility (id),
 
-  constraint facility_status_capacity_type_fk foreign key (capacity_type)
+  constraint facility_utilization_capacity_type_fk foreign key (capacity_type)
     references capacity_type (name),
 
-  constraint facility_status_facility_status_enum_fk foreign key (status)
-    references facility_status_enum (name)
+  constraint facility_utilization_status_fk foreign key (status)
+    references utilization_status (name)
 );
 
 create table facility_payment_method (

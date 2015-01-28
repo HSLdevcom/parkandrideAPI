@@ -63,28 +63,33 @@
                     return FeatureResource.getFeatures();
                 },
                 capacityTypes: function(schema, SchemaResource, $translate, $q) {
-                    return SchemaResource.getCapacityTypes().then(function(types) {
-                        return registerEnumValues(schema, "capacityTypes", types, $translate, $q);
+                    return SchemaResource.getCapacityTypes().then(function(values) {
+                        return registerEnumValues(schema, "capacityTypes", values, $translate, $q);
                     });
                 },
                 usages: function(schema, SchemaResource, $translate, $q) {
-                    return SchemaResource.getUsages().then(function(types) {
-                        return registerEnumValues(schema, "usages", types, $translate, $q);
+                    return SchemaResource.getUsages().then(function(values) {
+                        return registerEnumValues(schema, "usages", values, $translate, $q);
                     });
                 },
                 dayTypes: function(schema, SchemaResource, $translate, $q) {
-                    return SchemaResource.getDayTypes().then(function(types) {
-                        return registerEnumValues(schema, "dayTypes", types, $translate, $q);
+                    return SchemaResource.getDayTypes().then(function(values) {
+                        return registerEnumValues(schema, "dayTypes", values, $translate, $q);
                     });
                 },
                 services: function(schema, SchemaResource, $translate, $q) {
-                    return SchemaResource.getServices().then(function(types) {
-                        return registerEnumValues(schema, "services", types, $translate, $q);
+                    return SchemaResource.getServices().then(function(values) {
+                        return registerEnumValues(schema, "services", values, $translate, $q);
                     });
                 },
                 paymentMethods: function(schema, SchemaResource, $translate, $q) {
-                    return SchemaResource.getPaymentMethods().then(function(types) {
-                        return registerEnumValues(schema, "paymentMethods", types, $translate, $q);
+                    return SchemaResource.getPaymentMethods().then(function(values) {
+                        return registerEnumValues(schema, "paymentMethods", values, $translate, $q);
+                    });
+                },
+                facilityStatuses: function(schema, SchemaResource, $translate, $q) {
+                    return SchemaResource.getFacilityStatuses().then(function(values) {
+                        return registerEnumValues(schema, "facilityStatuses", values, $translate, $q);
                     });
                 }
             },

@@ -2,14 +2,12 @@ package fi.hsl.parkandride.core.service;
 
 import static fi.hsl.parkandride.core.domain.Permission.HUB_CREATE;
 import static fi.hsl.parkandride.core.domain.Permission.HUB_UPDATE;
-import static fi.hsl.parkandride.core.domain.Role.ADMIN;
 import static fi.hsl.parkandride.core.service.AuthenticationService.authorize;
 
+import fi.hsl.parkandride.core.domain.HubSearch;
 import fi.hsl.parkandride.core.back.HubRepository;
 import fi.hsl.parkandride.core.domain.Hub;
-import fi.hsl.parkandride.core.domain.Permission;
 import fi.hsl.parkandride.core.domain.SearchResults;
-import fi.hsl.parkandride.core.domain.SpatialSearch;
 import fi.hsl.parkandride.core.domain.User;
 
 public class HubService {
@@ -48,7 +46,7 @@ public class HubService {
     }
 
     @TransactionalRead
-    public SearchResults<Hub> search(SpatialSearch search) {
+    public SearchResults<Hub> search(HubSearch search) {
         return repository.findHubs(search);
     }
 }

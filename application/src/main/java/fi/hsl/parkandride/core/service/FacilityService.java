@@ -81,17 +81,17 @@ public class FacilityService {
     }
 
     @TransactionalRead
-    public SearchResults search(PageableSpatialSearch search) {
+    public SearchResults search(PageableFacilitySearch search) {
         return repository.findFacilities(search);
     }
 
     @TransactionalRead
-    public FacilitySummary summarize(SpatialSearch search) {
+    public FacilitySummary summarize(FacilitySearch search) {
         return repository.summarizeFacilities(search);
     }
 
     @TransactionalWrite
-    public void createStatuses(long facilityId, List<FacilityStatus> statuses, User currentUser) {
+    public void createStatuses(long facilityId, List<Utilization> statuses, User currentUser) {
         // TODO: authorize(currentUser, facility, FACILITY_STATUS_UPDATE);
 
         statuses.forEach((status) -> validationService.validate(status));
@@ -99,7 +99,7 @@ public class FacilityService {
     }
 
     @TransactionalRead
-    public List<FacilityStatus> getStatuses(long facilityId) {
+    public List<Utilization> getStatuses(long facilityId) {
         return repository.getStatuses(facilityId);
     }
 }

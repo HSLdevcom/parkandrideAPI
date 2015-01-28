@@ -75,6 +75,20 @@
     "VR_CARD": { "label": "VR matkakortti" },
     "OTHER": { "label": "Muu" }
   },
+  "facilityStatuses": {
+    "IN_OPERATION": {
+      "label": "Toiminnassa"
+    },
+    "INACTIVE": {
+      "label": "Pois käytöstä"
+    },
+    "TEMPORARILY_CLOSED": {
+      "label": "Tilapäisesti pois käytöstä"
+    },
+    "EXCEPTIONAL_SITUATION": {
+      "label": "Poikkeustilanne"
+    }
+  },
   "operators": {
     "title": "Operaattorit",
     "label": "Operaattori",
@@ -210,6 +224,22 @@
       },
       "en": {
         "label": "Nimi (en)"
+      }
+    },
+    "status": {
+      "label": "Status",
+      "placeholder": "Valitse status..."
+    },
+    "statusDescription": {
+      "label": "Poikkeustiedote / Statuksen lisätiedot",
+      "fi": {
+        "label": "Poikkeustiedote / Statuksen lisätiedot (fi)"
+      },
+      "sv": {
+        "label": "Poikkeustiedote / Statuksen lisätiedot (sv)"
+      },
+      "en": {
+        "label": "Poikkeustiedote / Statuksen lisätiedot (en)"
       }
     },
     "aliases": {

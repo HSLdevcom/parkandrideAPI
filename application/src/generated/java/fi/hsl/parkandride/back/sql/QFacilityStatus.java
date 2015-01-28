@@ -27,23 +27,11 @@ public class QFacilityStatus extends RelationalPathSpatial<QFacilityStatus> {
 
     public static final QFacilityStatus facilityStatus = new QFacilityStatus("FACILITY_STATUS");
 
-    public final EnumPath<fi.hsl.parkandride.core.domain.CapacityType> capacityType = createEnum("capacityType", fi.hsl.parkandride.core.domain.CapacityType.class);
+    public final StringPath name = createString("name");
 
-    public final NumberPath<Long> facilityId = createNumber("facilityId", Long.class);
+    public final com.mysema.query.sql.PrimaryKey<QFacilityStatus> constraint5 = createPrimaryKey(name);
 
-    public final NumberPath<Integer> spacesAvailable = createNumber("spacesAvailable", Integer.class);
-
-    public final EnumPath<fi.hsl.parkandride.core.domain.FacilityStatusEnum> status = createEnum("status", fi.hsl.parkandride.core.domain.FacilityStatusEnum.class);
-
-    public final DateTimePath<org.joda.time.DateTime> ts = createDateTime("ts", org.joda.time.DateTime.class);
-
-    public final com.mysema.query.sql.PrimaryKey<QFacilityStatus> constraint5d = createPrimaryKey(capacityType, facilityId, ts);
-
-    public final com.mysema.query.sql.ForeignKey<QFacility> facilityStatusFacilityIdFk = createForeignKey(facilityId, "ID");
-
-    public final com.mysema.query.sql.ForeignKey<QCapacityType> facilityStatusCapacityTypeFk = createForeignKey(capacityType, "NAME");
-
-    public final com.mysema.query.sql.ForeignKey<QFacilityStatusEnum> facilityStatusFacilityStatusEnumFk = createForeignKey(status, "NAME");
+    public final com.mysema.query.sql.ForeignKey<QFacility> _facilityStatusFk = createInvForeignKey(name, "STATUS");
 
     public QFacilityStatus(String variable) {
         super(QFacilityStatus.class, forVariable(variable), "PUBLIC", "FACILITY_STATUS");
@@ -66,11 +54,7 @@ public class QFacilityStatus extends RelationalPathSpatial<QFacilityStatus> {
     }
 
     public void addMetadata() {
-        addMetadata(capacityType, ColumnMetadata.named("CAPACITY_TYPE").withIndex(2).ofType(Types.VARCHAR).withSize(64).notNull());
-        addMetadata(facilityId, ColumnMetadata.named("FACILITY_ID").withIndex(1).ofType(Types.BIGINT).withSize(19).notNull());
-        addMetadata(spacesAvailable, ColumnMetadata.named("SPACES_AVAILABLE").withIndex(4).ofType(Types.INTEGER).withSize(10));
-        addMetadata(status, ColumnMetadata.named("STATUS").withIndex(5).ofType(Types.VARCHAR).withSize(64));
-        addMetadata(ts, ColumnMetadata.named("TS").withIndex(3).ofType(Types.TIMESTAMP).withSize(23).withDigits(10).notNull());
+        addMetadata(name, ColumnMetadata.named("NAME").withIndex(1).ofType(Types.VARCHAR).withSize(64).notNull());
     }
 
 }

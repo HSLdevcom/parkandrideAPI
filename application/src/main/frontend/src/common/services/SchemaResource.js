@@ -29,6 +29,8 @@
 
         api.getPaymentMethods = makeEnumLoader("payment-methods");
 
+        api.getFacilityStatuses = makeEnumLoader("facility-statuses");
+
         return api;
     });
 })();

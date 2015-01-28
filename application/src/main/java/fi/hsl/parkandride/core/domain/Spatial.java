@@ -23,6 +23,10 @@ public class Spatial {
         return Wkt.newDecoder(Wkt.Dialect.POSTGIS_EWKT_1).decode(wktShape);
     }
 
+    public static String toWkt(Geometry geometry) {
+        return Wkt.newEncoder(Wkt.Dialect.POSTGIS_EWKT_1).encode(geometry);
+    }
+
     public static Polygon fromWktPolygon(String wktShape) {
         return (Polygon) Wkt.newDecoder(Wkt.Dialect.POSTGIS_EWKT_1).decode(wktShape);
     }

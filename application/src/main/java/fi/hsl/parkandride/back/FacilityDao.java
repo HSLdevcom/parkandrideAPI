@@ -56,11 +56,14 @@ public class FacilityDao implements FacilityRepository {
 
     private static final QFacilityService qService = QFacilityService.facilityService;
 
-    private static final QFacilityStatus qStatus = QFacilityStatus.facilityStatus;
+    private static final QFacilityUtilization qUtilization = QFacilityUtilization.facilityUtilization;
 
     private static final QFacilityPaymentMethod  qPaymentMethod = QFacilityPaymentMethod.facilityPaymentMethod;
 
     private static final QUnavailableCapacity qUnavailableCapacity = QUnavailableCapacity.unavailableCapacity;
+
+    private static final MultilingualStringMapping statusDescriptionMapping =
+            new MultilingualStringMapping(qFacility.statusDescriptionFi, qFacility.statusDescriptionSv, qFacility.statusDescriptionEn);
 
     private static final MultilingualStringMapping openingHoursInfoMapping =
             new MultilingualStringMapping(qFacility.openingHoursInfoFi, qFacility.openingHoursInfoSv, qFacility.openingHoursInfoEn);
@@ -164,6 +167,8 @@ public class FacilityDao implements FacilityRepository {
         facility.location = row.get(qFacility.location);
         facility.name = nameMapping.map(row);
         facility.operatorId = row.get(qFacility.operatorId);
+        facility.status = row.get(qFacility.status);
+        facility.statusDescription = statusDescriptionMapping.map(row);
 
         if (row.get(qFacility.usageParkAndRide)) {
             facility.usages.add(PARK_AND_RIDE);
@@ -313,7 +318,7 @@ public class FacilityDao implements FacilityRepository {
 
     @TransactionalRead
     @Override
-    public SearchResults<FacilityInfo> findFacilities(PageableSpatialSearch search) {
+    public SearchResults<FacilityInfo> findFacilities(PageableFacilitySearch search) {
         PostgresQuery qry = fromFacility();
         qry.limit(search.limit + 1);
         qry.offset(search.offset);
@@ -327,7 +332,7 @@ public class FacilityDao implements FacilityRepository {
 
     @TransactionalRead
     @Override
-    public FacilitySummary summarizeFacilities(SpatialSearch search) {
+    public FacilitySummary summarizeFacilities(FacilitySearch search) {
         PostgresQuery qry = fromFacility();
 
         buildWhere(search, qry);
@@ -352,14 +357,14 @@ public class FacilityDao implements FacilityRepository {
 
     @TransactionalWrite
     @Override
-    public void insertStatuses(long facilityId, List<FacilityStatus> statuses) {
-        SQLInsertClause insertBatch = queryFactory.insert(qStatus);
+    public void insertStatuses(long facilityId, List<Utilization> statuses) {
+        SQLInsertClause insertBatch = queryFactory.insert(qUtilization);
         statuses.forEach((status) -> {
-            insertBatch.set(qStatus.facilityId, facilityId);
-            insertBatch.set(qStatus.capacityType, status.capacityType);
-            insertBatch.set(qStatus.status, status.status);
-            insertBatch.set(qStatus.spacesAvailable, status.spacesAvailable);
-            insertBatch.set(qStatus.ts, status.timestamp);
+            insertBatch.set(qUtilization.facilityId, facilityId);
+            insertBatch.set(qUtilization.capacityType, status.capacityType);
+            insertBatch.set(qUtilization.status, status.status);
+            insertBatch.set(qUtilization.spacesAvailable, status.spacesAvailable);
+            insertBatch.set(qUtilization.ts, status.timestamp);
             insertBatch.addBatch();
         });
         insertBatch.execute();
@@ -367,17 +372,17 @@ public class FacilityDao implements FacilityRepository {
 
     @TransactionalRead
     @Override
-    public List<FacilityStatus> getStatuses(long facilityId) {
-        return queryFactory.from(qStatus)
-                .where(qStatus.facilityId.eq(facilityId))
-                .list(new MappingProjection<FacilityStatus>(FacilityStatus.class, qStatus.all()) {
+    public List<Utilization> getStatuses(long facilityId) {
+        return queryFactory.from(qUtilization)
+                .where(qUtilization.facilityId.eq(facilityId))
+                .list(new MappingProjection<Utilization>(Utilization.class, qUtilization.all()) {
                     @Override
-                    protected FacilityStatus map(Tuple row) {
-                        FacilityStatus status = new FacilityStatus();
-                        status.capacityType = row.get(qStatus.capacityType);
-                        status.timestamp = row.get(qStatus.ts);
-                        status.spacesAvailable = row.get(qStatus.spacesAvailable);
-                        status.status = row.get(qStatus.status);
+                    protected Utilization map(Tuple row) {
+                        Utilization status = new Utilization();
+                        status.capacityType = row.get(qUtilization.capacityType);
+                        status.timestamp = row.get(qUtilization.ts);
+                        status.spacesAvailable = row.get(qUtilization.spacesAvailable);
+                        status.status = row.get(qUtilization.status);
                         return status;
                     }
                 });
@@ -539,13 +544,17 @@ public class FacilityDao implements FacilityRepository {
         return new ValidationException(new Violation("SortBy", "sort.by", "Expected one of 'name.fi', 'name.sv' or 'name.en'"));
     }
 
-    private void buildWhere(SpatialSearch search, PostgresQuery qry) {
-        if (search.intersecting != null) {
-            qry.where(qFacility.location.intersects(search.intersecting));
+    private void buildWhere(FacilitySearch search, PostgresQuery qry) {
+        if (search.statuses != null && !search.statuses.isEmpty()) {
+            qry.where(qFacility.status.in(search.statuses));
         }
 
         if (search.ids != null && !search.ids.isEmpty()) {
             qry.where(qFacility.id.in(search.ids));
+        }
+
+        if (search.geometry != null) {
+            qry.where(qFacility.location.intersects(search.geometry));
         }
     }
 
@@ -692,6 +701,8 @@ public class FacilityDao implements FacilityRepository {
         nameMapping.populate(facility.name, store);
         store.set(qFacility.location, facility.location);
         store.set(qFacility.operatorId, facility.operatorId);
+        store.set(qFacility.status, facility.status);
+        statusDescriptionMapping.populate(facility.statusDescription, store);
 
         FacilityContacts contacts = facility.contacts != null ? facility.contacts : new FacilityContacts();
         store.set(qFacility.emergencyContactId, contacts.emergency);

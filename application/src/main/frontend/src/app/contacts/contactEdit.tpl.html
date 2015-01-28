@@ -35,7 +35,8 @@
 					<div class="form-group">
 						<label>{{ "contacts.phone.label" | translate }} (*)</label>
 						<div>
-							<input name="phone" type="input" ng-model="contact.phone" class="form-control" empty-to-null>
+							<input name="phone" type="input" ng-model="contact.phone" class="form-control" empty-to-null
+									ng-required="!contact.email" show-errors>
 						</div>
 					</div>
 				</div>
@@ -46,7 +47,8 @@
 					<div class="form-group">
 						<label>{{ "contacts.email.label" | translate }} (*)</label>
 						<div>
-							<input name="phone" type="input" ng-model="contact.email" class="form-control" empty-to-null>
+							<input name="phone" type="input" ng-model="contact.email" class="form-control" empty-to-null
+								   ng-required="!contact.phone" show-errors>
 						</div>
 					</div>
 				</div>

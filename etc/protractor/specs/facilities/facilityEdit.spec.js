@@ -109,6 +109,10 @@ describe('edit facility view', function () {
             });
         });
 
+        it('should have IN_OPERATION as default status', function() {
+            expect(editPage.getStatus()).toBe("Toiminnassa")
+        });
+
         describe('ports', function () {
             it('add port', function() {
                 editPage.zoom(5);
@@ -210,6 +214,8 @@ describe('edit facility view', function () {
         it('create and edit full', function () {
             editPage.setName(facFull.name);
             editPage.selectOperator("smooth operator");
+            editPage.selectStatus('Poikkeus');
+            editPage.setStatusDescription("status description");
             editPage.drawLocation(facFull.locationInput.offset, facFull.locationInput.w, facFull.locationInput.h);
 
             editPage.openPortAt(200, 200);
@@ -234,6 +240,8 @@ describe('edit facility view', function () {
             // Back to edit...
             viewPage.toEditView();
             expect(editPage.isDisplayed()).toBe(true);
+            expect(editPage.getStatus()).toBe("Poikkeustilanne");
+            expect(editPage.getStatusDescription()).toEqual(["status description", "status description", "status description"]);
             expect(editPage.getEmergencyContact()).toBe("hsl fi (09 47664444)");
             expect(editPage.getOperatorContact()).toBe("hsl fi (09 47664444)");
             expect(editPage.getServiceContact()).toBe("hsl fi (09 47664444)");

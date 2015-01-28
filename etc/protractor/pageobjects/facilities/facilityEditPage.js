@@ -40,6 +40,9 @@ module.exports = function(spec) {
     spec.createOperator = $('.operator .createOperator');
     spec.selectedOperator = $('.operator .ui-select-match');
 
+    spec.facilityStatus = element(by.model('editCtrl.facility.status'));
+    spec.defineMultilingualAccessors("statusDescription");
+
     spec.pricingSelectAll = $("#pricingSelectAll");
     spec.pricingAddRow = $('#pricingAddRow');
     spec.pricingPasteRows = $('#pricingPasteRows');
@@ -148,6 +151,14 @@ module.exports = function(spec) {
 
     that.getOperator = function() {
         return spec.selectedOperator.getText();
+    };
+
+    that.selectStatus = function(name) {
+        spec.select(spec.facilityStatus, name);
+    };
+
+    that.getStatus = function() {
+        return spec.facilityStatus.element('.ui-select-match').getText();
     };
 
     that.drawLocation = function (topLeft, w, h) {

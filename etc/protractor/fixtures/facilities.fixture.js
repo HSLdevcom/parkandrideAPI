@@ -190,10 +190,5 @@ module.exports = function () {
 
     self.dummies = dummies;
 
-    self.paymentInfo = {};
-    self.paymentInfo.paymentMethods = {};
-    self.paymentInfo.paymentMethods.coins = { id: 1 };
-    self.paymentInfo.paymentMethods.notes = { id: 2 };
-
     return self;
 };

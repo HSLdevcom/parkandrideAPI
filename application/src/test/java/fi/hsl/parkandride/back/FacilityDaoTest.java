@@ -5,6 +5,8 @@ import static fi.hsl.parkandride.core.domain.CapacityType.ELECTRIC_CAR;
 import static fi.hsl.parkandride.core.domain.DayType.BUSINESS_DAY;
 import static fi.hsl.parkandride.core.domain.DayType.EVE;
 import static fi.hsl.parkandride.core.domain.DayType.SUNDAY;
+import static fi.hsl.parkandride.core.domain.FacilityStatus.EXCEPTIONAL_SITUATION;
+import static fi.hsl.parkandride.core.domain.FacilityStatus.IN_OPERATION;
 import static fi.hsl.parkandride.core.domain.Service.ACCESSIBLE_TOILETS;
 import static fi.hsl.parkandride.core.domain.Service.ELEVATOR;
 import static fi.hsl.parkandride.core.domain.Service.LIGHTING;
@@ -40,6 +42,8 @@ import fi.hsl.parkandride.core.service.ValidationException;
 public class FacilityDaoTest extends AbstractDaoTest {
 
     public static final MultilingualString NAME = new MultilingualString("Facility");
+
+    public static final MultilingualString STATUS_DESCRIPTION = new MultilingualString("Status description");
 
     public static final MultilingualString OPENING_HOURS_INFO = new MultilingualString("Opening Hours");
 
@@ -131,6 +135,8 @@ public class FacilityDaoTest extends AbstractDaoTest {
         final List<Pricing> newPricing = asList(new Pricing(CAR, COMMERCIAL, 50, BUSINESS_DAY, "8", "18", "10 EUR/H"));
 
         facility.name = newName;
+        facility.status = IN_OPERATION;
+        facility.statusDescription = null;
         facility.aliases = newAliases;
         facility.ports = newPorts;
         facility.services = newServices;
@@ -139,6 +145,8 @@ public class FacilityDaoTest extends AbstractDaoTest {
         facilityDao.updateFacility(id, facility);
         facility = facilityDao.getFacility(id);
         assertThat(facility.name).isEqualTo(newName);
+        assertThat(facility.status).isEqualTo(IN_OPERATION);
+        assertThat(facility.statusDescription).isNull();
         assertThat(facility.aliases).isEqualTo(newAliases);
         assertThat(facility.ports).isEqualTo(newPorts);
         assertThat(facility.services).isEqualTo(newServices);
@@ -178,6 +186,8 @@ public class FacilityDaoTest extends AbstractDaoTest {
         assertThat(facility).isNotNull();
         assertThat(facility.location).isEqualTo(LOCATION);
         assertThat(facility.operatorId).isEqualTo(operatorId);
+        assertThat(facility.status).isEqualTo(EXCEPTIONAL_SITUATION);
+        assertThat(facility.statusDescription).isEqualTo(STATUS_DESCRIPTION);
         assertThat(facility.name).isEqualTo(NAME);
         assertThat(facility.builtCapacity).isEqualTo(BUILT_CAPACITY);
         assertThat(facility.usages).isEqualTo(ImmutableSet.of(PARK_AND_RIDE));
@@ -214,6 +224,8 @@ public class FacilityDaoTest extends AbstractDaoTest {
         facility.name = NAME;
         facility.location = LOCATION;
         facility.operatorId = operatorId;
+        facility.status = EXCEPTIONAL_SITUATION;
+        facility.statusDescription = STATUS_DESCRIPTION;
         facility.aliases = ALIASES;
         facility.ports = PORTS;
         facility.services = SERVICES;

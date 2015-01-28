@@ -5,6 +5,7 @@ module.exports = function (spec) {
 
     spec.view = $('.wdUsersView');
     spec.rows = $$('.userRow');
+    spec.createUserButton = $('.wdCreate');
 
     spec.row = function(idx) {
         return spec.rows.get(idx);
@@ -21,6 +22,8 @@ module.exports = function (spec) {
     spec.getRole = function(row) {
         return spec.row(row).$$('td').get(2).getText();
     };
+
+    that.userModal = require('./userModal')({});
 
     that.get = function () {
         browser.get('/#/users');
@@ -41,6 +44,10 @@ module.exports = function (spec) {
             }
             return protractor.promise.all(results);
         });
+    };
+
+    that.toCreateUser = function() {
+        spec.createUserButton.click();
     };
 
     return that;

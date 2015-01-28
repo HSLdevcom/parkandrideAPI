@@ -26,6 +26,21 @@ describe('users', function () {
 
     var usersPage = po.usersPage({});
 
+    describe('navigation', function () {
+        beforeEach(function () {
+            devApi.loginAs(admin.role, admin.username, admin.password);
+            usersPage.get();
+        });
+
+        it('to create user', function () {
+            usersPage.toCreateUser();
+            expect(usersPage.userModal.isDisplayed()).toBe(true);
+        });
+        
+        // TODO: edit pending, let's see it this is even needed
+    });
+
+
     describe('lists users', function () {
         beforeEach(function () {
             devApi.resetAll({

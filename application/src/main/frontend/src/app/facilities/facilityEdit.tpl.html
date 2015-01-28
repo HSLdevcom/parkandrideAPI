@@ -188,7 +188,7 @@
 			{{'facilities.action.addPricingRow' | translate }}
 		</a>
 		<a id="pricingPasteRows" class="btn btn-xs btn-responsive" role="button" ng-click="editCtrl.pastePricingRows()"
-		   ng-disabled="pricingClipboard.length == 0" ng-show="editCtrl.hasPricingRows()">
+		   ng-disabled="pricingClipboard.length == 0 || selections.count > 0" ng-show="editCtrl.hasPricingRows()">
 			Liitä
 		</a>
 		<a id="pricingCopyRows" class="btn btn-xs btn-responsive" role="button" ng-click="editCtrl.copyPricingRows()"
@@ -215,7 +215,7 @@
 <div class="row" ng-hide="editCtrl.facility.unavailableCapacities.length == 0">
 	<div class="column2 first-column">
 		<div class="panel panel-default">
-			<table class="table table-bordered table-striped table-condensed">
+			<table id="unavailable-capacities" class="table table-bordered table-striped table-condensed">
 				<thead>
 				<tr>
 					<th translate="facilities.unavailableCapacities.capacityType.label"></th>

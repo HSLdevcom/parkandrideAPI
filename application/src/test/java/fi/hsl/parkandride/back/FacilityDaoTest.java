@@ -83,6 +83,10 @@ public class FacilityDaoTest extends AbstractDaoTest {
             ELECTRIC_CAR, 2
     );
 
+    public static final List<UnavailableCapacity> UNAVAILABLE_CAPACITIES = Arrays.asList(
+            new UnavailableCapacity(CAR, PARK_AND_RIDE, 1)
+    );
+
     @Inject
     ContactRepository contactDao;
 
@@ -139,6 +143,9 @@ public class FacilityDaoTest extends AbstractDaoTest {
         assertThat(facility.ports).isEqualTo(newPorts);
         assertThat(facility.services).isEqualTo(newServices);
         assertThat(facility.pricing).isEqualTo(newPricing);
+        assertThat(facility.unavailableCapacities).isEqualTo(asList(
+                new UnavailableCapacity(CAR, COMMERCIAL, 0)
+        ));
 
         // Remove aliases, capacities and ports
         facility.aliases = new HashSet<>();
@@ -182,6 +189,7 @@ public class FacilityDaoTest extends AbstractDaoTest {
         assertThat(facility.ports).isEqualTo(PORTS);
         assertThat(facility.services).isEqualTo(SERVICES);
         assertThat(facility.pricing).isEqualTo(asList(PRICING1, PRICING2));
+        assertThat(facility.unavailableCapacities).isEqualTo(UNAVAILABLE_CAPACITIES);
         assertThat(facility.openingHours.byDayType).isEqualTo(ImmutableMap.of(
                 SUNDAY, new TimeDuration("8", "18"),
                 EVE, new TimeDuration("8", "18")
@@ -215,6 +223,7 @@ public class FacilityDaoTest extends AbstractDaoTest {
         // pricing in wrong order should be sorted on load
         facility.pricing.add(PRICING2);
         facility.pricing.add(PRICING1);
+        facility.unavailableCapacities = UNAVAILABLE_CAPACITIES;
 
         facility.openingHours.info = OPENING_HOURS_INFO;
         facility.openingHours.url = OPENING_HOURS_URL;

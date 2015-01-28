@@ -81,12 +81,12 @@ public class FacilityService {
     }
 
     @TransactionalRead
-    public SearchResults search(PageableSpatialSearch search) {
+    public SearchResults search(PageableFacilitySearch search) {
         return repository.findFacilities(search);
     }
 
     @TransactionalRead
-    public FacilitySummary summarize(SpatialSearch search) {
+    public FacilitySummary summarize(FacilitySearch search) {
         return repository.summarizeFacilities(search);
     }
 

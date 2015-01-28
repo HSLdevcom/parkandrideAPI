@@ -164,6 +164,7 @@ public class FacilityDao implements FacilityRepository {
         facility.location = row.get(qFacility.location);
         facility.name = nameMapping.map(row);
         facility.operatorId = row.get(qFacility.operatorId);
+        facility.status = row.get(qFacility.status);
 
         if (row.get(qFacility.usageParkAndRide)) {
             facility.usages.add(PARK_AND_RIDE);
@@ -313,7 +314,7 @@ public class FacilityDao implements FacilityRepository {
 
     @TransactionalRead
     @Override
-    public SearchResults<FacilityInfo> findFacilities(PageableSpatialSearch search) {
+    public SearchResults<FacilityInfo> findFacilities(PageableFacilitySearch search) {
         PostgresQuery qry = fromFacility();
         qry.limit(search.limit + 1);
         qry.offset(search.offset);
@@ -327,7 +328,7 @@ public class FacilityDao implements FacilityRepository {
 
     @TransactionalRead
     @Override
-    public FacilitySummary summarizeFacilities(SpatialSearch search) {
+    public FacilitySummary summarizeFacilities(FacilitySearch search) {
         PostgresQuery qry = fromFacility();
 
         buildWhere(search, qry);
@@ -539,13 +540,17 @@ public class FacilityDao implements FacilityRepository {
         return new ValidationException(new Violation("SortBy", "sort.by", "Expected one of 'name.fi', 'name.sv' or 'name.en'"));
     }
 
-    private void buildWhere(SpatialSearch search, PostgresQuery qry) {
-        if (search.intersecting != null) {
-            qry.where(qFacility.location.intersects(search.intersecting));
+    private void buildWhere(FacilitySearch search, PostgresQuery qry) {
+        if (search.statuses != null && !search.statuses.isEmpty()) {
+            qry.where(qFacility.status.in(search.statuses));
         }
 
         if (search.ids != null && !search.ids.isEmpty()) {
             qry.where(qFacility.id.in(search.ids));
+        }
+
+        if (search.geometry != null) {
+            qry.where(qFacility.location.intersects(search.geometry));
         }
     }
 
@@ -692,6 +697,7 @@ public class FacilityDao implements FacilityRepository {
         nameMapping.populate(facility.name, store);
         store.set(qFacility.location, facility.location);
         store.set(qFacility.operatorId, facility.operatorId);
+        store.set(qFacility.status, facility.status);
 
         FacilityContacts contacts = facility.contacts != null ? facility.contacts : new FacilityContacts();
         store.set(qFacility.emergencyContactId, contacts.emergency);

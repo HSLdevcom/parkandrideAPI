@@ -1,3 +1,14 @@
+create table facility_status (
+  name varchar(64) not null,
+  primary key (name)
+);
+
+insert into facility_status values ('IN_OPERATION');
+insert into facility_status values ('INACTIVE');
+insert into facility_status values ('TEMPORARILY_CLOSED');
+insert into facility_status values ('EXCEPTIONAL_SITUATION');
+
+
 create table capacity_type (
   name varchar(64) not null,
   primary key (name)

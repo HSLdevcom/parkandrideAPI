@@ -126,9 +126,9 @@ public class JdbcConfiguration {
 
         conf.register("CONTACT", "PHONE", new PhoneType());
 
-        conf.register("APP_USER", "ROLE", new EnumByNameType<Role>(Role.class));
+        conf.register("APP_USER", "ROLE", new EnumByNameType<>(Role.class));
 
-        conf.register("UTILIZATION_STATUS", "NAME", new EnumByNameType<>(UtilizationStatus.class));
+        conf.register("FACILITY", "STATUS", new EnumByNameType<>(FacilityStatus.class));
 
         conf.register("FACILITY_UTILIZATION", "CAPACITY_TYPE", new EnumByNameType<>(CapacityType.class));
         conf.register("FACILITY_UTILIZATION", "STATUS", new EnumByNameType<>(UtilizationStatus.class));

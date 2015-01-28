@@ -121,7 +121,7 @@ public class FacilityDaoTest extends AbstractDaoTest {
         assertThat(facility.contacts).isEqualTo(dummyContacts);
 
         // Search
-        assertDefault(facilityDao.findFacilities(new PageableSpatialSearch()).get(0));
+        assertDefault(facilityDao.findFacilities(new PageableFacilitySearch()).get(0));
 
         // Update
         final MultilingualString newName = new MultilingualString("changed name");
@@ -199,8 +199,8 @@ public class FacilityDaoTest extends AbstractDaoTest {
     }
 
     private List<FacilityInfo> findByGeometry(Polygon geometry) {
-        PageableSpatialSearch search = new PageableSpatialSearch();
-        search.intersecting = geometry;
+        PageableFacilitySearch search = new PageableFacilitySearch();
+        search.geometry = geometry;
         return facilityDao.findFacilities(search).results;
     }
 
@@ -248,7 +248,7 @@ public class FacilityDaoTest extends AbstractDaoTest {
         f2.id = facilityDao.insertFacility(f2);
 
         // Default sort
-        PageableSpatialSearch search = new PageableSpatialSearch();
+        PageableFacilitySearch search = new PageableFacilitySearch();
         assertResultOrder(facilityDao.findFacilities(search), f1.id, f2.id);
 
         // name.fi desc
@@ -267,7 +267,7 @@ public class FacilityDaoTest extends AbstractDaoTest {
 
     @Test(expected = ValidationException.class)
     public void illegal_sort_by() {
-        PageableSpatialSearch search = new PageableSpatialSearch();
+        PageableFacilitySearch search = new PageableFacilitySearch();
         search.sort = new Sort("foobar");
         facilityDao.findFacilities(search);
     }

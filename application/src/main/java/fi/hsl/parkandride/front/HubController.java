@@ -1,11 +1,11 @@
 package fi.hsl.parkandride.front;
 
 import static fi.hsl.parkandride.front.UrlSchema.API_KEY;
-import static fi.hsl.parkandride.front.geojson.FeatureCollection.HUB_TO_FEATURE;
 import static fi.hsl.parkandride.front.UrlSchema.GEOJSON;
 import static fi.hsl.parkandride.front.UrlSchema.HUB;
 import static fi.hsl.parkandride.front.UrlSchema.HUBS;
 import static fi.hsl.parkandride.front.UrlSchema.HUB_ID;
+import static fi.hsl.parkandride.front.geojson.FeatureCollection.HUB_TO_FEATURE;
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
@@ -27,6 +27,7 @@ import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.Authorization;
 
+import fi.hsl.parkandride.core.domain.HubSearch;
 import fi.hsl.parkandride.core.domain.Hub;
 import fi.hsl.parkandride.core.domain.SearchResults;
 import fi.hsl.parkandride.core.domain.User;
@@ -73,14 +74,14 @@ public class HubController {
     }
 
     @RequestMapping(method = GET, value = HUBS, produces = APPLICATION_JSON_VALUE)
-    public ResponseEntity<SearchResults<Hub>> findHubs(SpatialSearchDto search) {
-        SearchResults<Hub> results = hubService.search(search.toSpatialSearch());
+    public ResponseEntity<SearchResults<Hub>> findHubs(HubSearch search) {
+        SearchResults<Hub> results = hubService.search(search);
         return new ResponseEntity<>(results, OK);
     }
 
     @RequestMapping(method = GET, value = HUBS, produces = GEOJSON)
-    public ResponseEntity<FeatureCollection> findHubsAsFeatureCollection(SpatialSearchDto search) {
-        SearchResults<Hub> results = hubService.search(search.toSpatialSearch());
+    public ResponseEntity<FeatureCollection> findHubsAsFeatureCollection(HubSearch search) {
+        SearchResults<Hub> results = hubService.search(search);
         return new ResponseEntity<>(FeatureCollection.ofHubs(results), OK);
     }
 

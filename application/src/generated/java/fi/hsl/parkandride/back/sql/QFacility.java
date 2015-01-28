@@ -81,6 +81,8 @@ public class QFacility extends RelationalPathSpatial<QFacility> {
 
     public final NumberPath<Long> serviceContactId = createNumber("serviceContactId", Long.class);
 
+    public final EnumPath<fi.hsl.parkandride.core.domain.FacilityStatus> status = createEnum("status", fi.hsl.parkandride.core.domain.FacilityStatus.class);
+
     public final BooleanPath usageCommercial = createBoolean("usageCommercial");
 
     public final BooleanPath usageParkAndRide = createBoolean("usageParkAndRide");
@@ -94,6 +96,8 @@ public class QFacility extends RelationalPathSpatial<QFacility> {
     public final com.mysema.query.sql.ForeignKey<QContact> facilityServiceContactIdFk = createForeignKey(serviceContactId, "ID");
 
     public final com.mysema.query.sql.ForeignKey<QContact> facilityEmergencyContactIdFk = createForeignKey(emergencyContactId, "ID");
+
+    public final com.mysema.query.sql.ForeignKey<QFacilityStatus> facilityStatusFk = createForeignKey(status, "NAME");
 
     public final com.mysema.query.sql.ForeignKey<QFacilityAlias> _facilityAliasFk = createInvForeignKey(id, "FACILITY_ID");
 
@@ -130,35 +134,36 @@ public class QFacility extends RelationalPathSpatial<QFacility> {
     }
 
     public void addMetadata() {
-        addMetadata(capacityBicycle, ColumnMetadata.named("CAPACITY_BICYCLE").withIndex(27).ofType(Types.INTEGER).withSize(10));
-        addMetadata(capacityCar, ColumnMetadata.named("CAPACITY_CAR").withIndex(23).ofType(Types.INTEGER).withSize(10));
-        addMetadata(capacityDisabled, ColumnMetadata.named("CAPACITY_DISABLED").withIndex(24).ofType(Types.INTEGER).withSize(10));
-        addMetadata(capacityElectricCar, ColumnMetadata.named("CAPACITY_ELECTRIC_CAR").withIndex(25).ofType(Types.INTEGER).withSize(10));
-        addMetadata(capacityMotorcycle, ColumnMetadata.named("CAPACITY_MOTORCYCLE").withIndex(26).ofType(Types.INTEGER).withSize(10));
-        addMetadata(emergencyContactId, ColumnMetadata.named("EMERGENCY_CONTACT_ID").withIndex(7).ofType(Types.BIGINT).withSize(19).notNull());
+        addMetadata(capacityBicycle, ColumnMetadata.named("CAPACITY_BICYCLE").withIndex(28).ofType(Types.INTEGER).withSize(10));
+        addMetadata(capacityCar, ColumnMetadata.named("CAPACITY_CAR").withIndex(24).ofType(Types.INTEGER).withSize(10));
+        addMetadata(capacityDisabled, ColumnMetadata.named("CAPACITY_DISABLED").withIndex(25).ofType(Types.INTEGER).withSize(10));
+        addMetadata(capacityElectricCar, ColumnMetadata.named("CAPACITY_ELECTRIC_CAR").withIndex(26).ofType(Types.INTEGER).withSize(10));
+        addMetadata(capacityMotorcycle, ColumnMetadata.named("CAPACITY_MOTORCYCLE").withIndex(27).ofType(Types.INTEGER).withSize(10));
+        addMetadata(emergencyContactId, ColumnMetadata.named("EMERGENCY_CONTACT_ID").withIndex(8).ofType(Types.BIGINT).withSize(19).notNull());
         addMetadata(id, ColumnMetadata.named("ID").withIndex(1).ofType(Types.BIGINT).withSize(19).notNull());
         addMetadata(location, ColumnMetadata.named("LOCATION").withIndex(5).ofType(Types.OTHER).withSize(2147483647).notNull());
         addMetadata(nameEn, ColumnMetadata.named("NAME_EN").withIndex(4).ofType(Types.VARCHAR).withSize(255).notNull());
         addMetadata(nameFi, ColumnMetadata.named("NAME_FI").withIndex(2).ofType(Types.VARCHAR).withSize(255).notNull());
         addMetadata(nameSv, ColumnMetadata.named("NAME_SV").withIndex(3).ofType(Types.VARCHAR).withSize(255).notNull());
-        addMetadata(openingHoursInfoEn, ColumnMetadata.named("OPENING_HOURS_INFO_EN").withIndex(19).ofType(Types.VARCHAR).withSize(255));
-        addMetadata(openingHoursInfoFi, ColumnMetadata.named("OPENING_HOURS_INFO_FI").withIndex(17).ofType(Types.VARCHAR).withSize(255));
-        addMetadata(openingHoursInfoSv, ColumnMetadata.named("OPENING_HOURS_INFO_SV").withIndex(18).ofType(Types.VARCHAR).withSize(255));
-        addMetadata(openingHoursUrlEn, ColumnMetadata.named("OPENING_HOURS_URL_EN").withIndex(22).ofType(Types.VARCHAR).withSize(255));
-        addMetadata(openingHoursUrlFi, ColumnMetadata.named("OPENING_HOURS_URL_FI").withIndex(20).ofType(Types.VARCHAR).withSize(255));
-        addMetadata(openingHoursUrlSv, ColumnMetadata.named("OPENING_HOURS_URL_SV").withIndex(21).ofType(Types.VARCHAR).withSize(255));
-        addMetadata(operatorContactId, ColumnMetadata.named("OPERATOR_CONTACT_ID").withIndex(8).ofType(Types.BIGINT).withSize(19).notNull());
+        addMetadata(openingHoursInfoEn, ColumnMetadata.named("OPENING_HOURS_INFO_EN").withIndex(20).ofType(Types.VARCHAR).withSize(255));
+        addMetadata(openingHoursInfoFi, ColumnMetadata.named("OPENING_HOURS_INFO_FI").withIndex(18).ofType(Types.VARCHAR).withSize(255));
+        addMetadata(openingHoursInfoSv, ColumnMetadata.named("OPENING_HOURS_INFO_SV").withIndex(19).ofType(Types.VARCHAR).withSize(255));
+        addMetadata(openingHoursUrlEn, ColumnMetadata.named("OPENING_HOURS_URL_EN").withIndex(23).ofType(Types.VARCHAR).withSize(255));
+        addMetadata(openingHoursUrlFi, ColumnMetadata.named("OPENING_HOURS_URL_FI").withIndex(21).ofType(Types.VARCHAR).withSize(255));
+        addMetadata(openingHoursUrlSv, ColumnMetadata.named("OPENING_HOURS_URL_SV").withIndex(22).ofType(Types.VARCHAR).withSize(255));
+        addMetadata(operatorContactId, ColumnMetadata.named("OPERATOR_CONTACT_ID").withIndex(9).ofType(Types.BIGINT).withSize(19).notNull());
         addMetadata(operatorId, ColumnMetadata.named("OPERATOR_ID").withIndex(6).ofType(Types.BIGINT).withSize(19).notNull());
-        addMetadata(parkAndRideAuthRequired, ColumnMetadata.named("PARK_AND_RIDE_AUTH_REQUIRED").withIndex(10).ofType(Types.BOOLEAN).withSize(1).notNull());
-        addMetadata(paymentInfoDetailEn, ColumnMetadata.named("PAYMENT_INFO_DETAIL_EN").withIndex(13).ofType(Types.VARCHAR).withSize(255));
-        addMetadata(paymentInfoDetailFi, ColumnMetadata.named("PAYMENT_INFO_DETAIL_FI").withIndex(11).ofType(Types.VARCHAR).withSize(255));
-        addMetadata(paymentInfoDetailSv, ColumnMetadata.named("PAYMENT_INFO_DETAIL_SV").withIndex(12).ofType(Types.VARCHAR).withSize(255));
-        addMetadata(paymentInfoUrlEn, ColumnMetadata.named("PAYMENT_INFO_URL_EN").withIndex(16).ofType(Types.VARCHAR).withSize(255));
-        addMetadata(paymentInfoUrlFi, ColumnMetadata.named("PAYMENT_INFO_URL_FI").withIndex(14).ofType(Types.VARCHAR).withSize(255));
-        addMetadata(paymentInfoUrlSv, ColumnMetadata.named("PAYMENT_INFO_URL_SV").withIndex(15).ofType(Types.VARCHAR).withSize(255));
-        addMetadata(serviceContactId, ColumnMetadata.named("SERVICE_CONTACT_ID").withIndex(9).ofType(Types.BIGINT).withSize(19));
-        addMetadata(usageCommercial, ColumnMetadata.named("USAGE_COMMERCIAL").withIndex(29).ofType(Types.BOOLEAN).withSize(1).notNull());
-        addMetadata(usageParkAndRide, ColumnMetadata.named("USAGE_PARK_AND_RIDE").withIndex(28).ofType(Types.BOOLEAN).withSize(1).notNull());
+        addMetadata(parkAndRideAuthRequired, ColumnMetadata.named("PARK_AND_RIDE_AUTH_REQUIRED").withIndex(11).ofType(Types.BOOLEAN).withSize(1).notNull());
+        addMetadata(paymentInfoDetailEn, ColumnMetadata.named("PAYMENT_INFO_DETAIL_EN").withIndex(14).ofType(Types.VARCHAR).withSize(255));
+        addMetadata(paymentInfoDetailFi, ColumnMetadata.named("PAYMENT_INFO_DETAIL_FI").withIndex(12).ofType(Types.VARCHAR).withSize(255));
+        addMetadata(paymentInfoDetailSv, ColumnMetadata.named("PAYMENT_INFO_DETAIL_SV").withIndex(13).ofType(Types.VARCHAR).withSize(255));
+        addMetadata(paymentInfoUrlEn, ColumnMetadata.named("PAYMENT_INFO_URL_EN").withIndex(17).ofType(Types.VARCHAR).withSize(255));
+        addMetadata(paymentInfoUrlFi, ColumnMetadata.named("PAYMENT_INFO_URL_FI").withIndex(15).ofType(Types.VARCHAR).withSize(255));
+        addMetadata(paymentInfoUrlSv, ColumnMetadata.named("PAYMENT_INFO_URL_SV").withIndex(16).ofType(Types.VARCHAR).withSize(255));
+        addMetadata(serviceContactId, ColumnMetadata.named("SERVICE_CONTACT_ID").withIndex(10).ofType(Types.BIGINT).withSize(19));
+        addMetadata(status, ColumnMetadata.named("STATUS").withIndex(7).ofType(Types.VARCHAR).withSize(64).notNull());
+        addMetadata(usageCommercial, ColumnMetadata.named("USAGE_COMMERCIAL").withIndex(30).ofType(Types.BOOLEAN).withSize(1).notNull());
+        addMetadata(usageParkAndRide, ColumnMetadata.named("USAGE_PARK_AND_RIDE").withIndex(29).ofType(Types.BOOLEAN).withSize(1).notNull());
     }
 
 }

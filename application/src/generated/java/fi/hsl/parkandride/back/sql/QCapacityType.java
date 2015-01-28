@@ -29,7 +29,7 @@ public class QCapacityType extends RelationalPathSpatial<QCapacityType> {
 
     public final EnumPath<fi.hsl.parkandride.core.domain.CapacityType> name = createEnum("name", fi.hsl.parkandride.core.domain.CapacityType.class);
 
-    public final com.mysema.query.sql.PrimaryKey<QCapacityType> constraint5 = createPrimaryKey(name);
+    public final com.mysema.query.sql.PrimaryKey<QCapacityType> constraint54 = createPrimaryKey(name);
 
     public final com.mysema.query.sql.ForeignKey<QUnavailableCapacity> _unavailableCapacityCapacityTypeFk = createInvForeignKey(name, "CAPACITY_TYPE");
 

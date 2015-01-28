@@ -27,7 +27,7 @@ public class QUtilizationStatus extends RelationalPathSpatial<QUtilizationStatus
 
     public static final QUtilizationStatus utilizationStatus = new QUtilizationStatus("UTILIZATION_STATUS");
 
-    public final EnumPath<fi.hsl.parkandride.core.domain.UtilizationStatus> name = createEnum("name", fi.hsl.parkandride.core.domain.UtilizationStatus.class);
+    public final StringPath name = createString("name");
 
     public final com.mysema.query.sql.PrimaryKey<QUtilizationStatus> constraint11 = createPrimaryKey(name);
 

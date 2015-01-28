@@ -119,10 +119,10 @@ public class HubDao implements HubRepository {
 
     @Override
     @TransactionalRead
-    public SearchResults<Hub> findHubs(SpatialSearch search) {
+    public SearchResults<Hub> findHubs(HubSearch search) {
         BooleanBuilder where = new BooleanBuilder();
-        if (search.intersecting != null) {
-            where.and(qHub.location.intersects(search.intersecting));
+        if (search.geometry != null) {
+            where.and(qHub.location.intersects(search.geometry));
         }
         return SearchResults.of(findAll(where, search.sort));
     }

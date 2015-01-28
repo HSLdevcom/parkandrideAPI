@@ -2,6 +2,7 @@ package fi.hsl.parkandride.core.domain;
 
 import static com.google.common.collect.Maps.newHashMap;
 import static com.google.common.collect.Sets.newTreeSet;
+import static fi.hsl.parkandride.core.domain.FacilityStatus.IN_OPERATION;
 
 import java.util.Map;
 import java.util.Set;
@@ -32,6 +33,10 @@ public class FacilityInfo implements OperatorEntity {
     @ApiModelProperty(required = true)
     @NotNull
     public Long operatorId;
+
+    @ApiModelProperty(required = true)
+    @NotNull
+    public FacilityStatus status = IN_OPERATION;
 
     @NotNullElement
     @NotNull

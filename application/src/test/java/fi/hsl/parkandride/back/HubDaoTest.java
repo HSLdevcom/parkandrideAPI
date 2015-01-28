@@ -101,7 +101,7 @@ public class HubDaoTest extends AbstractDaoTest {
         h2.id = hubRepository.insertHub(h2);
 
         // Default sort
-        PageableSpatialSearch search = new PageableSpatialSearch();
+        HubSearch search = new HubSearch();
         assertResultOrder(hubRepository.findHubs(search), h1.id, h2.id);
 
         // name.fi desc
@@ -165,8 +165,8 @@ public class HubDaoTest extends AbstractDaoTest {
     }
 
     private SearchResults<Hub> findByGeometry(Geometry geometry) {
-        SpatialSearch search = new SpatialSearch();
-        search.intersecting = geometry;
+        HubSearch search = new HubSearch();
+        search.geometry = geometry;
         return hubRepository.findHubs(search);
     }
 

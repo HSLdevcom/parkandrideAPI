@@ -76,6 +76,20 @@
     "VR_SINGLE_TICKET": { "label": "VR kertalipppu" },
     "OTHER": { "label": "Muu" }
   },
+  "facilityStatuses": {
+    "IN_OPERATION": {
+      "label": "Toiminnassa"
+    },
+    "INACTIVE": {
+      "label": "Pois käytöstä"
+    },
+    "TEMPORARILY_CLOSED": {
+      "label": "Tilapäisesti pois käytöstä"
+    },
+    "EXCEPTIONAL_SITUATION": {
+      "label": "Poikkeustilanne"
+    }
+  },
   "operators": {
     "title": "Operaattorit",
     "label": "Operaattori",
@@ -212,6 +226,10 @@
       "en": {
         "label": "Nimi (en)"
       }
+    },
+    "status": {
+      "label": "Status",
+      "placeholder": "Valitse status..."
     },
     "aliases": {
       "label": "Aliakset",

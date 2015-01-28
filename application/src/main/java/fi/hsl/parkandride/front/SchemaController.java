@@ -2,6 +2,7 @@ package fi.hsl.parkandride.front;
 
 import static fi.hsl.parkandride.front.UrlSchema.CAPACITY_TYPES;
 import static fi.hsl.parkandride.front.UrlSchema.DAY_TYPES;
+import static fi.hsl.parkandride.front.UrlSchema.FACILITY_STATUSES;
 import static fi.hsl.parkandride.front.UrlSchema.PAYMENT_METHODS;
 import static fi.hsl.parkandride.front.UrlSchema.SERVICES;
 import static fi.hsl.parkandride.front.UrlSchema.USAGES;
@@ -43,6 +44,11 @@ public class SchemaController {
     @RequestMapping(method = GET, value = PAYMENT_METHODS)
     public ResponseEntity<List<PaymentMethod>> paymentMethods() {
         return new ResponseEntity<>(asList(PaymentMethod.values()), OK);
+    }
+
+    @RequestMapping(method = GET, value = FACILITY_STATUSES)
+    public ResponseEntity<List<FacilityStatus>> facilityStatuses() {
+        return new ResponseEntity<>(asList(FacilityStatus.values()), OK);
     }
 
 }

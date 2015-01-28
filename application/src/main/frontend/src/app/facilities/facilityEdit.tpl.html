@@ -40,6 +40,22 @@
 </div>
 
 <div class="row">
+	<label>{{"facilities.status.label" | translate}} *</label>
+</div>
+<div class="row">
+	<div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 column first-column">
+		<ui-select class="statusInput" ng-model="editCtrl.facility.status" theme="bootstrap" reset-search-input="true">
+			<ui-select-match placeholder="{{'facilities.status.placeholder' | translate }}">
+				{{$select.selected.label}}
+			</ui-select-match>
+			<ui-select-choices repeat="status.id as status in editCtrl.facilityStatuses | filter: {label: $select.search}">
+				<div ng-bind-html="status.label | highlight: $select.search"></div>
+			</ui-select-choices>
+		</ui-select>
+	</div>
+</div>
+
+<div class="row">
 	<h3>{{"facilities.location" | translate}} *</h3>
 	<div class="btn-group">
 		<label id="editModeLocation" class="btn btn-xs" ng-model="editCtrl.editMode" btn-radio="'location'">Määritä sijainti</label>

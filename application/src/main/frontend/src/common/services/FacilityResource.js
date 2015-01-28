@@ -59,6 +59,7 @@
 
         api.newFacility = function() {
             return {
+                status: "IN_OPERATION",
                 aliases: [],
                 builtCapacity: {},
                 pricing: [

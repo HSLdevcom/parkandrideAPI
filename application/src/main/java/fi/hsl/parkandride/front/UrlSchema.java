@@ -60,6 +60,8 @@ public class UrlSchema {
 
     public static final String PAYMENT_METHODS = API + "/payment-methods";
 
+    public static final String FACILITY_STATUSES = API + "/facility-statuses";
+
     /**
      * TESTING
      */

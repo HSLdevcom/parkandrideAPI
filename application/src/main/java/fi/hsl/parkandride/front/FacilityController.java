@@ -2,7 +2,6 @@ package fi.hsl.parkandride.front;
 
 import static fi.hsl.parkandride.front.geojson.FeatureCollection.FACILITY_TO_FEATURE;
 import static fi.hsl.parkandride.front.UrlSchema.*;
-import static java.util.Arrays.asList;
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
@@ -11,7 +10,6 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 import static org.springframework.web.bind.annotation.RequestMethod.PUT;
 
 import java.util.List;
-import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -92,14 +90,14 @@ public class FacilityController {
     @ApiOperation(value = "Update facility status", authorizations = @Authorization(API_KEY))
     @RequestMapping(method = PUT, value = FACILITY_STATUS, produces = APPLICATION_JSON_VALUE)
     public void createStatuses(@PathVariable(FACILITY_ID) long facilityId,
-                               @RequestBody List<FacilityStatus> statuses,
+                               @RequestBody List<Utilization> statuses,
                                User currentUser) {
         facilityService.createStatuses(facilityId, statuses, currentUser);
     }
 
     @RequestMapping(method = GET, value = FACILITY_STATUS, produces = APPLICATION_JSON_VALUE)
-    public ResponseEntity<Results<FacilityStatus>> getStatuses(@PathVariable(FACILITY_ID) long facilityId) {
-        List<FacilityStatus> statuses = facilityService.getStatuses(facilityId);
+    public ResponseEntity<Results<Utilization>> getStatuses(@PathVariable(FACILITY_ID) long facilityId) {
+        List<Utilization> statuses = facilityService.getStatuses(facilityId);
         return new ResponseEntity<>(Results.of(statuses), OK);
     }
 }

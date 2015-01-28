@@ -56,7 +56,7 @@ public class FacilityDao implements FacilityRepository {
 
     private static final QFacilityService qService = QFacilityService.facilityService;
 
-    private static final QFacilityStatus qStatus = QFacilityStatus.facilityStatus;
+    private static final QFacilityUtilization qUtilization = QFacilityUtilization.facilityUtilization;
 
     private static final QFacilityPaymentMethod  qPaymentMethod = QFacilityPaymentMethod.facilityPaymentMethod;
 
@@ -352,14 +352,14 @@ public class FacilityDao implements FacilityRepository {
 
     @TransactionalWrite
     @Override
-    public void insertStatuses(long facilityId, List<FacilityStatus> statuses) {
-        SQLInsertClause insertBatch = queryFactory.insert(qStatus);
+    public void insertStatuses(long facilityId, List<Utilization> statuses) {
+        SQLInsertClause insertBatch = queryFactory.insert(qUtilization);
         statuses.forEach((status) -> {
-            insertBatch.set(qStatus.facilityId, facilityId);
-            insertBatch.set(qStatus.capacityType, status.capacityType);
-            insertBatch.set(qStatus.status, status.status);
-            insertBatch.set(qStatus.spacesAvailable, status.spacesAvailable);
-            insertBatch.set(qStatus.ts, status.timestamp);
+            insertBatch.set(qUtilization.facilityId, facilityId);
+            insertBatch.set(qUtilization.capacityType, status.capacityType);
+            insertBatch.set(qUtilization.status, status.status);
+            insertBatch.set(qUtilization.spacesAvailable, status.spacesAvailable);
+            insertBatch.set(qUtilization.ts, status.timestamp);
             insertBatch.addBatch();
         });
         insertBatch.execute();
@@ -367,17 +367,17 @@ public class FacilityDao implements FacilityRepository {
 
     @TransactionalRead
     @Override
-    public List<FacilityStatus> getStatuses(long facilityId) {
-        return queryFactory.from(qStatus)
-                .where(qStatus.facilityId.eq(facilityId))
-                .list(new MappingProjection<FacilityStatus>(FacilityStatus.class, qStatus.all()) {
+    public List<Utilization> getStatuses(long facilityId) {
+        return queryFactory.from(qUtilization)
+                .where(qUtilization.facilityId.eq(facilityId))
+                .list(new MappingProjection<Utilization>(Utilization.class, qUtilization.all()) {
                     @Override
-                    protected FacilityStatus map(Tuple row) {
-                        FacilityStatus status = new FacilityStatus();
-                        status.capacityType = row.get(qStatus.capacityType);
-                        status.timestamp = row.get(qStatus.ts);
-                        status.spacesAvailable = row.get(qStatus.spacesAvailable);
-                        status.status = row.get(qStatus.status);
+                    protected Utilization map(Tuple row) {
+                        Utilization status = new Utilization();
+                        status.capacityType = row.get(qUtilization.capacityType);
+                        status.timestamp = row.get(qUtilization.ts);
+                        status.spacesAvailable = row.get(qUtilization.spacesAvailable);
+                        status.status = row.get(qUtilization.status);
                         return status;
                     }
                 });

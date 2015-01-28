@@ -18,14 +18,14 @@ import com.mysema.query.spatial.path.*;
 
 
 /**
- * QFacilityStatus is a Querydsl query type for QFacilityStatus
+ * QFacilityUtilization is a Querydsl query type for QFacilityUtilization
  */
 @Generated("com.mysema.query.sql.codegen.MetaDataSerializer")
-public class QFacilityStatus extends RelationalPathSpatial<QFacilityStatus> {
+public class QFacilityUtilization extends RelationalPathSpatial<QFacilityUtilization> {
 
-    private static final long serialVersionUID = -847823104;
+    private static final long serialVersionUID = -1445988396;
 
-    public static final QFacilityStatus facilityStatus = new QFacilityStatus("FACILITY_STATUS");
+    public static final QFacilityUtilization facilityUtilization = new QFacilityUtilization("FACILITY_UTILIZATION");
 
     public final EnumPath<fi.hsl.parkandride.core.domain.CapacityType> capacityType = createEnum("capacityType", fi.hsl.parkandride.core.domain.CapacityType.class);
 
@@ -33,35 +33,35 @@ public class QFacilityStatus extends RelationalPathSpatial<QFacilityStatus> {
 
     public final NumberPath<Integer> spacesAvailable = createNumber("spacesAvailable", Integer.class);
 
-    public final EnumPath<fi.hsl.parkandride.core.domain.FacilityStatusEnum> status = createEnum("status", fi.hsl.parkandride.core.domain.FacilityStatusEnum.class);
+    public final EnumPath<fi.hsl.parkandride.core.domain.UtilizationStatus> status = createEnum("status", fi.hsl.parkandride.core.domain.UtilizationStatus.class);
 
     public final DateTimePath<org.joda.time.DateTime> ts = createDateTime("ts", org.joda.time.DateTime.class);
 
-    public final com.mysema.query.sql.PrimaryKey<QFacilityStatus> constraint5d = createPrimaryKey(capacityType, facilityId, ts);
+    public final com.mysema.query.sql.PrimaryKey<QFacilityUtilization> constraintE = createPrimaryKey(capacityType, facilityId, ts);
 
-    public final com.mysema.query.sql.ForeignKey<QFacility> facilityStatusFacilityIdFk = createForeignKey(facilityId, "ID");
+    public final com.mysema.query.sql.ForeignKey<QFacility> facilityUtilizationFacilityIdFk = createForeignKey(facilityId, "ID");
 
-    public final com.mysema.query.sql.ForeignKey<QCapacityType> facilityStatusCapacityTypeFk = createForeignKey(capacityType, "NAME");
+    public final com.mysema.query.sql.ForeignKey<QUtilizationStatus> facilityUtilizationStatusFk = createForeignKey(status, "NAME");
 
-    public final com.mysema.query.sql.ForeignKey<QFacilityStatusEnum> facilityStatusFacilityStatusEnumFk = createForeignKey(status, "NAME");
+    public final com.mysema.query.sql.ForeignKey<QCapacityType> facilityUtilizationCapacityTypeFk = createForeignKey(capacityType, "NAME");
 
-    public QFacilityStatus(String variable) {
-        super(QFacilityStatus.class, forVariable(variable), "PUBLIC", "FACILITY_STATUS");
+    public QFacilityUtilization(String variable) {
+        super(QFacilityUtilization.class, forVariable(variable), "PUBLIC", "FACILITY_UTILIZATION");
         addMetadata();
     }
 
-    public QFacilityStatus(String variable, String schema, String table) {
-        super(QFacilityStatus.class, forVariable(variable), schema, table);
+    public QFacilityUtilization(String variable, String schema, String table) {
+        super(QFacilityUtilization.class, forVariable(variable), schema, table);
         addMetadata();
     }
 
-    public QFacilityStatus(Path<? extends QFacilityStatus> path) {
-        super(path.getType(), path.getMetadata(), "PUBLIC", "FACILITY_STATUS");
+    public QFacilityUtilization(Path<? extends QFacilityUtilization> path) {
+        super(path.getType(), path.getMetadata(), "PUBLIC", "FACILITY_UTILIZATION");
         addMetadata();
     }
 
-    public QFacilityStatus(PathMetadata<?> metadata) {
-        super(QFacilityStatus.class, metadata, "PUBLIC", "FACILITY_STATUS");
+    public QFacilityUtilization(PathMetadata<?> metadata) {
+        super(QFacilityUtilization.class, metadata, "PUBLIC", "FACILITY_UTILIZATION");
         addMetadata();
     }
 

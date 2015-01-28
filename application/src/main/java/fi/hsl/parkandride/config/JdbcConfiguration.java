@@ -128,9 +128,10 @@ public class JdbcConfiguration {
 
         conf.register("APP_USER", "ROLE", new EnumByNameType<Role>(Role.class));
 
-        conf.register("FACILITY_STATUS", "CAPACITY_TYPE", new EnumByNameType<>(CapacityType.class));
-        conf.register("FACILITY_STATUS", "STATUS", new EnumByNameType<>(FacilityStatusEnum.class));
-        conf.register("FACILITY_STATUS_ENUM", "NAME", new EnumByNameType<>(FacilityStatusEnum.class));
+        conf.register("UTILIZATION_STATUS", "NAME", new EnumByNameType<>(UtilizationStatus.class));
+
+        conf.register("FACILITY_UTILIZATION", "CAPACITY_TYPE", new EnumByNameType<>(CapacityType.class));
+        conf.register("FACILITY_UTILIZATION", "STATUS", new EnumByNameType<>(UtilizationStatus.class));
 
         conf.register("FACILITY_SERVICE", "SERVICE", new EnumByNameType<>(Service.class));
 

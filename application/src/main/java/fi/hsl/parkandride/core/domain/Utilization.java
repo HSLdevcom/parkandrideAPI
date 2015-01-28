@@ -8,7 +8,7 @@ import org.joda.time.DateTime;
 import fi.hsl.parkandride.core.domain.validation.SpacesAvailableOrStatusRequired;
 
 @SpacesAvailableOrStatusRequired
-public class FacilityStatus {
+public class Utilization {
     @NotNull
     public DateTime timestamp;
 
@@ -16,5 +16,5 @@ public class FacilityStatus {
     public CapacityType capacityType;
 
     public Integer spacesAvailable;
-    public FacilityStatusEnum status;
+    public UtilizationStatus status;
 }

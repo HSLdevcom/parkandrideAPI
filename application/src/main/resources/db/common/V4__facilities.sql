@@ -108,7 +108,7 @@ create table facility_service (
 );
 
 
-create table facility_status (
+create table facility_utilization (
   facility_id bigint not null,
   capacity_type varchar(64) not null,
   ts timestamp,
@@ -117,14 +117,14 @@ create table facility_status (
 
   primary key (facility_id, capacity_type, ts),
 
-  constraint facility_status_facility_id_fk foreign key (facility_id)
+  constraint facility_utilization_facility_id_fk foreign key (facility_id)
     references facility (id),
 
-  constraint facility_status_capacity_type_fk foreign key (capacity_type)
+  constraint facility_utilization_capacity_type_fk foreign key (capacity_type)
     references capacity_type (name),
 
-  constraint facility_status_facility_status_enum_fk foreign key (status)
-    references facility_status_enum (name)
+  constraint facility_utilization_status_fk foreign key (status)
+    references utilization_status (name)
 );
 
 create table facility_payment_method (

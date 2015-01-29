@@ -87,12 +87,8 @@
         pricingManager.init(facility);
         $scope.model = pricingManager.data;
         $scope.selections = pricingManager.selections;
-        self.onSelectAll = onSelectAll;
-        self.addPricingRow = pricingManager.addPricing;
-
-        function onSelectAll() {
-            pricingManager.onSelectAll();
-        }
+        self.onSelectAllChange = pricingManager.onSelectAllChange;
+        self.addPricingRow = pricingManager.addRow;
 
         $scope.pricingClipboard = [];
         $scope.pricingClipboardIds = {};

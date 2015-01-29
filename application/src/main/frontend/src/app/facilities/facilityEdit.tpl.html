@@ -137,7 +137,7 @@
 			<tr>
 				<th class="clipboard-indicator"></th>
 				<th class="pricing-select centeredCell">
-					<input id="pricingSelectAll" type="checkbox" ng-model="model.allSelected" ng-change="editCtrl.onSelectAll()" class="checkbox"/>
+					<input id="pricingSelectAll" type="checkbox" ng-model="model.allSelected" ng-change="editCtrl.onSelectAllChange()" class="checkbox"/>
 				</th>
 
 				<th id="facilities-pricing-capacityType" translate="facilities.pricing.capacityType.title"></th>
@@ -156,7 +156,7 @@
 			</tr>
 			</thead>
 			<tbody>
-			<tr ng-repeat="pricing in editCtrl.facility.pricing" pricing-edit pricing="pricing" selections="selections"
+			<tr ng-repeat="pricing in editCtrl.facility.pricing" pricing-edit pricing="pricing"
 				class="{{ editCtrl.getPricingRowClasses(pricing, $index) }}"></tr>
 			</tbody>
 			<tfoot>

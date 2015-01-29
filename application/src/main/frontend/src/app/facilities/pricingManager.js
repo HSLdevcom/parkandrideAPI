@@ -11,18 +11,17 @@
         self.data = {
             allSelected: false
         };
-        self.onSelectAll = onSelectAll;
-        self.onSelectPricing = onSelectPricing;
-        self.addPricing = addPricing;
+        self.onSelectAllChange = onSelectAllChange;
+        self.onSelectRowChange = onSelectRowChange;
+        self.addRow = addRow;
         self.init = init;
 
         function init(facility) {
             self.pricing = facility.pricing;
             _.forEach(self.pricing, function(p) { p._id = Sequence.nextval();});
-            console.log(self.pricing);
         }
 
-        function addPricing() {
+        function addRow() {
             var p = {};
             p._id = Sequence.nextval();
             self.pricing.push(p);
@@ -30,7 +29,7 @@
             self.data.allSelected = false;
         }
 
-        function onSelectAll() {
+        function onSelectAllChange() {
             if (self.data.allSelected === isAllRowsSelected()) {
                 return;
             }
@@ -40,12 +39,8 @@
             }
         }
 
-        function onSelectPricing(pricing) {
-            if (self.selections[pricing._id]) {
-                self.selections.count++;
-            } else {
-                self.selections.count--;
-            }
+        function onSelectRowChange(pricing) {
+            self.selections.count += (self.selections[pricing._id] ? +1 : -1);
             self.data.allSelected = isAllRowsSelected();
         }
 

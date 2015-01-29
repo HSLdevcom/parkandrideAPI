@@ -19,8 +19,7 @@
         return {
             restrict: 'A',
             scope: {
-                pricing: '=',
-                selections: '='
+                pricing: '='
             },
             templateUrl: 'facilities/pricingEdit.tpl.html',
             transclude: false,
@@ -33,7 +32,7 @@
                 scope.h24 = is24h();
                 scope.free = isFree();
                 scope.rowSelected = rowSelected;
-                scope.onSelectPricing = onSelectPricing;
+                scope.onSelectChange = onSelectChange;
 
                 function rowSelected(isSelected) {
                     if (angular.isDefined(isSelected)) {
@@ -42,8 +41,8 @@
                     return pricingManager.selections[pricingId];
                 }
 
-                function onSelectPricing() {
-                    pricingManager.onSelectPricing(scope.pricing);
+                function onSelectChange() {
+                    pricingManager.onSelectRowChange(scope.pricing);
                 }
 
                 scope.$watch("h24", function(newValue) {

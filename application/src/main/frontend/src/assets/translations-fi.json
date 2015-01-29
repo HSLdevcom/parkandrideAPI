@@ -284,7 +284,7 @@
       }
     },
     "paymentInfo": {
-      "heading": "Maksutavat ja tunnistautuminen",
+      "heading": "Maksutavat",
       "paymentMethods": {
         "label": "Maksutavat"
       },

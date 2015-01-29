@@ -62,6 +62,7 @@
     m.controller('FacilityEditCtrl', function($scope, $state, schema, FacilityResource, Session, Sequence, facility, aliasesPlaceholder) {
         var self = this;
         $scope.common.translationPrefix = "facilities";
+        self.advancedMode = false;
         self.capacityTypes = schema.capacityTypes.values;
         self.usages = schema.usages.values;
         self.dayTypes = schema.dayTypes.values;
@@ -199,7 +200,7 @@
         };
         self.getPricingRowClasses = function(pricing, i) {
             var classes = ($scope.selections[pricing._id] ? 'selected' : 'unselected');
-            if ($scope.pricingClipboardIds[pricing._id]) {
+            if (self.advancedMode && $scope.pricingClipboardIds[pricing._id]) {
                 classes += ' on-clipboard';
             }
             if (self.isNewPricingGroup(i)) {

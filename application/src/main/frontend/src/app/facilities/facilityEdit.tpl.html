@@ -160,42 +160,42 @@
 				class="{{ editCtrl.getPricingRowClasses(pricing, $index) }}"></tr>
 			</tbody>
 			<tfoot>
-			<tr ng-show="pricingClipboard.length > 0 && selections.count > 0">
+			<tr ng-show="editCtrl.advancedMode && pricingClipboard.length > 0 && selections.count > 0">
 				<th class="clipboard-indicator"></th>
 				<th class="pricing-select"></th>
 
 				<th>
 					<a class="btn btn-xs btn-responsive" role="button" ng-click="editCtrl.pastePricingValues('capacityType')">
-						Liitä arvo
+						Liitä
 					</a>
 				</th>
 				<th>
 					<a class="btn btn-xs btn-responsive" role="button" ng-click="editCtrl.pastePricingValues('usage')">
-						Liitä arvo
+						Liitä
 					</a>
 				</th>
 				<th>
 					<a class="btn btn-xs btn-responsive" role="button" ng-click="editCtrl.pastePricingValues('maxCapacity')">
-						Liitä arvo
+						Liitä
 					</a>
 				</th>
 
 				<th>
 					<a class="btn btn-xs btn-responsive" role="button" ng-click="editCtrl.pastePricingValues('dayType')">
-						Liitä arvo
+						Liitä
 					</a>
 				</th>
 				<th></th>
 				<th colspan="2">
 					<a class="btn btn-xs btn-responsive" role="button" ng-click="editCtrl.pastePricingValues('time')">
-						Liitä arvot
+						Liitä
 					</a>
 				</th>
 
 				<th></th>
 				<th colspan="3">
 					<a class="btn btn-xs btn-responsive" role="button" ng-click="editCtrl.pastePricingValues('price')">
-						Liitä arvot
+						Liitä
 					</a>
 				</th>
 			</tr>
@@ -205,7 +205,7 @@
 </div>
 
 <div class="row rowWithSmallMargin">
-	<div class="column first-column">
+	<div class="col-lg-8 col-md-8 col-sm-8 col-xs-12 column first-column">
 		<a id="pricingAddRow" class="btn btn-xs btn-responsive" role="button" ng-click="editCtrl.addPricingRow()">
 			{{'facilities.action.addPricingRow' | translate }}
 		</a>
@@ -218,6 +218,7 @@
 			Kopioi
 		</a>
 		<a id="pricingCopyFirst" class="btn btn-xs btn-responsive" role="button" ng-click="editCtrl.copyPricingRows(true)"
+		   ng-show="editCtrl.advancedMode"
 		   ng-disabled="selections.count < 2" ng-show="editCtrl.hasPricingRows()">
 			Kopioi ensimmäinen
 		</a>
@@ -225,6 +226,11 @@
 		   ng-disabled="selections.count == 0" ng-show="editCtrl.hasPricingRows()">
 			Poista
 		</a>
+	</div>
+	<div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 column last-column">
+		<button id="advanced-mode" btn-checkbox ng-model="editCtrl.advancedMode" class="btn btn-xs" type="button">
+			Lisätoiminnot
+		</button>
 	</div>
 </div>
 

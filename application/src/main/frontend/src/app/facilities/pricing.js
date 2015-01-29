@@ -1,6 +1,7 @@
 (function() {
     var m = angular.module('parkandride.pricing', [
         'parkandride.multilingual',
+        'parkandride.pricingManager',
         'showErrors'
     ]);
 
@@ -13,7 +14,7 @@
         }
     });
 
-    m.directive('pricingEdit', function (schema, $translate, PricingService) {
+    m.directive('pricingEdit', function (schema, $translate, PricingService, pricingManager) {
 
         return {
             restrict: 'A',
@@ -31,7 +32,19 @@
                 scope.dayTypes = schema.dayTypes.values;
                 scope.h24 = is24h();
                 scope.free = isFree();
-                scope.rowSelected = scope.selections[pricingId];
+                scope.rowSelected = rowSelected;
+                scope.onSelectPricing = onSelectPricing;
+
+                function rowSelected(isSelected) {
+                    if (angular.isDefined(isSelected)) {
+                        pricingManager.selections[pricingId] = isSelected;
+                    }
+                    return pricingManager.selections[pricingId];
+                }
+
+                function onSelectPricing() {
+                    pricingManager.onSelectPricing(scope.pricing);
+                }
 
                 scope.$watch("h24", function(newValue) {
                     var h24 = is24h();
@@ -58,20 +71,6 @@
                 });
                 scope.$watchGroup(["pricing.price.fi", "pricing.price.sv", "pricing.price.en"], function() {
                     scope.free = isFree();
-                });
-
-                scope.$watch("rowSelected", function(value) {
-                    if (scope.rowSelected != scope.selections[pricingId]) {
-                        scope.selections[pricingId] = scope.rowSelected;
-                        if (scope.rowSelected) {
-                            scope.selections.count++;
-                        } else {
-                            scope.selections.count--;
-                        }
-                    }
-                });
-                scope.$watch("selections[" + pricingId + "]", function() {
-                    scope.rowSelected = scope.selections[pricingId];
                 });
 
                 function is24h() {

@@ -137,7 +137,7 @@
 			<tr>
 				<th class="clipboard-indicator"></th>
 				<th class="pricing-select centeredCell">
-					<input id="pricingSelectAll" type="checkbox" ng-model="allSelected" class="checkbox"/>
+					<input id="pricingSelectAll" type="checkbox" ng-model="model.allSelected" ng-change="editCtrl.onSelectAll()" class="checkbox"/>
 				</th>
 
 				<th id="facilities-pricing-capacityType" translate="facilities.pricing.capacityType.title"></th>

@@ -13,6 +13,7 @@
         'parkandride.pricing',
         'parkandride.tags',
         'parkandride.address',
+        'parkandride.pricingManager',
         'showErrors'
     ]);
 
@@ -59,7 +60,7 @@
         });
     });
 
-    m.controller('FacilityEditCtrl', function($scope, $state, schema, FacilityResource, Session, Sequence, facility, aliasesPlaceholder) {
+    m.controller('FacilityEditCtrl', function($scope, $state, schema, FacilityResource, Session, Sequence, facility, aliasesPlaceholder, pricingManager) {
         var self = this;
         $scope.common.translationPrefix = "facilities";
         self.capacityTypes = schema.capacityTypes.values;
@@ -83,35 +84,15 @@
 
         self.editMode = (facility.id ? "ports" : "location");
 
-        $scope.allSelected = false;
-        $scope.selections = {
-            // Selected pricing IDs as boolean-values properties
-            count: 0 // Selected row count for efficient "if all selected" check
-        };
-        $scope.$watch("allSelected", function(checked) {
-            if (checked === isAllRowsSelected()) {
-                return;
-            }
-            var pricingRows = self.facility.pricing;
-            for (var i = pricingRows.length - 1; i >= 0; i--) {
-                var id = pricingRows[i]._id;
-                setSelected(id, checked);
-            }
-        });
-        $scope.$watch("selections.count", function(newCount) {
-            $scope.allSelected = newCount === self.facility.pricing.length;
-        });
+        pricingManager.init(facility);
+        $scope.model = pricingManager.data;
+        $scope.selections = pricingManager.selections;
+        self.onSelectAll = onSelectAll;
+        self.addPricingRow = pricingManager.addPricing;
 
-        _.forEach(self.facility.pricing, function(pricing) {
-            pricing._id = Sequence.nextval();
-        });
-
-        self.addPricingRow = function() {
-            var newPricing = {};
-            newPricing._id = Sequence.nextval();
-            self.facility.pricing.push(newPricing);
-            $scope.allSelected = false;
-        };
+        function onSelectAll() {
+            pricingManager.onSelectAll();
+        }
 
         $scope.pricingClipboard = [];
         $scope.pricingClipboardIds = {};

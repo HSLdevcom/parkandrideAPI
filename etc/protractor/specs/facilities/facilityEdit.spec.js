@@ -468,19 +468,6 @@ describe('edit facility view', function () {
                 editPage.selectServiceContact("hsl");
             });
 
-            it('with auth', function() {
-                editPage.setParkAndRideAuthRequired(true);
-
-                editPage.save();
-                expect(viewPage.isDisplayed()).toBe(true);
-
-                expect(viewPage.isPaymentInfoDisplayed()).toBe(true);
-                expect(viewPage.isParkAndRideAuthRequired()).toBe(true);
-                expect(viewPage.isPaymentMethodsDisplayed()).toBe(false);
-                expect(viewPage.isPaymentInfoDetailsDisplayed()).toBe(false);
-
-            });
-
             it('with methods', function() {
                 editPage.selectPaymentMethod("Kolikko");
                 editPage.selectPaymentMethod("Seteli");
@@ -489,7 +476,6 @@ describe('edit facility view', function () {
                 expect(viewPage.isDisplayed()).toBe(true);
 
                 expect(viewPage.isPaymentInfoDisplayed()).toBe(true);
-                expect(viewPage.isParkAndRideAuthRequired()).toBe(false);
                 expect(viewPage.getPaymentMethods()).toEqual("Kolikko, Seteli");
                 expect(viewPage.isPaymentInfoDetailsDisplayed()).toBe(false);
 
@@ -507,7 +493,6 @@ describe('edit facility view', function () {
                 expect(viewPage.isDisplayed()).toBe(true);
 
                 expect(viewPage.isPaymentInfoDisplayed()).toBe(true);
-                expect(viewPage.isParkAndRideAuthRequired()).toBe(false);
                 expect(viewPage.isPaymentMethodsDisplayed()).toBe(false);
                 expect(viewPage.getPaymentInfoDetail()).toEqual(["fooFi", "fooSv", "fooEn"]);
                 expect(viewPage.getPaymentInfoUrl()).toEqual(["http://www.hsl.fi", "http://www.hsl.fi", "http://www.hsl.fi"]);
@@ -523,7 +508,6 @@ describe('edit facility view', function () {
             });
 
             it('initial state', function() {
-                expect(editPage.isParkAndRideAuthRequired()).toBe(true);
                 expect(editPage.isPaymentMethodSelected("Kolikko")).toBe(true);
                 expect(editPage.isPaymentMethodSelected("Seteli")).toBe(true);
                 expect(editPage.getPaymentInfoDetail()).toEqual([f.paymentInfo.detail.fi, f.paymentInfo.detail.sv, f.paymentInfo.detail.en]);
@@ -531,7 +515,6 @@ describe('edit facility view', function () {
             });
 
             it('modify and save', function() {
-                editPage.setParkAndRideAuthRequired(false);
                 editPage.removePaymentMethod("Kolikko");
                 editPage.setPaymentInfoDetailSv("foo");
                 editPage.setPaymentInfoUrlEn("http://www.hsl.fi");
@@ -540,7 +523,6 @@ describe('edit facility view', function () {
                 expect(viewPage.isDisplayed()).toBe(true);
 
                 expect(viewPage.isPaymentInfoDisplayed()).toBe(true);
-                expect(viewPage.isParkAndRideAuthRequired()).toBe(false);
                 expect(viewPage.getPaymentMethods()).toEqual("Seteli");
                 expect(viewPage.getPaymentInfoDetail()).toEqual([f.paymentInfo.detail.fi, "foo", f.paymentInfo.detail.en]);
                 expect(viewPage.getPaymentInfoUrl()).toEqual([f.paymentInfo.url.fi, f.paymentInfo.url.sv, "http://www.hsl.fi"]);

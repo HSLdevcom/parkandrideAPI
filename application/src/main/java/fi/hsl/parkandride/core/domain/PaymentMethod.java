@@ -10,6 +10,5 @@ public enum PaymentMethod {
     MASTERCARD,
     DINERS_CLUB,
     HSL_TRAVEL_CARD,
-    VR_CARD,
     OTHER
 }

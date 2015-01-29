@@ -107,6 +107,8 @@
         });
 
         self.addPricingRow = function() {
+            self.clearSelections();
+            self.clearClipboard();
             var newPricing = {};
             newPricing._id = Sequence.nextval();
             self.facility.pricing.push(newPricing);
@@ -132,8 +134,7 @@
             }
         };
         self.deletePricingRows = function() {
-            $scope.pricingClipboard = [];
-            $scope.pricingClipboardIds = {};
+            self.clearClipboard();
             var pricingRows = self.facility.pricing;
             for (var i=pricingRows.length - 1; i >= 0; i--) {
                 var id = pricingRows[i]._id;
@@ -176,6 +177,13 @@
         self.clearClipboard = function() {
             $scope.pricingClipboard = [];
             $scope.pricingClipboardIds = {};
+        };
+        self.clearSelections = function() {
+            for (var s in $scope.selections) {
+                delete $scope.selections[s];
+            }
+            $scope.selections.count = 0;
+            $scope.allSelected = false;
         };
 
         self.hasPricingRows = function() {

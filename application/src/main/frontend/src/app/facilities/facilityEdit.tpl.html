@@ -290,14 +290,6 @@
 <div class="row"><h3>{{"facilities.paymentInfo.heading" | translate }}</h3></div>
 <div class="row">
 	<div class="form-group">
-		<label class="checkbox-label">
-			<input type="checkbox" class="checkbox" ng-model="editCtrl.facility.paymentInfo.parkAndRideAuthRequired" />
-			{{ "facilities.paymentInfo.parkAndRideAuthRequired" | translate }}
-		</label>
-	</div>
-</div>
-<div class="row">
-	<div class="form-group">
 		<label>{{ "facilities.paymentInfo.paymentMethods.label" | translate }}</label>
 		<ui-select multiple ng-model="editCtrl.facility.paymentInfo.paymentMethods" theme="bootstrap" ng-disabled="disabled" reset-search-input="true">
 			<ui-select-match placeholder="{{'facilities.paymentInfo.methodPlaceholder' | translate }}">{{$item.label}}</ui-select-match>

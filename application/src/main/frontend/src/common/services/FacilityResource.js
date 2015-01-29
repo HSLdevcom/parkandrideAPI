@@ -139,7 +139,7 @@
             }
 
             return $http.get("api/v1/facilities", {
-                params: { summary: true, ids: facilityIds, statuses: ['IN_OPERATION', 'EXCEPTIONAL_SITUATION'] }
+                params: { summary: true, ids: facilityIds }
             }).then(function(response) {
                 return response.data;
             });

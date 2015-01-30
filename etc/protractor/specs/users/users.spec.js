@@ -14,7 +14,14 @@ describe('users', function () {
         object.toPayload = function() { return this; };
 
         if (object.role) {
-            if (object.role === 'ADMIN') object.username = object.password = object.roleFi = 'admin';
+            if (object.role === 'ADMIN') {
+                object.roleFi = 'admin';
+                if (object.username) {
+                    object.password = object.username;
+                } else {
+                    object.username = object.password = 'admin';
+                }
+            }
             if (object.role === 'OPERATOR') object.roleFi = 'operaattori';
             if (object.role === 'OPERATOR_API') object.roleFi = 'API';
 
@@ -48,6 +55,7 @@ describe('users', function () {
         menu.canLogout().then(function(canLogout) { if (canLogout) menu.logout(); });
         menu.openLoginModal();
         authModal.login(user.username,  user.password);
+        authModal.waitUntilAbsent();
 
         menu.toUsers();
         expect(usersPage.isDisplayed()).toBe(true);
@@ -73,7 +81,7 @@ describe('users', function () {
         // TODO: edit pending, let's see it this is even needed
     });
 
-    describe('lists users', function () {
+    describe('lists', function () {
         beforeEach(function () {
             devApi.resetAll({
                 operators: [operatorX, operatorY],
@@ -100,6 +108,114 @@ describe('users', function () {
                 assertUser(actual[0], operatorX_user);
                 assertUser(actual[1], operatorX_api);
             });
+        });
+    });
+
+    describe('create as admin', function () {
+
+        beforeEach(function () {
+            devApi.resetAll({
+                operators: [operatorX, operatorY],
+                users: _.shuffle([operatorX_user, operatorX_api, operatorY_user])
+            });
+            devApi.loginAs(admin.role, admin.username, admin.password);
+            usersPage.get();
+            usersPage.toCreateUser();
+            expect(usersPage.userModal.isDisplayed()).toBe(true);
+        });
+
+        it('on enter all fields are shown', function () {
+            expect(usersPage.userModal.getRoles()).toEqual(['admin', 'operaattori', 'API']);
+            expect(usersPage.userModal.canSetUsername()).toBe(true);
+            expect(usersPage.userModal.canSetPassword()).toBe(true);
+            expect(usersPage.userModal.getOperators()).toEqual([operatorX.name.fi, operatorY.name.fi]);
+        });
+
+        it('when admin role is selected, operator is hidden', function () {
+            expect(usersPage.userModal.canSetOperator()).toBe(true);
+            usersPage.userModal.setRole('admin');
+            expect(usersPage.userModal.canSetOperator()).toBe(false);
+        });
+
+        it('when api role is selected, password is hidden', function () {
+            expect(usersPage.userModal.canSetPassword()).toBe(true);
+            usersPage.userModal.setRole('API');
+            expect(usersPage.userModal.canSetPassword()).toBe(false);
+        });
+
+        it('added user is shown on the list', function () {
+            var newadmin = create({ role: "ADMIN", username: "newadmin"});
+
+            usersPage.userModal.setRole('admin');
+            usersPage.userModal.setUsername(newadmin.username);
+            usersPage.userModal.setPassword(newadmin.password);
+            usersPage.userModal.save();
+
+            usersPage.userModal.isDisplayed(false);
+            usersPage.getUsers().then(function (actual){
+                assertUser(actual[0], admin);
+                assertUser(actual[1], newadmin);
+                assertUser(actual[2], operatorX_user);
+                assertUser(actual[3], operatorX_api);
+                assertUser(actual[4], operatorY_user);
+            });
+        });
+    });
+
+    describe('create as operator', function () {
+        beforeEach(function () {
+            devApi.resetAll({
+                operators: [operatorX, operatorY],
+                users: _.shuffle([admin, operatorX_user, operatorX_api, operatorY_user])
+            });
+            devApi.loginAs(operatorX_user.role, operatorX_user.username, operatorX_user.password);
+            usersPage.get();
+            usersPage.toCreateUser();
+            expect(usersPage.userModal.isDisplayed()).toBe(true);
+        });
+
+        xit('on enter operator is fixed', function () {
+            expect(usersPage.userModal.getOperators()).toEqual([operatorX.name.fi]);
+        });
+
+        it('cannot create admin', function () {
+            expect(usersPage.userModal.getRoles()).toEqual(['operaattori', 'API']);
+        });
+
+        it('can create operator', function () {
+            var newoperator = create({ role: "OPERATOR", username: "newoperator", operatorId: operatorX.id});
+
+            usersPage.userModal.setRole('operaattori');
+            usersPage.userModal.setUsername(newoperator.username);
+            usersPage.userModal.setPassword(newoperator.password);
+            usersPage.userModal.save();
+
+            usersPage.userModal.isDisplayed(false);
+
+            usersPage.getUsers().then(function (actual){
+                expect(actual.length).toBe(3);
+                assertUser(actual[0], operatorX_user);
+                assertUser(actual[1], newoperator);
+                assertUser(actual[2], operatorX_api);
+            });
+        });
+
+        it('can create operator api', function () {
+            var newoperator = create({ role: "OPERATOR_API", username: "newoperatorapi", operatorId: operatorX.id});
+
+            usersPage.userModal.setRole('API');
+            usersPage.userModal.setUsername(newoperator.username);
+            usersPage.userModal.save();
+
+            usersPage.userModal.isDisplayed(false);
+
+            usersPage.getUsers().then(function (actual){
+                expect(actual.length).toBe(3);
+                assertUser(actual[0], operatorX_user);
+                assertUser(actual[1], operatorX_api);
+                assertUser(actual[2], newoperator);
+            });
+
         });
     });
 });

@@ -5,7 +5,7 @@ module.exports = function (spec) {
 
     spec.view = $('.wdUsersView');
     spec.rows = $$('.userRow');
-    spec.createUserButton = $('.wdCreate');
+    spec.createUserButton = $$('.wdCreate').first();
 
     spec.row = function(idx) {
         return spec.rows.get(idx);

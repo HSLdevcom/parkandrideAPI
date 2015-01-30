@@ -2,6 +2,7 @@
 
 module.exports = function (spec) {
     var that = require('../base')(spec);
+    var uiSelect = require('../components/uiSelect')({});
 
     spec.view = $('#userModal');
     spec.username = $('input[name="username"]');
@@ -10,6 +11,7 @@ module.exports = function (spec) {
     spec.operator = $('div[name="operator"]');
     spec.ok = $("#wdUserModalOk");
     spec.cancel = $("#wdUserModalCancel");
+
 
     that.canSetUsername = function() {
         return spec.isDisplayed(spec.username);
@@ -28,8 +30,7 @@ module.exports = function (spec) {
     };
 
     that.getRoles = function() {
-        spec.role.click();
-        return spec.role.$$('.ui-select-choices-row a').getText();
+        return uiSelect.getValues(spec.role);
     };
 
     that.canSetRole = function() {
@@ -37,15 +38,12 @@ module.exports = function (spec) {
     };
 
     that.setRole = function(input) {
-        spec.select(spec.role, input);
+        uiSelect.select(spec.role, input);
     };
 
     that.getOperators = function() {
-        spec.operator.click();
-        return spec.operator.$$('.ui-select-choices-row a').getText();
+        return uiSelect.getValues(spec.operator);
     };
-
-
 
     that.canSetOperator = function() {
         return spec.isDisplayed(spec.operator);

@@ -174,7 +174,7 @@ describe('users', function () {
             expect(usersPage.userModal.isDisplayed()).toBe(true);
         });
 
-        xit('on enter operator is fixed', function () {
+        it('on enter operator is fixed', function () {
             expect(usersPage.userModal.getOperators()).toEqual([operatorX.name.fi]);
         });
 

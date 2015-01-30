@@ -1,3 +1,14 @@
+create table facility_status (
+  name varchar(64) not null,
+  primary key (name)
+);
+
+insert into facility_status values ('IN_OPERATION');
+insert into facility_status values ('INACTIVE');
+insert into facility_status values ('TEMPORARILY_CLOSED');
+insert into facility_status values ('EXCEPTIONAL_SITUATION');
+
+
 create table capacity_type (
   name varchar(64) not null,
   primary key (name)
@@ -30,14 +41,14 @@ insert into usage values ('PARK_AND_RIDE');
 insert into usage values ('COMMERCIAL');
 
 
-create table facility_status_enum (
+create table utilization_status (
   name varchar(64) not null,
 
   primary key (name)
 );
 
-insert into facility_status_enum values ('FULL');
-insert into facility_status_enum values ('SPACES_AVAILABLE');
+insert into utilization_status values ('FULL');
+insert into utilization_status values ('SPACES_AVAILABLE');
 
 
 create table service (

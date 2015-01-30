@@ -59,6 +59,7 @@
 
         api.newFacility = function() {
             return {
+                status: "IN_OPERATION",
                 aliases: [],
                 builtCapacity: {},
                 pricing: [
@@ -138,7 +139,7 @@
             }
 
             return $http.get("api/v1/facilities", {
-                params: { summary: true, ids: facilityIds }
+                params: { summary: true, ids: facilityIds, statuses: ['IN_OPERATION', 'EXCEPTIONAL_SITUATION'] }
             }).then(function(response) {
                 return response.data;
             });

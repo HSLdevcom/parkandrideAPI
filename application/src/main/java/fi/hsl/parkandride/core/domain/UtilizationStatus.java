@@ -1,5 +1,5 @@
 package fi.hsl.parkandride.core.domain;
 
-public enum FacilityStatusEnum {
+public enum UtilizationStatus {
     FULL, SPACES_AVAILABLE
 }

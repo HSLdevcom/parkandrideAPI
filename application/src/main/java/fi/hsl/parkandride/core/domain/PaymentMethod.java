@@ -3,14 +3,13 @@ package fi.hsl.parkandride.core.domain;
 public enum PaymentMethod {
     COINS,
     NOTES,
-    VISA_DEBIT,
+    DEBIT_CARD,
     VISA_ELECTRON,
+    VISA_CREDIT,
     AMERICAN_EXPRESS,
     MASTERCARD,
     DINERS_CLUB,
     HSL_TRAVEL_CARD,
-    HSL_SINGLE_TICKET,
     VR_CARD,
-    VR_SINGLE_TICKET,
     OTHER
 }

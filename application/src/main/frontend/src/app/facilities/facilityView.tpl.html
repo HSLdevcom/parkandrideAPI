@@ -210,9 +210,6 @@
 
 			<div class="wdPaymentInfo" ng-show="viewCtrl.hasPaymentInfo()">
 				<div class="row"><h3>{{"facilities.paymentInfo.heading" | translate }}</h3></div>
-				<div class="row wdParkAndRideAuthRequired" ng-show="viewCtrl.facility.paymentInfo.parkAndRideAuthRequired">
-					&#x2713; {{ "facilities.paymentInfo.parkAndRideAuthRequired" | translate }}
-				</div>
 				<div class="row" ng-show="viewCtrl.hasPaymentMethods()"><h4>{{"facilities.paymentInfo.paymentMethods.label" | translate }}</h4></div>
 				<div class="row wdPaymentMethodNames" ng-show="viewCtrl.hasPaymentMethods()">{{viewCtrl.getPaymentMethodNames() | joinBy: ", "}}</div>
 				<div class="wdPaymentInfoDetails" ng-show="viewCtrl.hasPaymentInfoDetails()">

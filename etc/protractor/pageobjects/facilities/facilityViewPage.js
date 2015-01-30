@@ -17,7 +17,6 @@ module.exports = function(spec) {
     spec.toListButton = element.all(by.linkUiSref('hub-list')).first();
 
     spec.paymentInfo = $('.wdPaymentInfo');
-    spec.parkAndRideAuthRequired = $('.wdPaymentInfo .wdParkAndRideAuthRequired');
     spec.paymentMethods = $('.wdPaymentInfo .wdPaymentMethodNames');
     spec.paymentInfoDetails = $('.wdPaymentInfo .wdPaymentInfoDetails');
     spec.paymentInfoDetail = $('.wdPaymentInfo .wdPaymentInfoDetail');
@@ -70,10 +69,6 @@ module.exports = function(spec) {
 
     that.isPaymentInfoDisplayed = function () {
         return spec.isDisplayed(spec.paymentInfo);
-    };
-
-    that.isParkAndRideAuthRequired = function() {
-        return spec.isDisplayed(spec.parkAndRideAuthRequired);
     };
 
     that.isPaymentMethodsDisplayed = function() {

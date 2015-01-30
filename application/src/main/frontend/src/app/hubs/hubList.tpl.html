@@ -14,7 +14,7 @@
 				</tr>
 				<!-- Facilities by hubs -->
 				<tr ng-repeat-start="hub in hubsCtrl.hubs" class="hubRow wdHub{{hub.id}}">
-					<th class="wdNameFi hubRow" colspan="2"><a ui-sref="hub-view({id: hub.id})">{{hub.name.fi}}</a></th>
+					<th class="wdNameFi hubRow" colspan="4"><a ui-sref="hub-view({id: hub.id})">{{hub.name.fi}}</a></th>
 				</tr>
 				<tr ng-repeat="facility in hubsCtrl.getFacilities(hub) | orderBy:'_index'" class="facilityRow wdFacility{{facility.id}}"
 					ng-repeat-end>

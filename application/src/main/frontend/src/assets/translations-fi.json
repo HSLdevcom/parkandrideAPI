@@ -3,6 +3,9 @@
     "PARK_AND_RIDE": {
       "label": "Liityntä"
     },
+    "HSL": {
+      "label": "Liityntä matkakortti"
+    },
     "COMMERCIAL": {
       "label": "Kaupallinen"
     }
@@ -72,7 +75,6 @@
     "MASTERCARD": { "label": "MasterCard" },
     "DINERS_CLUB": { "label": "Diners Club" },
     "HSL_TRAVEL_CARD": { "label": "HSL matkakortti" },
-    "VR_CARD": { "label": "VR matkakortti" },
     "OTHER": { "label": "Muu" }
   },
   "facilityStatuses": {
@@ -282,8 +284,7 @@
       }
     },
     "paymentInfo": {
-      "heading": "Maksutavat ja tunnistautuminen",
-      "parkAndRideAuthRequired": "Liityntäpysäköinnin tunnistautumiseen tarvitaan HSL matkakortti",
+      "heading": "Maksutavat",
       "paymentMethods": {
         "label": "Maksutavat"
       },

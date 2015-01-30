@@ -276,3 +276,7 @@ a {
     .modal-dialog { @include translate(0, 0); }
   }
 }
+
+#advanced-mode {
+  float: right;
+}

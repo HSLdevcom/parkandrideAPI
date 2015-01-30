@@ -64,7 +64,6 @@ module.exports = function () {
             },
             services: [ 'LIGHTING','COVERED' ],
             paymentInfo: {
-                parkAndRideAuthRequired: true,
                 paymentMethods: [ 'COINS', 'NOTES' ],
                 detail: { fi: "Lisätietoja", sv: "Tilläggsinformation", en: "Additional info"},
                 url: { fi: "http://www.x-park.fi/hinnasto", sv: "http://www.x-park.fi/prislista", en: "http://www.x-park.fi/pricing" }

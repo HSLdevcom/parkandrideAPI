@@ -15,14 +15,18 @@ module.exports = function (spec) {
     };
 
     spec.getChoices = function(element) {
-        element.click();
+        spec.revealChoices(element);
         return element.$$('.ui-select-choices-row a').getText().then(function(arr){
             return _.without(arr, '');
         });
     };
 
-    that.select = function(element, value) {
+    spec.revealChoices = function(element) {
         element.$('.ui-select-match').click();
+    };
+
+    that.select = function(element, value) {
+        spec.revealChoices(element);
         browser.driver.switchTo().activeElement().sendKeys(value, protractor.Key.ENTER);
     };
 

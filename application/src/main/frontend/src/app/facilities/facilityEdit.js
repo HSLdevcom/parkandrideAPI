@@ -89,19 +89,17 @@
         $scope.selections = pricingManager.selections;
         self.onSelectAllChange = pricingManager.onSelectAllChange;
         self.addPricingRow = pricingManager.addRow;
-
-        $scope.pricingClipboard = [];
-        $scope.pricingClipboardIds = {};
+        self.isClipboardEmpty = pricingManager.isClipboardEmpty;
 
         self.copyPricingRows = function(firstOnly) {
             var pricingRows = self.facility.pricing;
-            self.clearClipboard();
+            pricingManager.clearClipboard();
             for (var i=0; i < pricingRows.length; i++) {
                 var id = pricingRows[i]._id;
                 if (isSelected(id)) {
                     setSelected(id, false);
-                    $scope.pricingClipboard.push(pricingRows[i]);
-                    $scope.pricingClipboardIds[id] = true;
+
+                    pricingManager.addToClipboard(pricingRows[i]);
                     if (firstOnly) {
                         return;
                     }
@@ -109,8 +107,8 @@
             }
         };
         self.deletePricingRows = function() {
-            $scope.pricingClipboard = [];
-            $scope.pricingClipboardIds = {};
+            pricingManager.clearClipboard();
+
             var pricingRows = self.facility.pricing;
             for (var i=pricingRows.length - 1; i >= 0; i--) {
                 var id = pricingRows[i]._id;
@@ -122,21 +120,21 @@
             $scope.model.allSelected = false;
         };
         self.pastePricingRows = function() {
-            for (var i=0; i < $scope.pricingClipboard.length; i++) {
-                var id = $scope.pricingClipboard[i]._id;
-                var newPricing = _.cloneDeep($scope.pricingClipboard[i]);
+            for (var i=0; i < pricingManager.clipboard.rows.length; i++) {
+                var id = pricingManager.clipboard.rows[i]._id;
+                var newPricing = _.cloneDeep(pricingManager.clipboard.rows[i]);
                 delete newPricing.$$hashKey;
 
                 newPricing._id = Sequence.nextval();
                 self.facility.pricing.push(newPricing);
-                if ($scope.pricingClipboard.length > 1) {
+                if (pricingManager.clipboard.rows.length > 1) {
                     setSelected(newPricing._id, true);
                 }
             }
             $scope.model.allSelected = false;
         };
         self.pastePricingValues = function(property) {
-            var len = $scope.pricingClipboard.length;
+            var len = pricingManager.clipboard.rows.length;
             if (len === 0) {
                 return;
             }
@@ -145,14 +143,10 @@
             for (var i=0; i < pricingRows.length; i++) {
                 var id = pricingRows[i]._id;
                 if (isSelected(id)) {
-                    var value = $scope.pricingClipboard[j++ % len][property];
+                    var value = pricingManager.clipboard.rows[j++ % len][property];
                     pricingRows[i][property] = _.cloneDeep(value);
                 }
             }
-        };
-        self.clearClipboard = function() {
-            $scope.pricingClipboard = [];
-            $scope.pricingClipboardIds = {};
         };
 
         self.hasPricingRows = function() {
@@ -168,7 +162,7 @@
         };
         self.getPricingRowClasses = function(pricing, i) {
             var classes = ($scope.selections[pricing._id] ? 'selected' : 'unselected');
-            if ($scope.pricingClipboardIds[pricing._id]) {
+            if (pricingManager.clipboard.ids[pricing._id]) {
                 classes += ' on-clipboard';
             }
             if (self.isNewPricingGroup(i)) {

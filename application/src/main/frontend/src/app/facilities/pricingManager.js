@@ -3,6 +3,8 @@
 
     m.factory('pricingManager', function(Sequence) {
         var self = {};
+        var clipboard = initClipboard();
+        self.clipboard = clipboard; // TODO encapsulate clipboard after 'paste' is refactored into pricing manager
 
         self.selections = {
             // Selected pricing IDs as boolean-values properties
@@ -11,9 +13,13 @@
         self.data = {
             allSelected: false
         };
+
         self.onSelectAllChange = onSelectAllChange;
         self.onSelectRowChange = onSelectRowChange;
         self.addRow = addRow;
+        self.addToClipboard = clipboard.add;
+        self.clearClipboard = clipboard.clear;
+        self.isClipboardEmpty = clipboard.isEmpty;
         self.init = init;
 
         function init(facility) {
@@ -56,5 +62,27 @@
         }
 
         return self;
+
+        function initClipboard() {
+            var self = {};
+            self.rows = [];
+            self.ids = {};
+
+            self.add = function(p) {
+                self.rows.push(p);
+                self.ids[p._id] = true;
+            };
+
+            self.clear = function() {
+                self.rows = [];
+                self.ids = {};
+            };
+
+            self.isEmpty = function() {
+                return self.rows.length === 0;
+            };
+
+            return self;
+        }
     });
 })();

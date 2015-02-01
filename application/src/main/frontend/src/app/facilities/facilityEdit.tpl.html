@@ -160,7 +160,7 @@
 				class="{{ editCtrl.getPricingRowClasses(pricing, $index) }}"></tr>
 			</tbody>
 			<tfoot>
-			<tr ng-show="pricingClipboard.length > 0 && selections.count > 0">
+			<tr ng-show="!editCtrl.isClipboardEmpty() && selections.count > 0">
 				<th class="clipboard-indicator"></th>
 				<th class="pricing-select"></th>
 
@@ -210,7 +210,7 @@
 			{{'facilities.action.addPricingRow' | translate }}
 		</a>
 		<a id="pricingPasteRows" class="btn btn-xs btn-responsive" role="button" ng-click="editCtrl.pastePricingRows()"
-		   ng-disabled="pricingClipboard.length == 0 || selections.count > 0" ng-show="editCtrl.hasPricingRows()">
+		   ng-disabled="editCtrl.isClipboardEmpty() || selections.count > 0" ng-show="editCtrl.hasPricingRows()">
 			Liitä
 		</a>
 		<a id="pricingCopyRows" class="btn btn-xs btn-responsive" role="button" ng-click="editCtrl.copyPricingRows()"

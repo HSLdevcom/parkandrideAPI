@@ -119,7 +119,7 @@
                     setSelected(id, false);
                 }
             }
-            $scope.allSelected = false;
+            $scope.model.allSelected = false;
         };
         self.pastePricingRows = function() {
             for (var i=0; i < $scope.pricingClipboard.length; i++) {
@@ -133,7 +133,7 @@
                     setSelected(newPricing._id, true);
                 }
             }
-            $scope.allSelected = false;
+            $scope.model.allSelected = false;
         };
         self.pastePricingValues = function(property) {
             var len = $scope.pricingClipboard.length;

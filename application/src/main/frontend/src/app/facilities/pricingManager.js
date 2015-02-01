@@ -18,13 +18,69 @@
         self.onSelectRowChange = onSelectRowChange;
         self.addRow = addRow;
         self.addToClipboard = clipboard.add;
-        self.clearClipboard = clipboard.clear;
+        self.clearClipboard = clipboard.clear; // TODO remove
         self.isClipboardEmpty = clipboard.isEmpty;
+        self.copyPricingRows = copyPricingRows;
+        self.deletePricingRows = deletePricingRows;
+        self.pastePricingRows = pastePricingRows;
+        self.pastePricingValues = pastePricingValues;
         self.init = init;
 
         function init(facility) {
             self.pricing = facility.pricing;
             _.forEach(self.pricing, function(p) { p._id = Sequence.nextval();});
+        }
+
+        function copyPricingRows(firstOnly) {
+            clipboard.clear();
+            _.forEach(self.pricing, function(p) {
+                if (isSelected(p)) {
+                    applySelectChange(p._id, false);
+
+                    clipboard.add(p);
+                    return !firstOnly;
+                }
+            });
+        }
+
+        function deletePricingRows() {
+            clipboard.clear();
+            _.forEachRight(self.pricing, function(p, i) {
+                if (isSelected(p)) {
+                    self.pricing.splice(i, 1);
+                    applySelectChange(p._id, false);
+                }
+            });
+            self.data.allSelected = false;
+        }
+
+        function pastePricingRows() {
+            _.forEach(clipboard.rows, function(p) {
+                var newPricing = _.cloneDeep(p);
+                delete newPricing.$$hashKey; // TODO consider using angular.clone
+                newPricing._id = Sequence.nextval();
+                self.pricing.push(newPricing);
+
+                if (clipboard.rows.length > 1) {
+                    applySelectChange(newPricing._id, true);
+                }
+            });
+            self.data.allSelected = false;
+        }
+
+        function pastePricingValues(property) {
+            var len = clipboard.rows.length;
+            if (len === 0) {
+                return;
+            }
+
+            var j = 0;
+            _.forEach(self.pricing, function(p) {
+                if (isSelected(p)) {
+                    var value = clipboard.rows[j++ % len][property];
+                    p[property] = _.cloneDeep(value);
+                }
+            });
         }
 
         function addRow() {
@@ -54,6 +110,11 @@
             return self.selections.count === self.pricing.length;
         }
 
+        function isSelected(p) {
+            return self.selections[p._id];
+        }
+
+        // TODO pass pricing instead of id
         function applySelectChange(pricingId, isSelected) {
             if (self.selections[pricingId] !== isSelected) {
                 self.selections.count += (isSelected ? +1 : -1);

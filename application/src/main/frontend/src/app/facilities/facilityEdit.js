@@ -90,64 +90,10 @@
         self.onSelectAllChange = pricingManager.onSelectAllChange;
         self.addPricingRow = pricingManager.addRow;
         self.isClipboardEmpty = pricingManager.isClipboardEmpty;
-
-        self.copyPricingRows = function(firstOnly) {
-            var pricingRows = self.facility.pricing;
-            pricingManager.clearClipboard();
-            for (var i=0; i < pricingRows.length; i++) {
-                var id = pricingRows[i]._id;
-                if (isSelected(id)) {
-                    setSelected(id, false);
-
-                    pricingManager.addToClipboard(pricingRows[i]);
-                    if (firstOnly) {
-                        return;
-                    }
-                }
-            }
-        };
-        self.deletePricingRows = function() {
-            pricingManager.clearClipboard();
-
-            var pricingRows = self.facility.pricing;
-            for (var i=pricingRows.length - 1; i >= 0; i--) {
-                var id = pricingRows[i]._id;
-                if (isSelected(id)) {
-                    pricingRows.splice(i, 1);
-                    setSelected(id, false);
-                }
-            }
-            $scope.model.allSelected = false;
-        };
-        self.pastePricingRows = function() {
-            for (var i=0; i < pricingManager.clipboard.rows.length; i++) {
-                var id = pricingManager.clipboard.rows[i]._id;
-                var newPricing = _.cloneDeep(pricingManager.clipboard.rows[i]);
-                delete newPricing.$$hashKey;
-
-                newPricing._id = Sequence.nextval();
-                self.facility.pricing.push(newPricing);
-                if (pricingManager.clipboard.rows.length > 1) {
-                    setSelected(newPricing._id, true);
-                }
-            }
-            $scope.model.allSelected = false;
-        };
-        self.pastePricingValues = function(property) {
-            var len = pricingManager.clipboard.rows.length;
-            if (len === 0) {
-                return;
-            }
-            var pricingRows = self.facility.pricing;
-            var j=0;
-            for (var i=0; i < pricingRows.length; i++) {
-                var id = pricingRows[i]._id;
-                if (isSelected(id)) {
-                    var value = pricingManager.clipboard.rows[j++ % len][property];
-                    pricingRows[i][property] = _.cloneDeep(value);
-                }
-            }
-        };
+        self.copyPricingRows = pricingManager.copyPricingRows;
+        self.deletePricingRows = pricingManager.deletePricingRows;
+        self.pastePricingRows = pricingManager.pastePricingRows;
+        self.pastePricingValues = pricingManager.pastePricingValues;
 
         self.hasPricingRows = function() {
             return self.facility.pricing.length > 0;

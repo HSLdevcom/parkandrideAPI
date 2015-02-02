@@ -62,6 +62,7 @@
     m.controller('FacilityEditCtrl', function($scope, $state, schema, FacilityResource, Session, Sequence, facility, aliasesPlaceholder) {
         var self = this;
         $scope.common.translationPrefix = "facilities";
+        self.advancedMode = false;
         self.capacityTypes = schema.capacityTypes.values;
         self.usages = schema.usages.values;
         self.dayTypes = schema.dayTypes.values;
@@ -107,6 +108,8 @@
         });
 
         self.addPricingRow = function() {
+            self.clearSelections();
+            self.clearClipboard();
             var newPricing = {};
             newPricing._id = Sequence.nextval();
             self.facility.pricing.push(newPricing);
@@ -132,8 +135,7 @@
             }
         };
         self.deletePricingRows = function() {
-            $scope.pricingClipboard = [];
-            $scope.pricingClipboardIds = {};
+            self.clearClipboard();
             var pricingRows = self.facility.pricing;
             for (var i=pricingRows.length - 1; i >= 0; i--) {
                 var id = pricingRows[i]._id;
@@ -177,6 +179,13 @@
             $scope.pricingClipboard = [];
             $scope.pricingClipboardIds = {};
         };
+        self.clearSelections = function() {
+            for (var s in $scope.selections) {
+                delete $scope.selections[s];
+            }
+            $scope.selections.count = 0;
+            $scope.allSelected = false;
+        };
 
         self.hasPricingRows = function() {
             return self.facility.pricing.length > 0;
@@ -191,7 +200,7 @@
         };
         self.getPricingRowClasses = function(pricing, i) {
             var classes = ($scope.selections[pricing._id] ? 'selected' : 'unselected');
-            if ($scope.pricingClipboardIds[pricing._id]) {
+            if (self.advancedMode && $scope.pricingClipboardIds[pricing._id]) {
                 classes += ' on-clipboard';
             }
             if (self.isNewPricingGroup(i)) {

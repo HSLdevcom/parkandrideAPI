@@ -91,6 +91,5 @@ insert into payment_method values ('MASTERCARD');
 insert into payment_method values ('DINERS_CLUB');
 insert into payment_method values ('HSL_TRAVEL_CARD');
 insert into payment_method values ('HSL_SINGLE_TICKET');
-insert into payment_method values ('VR_CARD');
 insert into payment_method values ('VR_SINGLE_TICKET');
 insert into payment_method values ('OTHER');

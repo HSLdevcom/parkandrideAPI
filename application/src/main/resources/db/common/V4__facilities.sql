@@ -15,7 +15,6 @@ create table facility (
   operator_contact_id bigint not null,
   service_contact_id bigint,
 
-  park_and_ride_auth_required boolean not null,
   payment_info_detail_fi varchar(255),
   payment_info_detail_sv varchar(255),
   payment_info_detail_en varchar(255),

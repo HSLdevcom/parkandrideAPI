@@ -195,7 +195,6 @@ public class FacilityDao implements FacilityRepository {
                     row.get(qFacility.operatorContactId),
                     row.get(qFacility.serviceContactId)
             );
-            facility.paymentInfo.parkAndRideAuthRequired = row.get(qFacility.parkAndRideAuthRequired);
             facility.paymentInfo.detail = paymentInfoDetailMapping.map(row);
             facility.paymentInfo.url = paymentInfoUrlMapping.map(row);
 
@@ -724,7 +723,6 @@ public class FacilityDao implements FacilityRepository {
         populateCapacity(qFacility.capacityBicycle, builtCapacity.get(BICYCLE), store);
 
         FacilityPaymentInfo paymentInfo = facility.paymentInfo;
-        store.set(qFacility.parkAndRideAuthRequired, paymentInfo.parkAndRideAuthRequired);
         paymentInfoDetailMapping.populate(paymentInfo.detail, store);
         paymentInfoUrlMapping.populate(paymentInfo.url, store);
     }

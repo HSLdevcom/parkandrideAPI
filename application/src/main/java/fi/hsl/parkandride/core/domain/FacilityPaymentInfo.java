@@ -6,7 +6,6 @@ import javax.validation.constraints.NotNull;
 import fi.hsl.parkandride.core.domain.validation.NotNullElement;
 
 public class FacilityPaymentInfo {
-    public boolean parkAndRideAuthRequired;
 
     @Valid
     public MultilingualString detail;

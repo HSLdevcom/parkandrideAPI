@@ -1,6 +1,6 @@
 "use strict";
 
-module.exports.capacityTypeOrder = ["Henkilöauto", "Invapaikka", "Sähköauto", "Moottoripyörä", "Polkupyörä"];
+module.exports.capacityTypeOrder = ["Henkilöauto", "Invapaikka", "Sähköauto", "Moottoripyörä", "Polkupyörä", "Polkupyörä, lukittu tila"];
 
 var caps_dont_matter = ["aaa", "Aba", "aca"];
 var v_w = ["bvb", "bwa"];

@@ -6,11 +6,7 @@ import static com.mysema.query.group.GroupBy.groupBy;
 import static com.mysema.query.group.GroupBy.list;
 import static com.mysema.query.group.GroupBy.set;
 import static fi.hsl.parkandride.back.GSortedSet.sortedSet;
-import static fi.hsl.parkandride.core.domain.CapacityType.BICYCLE;
-import static fi.hsl.parkandride.core.domain.CapacityType.CAR;
-import static fi.hsl.parkandride.core.domain.CapacityType.DISABLED;
-import static fi.hsl.parkandride.core.domain.CapacityType.ELECTRIC_CAR;
-import static fi.hsl.parkandride.core.domain.CapacityType.MOTORCYCLE;
+import static fi.hsl.parkandride.core.domain.CapacityType.*;
 import static fi.hsl.parkandride.core.domain.Sort.Dir.ASC;
 import static fi.hsl.parkandride.core.domain.Sort.Dir.DESC;
 import static fi.hsl.parkandride.core.domain.Usage.COMMERCIAL;
@@ -182,6 +178,7 @@ public class FacilityDao implements FacilityRepository {
         mapCapacity(facility.builtCapacity, ELECTRIC_CAR, row.get(qFacility.capacityElectricCar));
         mapCapacity(facility.builtCapacity, MOTORCYCLE, row.get(qFacility.capacityMotorcycle));
         mapCapacity(facility.builtCapacity, BICYCLE, row.get(qFacility.capacityBicycle));
+        mapCapacity(facility.builtCapacity, BICYCLE_SECURE_SPACE, row.get(qFacility.capacityBicycleSecureSpace));
 
         return facility;
     }
@@ -342,7 +339,8 @@ public class FacilityDao implements FacilityRepository {
                 qFacility.capacityDisabled.sum(),
                 qFacility.capacityElectricCar.sum(),
                 qFacility.capacityMotorcycle.sum(),
-                qFacility.capacityBicycle.sum());
+                qFacility.capacityBicycle.sum(),
+                qFacility.capacityBicycleSecureSpace.sum());
 
         Map<CapacityType, Integer> capacities = Maps.newHashMap();
         mapCapacity(capacities, CAR, result.get(qFacility.capacityCar.sum()));
@@ -350,6 +348,7 @@ public class FacilityDao implements FacilityRepository {
         mapCapacity(capacities, ELECTRIC_CAR, result.get(qFacility.capacityElectricCar.sum()));
         mapCapacity(capacities, MOTORCYCLE, result.get(qFacility.capacityMotorcycle.sum()));
         mapCapacity(capacities, BICYCLE, result.get(qFacility.capacityBicycle.sum()));
+        mapCapacity(capacities, BICYCLE_SECURE_SPACE, result.get(qFacility.capacityBicycleSecureSpace.sum()));
 
         return new FacilitySummary(result.get(qFacility.id.count()), capacities);
     }
@@ -721,6 +720,7 @@ public class FacilityDao implements FacilityRepository {
         populateCapacity(qFacility.capacityElectricCar, builtCapacity.get(ELECTRIC_CAR), store);
         populateCapacity(qFacility.capacityMotorcycle, builtCapacity.get(MOTORCYCLE), store);
         populateCapacity(qFacility.capacityBicycle, builtCapacity.get(BICYCLE), store);
+        populateCapacity(qFacility.capacityBicycleSecureSpace, builtCapacity.get(BICYCLE_SECURE_SPACE), store);
 
         FacilityPaymentInfo paymentInfo = facility.paymentInfo;
         paymentInfoDetailMapping.populate(paymentInfo.detail, store);

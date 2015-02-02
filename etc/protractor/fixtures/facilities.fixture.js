@@ -46,6 +46,7 @@ module.exports = function () {
             builtCapacity: {
                 "CAR": 10,
                 "BICYCLE": 20,
+                "BICYCLE_SECURE_SPACE": 30,
                 "DISABLED": 40,
                 "MOTORCYCLE": 50,
                 "ELECTRIC_CAR":  60

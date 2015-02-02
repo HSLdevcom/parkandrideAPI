@@ -34,7 +34,7 @@
     "BICYCLE": {
       "label": "Polkupyörä"
     },
-    "BICYCLE_LOCKUP": {
+    "BICYCLE_SECURE_SPACE": {
       "label": "Polkupyörä, lukittu tila"
     },
     "DISABLED": {

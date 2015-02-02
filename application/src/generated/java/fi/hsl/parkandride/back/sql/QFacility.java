@@ -29,7 +29,7 @@ public class QFacility extends RelationalPathSpatial<QFacility> {
 
     public final NumberPath<Integer> capacityBicycle = createNumber("capacityBicycle", Integer.class);
 
-    public final NumberPath<Integer> capacityBicycleLockup = createNumber("capacityBicycleLockup", Integer.class);
+    public final NumberPath<Integer> capacityBicycleSecureSpace = createNumber("capacityBicycleSecureSpace", Integer.class);
 
     public final NumberPath<Integer> capacityCar = createNumber("capacityCar", Integer.class);
 
@@ -141,7 +141,7 @@ public class QFacility extends RelationalPathSpatial<QFacility> {
 
     public void addMetadata() {
         addMetadata(capacityBicycle, ColumnMetadata.named("CAPACITY_BICYCLE").withIndex(30).ofType(Types.INTEGER).withSize(10));
-        addMetadata(capacityBicycleLockup, ColumnMetadata.named("CAPACITY_BICYCLE_LOCKUP").withIndex(31).ofType(Types.INTEGER).withSize(10));
+        addMetadata(capacityBicycleSecureSpace, ColumnMetadata.named("CAPACITY_BICYCLE_SECURE_SPACE").withIndex(31).ofType(Types.INTEGER).withSize(10));
         addMetadata(capacityCar, ColumnMetadata.named("CAPACITY_CAR").withIndex(26).ofType(Types.INTEGER).withSize(10));
         addMetadata(capacityDisabled, ColumnMetadata.named("CAPACITY_DISABLED").withIndex(27).ofType(Types.INTEGER).withSize(10));
         addMetadata(capacityElectricCar, ColumnMetadata.named("CAPACITY_ELECTRIC_CAR").withIndex(28).ofType(Types.INTEGER).withSize(10));

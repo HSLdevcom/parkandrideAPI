@@ -558,7 +558,7 @@
     },
     "associatedFacilities": "Alueen pysäköintipaikat",
     "noAssociatedFacilities": "Alueeseen ei ole lisätty pysäköintipaikkoja",
-    "facilitiesTotal": "Pysäköintipaikkoja yhteensä"
+    "facilitiesTotal": "Alueen rakennettu kapasiteetti"
   },
   "users": {
     "title": "Käyttäjät",

@@ -38,6 +38,7 @@ create table usage (
   primary key (name)
 );
 insert into usage values ('PARK_AND_RIDE');
+insert into usage values ('HSL');
 insert into usage values ('COMMERCIAL');
 
 

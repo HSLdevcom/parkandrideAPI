@@ -93,10 +93,9 @@
                         return registerEnumValues(schema, "facilityStatuses", values, $translate, $q);
                     });
                 },
-                roles: function(schema, UserResource) {
-                    return UserResource.listRoles().then(function(roles) {
-                        schema.roles = roles;
-                        return roles;
+                roles: function(schema, SchemaResource, $translate, $q) {
+                    return SchemaResource.getRoles().then(function(values) {
+                        return registerEnumValues(schema, "roles", values, $translate, $q);
                     });
                 }
             },

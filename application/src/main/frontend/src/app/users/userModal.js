@@ -40,7 +40,7 @@
         vm.user = user || {};
         vm.save = save;
         vm.cancel = cancel;
-        vm.roles = translatedEnumValues("roles", schema.roles);
+        vm.roles = schema.roles.values;
         vm.operators = operators.results;
         vm.onOperatorSelect = onOperatorSelect;
         vm.onRoleSelect = onRoleSelect;
@@ -87,15 +87,6 @@
 
         function cancel() {
             $modalInstance.dismiss();
-        }
-
-        function translatedEnumValues(prefix, values) {
-            return _.map(values, function(v) {
-                return {
-                    id: v,
-                    label: $translate.instant(prefix + "." + v + ".label")
-                };
-            });
         }
     });
 })();

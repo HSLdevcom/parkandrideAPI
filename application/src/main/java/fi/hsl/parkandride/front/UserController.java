@@ -38,11 +38,6 @@ public class UserController {
         return authenticationService.login(credentials.username, credentials.password);
     }
 
-    @RequestMapping(method = GET, value = ROLES, produces = APPLICATION_JSON_VALUE)
-    public ResponseEntity<Results<Role>> roles() {
-        return new ResponseEntity<>(Results.of(Arrays.asList(Role.values())), OK);
-    }
-
     @RequestMapping(method = GET, value = USERS, produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<SearchResults<User>> findUsers(User currentUser) {
         UserSearch search = new UserSearch();

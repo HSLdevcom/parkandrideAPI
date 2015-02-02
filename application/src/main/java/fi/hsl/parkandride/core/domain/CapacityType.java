@@ -5,5 +5,6 @@ public enum CapacityType {
     DISABLED,
     ELECTRIC_CAR,
     MOTORCYCLE,
-    BICYCLE
+    BICYCLE,
+    BICYCLE_LOCKUP
 }

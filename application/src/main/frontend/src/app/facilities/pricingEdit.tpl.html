@@ -3,7 +3,8 @@
 	<input type="checkbox" ng-model="rowSelected" class="checkbox"/>
 </td>
 <td>
-	<ui-select class="capacityInput" ng-model="pricing.capacityType" theme="bootstrap" reset-search-input="true">
+	<ui-select class="capacityInput" name="pricingCapacityType{{pricing._id}}" ng-model="pricing.capacityType"
+			   theme="bootstrap" reset-search-input="true" ng-required="true" show-errors>
 		<ui-select-match placeholder="{{'facilities.pricing.capacityTypePlaceholder' | translate }}">
 			{{$select.selected.label}}
 		</ui-select-match>
@@ -13,7 +14,8 @@
 	</ui-select>
 </td>
 <td>
-	<ui-select class="usageInput" ng-model="pricing.usage" theme="bootstrap" reset-search-input="true">
+	<ui-select class="usageInput" name="pricingUsage{{pricing._id}}" ng-model="pricing.usage"
+			   theme="bootstrap" reset-search-input="true" ng-required="true" show-errors>
 		<ui-select-match placeholder="{{'facilities.pricing.usagePlaceholder' | translate }}">
 			{{$select.selected.label}}
 		</ui-select-match>
@@ -28,7 +30,8 @@
 </td>
 
 <td>
-	<ui-select ng-model="pricing.dayType" theme="bootstrap" reset-search-input="true">
+	<ui-select name="pricingDayType{{pricing._id}}" ng-model="pricing.dayType"
+			   theme="bootstrap" reset-search-input="true" ng-required="true" show-errors>
 		<ui-select-match placeholder="{{'facilities.pricing.dayTypePlaceholder' | translate }}">
 			{{$select.selected.label}}
 		</ui-select-match>
@@ -54,14 +57,14 @@
 </td>
 <td>
 	<textarea name="pricingPriceFi{{pricing._id}}" rows="1" maxlenght="255" type="text" class="form-control capacityInput" ng-model="pricing.price.fi"
-			  show-errors ></textarea>
+			  ng-required="pricing.price.sv || pricing.price.en" show-errors ></textarea>
 </td>
 <td>
 	<textarea name="pricingPriceSv{{pricing._id}}" rows="1" maxlenght="255" type="text" class="form-control capacityInput" ng-model="pricing.price.sv"
-			  show-errors ></textarea>
+			  ng-required="pricing.price.fi || pricing.price.en" show-errors ></textarea>
 </td>
 <td>
 	<textarea name="pricingPriceEn{{pricing._id}}" rows="1" maxlenght="255" type="text" class="form-control capacityInput" ng-model="pricing.price.en"
-			  show-errors ></textarea>
+			  ng-required="pricing.price.fi || pricing.price.sv" show-errors ></textarea>
 </td>
 

@@ -114,7 +114,7 @@
             restrict: 'E',
             scope: {
                 object: '=',
-                mandatory: '@'
+                mandatory: '='
             },
             templateUrl: 'operators/operatorSelect.tpl.html',
             transclude: false,

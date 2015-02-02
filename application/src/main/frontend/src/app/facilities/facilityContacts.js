@@ -49,7 +49,7 @@
                 facilityContacts: '=',
                 operatorId: '=',
                 contactType: '@',
-                mandatory: '@'
+                mandatory: '='
             },
             templateUrl: 'facilities/facilityContactEdit.tpl.html',
             transclude: false,

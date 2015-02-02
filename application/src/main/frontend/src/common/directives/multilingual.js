@@ -18,7 +18,7 @@
             require: 'ngModel',
             scope: {
                 string: '=ngModel',
-                mandatory: '@',
+                mandatory: '=',
                 name: '@'
             },
             templateUrl: 'directives/multilingualEdit.tpl.html',
@@ -33,7 +33,7 @@
             require: 'ngModel',
             scope: {
                 string: '=ngModel',
-                mandatory: '@',
+                mandatory: '=',
                 name: '@'
             },
             templateUrl: 'directives/longMultilingualEdit.tpl.html',

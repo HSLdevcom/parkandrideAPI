@@ -40,6 +40,10 @@
             return $http.put('internal/users/' + user.id + '/password', data, config);
         };
 
+        api.remove = function(user) {
+            return $http['delete']('internal/users/' + user.id);
+        };
+
         return api;
     });
 })();

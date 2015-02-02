@@ -4,11 +4,10 @@ import static fi.hsl.parkandride.front.UrlSchema.*;
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 import static org.springframework.web.bind.annotation.RequestMethod.PUT;
-
-import java.util.Arrays;
 
 import javax.annotation.Resource;
 
@@ -20,7 +19,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import fi.hsl.parkandride.core.domain.*;
+import fi.hsl.parkandride.core.domain.Login;
+import fi.hsl.parkandride.core.domain.NewUser;
+import fi.hsl.parkandride.core.domain.SearchResults;
+import fi.hsl.parkandride.core.domain.User;
+import fi.hsl.parkandride.core.domain.UserSearch;
 import fi.hsl.parkandride.core.service.AuthenticationService;
 import fi.hsl.parkandride.core.service.UserService;
 
@@ -69,5 +72,10 @@ public class UserController {
             @RequestBody ValueHolder<String> newPassword,
             User updater) {
         userService.updatePassword(userId, newPassword.value, updater);
+    }
+
+    @RequestMapping(method = DELETE, value = USER, produces = APPLICATION_JSON_VALUE)
+    public void deleteUser(@PathVariable(USER_ID) long userId, User remover) {
+        userService.deleteUser(userId, remover);
     }
 }

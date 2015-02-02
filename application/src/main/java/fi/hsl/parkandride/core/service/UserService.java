@@ -74,6 +74,18 @@ public class UserService {
         userRepository.updatePassword(userId, authenticationService.encryptPassword(newPassword));
     }
 
+    @TransactionalWrite
+    public void deleteUser(long userId, User remover) {
+        User user = userRepository.getUser(userId).user;
+        authorize(remover, user, USER_UPDATE);
+
+        if (userId == remover.id) {
+            // TODO don't allow suicide, i.e. check that userId != remover.id
+        }
+
+        userRepository.deleteUser(userId);
+    }
+
     private void validate(User currentUser, NewUser newUser) {
         Collection<Violation> violations = new ArrayList<>();
 

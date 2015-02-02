@@ -588,6 +588,12 @@
       },
       "updatePass": {
         "label": "Päivitä salasana"
+      },
+      "remove": {
+        "label": "Poista",
+        "confirmTitle": "Oletko varma?",
+        "confirmText": "Olet poistamassa käyttäjää",
+        "confirmButtonText": "Kyllä, poista käyttäjä"
       }
     },
     "action": {

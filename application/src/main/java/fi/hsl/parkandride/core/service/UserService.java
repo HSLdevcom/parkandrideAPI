@@ -1,11 +1,17 @@
 package fi.hsl.parkandride.core.service;
 
 import static fi.hsl.parkandride.core.domain.Permission.USER_CREATE;
+import static fi.hsl.parkandride.core.domain.Permission.USER_UPDATE;
 import static fi.hsl.parkandride.core.domain.Permission.USER_VIEW;
 import static fi.hsl.parkandride.core.domain.Role.ADMIN;
 import static fi.hsl.parkandride.core.domain.Role.OPERATOR;
 import static fi.hsl.parkandride.core.domain.Role.OPERATOR_API;
 import static fi.hsl.parkandride.core.service.AuthenticationService.authorize;
+
+import java.util.ArrayList;
+import java.util.Collection;
+
+import org.springframework.util.StringUtils;
 
 import fi.hsl.parkandride.core.back.UserRepository;
 import fi.hsl.parkandride.core.domain.*;
@@ -35,11 +41,7 @@ public class UserService {
     public User createUser(NewUser newUser, User currentUser) {
         authorize(currentUser, newUser, USER_CREATE);
 
-        if (currentUser.role != ADMIN && !isOperatorRole(newUser.role)) {
-            throw new ValidationException(new Violation("IllegalRole", "role", "Expected an operator role, got " + newUser.role));
-        }
-
-        validationService.validate(newUser);
+        validate(currentUser, newUser);
         return createUserNoValidate(newUser);
     }
 
@@ -47,7 +49,6 @@ public class UserService {
     public User createUserNoValidate(NewUser newUser) {
         UserSecret userSecret = new UserSecret();
         if (!newUser.role.perpetualToken) {
-            validatePassword(newUser.password);
             userSecret.password = authenticationService.encryptPassword(newUser.password);
         }
         userSecret.user = new User(newUser);
@@ -55,14 +56,63 @@ public class UserService {
         return userSecret.user;
     }
 
-    private void validatePassword(String password) {
+    @TransactionalWrite
+    public String resetToken(Long userId, User currentUser) {
+        authorize(currentUser, userRepository.getUser(userId).user, USER_UPDATE);
+        return authenticationService.resetToken(userId);
+    }
+
+    @TransactionalWrite
+    public void updatePassword(Long userId, String newPassword, User updater) {
+        User user = userRepository.getUser(userId).user;
+        authorize(updater, user, USER_UPDATE);
+
+        if (user.role == Role.OPERATOR_API) {
+            throw new ValidationException(new Violation("PasswordUpdateNotApplicable", "", "Password update is not applicable for api user"));
+        }
+
+        userRepository.updatePassword(userId, authenticationService.encryptPassword(newPassword));
+    }
+
+    private void validate(User currentUser, NewUser newUser) {
+        Collection<Violation> violations = new ArrayList<>();
+
+        if (!isAdminRole(currentUser.role) && !isOperatorRole(newUser.role)) {
+            violations.add(new Violation("IllegalRole", "role", "Expected an operator role, got " + newUser.role));
+        }
+
+        validationService.validate(newUser, violations);
+        // cannot continue if e.g. role is not provided
+        if (violations.isEmpty()) {
+            if (!newUser.role.perpetualToken) {
+                validatePassword(newUser.password, violations);
+            }
+            validateOperator(newUser, violations);
+        }
+
+        if (!violations.isEmpty()) {
+            throw new ValidationException(violations);
+        }
+    }
+
+    private void validateOperator(NewUser newUser, Collection<Violation> violations) {
+        if (isOperatorRole(newUser.role) && newUser.operatorId == null) {
+            violations.add(new Violation("OperatorRequired", "operator", "Operator is required for operator user"));
+        }
+
+        if (isAdminRole(newUser.role) && newUser.operatorId != null) {
+            violations.add(new Violation("OperatorNotAllowed", "operator", "Operator is not allowed for admin user"));
+        }
+    }
+
+    private void validatePassword(String password, Collection<Violation> violations) {
         if (!isValidPassword(password)) {
-            throw new ValidationException(new Violation("BadPassword", "password", "Expected a password of length >= 8"));
+            violations.add(new Violation("BadPassword", "password", "Expected a password of length >= 8"));
         }
     }
 
     private boolean isValidPassword(String password) {
-        if (password == null) {
+        if (!StringUtils.hasText(password)) {
             return false;
         }
         // TODO
@@ -71,5 +121,9 @@ public class UserService {
 
     private boolean isOperatorRole(Role role) {
         return role == OPERATOR || role == OPERATOR_API;
+    }
+
+    private boolean isAdminRole(Role role) {
+        return role == ADMIN;
     }
 }

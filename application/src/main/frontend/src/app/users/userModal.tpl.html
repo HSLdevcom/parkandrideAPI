@@ -1,0 +1,73 @@
+<div id="userModal">
+	<div class="modal-header row">
+		<h3 class="modal-title">{{ ctrl.titleKey | translate }}</h3>
+	</div>
+
+	<div class="modal-body">
+		<div ng-show="violations.length > 0" class="row errorRow">
+			<div ng-repeat="violation in violations" class="wdViolation">
+				<span class="wdViolationPath">{{
+					(violation.path ? 'users.' + violation.path : 'users') + '.label' | translate
+				}}</span>:
+				<span class="wdViolationMessage" translate="violation.{{violation.type}}" translate-values="{{violation.args}}"></span>
+			</div>
+		</div>
+		<form name="userForm" class="form-horizontal" role="form" novalidate>
+			<div class="row">
+				<label>{{ "users.role.label" | translate }} *</label>
+			</div>
+			<div class="row">
+				<ui-select name="role" ng-model="ctrl.user.role" on-select="ctrl.onRoleSelect($item, $model)" theme="bootstrap" reset-search-input="true">
+					<ui-select-match placeholder="{{'users.role.placeholder' | translate}}">
+						{{$select.selected.label}}
+					</ui-select-match>
+					<ui-select-choices repeat="role.id as role in ctrl.roles | filter: {label: $select.search}">
+						<div ng-bind-html="role.label | highlight: $select.search"></div>
+					</ui-select-choices>
+				</ui-select>
+			</div>
+
+			<div class="row">
+				<label>{{ "users.username.label" | translate }} *</label>
+			</div>
+			<div class="row">
+				<input name="username" type="input" ng-model="ctrl.user.username" class="form-control">
+			</div>
+
+			<div ng-show="ctrl.isPasswordRequired()">
+				<div class="row">
+					<label>{{ "users.password.label" | translate }} *</label>
+				</div>
+				<div class="row">
+					<input name="password" type="password" ng-model="ctrl.user.password" class="form-control">
+				</div>
+			</div>
+
+			<div ng-show="!ctrl.isAdmin()">
+				<div class="row">
+					<label>{{ "users.operator.label" | translate }} *</label>
+				</div>
+				<div class="row">
+					<ui-select name="operator" ng-model="ctrl.user.operatorId" on-select="ctrl.onOperatorSelect($item, $model)" theme="bootstrap"
+							   reset-search-input="true" ng-disabled="ctrl.isOperatorCreator">
+						<ui-select-match placeholder="{{'operators.select' | translate}}" allow-clear="true">
+							{{$select.selected.name.fi}}
+						</ui-select-match>
+						<ui-select-choices repeat="operator.id as operator in ctrl.operators | filter: {name: {fi: $select.search}}">
+							<div ng-bind-html="operator.name.fi | highlight: $select.search"></div>
+						</ui-select-choices>
+					</ui-select>
+				</div>
+			</div>
+
+		</form>
+	</div>
+
+	<div class="modal-footer row">
+		<div class="last-column">
+			<button id="wdUserModalCancel" class="btn btn-xs-secondary" ng-click="ctrl.cancel()">{{ "common.action.cancel" | translate }}</button>
+			<button id="wdUserModalOk" class="btn btn-xs" ng-click="ctrl.save(userForm)"
+					ng-if="permit([USER_CREATE, USER_UPDATE], ctrl.user.operatorId)">{{ "common.action.ok" | translate }}</button>
+		</div>
+	</div>
+</div>

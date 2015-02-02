@@ -91,6 +91,17 @@
       "label": "Poikkeustilanne"
     }
   },
+  "roles": {
+    "ADMIN": {
+      "label": "admin"
+    },
+    "OPERATOR": {
+      "label": "operaattori"
+    },
+    "OPERATOR_API": {
+      "label": "API"
+    }
+  },
   "operators": {
     "title": "Operaattorit",
     "label": "Operaattori",
@@ -549,6 +560,41 @@
     "noAssociatedFacilities": "Alueeseen ei ole lisätty pysäköintipaikkoja",
     "facilitiesTotal": "Pysäköintipaikkoja yhteensä"
   },
+  "users": {
+    "title": "Käyttäjät",
+    "username": {
+      "label": "Käyttäjätunnus"
+    },
+    "password": {
+      "label": "Salasana"
+    },
+    "newPassword": {
+      "title": "Päivitä salasana",
+      "label": "Uusi salasana",
+      "label2": "Uusi salasana uudelleen"
+    },
+    "operator": {
+      "label": "Operaattori"
+    },
+    "role": {
+      "label": "Rooli",
+      "placeholder": "Valitse rooli..."
+    },
+    "listActions": {
+      "label": "Toiminnot",
+      "updateToken": {
+        "label": "Päivitä token",
+        "successMessage": "Uusi token on"
+      },
+      "updatePass": {
+        "label": "Päivitä salasana"
+      }
+    },
+    "action": {
+      "new": "Lisää uusi käyttäjä",
+      "edit": "Muokkaa käyttäjää"
+    }
+  },
   "common": {
     "action": {
       "back": "Takaisin listaukseen",
@@ -595,6 +641,8 @@
     "PricingOverlap": "aikavälit eivät saa olla päällekkäisiä",
     "BuiltCapacityNotFound": "rakennettua kapasiteettia ei löydy",
     "PricingCapacityOverflow": "ei voi olla enemmän kuin rakennettu kapasiteetti",
-    "UnavailableCapacityOverflow": "ei voi olla enemmän kuin pysäköintihinnoittelun maksimi"
+    "UnavailableCapacityOverflow": "ei voi olla enemmän kuin pysäköintihinnoittelun maksimi",
+    "OperatorRequired": "anna operaattori",
+    "PasswordConfirmationMismatch": "tarkista, että salasanat ovat identtiset"
   }
 }

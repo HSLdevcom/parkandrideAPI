@@ -15,7 +15,7 @@
     "font-awesome": "4.2.0",
     "lodash": "2.4.1",
     "openlayers3": "~3.0.0",
-    "sweetalert": "0.2.0"
+    "sweetalert2": "0.1.8"
   },
   "dependencies": {}
 }

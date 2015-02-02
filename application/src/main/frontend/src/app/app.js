@@ -16,6 +16,7 @@
         'parkandride.contacts',
         'parkandride.operators',
         'parkandride.hubList',
+        'parkandride.users',
         'parkandride.dev',
         'parkandride.auth'
     ]);
@@ -91,6 +92,11 @@
                     return SchemaResource.getFacilityStatuses().then(function(values) {
                         return registerEnumValues(schema, "facilityStatuses", values, $translate, $q);
                     });
+                },
+                roles: function(schema, SchemaResource, $translate, $q) {
+                    return SchemaResource.getRoles().then(function(values) {
+                        return registerEnumValues(schema, "roles", values, $translate, $q);
+                    });
                 }
             },
             controller: function($scope, features) {
@@ -110,6 +116,12 @@
         });
 
         $stateProvider.state('operatorstab', {
+            abstract: true,
+            parent: 'root',
+            views: { "main": { template: '<div ui-view="main"></div>' } }
+        });
+
+        $stateProvider.state('userstab', {
             abstract: true,
             parent: 'root',
             views: { "main": { template: '<div ui-view="main"></div>' } }

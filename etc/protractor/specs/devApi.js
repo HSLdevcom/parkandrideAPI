@@ -34,47 +34,57 @@ module.exports = function () {
         return _.map(coll, function(item) { return item.toPayload(); });
     }
 
+    function execute(options) {
+        return flow.execute(function () { return asPromise(options); });
+    }
+
     api.deleteFacilities = function() {
-        flow.execute(function() { return asPromise({ method: 'DELETE', url: facilitiesUrl }); });
+        execute({method: 'DELETE', url: facilitiesUrl});
     };
 
     api.insertFacilities = function(facilities) {
-        flow.execute(function() { return asPromise({ method: 'PUT', url: facilitiesUrl, json: true, body: asPayload(facilities) }); });
+        execute({method: 'PUT', url: facilitiesUrl, json: true, body: asPayload(facilities)});
     };
 
     api.deleteHubs = function() {
-        flow.execute(function() { return asPromise({ method: 'DELETE', url: hubsUrl }); });
+        execute({method: 'DELETE', url: hubsUrl});
     };
 
     api.insertHubs = function(hubs) {
         if (hubs) {
-            flow.execute(function(){ return asPromise({ method: 'PUT', url: hubsUrl, json: true, body: asPayload(hubs) }); });
+            execute({method: 'PUT', url: hubsUrl, json: true, body: asPayload(hubs)});
         }
     };
 
     api.deleteContacts = function() {
-        flow.execute(function() { return asPromise({ method: 'DELETE', url: contactsUrl }); });
+        execute({method: 'DELETE', url: contactsUrl});
     };
 
     api.insertContacts = function(contacts) {
         if (contacts) {
-            flow.execute(function(){return asPromise({ method: 'PUT', url: contactsUrl, json: true, body: asPayload(contacts) })});
+            execute({method: 'PUT', url: contactsUrl, json: true, body: asPayload(contacts)});
         }
     };
 
     api.deleteOperators = function() {
-        flow.execute(function() { return asPromise({ method: 'DELETE', url: operatorsUrl }); });
+        execute({method: 'DELETE', url: operatorsUrl});
     };
 
     api.insertOperators= function(operators) {
         if (operators) {
-            flow.execute(function(){return asPromise({ method: 'PUT', url: operatorsUrl, json: true, body: asPayload(operators) })});
+                var options = {method: 'PUT', url: operatorsUrl, json: true, body: asPayload(operators)};
+            execute(options);
         }
     };
 
-
     api.deleteUsers = function() {
-        flow.execute(function() { return asPromise({ method: 'DELETE', url: usersUrl }); });
+        execute({method: 'DELETE', url: usersUrl});
+    };
+
+    api.insertUsers = function(users) {
+        if (users) {
+            execute({ method: 'PUT', url: usersUrl, json: true, body: asPayload(users) });
+        }
     };
 
     api.createLogin = function(role, username, password) {
@@ -83,7 +93,7 @@ module.exports = function () {
             password: password || "password",
             role: role
         };
-        return flow.execute(function() { return asPromise({ method: 'POST', url: loginUrl, json: true, body: newUser }) });
+        return execute({method: 'POST', url: loginUrl, json: true, body: newUser});
     };
 
     api.loginAs = function(role, username, password) {
@@ -114,6 +124,7 @@ module.exports = function () {
         api.deleteOperators();
 
         api.insertOperators(data.operators);
+        api.insertUsers(data.users);
         api.insertContacts(data.contacts);
         api.insertFacilities(data.facilities);
         api.insertHubs(data.hubs);

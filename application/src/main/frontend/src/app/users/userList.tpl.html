@@ -1,0 +1,14 @@
+<table class="table table-bordered table-condensed">
+	<thead>
+		<tr>
+			<th>{{ "users.username.label" | translate }}</th>
+			<th>{{ "users.operator.label" | translate }}</th>
+			<th>{{ "users.role.label" | translate }}</th>
+			<th>{{ "users.listActions.label" | translate }}</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr user-list-row ng-repeat="user in ctrl.users | orderBy: [ 'operatorNameFi', 'role', 'username' ]"
+			class="userRow wdUser{{user.username}}" user="user"></tr>
+	</tbody>
+</table>

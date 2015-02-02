@@ -228,7 +228,7 @@
 		</a>
 	</div>
 	<div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 column last-column">
-		<button id="advanced-mode" btn-checkbox ng-model="editCtrl.advancedMode" class="btn btn-xs" type="button">
+		<button id="advanced-mode" btn-checkbox ng-model="editCtrl.advancedMode" class="btn btn-xs" type="button" ng-show="editCtrl.hasPricingRows()">
 			Lisätoiminnot
 		</button>
 	</div>

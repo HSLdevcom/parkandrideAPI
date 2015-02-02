@@ -76,6 +76,7 @@ insert into service values ('ENGINE_IGNITION_AID');
 insert into service values ('FIRST_AID');
 insert into service values ('STROLLER_RENTAL');
 insert into service values ('INFO_SCREENS');
+insert into service values ('BICYCLE_FRAME_LOCK');
 
 
 create table payment_method (

@@ -15,7 +15,7 @@
 
         $scope.ok = function (form) {
             $scope.$broadcast(EVENTS.showErrorsCheckValidity);
-            if (form.$valid) {
+            if (!form || form.$valid) {
                 $modalInstance.close($scope.port);
             }
         };

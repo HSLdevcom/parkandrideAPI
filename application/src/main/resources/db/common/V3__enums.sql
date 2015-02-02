@@ -16,6 +16,7 @@ create table capacity_type (
 
 insert into capacity_type values ('CAR');
 insert into capacity_type values ('BICYCLE');
+insert into capacity_type values ('BICYCLE_LOCKUP');
 insert into capacity_type values ('DISABLED');
 insert into capacity_type values ('MOTORCYCLE');
 insert into capacity_type values ('ELECTRIC_CAR');

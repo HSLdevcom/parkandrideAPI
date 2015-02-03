@@ -80,7 +80,8 @@ public class UserService {
         authorize(actor, user, USER_UPDATE);
 
         if (userId == actor.id) {
-            // TODO don't allow suicide, i.e. check that userId != remover.id
+            // don't allow suicide
+            throw new AccessDeniedException();
         }
 
         userRepository.deleteUser(userId);

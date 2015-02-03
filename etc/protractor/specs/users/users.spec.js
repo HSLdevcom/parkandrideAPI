@@ -67,7 +67,7 @@ describe('users', function () {
         expect(actual.role).toEqual(expected.roleFi);
     }
 
-    describe('navigation', function () {
+    xdescribe('navigation', function () {
         beforeEach(function () {
             devApi.loginAs(admin.role, admin.username, admin.password);
             usersPage.get();
@@ -81,7 +81,7 @@ describe('users', function () {
         // TODO: edit pending, let's see it this is even needed
     });
 
-    describe('lists', function () {
+    xdescribe('lists', function () {
         beforeEach(function () {
             devApi.resetAll({
                 operators: [operatorX, operatorY],
@@ -111,7 +111,7 @@ describe('users', function () {
         });
     });
 
-    describe('create as admin', function () {
+    xdescribe('create as admin', function () {
 
         beforeEach(function () {
             devApi.resetAll({
@@ -162,7 +162,7 @@ describe('users', function () {
         });
     });
 
-    describe('create as operator', function () {
+    xdescribe('create as operator', function () {
         beforeEach(function () {
             devApi.resetAll({
                 operators: [operatorX, operatorY],
@@ -218,4 +218,50 @@ describe('users', function () {
 
         });
     });
+
+    describe('delete', function () {
+        beforeEach(function () {
+            devApi.resetAll({
+                operators: [operatorX, operatorY],
+                users: _.shuffle([operatorX_user])
+            });
+            devApi.loginAs(admin.role, admin.username, admin.password);
+            usersPage.get();
+        });
+
+        it('cannot delete itself', function () {
+            usersPage.getUsers().then(function (actual) {
+                assertUser(actual[0], admin);
+                assertUser(actual[1], operatorX_user);
+            });
+
+            expect(usersPage.canBeDeleted(0)).toBe(false);
+            expect(usersPage.canBeDeleted(1)).toBe(true);
+        });
+
+        it('delete is confirmed and can be cancelled', function () {
+            usersPage.delete(1);
+            expect(usersPage.confirmModal.isDisplayed()).toBe(true);
+
+            usersPage.confirmModal.cancel();
+            expect(usersPage.confirmModal.isDisplayed()).toBe(false);
+
+            usersPage.getUsers().then(function (actual) {
+                assertUser(actual[0], admin);
+                assertUser(actual[1], operatorX_user);
+            });
+        });
+
+        it('after delete, the user list is updated accordingly', function () {
+            usersPage.delete(1);
+            usersPage.confirmModal.confirm();
+            expect(usersPage.confirmModal.isDisplayed()).toBe(false);
+
+            usersPage.getUsers().then(function (actual) {
+                expect(actual.length).toBe(1);
+                assertUser(actual[0], admin);
+            });
+        });
+    });
+
 });

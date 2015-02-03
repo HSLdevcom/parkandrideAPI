@@ -248,15 +248,15 @@
       "placeholder": "Valitse status..."
     },
     "statusDescription": {
-      "label": "Poikkeustiedote / Statuksen lisätiedot",
+      "label": "Statuksen lisätiedot / poikkeustiedote",
       "fi": {
-        "label": "Poikkeustiedote / Statuksen lisätiedot (fi)"
+        "label": "Statuksen lisätiedot / poikkeustiedote (fi)"
       },
       "sv": {
-        "label": "Poikkeustiedote / Statuksen lisätiedot (sv)"
+        "label": "Statuksen lisätiedot / poikkeustiedote (sv)"
       },
       "en": {
-        "label": "Poikkeustiedote / Statuksen lisätiedot (en)"
+        "label": "Statuksen lisätiedot / poikkeustiedote (en)"
       }
     },
     "aliases": {

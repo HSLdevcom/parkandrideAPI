@@ -67,7 +67,7 @@ describe('users', function () {
         expect(actual.role).toEqual(expected.roleFi);
     }
 
-    xdescribe('navigation', function () {
+    describe('navigation', function () {
         beforeEach(function () {
             devApi.loginAs(admin.role, admin.username, admin.password);
             usersPage.get();
@@ -81,7 +81,7 @@ describe('users', function () {
         // TODO: edit pending, let's see it this is even needed
     });
 
-    xdescribe('lists', function () {
+    describe('lists', function () {
         beforeEach(function () {
             devApi.resetAll({
                 operators: [operatorX, operatorY],
@@ -111,7 +111,7 @@ describe('users', function () {
         });
     });
 
-    xdescribe('create as admin', function () {
+    describe('create as admin', function () {
 
         beforeEach(function () {
             devApi.resetAll({
@@ -162,7 +162,7 @@ describe('users', function () {
         });
     });
 
-    xdescribe('create as operator', function () {
+    describe('create as operator', function () {
         beforeEach(function () {
             devApi.resetAll({
                 operators: [operatorX, operatorY],
@@ -254,6 +254,8 @@ describe('users', function () {
 
         it('after delete, the user list is updated accordingly', function () {
             usersPage.delete(1);
+            expect(usersPage.confirmModal.isDisplayed()).toBe(true);
+
             usersPage.confirmModal.confirm();
             expect(usersPage.confirmModal.isDisplayed()).toBe(false);
 

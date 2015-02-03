@@ -1,9 +1,7 @@
 package fi.hsl.parkandride.core.service;
 
 import static fi.hsl.parkandride.core.ViolationAssert.*;
-import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyObject;
-import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -47,9 +45,9 @@ public class UserServiceTest {
     private final static String DEFAULT_PASSWORD = "pass";
     private final AtomicLong seq = new AtomicLong(1L);
 
-    private final User adminActor = creator("admin_actor", Role.ADMIN);
-    private final User operatorActor = creator("operator_actor", Role.OPERATOR);
-    private final User operatorAPIActor = creator("operator_api_actor", Role.OPERATOR_API);
+    private final User adminActor = actor("admin_actor", Role.ADMIN);
+    private final User operatorActor = actor("operator_actor", Role.OPERATOR);
+    private final User operatorAPIActor = actor("operator_api_actor", Role.OPERATOR_API);
 
     private final NewUser admin = input("admin", Role.ADMIN, DEFAULT_PASSWORD);
     private final NewUser operator = input("operator", Role.OPERATOR, DEFAULT_PASSWORD);
@@ -190,6 +188,7 @@ public class UserServiceTest {
     public void operator_can_update_operator_password() {
         when(userRepository.getUser(operator.id)).thenReturn(userSecret(operator));
         when(passwordEncryptor.encryptPassword("newPass")).thenReturn("newPassEncrypted");
+
         userService.updatePassword(operator.id, "newPass", operatorActor);
 
         verify(userRepository).updatePassword(operator.id, "newPassEncrypted");
@@ -205,6 +204,7 @@ public class UserServiceTest {
     public void admin_can_update_operator_password() {
         when(userRepository.getUser(operator.id)).thenReturn(userSecret(operator));
         when(passwordEncryptor.encryptPassword("newPass")).thenReturn("newPassEncrypted");
+
         userService.updatePassword(operator.id, "newPass", adminActor);
 
         verify(userRepository).updatePassword(operator.id, "newPassEncrypted");
@@ -214,6 +214,7 @@ public class UserServiceTest {
     public void admin_can_update_admin_password() {
         when(userRepository.getUser(admin.id)).thenReturn(userSecret(admin));
         when(passwordEncryptor.encryptPassword("newPass")).thenReturn("newPassEncrypted");
+
         userService.updatePassword(admin.id, "newPass", adminActor);
 
         verify(userRepository).updatePassword(admin.id, "newPassEncrypted");
@@ -228,8 +229,8 @@ public class UserServiceTest {
     @Test(expected = AccessDeniedException.class)
     public void operator_cannot_update_other_operators_password() {
         operator.operatorId = DEFAULT_OPERATOR + 1;
-
         when(userRepository.getUser(operator.id)).thenReturn(userSecret(operator));
+
         userService.updatePassword(operator.id, "newPass", operatorActor);
     }
 
@@ -293,7 +294,7 @@ public class UserServiceTest {
         when(userRepository.getUser(admin.id)).thenReturn(userSecret(admin));
         when(userRepository.getUser(operator.id)).thenReturn(userSecret(operator));
 
-        assertAccessDenied(()->userService.deleteUser(admin.id, admin));
+        assertAccessDenied(() -> userService.deleteUser(admin.id, admin));
         assertAccessDenied(() -> userService.deleteUser(operator.id, operator));
     }
 
@@ -311,12 +312,12 @@ public class UserServiceTest {
         return input;
     }
 
-    private User creator(String username, Role role) {
-        User creator = new User(seq.incrementAndGet(), username, role);
+    private User actor(String username, Role role) {
+        User actor = new User(seq.incrementAndGet(), username, role);
         if (role != Role.ADMIN) {
-            creator.operatorId = DEFAULT_OPERATOR;
+            actor.operatorId = DEFAULT_OPERATOR;
         }
-        return creator;
+        return actor;
     }
 
     private static void assertAccessDenied(Runnable r) {

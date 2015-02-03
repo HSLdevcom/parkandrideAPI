@@ -429,7 +429,7 @@
         "label": "Hinnoittelu / Käyttötapa"
       },
       "maxCapacity": {
-        "title": "Maksimi",
+        "title": "Maks.",
         "label": "Hinnoittelu / Maksimi"
       },
       "dayTypePlaceholder": "Valitse...",

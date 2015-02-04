@@ -42,7 +42,8 @@ public class UserServiceTest {
     }
 
     private final static Long DEFAULT_OPERATOR = 0L;
-    private final static String DEFAULT_PASSWORD = "pass";
+    private final static String DEFAULT_PASSWORD = "paSs1234";
+    private final static String NEW_PASSWORD = "paSs1234_new";
     private final AtomicLong seq = new AtomicLong(1L);
 
     private final User adminActor = actor("admin_actor", Role.ADMIN);
@@ -187,9 +188,9 @@ public class UserServiceTest {
     @Test
     public void operator_can_update_operator_password() {
         when(userRepository.getUser(operator.id)).thenReturn(userSecret(operator));
-        when(passwordEncryptor.encryptPassword("newPass")).thenReturn("newPassEncrypted");
+        when(passwordEncryptor.encryptPassword(NEW_PASSWORD)).thenReturn("newPassEncrypted");
 
-        userService.updatePassword(operator.id, "newPass", operatorActor);
+        userService.updatePassword(operator.id, NEW_PASSWORD, operatorActor);
 
         verify(userRepository).updatePassword(operator.id, "newPassEncrypted");
     }
@@ -197,15 +198,15 @@ public class UserServiceTest {
     @Test(expected = AccessDeniedException.class)
     public void operator_cannot_update_admin_password() {
         when(userRepository.getUser(admin.id)).thenReturn(userSecret(admin));
-        userService.updatePassword(admin.id, "newPass", operatorActor);
+        userService.updatePassword(admin.id, NEW_PASSWORD, operatorActor);
     }
 
     @Test
     public void admin_can_update_operator_password() {
         when(userRepository.getUser(operator.id)).thenReturn(userSecret(operator));
-        when(passwordEncryptor.encryptPassword("newPass")).thenReturn("newPassEncrypted");
+        when(passwordEncryptor.encryptPassword(NEW_PASSWORD)).thenReturn("newPassEncrypted");
 
-        userService.updatePassword(operator.id, "newPass", adminActor);
+        userService.updatePassword(operator.id, NEW_PASSWORD, adminActor);
 
         verify(userRepository).updatePassword(operator.id, "newPassEncrypted");
     }
@@ -213,9 +214,9 @@ public class UserServiceTest {
     @Test
     public void admin_can_update_admin_password() {
         when(userRepository.getUser(admin.id)).thenReturn(userSecret(admin));
-        when(passwordEncryptor.encryptPassword("newPass")).thenReturn("newPassEncrypted");
+        when(passwordEncryptor.encryptPassword(NEW_PASSWORD)).thenReturn("newPassEncrypted");
 
-        userService.updatePassword(admin.id, "newPass", adminActor);
+        userService.updatePassword(admin.id, NEW_PASSWORD, adminActor);
 
         verify(userRepository).updatePassword(admin.id, "newPassEncrypted");
     }
@@ -223,7 +224,7 @@ public class UserServiceTest {
     @Test(expected = AccessDeniedException.class)
     public void operator_api_cannot_update_passwords() {
         when(userRepository.getUser(operator.id)).thenReturn(userSecret(operator));
-        userService.updatePassword(operator.id, "newPass", operatorAPIActor);
+        userService.updatePassword(operator.id, NEW_PASSWORD, operatorAPIActor);
     }
 
     @Test(expected = AccessDeniedException.class)
@@ -231,13 +232,13 @@ public class UserServiceTest {
         operator.operatorId = DEFAULT_OPERATOR + 1;
         when(userRepository.getUser(operator.id)).thenReturn(userSecret(operator));
 
-        userService.updatePassword(operator.id, "newPass", operatorActor);
+        userService.updatePassword(operator.id, NEW_PASSWORD, operatorActor);
     }
 
     @Test
     public void operator_api_password_cannot_be_updated() {
         when(userRepository.getUser(operatorAPI.id)).thenReturn(userSecret(operatorAPI));
-        assertPasswordUpdateNotApplicable(() -> userService.updatePassword(operatorAPI.id, "newPass", adminActor));
+        assertPasswordUpdateNotApplicable(() -> userService.updatePassword(operatorAPI.id, NEW_PASSWORD, adminActor));
     }
 
     @Test

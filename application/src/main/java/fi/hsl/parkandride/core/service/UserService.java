@@ -11,8 +11,6 @@ import static fi.hsl.parkandride.core.service.AuthenticationService.authorize;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import org.springframework.util.StringUtils;
-
 import fi.hsl.parkandride.core.back.UserRepository;
 import fi.hsl.parkandride.core.domain.*;
 
@@ -30,18 +28,18 @@ public class UserService {
         this.validationService = validationService;
     }
 
+    @TransactionalRead
     public SearchResults<User> findUsers(UserSearch search, User currentUser) {
         authorize(currentUser, search, USER_VIEW);
 
         return userRepository.findUsers(search);
     }
 
-
     @TransactionalWrite
     public User createUser(NewUser newUser, User actor) {
         authorize(actor, newUser, USER_CREATE);
 
-        validate(actor, newUser);
+        validate(newUser, actor);
         return createUserNoValidate(newUser);
     }
 
@@ -71,6 +69,8 @@ public class UserService {
             throw new ValidationException(new Violation("PasswordUpdateNotApplicable", "", "Password update is not applicable for api user"));
         }
 
+        PasswordValidator.validate(newPassword);
+
         userRepository.updatePassword(userId, authenticationService.encryptPassword(newPassword));
     }
 
@@ -79,15 +79,15 @@ public class UserService {
         User user = userRepository.getUser(userId).user;
         authorize(actor, user, USER_UPDATE);
 
+        // don't allow suicide
         if (userId == actor.id) {
-            // don't allow suicide
             throw new AccessDeniedException();
         }
 
         userRepository.deleteUser(userId);
     }
 
-    private void validate(User actor, NewUser newUser) {
+    private void validate(NewUser newUser, User actor) {
         Collection<Violation> violations = new ArrayList<>();
 
         if (!isAdminRole(actor.role) && !isOperatorRole(newUser.role)) {
@@ -98,7 +98,7 @@ public class UserService {
         // cannot continue if e.g. role is not provided
         if (violations.isEmpty()) {
             if (!newUser.role.perpetualToken) {
-                validatePassword(newUser.password, violations);
+                PasswordValidator.validate(newUser.password, violations);
             }
             validateOperator(newUser, violations);
         }
@@ -116,20 +116,6 @@ public class UserService {
         if (isAdminRole(newUser.role) && newUser.operatorId != null) {
             violations.add(new Violation("OperatorNotAllowed", "operator", "Operator is not allowed for admin user"));
         }
-    }
-
-    private void validatePassword(String password, Collection<Violation> violations) {
-        if (!isValidPassword(password)) {
-            violations.add(new Violation("BadPassword", "password", "Expected a password of length >= 8"));
-        }
-    }
-
-    private boolean isValidPassword(String password) {
-        if (!StringUtils.hasText(password)) {
-            return false;
-        }
-        // TODO
-        return true;
     }
 
     private boolean isOperatorRole(Role role) {

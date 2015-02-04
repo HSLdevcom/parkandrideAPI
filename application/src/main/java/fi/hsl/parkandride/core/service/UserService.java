@@ -28,18 +28,18 @@ public class UserService {
         this.validationService = validationService;
     }
 
+    @TransactionalRead
     public SearchResults<User> findUsers(UserSearch search, User currentUser) {
         authorize(currentUser, search, USER_VIEW);
 
         return userRepository.findUsers(search);
     }
 
-
     @TransactionalWrite
     public User createUser(NewUser newUser, User actor) {
         authorize(actor, newUser, USER_CREATE);
 
-        validate(actor, newUser);
+        validate(newUser, actor);
         return createUserNoValidate(newUser);
     }
 
@@ -79,15 +79,15 @@ public class UserService {
         User user = userRepository.getUser(userId).user;
         authorize(actor, user, USER_UPDATE);
 
+        // don't allow suicide
         if (userId == actor.id) {
-            // don't allow suicide
             throw new AccessDeniedException();
         }
 
         userRepository.deleteUser(userId);
     }
 
-    private void validate(User actor, NewUser newUser) {
+    private void validate(NewUser newUser, User actor) {
         Collection<Violation> violations = new ArrayList<>();
 
         if (!isAdminRole(actor.role) && !isOperatorRole(newUser.role)) {

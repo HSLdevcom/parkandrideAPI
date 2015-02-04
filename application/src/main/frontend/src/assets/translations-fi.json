@@ -653,6 +653,7 @@
     "PricingCapacityOverflow": "ei voi olla enemmän kuin rakennettu kapasiteetti",
     "UnavailableCapacityOverflow": "ei voi olla enemmän kuin pysäköintihinnoittelun maksimi",
     "OperatorRequired": "anna operaattori",
-    "PasswordConfirmationMismatch": "tarkista, että salasanat ovat identtiset"
+    "PasswordConfirmationMismatch": "tarkista, että salasanat ovat identtiset",
+    "BadPassword": "salasanan tulee sisältää 8-15 merkkiä, vähintään yksi numero (0-9), yksi pieni aakkonen (a-ö) ja yksi suuri aakkonen (A-Ö)"
   }
 }

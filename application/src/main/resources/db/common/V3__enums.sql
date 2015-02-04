@@ -16,6 +16,7 @@ create table capacity_type (
 
 insert into capacity_type values ('CAR');
 insert into capacity_type values ('BICYCLE');
+insert into capacity_type values ('BICYCLE_SECURE_SPACE');
 insert into capacity_type values ('DISABLED');
 insert into capacity_type values ('MOTORCYCLE');
 insert into capacity_type values ('ELECTRIC_CAR');
@@ -38,6 +39,7 @@ create table usage (
   primary key (name)
 );
 insert into usage values ('PARK_AND_RIDE');
+insert into usage values ('HSL');
 insert into usage values ('COMMERCIAL');
 
 
@@ -75,6 +77,7 @@ insert into service values ('ENGINE_IGNITION_AID');
 insert into service values ('FIRST_AID');
 insert into service values ('STROLLER_RENTAL');
 insert into service values ('INFO_SCREENS');
+insert into service values ('BICYCLE_FRAME_LOCK');
 
 
 create table payment_method (

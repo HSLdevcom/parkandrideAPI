@@ -29,6 +29,8 @@ public class QFacility extends RelationalPathSpatial<QFacility> {
 
     public final NumberPath<Integer> capacityBicycle = createNumber("capacityBicycle", Integer.class);
 
+    public final NumberPath<Integer> capacityBicycleSecureSpace = createNumber("capacityBicycleSecureSpace", Integer.class);
+
     public final NumberPath<Integer> capacityCar = createNumber("capacityCar", Integer.class);
 
     public final NumberPath<Integer> capacityDisabled = createNumber("capacityDisabled", Integer.class);
@@ -139,6 +141,7 @@ public class QFacility extends RelationalPathSpatial<QFacility> {
 
     public void addMetadata() {
         addMetadata(capacityBicycle, ColumnMetadata.named("CAPACITY_BICYCLE").withIndex(30).ofType(Types.INTEGER).withSize(10));
+        addMetadata(capacityBicycleSecureSpace, ColumnMetadata.named("CAPACITY_BICYCLE_SECURE_SPACE").withIndex(31).ofType(Types.INTEGER).withSize(10));
         addMetadata(capacityCar, ColumnMetadata.named("CAPACITY_CAR").withIndex(26).ofType(Types.INTEGER).withSize(10));
         addMetadata(capacityDisabled, ColumnMetadata.named("CAPACITY_DISABLED").withIndex(27).ofType(Types.INTEGER).withSize(10));
         addMetadata(capacityElectricCar, ColumnMetadata.named("CAPACITY_ELECTRIC_CAR").withIndex(28).ofType(Types.INTEGER).withSize(10));
@@ -168,8 +171,8 @@ public class QFacility extends RelationalPathSpatial<QFacility> {
         addMetadata(statusDescriptionEn, ColumnMetadata.named("STATUS_DESCRIPTION_EN").withIndex(10).ofType(Types.VARCHAR).withSize(255));
         addMetadata(statusDescriptionFi, ColumnMetadata.named("STATUS_DESCRIPTION_FI").withIndex(8).ofType(Types.VARCHAR).withSize(255));
         addMetadata(statusDescriptionSv, ColumnMetadata.named("STATUS_DESCRIPTION_SV").withIndex(9).ofType(Types.VARCHAR).withSize(255));
-        addMetadata(usageCommercial, ColumnMetadata.named("USAGE_COMMERCIAL").withIndex(32).ofType(Types.BOOLEAN).withSize(1).notNull());
-        addMetadata(usageParkAndRide, ColumnMetadata.named("USAGE_PARK_AND_RIDE").withIndex(31).ofType(Types.BOOLEAN).withSize(1).notNull());
+        addMetadata(usageCommercial, ColumnMetadata.named("USAGE_COMMERCIAL").withIndex(33).ofType(Types.BOOLEAN).withSize(1).notNull());
+        addMetadata(usageParkAndRide, ColumnMetadata.named("USAGE_PARK_AND_RIDE").withIndex(32).ofType(Types.BOOLEAN).withSize(1).notNull());
     }
 
 }

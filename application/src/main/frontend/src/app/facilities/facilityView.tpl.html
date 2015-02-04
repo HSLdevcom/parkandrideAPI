@@ -117,14 +117,14 @@
 										<th colspan="4" translate="facilities.pricing.price.title"></th>
 									</tr>
 									<tr>
-										<th id="facilities-pricing-capacityType" translate="facilities.pricing.capacityType.title"></th>
-										<th id="facilities-pricing-usage" translate="facilities.pricing.usage.title"></th>
+										<th id="facilities-view-pricing-capacityType" translate="facilities.pricing.capacityType.title"></th>
+										<th id="facilities-view-pricing-usage" translate="facilities.pricing.usage.title"></th>
 										<th id="facilities-pricing-maxCapacity" translate="facilities.pricing.maxCapacity.title"></th>
 
-										<th id="facilities-pricing-dayType" translate="facilities.pricing.dayType.title"></th>
+										<th id="facilities-view-pricing-dayType" translate="facilities.pricing.dayType.title"></th>
 										<th id="facilities-pricing-h24" translate="facilities.pricing.h24"></th>
-										<th id="facilities-pricing-from" translate="facilities.pricing.time.from.title"></th>
-										<th id="facilities-pricing-until" translate="facilities.pricing.time.until.title"></th>
+										<th id="facilities-view-pricing-from" translate="facilities.pricing.time.from.title"></th>
+										<th id="facilities-view-pricing-until" translate="facilities.pricing.time.until.title"></th>
 
 										<th id="facilities-pricing-free" translate="facilities.pricing.free"></th>
 										<th translate="facilities.pricing.price.fi.title"></th>
@@ -148,13 +148,13 @@
 
 										<td>{{ 'dayTypes.' + pricing.dayType + '.label' | translate }}</td>
 										<td>
-											<div ng-show="viewCtrl.is24h(pricing)">&#x2713;</div>
+											<div class="centeredCell" ng-show="viewCtrl.is24h(pricing)">&#x2713;</div>
 										</td>
 										<td><span ng-hide="viewCtrl.is24h(pricing)">{{ pricing.time.from }}</span></td>
 										<td><span ng-hide="viewCtrl.is24h(pricing)">{{ pricing.time.until }}</span></td>
 
 										<td>
-											<div ng-show="viewCtrl.isFree(pricing)">&#x2713;</div>
+											<div class="centeredCell" ng-show="viewCtrl.isFree(pricing)">&#x2713;</div>
 										</td>
 										<td class="tableText">{{ pricing.price.fi }}</td>
 										<td class="tableText">{{ pricing.price.sv }}</td>

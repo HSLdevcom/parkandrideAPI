@@ -34,8 +34,10 @@
 	<label>{{"operators.label" | translate}} *</label>
 </div>
 <div class="row">
-	<div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 column first-column">
-		<operator-select object="editCtrl.facility" mandatory="true"></operator-select>
+	<div class="column3 first-column">
+		<div class="form-group">
+			<operator-select object="editCtrl.facility" mandatory="true"></operator-select>
+		</div>
 	</div>
 </div>
 
@@ -43,22 +45,26 @@
 	<label>{{"facilities.status.label" | translate}} *</label>
 </div>
 <div class="row">
-	<div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 column first-column">
-		<ui-select class="statusInput" ng-model="editCtrl.facility.status" theme="bootstrap" reset-search-input="true">
-			<ui-select-match placeholder="{{'facilities.status.placeholder' | translate }}">
-				{{$select.selected.label}}
-			</ui-select-match>
-			<ui-select-choices repeat="status.id as status in editCtrl.facilityStatuses | filter: {label: $select.search}">
-				<div ng-bind-html="status.label | highlight: $select.search"></div>
-			</ui-select-choices>
-		</ui-select>
+	<div class="column3 first-column">
+		<div class="form-group">
+			<ui-select class="statusInput" ng-model="editCtrl.facility.status" theme="bootstrap" reset-search-input="true">
+				<ui-select-match placeholder="{{'facilities.status.placeholder' | translate }}">
+					{{$select.selected.label}}
+				</ui-select-match>
+				<ui-select-choices repeat="status.id as status in editCtrl.facilityStatuses | filter: {label: $select.search}">
+					<div ng-bind-html="status.label | highlight: $select.search"></div>
+				</ui-select-choices>
+			</ui-select>
+		</div>
 	</div>
 </div>
+
+
 <div class="row">
 	<label>{{ "facilities.statusDescription.label" | translate }}</label>
 </div>
 <div class="row">
-	<multilingual-edit name="statusDescription" ng-model="editCtrl.facility.statusDescription"></multilingual-edit>
+	<long-multilingual-edit name="statusDescription" ng-model="editCtrl.facility.statusDescription"></long-multilingual-edit>
 </div>
 
 <div class="row">
@@ -228,7 +234,7 @@
 		</a>
 	</div>
 	<div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 column last-column">
-		<button id="advanced-mode" btn-checkbox ng-model="editCtrl.advancedMode" class="btn btn-xs" type="button">
+		<button id="advanced-mode" btn-checkbox ng-model="editCtrl.advancedMode" class="btn btn-xs" type="button" ng-show="editCtrl.hasPricingRows()">
 			Lisätoiminnot
 		</button>
 	</div>

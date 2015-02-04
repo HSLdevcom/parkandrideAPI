@@ -34,6 +34,9 @@
     "BICYCLE": {
       "label": "Polkupyörä"
     },
+    "BICYCLE_SECURE_SPACE": {
+      "label": "Polkupyörä, lukittu tila"
+    },
     "DISABLED": {
       "label": "Invapaikka"
     },
@@ -63,7 +66,8 @@
     "ENGINE_IGNITION_AID": {"label": "Käynnistysapu"},
     "FIRST_AID": {"label": "Ensiapu"},
     "STROLLER_RENTAL": {"label": "Lastenrattaiden vuokraus"},
-    "INFO_SCREENS": {"label": "Inforuudut"}
+    "INFO_SCREENS": {"label": "Inforuudut"},
+    "BICYCLE_FRAME_LOCK": {"label": "Polkupyörän runkolukitus"}
   },
   "paymentMethods": {
     "COINS": { "label": "Kolikko" },
@@ -244,15 +248,15 @@
       "placeholder": "Valitse status..."
     },
     "statusDescription": {
-      "label": "Poikkeustiedote / Statuksen lisätiedot",
+      "label": "Statuksen lisätiedot / poikkeustiedote",
       "fi": {
-        "label": "Poikkeustiedote / Statuksen lisätiedot (fi)"
+        "label": "Statuksen lisätiedot / poikkeustiedote (fi)"
       },
       "sv": {
-        "label": "Poikkeustiedote / Statuksen lisätiedot (sv)"
+        "label": "Statuksen lisätiedot / poikkeustiedote (sv)"
       },
       "en": {
-        "label": "Poikkeustiedote / Statuksen lisätiedot (en)"
+        "label": "Statuksen lisätiedot / poikkeustiedote (en)"
       }
     },
     "aliases": {
@@ -425,7 +429,7 @@
         "label": "Hinnoittelu / Käyttötapa"
       },
       "maxCapacity": {
-        "title": "Maksimi",
+        "title": "Maks.",
         "label": "Hinnoittelu / Maksimi"
       },
       "dayTypePlaceholder": "Valitse...",

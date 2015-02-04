@@ -21,13 +21,11 @@ public class PasswordValidatorTest {
         return new Object[][]{
                 { "i2E45678", true },          // min length
                 { "i2E456789012345", true },   // max length
-                { "i2E%&$)[^@#$%_-", true },   // special chars
+                { "å2Ä%&$)[^@#$%_-", true },   // å,ä,ö + special chars
 
                 { null, false},
                 { "12E45678", false },         // missing lowercase letter
-                { "å2E45678", false },         // missing lowercase letter (å not considered as letter)
                 { "i2345678", false },         // missing uppercase letter
-                { "i2Ä45678", false },         // missing uppercase letter (Ä not considered as letter)
                 { "i2E4 5678", false },        // whitespace inside
                 { "i2E4567", false },          // too short
                 { "i2E4567890123456", false }, // too long

@@ -12,13 +12,12 @@ import fi.hsl.parkandride.core.domain.Violation;
 public class PasswordValidator {
     private PasswordValidator() {}
 
-    // TODO which letters in addition to a-zA-Z should be considered as letters? E.g. åäöñü... ÅÄÖÑÜ... ?!
     // TODO should allowed special chars be specified explicitly?
     private static final String PASSWORD_PATTERN =
             "" +
                     "(?=.*\\d)" +       // at least one digit
-                    "(?=.*[a-z])" +     // at least one lowercase letter
-                    "(?=.*[A-Z])" +     // at least one uppercase letter
+                    "(?=.*[a-zåäö])" +  // at least one lowercase letter
+                    "(?=.*[A-ZÅÄÖ])" +  // at least one uppercase letter
                     "(?!.*\\s)" +       // no whitespace inside
                     "." +               // everything provided that the previous condition checks pass
                     "{8,15}" +          // min max length

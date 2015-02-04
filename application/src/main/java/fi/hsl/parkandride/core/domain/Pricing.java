@@ -8,6 +8,7 @@ import java.util.Comparator;
 import java.util.Objects;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 public class Pricing {
@@ -25,6 +26,7 @@ public class Pricing {
     public CapacityType capacityType;
 
     @NotNull
+    @Min(1)
     public int maxCapacity;
 
 

@@ -19,11 +19,6 @@ import com.wordnik.swagger.annotations.ApiModelProperty;
 
 public class MultilingualString {
 
-    public static Comparator<MultilingualString> COMPARATOR =
-            comparing(((MultilingualString s) -> s.fi), nullsLast(naturalOrder()))
-            .thenComparing(((MultilingualString s) -> s.sv), nullsLast(naturalOrder()))
-            .thenComparing(((MultilingualString s) -> s.en), nullsLast(naturalOrder()));
-
     @ApiModelProperty(value="Value in Finnish", required = true)
     @NotBlank
     @Length(min=0, max=255)

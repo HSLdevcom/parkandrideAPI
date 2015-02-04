@@ -31,8 +31,11 @@ public class User implements OperatorEntity {
     }
 
     @Override
-    public Long operatorId() {
+    public final Long operatorId() {
         return operatorId;
     }
 
+    public final boolean hasPermission(Permission permission) {
+        return role != null && role.hasPermission(permission);
+    }
 }

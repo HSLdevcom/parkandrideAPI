@@ -1,6 +1,7 @@
 package fi.hsl.parkandride.core.domain;
 
 public enum Permission {
+    ALL_OPERATORS,
     FACILITY_CREATE,
     FACILITY_UPDATE,
     OPERATOR_CREATE,

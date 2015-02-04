@@ -1,5 +1,6 @@
 package fi.hsl.parkandride.core.service;
 
+import static fi.hsl.parkandride.core.domain.Permission.ALL_OPERATORS;
 import static fi.hsl.parkandride.core.domain.Permission.USER_CREATE;
 import static fi.hsl.parkandride.core.domain.Permission.USER_UPDATE;
 import static fi.hsl.parkandride.core.domain.Permission.USER_VIEW;
@@ -90,7 +91,7 @@ public class UserService {
     private void validate(User actor, NewUser newUser) {
         Collection<Violation> violations = new ArrayList<>();
 
-        if (!isAdminRole(actor.role) && !isOperatorRole(newUser.role)) {
+        if (newUser.hasPermission(ALL_OPERATORS) && !actor.hasPermission(ALL_OPERATORS)) {
             violations.add(new Violation("IllegalRole", "role", "Expected an operator role, got " + newUser.role));
         }
 
@@ -109,12 +110,12 @@ public class UserService {
     }
 
     private void validateOperator(NewUser newUser, Collection<Violation> violations) {
-        if (isOperatorRole(newUser.role) && newUser.operatorId == null) {
+        if (newUser.hasPermission(ALL_OPERATORS)) {
+            if (newUser.operatorId != null) {
+                violations.add(new Violation("OperatorNotAllowed", "operator", "Operator is not allowed for admin user"));
+            }
+        } else if (newUser.operatorId == null) {
             violations.add(new Violation("OperatorRequired", "operator", "Operator is required for operator user"));
-        }
-
-        if (isAdminRole(newUser.role) && newUser.operatorId != null) {
-            violations.add(new Violation("OperatorNotAllowed", "operator", "Operator is not allowed for admin user"));
         }
     }
 
@@ -132,11 +133,4 @@ public class UserService {
         return true;
     }
 
-    private boolean isOperatorRole(Role role) {
-        return role == OPERATOR || role == OPERATOR_API;
-    }
-
-    private boolean isAdminRole(Role role) {
-        return role == ADMIN;
-    }
 }

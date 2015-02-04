@@ -35,7 +35,7 @@ describe('users', function () {
         return object;
     }
 
-    var seq = 0;
+    var seq = 10; // starting from 0 causes problems in expectations as operator10 is ordered before operator9
 
     var defaultPassword = "paSs1234";
     var roleNameFi = {
@@ -151,6 +151,18 @@ describe('users', function () {
             expect(usersPage.userModal.canSetPassword()).toBe(false);
         });
 
+        it('too weak password is communicated to user after submit', function () {
+            var newadmin = createUser({ role: "ADMIN", username: "newadmin"});
+            usersPage.userModal.setRole(roleNameFi.ADMIN);
+            usersPage.userModal.setUsername(newadmin.username);
+            usersPage.userModal.setPassword("weak");
+            usersPage.userModal.save();
+
+            expect(usersPage.userModal.isDisplayed()).toBe(true);
+            expect(usersPage.userModal.getViolations()).toEqual([{ path: "Salasana",
+                message: "salasanan tulee sisältää 8-15 merkkiä, vähintään yksi numero (0-9), yksi pieni aakkonen (a-ö) ja yksi suuri aakkonen (A-Ö)" }]);
+        });
+
         it('added user is shown on the list', function () {
             var newadmin = createUser({ role: "ADMIN", username: "newadmin"});
 
@@ -159,7 +171,8 @@ describe('users', function () {
             usersPage.userModal.setPassword(newadmin.password);
             usersPage.userModal.save();
 
-            usersPage.userModal.isDisplayed(false);
+            expect(usersPage.userModal.isDisplayed()).toBe(false);
+
             usersPage.getUsers().then(function (actual){
                 assertUser(actual[0], admin);
                 assertUser(actual[1], newadmin);
@@ -191,14 +204,14 @@ describe('users', function () {
         });
 
         it('can create operator', function () {
-            var newoperator = createUser({ role: "OPERATOR", username: "newoperator", operatorId: operatorX.id});
+            var newoperator = createUser({ role: "OPERATOR", operatorId: operatorX.id});
 
             usersPage.userModal.setRole(roleNameFi.OPERATOR);
             usersPage.userModal.setUsername(newoperator.username);
             usersPage.userModal.setPassword(newoperator.password);
             usersPage.userModal.save();
 
-            usersPage.userModal.isDisplayed(false);
+            expect(usersPage.userModal.isDisplayed()).toBe(false);
 
             usersPage.getUsers().then(function (actual){
                 expect(actual.length).toBe(3);
@@ -209,7 +222,7 @@ describe('users', function () {
         });
 
         it('can create operator api', function () {
-            var newoperator = createUser({ role: "OPERATOR_API", username: "newoperatorapi", operatorId: operatorX.id});
+            var newoperator = createUser({ role: "OPERATOR_API", operatorId: operatorX.id});
 
             usersPage.userModal.setRole(roleNameFi.OPERATOR_API);
             usersPage.userModal.setUsername(newoperator.username);

@@ -6,11 +6,11 @@
 <td>{{ ctrl.user.operatorNameFi }}</td>
 <td>{{ "roles." + ctrl.user.role + ".label" | translate }}</td>
 <td>
-	<a class="btn btn-xs btn-responsive" role="button" ng-click="ctrl.updateSecret()" ng-if="ctrl.permitUpdateSecret()">
+	<a class="btn btn-xs" role="button" ng-click="ctrl.updateSecret()" ng-if="ctrl.permitUpdateUser()">
 		<span ng-hide="ctrl.isApi()">{{ "users.listActions.updatePass.label" | translate }}</span>
 		<span ng-show="ctrl.isApi()">{{ "users.listActions.updateToken.label" | translate }}</span>
 	</a>
-	<a class="btn btn-xs btn-responsive wdDeleteUser" role="button" ng-click="ctrl.remove()" ng-if="ctrl.permitRemove()">
+	<a class="btn btn-xs wdDeleteUser" role="button" ng-click="ctrl.remove()" ng-if="ctrl.permitRemove()">
 		<span>{{ "users.listActions.remove.label" | translate }}</span>
 	</a>
 </td>

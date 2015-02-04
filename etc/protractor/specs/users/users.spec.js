@@ -15,14 +15,14 @@ describe('users', function () {
 
         if (object.role) {
             if (object.role === 'ADMIN') {
-                object.roleFi = 'admin';
+                object.roleFi = 'Ylläpitäjä';
                 if (object.username) {
                     object.password = object.username;
                 } else {
                     object.username = object.password = 'admin';
                 }
             }
-            if (object.role === 'OPERATOR') object.roleFi = 'operaattori';
+            if (object.role === 'OPERATOR') object.roleFi = 'Operaattori';
             if (object.role === 'OPERATOR_API') object.roleFi = 'API';
 
             if (object.operatorId) {
@@ -125,7 +125,7 @@ describe('users', function () {
         });
 
         it('on enter all fields are shown', function () {
-            expect(usersPage.userModal.getRoles()).toEqual(['admin', 'operaattori', 'API']);
+            expect(usersPage.userModal.getRoles()).toEqual(['Ylläpitäjä', 'Operaattori', 'API']);
             expect(usersPage.userModal.canSetUsername()).toBe(true);
             expect(usersPage.userModal.canSetPassword()).toBe(true);
             expect(usersPage.userModal.getOperators()).toEqual([operatorX.name.fi, operatorY.name.fi]);
@@ -133,7 +133,7 @@ describe('users', function () {
 
         it('when admin role is selected, operator is hidden', function () {
             expect(usersPage.userModal.canSetOperator()).toBe(true);
-            usersPage.userModal.setRole('admin');
+            usersPage.userModal.setRole('Ylläpitäjä');
             expect(usersPage.userModal.canSetOperator()).toBe(false);
         });
 
@@ -146,7 +146,7 @@ describe('users', function () {
         it('added user is shown on the list', function () {
             var newadmin = create({ role: "ADMIN", username: "newadmin"});
 
-            usersPage.userModal.setRole('admin');
+            usersPage.userModal.setRole('Ylläpitäjä');
             usersPage.userModal.setUsername(newadmin.username);
             usersPage.userModal.setPassword(newadmin.password);
             usersPage.userModal.save();
@@ -179,13 +179,13 @@ describe('users', function () {
         });
 
         it('cannot create admin', function () {
-            expect(usersPage.userModal.getRoles()).toEqual(['operaattori', 'API']);
+            expect(usersPage.userModal.getRoles()).toEqual(['Operaattori', 'API']);
         });
 
         it('can create operator', function () {
             var newoperator = create({ role: "OPERATOR", username: "newoperator", operatorId: operatorX.id});
 
-            usersPage.userModal.setRole('operaattori');
+            usersPage.userModal.setRole('Operaattori');
             usersPage.userModal.setUsername(newoperator.username);
             usersPage.userModal.setPassword(newoperator.password);
             usersPage.userModal.save();

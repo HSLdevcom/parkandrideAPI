@@ -97,10 +97,10 @@
   },
   "roles": {
     "ADMIN": {
-      "label": "admin"
+      "label": "Ylläpitäjä"
     },
     "OPERATOR": {
-      "label": "operaattori"
+      "label": "Operaattori"
     },
     "OPERATOR_API": {
       "label": "API"

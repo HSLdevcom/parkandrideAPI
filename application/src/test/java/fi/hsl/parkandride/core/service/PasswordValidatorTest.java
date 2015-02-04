@@ -1,5 +1,8 @@
 package fi.hsl.parkandride.core.service;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -34,23 +37,11 @@ public class PasswordValidatorTest {
 
     @Test
     public void testPassword() {
-        assertIsValid(
-                () -> PasswordValidator.validate(password),
-                isExpectedToBeValid,
-                password + " was " + (!isExpectedToBeValid ? "valid" : "invalid")
-        );
-    }
-
-    private static void assertIsValid(Runnable r, boolean isValid, String message) {
         try {
-            r.run();
-            if (!isValid) {
-                Assert.fail(message);
-            }
+            PasswordValidator.validate(password);
+            assertTrue("Invalid password '"+ password + "' was valid", isExpectedToBeValid);
         } catch (ValidationException e) {
-            if (isValid) {
-                Assert.fail(message);
-            }
+            assertFalse("Valid password '" + password + "' was invalid", isExpectedToBeValid);
         }
     }
 }

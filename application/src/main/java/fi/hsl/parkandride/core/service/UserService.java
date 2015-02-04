@@ -38,10 +38,10 @@ public class UserService {
 
 
     @TransactionalWrite
-    public User createUser(NewUser newUser, User currentUser) {
-        authorize(currentUser, newUser, USER_CREATE);
+    public User createUser(NewUser newUser, User actor) {
+        authorize(actor, newUser, USER_CREATE);
 
-        validate(currentUser, newUser);
+        validate(actor, newUser);
         return createUserNoValidate(newUser);
     }
 
@@ -57,15 +57,15 @@ public class UserService {
     }
 
     @TransactionalWrite
-    public String resetToken(Long userId, User currentUser) {
-        authorize(currentUser, userRepository.getUser(userId).user, USER_UPDATE);
+    public String resetToken(Long userId, User actor) {
+        authorize(actor, userRepository.getUser(userId).user, USER_UPDATE);
         return authenticationService.resetToken(userId);
     }
 
     @TransactionalWrite
-    public void updatePassword(Long userId, String newPassword, User updater) {
+    public void updatePassword(Long userId, String newPassword, User actor) {
         User user = userRepository.getUser(userId).user;
-        authorize(updater, user, USER_UPDATE);
+        authorize(actor, user, USER_UPDATE);
 
         if (user.role == Role.OPERATOR_API) {
             throw new ValidationException(new Violation("PasswordUpdateNotApplicable", "", "Password update is not applicable for api user"));
@@ -74,10 +74,23 @@ public class UserService {
         userRepository.updatePassword(userId, authenticationService.encryptPassword(newPassword));
     }
 
-    private void validate(User currentUser, NewUser newUser) {
+    @TransactionalWrite
+    public void deleteUser(long userId, User actor) {
+        User user = userRepository.getUser(userId).user;
+        authorize(actor, user, USER_UPDATE);
+
+        if (userId == actor.id) {
+            // don't allow suicide
+            throw new AccessDeniedException();
+        }
+
+        userRepository.deleteUser(userId);
+    }
+
+    private void validate(User actor, NewUser newUser) {
         Collection<Violation> violations = new ArrayList<>();
 
-        if (!isAdminRole(currentUser.role) && !isOperatorRole(newUser.role)) {
+        if (!isAdminRole(actor.role) && !isOperatorRole(newUser.role)) {
             violations.add(new Violation("IllegalRole", "role", "Expected an operator role, got " + newUser.role));
         }
 

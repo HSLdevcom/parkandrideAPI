@@ -4,11 +4,10 @@ import static fi.hsl.parkandride.front.UrlSchema.*;
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 import static org.springframework.web.bind.annotation.RequestMethod.PUT;
-
-import java.util.Arrays;
 
 import javax.annotation.Resource;
 
@@ -20,7 +19,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import fi.hsl.parkandride.core.domain.*;
+import fi.hsl.parkandride.core.domain.Login;
+import fi.hsl.parkandride.core.domain.NewUser;
+import fi.hsl.parkandride.core.domain.SearchResults;
+import fi.hsl.parkandride.core.domain.User;
+import fi.hsl.parkandride.core.domain.UserSearch;
 import fi.hsl.parkandride.core.service.AuthenticationService;
 import fi.hsl.parkandride.core.service.UserService;
 
@@ -39,18 +42,18 @@ public class UserController {
     }
 
     @RequestMapping(method = GET, value = USERS, produces = APPLICATION_JSON_VALUE)
-    public ResponseEntity<SearchResults<User>> findUsers(User currentUser) {
+    public ResponseEntity<SearchResults<User>> findUsers(User actor) {
         UserSearch search = new UserSearch();
-        search.operatorId = currentUser.operatorId;
-        SearchResults<User> results = userService.findUsers(search, currentUser);
+        search.operatorId = actor.operatorId;
+        SearchResults<User> results = userService.findUsers(search, actor);
         return new ResponseEntity<>(results, OK);
     }
 
     @RequestMapping(method = POST, value = USERS, produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<User> createUser(@RequestBody NewUser newUser,
-                                                   User creator,
+                                                   User actor,
                                                    UriComponentsBuilder builder) {
-        User createdUser = userService.createUser(newUser, creator);
+        User createdUser = userService.createUser(newUser, actor);
 
         HttpHeaders headers = new HttpHeaders();
         headers.setLocation(builder.path(USER).buildAndExpand(createdUser.id).toUri());
@@ -58,8 +61,8 @@ public class UserController {
     }
 
     @RequestMapping(method = PUT, value = TOKEN, produces = APPLICATION_JSON_VALUE)
-    public ResponseEntity<ValueHolder<String>> resetToken(@PathVariable(USER_ID) long userId, User updater) {
-        String token = userService.resetToken(userId, updater);
+    public ResponseEntity<ValueHolder<String>> resetToken(@PathVariable(USER_ID) long userId, User actor) {
+        String token = userService.resetToken(userId, actor);
         return new ResponseEntity<>(ValueHolder.of(token), OK);
     }
 
@@ -67,7 +70,12 @@ public class UserController {
     public void updatePassword(
             @PathVariable(USER_ID) long userId,
             @RequestBody ValueHolder<String> newPassword,
-            User updater) {
-        userService.updatePassword(userId, newPassword.value, updater);
+            User actor) {
+        userService.updatePassword(userId, newPassword.value, actor);
+    }
+
+    @RequestMapping(method = DELETE, value = USER, produces = APPLICATION_JSON_VALUE)
+    public void deleteUser(@PathVariable(USER_ID) long userId, User actor) {
+        userService.deleteUser(userId, actor);
     }
 }

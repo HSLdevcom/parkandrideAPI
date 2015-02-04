@@ -1,6 +1,8 @@
 package fi.hsl.parkandride.core.service;
 
 import static fi.hsl.parkandride.core.ViolationAssert.*;
+import static org.mockito.Matchers.anyObject;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -43,9 +45,9 @@ public class UserServiceTest {
     private final static String DEFAULT_PASSWORD = "pass";
     private final AtomicLong seq = new AtomicLong(1L);
 
-    private final User adminCreator = creator("admin_creator", Role.ADMIN);
-    private final User operatorCreator = creator("operator_creator", Role.OPERATOR);
-    private final User operatorAPICreator = creator("operator_api_creator", Role.OPERATOR_API);
+    private final User adminActor = actor("admin_actor", Role.ADMIN);
+    private final User operatorActor = actor("operator_actor", Role.OPERATOR);
+    private final User operatorAPIActor = actor("operator_api_actor", Role.OPERATOR_API);
 
     private final NewUser admin = input("admin", Role.ADMIN, DEFAULT_PASSWORD);
     private final NewUser operator = input("operator", Role.OPERATOR, DEFAULT_PASSWORD);
@@ -53,9 +55,10 @@ public class UserServiceTest {
 
     @Test
     public void password_is_required_for_operator() {
-        Runnable createFn = () -> userService.createUser(operator, adminCreator);
+        Runnable createFn = () -> userService.createUser(operator, adminActor);
 
         createFn.run();
+        verify(userRepository).insertUser(anyObject());
 
         operator.password = null;
         assertBadPassword(createFn);
@@ -70,14 +73,16 @@ public class UserServiceTest {
     @Test
     public void password_is_not_required_for_operator_api() {
         operatorAPI.password = null;
-        userService.createUser(operatorAPI, adminCreator);
+        userService.createUser(operatorAPI, adminActor);
+        verify(userRepository).insertUser(anyObject());
     }
 
     @Test
     public void password_is_required_for_admin() {
-        Runnable createFn = () -> userService.createUser(admin, adminCreator);
+        Runnable createFn = () -> userService.createUser(admin, adminActor);
 
         createFn.run();
+        verify(userRepository).insertUser(anyObject());
 
         admin.password = null;
         assertBadPassword(createFn);
@@ -85,9 +90,10 @@ public class UserServiceTest {
 
     @Test
     public void operator_is_required_for_operator() {
-        Runnable createFn = () -> userService.createUser(operator, adminCreator);
+        Runnable createFn = () -> userService.createUser(operator, adminActor);
 
         createFn.run();
+        verify(userRepository).insertUser(anyObject());
 
         operator.operatorId = null;
         assertOperatorRequired(createFn);
@@ -95,9 +101,10 @@ public class UserServiceTest {
 
     @Test
     public void operator_is_required_for_operator_api() {
-        Runnable createFn = () -> userService.createUser(operatorAPI, adminCreator);
+        Runnable createFn = () -> userService.createUser(operatorAPI, adminActor);
 
         createFn.run();
+        verify(userRepository).insertUser(anyObject());
 
         operatorAPI.operatorId = null;
         assertOperatorRequired(createFn);
@@ -105,9 +112,10 @@ public class UserServiceTest {
 
     @Test
     public void operator_is_not_allowed_for_admin() {
-        Runnable createFn = () -> userService.createUser(admin, adminCreator);
+        Runnable createFn = () -> userService.createUser(admin, adminActor);
 
         createFn.run();
+        verify(userRepository).insertUser(anyObject());
 
         admin.operatorId = DEFAULT_OPERATOR;
         assertOperatorNotAllowed(createFn);
@@ -116,34 +124,37 @@ public class UserServiceTest {
     @Test
     public void role_is_required() {
         operator.role = null;
-        assertNotNull(() -> userService.createUser(operator, adminCreator));
+        assertNotNull(() -> userService.createUser(operator, adminActor));
     }
 
     @Test(expected = AccessDeniedException.class)
     public void operator_cannot_create_admin() {
-        userService.createUser(admin, operatorCreator);
+        userService.createUser(admin, operatorActor);
     }
 
     @Test(expected = AccessDeniedException.class)
     public void operator_cannot_create_other_operators_user() {
         operatorAPI.operatorId = DEFAULT_OPERATOR + 1;
-        userService.createUser(operatorAPI, operatorCreator);
+        userService.createUser(operatorAPI, operatorActor);
     }
 
     @Test
     public void operator_api_cannot_create_users() {
-        assertAccessDenied(() -> userService.createUser(admin, operatorAPICreator));
-        assertAccessDenied(() -> userService.createUser(operator, operatorAPICreator));
-        assertAccessDenied(() -> userService.createUser(input("same_operator__other_api", Role.OPERATOR_API, null), operatorAPICreator));
+        assertAccessDenied(() -> userService.createUser(admin, operatorAPIActor));
+        assertAccessDenied(() -> userService.createUser(operator, operatorAPIActor));
+        assertAccessDenied(() -> userService.createUser(input("same_operator__other_api", Role.OPERATOR_API, null), operatorAPIActor));
     }
 
     @Test
     public void api_token_can_be_reset() {
-        when(userRepository.getUser(operatorAPI.id)).thenReturn(userSecret(operatorAPI));
-        when(userRepository.getCurrentTime()).thenReturn(DateTime.now());
+        DateTime now = DateTime.now();
 
-        userService.resetToken(operatorAPI.id, adminCreator);
-        userService.resetToken(operatorAPI.id, operatorCreator);
+        when(userRepository.getUser(operatorAPI.id)).thenReturn(userSecret(operatorAPI));
+        when(userRepository.getCurrentTime()).thenReturn(now);
+
+        userService.resetToken(operatorAPI.id, adminActor);
+        userService.resetToken(operatorAPI.id, operatorActor);
+        verify(userRepository, times(2)).revokeTokens(operatorAPI.id, now);
     }
 
     @Test
@@ -152,8 +163,8 @@ public class UserServiceTest {
         when(userRepository.getUser(operator.id)).thenReturn(userSecret(operator));
         when(userRepository.getCurrentTime()).thenReturn(DateTime.now());
 
-        assertPerpetualTokenNotAllowed(() -> userService.resetToken(admin.id, adminCreator));
-        assertPerpetualTokenNotAllowed(() -> userService.resetToken(operator.id, operatorCreator));
+        assertPerpetualTokenNotAllowed(() -> userService.resetToken(admin.id, adminActor));
+        assertPerpetualTokenNotAllowed(() -> userService.resetToken(operator.id, operatorActor));
     }
 
     @Test(expected = AccessDeniedException.class)
@@ -164,7 +175,7 @@ public class UserServiceTest {
         when(userRepository.getUser(otherAPI.id)).thenReturn(userSecret(otherAPI));
         when(userRepository.getCurrentTime()).thenReturn(DateTime.now());
 
-        userService.resetToken(otherAPI.id, operatorCreator);
+        userService.resetToken(otherAPI.id, operatorActor);
     }
 
     @Test(expected = AccessDeniedException.class)
@@ -176,55 +187,115 @@ public class UserServiceTest {
     @Test
     public void operator_can_update_operator_password() {
         when(userRepository.getUser(operator.id)).thenReturn(userSecret(operator));
-        userService.updatePassword(operator.id, "newPass", operatorCreator);
+        when(passwordEncryptor.encryptPassword("newPass")).thenReturn("newPassEncrypted");
+
+        userService.updatePassword(operator.id, "newPass", operatorActor);
+
+        verify(userRepository).updatePassword(operator.id, "newPassEncrypted");
     }
 
     @Test(expected = AccessDeniedException.class)
     public void operator_cannot_update_admin_password() {
         when(userRepository.getUser(admin.id)).thenReturn(userSecret(admin));
-        userService.updatePassword(admin.id, "newPass", operatorCreator);
+        userService.updatePassword(admin.id, "newPass", operatorActor);
     }
 
     @Test
     public void admin_can_update_operator_password() {
         when(userRepository.getUser(operator.id)).thenReturn(userSecret(operator));
-        userService.updatePassword(operator.id, "newPass", adminCreator);
+        when(passwordEncryptor.encryptPassword("newPass")).thenReturn("newPassEncrypted");
+
+        userService.updatePassword(operator.id, "newPass", adminActor);
+
+        verify(userRepository).updatePassword(operator.id, "newPassEncrypted");
     }
 
     @Test
     public void admin_can_update_admin_password() {
         when(userRepository.getUser(admin.id)).thenReturn(userSecret(admin));
-        userService.updatePassword(admin.id, "newPass", adminCreator);
+        when(passwordEncryptor.encryptPassword("newPass")).thenReturn("newPassEncrypted");
+
+        userService.updatePassword(admin.id, "newPass", adminActor);
+
+        verify(userRepository).updatePassword(admin.id, "newPassEncrypted");
     }
 
     @Test(expected = AccessDeniedException.class)
     public void operator_api_cannot_update_passwords() {
         when(userRepository.getUser(operator.id)).thenReturn(userSecret(operator));
-        userService.updatePassword(operator.id, "newPass", operatorAPICreator);
+        userService.updatePassword(operator.id, "newPass", operatorAPIActor);
     }
 
     @Test(expected = AccessDeniedException.class)
     public void operator_cannot_update_other_operators_password() {
         operator.operatorId = DEFAULT_OPERATOR + 1;
-
         when(userRepository.getUser(operator.id)).thenReturn(userSecret(operator));
-        userService.updatePassword(operator.id, "newPass", operatorAPICreator);
+
+        userService.updatePassword(operator.id, "newPass", operatorActor);
     }
 
     @Test
     public void operator_api_password_cannot_be_updated() {
         when(userRepository.getUser(operatorAPI.id)).thenReturn(userSecret(operatorAPI));
-        assertPasswordUpdateNotApplicable(() -> userService.updatePassword(operatorAPI.id, "newPass", adminCreator));
+        assertPasswordUpdateNotApplicable(() -> userService.updatePassword(operatorAPI.id, "newPass", adminActor));
     }
 
     @Test
-    public void password_is_stored_encrypted() {
+    public void admin_can_delete_other_admin() {
+        NewUser otherAdmin = input("other_admin", Role.ADMIN, DEFAULT_PASSWORD);
+        when(userRepository.getUser(otherAdmin.id)).thenReturn(userSecret(otherAdmin));
+
+        userService.deleteUser(otherAdmin.id, adminActor);
+
+        verify(userRepository).deleteUser(otherAdmin.id);
+    }
+
+    @Test
+    public void admin_can_delete_operator() {
         when(userRepository.getUser(operator.id)).thenReturn(userSecret(operator));
-        when(passwordEncryptor.encryptPassword("newPass")).thenReturn("newPassEncrypted");
 
-        userService.updatePassword(operator.id, "newPass", adminCreator);
+        userService.deleteUser(operator.id, adminActor);
 
-        verify(userRepository).updatePassword(operator.id, "newPassEncrypted");
+        verify(userRepository).deleteUser(operator.id);
+    }
+
+    @Test(expected = AccessDeniedException.class)
+    public void operator_cannot_delete_admin() {
+        when(userRepository.getUser(admin.id)).thenReturn(userSecret(admin));
+
+        userService.deleteUser(admin.id, operatorActor);
+    }
+
+    @Test
+    public void operator_can_delete_other_user_of_the_same_operator() {
+        when(userRepository.getUser(operatorAPI.id)).thenReturn(userSecret(operatorAPI));
+
+        userService.deleteUser(operatorAPI.id, operatorActor);
+
+        verify(userRepository).deleteUser(operatorAPI.id);
+    }
+
+    @Test(expected = AccessDeniedException.class)
+    public void operator_cannot_delete_other_operators_user() {
+        operatorAPI.operatorId = DEFAULT_OPERATOR + 1;
+        when(userRepository.getUser(operatorAPI.id)).thenReturn(userSecret(operatorAPI));
+
+        userService.deleteUser(operatorAPI.id, operatorActor);
+    }
+
+    @Test(expected = AccessDeniedException.class)
+    public void operator_api_cannot_delete_users() {
+        when(userRepository.getUser(operator.id)).thenReturn(userSecret(operator));
+        userService.deleteUser(operator.id, operatorAPIActor);
+    }
+
+    @Test
+    public void user_cannot_delete_itself() {
+        when(userRepository.getUser(admin.id)).thenReturn(userSecret(admin));
+        when(userRepository.getUser(operator.id)).thenReturn(userSecret(operator));
+
+        assertAccessDenied(() -> userService.deleteUser(admin.id, admin));
+        assertAccessDenied(() -> userService.deleteUser(operator.id, operator));
     }
 
     private UserSecret userSecret(User u) {
@@ -241,12 +312,12 @@ public class UserServiceTest {
         return input;
     }
 
-    private User creator(String username, Role role) {
-        User creator = new User(seq.incrementAndGet(), username, role);
+    private User actor(String username, Role role) {
+        User actor = new User(seq.incrementAndGet(), username, role);
         if (role != Role.ADMIN) {
-            creator.operatorId = DEFAULT_OPERATOR;
+            actor.operatorId = DEFAULT_OPERATOR;
         }
-        return creator;
+        return actor;
     }
 
     private static void assertAccessDenied(Runnable r) {
@@ -255,5 +326,4 @@ public class UserServiceTest {
             Assert.fail("did not throw AccessDeniedException");
         } catch (AccessDeniedException expected) {}
     }
-
 }

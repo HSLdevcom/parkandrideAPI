@@ -1,8 +1,10 @@
 "use strict";
 
+var components = require('../components/components');
+
 module.exports = function (spec) {
     var that = require('../base')(spec);
-    var uiSelect = require('../components/uiSelect')({});
+    var uiSelect = components.uiSelect({});
 
     spec.view = $('#userModal');
     spec.username = $('input[name="username"]');

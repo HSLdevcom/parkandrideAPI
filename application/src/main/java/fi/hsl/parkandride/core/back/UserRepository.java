@@ -26,4 +26,5 @@ public interface UserRepository {
 
     SearchResults<User> findUsers(UserSearch search);
 
+    void deleteUser(long userId);
 }

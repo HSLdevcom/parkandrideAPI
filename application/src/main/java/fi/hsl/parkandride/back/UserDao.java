@@ -4,6 +4,7 @@ import org.joda.time.DateTime;
 
 import com.mysema.query.Tuple;
 import com.mysema.query.sql.SQLExpressions;
+import com.mysema.query.sql.dml.SQLDeleteClause;
 import com.mysema.query.sql.dml.SQLInsertClause;
 import com.mysema.query.sql.postgres.PostgresQuery;
 import com.mysema.query.sql.postgres.PostgresQueryFactory;
@@ -127,6 +128,15 @@ public class UserDao implements UserRepository {
         }
     }
 
+    @TransactionalWrite
+    @Override
+    public void deleteUser(long userId) {
+        SQLDeleteClause clause = queryFactory.delete(qUser).where(qUser.id.eq(userId));
+        if (clause.execute() != 1) {
+            notFound(userId);
+        };
+    }
+
     @TransactionalRead
     @Override
     public UserSecret getUser(String username) {
@@ -173,5 +183,4 @@ public class UserDao implements UserRepository {
 
         return SearchResults.of(qry.list(userMapping), search.limit);
     }
-
 }

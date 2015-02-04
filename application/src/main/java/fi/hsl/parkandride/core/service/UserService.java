@@ -11,8 +11,6 @@ import static fi.hsl.parkandride.core.service.AuthenticationService.authorize;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import org.springframework.util.StringUtils;
-
 import fi.hsl.parkandride.core.back.UserRepository;
 import fi.hsl.parkandride.core.domain.*;
 
@@ -71,6 +69,8 @@ public class UserService {
             throw new ValidationException(new Violation("PasswordUpdateNotApplicable", "", "Password update is not applicable for api user"));
         }
 
+        PasswordValidator.validate(newPassword);
+
         userRepository.updatePassword(userId, authenticationService.encryptPassword(newPassword));
     }
 
@@ -98,7 +98,7 @@ public class UserService {
         // cannot continue if e.g. role is not provided
         if (violations.isEmpty()) {
             if (!newUser.role.perpetualToken) {
-                validatePassword(newUser.password, violations);
+                PasswordValidator.validate(newUser.password, violations);
             }
             validateOperator(newUser, violations);
         }
@@ -116,20 +116,6 @@ public class UserService {
         if (isAdminRole(newUser.role) && newUser.operatorId != null) {
             violations.add(new Violation("OperatorNotAllowed", "operator", "Operator is not allowed for admin user"));
         }
-    }
-
-    private void validatePassword(String password, Collection<Violation> violations) {
-        if (!isValidPassword(password)) {
-            violations.add(new Violation("BadPassword", "password", "Expected a password of length >= 8"));
-        }
-    }
-
-    private boolean isValidPassword(String password) {
-        if (!StringUtils.hasText(password)) {
-            return false;
-        }
-        // TODO
-        return true;
     }
 
     private boolean isOperatorRole(Role role) {

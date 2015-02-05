@@ -342,6 +342,9 @@ public class FacilityDao implements FacilityRepository {
                 qFacility.capacityBicycle.sum(),
                 qFacility.capacityBicycleSecureSpace.sum());
 
+        // FIXME: what if (result == null) ?!?
+        assert result != null;
+
         Map<CapacityType, Integer> capacities = Maps.newHashMap();
         mapCapacity(capacities, CAR, result.get(qFacility.capacityCar.sum()));
         mapCapacity(capacities, DISABLED, result.get(qFacility.capacityDisabled.sum()));
@@ -728,7 +731,7 @@ public class FacilityDao implements FacilityRepository {
     }
 
     private void populateCapacity(NumberPath<Integer> path, Integer value, StoreClause store) {
-        if (value == null || value.intValue() < 1) {
+        if (value == null || value < 1) {
             store.setNull(path);
         } else {
             store.set(path, value);

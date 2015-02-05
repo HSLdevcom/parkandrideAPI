@@ -43,8 +43,12 @@ public class FacilityInfo implements OperatorEntity {
     @NotNull
     public Map<CapacityType, Integer> builtCapacity = newHashMap();
 
+    /**
+     * Summary of unique( pricing[*].usage )
+     */
     public NullSafeSortedSet<Usage> usages = new NullSafeSortedSet<>();
 
+    @Override
     public Long operatorId() {
         return operatorId;
     }

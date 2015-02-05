@@ -12,6 +12,7 @@ import javax.validation.ConstraintViolation;
 import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Maps;
 
 public class Violation {
 
@@ -44,7 +45,7 @@ public class Violation {
         this(getType(cv), getArgs(cv), getPath(cv), cv.getMessage());
     }
 
-    private static Map<String, Object> getArgs(ConstraintViolation cv) {
+    private static Map<String, Object> getArgs(ConstraintViolation<?> cv) {
         // NOTE: This supports only simple types, not annotation parameters!
         return filterKeys(cv.getConstraintDescriptor().getAttributes(), new Predicate<String>() {
             @Override

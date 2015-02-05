@@ -49,7 +49,7 @@ public class ContactService {
     }
 
     @TransactionalRead
-    public SearchResults search(ContactSearch search) {
+    public SearchResults<Contact> search(ContactSearch search) {
         return repository.findContacts(search);
     }
 

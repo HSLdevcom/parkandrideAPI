@@ -47,7 +47,7 @@ public class OperatorService {
     }
 
     @TransactionalRead
-    public SearchResults search(OperatorSearch search) {
+    public SearchResults<Operator> search(OperatorSearch search) {
         return repository.findOperators(search);
     }
 

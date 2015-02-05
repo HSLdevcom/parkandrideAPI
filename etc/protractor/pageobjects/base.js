@@ -38,6 +38,15 @@ module.exports = function(spec) {
         );
     };
 
+    // workaround to ensure element is present before invoking actions on it, this might be useful for elements residing inside non-angular components e.g.
+    // sweetAlert.
+    spec.ensureIsPresent = function(element) {
+        browser.wait(function() {
+            return element.then(function(elem) { return elem.isPresent(); });
+        });
+        return element;
+    };
+
     spec.parent = function(element) {
         return element.element(by.xpath('..'));
     };

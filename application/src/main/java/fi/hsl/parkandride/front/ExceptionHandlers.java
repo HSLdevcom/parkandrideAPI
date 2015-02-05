@@ -74,7 +74,7 @@ public class ExceptionHandlers {
             JsonMappingException jsonEx = (JsonMappingException) ex.getCause();
             String path = getPath(jsonEx);
             Violation violation = new Violation("TypeMismatch", path, jsonEx.getMessage());
-            return handleError(request, BAD_REQUEST, ex, "Invalid JSON", ImmutableList.of(violation));
+            return handleError(request, BAD_REQUEST, ex, "Invalid input", ImmutableList.of(violation));
         }
         return handleError(request, BAD_REQUEST, ex);
     }
@@ -124,7 +124,7 @@ public class ExceptionHandlers {
         return handleError(request, status, ex, ex.getMessage(), null);
     }
 
-   private ResponseEntity<Map<String, Object>> handleError(HttpServletRequest request, HttpStatus status, Throwable ex,
+    private ResponseEntity<Map<String, Object>> handleError(HttpServletRequest request, HttpStatus status, Throwable ex,
                                                             String message, List<Violation> violations) {
         ex = resolveError(ex);
         Map<String, Object> errorAttributes = new LinkedHashMap<>();

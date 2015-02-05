@@ -2,14 +2,11 @@ package fi.hsl.parkandride.core.service;
 
 import static fi.hsl.parkandride.core.domain.Permission.OPERATOR_CREATE;
 import static fi.hsl.parkandride.core.domain.Permission.OPERATOR_UPDATE;
-import static fi.hsl.parkandride.core.domain.Role.ADMIN;
-import static fi.hsl.parkandride.core.domain.Role.OPERATOR;
 import static fi.hsl.parkandride.core.service.AuthenticationService.authorize;
 
 import fi.hsl.parkandride.core.back.OperatorRepository;
 import fi.hsl.parkandride.core.domain.Operator;
 import fi.hsl.parkandride.core.domain.OperatorSearch;
-import fi.hsl.parkandride.core.domain.Permission;
 import fi.hsl.parkandride.core.domain.SearchResults;
 import fi.hsl.parkandride.core.domain.User;
 

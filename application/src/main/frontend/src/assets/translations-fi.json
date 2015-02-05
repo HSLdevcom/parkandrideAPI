@@ -645,7 +645,7 @@
     "Unique": "on jo käytössä",
     "PhoneOrEmailRequired": "anna vähintään puhelinnumero tai sähköposti",
     "Email": "tarkista muoto",
-    "OperatorMismatch": "yhteystiedon tulee olla joko yleinen tai operaattorin omistama",
+    "OperatorMismatch": "yhteystiedon operaattori on eri kuin fasiliteetilla, yhteystiedon tulee olla yleinen tai saman operaattorin omistama",
     "BasicRequirements": "tarkista pakolliset tiedot ja syötteiden muoto",
     "ValidTimeDuration": "aikavälin alku tulee olla ennen loppua",
     "PricingOverlap": "aikavälit eivät saa olla päällekkäisiä",

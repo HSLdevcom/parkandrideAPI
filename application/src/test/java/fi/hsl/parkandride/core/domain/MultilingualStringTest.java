@@ -6,11 +6,15 @@ import java.util.Map;
 
 import org.junit.Test;
 
-public class MultilingualStringTest {
+import nl.jqno.equalsverifier.EqualsVerifier;
+import nl.jqno.equalsverifier.Warning;
 
+public class MultilingualStringTest {
     @Test
-    public void not_equals() {
-        assertThat(new MultilingualString("test").equals(new Object())).isEqualTo(false);
+    public void equals_and_hashcode() {
+        EqualsVerifier.forExamples(new MultilingualString(), new MultilingualString("foo"), new MultilingualString("fi", "sv", "en"))
+                .suppress(Warning.NONFINAL_FIELDS)
+                .verify();
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -30,6 +34,8 @@ public class MultilingualStringTest {
     @Test
     public void as_map_modify() {
         MultilingualString str = new MultilingualString();
+        assertThat(str.toString()).isEqualTo("MultilingualString{fi=null, sv=null, en=null}");
+
         Map<String, String> map = str.asMap();
 
         map.put("fi", "Finnish");
@@ -40,5 +46,7 @@ public class MultilingualStringTest {
 
         map.put("en", "English");
         assertThat(str.getEn()).isEqualTo("English");
+
+        assertThat(str.toString()).isEqualTo("MultilingualString{fi=Finnish, sv=Swedish, en=English}");
     }
 }

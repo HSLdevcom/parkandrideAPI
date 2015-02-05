@@ -88,15 +88,16 @@ public class FacilityController {
         return new ResponseEntity<>(FeatureCollection.ofFacilities(results), OK);
     }
     @ApiOperation(value = "Update facility status", authorizations = @Authorization(API_KEY))
-    @RequestMapping(method = PUT, value = FACILITY_STATUS, produces = APPLICATION_JSON_VALUE)
-    public void createStatuses(@PathVariable(FACILITY_ID) long facilityId,
-                               @RequestBody List<Utilization> statuses,
-                               User currentUser) {
-        facilityService.createStatuses(facilityId, statuses, currentUser);
+    @RequestMapping(method = PUT, value = FACILITY_UTILIZATION, produces = APPLICATION_JSON_VALUE)
+    public void registerUtilization(@PathVariable(FACILITY_ID) long facilityId,
+                                    @RequestBody List<Utilization> statuses,
+                                    User currentUser) {
+        facilityService.registerUtilization(facilityId, statuses, currentUser);
     }
 
-    @RequestMapping(method = GET, value = FACILITY_STATUS, produces = APPLICATION_JSON_VALUE)
-    public ResponseEntity<Results<Utilization>> getStatuses(@PathVariable(FACILITY_ID) long facilityId) {
+    // FIXME: Only latest utilization...
+    @RequestMapping(method = GET, value = FACILITY_UTILIZATION, produces = APPLICATION_JSON_VALUE)
+    public ResponseEntity<Results<Utilization>> getUtilization(@PathVariable(FACILITY_ID) long facilityId) {
         List<Utilization> statuses = facilityService.getStatuses(facilityId);
         return new ResponseEntity<>(Results.of(statuses), OK);
     }

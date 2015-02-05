@@ -355,7 +355,7 @@ public class FacilityDao implements FacilityRepository {
 
     @TransactionalWrite
     @Override
-    public void insertStatuses(long facilityId, List<Utilization> statuses) {
+    public void insertUtilization(long facilityId, List<Utilization> statuses) {
         SQLInsertClause insertBatch = queryFactory.insert(qUtilization);
         statuses.forEach((status) -> {
             insertBatch.set(qUtilization.facilityId, facilityId);

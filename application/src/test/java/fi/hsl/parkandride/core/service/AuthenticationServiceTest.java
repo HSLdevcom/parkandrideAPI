@@ -1,8 +1,15 @@
 package fi.hsl.parkandride.core.service;
 
+import static fi.hsl.parkandride.core.domain.Permission.ALL_OPERATORS;
+import static fi.hsl.parkandride.core.domain.Permission.FACILITY_UTILIZATION_UPDATE;
+import static fi.hsl.parkandride.core.domain.Permission.FACILITY_UPDATE;
+import static fi.hsl.parkandride.core.domain.Permission.HUB_UPDATE;
+import static fi.hsl.parkandride.core.domain.Permission.OPERATOR_CREATE;
 import static fi.hsl.parkandride.core.domain.Role.ADMIN;
+import static fi.hsl.parkandride.core.domain.Role.OPERATOR;
 import static fi.hsl.parkandride.core.domain.Role.OPERATOR_API;
 import static fi.hsl.parkandride.core.service.AuthenticationService.TOKEN_PATTERN;
+import static fi.hsl.parkandride.core.service.AuthenticationService.authorize;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -20,10 +27,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import fi.hsl.parkandride.core.back.UserRepository;
-import fi.hsl.parkandride.core.domain.Login;
-import fi.hsl.parkandride.core.domain.NotFoundException;
-import fi.hsl.parkandride.core.domain.User;
-import fi.hsl.parkandride.core.domain.UserSecret;
+import fi.hsl.parkandride.core.domain.*;
 
 public class AuthenticationServiceTest {
 
@@ -148,6 +152,61 @@ public class AuthenticationServiceTest {
 
         when(userRepository.getUser(1l)).thenReturn(adminUser);
         service.authenticate(login.token);
+    }
+
+    @Test
+    public void authorize_admin_non_contextual_permission() {
+        User user = new User(1l, "admin", ADMIN);
+        authorize(user, ALL_OPERATORS);
+        authorize(user, HUB_UPDATE);
+    }
+
+    @Test
+    public void authorize_all_operators() {
+        User user = new User(1l, "admin", ADMIN);
+        authorize(user, () -> 5l, FACILITY_UPDATE );
+    }
+
+    @Test(expected = AccessDeniedException.class)
+    public void authorize_operator_mismatch() {
+        User user = new User(1l, "operator", OPERATOR);
+        user.operatorId = 1l;
+        authorize(user, () -> 5l, FACILITY_UPDATE );
+    }
+
+    @Test(expected = AccessDeniedException.class)
+    public void authorize_required_operator_missing() {
+        User user = new User(1l, "operator", OPERATOR);
+        user.operatorId = null;
+        authorize(user, () -> 5l, FACILITY_UPDATE );
+    }
+
+    @Test(expected = AccessDeniedException.class)
+    public void authorize_admin_exclusion() {
+        User user = new User(1l, "admin", ADMIN);
+        // FIXME: Should be authorize(user, () -> 1l, FACILITY_STATUS_UPDATE);
+        authorize(user, FACILITY_UTILIZATION_UPDATE);
+    }
+
+    @Test
+    public void authorize_operator() {
+        User user = new User(1l, "operator", OPERATOR);
+        user.operatorId = 1l;
+        authorize(user, () -> 1l, FACILITY_UPDATE);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void authorize_missing_operator_parameter() {
+        User user = new User(1l, "operator", OPERATOR);
+        user.operatorId = 1l;
+        authorize(user, FACILITY_UPDATE);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void authorize_unnecessary_operator_parameter() {
+        User user = new User(1l, "operator", OPERATOR);
+        user.operatorId = 1l;
+        authorize(user, () -> 1l,  OPERATOR_CREATE);
     }
 
     @Test

@@ -37,6 +37,7 @@
     });
 
     m.value('Permission', {
+        ALL_OPERATORS: 'ALL_OPERATORS',
         FACILITY_CREATE: 'FACILITY_CREATE',
         FACILITY_UPDATE: 'FACILITY_UPDATE',
         OPERATOR_CREATE: 'OPERATOR_CREATE',
@@ -66,10 +67,13 @@
                    }
 
                    if (user.permissions[permission]) {
-                       if (user.role === 'ADMIN') {
+                       if (arguments.length < 2) {
                            return true;
                        }
-                       if (arguments.length < 2 || operatorId === user.operatorId) {
+                       else if (user.permissions[Permission.ALL_OPERATORS]) {
+                           return true;
+                       }
+                       else if (operatorId === user.operatorId) {
                            return true;
                        }
                    }

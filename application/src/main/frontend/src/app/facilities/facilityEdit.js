@@ -64,7 +64,6 @@
         var self = this;
         var submitUtil = submitUtilFactory($scope);
 
-        $scope.common.translationPrefix = "facilities";
         self.advancedMode = false;
         self.capacityTypes = schema.capacityTypes.values;
         self.usages = schema.usages.values;

@@ -50,7 +50,6 @@
         var self = this;
         var submitUtil = submitUtilFactory($scope);
 
-        $scope.common.translationPrefix = "hubs";
         self.hub = hub;
         self.facilities = [];
         self.hasFacilities = function() {

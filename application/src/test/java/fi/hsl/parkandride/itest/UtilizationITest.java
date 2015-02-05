@@ -1,7 +1,7 @@
 package fi.hsl.parkandride.itest;
 
 import static com.jayway.restassured.RestAssured.when;
-import static fi.hsl.parkandride.core.domain.Role.ADMIN;
+import static fi.hsl.parkandride.core.domain.Role.OPERATOR_API;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
 import static org.hamcrest.Matchers.is;
@@ -73,8 +73,8 @@ public class UtilizationITest extends AbstractIntegrationTest {
         contactDao.insertContact(c, c.id);
         facilityDao.insertFacility(f, f.id);
 
-        devHelper.createUser(new NewUser(1l, "admin", ADMIN, "admin"));
-        authToken = devHelper.login("admin").token;
+        devHelper.createUser(new NewUser(1l, "operator", OPERATOR_API, f.operatorId, "operator"));
+        authToken = devHelper.login("operator").token;
     }
 
     @Test

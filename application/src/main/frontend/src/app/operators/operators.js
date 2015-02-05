@@ -5,41 +5,22 @@
         'parkandride.layout',
         'parkandride.multilingual',
         'parkandride.util',
+        'parkandride.modalUtil',
         'showErrors'
     ]);
 
+    m.controller("OperatorEditCtrl", function ($scope, $modalInstance, OperatorResource, operator, create, EVENTS, modalUtilFactory) {
+        var modalUtil = modalUtilFactory($scope, $modalInstance);
 
-    m.controller("OperatorEditCtrl", function ($scope, $modalInstance, OperatorResource, operator, create, EVENTS) {
         $scope.operator = operator;
         $scope.titleKey = 'operators.action.' + (create ? 'new' : 'edit');
 
-        function saveOperator() {
-            OperatorResource.save(operator).then(
-                function(operator) {
-                    $scope.operator = operator;
-                    $modalInstance.close($scope.operator);
-                },
-                function(rejection) {
-                    if (rejection.status == 400 && rejection.data.violations) {
-                        $scope.violations = rejection.data.violations;
-                    }
-                }
-            );
-        }
-
         $scope.ok = function (form) {
-            $scope.$broadcast(EVENTS.showErrorsCheckValidity);
-            if (form.$valid) {
-                saveOperator();
-            } else {
-                $scope.violations = [{
-                    path: "",
-                    type: "BasicRequirements"
-                }];
-            }
+            modalUtil.validateAndSubmit(form, function() { return OperatorResource.save(operator); });
         };
+
         $scope.cancel = function () {
-            $modalInstance.dismiss('cancel');
+            $modalInstance.dismiss();
         };
     });
 
@@ -84,7 +65,6 @@
     m.controller('OperatorListCtrl', function($scope, OperatorResource, editOperator, operators) {
         var self = this;
         self.operators = operators.results;
-        $scope.common.translationPrefix = "operators";
 
         self.create = function() {
             editOperator({}, true).then(function() {

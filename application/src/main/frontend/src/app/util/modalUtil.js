@@ -1,7 +1,9 @@
 (function() {
-    var m = angular.module('parkandride.modalUtil', []);
+    var m = angular.module('parkandride.modalUtil', [
+        'parkandride.components.violations'
+    ]);
 
-    m.factory('modalUtilFactory', function(EVENTS) {
+    m.factory('modalUtilFactory', function(EVENTS, violationsManager) {
         return function(scope, modalInstance) {
             var api = {};
             api.handleSubmitSuccess = handleSubmitSuccess;
@@ -16,7 +18,7 @@
 
             function handleSubmitReject(rejection) {
                 if (rejection.status == 400 && rejection.data.violations) {
-                    scope.violations = rejection.data.violations;
+                    violationsManager.setViolations(rejection.data.violations);
                 }
             }
 
@@ -29,10 +31,7 @@
                 if (form.$valid) {
                     submit(submitFn);
                 } else {
-                    scope.violations = [{
-                        path: "",
-                        type: "BasicRequirements"
-                    }];
+                    violationsManager.setViolations([{ path: "", type: "BasicRequirements" }]);
                 }
             }
         };

@@ -8,6 +8,7 @@
         'parkandride.UserResource',
         'parkandride.OperatorResource',
         'parkandride.i18n',
+        'parkandride.components.violations',
         'showErrors'
     ]);
 

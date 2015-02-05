@@ -1,7 +1,7 @@
 package fi.hsl.parkandride.core.domain;
 
 import static fi.hsl.parkandride.core.domain.Permission.ALL_OPERATORS;
-import static fi.hsl.parkandride.core.domain.Permission.FACILITY_STATUS_UPDATE;
+import static fi.hsl.parkandride.core.domain.Permission.FACILITY_UTILIZATION_UPDATE;
 import static fi.hsl.parkandride.core.domain.Permission.HUB_CREATE;
 import static fi.hsl.parkandride.core.domain.Permission.HUB_UPDATE;
 import static fi.hsl.parkandride.core.domain.Permission.OPERATOR_CREATE;
@@ -13,11 +13,11 @@ import java.util.Set;
 import com.google.common.collect.ImmutableSet;
 
 public enum Role {
-    ADMIN(false, exclude(FACILITY_STATUS_UPDATE)),
+    ADMIN(false, exclude(FACILITY_UTILIZATION_UPDATE)),
 
-    OPERATOR(false, exclude(ALL_OPERATORS, FACILITY_STATUS_UPDATE, OPERATOR_CREATE, HUB_CREATE, HUB_UPDATE)),
+    OPERATOR(false, exclude(ALL_OPERATORS, FACILITY_UTILIZATION_UPDATE, OPERATOR_CREATE, HUB_CREATE, HUB_UPDATE)),
 
-    OPERATOR_API(true, include(FACILITY_STATUS_UPDATE));
+    OPERATOR_API(true, include(FACILITY_UTILIZATION_UPDATE));
 
     public final boolean perpetualToken;
 

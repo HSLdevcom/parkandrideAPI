@@ -71,21 +71,31 @@ public class AuthenticationService {
     }
 
     public static void authorize(User currentUser, Permission permission) {
-        if (currentUser == null) {
-            throw new AccessDeniedException();
+        if (permission.requiresContext) {
+            throw new IllegalArgumentException("permission requires context");
         }
-        if (!currentUser.hasPermission(permission)) {
-            throw new AccessDeniedException();
-        }
+        checkPermission(currentUser, permission);
     }
 
     public static void authorize(User currentUser, OperatorEntity entity, Permission permission) {
-        authorize(currentUser, permission);
+        if (!permission.requiresContext) {
+            throw new IllegalArgumentException("permission does not require context");
+        }
+        checkPermission(currentUser, permission);
 
         if (!currentUser.hasPermission(ALL_OPERATORS)) {
             if (currentUser.operatorId == null || !currentUser.operatorId.equals(entity.operatorId())) {
                 throw new AccessDeniedException();
             }
+        }
+    }
+
+    private static void checkPermission(User currentUser, Permission permission) {
+        if (currentUser == null) {
+            throw new AccessDeniedException();
+        }
+        if (!currentUser.hasPermission(permission)) {
+            throw new AccessDeniedException();
         }
     }
 

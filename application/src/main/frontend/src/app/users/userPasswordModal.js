@@ -6,6 +6,7 @@
         'parkandride.modalUtil',
         'parkandride.UserResource',
         'parkandride.OperatorResource',
+        'parkandride.components.violations',
         'parkandride.i18n'
     ]);
 
@@ -28,7 +29,8 @@
 
     m.controller('UserPasswordModalCtrl', function($scope, $modalInstance, permit, Permission, user, UserResource, modalUtilFactory) {
         var vm = this;
-        var modalUtil = modalUtilFactory($scope, $modalInstance);
+        vm.context = "users";
+        var modalUtil = modalUtilFactory($scope, vm.context, $modalInstance);
 
         vm.user = user;
         vm.permitSave = permitSave;

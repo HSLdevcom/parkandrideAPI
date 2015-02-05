@@ -10,7 +10,10 @@
     ]);
 
     m.controller("OperatorEditCtrl", function ($scope, $modalInstance, OperatorResource, operator, create, EVENTS, modalUtilFactory) {
-        var modalUtil = modalUtilFactory($scope, $modalInstance);
+        var vm = this;
+        vm.context = "operators";
+
+        var modalUtil = modalUtilFactory($scope, vm.context, $modalInstance);
 
         $scope.operator = operator;
         $scope.titleKey = 'operators.action.' + (create ? 'new' : 'edit');
@@ -28,7 +31,7 @@
         return function(operator, create) {
             var modalInstance = $modal.open({
                 templateUrl: 'operators/operatorEdit.tpl.html',
-                controller: 'OperatorEditCtrl',
+                controller: 'OperatorEditCtrl as operatorEditCtrl',
                 resolve: {
                     operator: function () {
                         return _.cloneDeep(operator);

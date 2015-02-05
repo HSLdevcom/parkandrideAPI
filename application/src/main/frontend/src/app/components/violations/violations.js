@@ -16,18 +16,19 @@
             bindToController: true,
             controller: 'ViolationsCtrl',
             controllerAs: 'ctrl',
-            templateUrl: 'components/violations/violations.tpl.html',
-            link: function() {
-                violationsManager.clear();
-            }
+            templateUrl: 'components/violations/violations.tpl.html'
         };
     }
 
     function ViolationsCtrl(violationsManager) {
         var vm = this;
-        vm.model = violationsManager.model;
-        vm.hasViolations = violationsManager.hasViolations;
+        vm.model = violationsManager.initContext(vm.prefix);
+        vm.hasViolations = hasViolations;
         vm.getLabel = getLabel;
+
+        function hasViolations() {
+            return violationsManager.hasViolations(vm.prefix);
+        }
 
         function getLabel(violation) {
             return vm.prefix + (violation.path ? '.' + violation.path : '') + '.label';
@@ -35,17 +36,20 @@
     }
 
     function violationsManager() {
-        var model = {
-            violations: []
-        };
+        var model = {};
 
         var api = {};
         api.setViolations = setViolations;
         api.hasViolations = hasViolations;
-        api.clear = clear;
-        api.model = model;
+        api.initContext = initContext;
 
-        function setViolations(violations) {
+        function initContext(context) {
+            model[context] = { violations: [] };
+            console.log("initialized context [", context, "]", model[context]);
+            return model[context];
+        }
+
+        function setViolations(context, violations) {
             function filterDuplicates(violations) {
                 var filtered = [];
 
@@ -63,17 +67,12 @@
                 return filtered;
             }
 
-            console.log("set violations");
-            angular.copy(filterDuplicates(violations), model.violations);
+            angular.copy(filterDuplicates(violations), model[context].violations);
+            console.log("set violations [", context, "]", model[context].violations);
         }
 
-        function hasViolations() {
-            return !_.isEmpty(model.violations);
-        }
-
-        function clear() {
-            console.log("clearing violations...");
-            model.violations = [];
+        function hasViolations(context) {
+            return !_.isEmpty(model[context].violations);
         }
 
         return api;

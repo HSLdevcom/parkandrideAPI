@@ -34,8 +34,9 @@
 
     m.controller('UserModalCtrl', function($scope, $modalInstance, $translate, schema, user, EVENTS, UserResource, operators, Session, modalUtilFactory) {
         var vm = this;
+        vm.context = "users";
         var isNewUser = !user;
-        var modalUtil = modalUtilFactory($scope, $modalInstance);
+        var modalUtil = modalUtilFactory($scope, vm.context, $modalInstance);
 
         vm.titleKey = 'users.action.' + (isNewUser ? 'new' : 'edit');
         vm.user = user || {};

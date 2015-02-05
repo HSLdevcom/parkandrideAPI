@@ -48,7 +48,8 @@
 
     m.controller('HubEditCtrl', function ($scope, $state, HubResource, FacilityResource, hub, submitUtilFactory) {
         var self = this;
-        var submitUtil = submitUtilFactory($scope);
+        self.context = "hubs";
+        var submitUtil = submitUtilFactory($scope, self.context);
 
         self.hub = hub;
         self.facilities = [];

@@ -62,7 +62,8 @@
 
     m.controller('FacilityEditCtrl', function($scope, $state, schema, FacilityResource, Session, Sequence, facility, aliasesPlaceholder, submitUtilFactory) {
         var self = this;
-        var submitUtil = submitUtilFactory($scope);
+        self.context = "facilities";
+        var submitUtil = submitUtilFactory($scope, self.context);
 
         self.advancedMode = false;
         self.capacityTypes = schema.capacityTypes.values;

@@ -4,7 +4,7 @@
     ]);
 
     m.factory('submitUtilFactory', function(EVENTS, violationsManager) {
-        return function(scope) {
+        return function(scope, context) {
             var api = {};
             api.submit = submit;
             api.validateAndSubmit = validateAndSubmit;
@@ -12,7 +12,7 @@
 
             function handleSubmitReject(rejection) {
                 if (rejection.status == 400 && rejection.data.violations) {
-                    violationsManager.setViolations(rejection.data.violations);
+                    violationsManager.setViolations(context, rejection.data.violations);
                 }
             }
 
@@ -25,7 +25,7 @@
                 if (form.$valid) {
                     submit(submitFn, submitSuccessFn);
                 } else {
-                    violationsManager.setViolations([{ path: "", type: "BasicRequirements" }]);
+                    violationsManager.setViolations(context, [{ path: "", type: "BasicRequirements" }]);
                 }
             }
         };

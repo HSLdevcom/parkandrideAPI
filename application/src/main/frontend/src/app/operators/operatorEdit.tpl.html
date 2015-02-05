@@ -3,7 +3,7 @@
 		<h3 class="modal-title">{{ titleKey | translate }}</h3>
 	</div>
 	<div class="modal-body">
-		<violations prefix="operators"></violations>
+		<violations prefix="{{operatorEditCtrl.context}}"></violations>
 		<form name="editOperatorForm" class="form-horizontal" role="form" novalidate>
 			<div class="row">
 				<label>{{ "operators.name.label" | translate }} *</label>

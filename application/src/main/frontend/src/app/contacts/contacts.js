@@ -12,7 +12,10 @@
 
 
     m.controller("ContactEditCtrl", function ($scope, $modalInstance, ContactResource, contact, create, modalUtilFactory) {
-        var modalUtil = modalUtilFactory($scope, $modalInstance);
+        var vm = this;
+        vm.context = "contacts";
+
+        var modalUtil = modalUtilFactory($scope, vm.context, $modalInstance);
 
         $scope.contact = contact;
         $scope.titleKey = 'contacts.action.' + (create ? 'new' : 'edit');
@@ -32,7 +35,7 @@
         return function(contact, create) {
             var modalInstance = $modal.open({
                 templateUrl: 'contacts/contactEdit.tpl.html',
-                controller: 'ContactEditCtrl',
+                controller: 'ContactEditCtrl as contactEditCtrl',
                 resolve: {
                     contact: function () {
                         if (!contact.operatorId) {

@@ -4,9 +4,9 @@
     ]);
 
     m.factory('modalUtilFactory', function(submitUtilFactory) {
-        return function(scope, modalInstance) {
+        return function(scope, context, modalInstance) {
 
-            var submitUtil = submitUtilFactory(scope);
+            var submitUtil = submitUtilFactory(scope, context);
 
             var api = {};
             api.submit = submit;

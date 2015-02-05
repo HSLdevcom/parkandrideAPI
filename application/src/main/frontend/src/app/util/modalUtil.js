@@ -1,13 +1,14 @@
 (function() {
     var m = angular.module('parkandride.modalUtil', [
-        'parkandride.components.violations'
+        'parkandride.submitUtil'
     ]);
 
-    m.factory('modalUtilFactory', function(EVENTS, violationsManager) {
+    m.factory('modalUtilFactory', function(submitUtilFactory) {
         return function(scope, modalInstance) {
+
+            var submitUtil = submitUtilFactory(scope);
+
             var api = {};
-            api.handleSubmitSuccess = handleSubmitSuccess;
-            api.handleSubmitReject = handleSubmitReject;
             api.submit = submit;
             api.validateAndSubmit = validateAndSubmit;
             return api;
@@ -16,23 +17,12 @@
                 modalInstance.close(success);
             }
 
-            function handleSubmitReject(rejection) {
-                if (rejection.status == 400 && rejection.data.violations) {
-                    violationsManager.setViolations(rejection.data.violations);
-                }
-            }
-
             function submit(submitFn) {
-                submitFn().then(handleSubmitSuccess, handleSubmitReject);
+                submitUtil.submit(submitFn, handleSubmitSuccess);
             }
 
             function validateAndSubmit(form, submitFn) {
-                scope.$broadcast(EVENTS.showErrorsCheckValidity);
-                if (form.$valid) {
-                    submit(submitFn);
-                } else {
-                    violationsManager.setViolations([{ path: "", type: "BasicRequirements" }]);
-                }
+                submitUtil.validateAndSubmit(form, submitFn, handleSubmitSuccess);
             }
         };
     });

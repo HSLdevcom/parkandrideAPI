@@ -4,7 +4,7 @@
 <a class="btn btn-s btn-responsive" role="button" ng-show="editCtrl.hub.id" ui-sref="hub-view({ id: editCtrl.hub.id })">
 	{{'common.action.cancel' | translate }}
 </a>
-<a class="btn btn-s btn-responsive wdSave" role="button" ng-click="appCtrl.validateAndSubmit(editHubForm,  editCtrl.saveHub)"
+<a class="btn btn-s btn-responsive wdSave" role="button" ng-click="editCtrl.save(editHubForm)"
    ng-if="permit([HUB_CREATE, HUB_UPDATE])">
 	{{'common.action.save' | translate }}
 </a>

@@ -20,9 +20,9 @@
         };
     }
 
-    function ViolationsCtrl(violationsManager) {
+    function ViolationsCtrl(violationsManager, $element) {
         var vm = this;
-        vm.model = violationsManager.initContext(vm.context);
+        vm.model = violationsManager.initContext(vm.context, onViolationsUpdated);
         vm.hasViolations = hasViolations;
         vm.getLabel = getLabel;
 
@@ -32,6 +32,10 @@
 
         function getLabel(violation) {
             return vm.context + (violation.path ? '.' + violation.path : '') + '.label';
+        }
+
+        function onViolationsUpdated() {
+            $element[0].scrollIntoView();
         }
     }
 
@@ -43,8 +47,11 @@
         api.hasViolations = hasViolations;
         api.initContext = initContext;
 
-        function initContext(context) {
-            model[context] = { violations: [] };
+        function initContext(context, onViolationsUpdated) {
+            model[context] = {
+                violations: [],
+                onViolationsUpdated: onViolationsUpdated
+            };
             $log.debug("initialized context [", context, "]", model[context]);
             return model[context];
         }
@@ -69,6 +76,7 @@
 
             angular.copy(filterDuplicates(violations), model[context].violations);
             $log.debug("set violations [", context, "]", model[context].violations);
+            model[context].onViolationsUpdated();
         }
 
         function hasViolations(context) {

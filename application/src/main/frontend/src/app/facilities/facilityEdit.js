@@ -13,7 +13,7 @@
         'parkandride.pricing',
         'parkandride.tags',
         'parkandride.address',
-        'parkandride.pricingManager',
+        'parkandride.pricingList',
         'parkandride.submitUtil',
         'showErrors'
     ]);
@@ -61,12 +61,11 @@
         });
     });
 
-    m.controller('FacilityEditCtrl', function($scope, $state, schema, FacilityResource, Session, Sequence, facility, aliasesPlaceholder, pricingManager, submitUtilFactory) {
+    m.controller('FacilityEditCtrl', function($scope, $state, schema, FacilityResource, Session, Sequence, facility, aliasesPlaceholder, submitUtilFactory) {
         var self = this;
         self.context = "facilities";
         var submitUtil = submitUtilFactory($scope, self.context);
 
-        self.advancedMode = false;
         self.capacityTypes = schema.capacityTypes.values;
         self.usages = schema.usages.values;
         self.dayTypes = schema.dayTypes.values;
@@ -87,40 +86,6 @@
         }
 
         self.editMode = (facility.id ? "ports" : "location");
-
-        pricingManager.init(facility);
-        self.pricingModel = pricingManager.model;
-        self.onSelectAllChange = pricingManager.onSelectAllChange;
-        self.addPricingRow = pricingManager.addRow;
-        self.isClipboardEmpty = pricingManager.isClipboardEmpty;
-        self.copyPricingRows = pricingManager.copyPricingRows;
-        self.deletePricingRows = pricingManager.deletePricingRows;
-        self.pastePricingRows = pricingManager.pastePricingRows;
-        self.pastePricingValues = pricingManager.pastePricingValues;
-
-        self.hasPricingRows = function() {
-            return self.facility.pricing.length > 0;
-        };
-
-        self.isNewPricingGroup = function(i) {
-            if (i === 0) {
-                return false;
-            }
-            var pricingRows = self.facility.pricing;
-            return pricingRows[i-1].capacityType !== pricingRows[i].capacityType ||
-                pricingRows[i-1].usage !== pricingRows[i].usage;
-        };
-
-        self.getPricingRowClasses = function(pricing, i) {
-            var classes = (self.pricingModel.selections[pricing._id] ? 'selected' : 'unselected');
-            if (self.advancedMode && pricingManager.isInClipboard(pricing)) {
-                classes += ' on-clipboard';
-            }
-            if (self.isNewPricingGroup(i)) {
-                classes += ' new-pricing-group';
-            }
-            return classes;
-        };
 
         self.save = function(form) {
             var facility = _.cloneDeep(self.facility);

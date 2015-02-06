@@ -24,8 +24,8 @@
         self.init = init;
         return self;
 
-        function init(facility) {
-            self.pricing = facility.pricing;
+        function init(pricing) {
+            self.pricing = pricing;
             _.forEach(self.pricing, function(p) { p._id = Sequence.nextval();});
         }
 

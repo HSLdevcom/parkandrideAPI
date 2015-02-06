@@ -161,13 +161,19 @@
         });
     });
 
-    m.run(function($rootScope, $state, EVENTS) {
+    m.run(function($rootScope, $state) {
         $rootScope.$state = $state;
 
         $rootScope.$on("$stateChangeSuccess", scrollToTop);
+
+        $rootScope.$on('$stateChangeSuccess', function (event, toState) {
+            if (angular.isDefined(toState.data.pageTitle)) {
+                $rootScope.pageTitle = toState.data.pageTitle + ' | parkandride';
+            }
+        });
     });
 
-    m.controller('AppCtrl', function ($rootScope, $location, loginPrompt, Session, EVENTS, Permission, permit, schema) {
+    m.controller('AppCtrl', function ($rootScope, $location, loginPrompt, Session, EVENTS, Permission, permit) {
         $rootScope.permit = permit;
 
         // Permission constants
@@ -176,12 +182,6 @@
         }
 
         $rootScope.common = {};
-
-        $rootScope.$on('$stateChangeSuccess', function (event, toState, toParams, fromState, fromParams) {
-            if (angular.isDefined(toState.data.pageTitle)) {
-                $rootScope.pageTitle = toState.data.pageTitle + ' | parkandride';
-            }
-        });
 
         this.openLoginPrompt = function() {
             loginPrompt().then(function() {}, function() {});

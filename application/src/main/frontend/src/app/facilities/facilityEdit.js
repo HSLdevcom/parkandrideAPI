@@ -89,8 +89,7 @@
         self.editMode = (facility.id ? "ports" : "location");
 
         pricingManager.init(facility);
-        $scope.model = pricingManager.model;
-        $scope.selections = pricingManager.model.selections;
+        self.pricingModel = pricingManager.model;
         self.onSelectAllChange = pricingManager.onSelectAllChange;
         self.addPricingRow = pricingManager.addRow;
         self.isClipboardEmpty = pricingManager.isClipboardEmpty;
@@ -113,7 +112,7 @@
         };
 
         self.getPricingRowClasses = function(pricing, i) {
-            var classes = ($scope.selections[pricing._id] ? 'selected' : 'unselected');
+            var classes = (self.pricingModel.selections[pricing._id] ? 'selected' : 'unselected');
             if (self.advancedMode && pricingManager.isInClipboard(pricing)) {
                 classes += ' on-clipboard';
             }

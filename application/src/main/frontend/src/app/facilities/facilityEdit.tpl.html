@@ -144,7 +144,8 @@
 			<tr>
 				<th class="clipboard-indicator"></th>
 				<th class="pricing-select centeredCell">
-					<input id="pricingSelectAll" type="checkbox" ng-model="model.allSelected" ng-change="editCtrl.onSelectAllChange()" class="checkbox"/>
+					<input id="pricingSelectAll" type="checkbox" ng-model="editCtrl.pricingModel.allSelected" ng-change="editCtrl.onSelectAllChange()"
+						   class="checkbox"/>
 				</th>
 
 				<th id="facilities-pricing-capacityType" translate="facilities.pricing.capacityType.title"></th>
@@ -167,7 +168,7 @@
 				class="{{ editCtrl.getPricingRowClasses(pricing, $index) }}"></tr>
 			</tbody>
 			<tfoot>
-			<tr ng-show="editCtrl.advancedMode && !editCtrl.isClipboardEmpty() && selections.count > 0">
+			<tr ng-show="editCtrl.advancedMode && !editCtrl.isClipboardEmpty() && editCtrl.pricingModel.selections.count > 0">
 				<th class="clipboard-indicator"></th>
 				<th class="pricing-select"></th>
 
@@ -217,20 +218,20 @@
 			{{'facilities.action.addPricingRow' | translate }}
 		</a>
 		<a id="pricingPasteRows" class="btn btn-xs btn-responsive" role="button" ng-click="editCtrl.pastePricingRows()"
-		   ng-disabled="editCtrl.isClipboardEmpty() || selections.count > 0" ng-show="editCtrl.hasPricingRows()">
+		   ng-disabled="editCtrl.isClipboardEmpty() || editCtrl.pricingModel.selections.count > 0" ng-show="editCtrl.hasPricingRows()">
 			Liitä
 		</a>
 		<a id="pricingCopyRows" class="btn btn-xs btn-responsive" role="button" ng-click="editCtrl.copyPricingRows()"
-		   ng-disabled="selections.count == 0" ng-show="editCtrl.hasPricingRows()">
+		   ng-disabled="editCtrl.pricingModel.selections.count == 0" ng-show="editCtrl.hasPricingRows()">
 			Kopioi
 		</a>
 		<a id="pricingCopyFirst" class="btn btn-xs btn-responsive" role="button" ng-click="editCtrl.copyPricingRows(true)"
 		   ng-show="editCtrl.advancedMode"
-		   ng-disabled="selections.count < 2" ng-show="editCtrl.hasPricingRows()">
+		   ng-disabled="editCtrl.pricingModel.selections.count < 2" ng-show="editCtrl.hasPricingRows()">
 			Kopioi ensimmäinen
 		</a>
 		<a id="pricingRemoveRows" class="btn btn-xs btn-responsive" role="button" ng-click="editCtrl.deletePricingRows()"
-		   ng-disabled="selections.count == 0" ng-show="editCtrl.hasPricingRows()">
+		   ng-disabled="editCtrl.pricingModel.selections.count == 0" ng-show="editCtrl.hasPricingRows()">
 			Poista
 		</a>
 	</div>

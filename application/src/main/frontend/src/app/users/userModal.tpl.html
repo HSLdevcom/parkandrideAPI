@@ -4,14 +4,7 @@
 	</div>
 
 	<div class="modal-body">
-		<div ng-show="violations.length > 0" class="row errorRow">
-			<div ng-repeat="violation in violations" class="wdViolation">
-				<span class="wdViolationPath">{{
-					(violation.path ? 'users.' + violation.path : 'users') + '.label' | translate
-				}}</span>:
-				<span class="wdViolationMessage" translate="violation.{{violation.type}}" translate-values="{{violation.args}}"></span>
-			</div>
-		</div>
+		<violations context="{{ctrl.context}}"></violations>
 		<form name="userForm" class="form-horizontal" role="form" novalidate>
 			<div class="row">
 				<div class="column3 first-column">

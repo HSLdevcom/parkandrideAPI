@@ -129,7 +129,7 @@
         };
     });
 
-    m.directive('viewHubMap', function(MapService, HubMapCommon, FacilityResource) {
+    m.directive('viewHubMap', function($log, MapService, HubMapCommon, FacilityResource) {
         return {
             restrict: 'E',
             require: 'ngModel',
@@ -176,12 +176,10 @@
                         }
                     });
                 }
-                if (console.log) {
-                    map.on('dblclick', function(event) {
-                        console.log("{x: "+ event.pixel[0] + ", y: " + event.pixel[1] + "}");
-                        return true;
-                    });
-                }
+                map.on('dblclick', function(event) {
+                    $log.debug("{x: "+ event.pixel[0] + ", y: " + event.pixel[1] + "}");
+                    return true;
+                });
             }
         };
     });

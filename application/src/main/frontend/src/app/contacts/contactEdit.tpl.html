@@ -1,16 +1,10 @@
 <div id="contactEditModal">
+
 	<div class="modal-header">
 		<h3 class="modal-title">{{ titleKey | translate }}</h3>
 	</div>
 	<div class="modal-body">
-		<div ng-show="violations.length > 0" class="row errorRow">
-			<div ng-repeat="violation in violations" class="wdViolation">
-				<span class="wdViolationPath">{{
-					(violation.path ? 'contacts.' + violation.path : 'contacts') + '.label' | translate
-				}}</span>:
-				<span class="wdViolationMessage" translate="violation.{{violation.type}}" translate-values="{{violation.args}}"></span>
-			</div>
-		</div>
+		<violations context="{{contactEditCtrl.context}}"></violations>
 		<form name="editContactForm" class="form-horizontal" role="form" novalidate>
 			<div class="row">
 				<label>{{"operators.label" | translate}}</label>

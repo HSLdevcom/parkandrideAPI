@@ -13,6 +13,7 @@
         'parkandride.pricing',
         'parkandride.tags',
         'parkandride.address',
+        'parkandride.submitUtil',
         'showErrors'
     ]);
 
@@ -59,9 +60,11 @@
         });
     });
 
-    m.controller('FacilityEditCtrl', function($scope, $state, schema, FacilityResource, Session, Sequence, facility, aliasesPlaceholder) {
+    m.controller('FacilityEditCtrl', function($scope, $state, schema, FacilityResource, Session, Sequence, facility, aliasesPlaceholder, submitUtilFactory) {
         var self = this;
-        $scope.common.translationPrefix = "facilities";
+        self.context = "facilities";
+        var submitUtil = submitUtilFactory($scope, self.context);
+
         self.advancedMode = false;
         self.capacityTypes = schema.capacityTypes.values;
         self.usages = schema.usages.values;
@@ -209,11 +212,13 @@
             return classes;
         };
 
-        self.saveFacility = function() {
+        self.save = function(form) {
             var facility = _.cloneDeep(self.facility);
-            FacilityResource.save(facility).then(function(id){
-                $state.go('facility-view', { "id": id });
-            });
+            submitUtil.validateAndSubmit(
+                form,
+                function() { return FacilityResource.save(facility); },
+                function(id) { return $state.go('facility-view', {"id": id }); }
+            );
         };
 
         function isAllRowsSelected() {

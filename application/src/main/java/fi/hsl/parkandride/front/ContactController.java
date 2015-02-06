@@ -62,7 +62,7 @@ public class ContactController {
                                                    @RequestBody Contact contact,
                                                    User currentUser) {
         Contact response = contactService.updateContact(contactId, contact, currentUser);
-        return new ResponseEntity<>(contact, OK);
+        return new ResponseEntity<>(response, OK);
     }
 
     @RequestMapping(method = GET, value = CONTACTS, produces = APPLICATION_JSON_VALUE)

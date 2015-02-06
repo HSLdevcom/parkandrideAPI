@@ -82,7 +82,7 @@ public class FacilityService {
     }
 
     @TransactionalRead
-    public SearchResults search(PageableFacilitySearch search) {
+    public SearchResults<FacilityInfo> search(PageableFacilitySearch search) {
         return repository.findFacilities(search);
     }
 

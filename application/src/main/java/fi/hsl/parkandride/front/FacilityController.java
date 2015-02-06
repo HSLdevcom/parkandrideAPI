@@ -58,7 +58,7 @@ public class FacilityController {
     @RequestMapping(method = GET, value = FACILITY, produces = GEOJSON)
     public ResponseEntity<Feature> getFacilityAsFeature(@PathVariable(FACILITY_ID) long facilityId) {
         Facility facility = facilityService.getFacility(facilityId);
-        return new ResponseEntity<Feature>(FACILITY_TO_FEATURE.apply(facility), OK);
+        return new ResponseEntity<>(FACILITY_TO_FEATURE.apply(facility), OK);
     }
 
     @ApiOperation(value = "Update facility", authorizations = @Authorization(API_KEY))
@@ -67,12 +67,12 @@ public class FacilityController {
                                                    @RequestBody Facility facility,
                                                    User currentUser) {
         Facility response = facilityService.updateFacility(facilityId, facility, currentUser);
-        return new ResponseEntity<>(facility, OK);
+        return new ResponseEntity<>(response, OK);
     }
 
     @RequestMapping(method = GET, value = FACILITIES, produces = APPLICATION_JSON_VALUE)
-    public ResponseEntity<SearchResults<Facility>> findFacilities(PageableFacilitySearch search) {
-        SearchResults<Facility> results = facilityService.search(search);
+    public ResponseEntity<SearchResults<FacilityInfo>> findFacilities(PageableFacilitySearch search) {
+        SearchResults<FacilityInfo> results = facilityService.search(search);
         return new ResponseEntity<>(results, OK);
     }
 
@@ -87,6 +87,7 @@ public class FacilityController {
         SearchResults<FacilityInfo> results = facilityService.search(search);
         return new ResponseEntity<>(FeatureCollection.ofFacilities(results), OK);
     }
+
     @ApiOperation(value = "Update facility status", authorizations = @Authorization(API_KEY))
     @RequestMapping(method = PUT, value = FACILITY_UTILIZATION, produces = APPLICATION_JSON_VALUE)
     public void registerUtilization(@PathVariable(FACILITY_ID) long facilityId,

@@ -36,9 +36,9 @@
 
                 function rowSelected(isSelected) {
                     if (angular.isDefined(isSelected)) {
-                        pricingManager.selections[pricingId] = isSelected;
+                        pricingManager.model.selections[pricingId] = isSelected;
                     }
-                    return pricingManager.selections[pricingId];
+                    return pricingManager.model.selections[pricingId];
                 }
 
                 function onSelectChange() {

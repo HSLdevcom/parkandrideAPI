@@ -89,8 +89,8 @@
         self.editMode = (facility.id ? "ports" : "location");
 
         pricingManager.init(facility);
-        $scope.model = pricingManager.data;
-        $scope.selections = pricingManager.selections;
+        $scope.model = pricingManager.model;
+        $scope.selections = pricingManager.model.selections;
         self.onSelectAllChange = pricingManager.onSelectAllChange;
         self.addPricingRow = pricingManager.addRow;
         self.isClipboardEmpty = pricingManager.isClipboardEmpty;
@@ -102,6 +102,7 @@
         self.hasPricingRows = function() {
             return self.facility.pricing.length > 0;
         };
+
         self.isNewPricingGroup = function(i) {
             if (i === 0) {
                 return false;
@@ -110,9 +111,10 @@
             return pricingRows[i-1].capacityType !== pricingRows[i].capacityType ||
                 pricingRows[i-1].usage !== pricingRows[i].usage;
         };
+
         self.getPricingRowClasses = function(pricing, i) {
             var classes = ($scope.selections[pricing._id] ? 'selected' : 'unselected');
-            if (self.advancedMode && pricingManager.clipboard.ids[pricing._id]) {
+            if (self.advancedMode && pricingManager.isInClipboard(pricing)) {
                 classes += ' on-clipboard';
             }
             if (self.isNewPricingGroup(i)) {
@@ -129,20 +131,6 @@
                 function(id) { return $state.go('facility-view', {"id": id }); }
             );
         };
-
-        function isAllRowsSelected() {
-            return $scope.selections.count === self.facility.pricing.length;
-        }
-        function isSelected(pricingId) {
-            return $scope.selections[pricingId];
-        }
-        function setSelected(pricingId, selected) {
-            if ($scope.selections[pricingId] !== selected) {
-                $scope.selections.count += (selected ? +1 : -1);
-            }
-            $scope.selections[pricingId] = selected;
-        }
-
     });
 
     m.directive('aliases', function() {

@@ -4,22 +4,19 @@
     m.factory('pricingManager', function(Sequence) {
         var self = {};
         var clipboard = initClipboard();
-        self.clipboard = clipboard; // TODO encapsulate clipboard after 'paste' is refactored into pricing manager
+        var selections = initSelections();
 
-        self.selections = {
-            // Selected pricing IDs as boolean-values properties
-            count: 0 // Selected row count for efficient "if all selected" check
-        };
-        self.data = {
-            allSelected: false
+        self.model = {
+            allSelected: false,
+            selections: selections.model
         };
 
         self.onSelectAllChange = onSelectAllChange;
         self.onSelectRowChange = onSelectRowChange;
         self.addRow = addRow;
         self.addToClipboard = clipboard.add;
-        self.clearClipboard = clipboard.clear; // TODO remove
         self.isClipboardEmpty = clipboard.isEmpty;
+        self.isInClipboard = clipboard.contains;
         self.copyPricingRows = copyPricingRows;
         self.deletePricingRows = deletePricingRows;
         self.pastePricingRows = pastePricingRows;
@@ -35,8 +32,8 @@
         function copyPricingRows(firstOnly) {
             clipboard.clear();
             _.forEach(self.pricing, function(p) {
-                if (isSelected(p)) {
-                    applySelectChange(p._id, false);
+                if (selections.isSelected(p)) {
+                    selections.applyChange(p, false);
 
                     clipboard.add(p);
                     return !firstOnly;
@@ -47,12 +44,12 @@
         function deletePricingRows() {
             clipboard.clear();
             _.forEachRight(self.pricing, function(p, i) {
-                if (isSelected(p)) {
+                if (selections.isSelected(p)) {
                     self.pricing.splice(i, 1);
-                    applySelectChange(p._id, false);
+                    selections.applyChange(p, false);
                 }
             });
-            self.data.allSelected = false;
+            self.model.allSelected = false;
         }
 
         function pastePricingRows() {
@@ -63,10 +60,10 @@
                 self.pricing.push(newPricing);
 
                 if (clipboard.rows.length > 1) {
-                    applySelectChange(newPricing._id, true);
+                    selections.applyChange(newPricing, true);
                 }
             });
-            self.data.allSelected = false;
+            self.model.allSelected = false;
         }
 
         function pastePricingValues(property) {
@@ -77,7 +74,7 @@
 
             var j = 0;
             _.forEach(self.pricing, function(p) {
-                if (isSelected(p)) {
+                if (selections.isSelected(p)) {
                     var value = clipboard.rows[j++ % len][property];
                     p[property] = _.cloneDeep(value);
                 }
@@ -85,55 +82,34 @@
         }
 
         function addRow() {
-            clearSelections();
+            selections.clear();
             clipboard.clear();
 
             var p = {};
             p._id = Sequence.nextval();
             self.pricing.push(p);
 
-            self.data.allSelected = false;
-        }
-
-        function clearSelections() {
-            for (var s in self.selections) {
-                delete self.selections[s];
-            }
-            self.selections.count = 0;
-            self.data.allSelected = false;
+            self.model.allSelected = false;
         }
 
         function onSelectAllChange() {
-            if (self.data.allSelected === isAllRowsSelected()) {
+            if (self.model.allSelected === isAllRowsSelected()) {
                 return;
             }
 
-            for (var i = self.pricing.length - 1; i >= 0; i--) {
-                applySelectChange(self.pricing[i]._id, self.data.allSelected);
-            }
+            _.forEach(self.pricing, function(p) {
+                selections.applyChange(p, self.model.allSelected);
+            });
         }
 
         function onSelectRowChange(pricing) {
-            self.selections.count += (self.selections[pricing._id] ? +1 : -1);
-            self.data.allSelected = isAllRowsSelected();
+            selections.updateCount(pricing);
+            self.model.allSelected = isAllRowsSelected();
         }
 
         function isAllRowsSelected() {
-            return self.selections.count === self.pricing.length;
+            return selections.isAllSelected(self.pricing.length);
         }
-
-        function isSelected(p) {
-            return self.selections[p._id];
-        }
-
-        // TODO pass pricing instead of id
-        function applySelectChange(pricingId, isSelected) {
-            if (self.selections[pricingId] !== isSelected) {
-                self.selections.count += (isSelected ? +1 : -1);
-            }
-            self.selections[pricingId] = isSelected;
-        }
-
 
         function initClipboard() {
             var self = {};
@@ -152,6 +128,44 @@
 
             self.isEmpty = function() {
                 return self.rows.length === 0;
+            };
+
+            self.contains = function(p) {
+                return self.ids[p._id] === true;
+            };
+
+            return self;
+        }
+
+        function initSelections() {
+            var self = {};
+            var model = { count: 0 };
+            self.model = model;
+
+            self.updateCount = function(p) {
+                model.count += model[p._id] ? +1 : -1;
+            };
+
+            self.clear = function() {
+                for (var s in model) {
+                    delete model[s];
+                }
+                model.count = 0;
+            };
+
+            self.isAllSelected = function(allCount) {
+                return model.count === allCount;
+            };
+
+            self.applyChange = function(p, isSelected) {
+                if (model[p._id] !== isSelected) {
+                    model[p._id] = isSelected;
+                    self.updateCount(p);
+                }
+            };
+
+            self.isSelected = function(p) {
+                return model[p._id] === true;
             };
 
             return self;

@@ -9,6 +9,7 @@
 </actions>
 
 <content>
+<violations context="{{editCtrl.context}}"></violations>
 <div class="wdFacilityEditView">
 
 <div class="row">
@@ -34,8 +35,10 @@
 	<label>{{"operators.label" | translate}} *</label>
 </div>
 <div class="row">
-	<div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 column first-column">
-		<operator-select object="editCtrl.facility" mandatory="true"></operator-select>
+	<div class="column3 first-column">
+		<div class="form-group">
+			<operator-select object="editCtrl.facility" mandatory="true"></operator-select>
+		</div>
 	</div>
 </div>
 
@@ -43,22 +46,26 @@
 	<label>{{"facilities.status.label" | translate}} *</label>
 </div>
 <div class="row">
-	<div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 column first-column">
-		<ui-select class="statusInput" ng-model="editCtrl.facility.status" theme="bootstrap" reset-search-input="true">
-			<ui-select-match placeholder="{{'facilities.status.placeholder' | translate }}">
-				{{$select.selected.label}}
-			</ui-select-match>
-			<ui-select-choices repeat="status.id as status in editCtrl.facilityStatuses | filter: {label: $select.search}">
-				<div ng-bind-html="status.label | highlight: $select.search"></div>
-			</ui-select-choices>
-		</ui-select>
+	<div class="column3 first-column">
+		<div class="form-group">
+			<ui-select class="statusInput" ng-model="editCtrl.facility.status" theme="bootstrap" reset-search-input="true">
+				<ui-select-match placeholder="{{'facilities.status.placeholder' | translate }}">
+					{{$select.selected.label}}
+				</ui-select-match>
+				<ui-select-choices repeat="status.id as status in editCtrl.facilityStatuses | filter: {label: $select.search}">
+					<div ng-bind-html="status.label | highlight: $select.search"></div>
+				</ui-select-choices>
+			</ui-select>
+		</div>
 	</div>
 </div>
+
+
 <div class="row">
 	<label>{{ "facilities.statusDescription.label" | translate }}</label>
 </div>
 <div class="row">
-	<multilingual-edit name="statusDescription" ng-model="editCtrl.facility.statusDescription"></multilingual-edit>
+	<long-multilingual-edit name="statusDescription" ng-model="editCtrl.facility.statusDescription"></long-multilingual-edit>
 </div>
 
 <div class="row">
@@ -160,42 +167,42 @@
 				class="{{ editCtrl.getPricingRowClasses(pricing, $index) }}"></tr>
 			</tbody>
 			<tfoot>
-			<tr ng-show="!editCtrl.isClipboardEmpty() && selections.count > 0">
+			<tr ng-show="editCtrl.advancedMode && !editCtrl.isClipboardEmpty() && selections.count > 0">
 				<th class="clipboard-indicator"></th>
 				<th class="pricing-select"></th>
 
 				<th>
 					<a class="btn btn-xs btn-responsive" role="button" ng-click="editCtrl.pastePricingValues('capacityType')">
-						Liitä arvo
+						Liitä
 					</a>
 				</th>
 				<th>
 					<a class="btn btn-xs btn-responsive" role="button" ng-click="editCtrl.pastePricingValues('usage')">
-						Liitä arvo
+						Liitä
 					</a>
 				</th>
 				<th>
 					<a class="btn btn-xs btn-responsive" role="button" ng-click="editCtrl.pastePricingValues('maxCapacity')">
-						Liitä arvo
+						Liitä
 					</a>
 				</th>
 
 				<th>
 					<a class="btn btn-xs btn-responsive" role="button" ng-click="editCtrl.pastePricingValues('dayType')">
-						Liitä arvo
+						Liitä
 					</a>
 				</th>
 				<th></th>
 				<th colspan="2">
 					<a class="btn btn-xs btn-responsive" role="button" ng-click="editCtrl.pastePricingValues('time')">
-						Liitä arvot
+						Liitä
 					</a>
 				</th>
 
 				<th></th>
 				<th colspan="3">
 					<a class="btn btn-xs btn-responsive" role="button" ng-click="editCtrl.pastePricingValues('price')">
-						Liitä arvot
+						Liitä
 					</a>
 				</th>
 			</tr>
@@ -205,7 +212,7 @@
 </div>
 
 <div class="row rowWithSmallMargin">
-	<div class="column first-column">
+	<div class="col-lg-8 col-md-8 col-sm-8 col-xs-12 column first-column">
 		<a id="pricingAddRow" class="btn btn-xs btn-responsive" role="button" ng-click="editCtrl.addPricingRow()">
 			{{'facilities.action.addPricingRow' | translate }}
 		</a>
@@ -218,6 +225,7 @@
 			Kopioi
 		</a>
 		<a id="pricingCopyFirst" class="btn btn-xs btn-responsive" role="button" ng-click="editCtrl.copyPricingRows(true)"
+		   ng-show="editCtrl.advancedMode"
 		   ng-disabled="selections.count < 2" ng-show="editCtrl.hasPricingRows()">
 			Kopioi ensimmäinen
 		</a>
@@ -225,6 +233,11 @@
 		   ng-disabled="selections.count == 0" ng-show="editCtrl.hasPricingRows()">
 			Poista
 		</a>
+	</div>
+	<div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 column last-column">
+		<button id="advanced-mode" btn-checkbox ng-model="editCtrl.advancedMode" class="btn btn-xs" type="button" ng-show="editCtrl.hasPricingRows()">
+			Lisätoiminnot
+		</button>
 	</div>
 </div>
 
@@ -288,14 +301,6 @@
 </div>
 
 <div class="row"><h3>{{"facilities.paymentInfo.heading" | translate }}</h3></div>
-<div class="row">
-	<div class="form-group">
-		<label class="checkbox-label">
-			<input type="checkbox" class="checkbox" ng-model="editCtrl.facility.paymentInfo.parkAndRideAuthRequired" />
-			{{ "facilities.paymentInfo.parkAndRideAuthRequired" | translate }}
-		</label>
-	</div>
-</div>
 <div class="row">
 	<div class="form-group">
 		<label>{{ "facilities.paymentInfo.paymentMethods.label" | translate }}</label>

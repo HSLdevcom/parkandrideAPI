@@ -91,9 +91,9 @@ public class JdbcConfiguration {
     @Profile(FeatureProfile.PSQL)
     public com.mysema.query.sql.Configuration querydslConfigurationPsql() {
         com.mysema.query.sql.Configuration conf = querydslConfiguration();
-        conf.register("FACILITY", "LOCATION", new PGGeometryType(Polygon.class));
-        conf.register("PORT", "LOCATION", new PGGeometryType(Point.class));
-        conf.register("HUB", "LOCATION", new PGGeometryType(Point.class));
+        conf.register("FACILITY", "LOCATION", new PGGeometryType<>(Polygon.class));
+        conf.register("PORT", "LOCATION", new PGGeometryType<>(Point.class));
+        conf.register("HUB", "LOCATION", new PGGeometryType<>(Point.class));
         return conf;
     }
 
@@ -101,9 +101,9 @@ public class JdbcConfiguration {
     @Profile({FeatureProfile.H2})
     public com.mysema.query.sql.Configuration querydslConfigurationH2() {
         com.mysema.query.sql.Configuration conf = querydslConfiguration();
-        conf.register("FACILITY", "LOCATION", new H2GeometryType(Polygon.class));
-        conf.register("PORT", "LOCATION", new H2GeometryType(Point.class));
-        conf.register("HUB", "LOCATION", new H2GeometryType(Point.class));
+        conf.register("FACILITY", "LOCATION", new H2GeometryType<>(Polygon.class));
+        conf.register("PORT", "LOCATION", new H2GeometryType<>(Point.class));
+        conf.register("HUB", "LOCATION", new H2GeometryType<>(Point.class));
         return conf;
     }
 

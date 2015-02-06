@@ -5,41 +5,25 @@
         'parkandride.layout',
         'parkandride.multilingual',
         'parkandride.util',
+        'parkandride.modalUtil',
         'showErrors'
     ]);
 
+    m.controller("OperatorEditCtrl", function ($scope, $modalInstance, OperatorResource, operator, create, EVENTS, modalUtilFactory) {
+        var vm = this;
+        vm.context = "operators";
 
-    m.controller("OperatorEditCtrl", function ($scope, $modalInstance, OperatorResource, operator, create, EVENTS) {
+        var modalUtil = modalUtilFactory($scope, vm.context, $modalInstance);
+
         $scope.operator = operator;
         $scope.titleKey = 'operators.action.' + (create ? 'new' : 'edit');
 
-        function saveOperator() {
-            OperatorResource.save(operator).then(
-                function(operator) {
-                    $scope.operator = operator;
-                    $modalInstance.close($scope.operator);
-                },
-                function(rejection) {
-                    if (rejection.status == 400 && rejection.data.violations) {
-                        $scope.violations = rejection.data.violations;
-                    }
-                }
-            );
-        }
-
         $scope.ok = function (form) {
-            $scope.$broadcast(EVENTS.showErrorsCheckValidity);
-            if (form.$valid) {
-                saveOperator();
-            } else {
-                $scope.violations = [{
-                    path: "",
-                    type: "BasicRequirements"
-                }];
-            }
+            modalUtil.validateAndSubmit(form, function() { return OperatorResource.save(operator); });
         };
+
         $scope.cancel = function () {
-            $modalInstance.dismiss('cancel');
+            $modalInstance.dismiss();
         };
     });
 
@@ -47,7 +31,7 @@
         return function(operator, create) {
             var modalInstance = $modal.open({
                 templateUrl: 'operators/operatorEdit.tpl.html',
-                controller: 'OperatorEditCtrl',
+                controller: 'OperatorEditCtrl as operatorEditCtrl',
                 resolve: {
                     operator: function () {
                         return _.cloneDeep(operator);
@@ -84,7 +68,6 @@
     m.controller('OperatorListCtrl', function($scope, OperatorResource, editOperator, operators) {
         var self = this;
         self.operators = operators.results;
-        $scope.common.translationPrefix = "operators";
 
         self.create = function() {
             editOperator({}, true).then(function() {
@@ -114,7 +97,7 @@
             restrict: 'E',
             scope: {
                 object: '=',
-                mandatory: '@'
+                mandatory: '='
             },
             templateUrl: 'operators/operatorSelect.tpl.html',
             transclude: false,

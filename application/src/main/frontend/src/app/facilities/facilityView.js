@@ -90,7 +90,7 @@
         };
 
         self.hasPaymentInfo = function() {
-            return facility.paymentInfo.parkAndRideAuthRequired || self.hasPaymentMethods() || self.hasPaymentInfoDetails();
+            return self.hasPaymentMethods() || self.hasPaymentInfoDetails();
         };
         self.hasPaymentMethods = function() {
             return facility.paymentInfo.paymentMethods.length > 0;

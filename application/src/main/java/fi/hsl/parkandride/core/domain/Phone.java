@@ -18,7 +18,7 @@ public final class Phone {
             try {
                 PhoneNumber proto = phoneUtil.parse(number, "FI");
                 if (!phoneUtil.isValidNumber(proto)) {
-                    illegalNumber();
+                    throw illegalNumber();
                 }
                 if (proto.getCountryCode() == 358) {
                     this.number = phoneUtil.format(proto, NATIONAL);

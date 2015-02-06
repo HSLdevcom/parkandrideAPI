@@ -31,7 +31,6 @@ module.exports = function(spec) {
     spec.clearOperatorContact = $('.operatorContact .clearContact');
     spec.clearServiceContact = $('.serviceContact .clearContact');
 
-    spec.parkAndRideAuthRequired = element(by.model('editCtrl.facility.paymentInfo.parkAndRideAuthRequired'));
     spec.paymentMethods = element(by.model('editCtrl.facility.paymentInfo.paymentMethods'));
     spec.defineMultilingualAccessors("paymentInfoDetail");
     spec.defineMultilingualAccessors("paymentInfoUrl");
@@ -226,18 +225,6 @@ module.exports = function(spec) {
 
     that.toListView = function () {
         return spec.toListButton.click();
-    };
-
-    that.isParkAndRideAuthRequired = function() {
-        return spec.parkAndRideAuthRequired.isSelected();
-    };
-
-    that.setParkAndRideAuthRequired = function(isTrue) {
-        spec.parkAndRideAuthRequired.isSelected().then(function(isSelected) {
-            if (isTrue !== isSelected) {
-                spec.parkAndRideAuthRequired.click();
-            }
-        });
     };
 
     that.isPaymentMethodSelected = function(name) {

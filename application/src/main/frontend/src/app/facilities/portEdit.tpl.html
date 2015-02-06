@@ -32,7 +32,7 @@
 				<button id="wdPortCancel" class="btn btn-xs-secondary" ng-click="cancel()">{{ "common.action.cancel" | translate }}</button>
 				<button id="wdPortRemove" class="btn btn-xs-secondary" ng-click="remove()"
 						ng-if="port._id && permit([FACILITY_CREATE, FACILITY_UPDATE])">{{ "common.action.remove" | translate }}</button>
-				<button id="wdPortOk" class="btn btn-xs" ng-click="ok()"
+				<button id="wdPortOk" class="btn btn-xs" ng-click="ok(editPortForm)"
 						ng-if="permit([FACILITY_CREATE, FACILITY_UPDATE])">{{ "common.action.ok" | translate }}</button>
 			</div>
 		</div>

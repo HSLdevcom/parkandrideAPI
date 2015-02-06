@@ -14,6 +14,7 @@
         'parkandride.tags',
         'parkandride.address',
         'parkandride.pricingManager',
+        'parkandride.submitUtil',
         'showErrors'
     ]);
 
@@ -60,9 +61,12 @@
         });
     });
 
-    m.controller('FacilityEditCtrl', function($scope, $state, schema, FacilityResource, Session, Sequence, facility, aliasesPlaceholder, pricingManager) {
+    m.controller('FacilityEditCtrl', function($scope, $state, schema, FacilityResource, Session, Sequence, facility, aliasesPlaceholder, pricingManager, submitUtilFactory) {
         var self = this;
-        $scope.common.translationPrefix = "facilities";
+        self.context = "facilities";
+        var submitUtil = submitUtilFactory($scope, self.context);
+
+        self.advancedMode = false;
         self.capacityTypes = schema.capacityTypes.values;
         self.usages = schema.usages.values;
         self.dayTypes = schema.dayTypes.values;
@@ -108,7 +112,7 @@
         };
         self.getPricingRowClasses = function(pricing, i) {
             var classes = ($scope.selections[pricing._id] ? 'selected' : 'unselected');
-            if (pricingManager.clipboard.ids[pricing._id]) {
+            if (self.advancedMode && pricingManager.clipboard.ids[pricing._id]) {
                 classes += ' on-clipboard';
             }
             if (self.isNewPricingGroup(i)) {
@@ -117,11 +121,13 @@
             return classes;
         };
 
-        self.saveFacility = function() {
+        self.save = function(form) {
             var facility = _.cloneDeep(self.facility);
-            FacilityResource.save(facility).then(function(id){
-                $state.go('facility-view', { "id": id });
-            });
+            submitUtil.validateAndSubmit(
+                form,
+                function() { return FacilityResource.save(facility); },
+                function(id) { return $state.go('facility-view', {"id": id }); }
+            );
         };
 
         function isAllRowsSelected() {

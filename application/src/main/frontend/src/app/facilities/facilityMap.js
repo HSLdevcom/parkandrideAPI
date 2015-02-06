@@ -5,7 +5,7 @@
         'parkandride.FacilityResource'
     ]);
 
-    m.controller("PortModalCtrl", function ($scope, $modalInstance, port, mode) {
+    m.controller("PortModalCtrl", function ($scope, $modalInstance, EVENTS, port, mode) {
         $scope.port = port;
         $scope.titleKey = 'facilities.ports.' + mode;
 
@@ -13,8 +13,11 @@
             return port.address && port.address.streetAddress || port.address.postalCode || port.address.city;
         };
 
-        $scope.ok = function () {
-            $modalInstance.close($scope.port);
+        $scope.ok = function (form) {
+            $scope.$broadcast(EVENTS.showErrorsCheckValidity);
+            if (!form || form.$valid) {
+                $modalInstance.close($scope.port);
+            }
         };
         $scope.remove = function () {
             $scope.port.entry = false;

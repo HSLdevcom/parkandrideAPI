@@ -62,7 +62,7 @@ describe('manage contacts', function () {
         editModal.save();
         expect(editModal.isDisplayed()).toBe(true);
         expect(editModal.getViolations()).toEqual([{
-            path: "Yhteystieto", message: "anna vähintään puhelinnumero tai sähköposti"
+            path: "Yhteystieto", message: "tarkista pakolliset tiedot ja syötteiden muoto"
         }]);
     });
 

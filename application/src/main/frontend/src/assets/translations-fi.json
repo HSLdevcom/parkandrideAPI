@@ -3,6 +3,9 @@
     "PARK_AND_RIDE": {
       "label": "Liityntä"
     },
+    "HSL": {
+      "label": "Liityntä matkakortti"
+    },
     "COMMERCIAL": {
       "label": "Kaupallinen"
     }
@@ -30,6 +33,9 @@
     },
     "BICYCLE": {
       "label": "Polkupyörä"
+    },
+    "BICYCLE_SECURE_SPACE": {
+      "label": "Polkupyörä, lukittu tila"
     },
     "DISABLED": {
       "label": "Invapaikka"
@@ -60,7 +66,8 @@
     "ENGINE_IGNITION_AID": {"label": "Käynnistysapu"},
     "FIRST_AID": {"label": "Ensiapu"},
     "STROLLER_RENTAL": {"label": "Lastenrattaiden vuokraus"},
-    "INFO_SCREENS": {"label": "Inforuudut"}
+    "INFO_SCREENS": {"label": "Inforuudut"},
+    "BICYCLE_FRAME_LOCK": {"label": "Polkupyörän runkolukitus"}
   },
   "paymentMethods": {
     "COINS": { "label": "Kolikko" },
@@ -72,7 +79,6 @@
     "MASTERCARD": { "label": "MasterCard" },
     "DINERS_CLUB": { "label": "Diners Club" },
     "HSL_TRAVEL_CARD": { "label": "HSL matkakortti" },
-    "VR_CARD": { "label": "VR matkakortti" },
     "OTHER": { "label": "Muu" }
   },
   "facilityStatuses": {
@@ -87,6 +93,17 @@
     },
     "EXCEPTIONAL_SITUATION": {
       "label": "Poikkeustilanne"
+    }
+  },
+  "roles": {
+    "ADMIN": {
+      "label": "Ylläpitäjä"
+    },
+    "OPERATOR": {
+      "label": "Operaattori"
+    },
+    "OPERATOR_API": {
+      "label": "API"
     }
   },
   "operators": {
@@ -231,15 +248,15 @@
       "placeholder": "Valitse status..."
     },
     "statusDescription": {
-      "label": "Poikkeustiedote / Statuksen lisätiedot",
+      "label": "Statuksen lisätiedot / poikkeustiedote",
       "fi": {
-        "label": "Poikkeustiedote / Statuksen lisätiedot (fi)"
+        "label": "Statuksen lisätiedot / poikkeustiedote (fi)"
       },
       "sv": {
-        "label": "Poikkeustiedote / Statuksen lisätiedot (sv)"
+        "label": "Statuksen lisätiedot / poikkeustiedote (sv)"
       },
       "en": {
-        "label": "Poikkeustiedote / Statuksen lisätiedot (en)"
+        "label": "Statuksen lisätiedot / poikkeustiedote (en)"
       }
     },
     "aliases": {
@@ -282,8 +299,7 @@
       }
     },
     "paymentInfo": {
-      "heading": "Maksutavat ja tunnistautuminen",
-      "parkAndRideAuthRequired": "Liityntäpysäköinnin tunnistautumiseen tarvitaan HSL matkakortti",
+      "heading": "Maksutavat",
       "paymentMethods": {
         "label": "Maksutavat"
       },
@@ -413,7 +429,7 @@
         "label": "Hinnoittelu / Käyttötapa"
       },
       "maxCapacity": {
-        "title": "Maksimi",
+        "title": "Maks.",
         "label": "Hinnoittelu / Maksimi"
       },
       "dayTypePlaceholder": "Valitse...",
@@ -546,7 +562,48 @@
     },
     "associatedFacilities": "Alueen pysäköintipaikat",
     "noAssociatedFacilities": "Alueeseen ei ole lisätty pysäköintipaikkoja",
-    "facilitiesTotal": "Pysäköintipaikkoja yhteensä"
+    "facilitiesTotal": "Alueen rakennettu kapasiteetti"
+  },
+  "users": {
+    "title": "Käyttäjät",
+    "username": {
+      "label": "Käyttäjätunnus"
+    },
+    "password": {
+      "label": "Salasana"
+    },
+    "newPassword": {
+      "title": "Päivitä salasana",
+      "label": "Uusi salasana",
+      "label2": "Uusi salasana uudelleen"
+    },
+    "operator": {
+      "label": "Operaattori"
+    },
+    "role": {
+      "label": "Rooli",
+      "placeholder": "Valitse rooli..."
+    },
+    "listActions": {
+      "label": "Toiminnot",
+      "updateToken": {
+        "label": "Päivitä token",
+        "successMessage": "Uusi token on"
+      },
+      "updatePass": {
+        "label": "Päivitä salasana"
+      },
+      "remove": {
+        "label": "Poista",
+        "confirmTitle": "Oletko varma?",
+        "confirmText": "Olet poistamassa käyttäjää",
+        "confirmButtonText": "Kyllä, poista käyttäjä"
+      }
+    },
+    "action": {
+      "new": "Lisää uusi käyttäjä",
+      "edit": "Muokkaa käyttäjää"
+    }
   },
   "common": {
     "action": {
@@ -588,12 +645,15 @@
     "Unique": "on jo käytössä",
     "PhoneOrEmailRequired": "anna vähintään puhelinnumero tai sähköposti",
     "Email": "tarkista muoto",
-    "OperatorMismatch": "yhteystiedon tulee olla joko yleinen tai operaattorin omistama",
+    "OperatorMismatch": "yhteystiedon operaattori on eri kuin fasiliteetilla, yhteystiedon tulee olla yleinen tai saman operaattorin omistama",
     "BasicRequirements": "tarkista pakolliset tiedot ja syötteiden muoto",
     "ValidTimeDuration": "aikavälin alku tulee olla ennen loppua",
     "PricingOverlap": "aikavälit eivät saa olla päällekkäisiä",
     "BuiltCapacityNotFound": "rakennettua kapasiteettia ei löydy",
     "PricingCapacityOverflow": "ei voi olla enemmän kuin rakennettu kapasiteetti",
-    "UnavailableCapacityOverflow": "ei voi olla enemmän kuin pysäköintihinnoittelun maksimi"
+    "UnavailableCapacityOverflow": "ei voi olla enemmän kuin pysäköintihinnoittelun maksimi",
+    "OperatorRequired": "anna operaattori",
+    "PasswordConfirmationMismatch": "tarkista, että salasanat ovat identtiset",
+    "BadPassword": "salasanan tulee sisältää 8-15 merkkiä, vähintään yksi numero (0-9), yksi pieni aakkonen (a-ö) ja yksi suuri aakkonen (A-Ö)"
   }
 }

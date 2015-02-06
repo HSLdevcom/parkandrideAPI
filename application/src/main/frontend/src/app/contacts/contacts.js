@@ -6,43 +6,28 @@
         'parkandride.multilingual',
         'parkandride.util',
         'parkandride.address',
+        'parkandride.modalUtil',
         'showErrors'
     ]);
 
 
-    m.controller("ContactEditCtrl", function ($scope, $modalInstance, ContactResource, contact, create, EVENTS) {
+    m.controller("ContactEditCtrl", function ($scope, $modalInstance, ContactResource, contact, create, modalUtilFactory) {
+        var vm = this;
+        vm.context = "contacts";
+
+        var modalUtil = modalUtilFactory($scope, vm.context, $modalInstance);
+
         $scope.contact = contact;
         $scope.titleKey = 'contacts.action.' + (create ? 'new' : 'edit');
 
         $scope.allOperators = [];
 
-        function saveContact() {
-            ContactResource.save(contact).then(
-                function(contact) {
-                    $scope.contact = contact;
-                    $modalInstance.close($scope.contact);
-                },
-                function(rejection) {
-                    if (rejection.status == 400 && rejection.data.violations) {
-                        $scope.violations = rejection.data.violations;
-                    }
-                }
-            );
-        }
-
         $scope.ok = function (form) {
-            $scope.$broadcast(EVENTS.showErrorsCheckValidity);
-            if (form.$valid) {
-                saveContact();
-            } else {
-                $scope.violations = [{
-                    path: "",
-                    type: "BasicRequirements"
-                }];
-            }
+            modalUtil.validateAndSubmit(form, function() { return ContactResource.save(contact); });
         };
+
         $scope.cancel = function () {
-            $modalInstance.dismiss('cancel');
+            $modalInstance.dismiss();
         };
     });
 
@@ -50,7 +35,7 @@
         return function(contact, create) {
             var modalInstance = $modal.open({
                 templateUrl: 'contacts/contactEdit.tpl.html',
-                controller: 'ContactEditCtrl',
+                controller: 'ContactEditCtrl as contactEditCtrl',
                 resolve: {
                     contact: function () {
                         if (!contact.operatorId) {
@@ -91,7 +76,6 @@
     m.controller('ContactListCtrl', function($scope, ContactResource, editContact, contacts) {
         var self = this;
         self.contacts = contacts.results;
-        $scope.common.translationPrefix = "contacts";
 
         self.create = function() {
             editContact({}, true).then(function() {

@@ -15,7 +15,6 @@ create table facility (
   operator_contact_id bigint not null,
   service_contact_id bigint,
 
-  park_and_ride_auth_required boolean not null,
   payment_info_detail_fi varchar(255),
   payment_info_detail_sv varchar(255),
   payment_info_detail_en varchar(255),
@@ -37,6 +36,7 @@ create table facility (
   capacity_electric_car int,
   capacity_motorcycle int,
   capacity_bicycle int,
+  capacity_bicycle_secure_space int,
 
   usage_park_and_ride boolean not null,
   usage_commercial boolean not null,

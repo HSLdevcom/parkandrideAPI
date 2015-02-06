@@ -33,7 +33,8 @@ module.exports = function(spec) {
 
     that.getPostalCode = function() {
         return spec.getValue(spec.postalCode);
-    }
+    };
+
     that.setPostalCode = function(value) {
         spec.postalCode.sendKeys(value);
     };

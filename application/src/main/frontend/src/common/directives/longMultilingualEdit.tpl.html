@@ -2,7 +2,7 @@
 	<div class="form-group">
 		<div class="input-group">
 			<textarea name="{{name}}Fi" type="text" class="form-control" ng-model="string.fi" maxlength="255"
-					rows="4" show-errors ng-required="{{mandatory}}"></textarea>
+					rows="4" show-errors ng-required="mandatory || string.sv || string.en"></textarea>
 			<span class="input-group-addon">{{ "common.lang.fi" | translate }}&nbsp;</span>
 		</div>
 	</div>
@@ -11,7 +11,7 @@
 	<div class="form-group">
 		<div class="input-group">
 			<textarea name="{{name}}Sv" type="text" class="form-control" ng-model="string.sv" maxlength="255"
-					rows="4" show-errors ng-required="{{mandatory}}"></textarea>
+					rows="4" show-errors ng-required="mandatory || string.fi || string.en"></textarea>
 			<span class="input-group-addon">{{ "common.lang.sv" | translate }}</span>
 		</div>
 	</div>
@@ -20,7 +20,7 @@
 	<div class="form-group">
 		<div class="input-group">
 			<textarea name="{{name}}En" type="text" class="form-control" ng-model="string.en" maxlength="255"
-				   rows="4" show-errors ng-required="{{mandatory}}"></textarea>
+				   rows="4" show-errors ng-required="mandatory || string.fi || string.sv"></textarea>
 			<span class="input-group-addon">{{ "common.lang.en" | translate }}</span>
 		</div>
 	</div>

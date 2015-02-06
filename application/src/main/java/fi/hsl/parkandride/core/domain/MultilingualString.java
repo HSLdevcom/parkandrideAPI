@@ -1,11 +1,6 @@
 package fi.hsl.parkandride.core.domain;
 
-import static java.util.Comparator.comparing;
-import static java.util.Comparator.naturalOrder;
-import static java.util.Comparator.nullsLast;
-
 import java.util.AbstractMap;
-import java.util.Comparator;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -18,11 +13,6 @@ import com.google.common.collect.ImmutableSet;
 import com.wordnik.swagger.annotations.ApiModelProperty;
 
 public class MultilingualString {
-
-    public static Comparator<MultilingualString> COMPARATOR =
-            comparing(((MultilingualString s) -> s.fi), nullsLast(naturalOrder()))
-            .thenComparing(((MultilingualString s) -> s.sv), nullsLast(naturalOrder()))
-            .thenComparing(((MultilingualString s) -> s.en), nullsLast(naturalOrder()));
 
     @ApiModelProperty(value="Value in Finnish", required = true)
     @NotBlank
@@ -44,6 +34,7 @@ public class MultilingualString {
     public MultilingualString(String all) {
         this(all, all, all);
     }
+
     public MultilingualString(String fi, String sv, String en) {
         this.fi = fi;
         this.sv = sv;
@@ -63,14 +54,14 @@ public class MultilingualString {
     }
 
     @Override
-    public int hashCode() {
+    public final int hashCode() {
         int hashCode = fi==null ? 1 : fi.hashCode();
         hashCode = 31*hashCode + (sv==null ? 0 : sv.hashCode());
         return 31*hashCode + (en==null ? 0 : en.hashCode());
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public final boolean equals(Object obj) {
         if (obj == this) {
             return true;
         } else if (obj instanceof MultilingualString) {

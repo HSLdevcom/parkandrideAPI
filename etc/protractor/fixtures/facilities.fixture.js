@@ -4,17 +4,26 @@ module.exports = function () {
     var self = {};
     var facility = require('./fixtures').facility;
 
-    var ids = {};
-    ids._1 = 1;
-    ids._2 = 2;
-    ids._3 = 3;
-    ids._4 = 4;
+    // facility ids
+    var fids = {};
+    fids._1 = 1;
+    fids._2 = 2;
+    fids._3 = 3;
+    fids._4 = 4;
+
+    // operator ids
+    var oids = {};
+    oids._1 = 1;
+
+    // contact ids
+    var cids = {};
+    cids._1 = 1;
 
     var dummies = {
         facFull: facility({
-            "id": ids._3,
+            "id": fids._3,
             "name": "Dummy full",
-            "operatorId": 1,
+            "operatorId": oids._1,
             "location": {
                 "bbox": [24.77640173950195, 60.18169023118941, 24.797001104736328, 60.191931693737104],
                 "type": "Polygon",
@@ -37,6 +46,7 @@ module.exports = function () {
             builtCapacity: {
                 "CAR": 10,
                 "BICYCLE": 20,
+                "BICYCLE_SECURE_SPACE": 30,
                 "DISABLED": 40,
                 "MOTORCYCLE": 50,
                 "ELECTRIC_CAR":  60
@@ -59,21 +69,20 @@ module.exports = function () {
                 // Implicit MOTORCYCLE/PARK_AND_RIDE: 4
             ],
             contacts: {
-                emergency: 1,
-                operator: 1
+                emergency: cids._1,
+                operator: cids._1
             },
             services: [ 'LIGHTING','COVERED' ],
             paymentInfo: {
-                parkAndRideAuthRequired: true,
                 paymentMethods: [ 'COINS', 'NOTES' ],
                 detail: { fi: "Lisätietoja", sv: "Tilläggsinformation", en: "Additional info"},
                 url: { fi: "http://www.x-park.fi/hinnasto", sv: "http://www.x-park.fi/prislista", en: "http://www.x-park.fi/pricing" }
             }
         }),
         facCar: facility({
-            "id": ids._4,
+            "id": fids._4,
             "name": "Dummy CAR",
-            "operatorId": 1,
+            "operatorId": oids._1,
             "location": {
                 "bbox": [24.807300787353515, 60.166322046355866, 24.82790015258789, 60.176568301796806],
                 "type": "Polygon",
@@ -94,8 +103,8 @@ module.exports = function () {
             },
             aliases: ["facCar"],
             contacts: {
-                emergency: 1,
-                operator: 1
+                emergency: cids._1,
+                operator: cids._1
             },
             builtCapacity: {
                 "CAR": 10
@@ -104,9 +113,9 @@ module.exports = function () {
     };
 
     self.westend1 = facility({
-        "id": ids._1,
+        "id": fids._1,
         "name": "Westend CAR",
-        "operatorId": 1,
+        "operatorId": oids._1,
         "location": {
             "bbox": [24.807768741075638, 60.16837631366566, 24.80811206382954, 60.16868052638392],
             "type": "Polygon",
@@ -122,8 +131,8 @@ module.exports = function () {
         },
         "aliases": ["Westend", "Westis"],
         contacts: {
-            emergency: 1,
-            operator: 1
+            emergency: cids._1,
+            operator: cids._1
         },
         "builtCapacity": {
             "CAR": 100
@@ -131,9 +140,9 @@ module.exports = function () {
     });
 
     self.westend2 = facility({
-        "id": ids._2,
+        "id": fids._2,
         "name": "Westend BICYCLE",
-        "operatorId": 1,
+        "operatorId": oids._1,
         "location": {
             "bbox": [24.805209586446352, 60.16861541831023, 24.805365154569223, 60.16873283322467],
             "type": "Polygon",
@@ -149,8 +158,8 @@ module.exports = function () {
         },
         "aliases": ["Westis"],
         contacts: {
-            emergency: 1,
-            operator: 1
+            emergency: cids._1,
+            operator: cids._1
         },
         "builtCapacity": {
             "BICYCLE": 50
@@ -158,7 +167,7 @@ module.exports = function () {
     });
 
     self.contact = {
-        id: 1,
+        id: cids._1,
         name: { fi: "hsl fi", sv: "hsl sv", en: "hsl en" },
         phone: "09 47664444",
         toPayload: function() {
@@ -167,12 +176,12 @@ module.exports = function () {
     };
 
     self.operator = {
-        id: 1,
+        id: oids._1,
         name: { fi: "smooth operator", sv: "smooth operator", en: "smooth operator" },
         toPayload: function() {
             return self.operator;
         }
-    }
+    };
 
     self.all = [
         self.westend1,
@@ -180,11 +189,6 @@ module.exports = function () {
     ];
 
     self.dummies = dummies;
-
-    self.paymentInfo = {};
-    self.paymentInfo.paymentMethods = {};
-    self.paymentInfo.paymentMethods.coins = { id: 1 };
-    self.paymentInfo.paymentMethods.notes = { id: 2 };
 
     return self;
 };

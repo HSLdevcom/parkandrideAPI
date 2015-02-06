@@ -1,6 +1,7 @@
 package fi.hsl.parkandride.core.service;
 
 import static fi.hsl.parkandride.core.domain.Permission.FACILITY_CREATE;
+import static fi.hsl.parkandride.core.domain.Permission.FACILITY_UTILIZATION_UPDATE;
 import static fi.hsl.parkandride.core.domain.Permission.FACILITY_UPDATE;
 import static fi.hsl.parkandride.core.service.AuthenticationService.authorize;
 import static java.util.Collections.sort;
@@ -81,7 +82,7 @@ public class FacilityService {
     }
 
     @TransactionalRead
-    public SearchResults search(PageableFacilitySearch search) {
+    public SearchResults<FacilityInfo> search(PageableFacilitySearch search) {
         return repository.findFacilities(search);
     }
 
@@ -91,11 +92,12 @@ public class FacilityService {
     }
 
     @TransactionalWrite
-    public void createStatuses(long facilityId, List<Utilization> statuses, User currentUser) {
-        // TODO: authorize(currentUser, facility, FACILITY_STATUS_UPDATE);
+    public void registerUtilization(long facilityId, List<Utilization> utilization, User currentUser) {
+        // FIXME: Should require Facility!
+        authorize(currentUser, FACILITY_UTILIZATION_UPDATE);
 
-        statuses.forEach((status) -> validationService.validate(status));
-        repository.insertStatuses(facilityId, statuses);
+        utilization.forEach((status) -> validationService.validate(status));
+        repository.insertUtilization(facilityId, utilization);
     }
 
     @TransactionalRead

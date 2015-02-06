@@ -6,6 +6,8 @@ module.exports = function(spec) {
     spec.hubs = element.all(by.linkUiSref('hub-list')).first();
     spec.contacts = element.all(by.linkUiSref('contact-list')).first();
     spec.operators = element.all(by.linkUiSref('operator-list')).first();
+    spec.users = element.all(by.linkUiSref('user-list')).first();
+
 
     spec.loginLink = $("#openLoginPrompt");
     spec.logoutLink = $("#logout");
@@ -27,6 +29,10 @@ module.exports = function(spec) {
         return spec.operators.click();
     };
 
+    that.toUsers = function () {
+        return spec.users.click();
+    };
+
     that.isHubsActive = function() {
         return spec.isActive(spec.hubs);
     };
@@ -39,6 +45,9 @@ module.exports = function(spec) {
         return spec.isActive(spec.operators);
     };
 
+    that.isUsersActive = function() {
+        return spec.isActive(spec.users);
+    };
 
     that.openLoginModal = function() {
         expect(that.canLogin()).toBe(true);

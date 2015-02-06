@@ -4,14 +4,18 @@
     m.factory('SchemaResource', function ($http, $q, Sequence) {
         var cached = {};
 
-        function makeEnumLoader(type) {
+        var privateUrlPrefix = "internal/";
+        var publicUrlPrefix = "api/v1/";
+
+        function makeEnumLoader(type, urlPrefix) {
             return function() {
                 if (cached[type]) {
                     var deferred = $q.defer();
                     deferred.resolve(cached[type]);
                     return deferred.promise;
                 }
-                return $http.get("api/v1/" + type).then(function(response) {
+
+                return $http.get(urlPrefix + type).then(function(response) {
                     cached[type] = response.data;
                     return cached[type];
                 });
@@ -19,17 +23,20 @@
         }
 
         var api = {};
-        api.getCapacityTypes = makeEnumLoader("capacity-types");
 
-        api.getUsages = makeEnumLoader("usages");
+        api.getCapacityTypes = makeEnumLoader("capacity-types", publicUrlPrefix);
 
-        api.getDayTypes = makeEnumLoader("day-types");
+        api.getUsages = makeEnumLoader("usages", publicUrlPrefix);
 
-        api.getServices = makeEnumLoader("services");
+        api.getDayTypes = makeEnumLoader("day-types", publicUrlPrefix);
 
-        api.getPaymentMethods = makeEnumLoader("payment-methods");
+        api.getServices = makeEnumLoader("services", publicUrlPrefix);
 
-        api.getFacilityStatuses = makeEnumLoader("facility-statuses");
+        api.getPaymentMethods = makeEnumLoader("payment-methods", publicUrlPrefix);
+
+        api.getFacilityStatuses = makeEnumLoader("facility-statuses", publicUrlPrefix);
+
+        api.getRoles = makeEnumLoader("roles", privateUrlPrefix);
 
         return api;
     });

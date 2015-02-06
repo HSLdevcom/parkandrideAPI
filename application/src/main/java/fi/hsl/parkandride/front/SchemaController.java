@@ -1,15 +1,12 @@
 package fi.hsl.parkandride.front;
 
-import static fi.hsl.parkandride.front.UrlSchema.CAPACITY_TYPES;
-import static fi.hsl.parkandride.front.UrlSchema.DAY_TYPES;
-import static fi.hsl.parkandride.front.UrlSchema.FACILITY_STATUSES;
-import static fi.hsl.parkandride.front.UrlSchema.PAYMENT_METHODS;
-import static fi.hsl.parkandride.front.UrlSchema.SERVICES;
-import static fi.hsl.parkandride.front.UrlSchema.USAGES;
+import static fi.hsl.parkandride.front.UrlSchema.*;
 import static java.util.Arrays.asList;
 import static org.springframework.http.HttpStatus.OK;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
@@ -51,4 +48,8 @@ public class SchemaController {
         return new ResponseEntity<>(asList(FacilityStatus.values()), OK);
     }
 
+    @RequestMapping(method = GET, value = ROLES, produces = APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<Role>> roles() {
+        return new ResponseEntity<>(asList(Role.values()), OK);
+    }
 }

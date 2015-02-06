@@ -44,8 +44,8 @@ import fi.hsl.parkandride.config.SwaggerConfiguration;
 import fi.hsl.parkandride.core.domain.Phone;
 import fi.hsl.parkandride.core.domain.Time;
 import fi.hsl.parkandride.front.Features;
-import fi.hsl.parkandride.front.GeojsonDeserializer;
-import fi.hsl.parkandride.front.GeojsonSerializer;
+import fi.hsl.parkandride.front.geojson.GeojsonDeserializer;
+import fi.hsl.parkandride.front.geojson.GeojsonSerializer;
 import fi.hsl.parkandride.front.PhoneSerializer;
 import fi.hsl.parkandride.front.UserArgumentResolver;
 

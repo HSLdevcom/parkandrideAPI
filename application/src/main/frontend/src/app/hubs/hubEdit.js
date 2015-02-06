@@ -7,6 +7,7 @@
         'parkandride.HubResource',
         'parkandride.FacilityResource',
         'parkandride.address',
+        'parkandride.submitUtil',
         'showErrors'
     ]);
 
@@ -45,18 +46,22 @@
         });
     });
 
-    m.controller('HubEditCtrl', function ($scope, $state, HubResource, FacilityResource, hub) {
+    m.controller('HubEditCtrl', function ($scope, $state, HubResource, FacilityResource, hub, submitUtilFactory) {
         var self = this;
-        $scope.common.translationPrefix = "hubs";
+        self.context = "hubs";
+        var submitUtil = submitUtilFactory($scope, self.context);
+
         self.hub = hub;
         self.facilities = [];
         self.hasFacilities = function() {
           return _.keys(self.facilities).length !== 0;
         };
-        self.saveHub = function () {
-            HubResource.save(self.hub).then(function (id) {
-                $state.go('hub-view', { "id": id });
-            });
+        self.save = function (form) {
+            submitUtil.validateAndSubmit(
+                form,
+                function () { return HubResource.save(self.hub); },
+                function (id) { return $state.go('hub-view', { "id": id }); }
+            );
         };
     });
 

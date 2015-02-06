@@ -16,8 +16,10 @@
         'parkandride.contacts',
         'parkandride.operators',
         'parkandride.hubList',
+        'parkandride.users',
         'parkandride.dev',
-        'parkandride.auth'
+        'parkandride.auth',
+        'parkandride.components.violations'
     ]);
 
     function scrollToTop() {
@@ -29,7 +31,6 @@
     m.value("schema", {});
 
     m.value("EVENTS", {
-        validationErrors: "validation-errors-updated",
         showErrorsCheckValidity: "show-errors-check-validity"
     });
 
@@ -91,6 +92,11 @@
                     return SchemaResource.getFacilityStatuses().then(function(values) {
                         return registerEnumValues(schema, "facilityStatuses", values, $translate, $q);
                     });
+                },
+                roles: function(schema, SchemaResource, $translate, $q) {
+                    return SchemaResource.getRoles().then(function(values) {
+                        return registerEnumValues(schema, "roles", values, $translate, $q);
+                    });
                 }
             },
             controller: function($scope, features) {
@@ -115,39 +121,36 @@
             views: { "main": { template: '<div ui-view="main"></div>' } }
         });
 
+        $stateProvider.state('userstab', {
+            abstract: true,
+            parent: 'root',
+            views: { "main": { template: '<div ui-view="main"></div>' } }
+        });
+
         $stateProvider.state('devtab', {
             abstract: true,
             parent: 'root',
             views: { "main": { template: '<div ui-view="main"></div>' } }
         });
 
-        $httpProvider.interceptors.push(function($q, $translate, $rootScope, Session, $injector, EVENTS) {
+        $httpProvider.interceptors.push(function($q, $translate, $rootScope, Session, $injector) {
             return {
                 responseError: function(rejection) {
                     if (rejection.status == 401) {
-                        return $injector.get('loginPrompt')().then(function() {
+                        return $injector.get('loginPrompt')().then(function () {
                             return $injector.get('$http')(rejection.config);
                         });
-                    } else if (rejection.status == 400 && rejection.data.violations) {
-                        if (!rejection.config.skipDefaultViolationsHandling) {
-                            $rootScope.$broadcast(EVENTS.validationErrors, rejection.data.violations);
-                        }
-                        return $q.reject(rejection);
-                    } else {
+                    }
+                    if (rejection.status !== 400) { // violations are handled explicitly by submitUtil
                         swal({
                             title: $translate.instant('error.' + rejection.status + '.title'),
                             text: rejection.data.message,
                             confirmButtonText: $translate.instant('error.buttonText')
                         });
-                        return $q.reject(rejection);
                     }
-                },
-                response: function(response) {
-                    $rootScope.$broadcast(EVENTS.validationErrors, []);
-                    return response;
+                    return $q.reject(rejection);
                 },
                 request: function(config) {
-                    $rootScope.$broadcast(EVENTS.validationErrors, []);
                     var user = Session.get();
                     if (user && user.token) {
                         config.headers.Authorization = "Bearer " + user.token;
@@ -158,14 +161,19 @@
         });
     });
 
-    m.run(function($rootScope, $state, EVENTS) {
+    m.run(function($rootScope, $state) {
         $rootScope.$state = $state;
 
         $rootScope.$on("$stateChangeSuccess", scrollToTop);
-        $rootScope.$on(EVENTS.validationErrors, scrollToTop);
+
+        $rootScope.$on('$stateChangeSuccess', function (event, toState) {
+            if (angular.isDefined(toState.data.pageTitle)) {
+                $rootScope.pageTitle = toState.data.pageTitle + ' | parkandride';
+            }
+        });
     });
 
-    m.controller('AppCtrl', function AppCtrl($rootScope, $location, loginPrompt, Session, EVENTS, Permission, permit, schema) {
+    m.controller('AppCtrl', function ($rootScope, $location, loginPrompt, Session, EVENTS, Permission, permit) {
         $rootScope.permit = permit;
 
         // Permission constants
@@ -174,29 +182,6 @@
         }
 
         $rootScope.common = {};
-        $rootScope.$on(EVENTS.validationErrors, function(event, violations) {
-            $rootScope.common.violations = [];
-            var duplicates = {};
-            for (var i=0; i < violations.length; i++) {
-                var violation = violations[i];
-                violation.path = violation.path.replace(/\[\d+\]/, "");
-                var violationKey = violation.path + "/" + violation.type;
-                if (!duplicates[violationKey]) {
-                    duplicates[violationKey] = true;
-                    $rootScope.common.violations.push(violation);
-                }
-            }
-        });
-
-        this.hasValidationErrors = function() {
-            return !_.isEmpty($rootScope.violations);
-        };
-
-        $rootScope.$on('$stateChangeSuccess', function (event, toState, toParams, fromState, fromParams) {
-            if (angular.isDefined(toState.data.pageTitle)) {
-                $rootScope.pageTitle = toState.data.pageTitle + ' | parkandride';
-            }
-        });
 
         this.openLoginPrompt = function() {
             loginPrompt().then(function() {}, function() {});
@@ -208,20 +193,6 @@
 
         this.isUserLoggedIn = function() {
             return Session.get() != null;
-        };
-
-        this.validateAndSubmit = function(form, submitFn) {
-            $rootScope.$broadcast(EVENTS.showErrorsCheckValidity);
-            if (form.$valid) {
-                submitFn();
-            } else {
-                $rootScope.$broadcast(EVENTS.validationErrors, [
-                    {
-                        path: "",
-                        type: "BasicRequirements"
-                    }
-                ]);
-            }
         };
     });
 })();

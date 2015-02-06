@@ -25,6 +25,7 @@
         self.pastePricingRows = pastePricingRows;
         self.pastePricingValues = pastePricingValues;
         self.init = init;
+        return self;
 
         function init(facility) {
             self.pricing = facility.pricing;
@@ -84,10 +85,21 @@
         }
 
         function addRow() {
+            clearSelections();
+            clipboard.clear();
+
             var p = {};
             p._id = Sequence.nextval();
             self.pricing.push(p);
 
+            self.data.allSelected = false;
+        }
+
+        function clearSelections() {
+            for (var s in self.selections) {
+                delete self.selections[s];
+            }
+            self.selections.count = 0;
             self.data.allSelected = false;
         }
 
@@ -122,7 +134,6 @@
             self.selections[pricingId] = isSelected;
         }
 
-        return self;
 
         function initClipboard() {
             var self = {};

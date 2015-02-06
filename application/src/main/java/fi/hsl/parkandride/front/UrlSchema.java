@@ -17,7 +17,7 @@ public class UrlSchema {
 
     public static final String FACILITY = FACILITIES + "/{" + FACILITY_ID + "}" ;
 
-    public static final String FACILITY_STATUS = FACILITY + "/status" ;
+    public static final String FACILITY_UTILIZATION = FACILITY + "/utilization" ;
 
     public static final String CAPACITY_TYPES = API + "/capacity-types";
 
@@ -56,6 +56,18 @@ public class UrlSchema {
     public static final String FEATURES = INTERNAL + "/features" ;
 
     public static final String LOGIN = INTERNAL + "/login";
+
+    public static final String USER_ID = "userId";
+
+    public static final String USERS = INTERNAL + "/users";
+
+    public static final String USER = USERS + "/{" + USER_ID + "}";
+
+    public static final String TOKEN = USERS + "/{" + USER_ID + "}/token";
+
+    public static final String PASSWORD = USERS + "/{" + USER_ID + "}/password";
+
+    public static final String ROLES = INTERNAL + "/roles";
 
 
     public static final String PAYMENT_METHODS = API + "/payment-methods";

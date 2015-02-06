@@ -1,0 +1,6 @@
+<div ng-show="ctrl.hasViolations()" class="row errorRow">
+	<div ng-repeat="violation in ctrl.model.violations" class="wdViolation">
+		<span class="wdViolationPath">{{ ctrl.getLabel(violation) | translate }}</span>:
+		<span class="wdViolationMessage" translate="violation.{{violation.type}}" translate-values="{{violation.args}}"></span>
+	</div>
+</div>

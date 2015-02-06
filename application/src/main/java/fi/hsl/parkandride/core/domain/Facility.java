@@ -63,6 +63,9 @@ public class Facility extends FacilityInfo {
     @Valid
     public FacilityPaymentInfo paymentInfo = new FacilityPaymentInfo();
 
+    /**
+     * Summary of min( pricing.from ) and max( pricing.until )
+     */
     @NotNull
     @Valid
     public OpeningHours openingHours = new OpeningHours();

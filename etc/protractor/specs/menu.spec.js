@@ -16,25 +16,32 @@ describe('menu', function () {
     var facilityViewPage = po.facilityViewPage({});
     var contactPage = po.contactPage({});
     var operatorPage = po.operatorPage({});
+    var usersPage = po.usersPage({});
+    var authModal = po.authModal();
 
     var h = fixtures.hubsFixture.westend;
 
-    function assertTabs(isHubsTabActive, isContactsTabActive, isOperatorsTabActive) {
+    function assertTabs(isHubsTabActive, isContactsTabActive, isOperatorsTabActive, isUsersTabActive) {
         expect(menu.isHubsActive()).toBe(isHubsTabActive);
         expect(menu.isContactsActive()).toBe(isContactsTabActive);
         expect(menu.isOperatorsActive()).toBe(isOperatorsTabActive);
+        expect(menu.isUsersActive()).toBe(isUsersTabActive);
     }
 
     function assertHubsTabActive() {
-        assertTabs(true, false, false);
+        assertTabs(true, false, false, false);
     }
 
     function assertContactsTabActive() {
-        assertTabs(false, true, false);
+        assertTabs(false, true, false, false);
     }
 
     function assertOperatorsTabActive() {
-        assertTabs(false, false, true);
+        assertTabs(false, false, true, false);
+    }
+
+    function assertUsersTabActive() {
+        assertTabs(false, false, false, true);
     }
 
     beforeEach(function () {
@@ -51,6 +58,9 @@ describe('menu', function () {
 
         menu.toOperators();
         assertOperatorsTabActive();
+
+        menu.toUsers();
+        assertUsersTabActive();
 
         menu.toHubs();
         assertHubsTabActive();
@@ -101,5 +111,25 @@ describe('menu', function () {
     it('inactive operator tab is activated when accessed with direct url', function() {
         operatorPage.get();
         assertOperatorsTabActive();
+    });
+
+    describe('users tab', function() {
+        it('when inactive, is activated when accessed with direct url', function () {
+            usersPage.get();
+            assertUsersTabActive();
+        });
+
+        describe('requires authentication', function () {
+            beforeEach(function () {
+                expect(menu.canLogout()).toBe(true);
+                menu.logout();
+                expect(menu.canLogin()).toBe(true);
+            });
+
+            it('displays login modal when tab is accessed without session', function () {
+                usersPage.get();
+                expect(authModal.isDisplayed()).toBe(true);
+            });
+        });
     });
 });

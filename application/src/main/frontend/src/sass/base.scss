@@ -221,7 +221,8 @@ td > input[type="checkbox"], th > input[type="checkbox"] {
   font-size: $basic-font-size;
 }
 
-td > .form-control {
+div#pricing-edit .form-control  {
+  font-size: 14px;
   padding: 6px 5px;
 }
 
@@ -275,4 +276,8 @@ a {
   &.fade, &.in {
     .modal-dialog { @include translate(0, 0); }
   }
+}
+
+#advanced-mode {
+  float: right;
 }

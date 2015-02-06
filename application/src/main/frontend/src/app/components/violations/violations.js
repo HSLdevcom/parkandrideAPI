@@ -11,7 +11,7 @@
         return {
             restrict: 'E',
             scope: {
-                prefix: '@'
+                context: '@'
             },
             bindToController: true,
             controller: 'ViolationsCtrl',
@@ -22,16 +22,16 @@
 
     function ViolationsCtrl(violationsManager) {
         var vm = this;
-        vm.model = violationsManager.initContext(vm.prefix);
+        vm.model = violationsManager.initContext(vm.context);
         vm.hasViolations = hasViolations;
         vm.getLabel = getLabel;
 
         function hasViolations() {
-            return violationsManager.hasViolations(vm.prefix);
+            return violationsManager.hasViolations(vm.context);
         }
 
         function getLabel(violation) {
-            return vm.prefix + (violation.path ? '.' + violation.path : '') + '.label';
+            return vm.context + (violation.path ? '.' + violation.path : '') + '.label';
         }
     }
 

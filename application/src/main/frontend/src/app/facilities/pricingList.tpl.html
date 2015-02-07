@@ -82,28 +82,32 @@
 </div>
 
 <div class="row rowWithSmallMargin">
-	<div class="col-lg-8 col-md-8 col-sm-8 col-xs-12 column first-column">
+	<div class="col-sm-1 col-xs-1 column first-column">
 		<a id="pricingAddRow" class="btn btn-xs btn-responsive" role="button" ng-click="ctrl.addPricingRow()">
 			{{'facilities.action.addPricingRow' | translate }}
 		</a>
-		<a id="pricingPasteRows" class="btn btn-xs btn-responsive" role="button"
-		   ng-click="ctrl.pastePricingRows()" ng-disabled="ctrl.isPasteDisabled()" ng-show="ctrl.hasPricingRows()">
-			Liitä
-		</a>
-		<a id="pricingCopyRows" class="btn btn-xs btn-responsive" role="button"
-		   ng-click="ctrl.copyPricingRows()" ng-disabled="ctrl.isCopyDisabled()" ng-show="ctrl.hasPricingRows()">
-			Kopioi
-		</a>
-		<a id="pricingCopyFirst" class="btn btn-xs btn-responsive" role="button"
-		   ng-click="ctrl.copyPricingRows(true)" ng-disabled="ctrl.isCopyFirstDisabled()" ng-show="ctrl.advancedMode && ctrl.hasPricingRows()">
-			Kopioi ensimmäinen
-		</a>
-		<a id="pricingRemoveRows" class="btn btn-xs btn-responsive" role="button" ng-click="ctrl.deletePricingRows()"
-		   ng-disabled="ctrl.isRemoveDisabled()" ng-show="ctrl.hasPricingRows()">
-			Poista
-		</a>
 	</div>
-	<div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 column last-column">
+	<div class="col-sm-7 col-xs-11 column">
+		<div ng-show="ctrl.hasPricingRows()">
+			<a id="pricingPasteRows" class="btn btn-xs btn-responsive" role="button"
+			   ng-click="ctrl.pastePricingRows()" ng-disabled="ctrl.isPasteDisabled()">
+				Liitä
+			</a>
+			<a id="pricingCopyRows" class="btn btn-xs btn-responsive" role="button"
+			   ng-click="ctrl.copyPricingRows()" ng-disabled="ctrl.isCopyDisabled()">
+				Kopioi
+			</a>
+			<a id="pricingCopyFirst" class="btn btn-xs btn-responsive" role="button"
+			   ng-click="ctrl.copyPricingRows(true)" ng-disabled="ctrl.isCopyFirstDisabled()" ng-show="ctrl.advancedMode">
+				Kopioi ensimmäinen
+			</a>
+			<a id="pricingRemoveRows" class="btn btn-xs btn-responsive" role="button"
+			   ng-click="ctrl.deletePricingRows()" ng-disabled="ctrl.isRemoveDisabled()">
+				Poista
+			</a>
+		</div>
+	</div>
+	<div class="col-sm-4 col-xs-12 column last-column">
 		<button id="advanced-mode" btn-checkbox ng-model="ctrl.advancedMode" class="btn btn-xs" type="button" ng-show="ctrl.hasPricingRows()">
 			Lisätoiminnot
 		</button>

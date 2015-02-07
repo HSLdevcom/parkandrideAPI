@@ -14,7 +14,8 @@
 			<tr>
 				<th class="clipboard-indicator"></th>
 				<th class="pricing-select centeredCell">
-					<input id="pricingSelectAll" type="checkbox" ng-model="ctrl.model.allSelected" ng-change="ctrl.onSelectAllChange()" class="checkbox"/>
+					<input id="pricingSelectAll" type="checkbox" class="checkbox"
+						   ng-model="ctrl.allSelected" ng-model-options="{ getterSetter: true }" ng-change="ctrl.onSelectAllChange()" />
 				</th>
 
 				<th id="facilities-pricing-capacityType" translate="facilities.pricing.capacityType.title"></th>
@@ -36,7 +37,7 @@
 				<tr ng-repeat="pricing in ctrl.pricings" pricing-edit pricing="pricing" class="{{ ctrl.getPricingRowClasses(pricing, $index) }}"></tr>
 			</tbody>
 			<tfoot>
-			<tr ng-show="ctrl.advancedMode && !ctrl.isClipboardEmpty() && ctrl.model.selections.count > 0">
+			<tr ng-show="ctrl.showColumnActions()">
 				<th class="clipboard-indicator"></th>
 				<th class="pricing-select"></th>
 
@@ -85,21 +86,20 @@
 		<a id="pricingAddRow" class="btn btn-xs btn-responsive" role="button" ng-click="ctrl.addPricingRow()">
 			{{'facilities.action.addPricingRow' | translate }}
 		</a>
-		<a id="pricingPasteRows" class="btn btn-xs btn-responsive" role="button" ng-click="ctrl.pastePricingRows()"
-		   ng-disabled="ctrl.isClipboardEmpty() || ctrl.model.selections.count > 0" ng-show="ctrl.hasPricingRows()">
+		<a id="pricingPasteRows" class="btn btn-xs btn-responsive" role="button"
+		   ng-click="ctrl.pastePricingRows()" ng-disabled="ctrl.isPasteDisabled()" ng-show="ctrl.hasPricingRows()">
 			Liitä
 		</a>
-		<a id="pricingCopyRows" class="btn btn-xs btn-responsive" role="button" ng-click="ctrl.copyPricingRows()"
-		   ng-disabled="ctrl.model.selections.count == 0" ng-show="ctrl.hasPricingRows()">
+		<a id="pricingCopyRows" class="btn btn-xs btn-responsive" role="button"
+		   ng-click="ctrl.copyPricingRows()" ng-disabled="ctrl.isCopyDisabled()" ng-show="ctrl.hasPricingRows()">
 			Kopioi
 		</a>
-		<a id="pricingCopyFirst" class="btn btn-xs btn-responsive" role="button" ng-click="ctrl.copyPricingRows(true)"
-		   ng-show="ctrl.advancedMode"
-		   ng-disabled="ctrl.model.selections.count < 2" ng-show="ctrl.hasPricingRows()">
+		<a id="pricingCopyFirst" class="btn btn-xs btn-responsive" role="button"
+		   ng-click="ctrl.copyPricingRows(true)" ng-disabled="ctrl.isCopyFirstDisabled()" ng-show="ctrl.advancedMode && ctrl.hasPricingRows()">
 			Kopioi ensimmäinen
 		</a>
 		<a id="pricingRemoveRows" class="btn btn-xs btn-responsive" role="button" ng-click="ctrl.deletePricingRows()"
-		   ng-disabled="ctrl.model.selections.count == 0" ng-show="ctrl.hasPricingRows()">
+		   ng-disabled="ctrl.isRemoveDisabled()" ng-show="ctrl.hasPricingRows()">
 			Poista
 		</a>
 	</div>

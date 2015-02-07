@@ -23,8 +23,6 @@
         var vm = this;
 
         pricingManager.init(vm.pricings);
-        vm.advancedMode = false;
-        vm.model = pricingManager.model;
         vm.onSelectAllChange = pricingManager.onSelectAllChange;
         vm.addPricingRow = pricingManager.addRow;
         vm.isClipboardEmpty = pricingManager.isClipboardEmpty;
@@ -33,8 +31,43 @@
         vm.pastePricingRows = pricingManager.pastePricingRows;
         vm.pastePricingValues = pricingManager.pastePricingValues;
 
+        vm.allSelected = allSelected;
+        vm.advancedMode = false;
         vm.hasPricingRows = hasPricingRows;
         vm.getPricingRowClasses = getPricingRowClasses;
+
+        vm.showColumnActions = showColumnActions;
+        vm.isPasteDisabled = isPasteDisabled;
+        vm.isCopyDisabled = isCopyDisabled;
+        vm.isCopyFirstDisabled = isCopyFirstDisabled;
+        vm.isRemoveDisabled = isRemoveDisabled;
+
+        function allSelected(isSelected) {
+            if (angular.isDefined(isSelected)) {
+                pricingManager.model.allSelected = isSelected;
+            }
+            return pricingManager.model.allSelected;
+        }
+
+        function showColumnActions() {
+            return vm.advancedMode && !vm.isClipboardEmpty() && pricingManager.model.selections.count > 0;
+        }
+
+        function isPasteDisabled() {
+            return vm.isClipboardEmpty() || pricingManager.model.selections.count > 0;
+        }
+
+        function isCopyDisabled() {
+            return pricingManager.model.selections.count === 0;
+        }
+
+        function isCopyFirstDisabled() {
+            return pricingManager.model.selections.count < 2;
+        }
+
+        function isRemoveDisabled() {
+            return pricingManager.model.selections.count === 0;
+        }
 
         function hasPricingRows() {
             return vm.pricings.length > 0;
@@ -48,7 +81,7 @@
                 return previous.capacityType !== current.capacityType || previous.usage !== current.usage;
             }
 
-            var classes = (vm.model.selections[p._id] ? 'selected' : 'unselected');
+            var classes = (pricingManager.model.selections[p._id] ? 'selected' : 'unselected');
             if (vm.advancedMode && pricingManager.isInClipboard(p)) {
                 classes += ' on-clipboard';
             }

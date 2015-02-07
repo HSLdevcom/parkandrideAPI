@@ -25,7 +25,6 @@
         pricingManager.init(vm.pricings);
         vm.onSelectAllChange = pricingManager.onSelectAllChange;
         vm.addPricingRow = pricingManager.addRow;
-        vm.isClipboardEmpty = pricingManager.isClipboardEmpty;
         vm.copyPricingRows = pricingManager.copyPricingRows;
         vm.deletePricingRows = pricingManager.deletePricingRows;
         vm.pastePricingRows = pricingManager.pastePricingRows;
@@ -50,11 +49,11 @@
         }
 
         function showColumnActions() {
-            return vm.advancedMode && !vm.isClipboardEmpty() && pricingManager.model.selections.count > 0;
+            return vm.advancedMode && !pricingManager.isClipboardEmpty() && pricingManager.model.selections.count > 0;
         }
 
         function isPasteDisabled() {
-            return vm.isClipboardEmpty() || pricingManager.model.selections.count > 0;
+            return pricingManager.isClipboardEmpty() || pricingManager.model.selections.count > 0;
         }
 
         function isCopyDisabled() {

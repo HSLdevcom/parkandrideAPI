@@ -37,10 +37,8 @@ html, body {
 
 //header logo column
 .logo-column {
-  @extend .col-lg-4;
-  @extend .col-md-5;
-  @extend .col-sm-6;
-  @extend .col-xs-7;
+  @extend .col-md-4;
+  @extend .col-xs-6;
 }
 
 //header logo
@@ -50,9 +48,6 @@ html, body {
 
 //header nav column
 .navi-col {
-  @extend .col-lg-6;
-  @extend .col-md-10;
-  @extend .col-sm-9;
   @extend .col-xs-9;
   padding-left: 20px;
 }
@@ -92,9 +87,6 @@ html, body {
 
 //header logout link column
 .logout {
-  @extend .col-lg-2;
-  @extend .col-md-2;
-  @extend .col-sm-3;
   @extend .col-xs-3;
   padding-top: 20px;
 }
@@ -142,8 +134,6 @@ html, body {
 
 //columns
 .column2 {
-  @extend .col-lg-6;
-  @extend .col-md-6;
   @extend .col-sm-6;
   @extend .col-xs-12;
   padding-right: 20px;
@@ -151,8 +141,6 @@ html, body {
 }
 
 .column3 {
-  @extend .col-lg-4;
-  @extend .col-md-4;
   @extend .col-sm-4;
   @extend .col-xs-12;
   padding-right: 20px;
@@ -168,9 +156,6 @@ html, body {
 }
 
 .secondary-navi-column {
-  @extend .col-lg-6;
-  @extend .col-md-6;
-  @extend .col-sm-6;
   @extend .col-xs-6;
 }
 

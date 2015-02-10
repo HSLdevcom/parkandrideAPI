@@ -533,7 +533,8 @@
       }
     },
     "location": {
-      "label": "Sijainti"
+      "label": "Sijainti",
+      "help": "Lisää alueen sijainti tuplaklikkaamalla karttaa. Valitse alueeseen kuuluvat pysäköintipaikat klikkaamalla niitä kartalla."
     },
     "address": {
       "label": "Käyntiosoite",

@@ -34,7 +34,7 @@ public class FacilityInfo implements OperatorEntity {
 
     @ApiModelProperty(required = true)
     @NotNull
-    public FacilityStatus status = IN_OPERATION;
+    public FacilityStatus status;
 
     @ApiModelProperty(required = true)
     @Valid

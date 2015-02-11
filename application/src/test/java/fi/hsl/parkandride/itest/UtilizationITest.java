@@ -1,6 +1,7 @@
 package fi.hsl.parkandride.itest;
 
 import static com.jayway.restassured.RestAssured.when;
+import static fi.hsl.parkandride.core.domain.FacilityStatus.IN_OPERATION;
 import static fi.hsl.parkandride.core.domain.Role.OPERATOR_API;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
@@ -64,6 +65,7 @@ public class UtilizationITest extends AbstractIntegrationTest {
 
         f = new Facility();
         f.id = 1L;
+        f.status = IN_OPERATION;
         f.name = new MultilingualString("minimal facility");
         f.operatorId = 1l;
         f.location = Spatial.fromWktPolygon("POLYGON((25.010822 60.25054, 25.010822 60.250023, 25.012479 60.250337, 25.011449 60.250885, 25.010822 60.25054))");

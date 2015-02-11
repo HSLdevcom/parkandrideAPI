@@ -26,8 +26,7 @@ public class HubService {
         authorize(currentUser, HUB_CREATE);
 
         validationService.validate(hub);
-        hub.id = repository.insertHub(hub);
-        return hub;
+        return getHub(repository.insertHub(hub));
     }
 
     @TransactionalWrite
@@ -36,8 +35,7 @@ public class HubService {
 
         validationService.validate(hub);
         repository.updateHub(hubId, hub);
-        hub.id = hubId;
-        return hub;
+        return getHub(hubId);
     }
 
     @TransactionalRead

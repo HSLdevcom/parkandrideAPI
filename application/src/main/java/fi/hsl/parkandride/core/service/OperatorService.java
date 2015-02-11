@@ -26,8 +26,7 @@ public class OperatorService {
         authorize(currentUser, OPERATOR_CREATE);
 
         validationService.validate(operator);
-        operator.id = repository.insertOperator(operator);
-        return operator;
+        return getOperator(repository.insertOperator(operator));
     }
 
     @TransactionalWrite
@@ -37,8 +36,7 @@ public class OperatorService {
 
         validationService.validate(operator);
         repository.updateOperator(operatorId, operator);
-        operator.id = operatorId;
-        return operator;
+        return getOperator(operatorId);
     }
 
     @TransactionalRead

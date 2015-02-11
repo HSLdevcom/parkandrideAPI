@@ -1,6 +1,6 @@
 <td class="clipboard-indicator"></td>
 <td class="pricing-select centeredCell">
-	<input type="checkbox" ng-model="rowSelected" class="checkbox"/>
+	<input type="checkbox" ng-model="rowSelected" ng-model-options="{ getterSetter: true }" ng-change="onSelectChange()" class="checkbox"/>
 </td>
 <td>
 	<ui-select class="capacityInput" name="pricingCapacityType{{pricing._id}}" ng-model="pricing.capacityType"

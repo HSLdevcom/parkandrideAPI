@@ -21,6 +21,10 @@ h3 {
   margin-top: 10px;
 }
 
+.h3-view {
+  margin-top: 55px;
+}
+
 h4 {
   @include font($font-size: 20px);
   margin-top: 20px;

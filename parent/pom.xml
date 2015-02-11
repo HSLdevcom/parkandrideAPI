@@ -21,6 +21,7 @@
     <assertj.version>1.6.1</assertj.version>
     <guava.version>18.0</guava.version>
     <json-simple.version>1.1.1</json-simple.version>
+    <jackson.version>2.5.1</jackson.version>
 
     <maven-plugin.coveralls.version>3.0.0</maven-plugin.coveralls.version>
     <maven-plugin.jacoco.version>0.7.2.201409121644</maven-plugin.jacoco.version>
@@ -87,6 +88,23 @@
         <groupId>com.google.guava</groupId>
         <artifactId>guava</artifactId>
         <version>${guava.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>com.google.guava</groupId>
+        <artifactId>guava</artifactId>
+        <version>${guava.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>com.fasterxml.jackson.datatype</groupId>
+        <artifactId>jackson-datatype-joda</artifactId>
+        <version>${jackson.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.fasterxml.jackson.core</groupId>
+        <artifactId>jackson-core</artifactId>
+        <version>${jackson.version}</version>
       </dependency>
 
     </dependencies>

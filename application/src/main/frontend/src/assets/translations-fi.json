@@ -263,7 +263,12 @@
       "label": "Aliakset",
       "placeholder": "Lisää alias"
     },
-    "location": "Sijainti",
+    "location": {
+      "label": "Sijainti",
+      "help": "Valitse haluamasi toiminto valintapainikkeesta",
+      "facilityHelp": "Lisää uusi sijainti klikkaamalla alueen kulmapisteet kartalle",
+      "gateHelp": "Lisää tai muokkaa sisään- ja uloskäynnit tuplaklikkaamalla"
+    },
     "services": {
       "heading": "Palvelut"
     },
@@ -295,7 +300,7 @@
         }
       },
       "byDayType": {
-        "disclaimer": "Päivätyyppikohtaiset aukioloajat muodostetaan automaattisesti pysäköintihinnoittelusta."
+        "disclaimer": "Päivätyyppikohtaiset aukioloajat muodostetaan automaattisesti pysäköintihinnoittelusta"
       }
     },
     "paymentInfo": {
@@ -528,7 +533,8 @@
       }
     },
     "location": {
-      "label": "Sijainti"
+      "label": "Sijainti",
+      "help": "Lisää alueen sijainti tuplaklikkaamalla karttaa. Valitse alueeseen kuuluvat pysäköintipaikat klikkaamalla niitä kartalla."
     },
     "address": {
       "label": "Käyntiosoite",

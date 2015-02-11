@@ -15,11 +15,11 @@ create table capacity_type (
 );
 
 insert into capacity_type values ('CAR');
+insert into capacity_type values ('DISABLED');
+insert into capacity_type values ('ELECTRIC_CAR');
+insert into capacity_type values ('MOTORCYCLE');
 insert into capacity_type values ('BICYCLE');
 insert into capacity_type values ('BICYCLE_SECURE_SPACE');
-insert into capacity_type values ('DISABLED');
-insert into capacity_type values ('MOTORCYCLE');
-insert into capacity_type values ('ELECTRIC_CAR');
 
 
 create table day_type (
@@ -87,12 +87,11 @@ create table payment_method (
 
 insert into payment_method values ('COINS');
 insert into payment_method values ('NOTES');
-insert into payment_method values ('VISA_DEBIT');
+insert into payment_method values ('DEBIT_CARD');
 insert into payment_method values ('VISA_ELECTRON');
+insert into payment_method values ('VISA_CREDIT');
 insert into payment_method values ('AMERICAN_EXPRESS');
 insert into payment_method values ('MASTERCARD');
 insert into payment_method values ('DINERS_CLUB');
 insert into payment_method values ('HSL_TRAVEL_CARD');
-insert into payment_method values ('HSL_SINGLE_TICKET');
-insert into payment_method values ('VR_SINGLE_TICKET');
 insert into payment_method values ('OTHER');

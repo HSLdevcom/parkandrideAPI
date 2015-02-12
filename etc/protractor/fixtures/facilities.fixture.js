@@ -24,6 +24,7 @@ module.exports = function () {
             "id": fids._3,
             "name": "Dummy full",
             "operatorId": oids._1,
+            "status": "IN_OPERATION",
             "location": {
                 "bbox": [24.77640173950195, 60.18169023118941, 24.797001104736328, 60.191931693737104],
                 "type": "Polygon",
@@ -83,6 +84,7 @@ module.exports = function () {
             "id": fids._4,
             "name": "Dummy CAR",
             "operatorId": oids._1,
+            "status": "IN_OPERATION",
             "location": {
                 "bbox": [24.807300787353515, 60.166322046355866, 24.82790015258789, 60.176568301796806],
                 "type": "Polygon",
@@ -116,6 +118,7 @@ module.exports = function () {
         "id": fids._1,
         "name": "Westend CAR",
         "operatorId": oids._1,
+        "status": "IN_OPERATION",
         "location": {
             "bbox": [24.807768741075638, 60.16837631366566, 24.80811206382954, 60.16868052638392],
             "type": "Polygon",
@@ -143,6 +146,7 @@ module.exports = function () {
         "id": fids._2,
         "name": "Westend BICYCLE",
         "operatorId": oids._1,
+        "status": "IN_OPERATION",
         "location": {
             "bbox": [24.805209586446352, 60.16861541831023, 24.805365154569223, 60.16873283322467],
             "type": "Polygon",

@@ -101,6 +101,7 @@ describe('facility view', function () {
             "id":1,"name":{"fi":"test","sv":"test","en":"tes"},
             "aliases":[],"capacities":{},"services":[],
             "operatorId": 1,
+            "status": "IN_OPERATION",
             "contacts":{
                 "emergency": 1,
                 "operator": 1

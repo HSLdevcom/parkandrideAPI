@@ -1,5 +1,6 @@
 package fi.hsl.parkandride.core.domain;
 
+import static fi.hsl.parkandride.core.domain.FacilityStatus.IN_OPERATION;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Set;
@@ -28,6 +29,7 @@ public class ViolationTest {
     private ConstraintViolation<Facility> nameViolation() {
         Facility f = validFacility();
         f.operatorId  = 1l;
+        f.status = IN_OPERATION;
         f.contacts.emergency = 1l;
         f.contacts.operator = 1l;
         f.name = new MultilingualString("", "Test", "Test");
@@ -43,6 +45,7 @@ public class ViolationTest {
     private Facility validFacility() {
         Facility f = new Facility();
         f.operatorId  = 1l;
+        f.status = IN_OPERATION;
         f.contacts.emergency = 1l;
         f.contacts.operator = 1l;
         f.name = new MultilingualString("Test", "Test", "Test");

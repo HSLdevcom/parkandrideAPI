@@ -31,9 +31,7 @@ public class FacilityService {
         authorize(currentUser, facility, FACILITY_CREATE);
         validate(facility);
 
-        facility.id = repository.insertFacility(facility);
-        facility.initialize();
-        return facility;
+        return getFacility(repository.insertFacility(facility));
     }
 
     @TransactionalWrite
@@ -47,9 +45,7 @@ public class FacilityService {
         validate(facility);
 
         repository.updateFacility(facilityId, facility, oldFacility);
-        facility.id = facilityId;
-        facility.initialize();
-        return facility;
+        return getFacility(facilityId);
     }
 
     private void validate(Facility facility) {

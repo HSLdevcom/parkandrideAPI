@@ -26,8 +26,7 @@ public class ContactService {
         authorize(currentUser, contact, CONTACT_CREATE);
 
         validationService.validate(contact);
-        contact.id = repository.insertContact(contact);
-        return contact;
+        return getContact(repository.insertContact(contact));
     }
 
     @TransactionalWrite
@@ -39,8 +38,7 @@ public class ContactService {
         validationService.validate(contact);
 
         repository.updateContact(contactId, contact);
-        contact.id = contactId;
-        return contact;
+        return getContact(contactId);
     }
 
     @TransactionalRead

@@ -19,5 +19,6 @@ public enum Service {
     ENGINE_IGNITION_AID,
     FIRST_AID,
     STROLLER_RENTAL,
-    INFO_SCREENS
+    INFO_SCREENS,
+    BICYCLE_FRAME_LOCK
 }

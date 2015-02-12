@@ -12,6 +12,7 @@ import org.geolatte.geom.Polygon;
 
 import com.wordnik.swagger.annotations.ApiModelProperty;
 
+import fi.hsl.parkandride.core.domain.validation.MinElement;
 import fi.hsl.parkandride.core.domain.validation.NotNullElement;
 
 public class FacilityInfo implements OperatorEntity {
@@ -33,13 +34,14 @@ public class FacilityInfo implements OperatorEntity {
 
     @ApiModelProperty(required = true)
     @NotNull
-    public FacilityStatus status = IN_OPERATION;
+    public FacilityStatus status;
 
     @ApiModelProperty(required = true)
     @Valid
     public MultilingualString statusDescription;
 
     @NotNullElement
+    @MinElement(1)
     @NotNull
     public Map<CapacityType, Integer> builtCapacity = newHashMap();
 

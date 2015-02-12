@@ -100,7 +100,7 @@
 	</div>
 
 	<div ng-show="viewCtrl.facility.pricing.length > 0">
-		<div class="row rowWithSmallMargin">
+		<div class="row smallMargin">
 			<h4 translate="facilities.pricing.label"></h4>
 		</div>
 		<div class="row">
@@ -117,7 +117,6 @@
 							<th id="facilities-view-pricing-capacityType" translate="facilities.pricing.capacityType.title"></th>
 							<th id="facilities-view-pricing-usage" translate="facilities.pricing.usage.title"></th>
 							<th id="facilities-pricing-maxCapacity" translate="facilities.pricing.maxCapacity.title"></th>
-
 							<th id="facilities-view-pricing-dayType" translate="facilities.pricing.dayType.title"></th>
 							<th id="facilities-pricing-h24" translate="facilities.pricing.h24"></th>
 							<th id="facilities-view-pricing-from" translate="facilities.pricing.time.from.title"></th>
@@ -160,38 +159,38 @@
 						</tbody>
 					</table>
 				</div>
-			</div>
-		</div>
-	</div>
-	<div ng-show="viewCtrl.facility.unavailableCapacities.length > 0">
-		<div class="row rowWithSmallMargin">
-			<h4 translate="facilities.unavailableCapacities.capacity.label"></h4>
-		</div>
-		<div class="row">
-			<div class="column2 first-column">
-				<div class="panel panel-default">
-					<table id="unavailable-capacities" class="table table-bordered table-striped table-condensed">
-						<thead>
-						<tr>
-							<th translate="facilities.unavailableCapacities.capacityType.label"></th>
-							<th translate="facilities.unavailableCapacities.usage.label"></th>
-							<th translate="facilities.unavailableCapacities.capacity.label"></th>
-						</tr>
-						</thead>
-						<tbody>
-						<tr ng-repeat="unavailableCapacity in viewCtrl.facility.unavailableCapacities">
-							<td>
-								<div ng-hide="viewCtrl.isRepeatingValue(viewCtrl.facility.unavailableCapacities, $index, 'capacityType')">
-									{{'capacityTypes.' + unavailableCapacity.capacityType + '.label' | translate}}
-								</div>
-							</td>
-							<td>{{'usages.' + unavailableCapacity.usage + '.label' | translate}}</td>
-							<td>
-								{{ unavailableCapacity.capacity }}
-							</td>
-						</tr>
-						</tbody>
-					</table>
+				<div ng-show="viewCtrl.facility.unavailableCapacities.length > 0">
+					<div class="row smallMargin">
+						<h4 translate="facilities.unavailableCapacities.capacity.label"></h4>
+					</div>
+					<div class="row">
+						<div class="column2 first-column">
+							<div class="panel panel-default">
+								<table id="unavailable-capacities" class="table table-bordered table-striped table-condensed">
+									<thead>
+									<tr>
+										<th translate="facilities.unavailableCapacities.capacityType.label"></th>
+										<th translate="facilities.unavailableCapacities.usage.label"></th>
+										<th translate="facilities.unavailableCapacities.capacity.label"></th>
+									</tr>
+									</thead>
+									<tbody>
+									<tr ng-repeat="unavailableCapacity in viewCtrl.facility.unavailableCapacities">
+										<td>
+											<div ng-hide="viewCtrl.isRepeatingValue(viewCtrl.facility.unavailableCapacities, $index, 'capacityType')">
+												{{'capacityTypes.' + unavailableCapacity.capacityType + '.label' | translate}}
+											</div>
+										</td>
+										<td>{{'usages.' + unavailableCapacity.usage + '.label' | translate}}</td>
+										<td>
+											{{ unavailableCapacity.capacity }}
+										</td>
+									</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</div>
 				</div>
 			</div>
 		</div>

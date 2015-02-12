@@ -25,6 +25,7 @@ import com.google.common.collect.Maps;
 import com.wordnik.swagger.annotations.ApiModelProperty;
 
 import fi.hsl.parkandride.core.domain.validation.ElementLength;
+import fi.hsl.parkandride.core.domain.validation.MinElement;
 import fi.hsl.parkandride.core.domain.validation.NotBlankElement;
 import fi.hsl.parkandride.core.domain.validation.NotNullElement;
 
@@ -42,6 +43,7 @@ public class Facility extends FacilityInfo {
 
     @NotNull
     @NotBlankElement
+
     @ElementLength(min=0, max=255)
     public Set<String> aliases = newLinkedHashSet();
 

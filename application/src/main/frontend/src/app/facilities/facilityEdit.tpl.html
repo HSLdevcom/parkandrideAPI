@@ -12,9 +12,8 @@
 <violations context="{{editCtrl.context}}"></violations>
 <div class="wdFacilityEditView">
 
-<div class="row">
-	<h3 class="h3-first">{{"facilities.basic_info" | translate}}</h3>
-</div>
+
+<h3 class="h3-first">{{"facilities.basic_info" | translate}}</h3>
 
 <div class="row">
 	<label>{{ "facilities.name.label" | translate }} *</label>
@@ -60,7 +59,6 @@
 	</div>
 </div>
 
-
 <div class="row">
 	<label>{{ "facilities.statusDescription.label" | translate }}</label>
 </div>
@@ -83,15 +81,15 @@
 			<label id="editModePorts" class="btn btn-xs" ng-model="editCtrl.editMode" btn-radio="'ports'">Lisää sisään- ja uloskäynnit</label>
 		</div>
 	</div>
+</div>
+<div class="row">
 	<div class="map-container">
 		<facility-map name="facilityMap" ng-model="editCtrl.facility" edit-mode="editCtrl.editMode"
 					  no-tiles="{{features['mapNoTiles']}}" show-errors="{ instant: true }"></facility-map>
 	</div>
 </div>
 
-<div class="row">
-	<h3>{{ "facilities.openingHours.heading" | translate }}</h3>
-</div>
+<h3>{{ "facilities.openingHours.heading" | translate }}</h3>
 <div class="row"><p>{{ "facilities.openingHours.byDayType.disclaimer" | translate }}</p></div>
 <div class="row smallMargin"><label>{{ "facilities.openingHours.info.label" | translate }}</label></div>
 <div class="row">
@@ -103,12 +101,9 @@
 </div>
 
 
-<div class="row">
-	<h3>{{"facilities.capacity.heading" | translate}}</h3>
-</div>
-<div class="row">
-	<h4>{{"facilities.capacity.built" | translate}}</h4>
-</div>
+<h3>{{"facilities.capacity.heading" | translate}}</h3>
+<h4>{{"facilities.capacity.built" | translate}}</h4>
+
 <div class="row">
 	<div class="column2 first-column">
 		<div class="panel panel-default">
@@ -144,10 +139,10 @@
 	<h4 translate="facilities.unavailableCapacities.capacity.label"></h4>
 </div>
 <div class="row" ng-show="editCtrl.facility.unavailableCapacities.length == 0">
-	<p>{{ "facilities.unavailableCapacities.disclaimer" | translate }}</p>
+	<p class="smallMarginBottom">{{ "facilities.unavailableCapacities.disclaimer" | translate }}</p>
 </div>
 <div class="row" ng-hide="editCtrl.facility.unavailableCapacities.length == 0">
-	<div class="column2 first-column">
+	<div class="column2 first-column smallMarginBottom">
 		<div class="panel panel-default">
 			<table id="unavailable-capacities" class="table table-bordered table-striped table-condensed">
 				<thead>
@@ -177,9 +172,7 @@
 	</div>
 </div>
 
-<div class="row">
-	<h3>{{"facilities.contacts.heading" | translate}}</h3>
-</div>
+<h3>{{"facilities.contacts.heading" | translate}}</h3>
 <div class="row">
 	<div class="column3 first-column">
 		<facility-contact-edit contact-type="emergency" facility-contacts="editCtrl.facility.contacts"
@@ -199,7 +192,7 @@
 	</div>
 </div>
 
-<div class="row"><h3>{{"facilities.paymentInfo.heading" | translate }}</h3></div>
+<h3>{{"facilities.paymentInfo.heading" | translate }}</h3>
 <div class="row">
 	<div class="form-group">
 		<label>{{ "facilities.paymentInfo.paymentMethods.label" | translate }}</label>
@@ -220,8 +213,9 @@
 	<multilingual-edit name="paymentInfoUrl" ng-model="editCtrl.facility.paymentInfo.url"></multilingual-edit>
 </div>
 
+
+<h3>{{"facilities.services.heading" | translate}}</h3>
 <div class="row">
-	<h3>{{"facilities.services.heading" | translate}}</h3>
 	<div>
 		<ui-select multiple ng-model="editCtrl.facility.services" theme="bootstrap" ng-disabled="disabled" reset-search-input="true">
 			<ui-select-match placeholder="Valitse palvelut...">{{$item.label}}</ui-select-match>

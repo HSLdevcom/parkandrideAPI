@@ -21,7 +21,7 @@
 			<address-view address="viewCtrl.hub.address"></address-view>
 
 			<div class="row">
-				<h3>{{"hubs.location.label" | translate}}</h3>
+				<h3 class="h3-view">{{"hubs.location.label" | translate}}</h3>
 				<div class="map-container">
 					<view-hub-map ng-model="viewCtrl.hub" no-tiles="{{features['mapNoTiles']}}"></view-hub-map>
 				</div>
@@ -34,7 +34,7 @@
 			</div>
 
 			<div class="row">
-				<h3 class="wdFacilitiesTotal" ng-show="viewCtrl.hasCapacities()">{{"hubs.facilitiesTotal" | translate}}</h3>
+				<h3 class="h3-view wdFacilitiesTotal" ng-show="viewCtrl.hasCapacities()">{{"hubs.facilitiesTotal" | translate}}</h3>
 				<capacities-table capacities="viewCtrl.summary.capacities"></capacities-table>
 			</div>
 

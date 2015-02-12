@@ -1,71 +1,72 @@
 <main-layout>
-	<headline>
-		<span class="wdFacilityNameFi">{{viewCtrl.facility.name.fi}}</span>
-	</headline>
-	<actions>
-		<facility-view-navi></facility-view-navi>
-	</actions>
-	<content>
-		<div class="row wdFacilityView">
+<headline>
+	<span class="wdFacilityNameFi">{{viewCtrl.facility.name.fi}}</span>
+</headline>
+<actions>
+	<facility-view-navi></facility-view-navi>
+</actions>
+<content>
+<div class="row wdFacilityView">
 
-			<div class="row">
-				<h3 class="h3-first">{{ "facilities.basic_info" | translate }}</h3>
-				<h4>{{ "facilities.name.label" | translate }}</h4>
-			</div>
-			<div class="row facilityName">
-				<multilingual-view value="viewCtrl.facility.name"></multilingual-view>
-			</div>
-			<div class="row">
-				<div class="column3 first-column wdAliasesBlock" ng-show="viewCtrl.facility.aliases.length !== 0">
-					<h4>{{ "facilities.aliases.label" | translate }}</h4>
-					<p class="wdAliases">{{viewCtrl.facility.aliases | joinBy: ", "}}</p>
-				</div>
-			</div>
-			<div class="row">
-				<h4>{{ "operators.label" | translate }}</h4>
-			</div>
-			<div class="row operatorName">
-				<multilingual-view value="viewCtrl.operator.name"></multilingual-view>
-			</div>
+<div class="row">
+	<h3 class="h3-first">{{ "facilities.basic_info" | translate }}</h3>
+	<h4>{{ "facilities.name.label" | translate }}</h4>
+</div>
+<div class="row facilityName">
+	<multilingual-view value="viewCtrl.facility.name"></multilingual-view>
+</div>
+<div class="row">
+	<div class="column3 first-column wdAliasesBlock" ng-show="viewCtrl.facility.aliases.length !== 0">
+		<h4>{{ "facilities.aliases.label" | translate }}</h4>
+		<p class="wdAliases">{{viewCtrl.facility.aliases | joinBy: ", "}}</p>
+	</div>
+</div>
+<div class="row">
+	<h4>{{ "operators.label" | translate }}</h4>
+</div>
+<div class="row operatorName">
+	<multilingual-view value="viewCtrl.operator.name"></multilingual-view>
+</div>
 
-			<div class="row">
-				<h4>{{ "facilities.status.label" | translate }}</h4>
-			</div>
-			<div class="row">
-				{{ "facilityStatuses." + viewCtrl.facility.status + ".label" | translate }}
-			</div>
+<div class="row">
+	<h4>{{ "facilities.status.label" | translate }}</h4>
+</div>
+<div class="row">
+	{{ "facilityStatuses." + viewCtrl.facility.status + ".label" | translate }}
+</div>
 
-			<div ng-show="viewCtrl.facility.statusDescription">
-				<div class="row">
-					<h4>{{ "facilities.statusDescription.label" | translate }}</h4>
-				</div>
-				<div class="row">
-					<multilingual-view value="viewCtrl.facility.statusDescription"></multilingual-view>
-				</div>
-			</div>
+<div ng-show="viewCtrl.facility.statusDescription">
+	<div class="row">
+		<h4>{{ "facilities.statusDescription.label" | translate }}</h4>
+	</div>
+	<div class="row">
+		<multilingual-view value="viewCtrl.facility.statusDescription"></multilingual-view>
+	</div>
+</div>
 
-			<div class="row">
-				<h3>{{"facilities.location" | translate}}</h3>
-				<div class="map-container">
-					<facility-map ng-model="viewCtrl.facility" no-tiles="{{features['mapNoTiles']}}"></facility-map>
-				</div>
-			</div>
 
-			<div ng-show="viewCtrl.hasOpeningHoursByDayType() || viewCtrl.hasOpeningHoursInfo()">
-				<div class="row">
-					<h3>{{"facilities.openingHours.heading" | translate}}</h3>
-				</div>
-				<div ng-show="viewCtrl.hasOpeningHoursByDayType()">
-					<div class="row">
-						<div class="column3 first-column">
-							<div class="panel panel-default row">
-								<table id="opening-hours" class="table table-bordered table-striped table-condensed">
-									<tbody>
-									<tr ng-repeat="dayType in viewCtrl.dayTypes">
-										<td class="day-type">
-											{{ dayType.label }}
-										</td>
-										<td class="from-until">
+<h3 class="h3-view">{{"facilities.location.label" | translate}}</h3>
+<div class="row">
+	<div class="map-container">
+		<facility-map ng-model="viewCtrl.facility" no-tiles="{{features['mapNoTiles']}}"></facility-map>
+	</div>
+</div>
+
+<div ng-show="viewCtrl.hasOpeningHoursByDayType() || viewCtrl.hasOpeningHoursInfo()">
+	<div class="row">
+		<h3>{{"facilities.openingHours.heading" | translate}}</h3>
+	</div>
+	<div ng-show="viewCtrl.hasOpeningHoursByDayType()">
+		<div class="row">
+			<div class="column3 first-column">
+				<div class="panel panel-default row">
+					<table id="opening-hours" class="table table-bordered table-striped table-condensed">
+						<tbody>
+						<tr ng-repeat="dayType in viewCtrl.dayTypes">
+							<td class="day-type">
+								{{ dayType.label }}
+							</td>
+							<td class="from-until">
 											<span ng-show="viewCtrl.facility.openingHours.byDayType[dayType.id]">
 												{{viewCtrl.facility.openingHours.byDayType[dayType.id].from}}
 												-
@@ -74,97 +75,89 @@
 											<span ng-hide="viewCtrl.facility.openingHours.byDayType[dayType.id]">
 												{{'facilities.openingHours.closed' | translate }}
 											</span>
-										</td>
-									</tr>
-									</tbody>
-								</table>
-							</div>
-						</div>
-					</div>
-				</div>
-				<div ng-show="viewCtrl.hasOpeningHoursInfo()">
-					<div class="row"><h4>{{"facilities.openingHours.info.label" | translate }}</h4></div>
-					<div class="row"><multilingual-view id="wdOpeningHoursDetail" value="viewCtrl.facility.openingHours.info"></multilingual-view></div>
-					<div class="row"><multilingual-view id="wdOpeningHoursUrl"value="viewCtrl.facility.openingHours.url"></multilingual-view></div>
+							</td>
+						</tr>
+						</tbody>
+					</table>
 				</div>
 			</div>
+		</div>
+	</div>
+	<div ng-show="viewCtrl.hasOpeningHoursInfo()">
+		<div class="row"><h4>{{"facilities.openingHours.info.label" | translate }}</h4></div>
+		<div class="row"><multilingual-view id="wdOpeningHoursDetail" value="viewCtrl.facility.openingHours.info"></multilingual-view></div>
+		<div class="row"><multilingual-view id="wdOpeningHoursUrl"value="viewCtrl.facility.openingHours.url"></multilingual-view></div>
+	</div>
+</div>
 
-			<div ng-show="viewCtrl.hasCapacities()">
-				<div class="row">
-					<h3>{{"facilities.capacity.heading" | translate}}</h3>
-				</div>
-				<div class="row">
-					<h4>{{"facilities.capacity.built" | translate}}</h4>
-				</div>
-				<div class="row">
-					<div class="column2 first-column">
-						<capacities-table capacities="viewCtrl.facility.builtCapacity"></capacities-table>
-					</div>
-				</div>
+<div ng-show="viewCtrl.hasCapacities()">
+	<h3 class="h3-view">{{"facilities.capacity.heading" | translate}}</h3>
+	<h4>{{"facilities.capacity.built" | translate}}</h4>
+	<div class="row">
+		<div class="column2 first-column">
+			<capacities-table capacities="viewCtrl.facility.builtCapacity"></capacities-table>
+		</div>
+	</div>
 
-				<div ng-show="viewCtrl.facility.pricing.length > 0">
-					<div class="row smallMargin">
-						<h4 translate="facilities.pricing.label"></h4>
-					</div>
-					<div class="row">
-						<div class="column first-column">
-							<div class="panel panel-default row">
-								<table id="pricing" class="table table-bordered table-striped table-condensed">
-									<thead>
-									<tr>
-										<th colspan="3" translate="facilities.pricing.capacity"></th>
-										<th colspan="4" translate="facilities.pricing.time.title"></th>
-										<th colspan="4" translate="facilities.pricing.price.title"></th>
-									</tr>
-									<tr>
-										<th id="facilities-view-pricing-capacityType" translate="facilities.pricing.capacityType.title"></th>
-										<th id="facilities-view-pricing-usage" translate="facilities.pricing.usage.title"></th>
-										<th id="facilities-pricing-maxCapacity" translate="facilities.pricing.maxCapacity.title"></th>
+	<div ng-show="viewCtrl.facility.pricing.length > 0">
+		<div class="row smallMargin">
+			<h4 translate="facilities.pricing.label"></h4>
+		</div>
+		<div class="row">
+			<div class="column first-column">
+				<div class="panel panel-default row">
+					<table id="pricing" class="table table-bordered table-striped table-condensed">
+						<thead>
+						<tr>
+							<th colspan="3" translate="facilities.pricing.capacity"></th>
+							<th colspan="4" translate="facilities.pricing.time.title"></th>
+							<th colspan="4" translate="facilities.pricing.price.title"></th>
+						</tr>
+						<tr>
+							<th id="facilities-view-pricing-capacityType" translate="facilities.pricing.capacityType.title"></th>
+							<th id="facilities-view-pricing-usage" translate="facilities.pricing.usage.title"></th>
+							<th id="facilities-pricing-maxCapacity" translate="facilities.pricing.maxCapacity.title"></th>
+							<th id="facilities-view-pricing-dayType" translate="facilities.pricing.dayType.title"></th>
+							<th id="facilities-pricing-h24" translate="facilities.pricing.h24"></th>
+							<th id="facilities-view-pricing-from" translate="facilities.pricing.time.from.title"></th>
+							<th id="facilities-view-pricing-until" translate="facilities.pricing.time.until.title"></th>
 
-										<th id="facilities-view-pricing-dayType" translate="facilities.pricing.dayType.title"></th>
-										<th id="facilities-pricing-h24" translate="facilities.pricing.h24"></th>
-										<th id="facilities-view-pricing-from" translate="facilities.pricing.time.from.title"></th>
-										<th id="facilities-view-pricing-until" translate="facilities.pricing.time.until.title"></th>
+							<th id="facilities-pricing-free" translate="facilities.pricing.free"></th>
+							<th translate="facilities.pricing.price.fi.title"></th>
+							<th translate="facilities.pricing.price.sv.title"></th>
+							<th translate="facilities.pricing.price.en.title"></th>
+						</tr>
+						</thead>
+						<tbody>
+						<tr ng-repeat="pricing in viewCtrl.facility.pricing">
+							<td>
+								<div ng-hide="viewCtrl.isRepeatingValue(viewCtrl.facility.pricing, $index, 'capacityType')">
+									{{ 'capacityTypes.' + pricing.capacityType + '.label' | translate }}
+								</div>
+							</td>
+							<td>
+								<div ng-hide="viewCtrl.isRepeatingValue(viewCtrl.facility.pricing, $index, ['capacityType', 'usage'])">
+									{{ 'usages.' + pricing.usage + '.label' | translate }}
+								</div>
+							</td>
+							<td class="text-right">{{ pricing.maxCapacity }}</td>
 
-										<th id="facilities-pricing-free" translate="facilities.pricing.free"></th>
-										<th translate="facilities.pricing.price.fi.title"></th>
-										<th translate="facilities.pricing.price.sv.title"></th>
-										<th translate="facilities.pricing.price.en.title"></th>
-									</tr>
-									</thead>
-									<tbody>
-									<tr ng-repeat="pricing in viewCtrl.facility.pricing">
-										<td>
-											<div ng-hide="viewCtrl.isRepeatingValue(viewCtrl.facility.pricing, $index, 'capacityType')">
-												{{ 'capacityTypes.' + pricing.capacityType + '.label' | translate }}
-											</div>
-										</td>
-										<td>
-											<div ng-hide="viewCtrl.isRepeatingValue(viewCtrl.facility.pricing, $index, ['capacityType', 'usage'])">
-												{{ 'usages.' + pricing.usage + '.label' | translate }}
-											</div>
-										</td>
-										<td class="text-right">{{ pricing.maxCapacity }}</td>
+							<td>{{ 'dayTypes.' + pricing.dayType + '.label' | translate }}</td>
+							<td>
+								<div class="centeredCell" ng-show="viewCtrl.is24h(pricing)">&#x2713;</div>
+							</td>
+							<td><span ng-hide="viewCtrl.is24h(pricing)">{{ pricing.time.from }}</span></td>
+							<td><span ng-hide="viewCtrl.is24h(pricing)">{{ pricing.time.until }}</span></td>
 
-										<td>{{ 'dayTypes.' + pricing.dayType + '.label' | translate }}</td>
-										<td>
-											<div class="centeredCell" ng-show="viewCtrl.is24h(pricing)">&#x2713;</div>
-										</td>
-										<td><span ng-hide="viewCtrl.is24h(pricing)">{{ pricing.time.from }}</span></td>
-										<td><span ng-hide="viewCtrl.is24h(pricing)">{{ pricing.time.until }}</span></td>
-
-										<td>
-											<div class="centeredCell" ng-show="viewCtrl.isFree(pricing)">&#x2713;</div>
-										</td>
-										<td class="tableText">{{ pricing.price.fi }}</td>
-										<td class="tableText">{{ pricing.price.sv }}</td>
-										<td class="tableText">{{ pricing.price.en }}</td>
-									</tr>
-									</tbody>
-								</table>
-							</div>
-						</div>
-					</div>
+							<td>
+								<div class="centeredCell" ng-show="viewCtrl.isFree(pricing)">&#x2713;</div>
+							</td>
+							<td class="tableText">{{ pricing.price.fi }}</td>
+							<td class="tableText">{{ pricing.price.sv }}</td>
+							<td class="tableText">{{ pricing.price.en }}</td>
+						</tr>
+						</tbody>
+					</table>
 				</div>
 				<div ng-show="viewCtrl.facility.unavailableCapacities.length > 0">
 					<div class="row smallMargin">
@@ -200,29 +193,32 @@
 					</div>
 				</div>
 			</div>
-
-			<div class="row contacts">
-				<h3>{{"facilities.contacts.heading" | translate}}</h3>
-				<facility-contact-view contact="viewCtrl.contacts[viewCtrl.facility.contacts.emergency]" contact-type="emergency"></facility-contact-view>
-				<facility-contact-view contact="viewCtrl.contacts[viewCtrl.facility.contacts.operator]" contact-type="operator"></facility-contact-view>
-				<facility-contact-view contact="viewCtrl.contacts[viewCtrl.facility.contacts.service]" contact-type="service"></facility-contact-view>
-			</div>
-
-			<div class="wdPaymentInfo" ng-show="viewCtrl.hasPaymentInfo()">
-				<div class="row"><h3>{{"facilities.paymentInfo.heading" | translate }}</h3></div>
-				<div class="row" ng-show="viewCtrl.hasPaymentMethods()"><h4>{{"facilities.paymentInfo.paymentMethods.label" | translate }}</h4></div>
-				<div class="row wdPaymentMethodNames" ng-show="viewCtrl.hasPaymentMethods()">{{viewCtrl.getPaymentMethodNames() | joinBy: ", "}}</div>
-				<div class="wdPaymentInfoDetails" ng-show="viewCtrl.hasPaymentInfoDetails()">
-					<div class="row"><h4>{{"facilities.paymentInfo.details.heading" | translate }}</h4></div>
-					<div class="row"><multilingual-view class="wdPaymentInfoDetail" value="viewCtrl.facility.paymentInfo.detail"></multilingual-view></div>
-					<div class="row"><multilingual-view class="wdPaymentInfoUrl"value="viewCtrl.facility.paymentInfo.url"></multilingual-view></div>
-				</div>
-			</div>
-
-			<div class="row wdServices" ng-show="viewCtrl.hasServices()">
-				<h3>{{"facilities.services.heading" | translate}}</h3>
-				<p class="wdService">{{viewCtrl.getServiceNames() | joinBy: ", "}}</p>
-			</div>
 		</div>
-	</content>
+	</div>
+</div>
+
+<div class="row contacts">
+	<h3 class="h3-view">{{"facilities.contacts.heading" | translate}}</h3>
+	<facility-contact-view contact="viewCtrl.contacts[viewCtrl.facility.contacts.emergency]" contact-type="emergency"></facility-contact-view>
+	<facility-contact-view contact="viewCtrl.contacts[viewCtrl.facility.contacts.operator]" contact-type="operator"></facility-contact-view>
+	<facility-contact-view contact="viewCtrl.contacts[viewCtrl.facility.contacts.service]" contact-type="service"></facility-contact-view>
+</div>
+
+<div class="wdPaymentInfo" ng-show="viewCtrl.hasPaymentInfo()">
+	<h3 class="h3-view">{{"facilities.paymentInfo.heading" | translate }}</h3>
+	<div ng-show="viewCtrl.hasPaymentMethods()"><h4>{{"facilities.paymentInfo.paymentMethods.label" | translate }}</h4></div>
+	<div class="row wdPaymentMethodNames" ng-show="viewCtrl.hasPaymentMethods()">{{viewCtrl.getPaymentMethodNames() | joinBy: ", "}}</div>
+	<div class="wdPaymentInfoDetails" ng-show="viewCtrl.hasPaymentInfoDetails()">
+		<div class="row"><h4>{{"facilities.paymentInfo.details.heading" | translate }}</h4></div>
+		<div class="row"><multilingual-view class="wdPaymentInfoDetail" value="viewCtrl.facility.paymentInfo.detail"></multilingual-view></div>
+		<div class="row"><multilingual-view class="wdPaymentInfoUrl"value="viewCtrl.facility.paymentInfo.url"></multilingual-view></div>
+	</div>
+</div>
+
+<div class="row wdServices" ng-show="viewCtrl.hasServices()">
+	<h3 class="h3-view">{{"facilities.services.heading" | translate}}</h3>
+	<p class="wdService">{{viewCtrl.getServiceNames() | joinBy: ", "}}</p>
+</div>
+</div>
+</content>
 </main-layout>

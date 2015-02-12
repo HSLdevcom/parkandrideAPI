@@ -13,12 +13,16 @@ h3 {
   @include font($font-size: 30px);
   border-bottom: 3px solid $primarycolor;
   padding-bottom: 20px;
-  margin-top: 50px;
+  margin-top: 40px;
   margin-bottom: 30px;
 }
 
 .h3-first{
-  margin-top: 10px;
+  margin-top: 0;
+}
+
+.h3-view {
+  margin-top: 55px;
 }
 
 h4 {

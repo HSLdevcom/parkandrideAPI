@@ -3,7 +3,7 @@ package fi.hsl.parkandride.back;
 import static fi.hsl.parkandride.core.domain.CapacityType.CAR;
 import static fi.hsl.parkandride.core.domain.CapacityType.ELECTRIC_CAR;
 import static fi.hsl.parkandride.core.domain.DayType.BUSINESS_DAY;
-import static fi.hsl.parkandride.core.domain.DayType.EVE;
+import static fi.hsl.parkandride.core.domain.DayType.SATURDAY;
 import static fi.hsl.parkandride.core.domain.DayType.SUNDAY;
 import static fi.hsl.parkandride.core.domain.FacilityStatus.EXCEPTIONAL_SITUATION;
 import static fi.hsl.parkandride.core.domain.FacilityStatus.IN_OPERATION;
@@ -78,9 +78,9 @@ public class FacilityDaoTest extends AbstractDaoTest {
 
     public static final NullSafeSortedSet<Service> SERVICES = new NullSafeSortedSet<>(asList(ELEVATOR, TOILETS, ACCESSIBLE_TOILETS));
 
-    public static final Pricing PRICING1 = new Pricing(CAR, PARK_AND_RIDE, 50, SUNDAY, "8", "18", "2 EUR/H");
+    public static final Pricing PRICING1 = new Pricing(CAR, PARK_AND_RIDE, 50, SATURDAY, "8", "18", "2 EUR/H");
 
-    public static final Pricing PRICING2 = new Pricing(CAR, PARK_AND_RIDE, 50, EVE, "8", "18", "1 EUR/H");
+    public static final Pricing PRICING2 = new Pricing(CAR, PARK_AND_RIDE, 50, SUNDAY, "8", "18", "1 EUR/H");
 
     public static final Map<CapacityType, Integer> BUILT_CAPACITY = ImmutableMap.of(
             CAR, 50,
@@ -201,8 +201,8 @@ public class FacilityDaoTest extends AbstractDaoTest {
         assertThat(facility.pricing).isEqualTo(asList(PRICING1, PRICING2));
         assertThat(facility.unavailableCapacities).isEqualTo(UNAVAILABLE_CAPACITIES);
         assertThat(facility.openingHours.byDayType).isEqualTo(ImmutableMap.of(
-                SUNDAY, new TimeDuration("8", "18"),
-                EVE, new TimeDuration("8", "18")
+                SATURDAY, new TimeDuration("8", "18"),
+                SUNDAY, new TimeDuration("8", "18")
         ));
         assertThat(facility.openingHours.info).isEqualTo(OPENING_HOURS_INFO);
         assertThat(facility.openingHours.url).isEqualTo(OPENING_HOURS_URL);

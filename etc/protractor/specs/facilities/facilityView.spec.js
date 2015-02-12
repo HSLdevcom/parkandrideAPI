@@ -66,10 +66,8 @@ describe('facility view', function () {
 
             expect(viewPage.getOpeningHours()).toEqual({
                 "Arkipäivä": "00 - 24",
-                "Lauantai": "00 - 24",
-                "Sunnuntai": "08 - 18",
-                "Arkipyhä": "14 - 24",
-                "Aatto": "Kiinni"
+                "Lauantai": "08 - 18",
+                "Sunnuntai": "Kiinni"
             });
 
             expect(viewPage.getPricing()).toEqual([
@@ -77,21 +75,13 @@ describe('facility view', function () {
                     dayType: "Arkipäivä", is24h: "✓", from: "", until: "",
                     isFree: "✓", priceFi: "", priceSv: "", priceEn: ""},
                 {capacityType: "Invapaikka", usage: "Kaupallinen", maxCapacity: "40",
-                    dayType: "Lauantai", is24h: "✓", from: "", until: "",
-                    isFree: "✓", priceFi: "", priceSv: "", priceEn: ""},
-                {capacityType: "Sähköauto", usage: "Liityntä", maxCapacity: "60",
-                    dayType: "Sunnuntai", is24h: "", from: "08", until: "18",
-                    isFree: "✓", priceFi: "", priceSv: "", priceEn: ""},
-                {capacityType: "Moottoripyörä", usage: "Liityntä", maxCapacity: "50",
-                    dayType: "Arkipyhä", is24h: "", from: "14", until: "24",
+                    dayType: "Lauantai", is24h: "", from: "08", until: "18",
                     isFree: "", priceFi: "price fi", priceSv: "price sv", priceEn: "price en"}
             ]);
 
             expect(viewPage.getUnavailableCapacities()).toEqual([
                 {capacityType: "Henkilöauto", usage: "Liityntä", capacity: "1"},
-                {capacityType: "Invapaikka", usage: "Kaupallinen", capacity: "2"},
-                {capacityType: "Sähköauto", usage: "Liityntä", capacity: "3"},
-                {capacityType: "Moottoripyörä", usage: "Liityntä", capacity: "0"}
+                {capacityType: "Invapaikka", usage: "Kaupallinen", capacity: "0"}
             ]);
         });
     });

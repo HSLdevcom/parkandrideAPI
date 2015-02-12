@@ -30,8 +30,6 @@ create table day_type (
 insert into day_type values ('BUSINESS_DAY');
 insert into day_type values ('SATURDAY');
 insert into day_type values ('SUNDAY');
-insert into day_type values ('HOLIDAY');
-insert into day_type values ('EVE');
 
 
 create table usage (

@@ -55,18 +55,12 @@ module.exports = function () {
                 {"capacityType":"CAR","usage":"PARK_AND_RIDE","maxCapacity":10,"dayType":"BUSINESS_DAY",
                     "time":{"from":"00","until":"24"},"price":null},
                 {"capacityType":"DISABLED","usage":"COMMERCIAL","maxCapacity":40,"dayType":"SATURDAY",
-                    "time":{"from":"00","until":"24"},"price":null},
-                {"capacityType":"ELECTRIC_CAR","usage":"PARK_AND_RIDE","maxCapacity":60,"dayType":"SUNDAY",
-                    "time":{"from":"08","until":"18"},"price":null},
-                {"capacityType":"MOTORCYCLE","usage":"PARK_AND_RIDE","maxCapacity":50,"dayType":"HOLIDAY",
-                    "time":{"from":"14","until":"24"},"price":{"fi":"price fi","sv":"price sv","en":"price en"}}
-                // closed on EVE
+                    "time":{"from":"08","until":"18"},"price":{"fi":"price fi","sv":"price sv","en":"price en"}}
+                // closed on SUNDAY
             ],
             "unavailableCapacities": [
-                {"capacityType":"CAR","usage":"PARK_AND_RIDE","capacity":1},
-                {"capacityType":"DISABLED","usage":"COMMERCIAL","capacity":2},
-                {"capacityType":"ELECTRIC_CAR","usage":"PARK_AND_RIDE","capacity":3}
-                // Implicit MOTORCYCLE/PARK_AND_RIDE: 4
+                {"capacityType":"CAR","usage":"PARK_AND_RIDE","capacity":1}
+                // Implicit DISABLED/COMMERCIAL: 0
             ],
             contacts: {
                 emergency: cids._1,

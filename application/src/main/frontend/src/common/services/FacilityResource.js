@@ -65,9 +65,7 @@
                 pricing: [
                     { dayType: 'BUSINESS_DAY' },
                     { dayType: 'SATURDAY' },
-                    { dayType: 'SUNDAY' },
-                    { dayType: 'HOLIDAY' },
-                    { dayType: 'EVE' }
+                    { dayType: 'SUNDAY' }
                 ],
                 unavailableCapacities: [],
                 ports: [],

@@ -135,7 +135,10 @@
 
 <div class="row">
 	<div ng-repeat="pricingMethod in editCtrl.pricingMethods">
-		<label><input type="radio" ng-model="editCtrl.facility.pricingMethod" ng-value="pricingMethod.id"/> {{pricingMethod.label}}</label>
+		<label>
+			<input type="radio" ng-model="editCtrl.facility.pricingMethod" ng-value="pricingMethod.id" id="pricingMethod.{{pricingMethod.id}}"/>
+			{{pricingMethod.label}}
+		</label>
 	</div>
 </div>
 <pricing-list pricings="editCtrl.facility.pricing" ng-show="editCtrl.facility.pricingMethod == 'CUSTOM'"></pricing-list>

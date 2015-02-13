@@ -8,13 +8,13 @@ import java.util.List;
 import java.util.Map;
 
 public enum PricingMethod {
-    PARK_AND_RIDE_24H_FREE {
+    PARK_AND_RIDE_247_FREE {
         @Override
         public List<Pricing> getPricing(Facility facility) {
             return free24h(facility.builtCapacity, PARK_AND_RIDE);
         }
     },
-    HSL_24H_FREE {
+    HSL_247_FREE {
         @Override
         public List<Pricing> getPricing(Facility facility) {
             return free24h(facility.builtCapacity, HSL);

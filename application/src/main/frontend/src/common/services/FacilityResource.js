@@ -50,7 +50,7 @@
                 status: "IN_OPERATION",
                 aliases: [],
                 builtCapacity: {},
-                pricingMethod: "PARK_AND_RIDE_24H_FREE",
+                pricingMethod: "PARK_AND_RIDE_247_FREE",
                 pricing: [],
                 unavailableCapacities: [],
                 ports: [],

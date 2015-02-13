@@ -12,6 +12,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -75,7 +76,7 @@ public class CapacityPricingValidatorTest {
         UnavailableCapacity uc = new UnavailableCapacity(CAR, PARK_AND_RIDE, 10);
 
         List<Violation> violations = new ArrayList<>();
-        CapacityPricingValidator.validateAndNormalizeCustomPricing(maxCapacities(a, b), ImmutableList.of(a, b), ImmutableList.of(uc), violations);
+        CapacityPricingValidator.validateAndNormalizeCustomPricing(maxCapacities(a, b), ImmutableList.of(a, b), asList(uc), violations);
         Assertions.assertThat(violations).isEmpty();
     }
 
@@ -88,34 +89,36 @@ public class CapacityPricingValidatorTest {
         UnavailableCapacity uc = new UnavailableCapacity(CAR, PARK_AND_RIDE, 10);
 
         List<Violation> violations = new ArrayList<>();
-        CapacityPricingValidator.validateAndNormalizeCustomPricing(maxCapacities(a, b), ImmutableList.of(b, a), ImmutableList.of(uc), violations);
+        CapacityPricingValidator.validateAndNormalizeCustomPricing(maxCapacities(a, b), ImmutableList.of(b, a), asList(uc), violations);
         Assertions.assertThat(violations).isEmpty();
     }
 
     @Test
-    public void pricing_not_found_with_wrong_capacity_type() {
+    public void unavailable_capacity_is_removed_if_pricing_is_not_found__wrong_type() {
         Pricing a = pricing(CAR, PARK_AND_RIDE, BUSINESS_DAY, 0, 24);
         a.maxCapacity = 5;
         Pricing b = pricing(CAR, PARK_AND_RIDE, SATURDAY, 0, 24);
         b.maxCapacity = 10;
-        UnavailableCapacity uc = new UnavailableCapacity(BICYCLE, PARK_AND_RIDE, 10);
+        List<UnavailableCapacity> unavailableCapacities = asList(new UnavailableCapacity(BICYCLE, PARK_AND_RIDE, 10));
+
 
         List<Violation> violations = new ArrayList<>();
-        CapacityPricingValidator.validateAndNormalizeCustomPricing(maxCapacities(a, b), ImmutableList.of(a, b), ImmutableList.of(uc), violations);
-        Assertions.assertThat(violations).extracting("type", "path").containsOnly(tuple("PricingNotFound", "unavailableCapacities[0]"));
+        CapacityPricingValidator.validateAndNormalizeCustomPricing(maxCapacities(a, b), ImmutableList.of(a, b), unavailableCapacities, violations);
+        assertThat(unavailableCapacities).isEmpty();
     }
 
     @Test
-    public void pricing_not_found_with_wrong_usage() {
+    public void unavailable_capacity_is_removed_if_pricing_is_not_found__wrong_usage() {
         Pricing a = pricing(CAR, PARK_AND_RIDE, BUSINESS_DAY, 0, 24);
         a.maxCapacity = 5;
         Pricing b = pricing(CAR, PARK_AND_RIDE, SATURDAY, 0, 24);
         b.maxCapacity = 10;
-        UnavailableCapacity uc = new UnavailableCapacity(CAR, COMMERCIAL, 10);
+        List<UnavailableCapacity> unavailableCapacities = asList(new UnavailableCapacity(CAR, COMMERCIAL, 10));
+
 
         List<Violation> violations = new ArrayList<>();
-        CapacityPricingValidator.validateAndNormalizeCustomPricing(maxCapacities(a, b), ImmutableList.of(a, b), ImmutableList.of(uc), violations);
-        Assertions.assertThat(violations).extracting("type", "path").containsOnly(tuple("PricingNotFound", "unavailableCapacities[0]"));
+        CapacityPricingValidator.validateAndNormalizeCustomPricing(maxCapacities(a, b), ImmutableList.of(a, b), unavailableCapacities, violations);
+        assertThat(unavailableCapacities).isEmpty();
     }
 
     @Test
@@ -127,7 +130,7 @@ public class CapacityPricingValidatorTest {
         UnavailableCapacity uc = new UnavailableCapacity(CAR, PARK_AND_RIDE, 11);
 
         List<Violation> violations = new ArrayList<>();
-        CapacityPricingValidator.validateAndNormalizeCustomPricing(maxCapacities(a, b), ImmutableList.of(a, b), ImmutableList.of(uc), violations);
+        CapacityPricingValidator.validateAndNormalizeCustomPricing(maxCapacities(a, b), ImmutableList.of(a, b), asList(uc), violations);
         Assertions.assertThat(violations).extracting("type", "path").containsOnly(tuple("UnavailableCapacityOverflow", "unavailableCapacities[0].capacity"));
     }
 
@@ -140,7 +143,7 @@ public class CapacityPricingValidatorTest {
         UnavailableCapacity uc = new UnavailableCapacity(CAR, PARK_AND_RIDE, 5);
 
         List<Violation> violations = new ArrayList<>();
-        CapacityPricingValidator.validateAndNormalizeCustomPricing(maxCapacities(a, b), ImmutableList.of(a, b), ImmutableList.of(uc, uc), violations);
+        CapacityPricingValidator.validateAndNormalizeCustomPricing(maxCapacities(a, b), ImmutableList.of(a, b), asList(uc, uc), violations);
         Assertions.assertThat(violations).extracting("type", "path").containsOnly(tuple("DuplicateUnavailableCapacity", "unavailableCapacities[1]"));
     }
 
@@ -150,7 +153,7 @@ public class CapacityPricingValidatorTest {
         Pricing b = pricing(CAR, PARK_AND_RIDE, BUSINESS_DAY, 9, 10);
 
         List<Violation> violations = new ArrayList<>();
-        CapacityPricingValidator.validateAndNormalizeCustomPricing(maxCapacities(a, b), ImmutableList.of(a, b), ImmutableList.of(), violations);
+        CapacityPricingValidator.validateAndNormalizeCustomPricing(maxCapacities(a, b), ImmutableList.of(a, b), asList(), violations);
         Assertions.assertThat(violations).isEmpty();
     }
 
@@ -159,7 +162,7 @@ public class CapacityPricingValidatorTest {
         Pricing a = pricing(CAR, PARK_AND_RIDE, BUSINESS_DAY, 7, 17);
 
         List<Violation> violations = new ArrayList<>();
-        CapacityPricingValidator.validateAndNormalizeCustomPricing(Maps.newHashMap(), ImmutableList.of(a), ImmutableList.of(), violations);
+        CapacityPricingValidator.validateAndNormalizeCustomPricing(Maps.newHashMap(), ImmutableList.of(a), asList(), violations);
         Assertions.assertThat(violations).extracting("type", "path").containsOnly(tuple("BuiltCapacityNotFound", "pricing[0].capacityType"));
     }
 
@@ -171,7 +174,7 @@ public class CapacityPricingValidatorTest {
         builtCapacity.put(CAR, a.maxCapacity-1);
 
         List<Violation> violations = new ArrayList<>();
-        CapacityPricingValidator.validateAndNormalizeCustomPricing(builtCapacity, ImmutableList.of(a), ImmutableList.of(), violations);
+        CapacityPricingValidator.validateAndNormalizeCustomPricing(builtCapacity, ImmutableList.of(a), asList(), violations);
         Assertions.assertThat(violations).extracting("type", "path").containsOnly(tuple("PricingCapacityOverflow", "pricing[0].maxCapacity"));
     }
 
@@ -192,9 +195,10 @@ public class CapacityPricingValidatorTest {
         builtCapacity.put(c.capacityType, c.maxCapacity-1);
 
         List<Violation> violations = new ArrayList<>();
+        List<UnavailableCapacity> unavailableCapacities = asList(uc1, uc2, uc3);
         CapacityPricingValidator.validateAndNormalizeCustomPricing(builtCapacity,
                 ImmutableList.of(a, b, c, d, e),
-                ImmutableList.of(uc1, uc2, uc3), violations);
+                unavailableCapacities, violations);
 
         assertThat(violations).extracting("type", "path").containsOnly(
                 tuple("PricingOverlap", "pricing[1].time"),
@@ -204,10 +208,17 @@ public class CapacityPricingValidatorTest {
                 tuple("PricingCapacityOverflow", "pricing[2].maxCapacity"),
                 tuple("PricingCapacityOverflow", "pricing[3].maxCapacity"),
                 tuple("BuiltCapacityNotFound", "pricing[4].capacityType"),
-                tuple("PricingNotFound", "unavailableCapacities[0]"),
                 tuple("UnavailableCapacityOverflow", "unavailableCapacities[1].capacity"),
                 tuple("DuplicateUnavailableCapacity", "unavailableCapacities[2]")
                 );
+
+        assertThat(unavailableCapacities).isEqualTo(asList(uc2, uc3));
+    }
+
+    private static <T> List<T> asList(T... values) {
+        List<T> list = new ArrayList<>(values.length);
+        list.addAll(Arrays.asList(values));
+        return list;
     }
 
     private static Map<CapacityType, Integer> maxCapacities(Pricing... pricing) {

@@ -106,7 +106,7 @@ module.exports = function () {
             builtCapacity: {
                 "CAR": 10
             },
-            "pricingMethod": "PARK_AND_RIDE_24H_FREE"
+            "pricingMethod": "PARK_AND_RIDE_247_FREE"
         })
     };
 
@@ -136,7 +136,7 @@ module.exports = function () {
         "builtCapacity": {
             "CAR": 100
         },
-        "pricingMethod": "PARK_AND_RIDE_24H_FREE"
+        "pricingMethod": "PARK_AND_RIDE_247_FREE"
     });
 
     self.westend2 = facility({
@@ -165,7 +165,7 @@ module.exports = function () {
         "builtCapacity": {
             "BICYCLE": 50
         },
-        "pricingMethod": "HSL_24H_FREE"
+        "pricingMethod": "HSL_247_FREE"
     });
 
     self.contact = {

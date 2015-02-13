@@ -100,6 +100,6 @@ create table pricing_method (
   primary key (name)
 );
 
-insert into pricing_method values ('PARK_AND_RIDE_24H_FREE');
-insert into pricing_method values ('HSL_24H_FREE');
+insert into pricing_method values ('PARK_AND_RIDE_247_FREE');
+insert into pricing_method values ('HSL_247_FREE');
 insert into pricing_method values ('CUSTOM');

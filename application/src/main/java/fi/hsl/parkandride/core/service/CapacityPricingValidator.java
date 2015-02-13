@@ -1,8 +1,8 @@
 package fi.hsl.parkandride.core.service;
 
 import static fi.hsl.parkandride.core.domain.PricingMethod.CUSTOM;
-import static fi.hsl.parkandride.core.domain.PricingMethod.HSL_24H_FREE;
-import static fi.hsl.parkandride.core.domain.PricingMethod.PARK_AND_RIDE_24H_FREE;
+import static fi.hsl.parkandride.core.domain.PricingMethod.HSL_247_FREE;
+import static fi.hsl.parkandride.core.domain.PricingMethod.PARK_AND_RIDE_247_FREE;
 import static fi.hsl.parkandride.core.domain.Usage.HSL;
 import static fi.hsl.parkandride.core.domain.Usage.PARK_AND_RIDE;
 
@@ -26,10 +26,10 @@ public final class CapacityPricingValidator {
         if (facility.pricingMethod == CUSTOM) {
             validateAndNormalizeCustomPricing(facility.builtCapacity, facility.pricing, facility.unavailableCapacities, violations);
         }
-        else if (facility.pricingMethod == PARK_AND_RIDE_24H_FREE) {
+        else if (facility.pricingMethod == PARK_AND_RIDE_247_FREE) {
             validateAndNormalizeUnavailableCapacities(facility.unavailableCapacities, typeUsageMaxForUsage(facility.builtCapacity, PARK_AND_RIDE), violations);
         }
-        else if (facility.pricingMethod == HSL_24H_FREE) {
+        else if (facility.pricingMethod == HSL_247_FREE) {
             validateAndNormalizeUnavailableCapacities(facility.unavailableCapacities, typeUsageMaxForUsage(facility.builtCapacity, HSL), violations);
         }
     }
@@ -38,6 +38,9 @@ public final class CapacityPricingValidator {
                                                          List<Pricing> pricing,
                                                          List<UnavailableCapacity> unavailableCapacities,
                                                          Collection<Violation> violations) {
+        if (builtCapacity == null || pricing == null || unavailableCapacities == null) {
+            return;
+        }
         Map<Pair<CapacityType, Usage>, Integer> typeUsageMax = Maps.newHashMap();
         for (int i=0; i < pricing.size(); i++) {
             Pricing p = pricing.get(i);
@@ -87,6 +90,9 @@ public final class CapacityPricingValidator {
     private static void validateAndNormalizeUnavailableCapacities(List<UnavailableCapacity> unavailableCapacities,
                                                                   Map<Pair<CapacityType, Usage>, Integer> typeUsageMax,
                                                                   Collection<Violation> violations) {
+        if (unavailableCapacities == null) {
+            return;
+        }
         List<UnavailableCapacity> normalized = new ArrayList<>(unavailableCapacities.size());
         Set<Pair<CapacityType, Usage>> uniqueTypeUsage = Sets.newHashSet();
         for (int i=0; i < unavailableCapacities.size(); i++) {

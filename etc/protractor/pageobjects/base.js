@@ -28,7 +28,7 @@ module.exports = function(spec) {
     };
 
     spec.sendKeys = function(element, input) {
-        element.clear().sendKeys(input);
+        element.clear().sendKeys("" + input);
     };
 
     spec.isDisplayed = function(element) {

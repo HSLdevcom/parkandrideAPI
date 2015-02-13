@@ -19,12 +19,6 @@
     },
     "SUNDAY": {
       "label": "Sunnuntai"
-    },
-    "HOLIDAY": {
-      "label": "Arkipyhä"
-    },
-    "EVE": {
-      "label": "Aatto"
     }
   },
   "capacityTypes": {

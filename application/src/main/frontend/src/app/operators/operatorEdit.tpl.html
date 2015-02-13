@@ -1,25 +1,25 @@
 <div id="operatorEditModal">
-	<div class="modal-header">
-		<h3 class="modal-title">{{ titleKey | translate }}</h3>
-	</div>
-	<div class="modal-body">
-		<violations context="{{operatorEditCtrl.context}}"></violations>
-		<form name="editOperatorForm" class="form-horizontal" role="form" novalidate>
+	<form name="editOperatorForm" class="form-horizontal" role="form" novalidate ng-submit="ok(editOperatorForm)">
+		<div class="modal-header">
+			<h3 class="modal-title">{{ titleKey | translate }}</h3>
+		</div>
+		<div class="modal-body">
+			<violations context="{{operatorEditCtrl.context}}"></violations>
 			<div class="row">
 				<label>{{ "operators.name.label" | translate }} *</label>
 			</div>
 			<div class="row">
 				<multilingual-edit name="name" ng-model="operator.name" mandatory="true"></multilingual-edit>
 			</div>
-		</form>
-	</div>
-	<div class="modal-footer">
-		<div class="row">
-			<div class="last-column">
-				<button id="wdOperatorCancel" class="btn btn-xs-secondary" ng-click="cancel()">{{ "common.action.cancel" | translate }}</button>
-				<button id="wdOperatorOk" class="btn btn-xs" ng-click="ok(editOperatorForm)"
-						ng-if="permit([OPERATOR_CREATE, OPERATOR_UPDATE], operator.id)">{{ "common.action.ok" | translate }}</button>
+		</div>
+		<div class="modal-footer">
+			<div class="row">
+				<div class="last-column">
+					<button type="button" id="wdOperatorCancel" class="btn btn-xs-secondary" ng-click="cancel()">{{ "common.action.cancel" | translate }}</button>
+					<button type="submit" id="wdOperatorOk" class="btn btn-xs"
+							ng-if="permit([OPERATOR_CREATE, OPERATOR_UPDATE], operator.id)">{{ "common.action.ok" | translate }}</button>
+				</div>
 			</div>
 		</div>
-	</div>
+	</form>
 </div>

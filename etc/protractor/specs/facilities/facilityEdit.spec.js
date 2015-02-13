@@ -300,20 +300,16 @@ describe('edit facility view', function () {
 
             rows[1] = _.assign({}, rows[0], { dayType: 'Lauantai' });
             rows[2] = _.assign({}, rows[0], { dayType: 'Sunnuntai' });
-            rows[3] = _.assign({}, rows[0], { dayType: 'Arkipyhä' });
-            rows[4] = _.assign({}, rows[0], { dayType: 'Aatto' });
 
             editPage.setPricing(0, rows[0]);
             editPage.setPricing(1, rows[1]);
             editPage.setPricing(2, rows[2]);
-            editPage.setPricing(3, rows[3]);
-            editPage.setPricing(4, rows[4]);
 
             editPage.save();
             expect(viewPage.isDisplayed()).toBe(true);
             viewPage.toEditView();
             editPage.getPricing().then(function(actualRows) {
-                expect(actualRows.length).toEqual(5);
+                expect(actualRows.length).toEqual(3);
                 for (var i=0; i < actualRows.length; i++) {
                     expect(actualRows[i].capacityType).toEqual(rows[i].capacityType);
                     expect(actualRows[i].usage).toEqual(rows[i].usage);
@@ -328,7 +324,7 @@ describe('edit facility view', function () {
         it('should select all', function() {
             editPage.pricingSelectAll();
             editPage.getPricing().then(function(actualRows) {
-                expect(actualRows.length).toEqual(5);
+                expect(actualRows.length).toEqual(3);
                 for (var i = 0; i < actualRows.length; i++) {
                     expect(actualRows[i].selected).toBeTruthy();
                 }
@@ -338,7 +334,7 @@ describe('edit facility view', function () {
         it('should unselect all', function() {
             editPage.pricingSelectAll();
             editPage.getPricing().then(function(actualRows) {
-                expect(actualRows.length).toEqual(5);
+                expect(actualRows.length).toEqual(3);
                 for (var i = 0; i < actualRows.length; i++) {
                     expect(actualRows[i].selected).toBeFalsy();
                 }
@@ -346,9 +342,9 @@ describe('edit facility view', function () {
         });
 
         it('should remove last row', function() {
-            editPage.togglePricingRow(4);
+            editPage.togglePricingRow(2);
             editPage.pricingRemoveRows();
-            expect(editPage.getPricingCount()).toBe(4);
+            expect(editPage.getPricingCount()).toBe(2);
         });
 
         it('should remove all rows', function() {

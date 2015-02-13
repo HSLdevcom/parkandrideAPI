@@ -20,5 +20,6 @@ script:
 after_success:
   - mvn coveralls:report
 notifications:
+  email: false
   flowdock:
     secure: h3OB+ZyOFh6m/43twXDTh15enuvALOVvCNe81+doFj5o0s9x+n1K06x02hU2ISkHt5MYGg5JNtyeDTg2DDDht3TsfJcM3U8P/auMaIB7jt6Cwwrp0WPbFwyMR5t+CHYK27teeaopPtXbk+PWdq7FMma1kzvgOZlC6yq6OOj4hwM=

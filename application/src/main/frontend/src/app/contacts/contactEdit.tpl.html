@@ -1,11 +1,10 @@
 <div id="contactEditModal">
-
-	<div class="modal-header">
-		<h3 class="modal-title">{{ titleKey | translate }}</h3>
-	</div>
-	<div class="modal-body">
-		<violations context="{{contactEditCtrl.context}}"></violations>
-		<form name="editContactForm" class="form-horizontal" role="form" novalidate>
+	<form name="editContactForm" class="form-horizontal" role="form" novalidate ng-submit="ok(editContactForm)">
+		<div class="modal-header">
+			<h3 class="modal-title">{{ titleKey | translate }}</h3>
+		</div>
+		<div class="modal-body">
+			<violations context="{{contactEditCtrl.context}}"></violations>
 			<div class="row">
 				<label>{{"operators.label" | translate}}</label>
 			</div>
@@ -30,7 +29,7 @@
 						<label>{{ "contacts.phone.label" | translate }} (*)</label>
 						<div>
 							<input name="phone" type="input" ng-model="contact.phone" class="form-control" empty-to-null
-									ng-required="!contact.email" show-errors>
+								   ng-required="!contact.email" show-errors>
 						</div>
 					</div>
 				</div>
@@ -65,15 +64,15 @@
 			<div class="row">
 				<long-multilingual-edit name="info" ng-model="contact.info" mandatory="false"></long-multilingual-edit>
 			</div>
-		</form>
-	</div>
-	<div class="modal-footer">
-		<div class="row">
-			<div class="last-column">
-				<button id="wdContactCancel" class="btn btn-xs-secondary" ng-click="cancel()">{{ "common.action.cancel" | translate }}</button>
-				<button id="wdContactOk" class="btn btn-xs" ng-click="ok(editContactForm)"
-						ng-if="permit([CONTACT_CREATE, CONTACT_UPDATE], contact.operatorId)">{{ "common.action.ok" | translate }}</button>
+		</div>
+		<div class="modal-footer">
+			<div class="row">
+				<div class="last-column">
+					<button type="button" id="wdContactCancel" class="btn btn-xs-secondary" ng-click="cancel()">{{ "common.action.cancel" | translate }}</button>
+					<button type="submit" id="wdContactOk" class="btn btn-xs"
+							ng-if="permit([CONTACT_CREATE, CONTACT_UPDATE], contact.operatorId)">{{ "common.action.ok" | translate }}</button>
+				</div>
 			</div>
 		</div>
-	</div>
+	</form>
 </div>

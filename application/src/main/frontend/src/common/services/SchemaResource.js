@@ -36,6 +36,8 @@
 
         api.getFacilityStatuses = makeEnumLoader("facility-statuses", publicUrlPrefix);
 
+        api.getPricingMethods = makeEnumLoader("pricing-methods", publicUrlPrefix);
+
         api.getRoles = makeEnumLoader("roles", privateUrlPrefix);
 
         return api;

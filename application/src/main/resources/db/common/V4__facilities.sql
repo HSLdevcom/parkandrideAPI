@@ -6,6 +6,7 @@ create table facility (
   location geometry not null,
   operator_id bigint not null,
   status varchar(64) not null,
+  pricing_method varchar(64) not null,
 
   status_description_fi varchar(255),
   status_description_sv varchar(255),
@@ -56,7 +57,10 @@ create table facility (
     references contact (id),
 
   constraint facility_service_contact_id_fk foreign key (service_contact_id)
-    references contact (id)
+    references contact (id),
+
+  constraint facility_pricing_method_fk foreign key (pricing_method)
+    references pricing_method (name)
 );
 
 create sequence facility_id_seq increment by 1 start with 1;

@@ -225,6 +225,7 @@ public class FacilityDaoTest extends AbstractDaoTest {
         facility.location = LOCATION;
         facility.operatorId = operatorId;
         facility.status = EXCEPTIONAL_SITUATION;
+        facility.pricingMethod = PricingMethod.CUSTOM;
         facility.statusDescription = STATUS_DESCRIPTION;
         facility.aliases = ALIASES;
         facility.ports = PORTS;
@@ -248,6 +249,7 @@ public class FacilityDaoTest extends AbstractDaoTest {
         Facility f1 = new Facility();
         f1.name = new MultilingualString("a", "å", "C");
         f1.status = IN_OPERATION;
+        f1.pricingMethod = PricingMethod.CUSTOM;
         f1.location = LOCATION;
         f1.contacts = dummyContacts;
         f1.operatorId = operatorId;
@@ -256,6 +258,7 @@ public class FacilityDaoTest extends AbstractDaoTest {
         Facility f2 = new Facility();
         f2.name = new MultilingualString("D", "Ä", "F");
         f2.status = IN_OPERATION;
+        f2.pricingMethod = PricingMethod.CUSTOM;
         f2.location = LOCATION;
         f2.operatorId = operatorId;
         f2.contacts = dummyContacts;

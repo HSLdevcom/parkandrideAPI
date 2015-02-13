@@ -133,7 +133,12 @@
 	<h4 translate="facilities.pricing.label"></h4>
 </div>
 
-<pricing-list pricings="editCtrl.facility.pricing"></pricing-list>
+<div class="row">
+	<div ng-repeat="pricingMethod in editCtrl.pricingMethods">
+		<label><input type="radio" ng-model="editCtrl.facility.pricingMethod" ng-value="pricingMethod.id"/> {{pricingMethod.label}}</label>
+	</div>
+</div>
+<pricing-list pricings="editCtrl.facility.pricing" ng-show="editCtrl.facility.pricingMethod == 'CUSTOM'"></pricing-list>
 
 <div class="row smallMargin">
 	<h4 translate="facilities.unavailableCapacities.capacity.label"></h4>

@@ -276,7 +276,7 @@ describe('edit facility view', function () {
 
     describe('pricing flow', function() {
 
-        it('should not create empty rows', function() {
+        it('should create 24/7 free pricing', function() {
             devApi.resetAll({ facilities: [], contacts: [fixtures.facilitiesFixture.contact], operators: [fixtures.facilitiesFixture.operator] });
             devApi.loginAs('ADMIN');
 
@@ -290,10 +290,11 @@ describe('edit facility view', function () {
             editPage.selectServiceContact("hsl");
             editPage.setCapacities({ CAR: 10 }, true);
             editPage.save();
-            expect(editPage.hasNoValidationErrors()).toBe(false);
+            expect(viewPage.isDisplayed()).toBe(true);
+            viewPage.toEditView();
         });
 
-        it('should fill default rows with free 24h', function () {
+        it('should modify custom pricing', function () {
             var rows = [];
             rows[0] =  {capacityType: "Henkilöauto", usage: "Liityntä", maxCapacity: "10",
                     dayType: "Arkipäivä", is24h: true, isFree: true};

@@ -51,7 +51,7 @@ public class FacilityService {
     private void validate(Facility facility) {
         Collection<Violation> violations = new ArrayList<>();
         validationService.validate(facility, violations);
-        CapacityPricingValidator.validate(facility.builtCapacity, facility.pricing, facility.unavailableCapacities, violations);
+        CapacityPricingValidator.validateAndNormalize(facility, violations);
         validateContact(facility.operatorId, facility.contacts.emergency, "emergency", violations);
         validateContact(facility.operatorId, facility.contacts.operator, "operator", violations);
         validateContact(facility.operatorId, facility.contacts.service, "service", violations);

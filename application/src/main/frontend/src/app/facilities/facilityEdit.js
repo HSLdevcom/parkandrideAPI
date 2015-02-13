@@ -72,6 +72,7 @@
         self.services = schema.services.values;
         self.paymentMethods = schema.paymentMethods.values;
         self.facilityStatuses = schema.facilityStatuses.values;
+        self.pricingMethods = schema.pricingMethods.values;
 
         self.aliasesPlaceholder = aliasesPlaceholder;
         self.showUnavailableCapacityType = function(i) {

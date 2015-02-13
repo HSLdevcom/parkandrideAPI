@@ -52,6 +52,7 @@ module.exports = function () {
                 "MOTORCYCLE": 50,
                 "ELECTRIC_CAR":  60
             },
+            "pricingMethod": "CUSTOM",
             "pricing": [
                 {"capacityType":"CAR","usage":"PARK_AND_RIDE","maxCapacity":10,"dayType":"BUSINESS_DAY",
                     "time":{"from":"00","until":"24"},"price":null},
@@ -104,7 +105,8 @@ module.exports = function () {
             },
             builtCapacity: {
                 "CAR": 10
-            }
+            },
+            "pricingMethod": "PARK_AND_RIDE_24H_FREE"
         })
     };
 
@@ -133,7 +135,8 @@ module.exports = function () {
         },
         "builtCapacity": {
             "CAR": 100
-        }
+        },
+        "pricingMethod": "PARK_AND_RIDE_24H_FREE"
     });
 
     self.westend2 = facility({
@@ -161,7 +164,8 @@ module.exports = function () {
         },
         "builtCapacity": {
             "BICYCLE": 50
-        }
+        },
+        "pricingMethod": "HSL_24H_FREE"
     });
 
     self.contact = {

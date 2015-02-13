@@ -48,6 +48,11 @@ public class SchemaController {
         return new ResponseEntity<>(asList(FacilityStatus.values()), OK);
     }
 
+    @RequestMapping(method = GET, value = PRICING_METHODS)
+    public ResponseEntity<List<PricingMethod>> pricingMethods() {
+        return new ResponseEntity<>(asList(PricingMethod.values()), OK);
+    }
+
     @RequestMapping(method = GET, value = ROLES, produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<List<Role>> roles() {
         return new ResponseEntity<>(asList(Role.values()), OK);

@@ -165,6 +165,7 @@ public class FacilityDao implements FacilityRepository {
         facility.operatorId = row.get(qFacility.operatorId);
         facility.status = row.get(qFacility.status);
         facility.statusDescription = statusDescriptionMapping.map(row);
+        facility.pricingMethod = row.get(qFacility.pricingMethod);
 
         if (row.get(qFacility.usageParkAndRide)) {
             facility.usages.add(PARK_AND_RIDE);
@@ -235,7 +236,7 @@ public class FacilityDao implements FacilityRepository {
         insertPorts(facilityId, facility.ports);
         updateServices(facilityId, facility.services);
         updatePaymentMethods(facilityId, facility.paymentInfo.paymentMethods);
-        insertPricing(facilityId, facility.pricing);
+        insertPricing(facilityId, facility.pricingMethod.getPricing(facility));
         insertUnavailableCapacity(facilityId, facility.unavailableCapacities);
 
         return facilityId;
@@ -268,9 +269,10 @@ public class FacilityDao implements FacilityRepository {
             updatePaymentMethods(facilityId, newFacility.paymentInfo.paymentMethods);
         }
 
-        if (!Objects.equals(newFacility.pricing, oldFacility.pricing)) {
+        List<Pricing> newPricing = newFacility.pricingMethod.getPricing(newFacility);
+        if (!Objects.equals(newPricing, oldFacility.pricing)) {
             deletePricing(facilityId);
-            insertPricing(facilityId, newFacility.pricing);
+            insertPricing(facilityId, newPricing);
         }
 
         if (!Objects.equals(newFacility.unavailableCapacities, oldFacility.unavailableCapacities)) {
@@ -703,6 +705,7 @@ public class FacilityDao implements FacilityRepository {
         store.set(qFacility.location, facility.location);
         store.set(qFacility.operatorId, facility.operatorId);
         store.set(qFacility.status, facility.status);
+        store.set(qFacility.pricingMethod, facility.pricingMethod);
         statusDescriptionMapping.populate(facility.statusDescription, store);
 
         FacilityContacts contacts = facility.contacts != null ? facility.contacts : new FacilityContacts();

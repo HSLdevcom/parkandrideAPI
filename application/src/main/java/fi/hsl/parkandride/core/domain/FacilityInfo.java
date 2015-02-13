@@ -37,6 +37,10 @@ public class FacilityInfo implements OperatorEntity {
     public FacilityStatus status;
 
     @ApiModelProperty(required = true)
+    @NotNull
+    public PricingMethod pricingMethod;
+
+    @ApiModelProperty(required = true)
     @Valid
     public MultilingualString statusDescription;
 

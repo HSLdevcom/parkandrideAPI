@@ -89,6 +89,17 @@
       "label": "Poikkeustilanne"
     }
   },
+  "pricingMethods": {
+    "PARK_AND_RIDE_24H_FREE": {
+      "label": "24/7 ilmainen liityntäpysäköinti"
+    },
+    "HSL_24H_FREE": {
+      "label": "24/7 ilmainen liityntäpysäköinti, tunnistautuminen matkakortilla vaadittu"
+    },
+    "CUSTOM": {
+      "label": "Muu pysäköintihinnoittelu"
+    }
+  },
   "roles": {
     "ADMIN": {
       "label": "Ylläpitäjä"

@@ -1,14 +1,13 @@
 <div id="portEditModal">
-	<div class="modal-header">
-		<h3 class="modal-title">{{ titleKey | translate }}</h3>
-	</div>
-	<div class="modal-body">
-		<form name="editPortForm" class="form-horizontal" role="form" novalidate>
+	<form name="editPortForm" class="form-horizontal" role="form" novalidate ng-submit="ok(editPortForm)">
+		<div class="modal-header">
+			<h3 class="modal-title">{{ titleKey | translate }}</h3>
+		</div>
+		<div class="modal-body">
 			<div class="row">
 				<div class="column3 first-column">
 					<div class="form-group">
-						<label class="portType"><input type="checkbox" class="checkbox" ng-model="port.entry"> {{ "facilities.ports.entry.label" | translate
-							}}</label><br>
+						<label class="portType"><input type="checkbox" class="checkbox" ng-model="port.entry"> {{ "facilities.ports.entry.label" | translate }}</label><br>
 						<label class="portType"><input type="checkbox" class="checkbox" ng-model="port.exit"> {{ "facilities.ports.exit.label" | translate }}</label><br>
 						<label class="portType"><input type="checkbox" class="checkbox" ng-model="port.pedestrian"> {{ "facilities.ports.pedestrian.label" | translate }}</label><br>
 						<label class="portType"><input type="checkbox" class="checkbox" ng-model="port.bicycle"> {{ "facilities.ports.bicycle.label" | translate }}</label>
@@ -24,17 +23,17 @@
 			<div class="row">
 				<long-multilingual-edit name="info" ng-model="port.info" mandatory="false"></long-multilingual-edit>
 			</div>
-		</form>
-	</div>
-	<div class="modal-footer">
-		<div class="row">
-			<div class="last-column">
-				<button id="wdPortCancel" class="btn btn-xs-secondary" ng-click="cancel()">{{ "common.action.cancel" | translate }}</button>
-				<button id="wdPortRemove" class="btn btn-xs-secondary" ng-click="remove()"
-						ng-if="port._id && permit([FACILITY_CREATE, FACILITY_UPDATE])">{{ "common.action.remove" | translate }}</button>
-				<button id="wdPortOk" class="btn btn-xs" ng-click="ok(editPortForm)"
-						ng-if="permit([FACILITY_CREATE, FACILITY_UPDATE])">{{ "common.action.ok" | translate }}</button>
+		</div>
+		<div class="modal-footer">
+			<div class="row">
+				<div class="last-column">
+					<button type="button" id="wdPortCancel" class="btn btn-xs-secondary" ng-click="cancel()">{{ "common.action.cancel" | translate }}</button>
+					<button type="button" id="wdPortRemove" class="btn btn-xs-secondary" ng-click="remove()"
+							ng-if="port._id && permit([FACILITY_CREATE, FACILITY_UPDATE])">{{ "common.action.remove" | translate }}</button>
+					<button type="submit" id="wdPortOk" class="btn btn-xs"
+							ng-if="permit([FACILITY_CREATE, FACILITY_UPDATE])">{{ "common.action.ok" | translate }}</button>
+				</div>
 			</div>
 		</div>
-	</div>
+	</form>
 </div>

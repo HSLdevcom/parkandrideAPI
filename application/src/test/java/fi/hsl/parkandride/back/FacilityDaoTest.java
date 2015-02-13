@@ -7,6 +7,7 @@ import static fi.hsl.parkandride.core.domain.DayType.SATURDAY;
 import static fi.hsl.parkandride.core.domain.DayType.SUNDAY;
 import static fi.hsl.parkandride.core.domain.FacilityStatus.EXCEPTIONAL_SITUATION;
 import static fi.hsl.parkandride.core.domain.FacilityStatus.IN_OPERATION;
+import static fi.hsl.parkandride.core.domain.PricingMethod.PARK_AND_RIDE_247_FREE;
 import static fi.hsl.parkandride.core.domain.Service.ACCESSIBLE_TOILETS;
 import static fi.hsl.parkandride.core.domain.Service.ELEVATOR;
 import static fi.hsl.parkandride.core.domain.Service.LIGHTING;
@@ -132,15 +133,14 @@ public class FacilityDaoTest extends AbstractDaoTest {
         final SortedSet<String> newAliases = ImmutableSortedSet.of("clias");
         final List<Port> newPorts = ImmutableList.of(new Port(PORT_LOCATION2, true, true, true, true), new Port(PORT_LOCATION1, false, false, false, false));
         final NullSafeSortedSet<Service> newServices = new NullSafeSortedSet<>(asList(LIGHTING));
-        final List<Pricing> newPricing = asList(new Pricing(CAR, COMMERCIAL, 50, BUSINESS_DAY, "8", "18", "10 EUR/H"));
 
         facility.name = newName;
         facility.status = IN_OPERATION;
+        facility.pricingMethod = PARK_AND_RIDE_247_FREE;
         facility.statusDescription = null;
         facility.aliases = newAliases;
         facility.ports = newPorts;
         facility.services = newServices;
-        facility.pricing = newPricing;
 
         facilityDao.updateFacility(id, facility);
         facility = facilityDao.getFacility(id);
@@ -150,9 +150,17 @@ public class FacilityDaoTest extends AbstractDaoTest {
         assertThat(facility.aliases).isEqualTo(newAliases);
         assertThat(facility.ports).isEqualTo(newPorts);
         assertThat(facility.services).isEqualTo(newServices);
-        assertThat(facility.pricing).isEqualTo(newPricing);
+        assertThat(facility.pricing).isEqualTo(asList(
+                free24h(CAR, PARK_AND_RIDE, 50, BUSINESS_DAY),
+                free24h(CAR, PARK_AND_RIDE, 50, SATURDAY),
+                free24h(CAR, PARK_AND_RIDE, 50, SUNDAY),
+                free24h(ELECTRIC_CAR, PARK_AND_RIDE, 2, BUSINESS_DAY),
+                free24h(ELECTRIC_CAR, PARK_AND_RIDE, 2, SATURDAY),
+                free24h(ELECTRIC_CAR, PARK_AND_RIDE, 2, SUNDAY)
+        ));
         assertThat(facility.unavailableCapacities).isEqualTo(asList(
-                new UnavailableCapacity(CAR, COMMERCIAL, 0)
+                new UnavailableCapacity(CAR, PARK_AND_RIDE, 1),
+                new UnavailableCapacity(ELECTRIC_CAR, PARK_AND_RIDE, 0)
         ));
 
         // Remove aliases, capacities and ports
@@ -168,6 +176,10 @@ public class FacilityDaoTest extends AbstractDaoTest {
 
         // Not found by geometry
         assertThat(findByGeometry(NON_OVERLAPPING_AREA)).isEmpty();
+    }
+
+    private Pricing free24h(CapacityType type, Usage usage, int maxCapacity, DayType dayType) {
+        return new Pricing(type, usage, maxCapacity, dayType, "00", "24", null);
     }
 
     private Long createDummyContact() {

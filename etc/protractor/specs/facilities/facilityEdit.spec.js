@@ -16,7 +16,7 @@ describe('edit facility view', function () {
     var facFull = fixtures.facilitiesFixture.dummies.facFull;
     var facCar = fixtures.facilitiesFixture.dummies.facCar;
 
-    xdescribe('new facility', function () {
+    describe('new facility', function () {
         beforeEach(function () {
             devApi.resetAll({ contacts: [fixtures.facilitiesFixture.contact], operators: [fixtures.facilitiesFixture.operator] });
             devApi.loginAs('ADMIN');

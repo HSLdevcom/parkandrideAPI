@@ -24,3 +24,25 @@
   padding: 20px;
   margin-bottom: 40px;
 }
+
+//Sweetalert2 alert message customization classes
+.sweet-alert p {
+  font-weight: normal;
+  margin-top: 10px;
+}
+
+.sweet-alert hr {
+  margin-bottom: 0;
+}
+
+.sweet-alert button.confirm {
+  @extend .btn;
+  @extend .btn-xs;
+  margin-bottom: 10px;
+}
+
+.sweet-alert button.cancel {
+  @extend .btn;
+  @extend .btn-xs-secondary;
+  margin-bottom: 10px;
+}

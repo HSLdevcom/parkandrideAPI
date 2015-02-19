@@ -101,5 +101,4 @@ create table pricing_method (
 );
 
 insert into pricing_method values ('PARK_AND_RIDE_247_FREE');
-insert into pricing_method values ('HSL_247_FREE');
 insert into pricing_method values ('CUSTOM');

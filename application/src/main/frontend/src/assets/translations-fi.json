@@ -22,24 +22,12 @@
     }
   },
   "capacityTypes": {
-    "CAR": {
-      "label": "Henkilöauto"
-    },
-    "BICYCLE": {
-      "label": "Polkupyörä"
-    },
-    "BICYCLE_SECURE_SPACE": {
-      "label": "Polkupyörä, lukittu tila"
-    },
-    "DISABLED": {
-      "label": "Invapaikka"
-    },
-    "MOTORCYCLE": {
-      "label": "Moottoripyörä"
-    },
-    "ELECTRIC_CAR": {
-      "label": "Sähköauto"
-    }
+    "CAR": { "label": "Henkilöauto" },
+    "BICYCLE": { "label": "Polkupyörä" },
+    "BICYCLE_SECURE_SPACE": { "label": "Polkupyörä, lukittu tila" },
+    "DISABLED": { "label": "Invapaikka" },
+    "MOTORCYCLE": { "label": "Moottoripyörä" },
+    "ELECTRIC_CAR": { "label": "Sähköauto" }
   },
   "services": {
     "ELEVATOR": {"label": "Hissi"},
@@ -92,9 +80,6 @@
   "pricingMethods": {
     "PARK_AND_RIDE_247_FREE": {
       "label": "24/7 ilmainen liityntäpysäköinti"
-    },
-    "HSL_247_FREE": {
-      "label": "24/7 ilmainen liityntäpysäköinti, tunnistautuminen matkakortilla vaadittu"
     },
     "CUSTOM": {
       "label": "Muu pysäköintihinnoittelu"
@@ -409,21 +394,12 @@
       "unavailable": "Tilapäisesti poissa käytöstä"
     },
     "builtCapacity": {
-      "CAR": {
-        "label": "Henkilöauto, rakennettu kapasiteetti"
-      },
-      "BICYCLE": {
-        "label": "Polkupyörä, rakennettu kapasiteetti"
-      },
-      "DISABLED": {
-        "label": "Invapaikka, rakennettu kapasiteetti"
-      },
-      "MOTORCYCLE": {
-        "label": "Moottoripyörä, rakennettu kapasiteetti"
-      },
-      "ELECTRIC_CAR": {
-        "label": "Sähköauto, rakennettu kapasiteetti"
-      }
+      "CAR": { "label": "Henkilöauto, rakennettu kapasiteetti" },
+      "BICYCLE": { "label": "Polkupyörä, rakennettu kapasiteetti" },
+      "BICYCLE_SECURE_SPACE": { "label": "Polkupyörä, lukittu tila, rakennettu kapasiteetti" },
+      "DISABLED": { "label": "Invapaikka, rakennettu kapasiteetti" },
+      "MOTORCYCLE": { "label": "Moottoripyörä, rakennettu kapasiteetti" },
+      "ELECTRIC_CAR": { "label": "Sähköauto, rakennettu kapasiteetti" }
     },
     "pricing": {
       "label": "Pysäköintihinnoittelu",
@@ -665,6 +641,7 @@
     "UnavailableCapacityOverflow": "ei voi olla enemmän kuin pysäköintihinnoittelun maksimi",
     "OperatorRequired": "anna operaattori",
     "PasswordConfirmationMismatch": "tarkista, että salasanat ovat identtiset",
-    "BadPassword": "salasanan tulee sisältää 8-15 merkkiä, vähintään yksi numero (0-9), yksi pieni aakkonen (a-ö) ja yksi suuri aakkonen (A-Ö)"
+    "BadPassword": "salasanan tulee sisältää 8-15 merkkiä, vähintään yksi numero (0-9), yksi pieni aakkonen (a-ö) ja yksi suuri aakkonen (A-Ö)",
+    "PricingNotFound": "pysäköintihinnoittelua ei löydy"
   }
 }

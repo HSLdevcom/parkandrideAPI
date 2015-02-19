@@ -14,12 +14,6 @@ public enum PricingMethod {
             return free24h(facility.builtCapacity, PARK_AND_RIDE);
         }
     },
-    HSL_247_FREE {
-        @Override
-        public List<Pricing> getPricing(Facility facility) {
-            return free24h(facility.builtCapacity, HSL);
-        }
-    },
     CUSTOM {
         @Override
         public List<Pricing> getPricing(Facility facility) {

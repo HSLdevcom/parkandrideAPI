@@ -96,14 +96,10 @@ describe('edit facility view', function () {
         });
 
         describe('capacities', function () {
-            function testCapacityMustBePositive(c) {
-                expect(editPage.hasNoValidationErrors()).toBe(true);
-                editPage.setCapacities(c, true);
-                expect(editPage.hasNoValidationErrors()).toBe(false);
-            }
-
             it('build value must be positive', function () {
-                testCapacityMustBePositive({ "CAR": -1 });
+                expect(editPage.hasNoValidationErrors()).toBe(true);
+                editPage.setCapacities({ "CAR": -1 }, true);
+                expect(editPage.hasNoValidationErrors()).toBe(false);
             });
         });
 

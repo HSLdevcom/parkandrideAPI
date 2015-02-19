@@ -76,12 +76,28 @@ describe('facility view', function () {
                     isFree: "✓", priceFi: "", priceSv: "", priceEn: ""},
                 {capacityType: "Invapaikka", usage: "Kaupallinen", maxCapacity: "40",
                     dayType: "Lauantai", is24h: "", from: "08", until: "18",
-                    isFree: "", priceFi: "price fi", priceSv: "price sv", priceEn: "price en"}
+                    isFree: "", priceFi: "price fi", priceSv: "price sv", priceEn: "price en"},
+                {"capacityType":"Sähköauto","usage":"Kaupallinen","maxCapacity":"60",
+                    "dayType":"Lauantai", is24h: "", from:"08","until":"18",
+                    isFree: "", "priceFi":"price fi","priceSv":"price sv","priceEn":"price en"},
+                {"capacityType":"Moottoripyörä","usage":"Liityntä","maxCapacity":"50",
+                    dayType: "Arkipäivä", is24h: "✓", from: "", until: "",
+                    isFree: "✓", priceFi: "", priceSv: "", priceEn: ""},
+                {"capacityType":"Polkupyörä","usage":"Liityntä","maxCapacity":"20",
+                    "dayType":"Arkipäivä", is24h: "✓", "from":"","until":"",
+                    isFree: "✓", priceFi: "", priceSv: "", priceEn: ""},
+                {"capacityType":"Polkupyörä, lukittu tila","usage":"Kaupallinen","maxCapacity":"30",
+                    "dayType":"Lauantai", is24h: "", from:"08","until":"18",
+                    isFree: "", "priceFi":"price fi","priceSv":"price sv","priceEn":"price en"}
             ]);
 
             expect(viewPage.getUnavailableCapacities()).toEqual([
                 {capacityType: "Henkilöauto", usage: "Liityntä", capacity: "1"},
-                {capacityType: "Invapaikka", usage: "Kaupallinen", capacity: "0"}
+                {capacityType: "Invapaikka", usage: "Kaupallinen", capacity: "0"},
+                {capacityType: "Sähköauto", usage: "Kaupallinen", capacity: "0"},
+                {capacityType: "Moottoripyörä", usage: "Liityntä", capacity: "0"},
+                {capacityType: "Polkupyörä", usage: "Liityntä", capacity: "0"},
+                {capacityType: "Polkupyörä, lukittu tila", usage: "Kaupallinen", capacity: "0"},
             ]);
         });
     });

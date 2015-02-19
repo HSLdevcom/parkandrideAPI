@@ -17,11 +17,16 @@ public final class CapacityPricingValidator {
     private CapacityPricingValidator() {}
 
     public static void validateAndNormalize(Facility facility, Collection<Violation> violations) {
-        if (facility.pricingMethod == CUSTOM) {
+        if (facility.pricingMethod == null) {
+            // Not valid, but also not validated here.
+            return;
+        } else if (facility.pricingMethod == CUSTOM) {
             validateAndNormalizeCustomPricing(facility.builtCapacity, facility.pricing, facility.unavailableCapacities, violations);
         }
         else if (facility.pricingMethod == PARK_AND_RIDE_247_FREE) {
             validateAndNormalizeUnavailableCapacities(facility.unavailableCapacities, typeUsageMaxForUsage(facility.builtCapacity, PARK_AND_RIDE), violations);
+        } else {
+            throw new IllegalArgumentException("Unsupported PricingMethod: " + facility.pricingMethod);
         }
     }
 

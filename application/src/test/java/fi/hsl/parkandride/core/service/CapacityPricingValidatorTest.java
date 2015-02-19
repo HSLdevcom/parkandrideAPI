@@ -28,6 +28,11 @@ import fi.hsl.parkandride.core.domain.*;
 public class CapacityPricingValidatorTest {
 
     @Test
+    public void allow_null_pricing_method() {
+        CapacityPricingValidator.validateAndNormalize(new Facility(), new ArrayList<>());
+    }
+
+    @Test
     public void hours_can_overlap_for_different_usages() {
         Pricing a = pricing(CAR, PARK_AND_RIDE, BUSINESS_DAY, 7, 17);
         Pricing b = pricing(CAR, COMMERCIAL, BUSINESS_DAY, 8, 18);

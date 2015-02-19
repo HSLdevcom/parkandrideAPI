@@ -52,10 +52,19 @@ module.exports = function () {
                 "MOTORCYCLE": 50,
                 "ELECTRIC_CAR":  60
             },
+            "pricingMethod": "CUSTOM",
             "pricing": [
                 {"capacityType":"CAR","usage":"PARK_AND_RIDE","maxCapacity":10,"dayType":"BUSINESS_DAY",
                     "time":{"from":"00","until":"24"},"price":null},
                 {"capacityType":"DISABLED","usage":"COMMERCIAL","maxCapacity":40,"dayType":"SATURDAY",
+                    "time":{"from":"08","until":"18"},"price":{"fi":"price fi","sv":"price sv","en":"price en"}},
+                {"capacityType":"ELECTRIC_CAR","usage":"COMMERCIAL","maxCapacity":60,"dayType":"SATURDAY",
+                    "time":{"from":"08","until":"18"},"price":{"fi":"price fi","sv":"price sv","en":"price en"}},
+                {"capacityType":"MOTORCYCLE","usage":"PARK_AND_RIDE","maxCapacity":50,"dayType":"BUSINESS_DAY",
+                    "time":{"from":"00","until":"24"},"price":null},
+                {"capacityType":"BICYCLE","usage":"PARK_AND_RIDE","maxCapacity":20,"dayType":"BUSINESS_DAY",
+                    "time":{"from":"00","until":"24"},"price":null},
+                {"capacityType":"BICYCLE_SECURE_SPACE","usage":"COMMERCIAL","maxCapacity":30,"dayType":"SATURDAY",
                     "time":{"from":"08","until":"18"},"price":{"fi":"price fi","sv":"price sv","en":"price en"}}
                 // closed on SUNDAY
             ],
@@ -104,7 +113,8 @@ module.exports = function () {
             },
             builtCapacity: {
                 "CAR": 10
-            }
+            },
+            "pricingMethod": "PARK_AND_RIDE_247_FREE"
         })
     };
 
@@ -133,7 +143,8 @@ module.exports = function () {
         },
         "builtCapacity": {
             "CAR": 100
-        }
+        },
+        "pricingMethod": "PARK_AND_RIDE_247_FREE"
     });
 
     self.westend2 = facility({
@@ -161,7 +172,8 @@ module.exports = function () {
         },
         "builtCapacity": {
             "BICYCLE": 50
-        }
+        },
+        "pricingMethod": "PARK_AND_RIDE_247_FREE"
     });
 
     self.contact = {

@@ -21,8 +21,6 @@ describe('edit facility view', function () {
             devApi.resetAll({ contacts: [fixtures.facilitiesFixture.contact], operators: [fixtures.facilitiesFixture.operator] });
             devApi.loginAs('ADMIN');
             editPage.get();
-            editPage.pricingSelectAll();
-            editPage.pricingRemoveRows();
         });
 
         it('initially no errors exist', function () {
@@ -98,14 +96,10 @@ describe('edit facility view', function () {
         });
 
         describe('capacities', function () {
-            function testCapacityMustBePositive(c) {
-                expect(editPage.hasNoValidationErrors()).toBe(true);
-                editPage.setCapacities(c, true);
-                expect(editPage.hasNoValidationErrors()).toBe(false);
-            }
-
             it('build value must be positive', function () {
-                testCapacityMustBePositive({ "CAR": -1 });
+                expect(editPage.hasNoValidationErrors()).toBe(true);
+                editPage.setCapacities({ "CAR": -1 }, true);
+                expect(editPage.hasNoValidationErrors()).toBe(false);
             });
         });
 
@@ -204,8 +198,6 @@ describe('edit facility view', function () {
 
             // Reload and expect that new contact is still available after operator is selected
             editPage.get();
-            editPage.pricingSelectAll();
-            editPage.pricingRemoveRows();
             editPage.selectOperator("smooth operator");
             editPage.selectEmergencyContact("new contact");
             expect(editPage.getEmergencyContact()).toBe("new contact (09 47664444 / hsl@hsl.fi)");
@@ -276,7 +268,7 @@ describe('edit facility view', function () {
 
     describe('pricing flow', function() {
 
-        it('should not create empty rows', function() {
+        it('should create 24/7 free pricing', function() {
             devApi.resetAll({ facilities: [], contacts: [fixtures.facilitiesFixture.contact], operators: [fixtures.facilitiesFixture.operator] });
             devApi.loginAs('ADMIN');
 
@@ -290,20 +282,30 @@ describe('edit facility view', function () {
             editPage.selectServiceContact("hsl");
             editPage.setCapacities({ CAR: 10 }, true);
             editPage.save();
-            expect(editPage.hasNoValidationErrors()).toBe(false);
+            expect(viewPage.isDisplayed()).toBe(true);
+            viewPage.toEditView();
+            editPage.setPricingMethod("CUSTOM");
+            editPage.getPricing().then(function(actualRows) {
+                expect(actualRows.length).toEqual(3);
+                for (var i=0; i < actualRows.length; i++) {
+                    expect(actualRows[i].capacityType).toEqual("Henkilöauto");
+                    expect(actualRows[i].usage).toEqual("Liityntä");
+                    expect(actualRows[i].maxCapacity).toEqual("10");
+                    expect(actualRows[i].is24h).toBeTruthy();
+                    expect(actualRows[i].isFree).toBeTruthy();
+                }
+                expect(actualRows[0].dayType).toEqual("Arkipäivä");
+                expect(actualRows[1].dayType).toEqual("Lauantai");
+                expect(actualRows[2].dayType).toEqual("Sunnuntai");
+            });
         });
 
-        it('should fill default rows with free 24h', function () {
-            var rows = [];
-            rows[0] =  {capacityType: "Henkilöauto", usage: "Liityntä", maxCapacity: "10",
-                    dayType: "Arkipäivä", is24h: true, isFree: true};
+        it('should modify custom pricing', function () {
+            var changes = {from:"8", until:"18", priceFi:"price fi", priceSv:"price sv", priceEn:"price en"};
 
-            rows[1] = _.assign({}, rows[0], { dayType: 'Lauantai' });
-            rows[2] = _.assign({}, rows[0], { dayType: 'Sunnuntai' });
-
-            editPage.setPricing(0, rows[0]);
-            editPage.setPricing(1, rows[1]);
-            editPage.setPricing(2, rows[2]);
+            editPage.setPricing(0, changes);
+            editPage.setPricing(1, changes);
+            editPage.setPricing(2, changes);
 
             editPage.save();
             expect(viewPage.isDisplayed()).toBe(true);
@@ -311,12 +313,16 @@ describe('edit facility view', function () {
             editPage.getPricing().then(function(actualRows) {
                 expect(actualRows.length).toEqual(3);
                 for (var i=0; i < actualRows.length; i++) {
-                    expect(actualRows[i].capacityType).toEqual(rows[i].capacityType);
-                    expect(actualRows[i].usage).toEqual(rows[i].usage);
-                    expect(actualRows[i].maxCapacity).toEqual(rows[i].maxCapacity);
-                    expect(actualRows[i].dayType).toEqual(rows[i].dayType);
-                    expect(actualRows[i].is24h).toBeTruthy();
-                    expect(actualRows[i].isFree).toBeTruthy();
+                    expect(actualRows[i].capacityType).toEqual("Henkilöauto");
+                    expect(actualRows[i].usage).toEqual("Liityntä");
+                    expect(actualRows[i].maxCapacity).toEqual("10");
+                    expect(actualRows[i].is24h).toBeFalsy();
+                    expect(actualRows[i].from).toEqual("08");
+                    expect(actualRows[i].until).toEqual("18");
+                    expect(actualRows[i].isFree).toBeFalsy();
+                    expect(actualRows[i].priceFi).toEqual("price fi");
+                    expect(actualRows[i].priceSv).toEqual("price sv");
+                    expect(actualRows[i].priceEn).toEqual("price en");
                 }
             });
         });
@@ -453,8 +459,6 @@ describe('edit facility view', function () {
                 devApi.loginAs('ADMIN');
 
                 editPage.get();
-                editPage.pricingSelectAll();
-                editPage.pricingRemoveRows();
                 editPage.setName(facFull.name);
                 editPage.selectOperator("smooth");
                 editPage.drawLocation(facFull.locationInput.offset, facFull.locationInput.w, facFull.locationInput.h);

@@ -1,38 +1,69 @@
 package fi.hsl.parkandride.core.service;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import static fi.hsl.parkandride.core.domain.PricingMethod.CUSTOM;
+import static fi.hsl.parkandride.core.domain.PricingMethod.PARK_AND_RIDE_247_FREE;
+import static fi.hsl.parkandride.core.domain.Usage.PARK_AND_RIDE;
+
+import java.util.*;
+import java.util.stream.Collectors;
 
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.mysema.commons.lang.Pair;
 
-import fi.hsl.parkandride.core.domain.CapacityType;
-import fi.hsl.parkandride.core.domain.Pricing;
-import fi.hsl.parkandride.core.domain.UnavailableCapacity;
-import fi.hsl.parkandride.core.domain.Usage;
-import fi.hsl.parkandride.core.domain.Violation;
+import fi.hsl.parkandride.core.domain.*;
 
 public final class CapacityPricingValidator {
     private CapacityPricingValidator() {}
 
-    public static void validate(Map<CapacityType, Integer> builtCapacity,
-                                List<Pricing> pricing,
-                                List<UnavailableCapacity> unavailableCapacities,
-                                Collection<Violation> violations) {
+    public static void validateAndNormalize(Facility facility, Collection<Violation> violations) {
+        if (facility.pricingMethod == null) {
+            // Not valid, but also not validated here.
+            return;
+        } else if (facility.pricingMethod == CUSTOM) {
+            validateAndNormalizeCustomPricing(facility.builtCapacity, facility.pricing, facility.unavailableCapacities, violations);
+        }
+        else if (facility.pricingMethod == PARK_AND_RIDE_247_FREE) {
+            validateAndNormalizeUnavailableCapacities(facility.unavailableCapacities, typeUsageMaxForUsage(facility.builtCapacity, PARK_AND_RIDE), violations);
+        } else {
+            throw new IllegalArgumentException("Unsupported PricingMethod: " + facility.pricingMethod);
+        }
+    }
+
+    public static void validateAndNormalizeCustomPricing(Map<CapacityType, Integer> builtCapacity,
+                                                         List<Pricing> pricing,
+                                                         List<UnavailableCapacity> unavailableCapacities,
+                                                         final Collection<Violation> violations) {
+        if (builtCapacity == null || pricing == null || unavailableCapacities == null) {
+            return;
+        }
         Map<Pair<CapacityType, Usage>, Integer> typeUsageMax = Maps.newHashMap();
+        final Set<CapacityType> pricingCapacityTypes = new LinkedHashSet<>();
         for (int i=0; i < pricing.size(); i++) {
             Pricing p = pricing.get(i);
             if (p != null) {
+                Integer capacity = builtCapacity.get(p.capacityType);
+                if (capacity != null && capacity.intValue() >= 1) {
+                    pricingCapacityTypes.add(p.capacityType);
+                }
                 registerTypeUsageMaxCapacity(p, typeUsageMax);
-                validateTotalCapacity(builtCapacity.get(p.capacityType), p, i, violations);
+                validateTotalCapacity(capacity, p, i, violations);
                 validateHourOverlap(pricing, i, violations);
             }
         }
-        validateUnavailableCapacities(unavailableCapacities, typeUsageMax, violations);
+        builtCapacity.keySet().stream().forEach( type -> {
+            if (!pricingCapacityTypes.contains(type)) {
+                violations.add(pricingNotFoundForBuiltCapacity(type));
+            }
+        });
+        validateAndNormalizeUnavailableCapacities(unavailableCapacities, typeUsageMax, violations);
+    }
+
+    private static Map<Pair<CapacityType, Usage>, Integer> typeUsageMaxForUsage(final Map<CapacityType, Integer> builtCapacity, final Usage usage) {
+        return builtCapacity.entrySet().stream().collect(Collectors.toMap(
+                (Map.Entry<CapacityType, Integer> e) -> new Pair<>(e.getKey(), usage),
+                (Map.Entry<CapacityType, Integer> e) -> e.getValue()
+        ));
     }
 
     private static void registerTypeUsageMaxCapacity(Pricing p, Map<Pair<CapacityType, Usage>, Integer> typeUsageMax) {
@@ -62,9 +93,13 @@ public final class CapacityPricingValidator {
         }
     }
 
-    private static void validateUnavailableCapacities(List<UnavailableCapacity> unavailableCapacities,
-                                                      Map<Pair<CapacityType, Usage>, Integer> typeUsageMax,
-                                                      Collection<Violation> violations) {
+    private static void validateAndNormalizeUnavailableCapacities(List<UnavailableCapacity> unavailableCapacities,
+                                                                  Map<Pair<CapacityType, Usage>, Integer> typeUsageMax,
+                                                                  Collection<Violation> violations) {
+        if (unavailableCapacities == null) {
+            return;
+        }
+        List<UnavailableCapacity> normalized = new ArrayList<>(unavailableCapacities.size());
         Set<Pair<CapacityType, Usage>> uniqueTypeUsage = Sets.newHashSet();
         for (int i=0; i < unavailableCapacities.size(); i++) {
             UnavailableCapacity uc = unavailableCapacities.get(i);
@@ -73,14 +108,19 @@ public final class CapacityPricingValidator {
                 if (uniqueTypeUsage.add(typeUsage)) {
                     Integer max = typeUsageMax.get(typeUsage);
                     if (max == null) {
-                        violations.add(pricingNotFound(i));
+                        continue;
                     } else if (uc.capacity > max.intValue()) {
                         violations.add(unavailableCapacityOverflow(i));
                     }
                 } else {
                     violations.add(duplicateUnavailableCapacity(i));
                 }
+                normalized.add(uc);
             }
+        }
+        if (unavailableCapacities.size() != normalized.size()) {
+            unavailableCapacities.clear();
+            unavailableCapacities.addAll(normalized);
         }
     }
 
@@ -94,9 +134,9 @@ public final class CapacityPricingValidator {
                 "unavailable capacity cannot exceed max capacity of pricing");
     }
 
-    private static Violation pricingNotFound(int i) {
-        return new Violation("PricingNotFound", "unavailableCapacities[" + i + "]",
-                "no corresponding pricing for unavailable capacity");
+    private static Violation pricingNotFoundForBuiltCapacity(CapacityType type) {
+        return new Violation("PricingNotFound", "builtCapacity." + type,
+                "pricing not found");
     }
 
     private static Violation pricingCapacityOverflow(int i) {

@@ -76,12 +76,28 @@ describe('facility view', function () {
                     isFree: "✓", priceFi: "", priceSv: "", priceEn: ""},
                 {capacityType: "Invapaikka", usage: "Kaupallinen", maxCapacity: "40",
                     dayType: "Lauantai", is24h: "", from: "08", until: "18",
-                    isFree: "", priceFi: "price fi", priceSv: "price sv", priceEn: "price en"}
+                    isFree: "", priceFi: "price fi", priceSv: "price sv", priceEn: "price en"},
+                {"capacityType":"Sähköauto","usage":"Kaupallinen","maxCapacity":"60",
+                    "dayType":"Lauantai", is24h: "", from:"08","until":"18",
+                    isFree: "", "priceFi":"price fi","priceSv":"price sv","priceEn":"price en"},
+                {"capacityType":"Moottoripyörä","usage":"Liityntä","maxCapacity":"50",
+                    dayType: "Arkipäivä", is24h: "✓", from: "", until: "",
+                    isFree: "✓", priceFi: "", priceSv: "", priceEn: ""},
+                {"capacityType":"Polkupyörä","usage":"Liityntä","maxCapacity":"20",
+                    "dayType":"Arkipäivä", is24h: "✓", "from":"","until":"",
+                    isFree: "✓", priceFi: "", priceSv: "", priceEn: ""},
+                {"capacityType":"Polkupyörä, lukittu tila","usage":"Kaupallinen","maxCapacity":"30",
+                    "dayType":"Lauantai", is24h: "", from:"08","until":"18",
+                    isFree: "", "priceFi":"price fi","priceSv":"price sv","priceEn":"price en"}
             ]);
 
             expect(viewPage.getUnavailableCapacities()).toEqual([
                 {capacityType: "Henkilöauto", usage: "Liityntä", capacity: "1"},
-                {capacityType: "Invapaikka", usage: "Kaupallinen", capacity: "0"}
+                {capacityType: "Invapaikka", usage: "Kaupallinen", capacity: "0"},
+                {capacityType: "Sähköauto", usage: "Kaupallinen", capacity: "0"},
+                {capacityType: "Moottoripyörä", usage: "Liityntä", capacity: "0"},
+                {capacityType: "Polkupyörä", usage: "Liityntä", capacity: "0"},
+                {capacityType: "Polkupyörä, lukittu tila", usage: "Kaupallinen", capacity: "0"},
             ]);
         });
     });
@@ -96,6 +112,7 @@ describe('facility view', function () {
                 "emergency": 1,
                 "operator": 1
             },
+            "pricingMethod": "CUSTOM",
             "location":{"type":"Polygon","coordinates":[[[24.943295535227904,60.17184809821847],[24.944218215129023,60.17186410779244],[24.94464736857141,60.17192280949709],[24.94479757227624,60.17077543898606],[24.944293316981444,60.17060466413514],[24.9436925021621,60.170572643751754],[24.9434028235885,60.17073274535653],[24.943295535227904,60.17184809821847]]]},
             "ports":[{
                 "location":{"type":"Point","coordinates":[24.944605,60.17197]},

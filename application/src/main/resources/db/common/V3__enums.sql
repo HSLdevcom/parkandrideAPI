@@ -93,3 +93,12 @@ insert into payment_method values ('MASTERCARD');
 insert into payment_method values ('DINERS_CLUB');
 insert into payment_method values ('HSL_TRAVEL_CARD');
 insert into payment_method values ('OTHER');
+
+
+create table pricing_method (
+  name varchar(64) not null,
+  primary key (name)
+);
+
+insert into pricing_method values ('PARK_AND_RIDE_247_FREE');
+insert into pricing_method values ('CUSTOM');

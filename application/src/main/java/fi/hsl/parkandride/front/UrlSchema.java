@@ -74,6 +74,8 @@ public class UrlSchema {
 
     public static final String FACILITY_STATUSES = API + "/facility-statuses";
 
+    public static final String PRICING_METHODS = API + "/pricing-methods";
+
     /**
      * TESTING
      */

@@ -1,6 +1,7 @@
 package fi.hsl.parkandride.core.domain;
 
 import static fi.hsl.parkandride.core.domain.FacilityStatus.IN_OPERATION;
+import static fi.hsl.parkandride.core.domain.PricingMethod.CUSTOM;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Set;
@@ -46,6 +47,7 @@ public class ViolationTest {
         Facility f = new Facility();
         f.operatorId  = 1l;
         f.status = IN_OPERATION;
+        f.pricingMethod = CUSTOM;
         f.contacts.emergency = 1l;
         f.contacts.operator = 1l;
         f.name = new MultilingualString("Test", "Test", "Test");

@@ -274,6 +274,10 @@ module.exports = function(spec) {
         });
     };
 
+    that.setPricingMethod = function(pricingMethod) {
+        element(by.id("pricingMethod." + pricingMethod)).click();
+    };
+
     that.setPricing = function(index, pricing) {
         spec.pricingRows.get(index).then(function(row) {
             for (var prop in pricing) {
@@ -285,7 +289,7 @@ module.exports = function(spec) {
                         spec.select(row.element(by.model('pricing.usage')), pricing[prop]);
                         break;
                     case 'maxCapacity':
-                        row.element(by.model('pricing.maxCapacity')).sendKeys(pricing[prop]);
+                        spec.sendKeys(row.element(by.model('pricing.maxCapacity')), pricing[prop]);
                         break;
                     case 'dayType':
                         spec.select(row.element(by.model('pricing.dayType')), pricing[prop]);
@@ -294,22 +298,22 @@ module.exports = function(spec) {
                         row.element(by.model('h24')).click();
                         break;
                     case 'from':
-                        row.element(by.model('pricing.time.from')).sendKeys(pricing[prop]);
+                        spec.sendKeys(row.element(by.model('pricing.time.from')), pricing[prop]);
                         break;
                     case 'until':
-                        row.element(by.model('pricing.time.until')).sendKeys(pricing[prop]);
+                        spec.sendKeys(row.element(by.model('pricing.time.until')), pricing[prop]);
                         break;
                     case 'isFree':
                         row.element(by.model('free')).click();
                         break;
                     case 'priceFi':
-                        row.element(by.model('pricing.price.fi')).sendKeys(pricing[prop]);
+                        spec.sendKeys(row.element(by.model('pricing.price.fi')), pricing[prop]);
                         break;
                     case 'priceSv':
-                        row.element(by.model('pricing.price.sv')).sendKeys(pricing[prop]);
+                        spec.sendKeys(row.element(by.model('pricing.price.sv')), pricing[prop]);
                         break;
                     case 'priceEn':
-                        row.element(by.model('pricing.price.en')).sendKeys(pricing[prop]);
+                        spec.sendKeys(row.element(by.model('pricing.price.en')), pricing[prop]);
                         break;
                 }
             }

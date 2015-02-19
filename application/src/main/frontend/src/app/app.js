@@ -93,6 +93,11 @@
                         return registerEnumValues(schema, "facilityStatuses", values, $translate, $q);
                     });
                 },
+                pricingMethods: function(schema, SchemaResource, $translate, $q) {
+                    return SchemaResource.getPricingMethods().then(function(values) {
+                        return registerEnumValues(schema, "pricingMethods", values, $translate, $q);
+                    });
+                },
                 roles: function(schema, SchemaResource, $translate, $q) {
                     return SchemaResource.getRoles().then(function(values) {
                         return registerEnumValues(schema, "roles", values, $translate, $q);

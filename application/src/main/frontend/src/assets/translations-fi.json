@@ -562,7 +562,7 @@
     "newPassword": {
       "title": "Päivitä salasana",
       "label": "Uusi salasana",
-      "label2": "Uusi salasana uudelleen"
+      "label2": "Vahvista uusi salasana"
     },
     "operator": {
       "label": "Operaattori"
@@ -575,15 +575,15 @@
       "label": "Toiminnot",
       "updateToken": {
         "label": "Päivitä token",
-        "successMessage": "Uusi token on"
+        "successMessage": "Token päivitetty. Uusi token on "
       },
       "updatePass": {
         "label": "Päivitä salasana"
       },
       "remove": {
         "label": "Poista",
-        "confirmTitle": "Oletko varma?",
-        "confirmText": "Olet poistamassa käyttäjää",
+        "confirmTitle": "Haluatko varmasti poistaa valitsemasi käyttäjän?",
+        "confirmText": "Haluatko varmasti poistaa valitsemasi käyttäjän?",
         "confirmButtonText": "Kyllä, poista käyttäjä"
       }
     },

@@ -12,4 +12,15 @@
             }
         };
     });
+
+    m.directive('focus', function () {
+        return {
+            link: function (scope, element) {
+                // XXX: for some reason we can't focus the element synchronously
+                setTimeout(function () {
+                    element[0].focus();
+                }, 100);
+            }
+        };
+    });
 })();

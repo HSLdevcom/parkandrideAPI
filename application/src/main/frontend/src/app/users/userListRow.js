@@ -51,10 +51,9 @@
         function updateToken() {
             UserResource.resetToken(vm.user).then(function(newToken) {
                 swal({
-                    title: $translate.instant('users.listActions.updateToken.successMessage'),
-                    text: newToken,
-                    type: "success",
-                    width: 650
+                    text: $translate.instant('users.listActions.updateToken.successMessage') + newToken,
+                    width: 600,
+                    confirmButtonColor: "#007AC9"
                 });
             });
         }
@@ -69,12 +68,13 @@
 
         function remove() {
             swal({
-                title: $translate.instant('users.listActions.remove.confirmTitle'),
                 text: $translate.instant('users.listActions.remove.confirmText'),
-                type: "warning",
+                width: 400,
                 showCancelButton: true,
-                confirmButtonText: $translate.instant('users.listActions.remove.confirmButtonText'),
                 cancelButtonText: $translate.instant('common.action.cancel'),
+                cancelButtonColor: "#BEE4F8",
+                confirmButtonText: $translate.instant('users.listActions.remove.confirmButtonText'),
+                confirmButtonColor: "#007AC9",
                 closeOnConfirm: true
             }, function() {
                 UserResource.remove(vm.user).then(function(){

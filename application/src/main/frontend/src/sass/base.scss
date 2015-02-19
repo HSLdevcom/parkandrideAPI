@@ -228,6 +228,7 @@ div#pricing-edit .form-control  {
 
 textarea {
   resize: vertical;
+  overflow: hidden;
 }
 
 //table
@@ -265,6 +266,10 @@ input[type=number]::-webkit-inner-spin-button,
 input[type=number]::-webkit-outer-spin-button {
   -webkit-appearance: none;
   margin: 0;
+}
+
+input[type=number] {
+  -moz-appearance: textfield;
 }
 
 a {

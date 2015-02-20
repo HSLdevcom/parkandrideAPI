@@ -89,6 +89,7 @@
 div.dropdown > .btn {
   padding: 6px 5px;
   background-color: transparent;
+  overflow: hidden;
 }
 
 tr.selected > td > div.dropdown > .btn {
@@ -117,6 +118,10 @@ div.ui-select-bootstrap > .btn-default:focus {
 
 .btn-default-focus {
   outline: none;
+}
+
+span {
+  white-space: normal;
 }
 
 span.input-group-btn > .btn-default {

@@ -207,7 +207,7 @@ input[type="checkbox"]:focus {
   color: $messagecolor;
 }
 
-.checkbox-label {
+.checkbox-label, .radiobutton-label {
   font-weight: normal;
   margin-bottom: 0px;
 }

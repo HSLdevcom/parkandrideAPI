@@ -135,7 +135,7 @@
 
 <div class="row">
 	<div ng-repeat="pricingMethod in editCtrl.pricingMethods">
-		<label>
+		<label class="radiobutton-label">
 			<input type="radio" ng-model="editCtrl.facility.pricingMethod" ng-value="pricingMethod.id" id="pricingMethod.{{pricingMethod.id}}"/>
 			{{pricingMethod.label}}
 		</label>

@@ -13,6 +13,8 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 
+import com.jayway.restassured.http.ContentType;
+
 import fi.hsl.parkandride.core.domain.Facility;
 import fi.hsl.parkandride.core.service.ValidationException;
 import fi.hsl.parkandride.front.UrlSchema;
@@ -39,15 +41,14 @@ public class ErrorHandlingITest extends AbstractIntegrationTest {
     }
 
     @Test
-    @Ignore
     public void validation_errors_are_detailed_as_violations() {
-        givenWithContent()
-                // FIXME: Authorization
+        givenWithContent(devHelper.login("admin").token)
             .body(new Facility())
         .when()
             .post(UrlSchema.FACILITIES)
         .then()
             .spec(assertResponse(HttpStatus.BAD_REQUEST, ValidationException.class))
+            .contentType(ContentType.JSON)
             .body("message", is("Invalid data. See violations for details."))
             .body("violations", is(notNullValue()))
         ;

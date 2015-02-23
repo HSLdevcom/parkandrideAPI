@@ -77,7 +77,7 @@ public class UtilizationITest extends AbstractIntegrationTest {
         contactDao.insertContact(c, c.id);
         facilityDao.insertFacility(f, f.id);
 
-        devHelper.createUser(new NewUser(1l, "operator", OPERATOR_API, f.operatorId, "operator"));
+        devHelper.createOrUpdateUser(new NewUser(1l, "operator", OPERATOR_API, f.operatorId, "operator"));
         authToken = devHelper.login("operator").token;
     }
 

@@ -5,7 +5,6 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.TypeMismatchException;
 import org.springframework.http.HttpStatus;
@@ -16,6 +15,8 @@ import org.springframework.web.HttpRequestMethodNotSupportedException;
 import com.jayway.restassured.http.ContentType;
 
 import fi.hsl.parkandride.core.domain.Facility;
+import fi.hsl.parkandride.core.domain.NewUser;
+import fi.hsl.parkandride.core.domain.Role;
 import fi.hsl.parkandride.core.service.ValidationException;
 import fi.hsl.parkandride.front.UrlSchema;
 
@@ -42,6 +43,7 @@ public class ErrorHandlingITest extends AbstractIntegrationTest {
 
     @Test
     public void validation_errors_are_detailed_as_violations() {
+        devHelper.createOrUpdateUser(new NewUser(1l, "admin", Role.ADMIN, "admin"));
         givenWithContent(devHelper.login("admin").token)
             .body(new Facility())
         .when()

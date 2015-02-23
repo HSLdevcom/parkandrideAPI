@@ -19,6 +19,7 @@
         'parkandride.users',
         'parkandride.dev',
         'parkandride.auth',
+        'parkandride.searchDemo',
         'parkandride.components.violations'
     ]);
 

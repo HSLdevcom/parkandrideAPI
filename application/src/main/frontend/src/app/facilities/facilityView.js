@@ -3,7 +3,6 @@
         'ui.router',
         'parkandride.facilityMap',
         'parkandride.capacities',
-        'parkandride.layout',
         'parkandride.address',
         'parkandride.OperatorResource',
         'parkandride.ContactResource',

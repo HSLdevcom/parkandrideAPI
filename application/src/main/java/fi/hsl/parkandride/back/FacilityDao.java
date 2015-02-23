@@ -5,6 +5,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.mysema.query.group.GroupBy.groupBy;
 import static com.mysema.query.group.GroupBy.list;
 import static com.mysema.query.group.GroupBy.set;
+import static com.mysema.query.spatial.GeometryExpressions.dwithin;
 import static fi.hsl.parkandride.back.GSortedSet.sortedSet;
 import static fi.hsl.parkandride.core.domain.CapacityType.*;
 import static fi.hsl.parkandride.core.domain.Sort.Dir.ASC;
@@ -23,11 +24,13 @@ import com.google.common.collect.Sets;
 import com.mysema.query.ResultTransformer;
 import com.mysema.query.Tuple;
 import com.mysema.query.dml.StoreClause;
+import com.mysema.query.spatial.GeometryExpressions;
 import com.mysema.query.sql.SQLExpressions;
 import com.mysema.query.sql.dml.SQLInsertClause;
 import com.mysema.query.sql.dml.SQLUpdateClause;
 import com.mysema.query.sql.postgres.PostgresQuery;
 import com.mysema.query.sql.postgres.PostgresQueryFactory;
+import com.mysema.query.types.ConstantImpl;
 import com.mysema.query.types.MappingProjection;
 import com.mysema.query.types.expr.ComparableExpression;
 import com.mysema.query.types.expr.SimpleExpression;
@@ -557,7 +560,11 @@ public class FacilityDao implements FacilityRepository {
         }
 
         if (search.geometry != null) {
-            qry.where(qFacility.location.intersects(search.geometry));
+            if (search.maxDistance != null && search.maxDistance > 0) {
+                qry.where(dwithin(qFacility.location, ConstantImpl.create(search.geometry), search.maxDistance));
+            } else {
+                qry.where(qFacility.location.intersects(search.geometry));
+            }
         }
     }
 

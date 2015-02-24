@@ -618,7 +618,7 @@
     "500": {
       "title": "Oops, nyt tuli virhe!"
     },
-    "buttonText": "Voi veljet!"
+    "buttonText": "Voi harmi!"
   },
   "violation": {
     "Min": "pitää olla vähintään {{value}}",

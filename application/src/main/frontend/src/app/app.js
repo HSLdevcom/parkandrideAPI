@@ -149,9 +149,11 @@
                     }
                     if (rejection.status !== 400) { // violations are handled explicitly by submitUtil
                         swal({
-                            title: $translate.instant('error.' + rejection.status + '.title'),
-                            text: rejection.data.message,
-                            confirmButtonText: $translate.instant('error.buttonText')
+                            text: $translate.instant('error.' + rejection.status + '.title') + rejection.data.message,
+                            width: 400,
+                            confirmButtonText: $translate.instant('error.buttonText'),
+                            confirmButtonColor: "#007AC9",
+                            closeOnConfirm: true
                         });
                     }
                     return $q.reject(rejection);

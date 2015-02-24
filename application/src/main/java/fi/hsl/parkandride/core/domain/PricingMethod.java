@@ -1,6 +1,5 @@
 package fi.hsl.parkandride.core.domain;
 
-import static fi.hsl.parkandride.core.domain.Usage.HSL;
 import static fi.hsl.parkandride.core.domain.Usage.PARK_AND_RIDE;
 
 import java.util.ArrayList;

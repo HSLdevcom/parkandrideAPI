@@ -6,7 +6,6 @@ import fi.hsl.parkandride.core.domain.SearchResults;
 import fi.hsl.parkandride.core.domain.User;
 import fi.hsl.parkandride.core.domain.UserSearch;
 import fi.hsl.parkandride.core.domain.UserSecret;
-import fi.hsl.parkandride.core.service.TransactionalRead;
 
 public interface UserRepository {
 

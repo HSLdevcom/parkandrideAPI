@@ -5,7 +5,6 @@ import java.util.Objects;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
-import org.geolatte.geom.Geometry;
 import org.geolatte.geom.Point;
 
 import com.google.common.base.MoreObjects;

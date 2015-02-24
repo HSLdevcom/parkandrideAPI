@@ -27,8 +27,8 @@ import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.Authorization;
 
-import fi.hsl.parkandride.core.domain.HubSearch;
 import fi.hsl.parkandride.core.domain.Hub;
+import fi.hsl.parkandride.core.domain.HubSearch;
 import fi.hsl.parkandride.core.domain.SearchResults;
 import fi.hsl.parkandride.core.domain.User;
 import fi.hsl.parkandride.core.service.HubService;

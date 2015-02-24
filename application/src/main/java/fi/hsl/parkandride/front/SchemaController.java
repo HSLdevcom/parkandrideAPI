@@ -6,7 +6,6 @@ import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
-import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;

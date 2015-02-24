@@ -5,8 +5,6 @@ import java.util.Map;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
-import org.hibernate.validator.internal.constraintvalidators.MinValidatorForNumber;
-
 public class MinElementMapValidator implements ConstraintValidator<MinElement, Map<?, ? extends Number>> {
 
     private long min;

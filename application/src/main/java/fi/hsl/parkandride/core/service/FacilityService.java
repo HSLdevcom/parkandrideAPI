@@ -1,12 +1,13 @@
 package fi.hsl.parkandride.core.service;
 
 import static fi.hsl.parkandride.core.domain.Permission.FACILITY_CREATE;
-import static fi.hsl.parkandride.core.domain.Permission.FACILITY_UTILIZATION_UPDATE;
 import static fi.hsl.parkandride.core.domain.Permission.FACILITY_UPDATE;
+import static fi.hsl.parkandride.core.domain.Permission.FACILITY_UTILIZATION_UPDATE;
 import static fi.hsl.parkandride.core.service.AuthenticationService.authorize;
-import static java.util.Collections.sort;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 import fi.hsl.parkandride.core.back.ContactRepository;
 import fi.hsl.parkandride.core.back.FacilityRepository;

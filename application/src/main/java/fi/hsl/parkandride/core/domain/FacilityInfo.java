@@ -1,7 +1,6 @@
 package fi.hsl.parkandride.core.domain;
 
 import static com.google.common.collect.Maps.newHashMap;
-import static fi.hsl.parkandride.core.domain.FacilityStatus.IN_OPERATION;
 
 import java.util.Map;
 

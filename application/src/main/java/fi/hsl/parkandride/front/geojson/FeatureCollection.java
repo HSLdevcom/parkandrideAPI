@@ -1,7 +1,6 @@
 package fi.hsl.parkandride.front.geojson;
 
 import java.util.List;
-import java.util.Objects;
 
 import javax.annotation.Nullable;
 
@@ -9,7 +8,6 @@ import com.google.common.base.Function;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 
-import fi.hsl.parkandride.core.domain.Facility;
 import fi.hsl.parkandride.core.domain.FacilityInfo;
 import fi.hsl.parkandride.core.domain.Hub;
 import fi.hsl.parkandride.core.domain.SearchResults;

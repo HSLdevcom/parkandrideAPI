@@ -1,16 +1,10 @@
 package fi.hsl.parkandride.dev;
 
-import static fi.hsl.parkandride.front.UrlSchema.DEV_CONTACTS;
-import static fi.hsl.parkandride.front.UrlSchema.DEV_FACILITIES;
-import static fi.hsl.parkandride.front.UrlSchema.DEV_HUBS;
-import static fi.hsl.parkandride.front.UrlSchema.DEV_LOGIN;
-import static fi.hsl.parkandride.front.UrlSchema.DEV_OPERATORS;
-import static fi.hsl.parkandride.front.UrlSchema.DEV_USERS;
-import static java.lang.String.format;
+import static fi.hsl.parkandride.front.UrlSchema.*;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
-import static org.springframework.web.bind.annotation.RequestMethod.PUT;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
+import static org.springframework.web.bind.annotation.RequestMethod.PUT;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,7 +28,10 @@ import fi.hsl.parkandride.core.back.HubRepository;
 import fi.hsl.parkandride.core.back.OperatorRepository;
 import fi.hsl.parkandride.core.back.UserRepository;
 import fi.hsl.parkandride.core.domain.*;
-import fi.hsl.parkandride.core.service.*;
+import fi.hsl.parkandride.core.service.AuthenticationService;
+import fi.hsl.parkandride.core.service.ContactService;
+import fi.hsl.parkandride.core.service.TransactionalWrite;
+import fi.hsl.parkandride.core.service.UserService;
 
 @RestController
 @Profile({ FeatureProfile.DEV_API})

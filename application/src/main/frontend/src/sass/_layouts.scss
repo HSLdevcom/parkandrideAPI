@@ -142,6 +142,7 @@ html, body {
   @extend .col-xs-12;
   padding-right: 20px;
   padding-left: 20px;
+  word-wrap: break-word;
 }
 
 .column3 {
@@ -149,6 +150,7 @@ html, body {
   @extend .col-xs-12;
   padding-right: 20px;
   padding-left: 20px;
+  word-wrap: break-word;
 }
 
 .first-column {

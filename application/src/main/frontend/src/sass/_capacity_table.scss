@@ -85,3 +85,20 @@
 .tableText {
   white-space: pre-wrap;
 }
+
+//capacity table inputs
+.capacityInput {
+  background-color: transparent;
+}
+
+.capacityInput:active {
+  background-color: #fff;
+}
+
+.capacityInput:focus {
+  background-color: #fff;
+}
+
+tr.selected > td > .capacityInput {
+  background-color: #fff;
+}

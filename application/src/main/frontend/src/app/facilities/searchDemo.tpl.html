@@ -6,9 +6,15 @@
 	<search-demo-navi></search-demo-navi>
 </actions>
 <content>
-	<input type="number" ng-model="searchCtrl.maxDistance" min="0">
+	<div>
+		<label for="maxDistance">Max distance (m/deg): </label>
+		<input id="maxDistance" type="number" ng-model="searchCtrl.maxDistance" min="0">
+	</div>
 
-	<textarea ng-model="searchCtrl.geometry" style="width:100%" focus-on-demand="focus-on-geometry"></textarea>
+	<div style="width:100%">
+		<label for="geometry">Geometry: </label>
+		<textarea id="geometry" ng-model="searchCtrl.geometry" style="width:100%" focus-on-demand="focus-on-geometry"></textarea>
+	</div>
 
 	<search-map callback="searchCtrl.coordinateCallback" results="searchCtrl.results" search-geometry="searchCtrl.searchGeometry"></search-map>
 

@@ -43,7 +43,7 @@
             });
         };
 
-        var attachedFacilityIds = _.sortBy(_.flatten(hubs, "facilityIds"));
+        var attachedFacilityIds = _.sortBy(_.flatten(_.map(hubs, "facilityIds")));
         this.getUnattachedFacilities = function() {
             return _.filter(facilities, function(facility) {
                 return _.indexOf(attachedFacilityIds, facility.id, true) < 0;

@@ -10,6 +10,7 @@ import javax.annotation.Nullable;
 import org.geolatte.geom.Geometry;
 import org.geolatte.geom.codec.Wkt;
 import org.postgis.PGgeometry;
+import org.postgresql.util.PGobject;
 
 import com.mysema.query.sql.spatial.PGgeometryConverter;
 import com.mysema.query.sql.types.AbstractType;
@@ -32,6 +33,9 @@ public class PGGeometryType<T extends Geometry> extends AbstractType<T> {
     @Nullable
     public T getValue(ResultSet rs, int startIndex) throws SQLException {
         Object obj = rs.getObject(startIndex);
+        if (!(obj instanceof PGgeometry)) {
+            obj = new PGgeometry(((PGobject) obj).getValue());
+        }
         return obj != null ? (T) PGgeometryConverter.convert(((PGgeometry) obj).getGeometry()) : null;
     }
 

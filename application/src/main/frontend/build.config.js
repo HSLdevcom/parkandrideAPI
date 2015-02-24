@@ -64,7 +64,7 @@ module.exports = {
       'vendor/angular-ui-router/release/angular-ui-router.js',
       'vendor/angular-ui-utils/modules/route/route.js',
       'vendor/angular-ui-utils/modules/validate/validate.js',
-      'vendor/lodash/dist/lodash.js',
+      'vendor/lodash/lodash.js',
       'vendor/angular-translate/angular-translate.js',
       'vendor/angular-ui-select/dist/select.min.js',
       'vendor/angular-sanitize/angular-sanitize.min.js',

@@ -20,7 +20,7 @@ public class Spatial {
     }
 
     public static Geometry fromWkt(String wktShape) {
-        return Wkt.newDecoder(Wkt.Dialect.POSTGIS_EWKT_1).decode(wktShape);
+        return Wkt.newDecoder(Wkt.Dialect.POSTGIS_EWKT_1).decode(normalize(wktShape));
     }
 
     public static String toWkt(Geometry geometry) {
@@ -28,7 +28,14 @@ public class Spatial {
     }
 
     public static Polygon fromWktPolygon(String wktShape) {
-        return (Polygon) Wkt.newDecoder(Wkt.Dialect.POSTGIS_EWKT_1).decode(wktShape);
+        return (Polygon) Wkt.newDecoder(Wkt.Dialect.POSTGIS_EWKT_1).decode(normalize(wktShape));
     }
 
+    private static String normalize(String wkt) {
+        if (!wkt.startsWith("SRID=")) {
+            return "SRID=4326;" + wkt;
+        } else {
+            return wkt;
+        }
+    }
 }

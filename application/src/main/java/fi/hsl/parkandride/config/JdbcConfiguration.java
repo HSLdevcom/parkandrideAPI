@@ -67,8 +67,8 @@ public class JdbcConfiguration {
     @Inject DataSource dataSource;
 
     @Bean
-    public PostgresQueryFactory queryFactory() {
-        return new PostgresQueryFactory(querydslConfiguration(), connectionProvider());
+    public PostgresQueryFactory queryFactory(com.mysema.query.sql.Configuration configuration) {
+        return new PostgresQueryFactory(configuration, connectionProvider());
     }
 
     @Bean

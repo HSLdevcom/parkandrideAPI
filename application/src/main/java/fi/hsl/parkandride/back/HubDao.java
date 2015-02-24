@@ -1,21 +1,26 @@
 package fi.hsl.parkandride.back;
 
 import static com.google.common.base.MoreObjects.firstNonNull;
+import static com.mysema.query.spatial.GeometryExpressions.dwithin;
 import static fi.hsl.parkandride.core.domain.Sort.Dir.ASC;
 import static fi.hsl.parkandride.core.domain.Sort.Dir.DESC;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
+import com.google.common.collect.ImmutableMap;
 import com.mysema.query.BooleanBuilder;
 import com.mysema.query.Tuple;
 import com.mysema.query.dml.StoreClause;
 import com.mysema.query.group.GroupBy;
 import com.mysema.query.sql.SQLExpressions;
+import com.mysema.query.sql.SQLSubQuery;
 import com.mysema.query.sql.dml.SQLInsertClause;
 import com.mysema.query.sql.dml.SQLUpdateClause;
 import com.mysema.query.sql.postgres.PostgresQuery;
 import com.mysema.query.sql.postgres.PostgresQueryFactory;
+import com.mysema.query.types.ConstantImpl;
 import com.mysema.query.types.Expression;
 import com.mysema.query.types.MappingProjection;
 import com.mysema.query.types.expr.ComparableExpression;
@@ -47,7 +52,7 @@ public class HubDao implements HubRepository {
 
     private static final AddressMapping addressMapping = new AddressMapping(qHub);
 
-    private static final MappingProjection<Hub> hubMapping = new MappingProjection<Hub>(Hub.class, qHub.all(), new Expression<?>[] { facilityIdsMapping }) {
+    private static final MappingProjection<Hub> hubMapping = new MappingProjection<Hub>(Hub.class, qHub.all()) {
 
         @Override
         protected Hub map(Tuple row) {
@@ -59,7 +64,6 @@ public class HubDao implements HubRepository {
             hub.id = id;
             hub.location = row.get(qHub.location);
             hub.name = nameMapping.map(row);
-            hub.facilityIds = row.get(facilityIdsMapping);
             hub.address = addressMapping.map(row);
             return hub;
         }
@@ -110,21 +114,60 @@ public class HubDao implements HubRepository {
     @Override
     @TransactionalRead
     public Hub getHub(long hubId) {
-        List<Hub> results = findAll(new BooleanBuilder(qHub.id.eq(hubId)), null);
-        if (results.isEmpty()) {
+        Hub hub = queryFactory.from(qHub).where(qHub.id.eq(hubId)).singleResult(hubMapping);
+        if (hub == null) {
             throw new HubNotFoundException(hubId);
         }
-        return results.get(0);
+        fetchFacilityIds(ImmutableMap.of(hubId, hub));
+        return hub;
     }
 
     @Override
     @TransactionalRead
     public SearchResults<Hub> findHubs(HubSearch search) {
-        BooleanBuilder where = new BooleanBuilder();
+        PostgresQuery qry = queryFactory.from(qHub);
+        qry.limit(search.limit + 1);
+        qry.offset(search.offset);
+
+        buildWhere(search, qry);
+
+        orderBy(search.sort, qry);
+
+        Map<Long, Hub> hubs = qry.map(qHub.id, hubMapping);
+
+        fetchFacilityIds(hubs);
+
+        return SearchResults.of(hubs.values(), search.limit);
+    }
+
+    private void buildWhere(HubSearch search, PostgresQuery qry) {
         if (search.geometry != null) {
-            where.and(qHub.location.intersects(search.geometry));
+            if (search.maxDistance != null && search.maxDistance > 0) {
+                qry.where(dwithin(qHub.location, ConstantImpl.create(search.geometry), search.maxDistance));
+            } else {
+                qry.where(qHub.location.intersects(search.geometry));
+            }
         }
-        return SearchResults.of(findAll(where, search.sort));
+        if (search.ids != null && !search.ids.isEmpty()) {
+            qry.where(qHub.id.in(search.ids));
+        }
+        if (search.facilityIds != null && !search.facilityIds.isEmpty()) {
+            SQLSubQuery hasFacilityId = queryFactory
+                    .subQuery(qHubFacility)
+                    .where(qHubFacility.hubId.eq(qHub.id), qHubFacility.facilityId.in(search.facilityIds));
+            qry.where(hasFacilityId.exists());
+        }
+    }
+
+    private void fetchFacilityIds(Map<Long, Hub> hubs) {
+        if (!hubs.isEmpty()) {
+            PostgresQuery qry = queryFactory.from(qHubFacility);
+            qry.where(qHubFacility.hubId.in(hubs.keySet()));
+            Map<Long, Set<Long>> hubFacilityIds = qry.transform(GroupBy.groupBy(qHubFacility.hubId).as(facilityIdsMapping));
+            for (Map.Entry<Long, Set<Long>> entry : hubFacilityIds.entrySet()) {
+                hubs.get(entry.getKey()).facilityIds = entry.getValue();
+            }
+        }
     }
 
     private void populate(Hub hub, StoreClause store) {
@@ -143,18 +186,6 @@ public class HubDao implements HubRepository {
             }
             insertBatch.execute();
         }
-    }
-
-    private List<Hub> findAll(BooleanBuilder where, Sort sort) {
-        PostgresQuery qry = queryFactory.from(qHub)
-                .leftJoin(qHub._hubFacilityHubIdFk, qHubFacility);
-
-        if (where.hasValue()) {
-            qry.where(where);
-        }
-        orderBy(sort, qry);
-
-        return qry.transform(GroupBy.groupBy(qHub.id).list(hubMapping));
     }
 
     private void orderBy(Sort sort, PostgresQuery qry) {

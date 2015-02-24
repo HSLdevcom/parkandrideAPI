@@ -3,7 +3,9 @@ package fi.hsl.parkandride.back;
 import static fi.hsl.parkandride.core.domain.Sort.Dir.ASC;
 import static fi.hsl.parkandride.core.domain.Sort.Dir.DESC;
 import static fi.hsl.parkandride.core.domain.Spatial.fromWkt;
+import static fi.hsl.parkandride.core.domain.Spatial.fromWktPolygon;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.setRemoveAssertJRelatedElementsFromStackTrace;
 import static org.junit.Assert.fail;
 
 import java.util.List;
@@ -23,7 +25,7 @@ import fi.hsl.parkandride.core.service.ValidationException;
 
 public class HubDaoTest extends AbstractDaoTest {
 
-    private static final MultilingualString NAME = new MultilingualString("Malmi");
+    private static final MultilingualString NAME = new MultilingualString("malmi");
 
     public static final Point LOCATION = (Point) fromWkt("POINT(25.010563 60.251022)");
     public static final ImmutableSet<Long> FACILITY_IDS = ImmutableSet.of(1l, 2l, 3l);
@@ -44,12 +46,7 @@ public class HubDaoTest extends AbstractDaoTest {
 
         // Get
         hub = hubRepository.getHub(hubId);
-        assertThat(hub.name).isEqualTo(NAME);
-        assertThat(hub.address.streetAddress).isEqualTo(STREET_ADDRESS);
-        assertThat(hub.address.city).isEqualTo(CITY);
-        assertThat(hub.address.postalCode).isEqualTo(POSTAL_CODE);
-        assertThat(hub.location).isEqualTo(LOCATION);
-        assertThat(hub.facilityIds).isEqualTo(FACILITY_IDS);
+        assertDefaultHub(hub);
 
         // Update
         final Set<Long> newFacilityIds = ImmutableSet.of(5l, 6l);
@@ -69,7 +66,7 @@ public class HubDaoTest extends AbstractDaoTest {
                 "25.015955 60.254351, " +
                 "25.0178 60.254649, " +
                 "25.016395 60.253675, " +
-                "25.015955 60.254351))")).results;
+                "25.015955 60.254351))"));
         assertThat(hubs.size()).isEqualTo(1);
         hub = hubs.get(0);
         assertThat(hub.name).isEqualTo(newName);
@@ -83,9 +80,84 @@ public class HubDaoTest extends AbstractDaoTest {
                 "25.015955 60.254351, " +
                 "25.0178 60.254649, " +
                 "25.01677 60.254548, " +
-                "25.015955 60.254351))")).results;
+                "25.015955 60.254351))"));
         assertThat(hubs).isEmpty();
 
+        hubs = findByDistance(fromWkt("POINT(25.016390 60.254160)"), 1);
+        assertThat(hubs).hasSize(1);
+        assertThat(hubs.get(0).id).isEqualTo(hubId);
+
+        hubs = findByDistance(fromWkt("POINT(23.016392 58.254157)"), 1);
+        assertThat(hubs).isEmpty();
+    }
+
+    private void assertDefaultHub(Hub hub) {
+        assertThat(hub.name).isEqualTo(NAME);
+        assertThat(hub.address.streetAddress).isEqualTo(STREET_ADDRESS);
+        assertThat(hub.address.city).isEqualTo(CITY);
+        assertThat(hub.address.postalCode).isEqualTo(POSTAL_CODE);
+        assertThat(hub.location).isEqualTo(LOCATION);
+        assertThat(hub.facilityIds).isEqualTo(FACILITY_IDS);
+    }
+
+    @Test
+    public void search_exclusion_test() {
+        final Hub hub1 = new Hub();
+        hub1.name = NAME;
+        hub1.location = LOCATION;
+        hub1.facilityIds = FACILITY_IDS;
+        hub1.address = new Address(STREET_ADDRESS, POSTAL_CODE, CITY);
+
+        final Hub hub2 = new Hub();
+        hub2.name = new MultilingualString("Nalmi");
+        hub2.location = (Point) fromWkt("POINT(24.010563 59.251022)");
+        hub2.facilityIds = ImmutableSet.of(3l, 4l, 5l);
+        hub2.address = new Address(STREET_ADDRESS, POSTAL_CODE, CITY);
+
+        final long hub1Id = hubRepository.insertHub(hub1);
+        final long hub2Id = hubRepository.insertHub(hub2);
+
+        // ids = hub1.id
+        HubSearch search = new HubSearch();
+        search.ids = ImmutableSet.of(hub1Id);
+        SearchResults<Hub> hubs = hubRepository.findHubs(search);
+        assertThat(hubs.size()).isEqualTo(1);
+        assertDefaultHub(hubs.get(0));
+
+        // ids = hub2.id
+        search.ids = ImmutableSet.of(hub2Id);
+        hubs = hubRepository.findHubs(search);
+        assertThat(hubs.size()).isEqualTo(1);
+        assertThat(hubs.get(0).id).isEqualTo(hub2Id);
+
+        // ids = [hub1.id, hub2.id]
+        search.ids = ImmutableSet.of(hub1Id, hub2Id);
+        hubs = hubRepository.findHubs(search);
+        assertThat(hubs.size()).isEqualTo(2);
+        assertThat(hubs.get(0).facilityIds).isEqualTo(hub1.facilityIds);
+        assertThat(hubs.get(1).facilityIds).isEqualTo(hub2.facilityIds);
+
+        // facilityIds in hub1.facilityIds
+        search.ids = null;
+        search.facilityIds = ImmutableSet.of(2l);
+        hubs = hubRepository.findHubs(search);
+        assertThat(hubs.size()).isEqualTo(1);
+        assertDefaultHub(hubs.get(0));
+
+        // facilityIds in both hub1.facilityIds and hub2.facilityIds, with limit
+        search.facilityIds = ImmutableSet.of(3l);
+        search.limit = 1;
+        hubs = hubRepository.findHubs(search);
+        assertThat(hubs.size()).isEqualTo(1);
+        assertThat(hubs.hasMore).isEqualTo(true);
+        assertDefaultHub(hubs.get(0));
+
+        // facilityIds in both hub1.facilityIds and hub2.facilityIds, with offset
+        search.offset = 1;
+        hubs = hubRepository.findHubs(search);
+        assertThat(hubs.size()).isEqualTo(1);
+        assertThat(hubs.hasMore).isEqualTo(false);
+        assertThat(hubs.get(0).id).isEqualTo(hub2Id);
     }
 
     @Test
@@ -110,6 +182,7 @@ public class HubDaoTest extends AbstractDaoTest {
 
 
         // name.sv desc
+        // NOTE: This doesn't work on mac/postgresql because it's fi-collation is broken
         search.sort = new Sort("name.sv", DESC);
         assertResultOrder(hubRepository.findHubs(search), h2.id, h1.id);
 
@@ -164,10 +237,17 @@ public class HubDaoTest extends AbstractDaoTest {
         assertThat(results.get(1).id).isEqualTo(id2);
     }
 
-    private SearchResults<Hub> findByGeometry(Geometry geometry) {
+    private List<Hub> findByGeometry(Geometry geometry) {
         HubSearch search = new HubSearch();
         search.geometry = geometry;
-        return hubRepository.findHubs(search);
+        return hubRepository.findHubs(search).results;
+    }
+
+    private List<Hub> findByDistance(Geometry geometry, double distance) {
+        HubSearch search = new HubSearch();
+        search.geometry = geometry;
+        search.maxDistance = distance;
+        return hubRepository.findHubs(search).results;
     }
 
 }

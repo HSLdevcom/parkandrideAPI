@@ -328,7 +328,7 @@ public class FacilityDao implements FacilityRepository {
         orderBy(search.sort, qry);
 
         Map<Long, FacilityInfo> facilities = qry.map(qFacility.id, facilityInfoMapping);
-        return SearchResults.of(new ArrayList<>(facilities.values()), search.limit);
+        return SearchResults.of(facilities.values(), search.limit);
     }
 
     @TransactionalRead

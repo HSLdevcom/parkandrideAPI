@@ -6,13 +6,11 @@ import static fi.hsl.parkandride.back.HubDao.HUB_ID_SEQ;
 import static fi.hsl.parkandride.back.OperatorDao.OPERATOR_ID_SEQ;
 import static fi.hsl.parkandride.back.UserDao.USER_ID_SEQ;
 import static java.lang.String.format;
-import static org.springframework.http.HttpStatus.OK;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;
 
 import org.springframework.context.annotation.Profile;
-import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
@@ -20,8 +18,6 @@ import com.mysema.query.sql.RelationalPath;
 import com.mysema.query.sql.postgres.PostgresQueryFactory;
 
 import fi.hsl.parkandride.FeatureProfile;
-import fi.hsl.parkandride.back.OperatorDao;
-import fi.hsl.parkandride.back.UserDao;
 import fi.hsl.parkandride.back.sql.*;
 import fi.hsl.parkandride.core.back.UserRepository;
 import fi.hsl.parkandride.core.domain.Login;

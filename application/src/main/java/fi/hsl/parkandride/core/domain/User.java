@@ -4,8 +4,6 @@ import javax.validation.constraints.NotNull;
 
 import org.hibernate.validator.constraints.NotBlank;
 
-import com.mangofactory.swagger.readers.operation.HandlerMethodResolver;
-
 public class User implements OperatorEntity {
 
     public Long id;

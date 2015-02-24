@@ -1,7 +1,5 @@
 package fi.hsl.parkandride.core.domain;
 
-import java.util.Set;
-
 public class OperatorSearch {
 
     public int limit = 100;

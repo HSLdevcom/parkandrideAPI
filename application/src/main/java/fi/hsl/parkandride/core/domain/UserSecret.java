@@ -2,7 +2,6 @@ package fi.hsl.parkandride.core.domain;
 
 import javax.validation.Valid;
 
-import org.hibernate.validator.constraints.NotBlank;
 import org.joda.time.DateTime;
 
 public class UserSecret {

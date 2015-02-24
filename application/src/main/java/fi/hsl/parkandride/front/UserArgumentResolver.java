@@ -13,7 +13,6 @@ import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
 
 import com.google.common.base.Strings;
-import com.google.common.net.HttpHeaders;
 
 import fi.hsl.parkandride.core.domain.User;
 import fi.hsl.parkandride.core.service.AuthenticationRequiredException;

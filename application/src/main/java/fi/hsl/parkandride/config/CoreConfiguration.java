@@ -14,8 +14,16 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import com.mysema.query.sql.postgres.PostgresQueryFactory;
 
-import fi.hsl.parkandride.back.*;
-import fi.hsl.parkandride.core.back.*;
+import fi.hsl.parkandride.back.ContactDao;
+import fi.hsl.parkandride.back.FacilityDao;
+import fi.hsl.parkandride.back.HubDao;
+import fi.hsl.parkandride.back.OperatorDao;
+import fi.hsl.parkandride.back.UserDao;
+import fi.hsl.parkandride.core.back.ContactRepository;
+import fi.hsl.parkandride.core.back.FacilityRepository;
+import fi.hsl.parkandride.core.back.HubRepository;
+import fi.hsl.parkandride.core.back.OperatorRepository;
+import fi.hsl.parkandride.core.back.UserRepository;
 import fi.hsl.parkandride.core.service.*;
 
 @Configuration

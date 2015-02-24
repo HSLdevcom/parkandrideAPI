@@ -5,12 +5,10 @@ import static com.mysema.query.spatial.GeometryExpressions.dwithin;
 import static fi.hsl.parkandride.core.domain.Sort.Dir.ASC;
 import static fi.hsl.parkandride.core.domain.Sort.Dir.DESC;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import com.google.common.collect.ImmutableMap;
-import com.mysema.query.BooleanBuilder;
 import com.mysema.query.Tuple;
 import com.mysema.query.dml.StoreClause;
 import com.mysema.query.group.GroupBy;

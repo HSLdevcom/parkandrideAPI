@@ -1,7 +1,6 @@
 package fi.hsl.parkandride.core.domain;
 
 import static java.util.Comparator.nullsFirst;
-import static java.util.Comparator.nullsLast;
 
 import java.util.Collection;
 import java.util.Comparator;

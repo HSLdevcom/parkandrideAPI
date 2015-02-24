@@ -24,7 +24,6 @@ import com.google.common.collect.Sets;
 import com.mysema.query.ResultTransformer;
 import com.mysema.query.Tuple;
 import com.mysema.query.dml.StoreClause;
-import com.mysema.query.spatial.GeometryExpressions;
 import com.mysema.query.sql.SQLExpressions;
 import com.mysema.query.sql.dml.SQLInsertClause;
 import com.mysema.query.sql.dml.SQLUpdateClause;

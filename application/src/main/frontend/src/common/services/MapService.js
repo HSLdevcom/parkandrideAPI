@@ -6,6 +6,23 @@
         dot: 4
     };
 
+    var geoJsonOptions = {
+        dataProjection: 'EPSG:4326',
+        featureProjection: 'EPSG:3857'
+    };
+    var geoJsonFormat = new ol.format.GeoJSON();
+    var GeoJSON = {
+        readGeometry: function(geojson) {
+            return geoJsonFormat.readGeometry(geojson, geoJsonOptions);
+        },
+        writeGeometry: function(geometry) {
+            return geoJsonFormat.writeGeometryObject(geometry, geoJsonOptions);
+        },
+        readFeatures: function(geojson) {
+            return geoJsonFormat.readFeatures(geojson, geoJsonOptions);
+        }
+    };
+
     m.value('MapService', {
             facilityStyle: new ol.style.Style({
                 fill: new ol.style.Fill({
@@ -115,9 +132,7 @@
                 })
             }),
 
-            mapCRS: 'EPSG:3857',
-
-            targetCRS: 'EPSG:4326',
+            GeoJSON: GeoJSON,
 
             createMap: function(ngElement, options) {
                 var layers = [];

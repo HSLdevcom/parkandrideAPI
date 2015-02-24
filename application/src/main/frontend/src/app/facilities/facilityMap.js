@@ -80,8 +80,7 @@
             link: function(scope, element, attrs, ctrl) {
                 var facility = scope.facility;
                 var editable = scope.editMode == 'location' || scope.editMode == 'ports';
-                var mapCRS = MapService.mapCRS;
-                var targetCRS = MapService.targetCRS;
+                var GeoJSON = MapService.GeoJSON;
 
                 var locationSource = new ol.source.Vector();
                 var locationLayer = new ol.layer.Vector({
@@ -103,7 +102,7 @@
                 var view = map.getView();
 
                 var setLocation = function(location) {
-                    var polygon = new ol.format.GeoJSON().readGeometry(location).transform(targetCRS, mapCRS);
+                    var polygon = GeoJSON.readGeometry(location);
                     var feature = new ol.Feature(polygon);
                     locationSource.clear();
                     locationSource.addFeature(feature);
@@ -113,7 +112,7 @@
                     var feature = portsSource.getFeatureById(port._id);
                     if (feature == null) {
                         // New port
-                        var geometry = new ol.format.GeoJSON().readGeometry(port.location).transform(targetCRS, mapCRS);
+                        var geometry = GeoJSON.readGeometry(port.location);
                         feature = new ol.Feature(geometry);
                         feature.setId(port._id);
                         portsSource.addFeature(feature);
@@ -195,8 +194,7 @@
                         map.addControl(cancelControl);
                     });
                     drawLocation.on("drawend", function(drawEvent) {
-                        var polygon = drawEvent.feature.getGeometry().clone().transform(mapCRS, targetCRS);
-                        facility.location = new ol.format.GeoJSON().writeGeometry(polygon);
+                        facility.location = GeoJSON.writeGeometry(drawEvent.feature.getGeometry());
                         setLocation(facility.location);
 
                         locationLayer.setOpacity(1);
@@ -223,8 +221,7 @@
                             if (!port) {
                                 // Create new port
                                 mode = "create";
-                                var point = new ol.geom.Point(event.coordinate).transform(mapCRS, targetCRS);
-                                port = FacilityResource.newPort(new ol.format.GeoJSON().writeGeometry(point));
+                                port = FacilityResource.newPort(GeoJSON.writeGeometry(new ol.geom.Point(event.coordinate)));
                             }
                             openPort(port, mode).then(function (port) {
                                 if (port._id) {

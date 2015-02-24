@@ -14,7 +14,7 @@
     "angular-translate-loader-static-files": "2.4.2",
     "font-awesome": "4.2.0",
     "lodash": "3.3.0",
-    "openlayers3": "~3.0.0",
+    "openlayers3": "https://github.com/openlayers/ol3/releases/download/v3.2.1/v3.2.1.zip",
     "sweetalert2": "0.1.8"
   },
   "dependencies": {}

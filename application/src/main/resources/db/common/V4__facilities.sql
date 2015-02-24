@@ -3,7 +3,7 @@ create table facility (
   name_fi varchar(255) not null,
   name_sv varchar(255) not null,
   name_en varchar(255) not null,
-  location geometry not null,
+-- location: H2/geometry or POSTGIS/geography
   operator_id bigint not null,
   status varchar(64) not null,
   pricing_method varchar(64) not null,
@@ -84,7 +84,7 @@ create table port (
   exit boolean not null,
   pedestrian boolean not null,
   bicycle boolean not null,
-  location geometry not null,
+-- location: H2/geometry or POSTGIS/geography
 
   street_address_fi varchar(255),
   street_address_sv varchar(255),

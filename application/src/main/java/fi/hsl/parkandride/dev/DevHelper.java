@@ -74,7 +74,7 @@ public class DevHelper {
     }
 
     @TransactionalWrite
-    public User createUser(NewUser newUser) {
+    public User createOrUpdateUser(NewUser newUser) {
         UserSecret userSecret;
         try {
             userSecret = userRepository.getUser(newUser.username);

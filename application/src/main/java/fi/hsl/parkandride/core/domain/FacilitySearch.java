@@ -10,6 +10,8 @@ public class FacilitySearch {
 
     public Set<FacilityStatus> statuses;
 
+    public Double maxDistance;
+
     public Geometry geometry;
 
     public Set<Long> getIds() {
@@ -34,5 +36,13 @@ public class FacilitySearch {
 
     public void setGeometry(Geometry geometry) {
         this.geometry = geometry;
+    }
+
+    public Double getMaxDistance() {
+        return maxDistance;
+    }
+
+    public void setMaxDistance(Double maxDistance) {
+        this.maxDistance = maxDistance;
     }
 }

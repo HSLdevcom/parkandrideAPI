@@ -23,8 +23,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.sun.org.apache.xalan.internal.xsltc.runtime.Operators;
-
 import fi.hsl.parkandride.FeatureProfile;
 import fi.hsl.parkandride.back.ContactDao;
 import fi.hsl.parkandride.back.FacilityDao;
@@ -62,7 +60,7 @@ public class DevController {
 
     @RequestMapping(method = POST, value = DEV_LOGIN)
     public ResponseEntity<Login> login(@RequestBody NewUser newUser) {
-        User user = devHelper.createUser(newUser);
+        User user = devHelper.createOrUpdateUser(newUser);
         Login login = devHelper.login(user.username);
         return new ResponseEntity<>(login, OK);
     }
@@ -107,7 +105,7 @@ public class DevController {
     public ResponseEntity<List<User>> pushUsers(@RequestBody List<NewUser> newUsers) {
         List<User> users = new ArrayList<>(newUsers.size());
         for (NewUser newUser : newUsers) {
-            users.add(devHelper.createUser(newUser));
+            users.add(devHelper.createOrUpdateUser(newUser));
         }
         return new ResponseEntity<>(users, OK);
     }

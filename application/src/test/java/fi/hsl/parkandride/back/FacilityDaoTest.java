@@ -287,6 +287,7 @@ public class FacilityDaoTest extends AbstractDaoTest {
 
         // name.sv desc
         search.sort = new Sort("name.sv", DESC);
+        // NOTE: This doesn't work on mac/postgresql because it's fi-collation is broken
         assertResultOrder(facilityDao.findFacilities(search), f2.id, f1.id);
 
         // name.en asc

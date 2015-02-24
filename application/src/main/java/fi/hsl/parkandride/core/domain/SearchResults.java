@@ -1,13 +1,23 @@
 package fi.hsl.parkandride.core.domain;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import com.google.common.collect.ImmutableList;
 
 public class SearchResults<T> {
 
+    public static <T> SearchResults<T> of(final Collection<T> results) {
+        return of(new ArrayList<T>(results));
+    }
+
     public static <T> SearchResults<T> of(final List<T> results) {
         return new SearchResults<T>(results, false);
+    }
+
+    public static <T> SearchResults<T> of(final Collection<T> results, final int limit) {
+        return of(new ArrayList<T>(results), limit);
     }
 
     public static <T> SearchResults<T> of(final List<T> results, final int limit) {

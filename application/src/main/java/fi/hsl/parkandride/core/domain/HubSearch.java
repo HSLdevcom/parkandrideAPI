@@ -10,6 +10,10 @@ public class HubSearch {
 
     public Geometry geometry;
 
+    public Double maxDistance;
+
+    public Set<Long> facilityIds;
+
     public Sort sort;
 
     public int limit = 100;
@@ -55,4 +59,21 @@ public class HubSearch {
     public void setOffset(long offset) {
         this.offset = offset;
     }
+
+    public Set<Long> getFacilityIds() {
+        return facilityIds;
+    }
+
+    public void setFacilityIds(Set<Long> facilityIds) {
+        this.facilityIds = facilityIds;
+    }
+
+    public Double getMaxDistance() {
+        return maxDistance;
+    }
+
+    public void setMaxDistance(Double maxDistance) {
+        this.maxDistance = maxDistance;
+    }
+
 }

@@ -86,10 +86,14 @@
   text-decoration: underline;
 }
 
+div.input-group > div.dropdown > .btn {
+  max-width: 326px;
+}
+
 div.dropdown > .btn {
   padding: 6px 5px;
   background-color: transparent;
-  overflow: hidden;
+  max-width: 360px;
 }
 
 tr.selected > td > div.dropdown > .btn {
@@ -118,10 +122,6 @@ div.ui-select-bootstrap > .btn-default:focus {
 
 .btn-default-focus {
   outline: none;
-}
-
-span {
-  white-space: normal;
 }
 
 span.input-group-btn > .btn-default {
@@ -236,37 +236,28 @@ textarea {
   overflow: hidden;
 }
 
-//table
 .hubRow {
   background-color: #f9f9f9;
   font-size: 20px;
 }
 
+//Tables
+th {
+  max-width: 360px;
+  word-wrap: break-word;
+}
+
 .table > tbody > tr > td {
   vertical-align: middle;
+  max-width: 200px;
+  word-wrap: break-word;
 }
 
 .centeredCell {
   text-align: center;
 }
 
-//capacity table inputs
-.capacityInput {
-  background-color: transparent;
-}
-
-.capacityInput:active {
-   background-color: #fff;
- }
-
-.capacityInput:focus {
-  background-color: #fff;
-}
-
-tr.selected > td > .capacityInput {
-  background-color: #fff;
-}
-
+//Number input spinner removal
 input[type=number]::-webkit-inner-spin-button,
 input[type=number]::-webkit-outer-spin-button {
   -webkit-appearance: none;

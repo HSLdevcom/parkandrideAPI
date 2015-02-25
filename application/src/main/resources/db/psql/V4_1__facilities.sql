@@ -4,4 +4,6 @@ alter table port add column location geography(POINT, 4326) not null;
 
 create index facility_location_gist ON facility USING GIST ( location );
 
-create index concurrently facility_utilization_idx on facility_utilization (ts, facility_id, capacity_type, usage, spaces_available);
+-- FIXME: This should be "concurrently" but that fails with Flyway as it cannot be created within transaction
+-- https://github.com/flyway/flyway/issues/655
+create index facility_utilization_idx on facility_utilization (ts, facility_id, capacity_type, usage, spaces_available);

@@ -52,7 +52,7 @@
                 violations: [],
                 onViolationsUpdated: onViolationsUpdated
             };
-            $log.debug("initialized context [", context, "]", model[context]);
+            //$log.debug("initialized context [", context, "]", model[context]);
             return model[context];
         }
 
@@ -75,7 +75,7 @@
             }
 
             angular.copy(filterDuplicates(violations), model[context].violations);
-            $log.debug("set violations [", context, "]", model[context].violations);
+            //$log.debug("set violations [", context, "]", model[context].violations);
             model[context].onViolationsUpdated();
         }
 

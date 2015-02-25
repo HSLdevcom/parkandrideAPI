@@ -416,7 +416,6 @@ describe('edit facility view', function () {
             devApi.loginAs('ADMIN');
 
             editPage.get(facility.id);
-            browser.debugger();
             expect(editPage.getUnavailableCapacitiesCount()).toBe(0);
         });
 
@@ -434,7 +433,6 @@ describe('edit facility view', function () {
             devApi.loginAs('ADMIN');
 
             editPage.get(facility.id);
-            browser.debugger();
             editPage.getUnavailableCapacities().then(function(ucs) {
                 expect(ucs.length).toBe(3);
                 expect(ucs[0].capacityType).toBe("Henkilöauto");

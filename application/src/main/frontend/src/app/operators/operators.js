@@ -97,11 +97,13 @@
             restrict: 'E',
             scope: {
                 object: '=',
-                mandatory: '='
+                mandatory: '=',
+                placeholder: '@'
             },
             templateUrl: 'operators/operatorSelect.tpl.html',
             transclude: false,
             link: function(scope) {
+                scope.placeholder = scope.placeholder || 'operators.select';
                 scope.allOperators = [];
                 OperatorResource.listOperators().then(function(response) {
                     scope.allOperators = response.results;

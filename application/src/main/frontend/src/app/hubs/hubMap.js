@@ -7,7 +7,6 @@
     m.factory("HubMapCommon", function(MapService) {
         return {
             setPoint: function (point, layer) {
-                point.transform(MapService.targetCRS, MapService.mapCRS);
                 var feature = new ol.Feature(point);
                 var source = layer.getSource();
                 source.clear();
@@ -28,8 +27,8 @@
             template: '<div class="map hub-map edit-hub-map"></div>',
             transclude: false,
             link: function(scope, element, attrs, ctrl) {
-                var mapCRS = MapService.mapCRS;
-                var targetCRS = MapService.targetCRS;
+                var GeoJSON = MapService.GeoJSON;
+
 
                 var facilitiesLayer = new ol.layer.Vector({
                     source: new ol.source.Vector(),
@@ -49,7 +48,7 @@
                 var view = map.getView();
 
                 if (scope.hub.location) {
-                    var point = new ol.format.GeoJSON().readGeometry(scope.hub.location);
+                    var point = GeoJSON.readGeometry(scope.hub.location);
                     HubMapCommon.setPoint(point, hubLayer);
                     view.setCenter(point.getCoordinates());
                     view.setZoom(14);
@@ -58,8 +57,8 @@
                 }
 
                 map.on('dblclick', function(event) {
-                    var point = new ol.geom.Point(event.coordinate).transform(mapCRS, targetCRS);
-                    scope.hub.location = new ol.format.GeoJSON().writeGeometry(point);
+                    var point = new ol.geom.Point(event.coordinate);
+                    scope.hub.location = GeoJSON.writeGeometry(point);
                     ctrl.$setValidity("required", true);
                     ctrl.$setTouched();
                     scope.$apply();
@@ -107,11 +106,10 @@
                 }
 
                 FacilityResource.findFacilitiesAsFeatureCollection().then(function(geojson) {
-                    var features = new ol.format.GeoJSON().readFeatures(geojson);
+                    var features = GeoJSON.readFeatures(geojson);
                     var extent = hubLayer.getSource().getExtent();
 
                     _.forEach(features, function (feature) {
-                        feature.getGeometry().transform(targetCRS, mapCRS);
                         facilitiesLayer.getSource().addFeature(feature);
                         if (_.contains(scope.hub.facilityIds, feature.getId())) {
                             selectedFeatures.push(feature);
@@ -141,8 +139,7 @@
             template: '<div class="map hub-map"></div>',
             transclude: false,
             link: function(scope, element, attrs, ctrl) {
-                var mapCRS = MapService.mapCRS;
-                var targetCRS = MapService.targetCRS;
+                var GeoJSON = MapService.GeoJSON;
 
                 var facilitiesLayer = new ol.layer.Vector({
                     source: new ol.source.Vector(),
@@ -158,16 +155,15 @@
                 var map = MapService.createMap(element, { layers: [ facilitiesLayer, hubLayer ], readOnly: true, noTiles: attrs.noTiles === "true"});
                 var view = map.getView();
 
-                var point = new ol.format.GeoJSON().readGeometry(scope.hub.location);
+                var point = GeoJSON.readGeometry(scope.hub.location);
                 HubMapCommon.setPoint(point, hubLayer);
                 view.setCenter(point.getCoordinates());
                 view.setZoom(14);
 
                 if (!_.isEmpty(scope.hub.facilityIds)) {
                     FacilityResource.findFacilitiesAsFeatureCollection({ ids: scope.hub.facilityIds }).then(function(geojson) {
-                        var features = new ol.format.GeoJSON().readFeatures(geojson);
+                        var features = GeoJSON.readFeatures(geojson);
                         _.forEach(features, function (feature) {
-                            feature.getGeometry().transform(targetCRS, mapCRS);
                             facilitiesLayer.getSource().addFeature(feature);
                         });
                         var extent = ol.extent.extend(hubLayer.getSource().getExtent(), facilitiesLayer.getSource().getExtent());

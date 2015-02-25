@@ -137,6 +137,10 @@
         "label": "Nimi (en)"
       }
     },
+    "operator": {
+      "label": "Näkyvyys operaattoreille",
+      "placeholder": "Kaikki"
+    },
     "phone": {
       "label": "Puhelinnumero"
     },

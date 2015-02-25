@@ -92,7 +92,7 @@
                     return false;
                 });
 
-                scope.watch("results", function(newVal, oldVal, results) { // WTF?!?
+                scope.$watch("results", function(results) {
                     facilitiesLayer.getSource().clear();
                     if (results) {
                         var features = new ol.format.GeoJSON().readFeatures(results);
@@ -103,7 +103,7 @@
                         });
                     }
                 });
-                scope.watch("searchGeometry", function(newVal, oldVal, wkt) {
+                scope.$watch("searchGeometry", function(wkt) {
                     searchLayer.getSource().clear();
                     if (wkt && _.endsWith(wkt, ')')) {
                         var geometry = new ol.format.WKT().readGeometry(wkt);

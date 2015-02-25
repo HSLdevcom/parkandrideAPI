@@ -219,6 +219,9 @@
       "removePricingRows": "Poista valitut",
       "clonePricingRows": "Kloonaa valitut"
     },
+    "hubs": {
+      "heading": "Kuuluu alueisiin"
+    },
     "name": {
       "title": "Nimitiedot",
       "placeholder": "Pysäköintipaikka",

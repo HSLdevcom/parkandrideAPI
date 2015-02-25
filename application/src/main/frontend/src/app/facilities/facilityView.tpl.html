@@ -46,6 +46,12 @@
 
 
 <h3 class="h3-view">{{"facilities.location.label" | translate}}</h3>
+<h4 ng-show="viewCtrl.hubs.length > 0">{{"facilities.hubs.heading" | translate}}</h4>
+<div class="row smallMarginBottom" ng-show="viewCtrl.hubs.length > 0">
+	<span ng-repeat="hub in viewCtrl.hubs">
+		<a ui-sref="hub-view({id: hub.id})">{{hub.name.fi}}</a><span ng-if="!$last">, </span>
+	</span>
+</div>
 <div class="row">
 	<div class="map-container">
 		<facility-map ng-model="viewCtrl.facility" no-tiles="{{features['mapNoTiles']}}"></facility-map>
@@ -223,5 +229,6 @@
 	<p class="wdService">{{viewCtrl.getServiceNames() | joinBy: ", "}}</p>
 </div>
 </div>
+
 </content>
 </main-layout>

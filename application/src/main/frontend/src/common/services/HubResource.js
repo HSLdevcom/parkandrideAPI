@@ -10,8 +10,10 @@
             };
         };
 
-        api.listHubs = function() {
-            return $http.get('api/v1/hubs').then(function(response) {
+        api.listHubs = function(search) {
+            return $http.get('api/v1/hubs', {
+                params: search
+            }).then(function(response) {
                 return response.data.results;
             });
         };

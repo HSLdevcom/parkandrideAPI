@@ -7,6 +7,7 @@
         'parkandride.OperatorResource',
         'parkandride.ContactResource',
         'parkandride.FacilityResource',
+        'parkandride.HubResource',
         'parkandride.pricing',
         'parkandride.layout'
     ]);
@@ -35,6 +36,9 @@
                         },
                         operator: function(OperatorResource, facility) {
                             return OperatorResource.getOperator(facility.operatorId);
+                        },
+                        hubs: function($stateParams, HubResource) {
+                            return HubResource.listHubs({facilityIds: [$stateParams.id]});
                         }
                     }
                 }
@@ -43,13 +47,14 @@
         });
     });
 
-    m.controller('FacilityViewCtrl', function(PricingService, schema, facility, contacts, operator) {
+    m.controller('FacilityViewCtrl', function(PricingService, schema, facility, contacts, operator, hubs) {
         var self = this;
         self.services = schema.services.values;
         self.dayTypes = schema.dayTypes.values;
         self.facility = facility;
         self.contacts = contacts;
         self.operator = operator;
+        self.hubs = hubs;
         self.isFree = function(pricing) {
             return PricingService.isFree(pricing);
         };

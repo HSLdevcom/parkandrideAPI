@@ -197,6 +197,7 @@
 
         this.logout = function() {
             Session.remove();
+            $location.path("/hubs");
         };
 
         this.isUserLoggedIn = function() {

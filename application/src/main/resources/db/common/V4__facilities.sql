@@ -3,7 +3,7 @@ create table facility (
   name_fi varchar(255) not null,
   name_sv varchar(255) not null,
   name_en varchar(255) not null,
--- location: H2/geometry or POSTGIS/geography
+-- location -> V4_1__facilities.sql
   operator_id bigint not null,
   status varchar(64) not null,
   pricing_method varchar(64) not null,
@@ -84,7 +84,7 @@ create table port (
   exit boolean not null,
   pedestrian boolean not null,
   bicycle boolean not null,
--- location: H2/geometry or POSTGIS/geography
+-- location -> V4_1__facilities.sql
 
   street_address_fi varchar(255),
   street_address_sv varchar(255),
@@ -123,11 +123,9 @@ create table facility_service (
 create table facility_utilization (
   facility_id bigint not null,
   capacity_type varchar(64) not null,
-  ts timestamp,
-  spaces_available int,
-  status varchar(64),
-
-  primary key (facility_id, capacity_type, ts),
+  usage varchar(64) not null,
+  ts timestamp not null,
+  spaces_available int not null,
 
   constraint facility_utilization_facility_id_fk foreign key (facility_id)
     references facility (id),
@@ -135,9 +133,11 @@ create table facility_utilization (
   constraint facility_utilization_capacity_type_fk foreign key (capacity_type)
     references capacity_type (name),
 
-  constraint facility_utilization_status_fk foreign key (status)
-    references utilization_status (name)
+  constraint facility_utilization_usage_fk foreign key (usage)
+  references usage (name)
 );
+-- create index on facility_utilization -> V4_1__facilities.sql
+
 
 create table facility_payment_method (
   facility_id bigint not null,

@@ -132,6 +132,10 @@
                 })
             }),
 
+            mapCRS: geoJsonOptions.featureProjection,
+
+            targetCRS: geoJsonOptions.dataProjection,
+
             GeoJSON: GeoJSON,
 
             createMap: function(ngElement, options) {

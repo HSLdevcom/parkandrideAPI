@@ -3,7 +3,7 @@ create table hub (
   name_fi varchar(255) not null,
   name_sv varchar(255) not null,
   name_en varchar(255) not null,
--- location: H2/geometry or POSTGIS/geography
+-- location -> V5_1__hubs.sql
 
   street_address_fi varchar(255),
   street_address_sv varchar(255),

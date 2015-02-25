@@ -285,8 +285,18 @@ public class FacilityDao implements FacilityRepository {
 
     @TransactionalRead
     @Override
-    public Facility getFacility(long id) {
-        return getFacility(id, false);
+    public Facility getFacility(long facilityId) {
+        return getFacility(facilityId, false);
+    }
+
+    @TransactionalRead
+    @Override
+    public FacilityInfo getFacilityInfo(long facilityId) {
+        FacilityInfo facility = fromFacility().where(qFacility.id.eq(facilityId)).singleResult(facilityInfoMapping);
+        if (facility == null) {
+            throw new FacilityNotFoundException(facilityId);
+        }
+        return facility;
     }
 
     @TransactionalWrite

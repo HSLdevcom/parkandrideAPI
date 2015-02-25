@@ -82,6 +82,33 @@ public class UtilizationITest extends AbstractIntegrationTest {
     }
 
     @Test
+    public void cannot_update_other_operators_facility() {
+        Operator o = new Operator();
+        o.id = 2l;
+        o.name = new MultilingualString("another operator");
+
+        Facility f2 = new Facility();
+        f2.id = 2L;
+        f2.status = IN_OPERATION;
+        f2.pricingMethod = PARK_AND_RIDE_247_FREE;
+        f2.name = new MultilingualString("another facility");
+        f2.operatorId = 2l;
+        f2.location = Spatial.fromWktPolygon("POLYGON((25.010822 60.25054, 25.010822 60.250023, 25.012479 60.250337, 25.011449 60.250885, 25.010822 60.25054))");
+        f2.contacts = new FacilityContacts(1l, 1l);
+
+        operatorDao.insertOperator(o, o.id);
+        facilityDao.insertFacility(f2, f2.id);
+
+        givenWithContent(authToken)
+            .body(minValidPayload().asArray())
+        .when()
+            .put(UrlSchema.FACILITY_UTILIZATION, f2.id)
+        .then()
+            .statusCode(HttpStatus.FORBIDDEN.value())
+        ;
+    }
+
+    @Test
     public void returns_ISO8601_UTC_timestamp() {
         JSONObjectBuilder expected = minValidPayload();
         givenWithContent(authToken)

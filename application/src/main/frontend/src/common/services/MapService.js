@@ -6,22 +6,12 @@
         dot: 4
     };
 
-    var geoJsonOptions = {
+    var formatOptions = {
         dataProjection: 'EPSG:4326',
         featureProjection: 'EPSG:3857'
     };
     var geoJsonFormat = new ol.format.GeoJSON();
-    var GeoJSON = {
-        readGeometry: function(geojson) {
-            return geoJsonFormat.readGeometry(geojson, geoJsonOptions);
-        },
-        writeGeometry: function(geometry) {
-            return geoJsonFormat.writeGeometryObject(geometry, geoJsonOptions);
-        },
-        readFeatures: function(geojson) {
-            return geoJsonFormat.readFeatures(geojson, geoJsonOptions);
-        }
-    };
+    var wktFormat = new ol.format.WKT();
 
     m.value('MapService', {
             facilityStyle: new ol.style.Style({
@@ -132,7 +122,33 @@
                 })
             }),
 
-            GeoJSON: GeoJSON,
+            mapCRS: formatOptions.featureProjection,
+
+            targetCRS: formatOptions.dataProjection,
+
+            GeoJSON: {
+                readGeometry: function(geojson) {
+                    return geoJsonFormat.readGeometry(geojson, formatOptions);
+                },
+                writeGeometry: function(geometry) {
+                    return geoJsonFormat.writeGeometryObject(geometry, formatOptions);
+                },
+                readFeatures: function(geojson) {
+                    return geoJsonFormat.readFeatures(geojson, formatOptions);
+                }
+            },
+
+            WKT: {
+                readGeometry: function(wkt) {
+                    return wktFormat.readGeometry(wkt, formatOptions);
+                },
+                writeGeometry: function(wkt) {
+                    return wktFormat.writeGeometryObject(wkt, formatOptions);
+                },
+                readFeatures: function(wkt) {
+                    return wktFormat.readFeatures(wkt, formatOptions);
+                }
+            },
 
             createMap: function(ngElement, options) {
                 var layers = [];

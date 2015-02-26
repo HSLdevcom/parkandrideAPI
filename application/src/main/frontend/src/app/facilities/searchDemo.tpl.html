@@ -6,17 +6,23 @@
 	<search-demo-navi></search-demo-navi>
 </actions>
 <content>
+	<div style="margin: 0px 10px 20px 10px; font-weight: bold;">
+		Huom! Tämä on kehittäjien leikkikentäksi tarkoitettu epävirallinen demo-sivu.
+		Avaa selaimen konsoli ja seuraa mahdollisia WKT-parsinta yms. virheitä sieltä.
+	</div>
 	<div>
-		<label for="maxDistance">Max distance (m/deg): </label>
+		<label for="maxDistance">Max distance: </label> (meters in Postgresql, but degrees in H2)<br>
 		<input id="maxDistance" type="number" ng-model="searchCtrl.maxDistance" min="0">
 	</div>
 
 	<div style="width:100%">
-		<label for="geometry">Geometry: </label>
+		<label for="geometry">Geometry: </label> (WKT using WGS84/EPSG:4326 coordinates)
 		<textarea id="geometry" ng-model="searchCtrl.geometry" style="width:100%" focus-on-demand="focus-on-geometry"></textarea>
 	</div>
 
 	<search-map callback="searchCtrl.coordinateCallback" results="searchCtrl.results" search-geometry="searchCtrl.searchGeometry"></search-map>
+
+	<h3><a href="http://en.wikipedia.org/wiki/Well-known_text">WKT examples from Wikipedia</a></h3>
 
 	<table class="wikitable">
 		<caption>Geometry primitives (2D)</caption>
@@ -25,22 +31,23 @@
 			<th colspan="2">Examples</th>
 		</tr>
 		<tr>
-			<td><a title="Point (geometry)" href="/wiki/Point_(geometry)">Point</a></td>
-			<td><a class="image" href="/wiki/File:SFA_Point.svg"><img width="51" height="51" data-file-height="51" data-file-width="51" srcset="//upload.wikimedia.org/wikipedia/commons/thumb/c/c2/SFA_Point.svg/77px-SFA_Point.svg.png 1.5x, //upload.wikimedia.org/wikipedia/commons/thumb/c/c2/SFA_Point.svg/102px-SFA_Point.svg.png 2x" src="//upload.wikimedia.org/wikipedia/commons/thumb/c/c2/SFA_Point.svg/51px-SFA_Point.svg.png" alt="SFA Point.svg"></a></td>
+			<td><a title="Point (geometry)" href="//www.wikipedia.org/wiki/Point_(geometry)">Point</a></td>
+			<td><a class="image" href="//www.wikipedia.org/wiki/File:SFA_Point.svg"><img width="51" height="51" data-file-height="51" data-file-width="51"
+																	   srcset="//upload.wikimedia.org/wikipedia/commons/thumb/c/c2/SFA_Point.svg/77px-SFA_Point.svg.png 1.5x, //upload.wikimedia.org/wikipedia/commons/thumb/c/c2/SFA_Point.svg/102px-SFA_Point.svg.png 2x" src="//upload.wikimedia.org/wikipedia/commons/thumb/c/c2/SFA_Point.svg/51px-SFA_Point.svg.png" alt="SFA Point.svg"></a></td>
 			<td><code>POINT (30 10)</code></td>
 		</tr>
 		<tr>
-			<td><a title="Line segment" href="/wiki/Line_segment">LineString</a></td>
-			<td><a class="image" href="/wiki/File:SFA_LineString.svg"><img width="51" height="51" data-file-height="51" data-file-width="51" srcset="//upload.wikimedia.org/wikipedia/commons/thumb/b/b9/SFA_LineString.svg/77px-SFA_LineString.svg.png 1.5x, //upload.wikimedia.org/wikipedia/commons/thumb/b/b9/SFA_LineString.svg/102px-SFA_LineString.svg.png 2x" src="//upload.wikimedia.org/wikipedia/commons/thumb/b/b9/SFA_LineString.svg/51px-SFA_LineString.svg.png" alt="SFA LineString.svg"></a></td>
+			<td><a title="Line segment" href="//www.wikipedia.org/wiki/Line_segment">LineString</a></td>
+			<td><a class="image" href="//www.wikipedia.org/wiki/File:SFA_LineString.svg"><img width="51" height="51" data-file-height="51" data-file-width="51" srcset="//upload.wikimedia.org/wikipedia/commons/thumb/b/b9/SFA_LineString.svg/77px-SFA_LineString.svg.png 1.5x, //upload.wikimedia.org/wikipedia/commons/thumb/b/b9/SFA_LineString.svg/102px-SFA_LineString.svg.png 2x" src="//upload.wikimedia.org/wikipedia/commons/thumb/b/b9/SFA_LineString.svg/51px-SFA_LineString.svg.png" alt="SFA LineString.svg"></a></td>
 			<td><code>LINESTRING (30 10, 10 30, 40 40)</code></td>
 		</tr>
 		<tr>
-			<td rowspan="2"><a title="Polygon" href="/wiki/Polygon">Polygon</a></td>
-			<td><a class="image" href="/wiki/File:SFA_Polygon.svg"><img width="51" height="51" data-file-height="51" data-file-width="51" srcset="//upload.wikimedia.org/wikipedia/commons/thumb/3/3f/SFA_Polygon.svg/77px-SFA_Polygon.svg.png 1.5x, //upload.wikimedia.org/wikipedia/commons/thumb/3/3f/SFA_Polygon.svg/102px-SFA_Polygon.svg.png 2x" src="//upload.wikimedia.org/wikipedia/commons/thumb/3/3f/SFA_Polygon.svg/51px-SFA_Polygon.svg.png" alt="SFA Polygon.svg"></a></td>
+			<td rowspan="2"><a title="Polygon" href="//www.wikipedia.org/wiki/Polygon">Polygon</a></td>
+			<td><a class="image" href="//www.wikipedia.org/wiki/File:SFA_Polygon.svg"><img width="51" height="51" data-file-height="51" data-file-width="51" srcset="//upload.wikimedia.org/wikipedia/commons/thumb/3/3f/SFA_Polygon.svg/77px-SFA_Polygon.svg.png 1.5x, //upload.wikimedia.org/wikipedia/commons/thumb/3/3f/SFA_Polygon.svg/102px-SFA_Polygon.svg.png 2x" src="//upload.wikimedia.org/wikipedia/commons/thumb/3/3f/SFA_Polygon.svg/51px-SFA_Polygon.svg.png" alt="SFA Polygon.svg"></a></td>
 			<td><code>POLYGON ((30 10, 40 40, 20 40, 10 20, 30 10))</code></td>
 		</tr>
 		<tr>
-			<td><a class="image" href="/wiki/File:SFA_Polygon_with_hole.svg"><img width="51" height="51" data-file-height="51" data-file-width="51" srcset="//upload.wikimedia.org/wikipedia/commons/thumb/5/55/SFA_Polygon_with_hole.svg/77px-SFA_Polygon_with_hole.svg.png 1.5x, //upload.wikimedia.org/wikipedia/commons/thumb/5/55/SFA_Polygon_with_hole.svg/102px-SFA_Polygon_with_hole.svg.png 2x" src="//upload.wikimedia.org/wikipedia/commons/thumb/5/55/SFA_Polygon_with_hole.svg/51px-SFA_Polygon_with_hole.svg.png" alt="SFA Polygon with hole.svg"></a></td>
+			<td><a class="image" href="//www.wikipedia.org/wiki/File:SFA_Polygon_with_hole.svg"><img width="51" height="51" data-file-height="51" data-file-width="51" srcset="//upload.wikimedia.org/wikipedia/commons/thumb/5/55/SFA_Polygon_with_hole.svg/77px-SFA_Polygon_with_hole.svg.png 1.5x, //upload.wikimedia.org/wikipedia/commons/thumb/5/55/SFA_Polygon_with_hole.svg/102px-SFA_Polygon_with_hole.svg.png 2x" src="//upload.wikimedia.org/wikipedia/commons/thumb/5/55/SFA_Polygon_with_hole.svg/51px-SFA_Polygon_with_hole.svg.png" alt="SFA Polygon with hole.svg"></a></td>
 			<td><code>POLYGON ((35 10, 45 45, 15 40, 10 20, 35 10),<br>
 				(20 30, 35 35, 30 20, 20 30))</code></td>
 		</tr>
@@ -53,27 +60,27 @@
 			<th colspan="2">Examples</th>
 		</tr>
 		<tr>
-			<td rowspan="2"><a title="Point (geometry)" href="/wiki/Point_(geometry)">MultiPoint</a></td>
-			<td rowspan="2"><a class="image" href="/wiki/File:SFA_MultiPoint.svg"><img width="51" height="51" data-file-height="51" data-file-width="51" srcset="//upload.wikimedia.org/wikipedia/commons/thumb/d/d6/SFA_MultiPoint.svg/77px-SFA_MultiPoint.svg.png 1.5x, //upload.wikimedia.org/wikipedia/commons/thumb/d/d6/SFA_MultiPoint.svg/102px-SFA_MultiPoint.svg.png 2x" src="//upload.wikimedia.org/wikipedia/commons/thumb/d/d6/SFA_MultiPoint.svg/51px-SFA_MultiPoint.svg.png" alt="SFA MultiPoint.svg"></a></td>
+			<td rowspan="2"><a title="Point (geometry)" href="//www.wikipedia.org/wiki/Point_(geometry)">MultiPoint</a></td>
+			<td rowspan="2"><a class="image" href="//www.wikipedia.org/wiki/File:SFA_MultiPoint.svg"><img width="51" height="51" data-file-height="51" data-file-width="51" srcset="//upload.wikimedia.org/wikipedia/commons/thumb/d/d6/SFA_MultiPoint.svg/77px-SFA_MultiPoint.svg.png 1.5x, //upload.wikimedia.org/wikipedia/commons/thumb/d/d6/SFA_MultiPoint.svg/102px-SFA_MultiPoint.svg.png 2x" src="//upload.wikimedia.org/wikipedia/commons/thumb/d/d6/SFA_MultiPoint.svg/51px-SFA_MultiPoint.svg.png" alt="SFA MultiPoint.svg"></a></td>
 			<td><code>MULTIPOINT ((10 40), (40 30), (20 20), (30 10))</code></td>
 		</tr>
 		<tr>
 			<td><code>MULTIPOINT (10 40, 40 30, 20 20, 30 10)</code></td>
 		</tr>
 		<tr>
-			<td><a title="Line segment" href="/wiki/Line_segment">MultiLineString</a></td>
-			<td><a class="image" href="/wiki/File:SFA_MultiLineString.svg"><img width="51" height="51" data-file-height="51" data-file-width="51" srcset="//upload.wikimedia.org/wikipedia/commons/thumb/8/86/SFA_MultiLineString.svg/77px-SFA_MultiLineString.svg.png 1.5x, //upload.wikimedia.org/wikipedia/commons/thumb/8/86/SFA_MultiLineString.svg/102px-SFA_MultiLineString.svg.png 2x" src="//upload.wikimedia.org/wikipedia/commons/thumb/8/86/SFA_MultiLineString.svg/51px-SFA_MultiLineString.svg.png" alt="SFA MultiLineString.svg"></a></td>
+			<td><a title="Line segment" href="//www.wikipedia.org/wiki/Line_segment">MultiLineString</a></td>
+			<td><a class="image" href="//www.wikipedia.org/wiki/File:SFA_MultiLineString.svg"><img width="51" height="51" data-file-height="51" data-file-width="51" srcset="//upload.wikimedia.org/wikipedia/commons/thumb/8/86/SFA_MultiLineString.svg/77px-SFA_MultiLineString.svg.png 1.5x, //upload.wikimedia.org/wikipedia/commons/thumb/8/86/SFA_MultiLineString.svg/102px-SFA_MultiLineString.svg.png 2x" src="//upload.wikimedia.org/wikipedia/commons/thumb/8/86/SFA_MultiLineString.svg/51px-SFA_MultiLineString.svg.png" alt="SFA MultiLineString.svg"></a></td>
 			<td><code>MULTILINESTRING ((10 10, 20 20, 10 40),<br>
 				(40 40, 30 30, 40 20, 30 10))</code></td>
 		</tr>
 		<tr>
-			<td rowspan="2"><a title="Polygon" href="/wiki/Polygon">MultiPolygon</a></td>
-			<td><a class="image" href="/wiki/File:SFA_MultiPolygon.svg"><img width="51" height="51" data-file-height="51" data-file-width="51" srcset="//upload.wikimedia.org/wikipedia/commons/thumb/d/dc/SFA_MultiPolygon.svg/77px-SFA_MultiPolygon.svg.png 1.5x, //upload.wikimedia.org/wikipedia/commons/thumb/d/dc/SFA_MultiPolygon.svg/102px-SFA_MultiPolygon.svg.png 2x" src="//upload.wikimedia.org/wikipedia/commons/thumb/d/dc/SFA_MultiPolygon.svg/51px-SFA_MultiPolygon.svg.png" alt="SFA MultiPolygon.svg"></a></td>
+			<td rowspan="2"><a title="Polygon" href="//www.wikipedia.org/wiki/Polygon">MultiPolygon</a></td>
+			<td><a class="image" href="//www.wikipedia.org/wiki/File:SFA_MultiPolygon.svg"><img width="51" height="51" data-file-height="51" data-file-width="51" srcset="//upload.wikimedia.org/wikipedia/commons/thumb/d/dc/SFA_MultiPolygon.svg/77px-SFA_MultiPolygon.svg.png 1.5x, //upload.wikimedia.org/wikipedia/commons/thumb/d/dc/SFA_MultiPolygon.svg/102px-SFA_MultiPolygon.svg.png 2x" src="//upload.wikimedia.org/wikipedia/commons/thumb/d/dc/SFA_MultiPolygon.svg/51px-SFA_MultiPolygon.svg.png" alt="SFA MultiPolygon.svg"></a></td>
 			<td><code>MULTIPOLYGON (((30 20, 45 40, 10 40, 30 20)),<br>
 				((15 5, 40 10, 10 20, 5 10, 15 5)))</code></td>
 		</tr>
 		<tr>
-			<td><a class="image" href="/wiki/File:SFA_MultiPolygon_with_hole.svg"><img width="51" height="51" data-file-height="51" data-file-width="51" srcset="//upload.wikimedia.org/wikipedia/commons/thumb/3/3b/SFA_MultiPolygon_with_hole.svg/77px-SFA_MultiPolygon_with_hole.svg.png 1.5x, //upload.wikimedia.org/wikipedia/commons/thumb/3/3b/SFA_MultiPolygon_with_hole.svg/102px-SFA_MultiPolygon_with_hole.svg.png 2x" src="//upload.wikimedia.org/wikipedia/commons/thumb/3/3b/SFA_MultiPolygon_with_hole.svg/51px-SFA_MultiPolygon_with_hole.svg.png" alt="SFA MultiPolygon with hole.svg"></a></td>
+			<td><a class="image" href="//www.wikipedia.org/wiki/File:SFA_MultiPolygon_with_hole.svg"><img width="51" height="51" data-file-height="51" data-file-width="51" srcset="//upload.wikimedia.org/wikipedia/commons/thumb/3/3b/SFA_MultiPolygon_with_hole.svg/77px-SFA_MultiPolygon_with_hole.svg.png 1.5x, //upload.wikimedia.org/wikipedia/commons/thumb/3/3b/SFA_MultiPolygon_with_hole.svg/102px-SFA_MultiPolygon_with_hole.svg.png 2x" src="//upload.wikimedia.org/wikipedia/commons/thumb/3/3b/SFA_MultiPolygon_with_hole.svg/51px-SFA_MultiPolygon_with_hole.svg.png" alt="SFA MultiPolygon with hole.svg"></a></td>
 			<td><code>MULTIPOLYGON (((40 40, 20 45, 45 30, 40 40)),<br>
 				((20 35, 10 30, 10 10, 30 5, 45 20, 20 35),<br>
 				(30 20, 20 15, 20 25, 30 20)))</code></td>

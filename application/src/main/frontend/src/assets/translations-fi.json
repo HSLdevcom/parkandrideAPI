@@ -652,6 +652,7 @@
     "OperatorRequired": "anna operaattori",
     "PasswordConfirmationMismatch": "tarkista, että salasanat ovat identtiset",
     "BadPassword": "salasanan tulee sisältää 8-15 merkkiä, vähintään yksi numero (0-9), yksi pieni aakkonen (a-ö) ja yksi suuri aakkonen (A-Ö)",
-    "PricingNotFound": "pysäköintihinnoittelua ei löydy"
+    "PricingNotFound": "pysäköintihinnoittelua ei löydy",
+    "WGS84Coordinates": "Koordinaatit ovat ulkona WGS84:n rajoista: -180° <= x/pituuspiiri <= 180°, -90° <= y/leveyspiiri <= 90°"
   }
 }

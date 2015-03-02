@@ -63,6 +63,7 @@
 
     m.controller('FacilityEditCtrl', function($scope, $state, schema, FacilityResource, Session, Sequence, facility, aliasesPlaceholder, submitUtilFactory) {
         var self = this;
+        var customPricing = [];
         self.context = "facilities";
         var submitUtil = submitUtilFactory($scope, self.context);
 
@@ -87,6 +88,26 @@
         }
 
         self.editMode = (facility.id ? "ports" : "location");
+
+        // Watch pricingMethod because:
+        // 1) Invalid pricing rows should be validated iff pricingMethod is CUSTOM.
+        // 2) Clearing pricing rows in save method would have to modify self.facility.pricing AND $scope.$apply() for
+        //    these changes to be reflected in validation results.
+        // 3) Having this customPricing for "discarded" rows allows us to revert to those at any time before
+        //    validateAndSubmit success.
+        $scope.$watch("editCtrl.facility.pricingMethod", function(newValue) {
+            if (self.facility.pricingMethod === "CUSTOM") {
+                if (!_.isEmpty(customPricing)) {
+                    self.facility.pricing = customPricing;
+                }
+                customPricing = [];
+            } else {
+                if (!_.isEmpty(self.facility.pricing)) {
+                    customPricing = self.facility.pricing;
+                }
+                self.facility.pricing = [];
+            }
+        });
 
         self.save = function(form) {
             var facility = _.cloneDeep(self.facility);

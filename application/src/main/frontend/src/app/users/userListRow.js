@@ -2,7 +2,6 @@
     var m = angular.module('parkandride.users.userListRow', [
         'ui.router',
         'parkandride.auth',
-        'parkandride.users.userModal',
         'parkandride.users.userPasswordModal',
         'parkandride.UserResource',
         'parkandride.i18n'
@@ -21,18 +20,13 @@
         };
     });
 
-    m.controller('UserListRowCtrl', function($state, $translate, UserResource, userModal, userPasswordModal, permit, Permission, Session) {
+    m.controller('UserListRowCtrl', function($state, $translate, UserResource, userPasswordModal, permit, Permission, Session) {
         var vm = this;
-        vm.openModal = openModal;
         vm.isApi = isApi;
         vm.updateSecret = updateSecret;
         vm.permitUpdateSecret = permitUpdateSecret;
         vm.remove = remove;
         vm.permitRemove = permitRemove;
-
-        function openModal() {
-            userModal.open(vm.user).result.then(function() { $state.reload(); });
-        }
 
         function isApi() { return vm.user.role === 'OPERATOR_API'; }
 

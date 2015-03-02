@@ -33,6 +33,8 @@ public class QUsage extends RelationalPathSpatial<QUsage> {
 
     public final com.mysema.query.sql.ForeignKey<QPricing> _pricingUsageFk = createInvForeignKey(name, "USAGE");
 
+    public final com.mysema.query.sql.ForeignKey<QFacilityUtilization> _facilityUtilizationUsageFk = createInvForeignKey(name, "USAGE");
+
     public final com.mysema.query.sql.ForeignKey<QUnavailableCapacity> _unavailableCapacityUsageFk = createInvForeignKey(name, "USAGE");
 
     public QUsage(String variable) {

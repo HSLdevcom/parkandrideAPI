@@ -11,7 +11,7 @@ public enum Permission {
     USER_CREATE(true),
     USER_UPDATE(true),
     USER_VIEW(true),
-    FACILITY_UTILIZATION_UPDATE(false), // FIXME: Should require Facility!
+    FACILITY_UTILIZATION_UPDATE(true),
     HUB_CREATE(false),
     HUB_UPDATE(false);
 

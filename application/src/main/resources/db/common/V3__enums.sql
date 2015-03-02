@@ -41,16 +41,6 @@ insert into usage values ('HSL');
 insert into usage values ('COMMERCIAL');
 
 
-create table utilization_status (
-  name varchar(64) not null,
-
-  primary key (name)
-);
-
-insert into utilization_status values ('FULL');
-insert into utilization_status values ('SPACES_AVAILABLE');
-
-
 create table service (
   name varchar(64) not null,
   primary key (name)

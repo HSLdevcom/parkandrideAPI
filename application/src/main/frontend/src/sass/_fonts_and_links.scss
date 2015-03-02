@@ -1,4 +1,9 @@
-//fonts
+//paragraph
+p {
+  word-wrap: break-word;
+}
+
+//header fonts
 h1 {
   @include font($font-size: 60px);
 }

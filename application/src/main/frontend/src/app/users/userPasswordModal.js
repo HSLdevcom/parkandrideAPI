@@ -27,7 +27,7 @@
         };
     });
 
-    m.controller('UserPasswordModalCtrl', function($scope, $modalInstance, permit, Permission, user, UserResource, modalUtilFactory) {
+    m.controller('UserPasswordModalCtrl', function($scope, $modalInstance, permit, Permission, user, UserResource, modalUtilFactory, violationsManager) {
         var vm = this;
         vm.context = "users";
         var modalUtil = modalUtilFactory($scope, vm.context, $modalInstance);
@@ -47,10 +47,10 @@
                 vm.user.password = vm.newPassword;
                 modalUtil.submit(function() { return UserResource.updatePassword(user); });
             } else {
-                $scope.violations = [{
+                violationsManager.setViolations(vm.context, [{
                     path: "newPassword",
                     type: "PasswordConfirmationMismatch"
-                }];
+                }]);
             }
         }
 

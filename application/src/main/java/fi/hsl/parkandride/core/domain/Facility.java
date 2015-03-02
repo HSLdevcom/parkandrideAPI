@@ -82,4 +82,7 @@ public class Facility extends FacilityInfo {
         return pricing.stream().collect(mapping(Pricing::getUsage, toSet()));
     }
 
+    public void normalize() {
+        this.pricing = pricingMethod.getPricing(this);
+    }
 }

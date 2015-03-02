@@ -76,18 +76,18 @@ public class QHub extends RelationalPathSpatial<QHub> {
     }
 
     public void addMetadata() {
-        addMetadata(cityEn, ColumnMetadata.named("CITY_EN").withIndex(12).ofType(Types.VARCHAR).withSize(255));
-        addMetadata(cityFi, ColumnMetadata.named("CITY_FI").withIndex(10).ofType(Types.VARCHAR).withSize(255));
-        addMetadata(citySv, ColumnMetadata.named("CITY_SV").withIndex(11).ofType(Types.VARCHAR).withSize(255));
+        addMetadata(cityEn, ColumnMetadata.named("CITY_EN").withIndex(11).ofType(Types.VARCHAR).withSize(255));
+        addMetadata(cityFi, ColumnMetadata.named("CITY_FI").withIndex(9).ofType(Types.VARCHAR).withSize(255));
+        addMetadata(citySv, ColumnMetadata.named("CITY_SV").withIndex(10).ofType(Types.VARCHAR).withSize(255));
         addMetadata(id, ColumnMetadata.named("ID").withIndex(1).ofType(Types.BIGINT).withSize(19).notNull());
-        addMetadata(location, ColumnMetadata.named("LOCATION").withIndex(5).ofType(Types.OTHER).withSize(2147483647).notNull());
+        addMetadata(location, ColumnMetadata.named("LOCATION").withIndex(12).ofType(Types.OTHER).withSize(2147483647).notNull());
         addMetadata(nameEn, ColumnMetadata.named("NAME_EN").withIndex(4).ofType(Types.VARCHAR).withSize(255).notNull());
         addMetadata(nameFi, ColumnMetadata.named("NAME_FI").withIndex(2).ofType(Types.VARCHAR).withSize(255).notNull());
         addMetadata(nameSv, ColumnMetadata.named("NAME_SV").withIndex(3).ofType(Types.VARCHAR).withSize(255).notNull());
-        addMetadata(postalCode, ColumnMetadata.named("POSTAL_CODE").withIndex(9).ofType(Types.VARCHAR).withSize(5));
-        addMetadata(streetAddressEn, ColumnMetadata.named("STREET_ADDRESS_EN").withIndex(8).ofType(Types.VARCHAR).withSize(255));
-        addMetadata(streetAddressFi, ColumnMetadata.named("STREET_ADDRESS_FI").withIndex(6).ofType(Types.VARCHAR).withSize(255));
-        addMetadata(streetAddressSv, ColumnMetadata.named("STREET_ADDRESS_SV").withIndex(7).ofType(Types.VARCHAR).withSize(255));
+        addMetadata(postalCode, ColumnMetadata.named("POSTAL_CODE").withIndex(8).ofType(Types.VARCHAR).withSize(5));
+        addMetadata(streetAddressEn, ColumnMetadata.named("STREET_ADDRESS_EN").withIndex(7).ofType(Types.VARCHAR).withSize(255));
+        addMetadata(streetAddressFi, ColumnMetadata.named("STREET_ADDRESS_FI").withIndex(5).ofType(Types.VARCHAR).withSize(255));
+        addMetadata(streetAddressSv, ColumnMetadata.named("STREET_ADDRESS_SV").withIndex(6).ofType(Types.VARCHAR).withSize(255));
     }
 
 }

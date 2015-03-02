@@ -40,6 +40,7 @@ create table facility (
   capacity_bicycle_secure_space int,
 
   usage_park_and_ride boolean not null,
+  usage_hsl boolean not null,
   usage_commercial boolean not null,
 
   primary key (id),

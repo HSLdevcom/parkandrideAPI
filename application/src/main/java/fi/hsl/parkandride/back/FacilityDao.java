@@ -11,6 +11,7 @@ import static fi.hsl.parkandride.core.domain.CapacityType.*;
 import static fi.hsl.parkandride.core.domain.Sort.Dir.ASC;
 import static fi.hsl.parkandride.core.domain.Sort.Dir.DESC;
 import static fi.hsl.parkandride.core.domain.Usage.COMMERCIAL;
+import static fi.hsl.parkandride.core.domain.Usage.HSL;
 import static fi.hsl.parkandride.core.domain.Usage.PARK_AND_RIDE;
 
 import java.util.*;
@@ -172,6 +173,9 @@ public class FacilityDao implements FacilityRepository {
         if (row.get(qFacility.usageParkAndRide)) {
             facility.usages.add(PARK_AND_RIDE);
         }
+        if (row.get(qFacility.usageHsl)) {
+            facility.usages.add(HSL);
+        }
         if (row.get(qFacility.usageCommercial)) {
             facility.usages.add(COMMERCIAL);
         }
@@ -254,6 +258,8 @@ public class FacilityDao implements FacilityRepository {
     @Override
     public void updateFacility(long facilityId, Facility newFacility, Facility oldFacility) {
         checkNotNull(newFacility, "facility");
+        newFacility.normalize();
+
         SQLUpdateClause update = updateFacility().where(qFacility.id.eq(facilityId));
         populate(newFacility, update);
         if (update.execute() != 1) {
@@ -271,10 +277,9 @@ public class FacilityDao implements FacilityRepository {
             updatePaymentMethods(facilityId, newFacility.paymentInfo.paymentMethods);
         }
 
-        List<Pricing> newPricing = newFacility.pricingMethod.getPricing(newFacility);
-        if (!Objects.equals(newPricing, oldFacility.pricing)) {
+        if (!Objects.equals(newFacility.pricing, oldFacility.pricing)) {
             deletePricing(facilityId);
-            insertPricing(facilityId, newPricing);
+            insertPricing(facilityId, newFacility.pricing);
         }
 
         if (!Objects.equals(newFacility.unavailableCapacities, oldFacility.unavailableCapacities)) {
@@ -724,6 +729,7 @@ public class FacilityDao implements FacilityRepository {
 
         Set<Usage> usages = facility.analyzeUsages();
         store.set(qFacility.usageParkAndRide, usages.contains(PARK_AND_RIDE));
+        store.set(qFacility.usageHsl, usages.contains(HSL));
         store.set(qFacility.usageCommercial, usages.contains(COMMERCIAL));
 
         Map<CapacityType, Integer> builtCapacity = facility.builtCapacity != null ? facility.builtCapacity : ImmutableMap.of();

@@ -90,8 +90,7 @@ public class FacilityService {
 
     @TransactionalWrite
     public void registerUtilization(long facilityId, List<Utilization> utilization, User currentUser) {
-        // FIXME: Should require Facility!
-        authorize(currentUser, FACILITY_UTILIZATION_UPDATE);
+        authorize(currentUser, repository.getFacilityInfo(facilityId), FACILITY_UTILIZATION_UPDATE);
 
         utilization.forEach((status) -> validationService.validate(status));
         repository.insertUtilization(facilityId, utilization);

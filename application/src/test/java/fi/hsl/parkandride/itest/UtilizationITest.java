@@ -33,8 +33,8 @@ public class UtilizationITest extends AbstractIntegrationTest {
 
     interface Key {
         String CAPACITY_TYPE = "capacityType";
+        String USAGE = "usage";
         String SPACES_AVAILABLE = "spacesAvailable";
-        String STATUS = "status";
         String TIMESTAMP = "timestamp";
     }
 
@@ -79,6 +79,33 @@ public class UtilizationITest extends AbstractIntegrationTest {
 
         devHelper.createOrUpdateUser(new NewUser(1l, "operator", OPERATOR_API, f.operatorId, "operator"));
         authToken = devHelper.login("operator").token;
+    }
+
+    @Test
+    public void cannot_update_other_operators_facility() {
+        Operator o = new Operator();
+        o.id = 2l;
+        o.name = new MultilingualString("another operator");
+
+        Facility f2 = new Facility();
+        f2.id = 2L;
+        f2.status = IN_OPERATION;
+        f2.pricingMethod = PARK_AND_RIDE_247_FREE;
+        f2.name = new MultilingualString("another facility");
+        f2.operatorId = 2l;
+        f2.location = Spatial.fromWktPolygon("POLYGON((25.010822 60.25054, 25.010822 60.250023, 25.012479 60.250337, 25.011449 60.250885, 25.010822 60.25054))");
+        f2.contacts = new FacilityContacts(1l, 1l);
+
+        operatorDao.insertOperator(o, o.id);
+        facilityDao.insertFacility(f2, f2.id);
+
+        givenWithContent(authToken)
+            .body(minValidPayload().asArray())
+        .when()
+            .put(UrlSchema.FACILITY_UTILIZATION, f2.id)
+        .then()
+            .statusCode(HttpStatus.FORBIDDEN.value())
+        ;
     }
 
     @Test
@@ -141,23 +168,25 @@ public class UtilizationITest extends AbstractIntegrationTest {
     private void multiCapacityCreate() {
         DateTime now = DateTime.now();
 
-        Utilization spacesOnly = new Utilization();
-        spacesOnly.timestamp = now;
-        spacesOnly.spacesAvailable = 1;
-        spacesOnly.capacityType = CapacityType.CAR;
+        Utilization u1 = new Utilization();
+        u1.timestamp = now;
+        u1.spacesAvailable = 1;
+        u1.capacityType = CapacityType.CAR;
+        u1.usage = Usage.PARK_AND_RIDE;
 
-        Utilization statusOnly = new Utilization();
-        statusOnly.timestamp = now.minusSeconds(10);
-        statusOnly.status = UtilizationStatus.FULL;
-        statusOnly.capacityType = CapacityType.BICYCLE;
+        Utilization u2 = new Utilization();
+        u2.timestamp = now.minusSeconds(10);
+        u2.spacesAvailable = 1;
+        u2.capacityType = CapacityType.BICYCLE;
+        u2.usage = Usage.PARK_AND_RIDE;
 
-        Utilization spacesAndStatus = new Utilization();
-        spacesAndStatus.timestamp = now.minusSeconds(20);
-        spacesAndStatus.spacesAvailable = 2;
-        spacesAndStatus.status = UtilizationStatus.SPACES_AVAILABLE;
-        spacesAndStatus.capacityType = CapacityType.ELECTRIC_CAR;
+        Utilization u3 = new Utilization();
+        u3.timestamp = now.minusSeconds(20);
+        u3.spacesAvailable = 2;
+        u3.capacityType = CapacityType.ELECTRIC_CAR;
+        u3.usage = Usage.PARK_AND_RIDE;
 
-        List<Utilization> payload = Lists.newArrayList(spacesOnly, statusOnly, spacesAndStatus);
+        List<Utilization> payload = Lists.newArrayList(u1, u2, u3);
 
         givenWithContent(authToken)
             .body(payload)
@@ -176,11 +205,11 @@ public class UtilizationITest extends AbstractIntegrationTest {
                 ;
 
         assertThat(r.results)
-                .extracting("capacityType", "spacesAvailable", "status", "timestamp")
+                .extracting("capacityType", "usage", "spacesAvailable", "timestamp")
                 .contains(
-                        tuple(spacesOnly.capacityType, spacesOnly.spacesAvailable, spacesOnly.status, spacesOnly.timestamp.toInstant()),
-                        tuple(statusOnly.capacityType, statusOnly.spacesAvailable, statusOnly.status, statusOnly.timestamp.toInstant()),
-                        tuple(spacesAndStatus.capacityType, spacesAndStatus.spacesAvailable, spacesAndStatus.status, spacesAndStatus.timestamp.toInstant())
+                        tuple(u1.capacityType, u1.usage, u1.spacesAvailable, u1.timestamp.toInstant()),
+                        tuple(u2.capacityType, u2.usage, u2.spacesAvailable, u2.timestamp.toInstant()),
+                        tuple(u3.capacityType, u3.usage, u3.spacesAvailable, u3.timestamp.toInstant())
                 )
         ;
     }
@@ -211,24 +240,10 @@ public class UtilizationITest extends AbstractIntegrationTest {
         ;
     }
 
-    @Test
-    public void spaces_or_status_is_required() {
-        givenWithContent(authToken)
-            .body(minValidPayload()
-                    .put(Key.SPACES_AVAILABLE, null)
-                    .put(Key.STATUS, null)
-                    .asArray())
-        .when()
-            .put(UrlSchema.FACILITY_UTILIZATION, f.id)
-        .then()
-            .spec(assertResponse(HttpStatus.BAD_REQUEST, ValidationException.class))
-            .body("violations[0].type", is("SpacesAvailableOrStatusRequired"))
-        ;
-    }
-
     private JSONObjectBuilder minValidPayload() {
         return new JSONObjectBuilder()
                 .put(Key.CAPACITY_TYPE, CapacityType.CAR)
+                .put(Key.USAGE, Usage.PARK_AND_RIDE)
                 .put(Key.SPACES_AVAILABLE, 42)
                 .put(Key.TIMESTAMP, DateTime.now().getMillis());
     }

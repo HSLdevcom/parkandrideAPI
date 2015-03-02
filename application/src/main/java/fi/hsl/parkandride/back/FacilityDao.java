@@ -290,8 +290,18 @@ public class FacilityDao implements FacilityRepository {
 
     @TransactionalRead
     @Override
-    public Facility getFacility(long id) {
-        return getFacility(id, false);
+    public Facility getFacility(long facilityId) {
+        return getFacility(facilityId, false);
+    }
+
+    @TransactionalRead
+    @Override
+    public FacilityInfo getFacilityInfo(long facilityId) {
+        FacilityInfo facility = fromFacility().where(qFacility.id.eq(facilityId)).singleResult(facilityInfoMapping);
+        if (facility == null) {
+            throw new FacilityNotFoundException(facilityId);
+        }
+        return facility;
     }
 
     @TransactionalWrite
@@ -372,7 +382,7 @@ public class FacilityDao implements FacilityRepository {
         statuses.forEach((status) -> {
             insertBatch.set(qUtilization.facilityId, facilityId);
             insertBatch.set(qUtilization.capacityType, status.capacityType);
-            insertBatch.set(qUtilization.status, status.status);
+            insertBatch.set(qUtilization.usage, status.usage);
             insertBatch.set(qUtilization.spacesAvailable, status.spacesAvailable);
             insertBatch.set(qUtilization.ts, status.timestamp);
             insertBatch.addBatch();
@@ -390,9 +400,9 @@ public class FacilityDao implements FacilityRepository {
                     protected Utilization map(Tuple row) {
                         Utilization status = new Utilization();
                         status.capacityType = row.get(qUtilization.capacityType);
+                        status.usage = row.get(qUtilization.usage);
                         status.timestamp = row.get(qUtilization.ts);
                         status.spacesAvailable = row.get(qUtilization.spacesAvailable);
-                        status.status = row.get(qUtilization.status);
                         return status;
                     }
                 });

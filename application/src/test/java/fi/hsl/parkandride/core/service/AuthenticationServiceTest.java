@@ -184,8 +184,7 @@ public class AuthenticationServiceTest {
     @Test(expected = AccessDeniedException.class)
     public void authorize_admin_exclusion() {
         User user = new User(1l, "admin", ADMIN);
-        // FIXME: Should be authorize(user, () -> 1l, FACILITY_STATUS_UPDATE);
-        authorize(user, FACILITY_UTILIZATION_UPDATE);
+        authorize(user, () -> 1l, FACILITY_UTILIZATION_UPDATE);
     }
 
     @Test

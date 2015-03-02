@@ -33,15 +33,13 @@ public class QFacilityUtilization extends RelationalPathSpatial<QFacilityUtiliza
 
     public final NumberPath<Integer> spacesAvailable = createNumber("spacesAvailable", Integer.class);
 
-    public final EnumPath<fi.hsl.parkandride.core.domain.UtilizationStatus> status = createEnum("status", fi.hsl.parkandride.core.domain.UtilizationStatus.class);
-
     public final DateTimePath<org.joda.time.DateTime> ts = createDateTime("ts", org.joda.time.DateTime.class);
 
-    public final com.mysema.query.sql.PrimaryKey<QFacilityUtilization> constraintE = createPrimaryKey(capacityType, facilityId, ts);
+    public final EnumPath<fi.hsl.parkandride.core.domain.Usage> usage = createEnum("usage", fi.hsl.parkandride.core.domain.Usage.class);
 
     public final com.mysema.query.sql.ForeignKey<QFacility> facilityUtilizationFacilityIdFk = createForeignKey(facilityId, "ID");
 
-    public final com.mysema.query.sql.ForeignKey<QUtilizationStatus> facilityUtilizationStatusFk = createForeignKey(status, "NAME");
+    public final com.mysema.query.sql.ForeignKey<QUsage> facilityUtilizationUsageFk = createForeignKey(usage, "NAME");
 
     public final com.mysema.query.sql.ForeignKey<QCapacityType> facilityUtilizationCapacityTypeFk = createForeignKey(capacityType, "NAME");
 
@@ -68,9 +66,9 @@ public class QFacilityUtilization extends RelationalPathSpatial<QFacilityUtiliza
     public void addMetadata() {
         addMetadata(capacityType, ColumnMetadata.named("CAPACITY_TYPE").withIndex(2).ofType(Types.VARCHAR).withSize(64).notNull());
         addMetadata(facilityId, ColumnMetadata.named("FACILITY_ID").withIndex(1).ofType(Types.BIGINT).withSize(19).notNull());
-        addMetadata(spacesAvailable, ColumnMetadata.named("SPACES_AVAILABLE").withIndex(4).ofType(Types.INTEGER).withSize(10));
-        addMetadata(status, ColumnMetadata.named("STATUS").withIndex(5).ofType(Types.VARCHAR).withSize(64));
-        addMetadata(ts, ColumnMetadata.named("TS").withIndex(3).ofType(Types.TIMESTAMP).withSize(23).withDigits(10).notNull());
+        addMetadata(spacesAvailable, ColumnMetadata.named("SPACES_AVAILABLE").withIndex(5).ofType(Types.INTEGER).withSize(10).notNull());
+        addMetadata(ts, ColumnMetadata.named("TS").withIndex(4).ofType(Types.TIMESTAMP).withSize(23).withDigits(10).notNull());
+        addMetadata(usage, ColumnMetadata.named("USAGE").withIndex(3).ofType(Types.VARCHAR).withSize(64).notNull());
     }
 
 }

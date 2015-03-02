@@ -7,6 +7,7 @@ import static fi.hsl.parkandride.core.domain.DayType.SATURDAY;
 import static fi.hsl.parkandride.core.domain.DayType.SUNDAY;
 import static fi.hsl.parkandride.core.domain.FacilityStatus.EXCEPTIONAL_SITUATION;
 import static fi.hsl.parkandride.core.domain.FacilityStatus.IN_OPERATION;
+import static fi.hsl.parkandride.core.domain.PricingMethod.CUSTOM;
 import static fi.hsl.parkandride.core.domain.PricingMethod.PARK_AND_RIDE_247_FREE;
 import static fi.hsl.parkandride.core.domain.Service.ACCESSIBLE_TOILETS;
 import static fi.hsl.parkandride.core.domain.Service.ELEVATOR;
@@ -18,6 +19,7 @@ import static fi.hsl.parkandride.core.domain.Usage.COMMERCIAL;
 import static fi.hsl.parkandride.core.domain.Usage.PARK_AND_RIDE;
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.setAllowExtractingPrivateFields;
 import static org.junit.Assert.fail;
 
 import java.util.*;
@@ -112,6 +114,32 @@ public class FacilityDaoTest extends AbstractDaoTest {
     }
 
     @Test
+    public void all_usages_and_capacities_are_materialized_and_projected() {
+        Facility facility = createFacility();
+        facility.pricingMethod = CUSTOM;
+        final Map<CapacityType, Integer> builtCapacity = new HashMap<>();
+        facility.pricing = new ArrayList<>();
+
+        CapacityType[] capacityTypes = CapacityType.values();
+        Usage[] usages = Usage.values();
+        for (int i=0; i < capacityTypes.length || i < usages.length; i++) {
+            CapacityType type = capacityTypes[i % capacityTypes.length];
+            Usage usage = usages[i % usages.length];
+
+            builtCapacity.put(type, i+1);
+            facility.pricing.add(new Pricing(type, usage, i+1, BUSINESS_DAY, "0", "24", null));
+        }
+        facility.builtCapacity = builtCapacity;
+        final long id = facilityDao.insertFacility(facility);
+        facility = facilityDao.getFacility(id);
+        assertThat(facility.builtCapacity).isEqualTo(builtCapacity);
+        assertThat(facility.usages).isEqualTo(ImmutableSet.copyOf(Usage.values()));
+
+        FacilitySummary facilitySummary = facilityDao.summarizeFacilities(new FacilitySearch());
+        assertThat(facilitySummary.capacities).isEqualTo(builtCapacity);
+    }
+
+    @Test
     public void create_read_update() {
         Facility facility = createFacility();
 
@@ -158,6 +186,7 @@ public class FacilityDaoTest extends AbstractDaoTest {
                 free24h(ELECTRIC_CAR, PARK_AND_RIDE, 2, SATURDAY),
                 free24h(ELECTRIC_CAR, PARK_AND_RIDE, 2, SUNDAY)
         ));
+        assertThat(facility.usages).isEqualTo(ImmutableSet.of(PARK_AND_RIDE));
         assertThat(facility.unavailableCapacities).isEqualTo(asList(
                 new UnavailableCapacity(CAR, PARK_AND_RIDE, 1),
                 new UnavailableCapacity(ELECTRIC_CAR, PARK_AND_RIDE, 0)

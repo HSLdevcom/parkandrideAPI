@@ -66,8 +66,8 @@ public class QFacilityUtilization extends RelationalPathSpatial<QFacilityUtiliza
     public void addMetadata() {
         addMetadata(capacityType, ColumnMetadata.named("CAPACITY_TYPE").withIndex(2).ofType(Types.VARCHAR).withSize(64).notNull());
         addMetadata(facilityId, ColumnMetadata.named("FACILITY_ID").withIndex(1).ofType(Types.BIGINT).withSize(19).notNull());
-        addMetadata(spacesAvailable, ColumnMetadata.named("SPACES_AVAILABLE").withIndex(5).ofType(Types.INTEGER).withSize(10));
-        addMetadata(ts, ColumnMetadata.named("TS").withIndex(4).ofType(Types.TIMESTAMP).withSize(23).withDigits(10));
+        addMetadata(spacesAvailable, ColumnMetadata.named("SPACES_AVAILABLE").withIndex(5).ofType(Types.INTEGER).withSize(10).notNull());
+        addMetadata(ts, ColumnMetadata.named("TS").withIndex(4).ofType(Types.TIMESTAMP).withSize(23).withDigits(10).notNull());
         addMetadata(usage, ColumnMetadata.named("USAGE").withIndex(3).ofType(Types.VARCHAR).withSize(64).notNull());
     }
 

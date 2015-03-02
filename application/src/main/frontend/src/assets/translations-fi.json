@@ -616,14 +616,17 @@
     }
   },
   "error": {
+    "400": {
+      "title": "Väärän muotoinen syöte. "
+    },
     "403": {
-      "title": "Toiminto ei ole sallittu."
+      "title": "Toiminto ei ole sallittu. "
     },
     "404": {
-      "title": "Sivua ei löytynyt. Tarkista osoite."
+      "title": "Sivua ei löytynyt. Tarkista osoite. "
     },
     "500": {
-      "title": "Oops, nyt tuli virhe!"
+      "title": "Oops, nyt tuli virhe! "
     },
     "buttonText": "Voi harmi!"
   },

@@ -9,12 +9,36 @@
     m.config(function config($stateProvider) {
         $stateProvider.state('search-demo', { // dot notation in ui-router indicates nested ui-view
             parent: 'hubstab',
-            url: '/search-demo', // TODO set facilities base path on upper level and say here /create ?
+            url: '/search-demo?geometry&maxDistance', // TODO set facilities base path on upper level and say here /create ?
             views: {
                 "main": {
                     controller: 'FacilitySearchCtrl as searchCtrl',
                     templateUrl: 'facilities/searchDemo.tpl.html',
                     resolve: {
+                        results: function(FacilityResource, $translate, $stateParams) {
+                            if ($stateParams.geometry) {
+                                return FacilityResource.findFacilitiesAsFeatureCollection({
+                                    geometry: $stateParams.geometry.replace(/\s+/g, ' '),
+                                    maxDistance: $stateParams.maxDistance
+                                }).then(
+                                    function(geojson) {
+                                        return geojson;
+                                    },
+                                    function(rejection) {
+                                        swal({
+                                            text: $translate.instant('error.' + rejection.status + '.title') + " " + rejection.data.message,
+                                            width: 400,
+                                            confirmButtonText: $translate.instant('error.buttonText'),
+                                            confirmButtonColor: "#007AC9",
+                                            closeOnConfirm: true
+                                        });
+                                        return null;
+                                    }
+                                );
+                            } else {
+                                return null;
+                            }
+                        }
                     }
                 }
             },
@@ -22,24 +46,25 @@
         });
     });
 
-    m.controller('FacilitySearchCtrl', function($scope, FacilityResource) {
+    m.controller('FacilitySearchCtrl', function($scope, $stateParams, $location, results) {
         var self = this;
-        self.geometry = "MULTIPOINT(";
-        self.maxDistance = null;
-        self.results = null;
-        self.searchGeometry = null;
+        if (results) {
+            self.geometry = $stateParams.geometry;
+            self.searchGeometry = self.geometry;
+        }
+        self.geometry = $stateParams.geometry || "MULTIPOINT(";
+        self.maxDistance = $stateParams.maxDistance ? parseFloat($stateParams.maxDistance) : null;
+        self.results = results;
+
         self.coordinateCallback = function(x, y) {
             self.geometry += " " + x + " " + y;
             $scope.$apply();
             $scope.$broadcast("focus-on-geometry");
         };
         self.search = function() {
-            self.searchGeometry = self.geometry;
-            FacilityResource.findFacilitiesAsFeatureCollection({
+            $location.search({
                 geometry: self.geometry,
                 maxDistance: self.maxDistance
-            }).then(function(geojson) {
-                self.results = geojson;
             });
         };
     });
@@ -69,6 +94,8 @@
             link: function (scope, element, attrs, ctrl) {
                 var mapCRS = MapService.mapCRS;
                 var targetCRS = MapService.targetCRS;
+                var GeoJSON = MapService.GeoJSON;
+                var WKT = MapService.WKT;
 
                 var facilitiesLayer = new ol.layer.Vector({
                     source: new ol.source.Vector(),
@@ -85,32 +112,24 @@
                 map.on('dblclick', function(event) {
                     var point = new ol.geom.Point(event.coordinate).transform(mapCRS, targetCRS);
                     var coordinates = point.getCoordinates();
-                    console.log("" + coordinates[0] + " " + coordinates[1]);
+                    console.log("WGS84: " + coordinates[0] + " " + coordinates[1]);
+                    console.log("Pixel: " + event.pixel[0] + " " + event.pixel[1]);
                     if (scope.callback) {
                         scope.callback()(coordinates[0], coordinates[1]);
                     }
                     return false;
                 });
 
-                scope.$watch("results", function(results) {
+                if (scope.results) {
                     facilitiesLayer.getSource().clear();
-                    if (results) {
-                        var features = new ol.format.GeoJSON().readFeatures(results);
-
-                        _.forEach(features, function (feature) {
-                            feature.getGeometry().transform(targetCRS, mapCRS);
-                            facilitiesLayer.getSource().addFeature(feature);
-                        });
-                    }
-                });
-                scope.$watch("searchGeometry", function(wkt) {
+                    var features = GeoJSON.readFeatures(scope.results);
+                    facilitiesLayer.getSource().addFeatures(features);
+                }
+                if (scope.searchGeometry) {
                     searchLayer.getSource().clear();
-                    if (wkt && _.endsWith(wkt, ')')) {
-                        var geometry = new ol.format.WKT().readGeometry(wkt);
-                        geometry.transform(targetCRS, mapCRS);
-                        searchLayer.getSource().addFeature(new ol.Feature(geometry));
-                    }
-                });
+                    var geometry = WKT.readGeometry(scope.searchGeometry);
+                    searchLayer.getSource().addFeature(new ol.Feature(geometry));
+                }
             }
         };
     });

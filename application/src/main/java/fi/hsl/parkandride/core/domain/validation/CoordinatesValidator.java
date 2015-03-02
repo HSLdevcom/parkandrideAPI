@@ -6,10 +6,10 @@ import javax.validation.ConstraintValidatorContext;
 import org.geolatte.geom.Geometry;
 import org.geolatte.geom.PointCollection;
 
-public class WGS84CoordinatesValidator implements ConstraintValidator<WGS84Coordinates, Geometry> {
+public class CoordinatesValidator implements ConstraintValidator<Coordinates, Geometry> {
 
     @Override
-    public void initialize(WGS84Coordinates constraintAnnotation) {}
+    public void initialize(Coordinates constraintAnnotation) {}
 
     @Override
     public boolean isValid(Geometry geometry, ConstraintValidatorContext context) {
@@ -21,7 +21,7 @@ public class WGS84CoordinatesValidator implements ConstraintValidator<WGS84Coord
         }
         PointCollection points = geometry.getPoints();
         for (int i = 0; i < points.size(); i++) {
-            if (isNotBetween(-180, points.getX(i), 180) || isNotBetween(-90, points.getY(i), 90)) {
+            if (isNotBetween(19, points.getX(i), 32) || isNotBetween(59.5, points.getY(i), 70.5)) {
                 return false;
             }
         }

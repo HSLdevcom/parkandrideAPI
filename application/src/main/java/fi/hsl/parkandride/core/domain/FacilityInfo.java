@@ -13,7 +13,7 @@ import com.wordnik.swagger.annotations.ApiModelProperty;
 
 import fi.hsl.parkandride.core.domain.validation.MinElement;
 import fi.hsl.parkandride.core.domain.validation.NotNullElement;
-import fi.hsl.parkandride.core.domain.validation.WGS84Coordinates;
+import fi.hsl.parkandride.core.domain.validation.Coordinates;
 
 public class FacilityInfo implements OperatorEntity {
 
@@ -26,7 +26,7 @@ public class FacilityInfo implements OperatorEntity {
 
     @ApiModelProperty(required = true)
     @NotNull
-    @WGS84Coordinates
+    @Coordinates
     public Polygon location;
 
     @ApiModelProperty(required = true)

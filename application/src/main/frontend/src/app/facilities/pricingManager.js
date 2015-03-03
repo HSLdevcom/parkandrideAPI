@@ -28,6 +28,7 @@
 
         function init(pricing) {
             self.pricing = pricing;
+            customPricing = [];
             _.forEach(self.pricing, function(p) { p._id = Sequence.nextval();});
         }
 

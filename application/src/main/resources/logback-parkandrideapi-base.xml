@@ -2,7 +2,7 @@
 <included>
   <property name="LOG_FILE_APP" value="${LOG_PATH}/parkandrideapi" />
   <property name="FILE_LOG_PATTERN"
-            value="%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%X{srcip}] [%X{username}] [%X{requestid}] [%thread] %-40.40logger{39} - %msg %rEx{full}%n"/>
+            value="%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%X{srcip}] [%X{username}] [%X{requestid}] [%X{appid}] [%thread] %-40.40logger{39} - %msg %rEx{full}%n"/>
 
   <appender name="APP" class="ch.qos.logback.core.rolling.RollingFileAppender">
     <file>${LOG_FILE_APP}.log</file>

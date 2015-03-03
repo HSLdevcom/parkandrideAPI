@@ -53,6 +53,11 @@ public class ExceptionHandlers {
         return handleError(request, BAD_REQUEST, ex, ex.getMessage(), ex.violations);
     }
 
+    @ExceptionHandler(IllegalHeaderException.class)
+    public ResponseEntity<Map<String, Object>> validationException(HttpServletRequest request, IllegalHeaderException ex) {
+        return handleError(request, BAD_REQUEST, ex, ex.getMessage(), null);
+    }
+
     @ExceptionHandler(ClientAbortException.class)
     public void clientAbortException(ClientAbortException e) {
         // Nothing to respond here as client has terminated connection

@@ -1,7 +1,10 @@
 package fi.hsl.parkandride;
 
+import static java.lang.String.format;
+
 import java.io.IOException;
 import java.util.UUID;
+import java.util.regex.Pattern;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -13,12 +16,20 @@ import org.slf4j.MDC;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.GenericFilterBean;
 
+import fi.hsl.parkandride.front.IllegalHeaderException;
+
 @Component
 public class MDCFilter extends GenericFilterBean {
+
+    public static final String LIIPI_APPLICATION_ID = "Liipi-Application-Id";
+
+    public static final Pattern APP_ID_PATTERN = Pattern.compile("[a-zA-Z0-9_\\-\\./]{3,20}");
+
     public interface Key {
         String REQUESTID = "requestid";
         String USERNAME = "username";
         String SRCIP = "srcip";
+        String APPID = "appid";
     }
 
     @Override
@@ -39,11 +50,24 @@ public class MDCFilter extends GenericFilterBean {
         if (username != null) {
             MDC.put(Key.USERNAME, username);
         }
+        String appId = httpReq.getHeader(LIIPI_APPLICATION_ID);
+        if (appId != null) {
+            validateAppId(appId);
+            MDC.put(Key.APPID, appId);
+        }
+    }
+
+    public static void validateAppId(String appId) {
+        if (!APP_ID_PATTERN.matcher(appId).matches()) {
+            throw new IllegalHeaderException(
+                    format("Illegal %s header. Value should match pattern %s.", LIIPI_APPLICATION_ID, APP_ID_PATTERN));
+        }
     }
 
     private static  void unsetValues() {
         MDC.remove(Key.REQUESTID);
         MDC.remove(Key.USERNAME);
         MDC.remove(Key.SRCIP);
+        MDC.remove(Key.APPID);
     }
 }

@@ -163,6 +163,7 @@
                     if (user && user.token) {
                         config.headers.Authorization = "Bearer " + user.token;
                     }
+                    config.headers["Liipi-Application-Id"] = "liipi-ui";
                     return config;
                 }
             };

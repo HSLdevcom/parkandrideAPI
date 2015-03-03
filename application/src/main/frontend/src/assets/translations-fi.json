@@ -401,6 +401,7 @@
       "unavailable": "Tilapäisesti poissa käytöstä"
     },
     "builtCapacity": {
+      "label": "Rakennettu kapasiteetti",
       "CAR": { "label": "Henkilöauto, rakennettu kapasiteetti" },
       "BICYCLE": { "label": "Polkupyörä, rakennettu kapasiteetti" },
       "BICYCLE_SECURE_SPACE": { "label": "Polkupyörä, lukittu tila, rakennettu kapasiteetti" },

@@ -5,6 +5,7 @@
         var self = {};
         var clipboard = initClipboard();
         var selections = initSelections();
+        var customPricing = [];
 
         self.model = {
             allSelected: false,
@@ -21,6 +22,7 @@
         self.deletePricingRows = deletePricingRows;
         self.pastePricingRows = pastePricingRows;
         self.pastePricingValues = pastePricingValues;
+        self.setPricingMethod = setPricingMethod;
         self.init = init;
         return self;
 
@@ -39,6 +41,32 @@
                     return !firstOnly;
                 }
             });
+        }
+
+        function clear(array) {
+            array.splice(0, array.length);
+        }
+
+        function moveElements(from, to) {
+            clear(to);
+            for (var i=0; i < from.length; i++) {
+                to[i] = from[i];
+            }
+            clear(from);
+        }
+
+        function setPricingMethod(pricingMethod) {
+            selections.clear();
+            clipboard.clear();
+            if (pricingMethod === "CUSTOM") {
+                if (!_.isEmpty(customPricing)) {
+                    moveElements(customPricing, self.pricing);
+                }
+            } else {
+                if (!_.isEmpty(self.pricing)) {
+                    moveElements(self.pricing, customPricing);
+                }
+            }
         }
 
         function deletePricingRows() {

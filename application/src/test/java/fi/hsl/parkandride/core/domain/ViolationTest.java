@@ -10,7 +10,6 @@ import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 
-import org.geolatte.geom.Geometry;
 import org.geolatte.geom.Polygon;
 import org.junit.Test;
 import org.mockito.Mockito;

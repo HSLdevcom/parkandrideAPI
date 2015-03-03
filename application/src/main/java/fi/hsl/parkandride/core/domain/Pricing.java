@@ -86,9 +86,7 @@ public class Pricing {
         }
     }
 
-    public MultilingualString getPrice() {
-        return price;
-    }
+    // NOTE: getters'n'setters are required for COMPARATOR
 
     public TimeDuration getTime() {
         return time;
@@ -96,10 +94,6 @@ public class Pricing {
 
     public DayType getDayType() {
         return dayType;
-    }
-
-    public int getMaxCapacity() {
-        return maxCapacity;
     }
 
     public CapacityType getCapacityType() {

@@ -16,6 +16,12 @@ public class ContactSearch {
 
     public Long operatorId;
 
+    public void setOperatorId(Long operatorId) {
+        this.operatorId = operatorId;
+    }
+
+    // NOTE: getters'n'setters are required for Spring GET request binding
+
     public int getLimit() {
         return limit;
     }
@@ -58,9 +64,5 @@ public class ContactSearch {
 
     public Long getOperatorId() {
         return operatorId;
-    }
-
-    public void setOperatorId(Long operatorId) {
-        this.operatorId = operatorId;
     }
 }

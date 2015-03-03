@@ -8,6 +8,13 @@ public class UserSearch implements OperatorEntity {
 
     public Long operatorId;
 
+    @Override
+    public Long operatorId() {
+        return operatorId;
+    }
+
+    // NOTE: getters'n'setters are required for Spring GET request binding
+
     public int getLimit() {
         return limit;
     }
@@ -28,8 +35,7 @@ public class UserSearch implements OperatorEntity {
         return operatorId;
     }
 
-    @Override
-    public Long operatorId() {
-        return operatorId;
+    public void setOperatorId(Long operatorId) {
+        this.operatorId = operatorId;
     }
 }

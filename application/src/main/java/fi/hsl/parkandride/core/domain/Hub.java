@@ -32,23 +32,4 @@ public class Hub {
     @Valid
     public Address address;
 
-    public Long getId() {
-        return id;
-    }
-
-    public MultilingualString getName() {
-        return name;
-    }
-
-    public Point getLocation() {
-        return location;
-    }
-
-    public Set<Long> getFacilityIds() {
-        return facilityIds;
-    }
-
-    public Address getAddress() {
-        return address;
-    }
 }

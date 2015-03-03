@@ -8,6 +8,8 @@ public class PageableFacilitySearch extends FacilitySearch {
 
     public long offset = 0l;
 
+    // NOTE: getters'n'setters are required for Spring GET request binding
+
     public Sort getSort() {
         return sort;
     }

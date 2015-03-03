@@ -49,15 +49,4 @@ public class FacilityContacts {
         }
     }
 
-    public Long getEmergency() {
-        return emergency;
-    }
-
-    public Long getOperator() {
-        return operator;
-    }
-
-    public Long getService() {
-        return service;
-    }
 }

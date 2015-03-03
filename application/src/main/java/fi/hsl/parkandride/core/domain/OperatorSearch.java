@@ -8,6 +8,8 @@ public class OperatorSearch {
 
     public Sort sort;
 
+    // NOTE: getters'n'setters are required for Spring GET request binding
+
     public int getLimit() {
         return limit;
     }

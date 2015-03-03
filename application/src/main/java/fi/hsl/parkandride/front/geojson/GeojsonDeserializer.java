@@ -9,6 +9,7 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
+import com.fasterxml.jackson.databind.JsonMappingException;
 
 /**
  * This is a bridge deserializer for Jackson 1.9 used by Geolatte and Jackson 2.x.
@@ -29,7 +30,7 @@ public class GeojsonDeserializer<T> extends JsonDeserializer<T> {
         try {
             return jsonMapper.fromJson(jp.readValueAsTree().toString(), type);
         } catch (JsonException e) {
-            throw new IOException(e);
+            throw new JsonMappingException(e.getMessage(), jp.getCurrentLocation(), e.getCause());
         }
     }
 

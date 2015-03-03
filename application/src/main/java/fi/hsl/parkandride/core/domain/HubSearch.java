@@ -20,6 +20,8 @@ public class HubSearch {
 
     public long offset = 0l;
 
+    // NOTE: getters'n'setters are required for Spring GET request binding
+
     public Set<Long> getIds() {
         return ids;
     }

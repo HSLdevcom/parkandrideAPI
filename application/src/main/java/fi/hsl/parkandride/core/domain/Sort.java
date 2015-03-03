@@ -21,6 +21,8 @@ public class Sort {
         this.dir = dir;
     }
 
+    // NOTE: getters'n'setters are required for Spring GET request binding
+
     public String getBy() {
         return by;
     }

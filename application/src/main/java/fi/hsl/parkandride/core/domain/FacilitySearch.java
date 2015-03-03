@@ -14,6 +14,8 @@ public class FacilitySearch {
 
     public Geometry geometry;
 
+    // NOTE: getters'n'setters are required for Spring GET request binding
+
     public Set<Long> getIds() {
         return ids;
     }

@@ -13,12 +13,4 @@ public class FacilitySummary {
         this.capacities = capacities;
     }
 
-    public long getFacilityCount() {
-        return facilityCount;
-    }
-
-    public Map<CapacityType, Integer> getCapacities() {
-        return capacities;
-    }
-
 }

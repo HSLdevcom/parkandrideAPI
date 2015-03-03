@@ -35,34 +35,6 @@ public class Contact implements OperatorEntity {
     @Valid
     public MultilingualString info;
 
-    public Long getId() {
-        return id;
-    }
-
-    public MultilingualString getName() {
-        return name;
-    }
-
-    public Phone getPhone() {
-        return phone;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public Address getAddress() {
-        return address;
-    }
-
-    public MultilingualString getOpeningHours() {
-        return openingHours;
-    }
-
-    public MultilingualString getInfo() {
-        return info;
-    }
-
     @Override
     public Long operatorId() {
         return operatorId;

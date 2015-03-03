@@ -233,6 +233,9 @@ public class FacilityDao implements FacilityRepository {
 
     @TransactionalWrite
     public long insertFacility(Facility facility, long facilityId) {
+        checkNotNull(facility, "facility");
+        facility.normalize();
+
         SQLInsertClause insert = insertFacility();
         insert.set(qFacility.id, facilityId);
         populate(facility, insert);

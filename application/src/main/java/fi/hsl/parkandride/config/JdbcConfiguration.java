@@ -28,6 +28,7 @@ import fi.hsl.parkandride.back.H2GeometryType;
 import fi.hsl.parkandride.back.LiipiSQLExceptionTranslator;
 import fi.hsl.parkandride.back.PGGeometryType;
 import fi.hsl.parkandride.back.TimeType;
+import fi.hsl.parkandride.core.back.PhoneType;
 import fi.hsl.parkandride.core.domain.*;
 
 @Configuration

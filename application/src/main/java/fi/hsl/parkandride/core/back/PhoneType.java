@@ -1,4 +1,4 @@
-package fi.hsl.parkandride.config;
+package fi.hsl.parkandride.core.back;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;

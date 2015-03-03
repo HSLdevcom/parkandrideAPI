@@ -15,6 +15,7 @@
         'parkandride.address',
         'parkandride.pricingList',
         'parkandride.submitUtil',
+        'parkandride.pricingManager',
         'showErrors'
     ]);
 
@@ -61,7 +62,8 @@
         });
     });
 
-    m.controller('FacilityEditCtrl', function($scope, $state, schema, FacilityResource, Session, Sequence, facility, aliasesPlaceholder, submitUtilFactory) {
+    m.controller('FacilityEditCtrl', function($scope, $state, schema, FacilityResource, Session, Sequence, facility,
+                                              aliasesPlaceholder, submitUtilFactory, pricingManager) {
         var self = this;
         var customPricing = [];
         self.context = "facilities";
@@ -96,17 +98,7 @@
         // 3) Having this customPricing for "discarded" rows allows us to revert to those at any time before
         //    validateAndSubmit success.
         $scope.$watch("editCtrl.facility.pricingMethod", function(newValue) {
-            if (self.facility.pricingMethod === "CUSTOM") {
-                if (!_.isEmpty(customPricing)) {
-                    self.facility.pricing = customPricing;
-                }
-                customPricing = [];
-            } else {
-                if (!_.isEmpty(self.facility.pricing)) {
-                    customPricing = self.facility.pricing;
-                }
-                self.facility.pricing = [];
-            }
+            pricingManager.setPricingMethod(newValue);
         });
 
         self.save = function(form) {

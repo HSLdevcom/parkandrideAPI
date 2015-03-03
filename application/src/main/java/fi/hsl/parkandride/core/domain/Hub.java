@@ -11,6 +11,7 @@ import com.google.common.collect.Sets;
 import com.wordnik.swagger.annotations.ApiModelProperty;
 
 import fi.hsl.parkandride.core.domain.validation.NotNullElement;
+import fi.hsl.parkandride.core.domain.validation.Coordinates;
 
 public class Hub {
 
@@ -23,6 +24,7 @@ public class Hub {
 
     @ApiModelProperty(required = true)
     @NotNull
+    @Coordinates
     public Point location;
 
     @NotNull

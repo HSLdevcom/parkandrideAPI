@@ -9,9 +9,12 @@ import org.geolatte.geom.Point;
 
 import com.google.common.base.MoreObjects;
 
+import fi.hsl.parkandride.core.domain.validation.Coordinates;
+
 public class Port {
 
     @NotNull
+    @Coordinates
     public Point location;
 
     public boolean entry;

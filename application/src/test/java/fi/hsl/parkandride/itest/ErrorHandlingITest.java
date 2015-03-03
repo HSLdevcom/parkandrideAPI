@@ -69,14 +69,14 @@ public class ErrorHandlingITest extends AbstractIntegrationTest {
     }
 
     @Test
-    public void geolatte_json_mapping_violations_are_not_detected() {
+    public void geolatte_json_mapping_violations_are_detected() {
         givenWithContent()
             .body("{ \"name\": \"foo\", \"location\": \"this is not readable location\"  }")
         .when()
             .post(UrlSchema.FACILITIES)
         .then()
             .spec(assertResponse(HttpStatus.BAD_REQUEST, HttpMessageNotReadableException.class))
-            .body("violations", is(nullValue()))
+            .body("violations[0].path", is("location"))
         ;
     }
 

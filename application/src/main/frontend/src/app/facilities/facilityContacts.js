@@ -4,7 +4,7 @@
         'parkandride.contacts'
     ]);
 
-    m.factory('ContactsManager', function($q, ContactResource) {
+    m.factory('ContactsManager', function($q, ContactResource, $rootScope) {
         var operatorId;
         var loading = false;
         var api = {
@@ -39,6 +39,10 @@
                 api.allContacts.push(contact);
             }
         };
+        // Refresh cache on route/state change
+        $rootScope.$on('$stateChangeSuccess', function() {
+           api.setOperatorId(null);
+        });
         return api;
     });
 

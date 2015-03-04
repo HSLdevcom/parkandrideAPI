@@ -15,12 +15,11 @@ import static fi.hsl.parkandride.core.domain.Service.LIGHTING;
 import static fi.hsl.parkandride.core.domain.Service.TOILETS;
 import static fi.hsl.parkandride.core.domain.Sort.Dir.ASC;
 import static fi.hsl.parkandride.core.domain.Sort.Dir.DESC;
-import static fi.hsl.parkandride.core.domain.Usage.COMMERCIAL;
 import static fi.hsl.parkandride.core.domain.Usage.PARK_AND_RIDE;
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.setAllowExtractingPrivateFields;
 import static org.junit.Assert.fail;
+import static org.mockito.Mockito.*;
 
 import java.util.*;
 
@@ -30,6 +29,7 @@ import org.geolatte.geom.Point;
 import org.geolatte.geom.Polygon;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mock;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -137,6 +137,24 @@ public class FacilityDaoTest extends AbstractDaoTest {
 
         FacilitySummary facilitySummary = facilityDao.summarizeFacilities(new FacilitySearch());
         assertThat(facilitySummary.capacities).isEqualTo(builtCapacity);
+    }
+
+    @Test
+    public void normalize_facility_on_create() {
+        Facility facility = mock(Facility.class);
+        try {
+            facilityDao.insertFacility(facility);
+        } catch (RuntimeException e) {}
+        verify(facility).normalize();
+    }
+
+    @Test
+    public void normalize_facility_on_update() {
+        Facility facility = mock(Facility.class);
+        try {
+            facilityDao.updateFacility(123l, facility, facility);
+        } catch (RuntimeException e) {}
+        verify(facility).normalize();
     }
 
     @Test

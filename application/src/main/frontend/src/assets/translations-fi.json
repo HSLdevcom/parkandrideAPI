@@ -401,6 +401,7 @@
       "unavailable": "Tilapäisesti poissa käytöstä"
     },
     "builtCapacity": {
+      "label": "Rakennettu kapasiteetti",
       "CAR": { "label": "Henkilöauto, rakennettu kapasiteetti" },
       "BICYCLE": { "label": "Polkupyörä, rakennettu kapasiteetti" },
       "BICYCLE_SECURE_SPACE": { "label": "Polkupyörä, lukittu tila, rakennettu kapasiteetti" },
@@ -653,6 +654,6 @@
     "PasswordConfirmationMismatch": "tarkista, että salasanat ovat identtiset",
     "BadPassword": "salasanan tulee sisältää 8-15 merkkiä, vähintään yksi numero (0-9), yksi pieni aakkonen (a-ö) ja yksi suuri aakkonen (A-Ö)",
     "PricingNotFound": "pysäköintihinnoittelua ei löydy",
-    "WGS84Coordinates": "Koordinaatit ovat ulkona sallituista rajoista: 19° <= x/pituuspiiri <= 32°, 59.5° <= y/leveyspiiri <= 70.5°"
+    "Coordinates": "Koordinaatit ovat ulkona sallituista rajoista: 19° <= x/pituuspiiri <= 32°, 59.5° <= y/leveyspiiri <= 70.5°"
   }
 }

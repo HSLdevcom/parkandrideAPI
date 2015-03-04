@@ -5,7 +5,7 @@
         var self = {};
         var clipboard = initClipboard();
         var selections = initSelections();
-        var customPricing = [];
+        var customPricing;
 
         self.model = {
             allSelected: false,
@@ -29,6 +29,8 @@
         function init(pricing) {
             self.pricing = pricing;
             customPricing = [];
+            selections.clear();
+            clipboard.clear();
             _.forEach(self.pricing, function(p) { p._id = Sequence.nextval();});
         }
 

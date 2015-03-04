@@ -46,10 +46,8 @@ public class MDCFilter extends GenericFilterBean {
         HttpServletRequest httpReq = HttpServletRequest.class.cast(request);
         MDC.put(Key.REQUESTID, UUID.randomUUID().toString());
         MDC.put(Key.SRCIP, httpReq.getRemoteHost());
-        String username = httpReq.getRemoteUser();
-        if (username != null) {
-            MDC.put(Key.USERNAME, username);
-        }
+        // Authenticated username will be set in UserArgumentResolver iff authentication is required
+        MDC.put(Key.USERNAME, "<ANONYMOUS>");
         String appId = httpReq.getHeader(LIIPI_APPLICATION_ID);
         if (appId != null) {
             validateAppId(appId);

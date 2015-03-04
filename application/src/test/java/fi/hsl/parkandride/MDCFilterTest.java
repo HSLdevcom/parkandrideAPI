@@ -6,7 +6,8 @@ import org.junit.Test;
 
 import fi.hsl.parkandride.front.IllegalHeaderException;
 
-public class MDCFilterTest {
+public class
+        MDCFilterTest {
 
     @Test
     public void liipi_ui_is_valid() {
@@ -26,6 +27,11 @@ public class MDCFilterTest {
     @Test
     public void valid_character_classes() {
         validateAppId("a-zA-Z_0.1/9");
+    }
+
+    @Test(expected = IllegalHeaderException.class)
+    public void newline_is_invalid() {
+        validateAppId("foo\nbar");
     }
 
 }

@@ -6,7 +6,7 @@
   <parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
-    <version>1.2.1.RELEASE</version>
+    <version>1.2.2.RELEASE</version>
     <relativePath/>
   </parent>
 
@@ -21,7 +21,7 @@
     <assertj.version>1.6.1</assertj.version>
     <guava.version>18.0</guava.version>
     <json-simple.version>1.1.1</json-simple.version>
-    <jackson.version>2.5.1</jackson.version>
+    <jackson.version>2.4.5</jackson.version>
 
     <maven-plugin.coveralls.version>3.0.0</maven-plugin.coveralls.version>
     <maven-plugin.jacoco.version>0.7.2.201409121644</maven-plugin.jacoco.version>

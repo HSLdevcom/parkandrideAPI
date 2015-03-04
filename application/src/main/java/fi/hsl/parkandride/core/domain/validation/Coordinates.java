@@ -16,7 +16,7 @@ import javax.validation.Payload;
 @Retention(RUNTIME)
 public @interface Coordinates {
 
-    String message() default "{fi.hsl.parkandride.core.domain.validation.WGS84Coordinates.message}";
+    String message() default "{fi.hsl.parkandride.core.domain.validation.Coordinates.message}";
 
     Class<?>[] groups() default { };
 

@@ -70,6 +70,9 @@
                 });
                 scope.$watchGroup(["pricing.price.fi", "pricing.price.sv", "pricing.price.en"], function() {
                     scope.free = isFree();
+                    if (scope.free && scope.pricing.price != null) {
+                        scope.pricing.price = null;
+                    }
                 });
 
                 function is24h() {

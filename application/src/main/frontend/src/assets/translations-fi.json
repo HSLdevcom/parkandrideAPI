@@ -339,6 +339,9 @@
       "edit": "Sisään-/uloskäynti",
       "view": "Sisään-/uloskäynti",
       "label": "Sisään-/uloskäynnit",
+      "location": {
+        "label": "Sisään-/uloskäynnin sijainti"
+      },
       "entry": {
         "label": "Sisäänajo"
       },

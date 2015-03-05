@@ -86,6 +86,16 @@
   text-decoration: underline;
 }
 
+//dropdowns
+div.ui-select-match > .btn {
+  text-align: left;
+}
+
+div.ui-select-match > .btn:hover {
+  background-color: #fff;
+  color: #333;
+}
+
 div.input-group > div.dropdown > .btn {
   max-width: 326px;
   overflow: hidden;

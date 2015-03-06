@@ -8,6 +8,8 @@ import javax.sql.DataSource;
 
 import org.geolatte.geom.Point;
 import org.geolatte.geom.Polygon;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -34,12 +36,14 @@ import fi.hsl.parkandride.core.domain.*;
 @Configuration
 public class JdbcConfiguration {
 
+    private static final Logger log = LoggerFactory.getLogger(JdbcConfiguration.class);
+
     @Configuration
     @Profile({FeatureProfile.H2})
     public static class H2 {
 
         public H2() {
-            System.out.println("USING H2");
+            log.info("USING H2");
         }
 
         @Bean
@@ -54,7 +58,7 @@ public class JdbcConfiguration {
     public static class Postgresql {
 
         public Postgresql() {
-            System.out.println("USING POSTGRESQL");
+            log.info("USING H2");
         }
 
         @Bean

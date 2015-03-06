@@ -1,6 +1,13 @@
 package fi.hsl.parkandride.front;
 
-public class UrlSchema {
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+
+import com.sun.org.apache.bcel.internal.generic.RETURN;
+
+public final class UrlSchema {
+
+    private UrlSchema() {}
 
     public static final String GEOJSON = "application/vnd.geo+json";
 
@@ -93,4 +100,12 @@ public class UrlSchema {
 
     public static final String DEV_HUBS = DEV_API + "/hubs";
 
+
+    public static String urlEncode(String str) {
+        try {
+            return URLEncoder.encode(str, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            throw new Error(e);
+        }
+    }
 }

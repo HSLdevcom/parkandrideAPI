@@ -2,6 +2,7 @@ package fi.hsl.parkandride.front;
 
 import static fi.hsl.parkandride.front.UrlSchema.*;
 import static fi.hsl.parkandride.front.geojson.FeatureCollection.FACILITY_TO_FEATURE;
+import static java.lang.String.format;
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
@@ -13,6 +14,8 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -34,6 +37,8 @@ import fi.hsl.parkandride.front.geojson.FeatureCollection;
 @Api("facilities")
 public class FacilityController {
 
+    private final Logger log = LoggerFactory.getLogger(FacilityController.class);
+
     @Inject
     FacilityService facilityService;
 
@@ -42,7 +47,9 @@ public class FacilityController {
     public ResponseEntity<Facility> createFacility(@RequestBody Facility facility,
                                                    User currentUser,
                                                    UriComponentsBuilder builder) {
+        log.info("createFacility");
         Facility newFacility = facilityService.createFacility(facility, currentUser);
+        log.info("createFacility(%s)", newFacility.id);
 
         HttpHeaders headers = new HttpHeaders();
         headers.setLocation(builder.path(FACILITY).buildAndExpand(newFacility.id).toUri());
@@ -51,12 +58,14 @@ public class FacilityController {
 
     @RequestMapping(method = GET, value = FACILITY, produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<Facility> getFacility(@PathVariable(FACILITY_ID) long facilityId) {
+        log.info(format("getFacility(%s)", facilityId));
         Facility facility = facilityService.getFacility(facilityId);
         return new ResponseEntity<>(facility, OK);
     }
 
     @RequestMapping(method = GET, value = FACILITY, produces = GEOJSON)
     public ResponseEntity<Feature> getFacilityAsFeature(@PathVariable(FACILITY_ID) long facilityId) {
+        log.info(format("getFacilityAsFeature(%s)", facilityId));
         Facility facility = facilityService.getFacility(facilityId);
         return new ResponseEntity<>(FACILITY_TO_FEATURE.apply(facility), OK);
     }
@@ -66,24 +75,28 @@ public class FacilityController {
     public ResponseEntity<Facility> updateFacility(@PathVariable(FACILITY_ID) long facilityId,
                                                    @RequestBody Facility facility,
                                                    User currentUser) {
+        log.info(format("updateFacility(%s)", facilityId));
         Facility response = facilityService.updateFacility(facilityId, facility, currentUser);
         return new ResponseEntity<>(response, OK);
     }
 
     @RequestMapping(method = GET, value = FACILITIES, produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<SearchResults<FacilityInfo>> findFacilities(PageableFacilitySearch search) {
+        log.info("findFacilities");
         SearchResults<FacilityInfo> results = facilityService.search(search);
         return new ResponseEntity<>(results, OK);
     }
 
     @RequestMapping(method = GET, value = FACILITIES, params = "summary", produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<FacilitySummary> summarizeFacilities(FacilitySearch search) {
+        log.info("summarizeFacilities");
         FacilitySummary summary = facilityService.summarize(search);
         return new ResponseEntity<>(summary, OK);
     }
 
     @RequestMapping(method = GET, value = FACILITIES, produces = GEOJSON)
     public ResponseEntity<FeatureCollection> findFacilitiesAsFeatureCollection(PageableFacilitySearch search) {
+        log.info("findFacilitiesAsFeatureCollection");
         SearchResults<FacilityInfo> results = facilityService.search(search);
         return new ResponseEntity<>(FeatureCollection.ofFacilities(results), OK);
     }
@@ -93,12 +106,14 @@ public class FacilityController {
     public void registerUtilization(@PathVariable(FACILITY_ID) long facilityId,
                                     @RequestBody List<Utilization> statuses,
                                     User currentUser) {
+        log.info(format("registerUtilization(%s)", facilityId));
         facilityService.registerUtilization(facilityId, statuses, currentUser);
     }
 
     // FIXME: Only latest utilization...
     @RequestMapping(method = GET, value = FACILITY_UTILIZATION, produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<Results<Utilization>> getUtilization(@PathVariable(FACILITY_ID) long facilityId) {
+        log.info(format("getUtilization(%s)", facilityId));
         List<Utilization> statuses = facilityService.getStatuses(facilityId);
         return new ResponseEntity<>(Results.of(statuses), OK);
     }

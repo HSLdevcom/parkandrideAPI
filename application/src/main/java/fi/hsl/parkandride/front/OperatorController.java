@@ -4,6 +4,7 @@ import static fi.hsl.parkandride.front.UrlSchema.API_KEY;
 import static fi.hsl.parkandride.front.UrlSchema.OPERATOR;
 import static fi.hsl.parkandride.front.UrlSchema.OPERATORS;
 import static fi.hsl.parkandride.front.UrlSchema.OPERATOR_ID;
+import static java.lang.String.format;
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
@@ -13,6 +14,8 @@ import static org.springframework.web.bind.annotation.RequestMethod.PUT;
 
 import javax.inject.Inject;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -35,6 +38,8 @@ import fi.hsl.parkandride.core.service.OperatorService;
 @Api("operators")
 public class OperatorController {
 
+    private final Logger log = LoggerFactory.getLogger(OperatorController.class);
+
     @Inject
     OperatorService operatorService;
 
@@ -43,7 +48,9 @@ public class OperatorController {
     public ResponseEntity<Operator> createOperator(@RequestBody Operator operator,
                                                    User currentUser,
                                                    UriComponentsBuilder builder) {
+        log.info("createOperator");
         Operator newOperator = operatorService.createOperator(operator, currentUser);
+        log.info(format("createOperator(%s)", newOperator.id));
 
         HttpHeaders headers = new HttpHeaders();
         headers.setLocation(builder.path(OPERATOR).buildAndExpand(newOperator.id).toUri());
@@ -52,9 +59,10 @@ public class OperatorController {
 
     @ApiOperation(value = "Update operator", authorizations = @Authorization(API_KEY))
     @RequestMapping(method = PUT, value = OPERATOR, produces = APPLICATION_JSON_VALUE)
-    public ResponseEntity<Operator> updateContact(@PathVariable(OPERATOR_ID) long operatorId,
-                                                 @RequestBody Operator operator,
-                                                 User currentUser) {
+    public ResponseEntity<Operator> updateOperator(@PathVariable(OPERATOR_ID) long operatorId,
+                                                   @RequestBody Operator operator,
+                                                   User currentUser) {
+        log.info(format("updateOperator(%s)", operatorId));
         Operator response = operatorService.updateOperator(operatorId, operator, currentUser);
         return new ResponseEntity<>(response, OK);
     }

@@ -4,6 +4,7 @@ import static fi.hsl.parkandride.front.UrlSchema.API_KEY;
 import static fi.hsl.parkandride.front.UrlSchema.CONTACT;
 import static fi.hsl.parkandride.front.UrlSchema.CONTACTS;
 import static fi.hsl.parkandride.front.UrlSchema.CONTACT_ID;
+import static java.lang.String.format;
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
@@ -13,6 +14,8 @@ import static org.springframework.web.bind.annotation.RequestMethod.PUT;
 
 import javax.inject.Inject;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -35,6 +38,8 @@ import fi.hsl.parkandride.core.service.ContactService;
 @Api("contacts")
 public class ContactController {
 
+    private final Logger log = LoggerFactory.getLogger(ContactController.class);
+
     @Inject
     ContactService contactService;
 
@@ -43,7 +48,9 @@ public class ContactController {
     public ResponseEntity<Contact> createContact(@RequestBody Contact contact,
                                                  User currentUser,
                                                  UriComponentsBuilder builder) {
+        log.info("createContact");
         Contact newContact = contactService.createContact(contact, currentUser);
+        log.info(format("createContact(%s)", newContact.id));
 
         HttpHeaders headers = new HttpHeaders();
         headers.setLocation(builder.path(CONTACT).buildAndExpand(newContact.id).toUri());
@@ -61,6 +68,7 @@ public class ContactController {
     public ResponseEntity<Contact> updateContact(@PathVariable(CONTACT_ID) long contactId,
                                                    @RequestBody Contact contact,
                                                    User currentUser) {
+        log.info(format("updateContact(%s)", contactId));
         Contact response = contactService.updateContact(contactId, contact, currentUser);
         return new ResponseEntity<>(response, OK);
     }

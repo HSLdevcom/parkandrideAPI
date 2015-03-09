@@ -159,6 +159,15 @@
                     return $q.reject(rejection);
                 },
                 request: function(config) {
+                    // For running with CORS:
+                    // 1) cd application/src/main/frontend
+                    // 2) grunt build (or grunt watch on another console)
+                    // 3) cd build
+                    // 4) python -m SimpleHTTPServer 8000
+                    // 5) Uncomment lines below
+                    //if (config.url.startsWith("api/") || config.url.startsWith("internal/")) {
+                    //    config.url = "http://localhost:8080/" + config.url;
+                    //}
                     var user = Session.get();
                     if (user && user.token) {
                         config.headers.Authorization = "Bearer " + user.token;

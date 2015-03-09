@@ -22,7 +22,7 @@ module.exports = function (spec) {
     };
 
     spec.revealChoices = function(element) {
-        element.$('.ui-select-match').click();
+        element.$('.ui-select-toggle').click();
     };
 
     that.select = function(element, value) {

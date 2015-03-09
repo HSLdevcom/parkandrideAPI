@@ -1,8 +1,11 @@
 package fi.hsl.parkandride;
 
+import static fi.hsl.parkandride.front.UrlSchema.API;
 import static fi.hsl.parkandride.front.UrlSchema.GEOJSON;
+import static java.util.Arrays.asList;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.geolatte.common.Feature;
@@ -43,8 +46,10 @@ import com.google.common.base.Preconditions;
 import fi.hsl.parkandride.config.SwaggerConfiguration;
 import fi.hsl.parkandride.core.domain.Phone;
 import fi.hsl.parkandride.core.domain.Time;
+import fi.hsl.parkandride.front.CORSFilter;
 import fi.hsl.parkandride.front.Features;
 import fi.hsl.parkandride.front.PhoneSerializer;
+import fi.hsl.parkandride.front.UrlSchema;
 import fi.hsl.parkandride.front.UserArgumentResolver;
 import fi.hsl.parkandride.front.geojson.GeojsonDeserializer;
 import fi.hsl.parkandride.front.geojson.GeojsonSerializer;
@@ -169,10 +174,17 @@ public class Application {
 
     @Bean
     public FilterRegistrationBean registerMdcFilter(MDCFilter filter) {
-        Preconditions.checkNotNull(filter);
-        FilterRegistrationBean b = new FilterRegistrationBean();
-        b.setFilter(filter);
+        FilterRegistrationBean b = new FilterRegistrationBean(filter);
         b.setMatchAfter(true);
         return b;
     }
+
+    @Bean
+    public FilterRegistrationBean registerCORSFilter() {
+        FilterRegistrationBean b = new FilterRegistrationBean(new CORSFilter());
+        b.setMatchAfter(true);
+        b.setUrlPatterns(UrlSchema.CORS_ENABLED_PATHS);
+        return b;
+    }
+
 }

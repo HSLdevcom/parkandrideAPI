@@ -101,7 +101,7 @@ module.exports = function(spec) {
     };
 
     spec.select = function(element, name) {
-        element.element(by.css('.ui-select-match')).click();
+        element.element(by.css('.ui-select-toggle')).click();
         element = browser.driver.switchTo().activeElement();
         element.sendKeys(name);
         element.sendKeys(protractor.Key.ENTER);

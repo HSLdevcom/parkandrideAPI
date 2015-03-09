@@ -14,7 +14,7 @@
 
 .form-control.validation-error.ng-invalid,
 .validation-error.ng-invalid > .map,
-.ui-select-bootstrap.validation-error.ng-invalid > button {
+.ui-select-bootstrap.validation-error.ng-invalid > button, .ui-select-container.validation-error.ng-invalid > .ui-select-match > .ui-select-toggle{
   border: 2px solid $errorcolor;
 }
 

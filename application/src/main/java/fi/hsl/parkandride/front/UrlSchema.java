@@ -1,9 +1,10 @@
 package fi.hsl.parkandride.front;
 
+import static java.util.Arrays.asList;
+
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-
-import com.sun.org.apache.bcel.internal.generic.RETURN;
+import java.util.Collection;
 
 public final class UrlSchema {
 
@@ -12,6 +13,7 @@ public final class UrlSchema {
     public static final String GEOJSON = "application/vnd.geo+json";
 
     public static final String API_KEY = "apiKey";
+
 
     public static final String DOCS = "/docs";
 
@@ -82,6 +84,9 @@ public final class UrlSchema {
     public static final String FACILITY_STATUSES = API + "/facility-statuses";
 
     public static final String PRICING_METHODS = API + "/pricing-methods";
+
+
+    public static Collection<String> CORS_ENABLED_PATHS = asList(API + "/*", DOCS + "/*");
 
     /**
      * TESTING

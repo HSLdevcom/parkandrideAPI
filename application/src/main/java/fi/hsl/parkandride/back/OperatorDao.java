@@ -103,9 +103,9 @@ public class OperatorDao implements OperatorRepository {
         sort = firstNonNull(sort, DEFAULT_SORT);
         ComparableExpression<String> sortField;
         switch (firstNonNull(sort.by, DEFAULT_SORT.by)) {
-            case "name.fi": sortField = qOperator.nameFi.toUpperCase(); break;
-            case "name.sv": sortField = qOperator.nameSv.toUpperCase(); break;
-            case "name.en": sortField = qOperator.nameEn.toUpperCase(); break;
+            case "name.fi": sortField = qOperator.nameFi.lower(); break;
+            case "name.sv": sortField = qOperator.nameSv.lower(); break;
+            case "name.en": sortField = qOperator.nameEn.lower(); break;
             default: throw invalidSortBy();
         }
         if (DESC.equals(sort.dir)) {

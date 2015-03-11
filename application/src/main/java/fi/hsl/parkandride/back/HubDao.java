@@ -190,9 +190,9 @@ public class HubDao implements HubRepository {
         sort = firstNonNull(sort, DEFAULT_SORT);
         ComparableExpression<String> sortField;
         switch (firstNonNull(sort.by, DEFAULT_SORT.by)) {
-            case "name.fi": sortField = qHub.nameFi.toUpperCase(); break;
-            case "name.sv": sortField = qHub.nameSv.toUpperCase(); break;
-            case "name.en": sortField = qHub.nameEn.toUpperCase(); break;
+            case "name.fi": sortField = qHub.nameFi.lower(); break;
+            case "name.sv": sortField = qHub.nameSv.lower(); break;
+            case "name.en": sortField = qHub.nameEn.lower(); break;
             default: throw invalidSortBy();
         }
         if (DESC.equals(sort.dir)) {

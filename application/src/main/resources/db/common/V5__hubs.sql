@@ -20,6 +20,7 @@ create table hub (
 
 create sequence hub_id_seq increment by 1 start with 1;
 
+
 create table hub_facility (
   hub_id bigint not null,
   facility_id bigint not null,
@@ -29,3 +30,7 @@ create table hub_facility (
   constraint hub_facility_hub_id_fk foreign key (hub_id)
     references hub (id)
 );
+
+create index hub_facility_hub_id_idx on hub_facility (hub_id);
+
+create index hub_facility_facility_id_idx on hub_facility (facility_id);

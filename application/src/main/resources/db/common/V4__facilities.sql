@@ -66,6 +66,10 @@ create table facility (
 
 create sequence facility_id_seq increment by 1 start with 1;
 
+create index facility_operator_id_idx on facility (operator_id);
+
+create index facility_status_idx on facility (status);
+
 
 create table facility_alias (
   facility_id bigint not null,
@@ -76,6 +80,8 @@ create table facility_alias (
   constraint facility_alias_fk foreign key (facility_id)
     references facility (id)
 );
+
+create index facility_alias_facility_id_idx on facility_alias (facility_id);
 
 
 create table port (
@@ -107,6 +113,9 @@ create table port (
     references facility (id)
 );
 
+create index port_facility_id_idx on port (facility_id);
+
+
 create table facility_service (
   facility_id bigint not null,
   service varchar(64) not null,
@@ -119,6 +128,8 @@ create table facility_service (
   constraint facility_service_service_fk foreign key (service)
     references service (name)
 );
+
+create index facility_service_facility_id_idx on facility_service (facility_id);
 
 
 create table facility_utilization (
@@ -153,6 +164,8 @@ create table facility_payment_method (
     references payment_method (name)
 );
 
+create index facility_payment_method_facility_id_idx on facility_payment_method (facility_id);
+
 
 create table pricing (
   facility_id bigint not null,
@@ -186,6 +199,8 @@ create table pricing (
 
 create sequence pricing_id_seq increment by 1 start with 1;
 
+create index pricing_facility_id_idx on pricing (facility_id);
+
 
 create table unavailable_capacity (
   facility_id bigint not null,
@@ -204,3 +219,5 @@ create table unavailable_capacity (
   constraint unavailable_capacity_capacity_type_fk foreign key (capacity_type)
   references capacity_type (name)
 );
+
+create index unavailable_capacity_facility_id_idx on unavailable_capacity (facility_id);

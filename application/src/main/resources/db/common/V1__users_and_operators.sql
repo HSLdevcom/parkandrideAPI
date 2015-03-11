@@ -27,3 +27,5 @@ create table app_user (
 );
 
 create sequence user_id_seq increment by 1 start with 1;
+
+create index app_user_operator_id_idx on app_user (operator_id);

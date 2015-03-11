@@ -37,3 +37,5 @@ create table contact (
 );
 
 create sequence contact_id_seq increment by 1 start with 1;
+
+create index contact_operator_id_idx on contact (operator_id);

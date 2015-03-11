@@ -194,7 +194,7 @@ public class FacilityDaoTest extends AbstractDaoTest {
         assertThat(facility.status).isEqualTo(IN_OPERATION);
         assertThat(facility.statusDescription).isNull();
         assertThat(facility.aliases).isEqualTo(newAliases);
-        assertThat(facility.ports).isEqualTo(newPorts);
+        assertThat(ImmutableSet.copyOf(facility.ports)).isEqualTo(ImmutableSet.copyOf(newPorts));
         assertThat(facility.services).isEqualTo(newServices);
         assertThat(facility.pricing).isEqualTo(asList(
                 free24h(CAR, PARK_AND_RIDE, 50, BUSINESS_DAY),

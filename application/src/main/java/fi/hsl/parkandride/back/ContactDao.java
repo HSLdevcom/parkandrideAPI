@@ -162,9 +162,9 @@ public class ContactDao implements ContactRepository {
         sort = firstNonNull(sort, DEFAULT_SORT);
         ComparableExpression<String> sortField;
         switch (firstNonNull(sort.by, DEFAULT_SORT.by)) {
-            case "name.fi": sortField = qContact.nameFi.toUpperCase(); break;
-            case "name.sv": sortField = qContact.nameSv.toUpperCase(); break;
-            case "name.en": sortField = qContact.nameEn.toUpperCase(); break;
+            case "name.fi": sortField = qContact.nameFi.lower(); break;
+            case "name.sv": sortField = qContact.nameSv.lower(); break;
+            case "name.en": sortField = qContact.nameEn.lower(); break;
             default: throw invalidSortBy();
         }
         if (DESC.equals(sort.dir)) {

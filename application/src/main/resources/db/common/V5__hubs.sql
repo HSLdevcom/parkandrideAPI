@@ -31,6 +31,4 @@ create table hub_facility (
     references hub (id)
 );
 
-create index hub_facility_hub_id_idx on hub_facility (hub_id);
-
 create index hub_facility_facility_id_idx on hub_facility (facility_id);

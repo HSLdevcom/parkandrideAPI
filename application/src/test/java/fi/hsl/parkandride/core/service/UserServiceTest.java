@@ -8,6 +8,7 @@ import static org.mockito.Mockito.when;
 
 import java.util.concurrent.atomic.AtomicLong;
 
+import org.apache.commons.lang3.StringUtils;
 import org.jasypt.util.password.PasswordEncryptor;
 import org.joda.time.DateTime;
 import org.joda.time.Period;
@@ -37,7 +38,7 @@ public class UserServiceTest {
         MockitoAnnotations.initMocks(this);
         userService = new UserService(
                 userRepository,
-                new AuthenticationService(userRepository, passwordEncryptor, "secret", Period.seconds(60)),
+                new AuthenticationService(userRepository, passwordEncryptor, StringUtils.repeat('x', AuthenticationService.SECRET_MIN_LENGTH), Period.seconds(60)),
                 new ValidationService());
     }
 

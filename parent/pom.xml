@@ -43,6 +43,7 @@
             <excludes>
               <exclude>**/parkandride/dev/**</exclude>
               <exclude>**/parkandride/back/sql/**</exclude>
+              <exclude>**/parkandride/core/domain/wkt/**</exclude>
               <exclude>**/H2GeometryWktType.class</exclude>
               <exclude>**/H2GISTemplates.class</exclude>
             </excludes>

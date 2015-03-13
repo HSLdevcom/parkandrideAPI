@@ -48,7 +48,7 @@ lineString
 	;
 
 point
-	: Decimal Decimal
+	: x=Decimal y=Decimal
 	;
 
 

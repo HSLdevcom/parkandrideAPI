@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.antlr.v4.runtime.*;
-import org.antlr.v4.runtime.misc.NotNull;
 import org.geolatte.geom.*;
 import org.geolatte.geom.codec.Wkt;
 import org.geolatte.geom.crs.CrsId;
@@ -32,7 +31,7 @@ public class Spatial {
                                 int charPositionInLine,
                                 String msg,
                                 RecognitionException e) {
-            throw new IllegalArgumentException("line " + line + ":" + charPositionInLine + " " + msg);
+            throw new IllegalArgumentException("Line " + line + ":" + charPositionInLine + " " + msg);
         }
     };
 
@@ -55,7 +54,8 @@ public class Spatial {
         try {
             return newParser(wkt).geometry().accept(WKT_VISITOR).toGeometry();
         } catch (RuntimeException e) {
-            throw new IllegalArgumentException(e.getMessage(), e);
+            throw new IllegalArgumentException(
+                    "Expected a valid WKT Point, LineString, Polygon, MultiPoint, MultiLineString or MultiPolygon. " + e.getMessage(), e);
         }
     }
 
@@ -72,50 +72,50 @@ public class Spatial {
     private static final WKTBaseVisitor<Builder> WKT_VISITOR = new WKTBaseVisitor<Builder>() {
 
         @Override
-        public Builder visitPointGeometry(@NotNull WKTParser.PointGeometryContext ctx) {
+        public Builder visitPointGeometry(WKTParser.PointGeometryContext ctx) {
             return new GeometryWrapper(((Points) visitChildren(ctx)).toPoint());
         }
 
         @Override
-        public Builder visitLineStringGeometry(@NotNull WKTParser.LineStringGeometryContext ctx) {
+        public Builder visitLineStringGeometry(WKTParser.LineStringGeometryContext ctx) {
             return new GeometryWrapper(((Lines) visitChildren(ctx)).toLineString());
         }
 
         @Override
-        public Builder visitPolygonGeometry(@NotNull WKTParser.PolygonGeometryContext ctx) {
+        public Builder visitPolygonGeometry(WKTParser.PolygonGeometryContext ctx) {
             return new GeometryWrapper(((Shapes) visitChildren(ctx)).toPolygon());
         }
 
         @Override
-        public Builder visitMultiPointGeometry(@NotNull WKTParser.MultiPointGeometryContext ctx) {
+        public Builder visitMultiPointGeometry(WKTParser.MultiPointGeometryContext ctx) {
             return new GeometryWrapper(((Points) visitChildren(ctx)).toMultiPoint());
         }
 
         @Override
-        public Builder visitMultiLineStringGeometry(@NotNull WKTParser.MultiLineStringGeometryContext ctx) {
+        public Builder visitMultiLineStringGeometry(WKTParser.MultiLineStringGeometryContext ctx) {
             return new GeometryWrapper(((Lines) visitChildren(ctx)).toMultiLineString());
         }
 
         @Override
-        public Builder visitMultiPolygonGeometry(@NotNull WKTParser.MultiPolygonGeometryContext ctx) {
+        public Builder visitMultiPolygonGeometry(WKTParser.MultiPolygonGeometryContext ctx) {
             return new GeometryWrapper(((Shapes) visitChildren(ctx)).toMultiPolygon());
         }
 
         @Override
-        public Builder visitPolygon(@NotNull WKTParser.PolygonContext ctx) {
+        public Builder visitPolygon(WKTParser.PolygonContext ctx) {
             Lines lines = (Lines) visitChildren(ctx);
             return new Shapes(lines);
         }
 
         @Override
-        public Builder visitLineString(@NotNull WKTParser.LineStringContext ctx) {
+        public Builder visitLineString(WKTParser.LineStringContext ctx) {
             Points points = (Points) visitChildren(ctx);
             return new Lines(points);
         }
 
         @Override
-        public Builder visitPoint(@NotNull WKTParser.PointContext ctx) {
-            return new Points(parseDouble(ctx.getChild(0).toString()), parseDouble(ctx.getChild(1).toString()));
+        public Builder visitPoint(WKTParser.PointContext ctx) {
+            return new Points(parseDouble(ctx.x.getText()), parseDouble(ctx.y.getText()));
         }
 
         @Override

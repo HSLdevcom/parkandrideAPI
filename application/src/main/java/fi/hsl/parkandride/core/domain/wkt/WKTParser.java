@@ -795,6 +795,8 @@ public class WKTParser extends Parser {
 	}
 
 	public static class PointContext extends ParserRuleContext {
+		public Token x;
+		public Token y;
 		public List<TerminalNode> Decimal() { return getTokens(WKTParser.Decimal); }
 		public TerminalNode Decimal(int i) {
 			return getToken(WKTParser.Decimal, i);
@@ -825,9 +827,9 @@ public class WKTParser extends Parser {
 			enterOuterAlt(_localctx, 1);
 			{
 			setState(112); 
-			match(Decimal);
+			((PointContext)_localctx).x = match(Decimal);
 			setState(113); 
-			match(Decimal);
+			((PointContext)_localctx).y = match(Decimal);
 			}
 		}
 		catch (RecognitionException re) {

@@ -6,7 +6,7 @@ function init_db {
 
 function init() {
   set -eu
-  : ${GO_PIPELINE_COUNTER:?}
+  : ${GO_PIPELINE_LABEL:?}
   : ${PWD:?}
   : ${LIIPI_DB:="liipici"}
   export LIIPI_DB PSQL_USERNAME=$LIIPI_DB SPRING_PROFILES_ACTIVE=env_gocd
@@ -18,23 +18,16 @@ function init() {
   cd $ROOT_DIR
 }
 
-function version() {
-  local byxpath=".//{http://maven.apache.org/POM/4.0.0}parent/{http://maven.apache.org/POM/4.0.0}version"
-  local version=$(python -c "import xml.etree.ElementTree as ET; print ET.parse('pom.xml').find(\"$byxpath\").text")
-  echo $version > version
-  sed -i -e "s/SNAPSHOT$/$GO_PIPELINE_COUNTER/" version
-  cat version
-}
-
 function run() {
-  local v=`version`
+  local version="$GO_PIPELINE_LABEL"
+  echo "$version" > version
 
   mvn versions:set \
       --update-snapshots \
       --batch-mode \
       --errors \
       -DgenerateBackupPoms=false \
-      -DnewVersion="$v" \
+      -DnewVersion="$version" \
       --file parent/pom.xml
 
   mvn clean deploy \

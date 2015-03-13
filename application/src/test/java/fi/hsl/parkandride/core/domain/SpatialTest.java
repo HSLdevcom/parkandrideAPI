@@ -40,6 +40,11 @@ public class SpatialTest {
         parseWKT("POLYGON ((30 10, 40 40, 20 40, 10 20, 30 11))");
     }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void too_short_polygon() {
+        parseWKT("POLYGON((1 1, 2 2, 1 1))");
+    }
+
     @Test
     public void ignore_whitespace() {
         assertPoint((Point) parseWKT("\nPOINT\t ( 1\r2)\t\r \n"), 1, 2);

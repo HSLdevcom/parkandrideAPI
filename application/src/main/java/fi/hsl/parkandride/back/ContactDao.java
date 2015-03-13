@@ -121,29 +121,29 @@ public class ContactDao implements ContactRepository {
     @TransactionalRead
     public SearchResults<Contact> findContacts(ContactSearch search) {
         PostgresQuery qry = queryFactory.from(qContact);
-        qry.limit(search.limit + 1);
-        qry.offset(search.offset);
+        qry.limit(search.getLimit() + 1);
+        qry.offset(search.getOffset());
 
-        if (search.ids != null && !search.ids.isEmpty()) {
-            qry.where(qContact.id.in(search.ids));
+        if (search.getIds() != null && !search.getIds().isEmpty()) {
+            qry.where(qContact.id.in(search.getIds()));
         }
-        if (search.operatorId != null) {
-            qry.where(qContact.operatorId.isNull().or(qContact.operatorId.eq(search.operatorId)));
+        if (search.getOperatorId() != null) {
+            qry.where(qContact.operatorId.isNull().or(qContact.operatorId.eq(search.getOperatorId())));
         }
-        if (search.name != null) {
-            if (!isNullOrEmpty(search.name.fi)) {
-                qry.where(qContact.nameFi.startsWith(search.name.fi));
+        if (search.getName() != null) {
+            if (!isNullOrEmpty(search.getName().fi)) {
+                qry.where(qContact.nameFi.startsWith(search.getName().fi));
             }
-            if (!isNullOrEmpty(search.name.sv)) {
-                qry.where(qContact.nameSv.startsWith(search.name.sv));
+            if (!isNullOrEmpty(search.getName().sv)) {
+                qry.where(qContact.nameSv.startsWith(search.getName().sv));
             }
-            if (!isNullOrEmpty(search.name.en)) {
-                qry.where(qContact.nameEn.startsWith(search.name.en));
+            if (!isNullOrEmpty(search.getName().en)) {
+                qry.where(qContact.nameEn.startsWith(search.getName().en));
             }
         }
 
-        orderBy(search.sort, qry);
-        return SearchResults.of(qry.list(contactMapping), search.limit);
+        orderBy(search.getSort(), qry);
+        return SearchResults.of(qry.list(contactMapping), search.getLimit());
     }
 
     private void populate(Contact contact, StoreClause<?> store) {
@@ -161,13 +161,13 @@ public class ContactDao implements ContactRepository {
     private void orderBy(Sort sort, PostgresQuery qry) {
         sort = firstNonNull(sort, DEFAULT_SORT);
         ComparableExpression<String> sortField;
-        switch (firstNonNull(sort.by, DEFAULT_SORT.by)) {
+        switch (firstNonNull(sort.getBy(), DEFAULT_SORT.getBy())) {
             case "name.fi": sortField = qContact.nameFi.lower(); break;
             case "name.sv": sortField = qContact.nameSv.lower(); break;
             case "name.en": sortField = qContact.nameEn.lower(); break;
             default: throw invalidSortBy();
         }
-        if (DESC.equals(sort.dir)) {
+        if (DESC.equals(sort.getDir())) {
             qry.orderBy(sortField.desc(), qContact.id.desc());
         } else {
             qry.orderBy(sortField.asc(), qContact.id.asc());

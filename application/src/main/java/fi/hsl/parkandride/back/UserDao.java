@@ -172,15 +172,15 @@ public class UserDao implements UserRepository {
     @TransactionalRead
     public SearchResults<User> findUsers(UserSearch search) {
         PostgresQuery qry = queryFactory.from(qUser);
-        qry.limit(search.limit + 1);
-        qry.offset(search.offset);
+        qry.limit(search.getLimit() + 1);
+        qry.offset(search.getOffset());
 
-        if (search.operatorId != null) {
-            qry.where(qUser.operatorId.eq(search.operatorId));
+        if (search.getOperatorId() != null) {
+            qry.where(qUser.operatorId.eq(search.getOperatorId()));
         }
 
         qry.orderBy(qUser.username.asc());
 
-        return SearchResults.of(qry.list(userMapping), search.limit);
+        return SearchResults.of(qry.list(userMapping), search.getLimit());
     }
 }

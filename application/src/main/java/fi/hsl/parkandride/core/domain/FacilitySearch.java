@@ -6,15 +6,15 @@ import org.geolatte.geom.Geometry;
 
 public class FacilitySearch {
 
-    public Set<Long> ids;
-
-    public Set<FacilityStatus> statuses;
-
-    public Double maxDistance;
-
-    public Geometry geometry;
-
     // NOTE: getters'n'setters are required for Spring GET request binding
+
+    private Set<Long> ids;
+
+    private Set<FacilityStatus> statuses;
+
+    private Double maxDistance;
+
+    private Geometry geometry;
 
     public Set<Long> getIds() {
         return ids;

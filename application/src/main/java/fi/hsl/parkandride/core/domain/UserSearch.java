@@ -2,18 +2,19 @@ package fi.hsl.parkandride.core.domain;
 
 public class UserSearch implements OperatorEntity {
 
-    public int limit = 100;
+    // NOTE: getters'n'setters are required for Spring GET request binding
 
-    public long offset = 0l;
+    private int limit = 100;
 
-    public Long operatorId;
+    private long offset = 0l;
+
+    private Long operatorId;
+
 
     @Override
     public Long operatorId() {
         return operatorId;
     }
-
-    // NOTE: getters'n'setters are required for Spring GET request binding
 
     public int getLimit() {
         return limit;

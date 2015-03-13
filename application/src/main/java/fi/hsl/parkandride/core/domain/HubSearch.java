@@ -6,21 +6,22 @@ import org.geolatte.geom.Geometry;
 
 public class HubSearch {
 
-    public Set<Long> ids;
-
-    public Geometry geometry;
-
-    public Double maxDistance;
-
-    public Set<Long> facilityIds;
-
-    public Sort sort;
-
-    public int limit = 100;
-
-    public long offset = 0l;
-
     // NOTE: getters'n'setters are required for Spring GET request binding
+
+    private Set<Long> ids;
+
+    private Geometry geometry;
+
+    private Double maxDistance;
+
+    private Set<Long> facilityIds;
+
+    private Sort sort;
+
+    private int limit = 100;
+
+    private long offset = 0l;
+
 
     public Set<Long> getIds() {
         return ids;

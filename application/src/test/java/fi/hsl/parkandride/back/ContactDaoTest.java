@@ -50,7 +50,7 @@ public class ContactDaoTest extends AbstractDaoTest {
 
         // Generic contacts are returned with operatoId search option
         ContactSearch search = new ContactSearch();
-        search.operatorId = -123l;
+        search.setOperatorId(-123l);
         assertThat(contactDao.findContacts(search).results).hasSize(1);
 
         final MultilingualString newName = new MultilingualString("changed name");
@@ -77,11 +77,11 @@ public class ContactDaoTest extends AbstractDaoTest {
         assertThat(contact.info).isEqualTo(newInfo);
 
         // Matches given operatorId
-        search.operatorId = contact.operatorId;
+        search.setOperatorId(contact.operatorId);
         assertThat(contactDao.findContacts(search).results).hasSize(1);
 
         // But doesn't match other operatorId
-        search.operatorId = -123l;
+        search.setOperatorId(-123l);
         assertThat(contactDao.findContacts(search).results).isEmpty();
     }
 

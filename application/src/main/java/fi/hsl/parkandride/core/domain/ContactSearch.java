@@ -4,23 +4,24 @@ import java.util.Set;
 
 public class ContactSearch {
 
-    public int limit = 100;
+    // NOTE: getters'n'setters are required for Spring GET request binding
 
-    public long offset = 0l;
+    private int limit = 100;
 
-    public Sort sort;
+    private long offset = 0l;
 
-    public Set<Long> ids;
+    private Sort sort;
 
-    public MultilingualString name;
+    private Set<Long> ids;
 
-    public Long operatorId;
+    private MultilingualString name;
+
+    private Long operatorId;
+
 
     public void setOperatorId(Long operatorId) {
         this.operatorId = operatorId;
     }
-
-    // NOTE: getters'n'setters are required for Spring GET request binding
 
     public int getLimit() {
         return limit;

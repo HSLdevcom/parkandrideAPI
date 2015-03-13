@@ -6,14 +6,15 @@ import static fi.hsl.parkandride.core.domain.PricingMethod.PARK_AND_RIDE_247_FRE
 import static fi.hsl.parkandride.core.domain.Role.OPERATOR_API;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
+import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 
 import java.util.List;
 
 import javax.inject.Inject;
 
+import com.jayway.restassured.response.Response;
 import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.http.HttpStatus;
@@ -131,27 +132,35 @@ public class UtilizationITest extends AbstractIntegrationTest {
 
     @Test
     public void accepts_ISO8601_UTC_timestamp() {
-        test_accept_timestamp(minValidPayload().put(Key.TIMESTAMP, DateTime.now(DateTimeZone.forOffsetHours(0))));
+        submitUtilization(minValidPayload().put(Key.TIMESTAMP, "2015-01-01T11:00:00.000Z"));
+
+        assertThat(getUtilizationTimestamp()).isEqualTo("2015-01-01T11:00:00.000Z");
     }
 
     @Test
-    public void accepts_ISO8601_non_UTC_timestamp() {
-        test_accept_timestamp(minValidPayload().put(Key.TIMESTAMP, DateTime.now(DateTimeZone.forOffsetHours(2))));
+    public void accepts_ISO8601_non_UTC_timestamp_and_converts_it_to_UTC() {
+        submitUtilization(minValidPayload().put(Key.TIMESTAMP, "2015-01-01T13:00:00.000+02:00"));
+
+        assertThat(getUtilizationTimestamp()).isEqualTo("2015-01-01T11:00:00.000Z");
     }
 
     @Test
-    public void accepts_epoch_timestamp() {
-        test_accept_timestamp(minValidPayload().put(Key.TIMESTAMP, DateTime.now().getMillis()));
+    public void accepts_epoch_timestamp_in_milliseconds() {
+        submitUtilization(minValidPayload().put(Key.TIMESTAMP, 1420110000123L));
+
+        assertThat(getUtilizationTimestamp()).isEqualTo("2015-01-01T11:00:00.123Z");
     }
 
-    private void test_accept_timestamp(JSONObjectBuilder builder) {
-        givenWithContent(authToken)
-            .body(builder.asArray())
-        .when()
-            .put(UrlSchema.FACILITY_UTILIZATION, f.id)
-        .then()
-            .statusCode(HttpStatus.OK.value())
-        ;
+    private void submitUtilization(JSONObjectBuilder builder) {
+        givenWithContent(authToken).body(builder.asArray())
+                .when().put(UrlSchema.FACILITY_UTILIZATION, f.id)
+                .then().statusCode(HttpStatus.OK.value());
+    }
+
+    private String getUtilizationTimestamp() {
+        Response response = when().get(UrlSchema.FACILITY_UTILIZATION, f.id);
+        response.then().assertThat().body("results", hasSize(1));
+        return response.body().jsonPath().getString("results[0].timestamp");
     }
 
     @Test

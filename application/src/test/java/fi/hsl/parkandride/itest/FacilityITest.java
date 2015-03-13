@@ -34,10 +34,6 @@ public class FacilityITest extends AbstractIntegrationTest{
     @Inject
     private OperatorDao operatorDao;
 
-    private Facility f;
-
-    private String authToken;
-
     @Before
     @TransactionalWrite
     public void initFixture() {

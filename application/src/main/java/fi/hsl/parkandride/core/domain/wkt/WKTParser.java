@@ -17,7 +17,7 @@ public class WKTParser extends Parser {
 	protected static final PredictionContextCache _sharedContextCache =
 		new PredictionContextCache();
 	public static final int
-		T__0=1, T__1=2, T__2=3, Decimal=4, IntegerPart=5, DecimalPart=6, POINT=7, 
+		Decimal=1, IntegerPart=2, DecimalPart=3, COMMA=4, LPAR=5, RPAR=6, POINT=7, 
 		LINESTRING=8, POLYGON=9, MULTIPOINT=10, MULTILINESTRING=11, MULTIPOLYGON=12, 
 		WS=13;
 	public static final int
@@ -32,11 +32,11 @@ public class WKTParser extends Parser {
 	};
 
 	private static final String[] _LITERAL_NAMES = {
-		null, "'('", "')'", "','"
+		null, null, null, null, "','", "'('", "')'"
 	};
 	private static final String[] _SYMBOLIC_NAMES = {
-		null, null, null, null, "Decimal", "IntegerPart", "DecimalPart", "POINT", 
-		"LINESTRING", "POLYGON", "MULTIPOINT", "MULTILINESTRING", "MULTIPOLYGON", 
+		null, "Decimal", "IntegerPart", "DecimalPart", "COMMA", "LPAR", "RPAR", 
+		"POINT", "LINESTRING", "POLYGON", "MULTIPOINT", "MULTILINESTRING", "MULTIPOLYGON", 
 		"WS"
 	};
 	public static final Vocabulary VOCABULARY = new VocabularyImpl(_LITERAL_NAMES, _SYMBOLIC_NAMES);
@@ -188,9 +188,11 @@ public class WKTParser extends Parser {
 
 	public static class PointGeometryContext extends ParserRuleContext {
 		public TerminalNode POINT() { return getToken(WKTParser.POINT, 0); }
+		public TerminalNode LPAR() { return getToken(WKTParser.LPAR, 0); }
 		public PointContext point() {
 			return getRuleContext(PointContext.class,0);
 		}
+		public TerminalNode RPAR() { return getToken(WKTParser.RPAR, 0); }
 		public TerminalNode EOF() { return getToken(WKTParser.EOF, 0); }
 		public PointGeometryContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -220,11 +222,11 @@ public class WKTParser extends Parser {
 			setState(30); 
 			match(POINT);
 			setState(31); 
-			match(T__0);
+			match(LPAR);
 			setState(32); 
 			point();
 			setState(33); 
-			match(T__1);
+			match(RPAR);
 			setState(34); 
 			match(EOF);
 			}
@@ -342,13 +344,19 @@ public class WKTParser extends Parser {
 
 	public static class MultiPointGeometryContext extends ParserRuleContext {
 		public TerminalNode MULTIPOINT() { return getToken(WKTParser.MULTIPOINT, 0); }
+		public TerminalNode LPAR() { return getToken(WKTParser.LPAR, 0); }
 		public List<PointOrClosedPointContext> pointOrClosedPoint() {
 			return getRuleContexts(PointOrClosedPointContext.class);
 		}
 		public PointOrClosedPointContext pointOrClosedPoint(int i) {
 			return getRuleContext(PointOrClosedPointContext.class,i);
 		}
+		public TerminalNode RPAR() { return getToken(WKTParser.RPAR, 0); }
 		public TerminalNode EOF() { return getToken(WKTParser.EOF, 0); }
+		public List<TerminalNode> COMMA() { return getTokens(WKTParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(WKTParser.COMMA, i);
+		}
 		public MultiPointGeometryContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -378,17 +386,17 @@ public class WKTParser extends Parser {
 			setState(44); 
 			match(MULTIPOINT);
 			setState(45); 
-			match(T__0);
+			match(LPAR);
 			setState(46); 
 			pointOrClosedPoint();
 			setState(51);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-			while (_la==T__2) {
+			while (_la==COMMA) {
 				{
 				{
 				setState(47); 
-				match(T__2);
+				match(COMMA);
 				setState(48); 
 				pointOrClosedPoint();
 				}
@@ -398,7 +406,7 @@ public class WKTParser extends Parser {
 				_la = _input.LA(1);
 			}
 			setState(54); 
-			match(T__1);
+			match(RPAR);
 			setState(55); 
 			match(EOF);
 			}
@@ -416,13 +424,19 @@ public class WKTParser extends Parser {
 
 	public static class MultiLineStringGeometryContext extends ParserRuleContext {
 		public TerminalNode MULTILINESTRING() { return getToken(WKTParser.MULTILINESTRING, 0); }
+		public TerminalNode LPAR() { return getToken(WKTParser.LPAR, 0); }
 		public List<LineStringContext> lineString() {
 			return getRuleContexts(LineStringContext.class);
 		}
 		public LineStringContext lineString(int i) {
 			return getRuleContext(LineStringContext.class,i);
 		}
+		public TerminalNode RPAR() { return getToken(WKTParser.RPAR, 0); }
 		public TerminalNode EOF() { return getToken(WKTParser.EOF, 0); }
+		public List<TerminalNode> COMMA() { return getTokens(WKTParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(WKTParser.COMMA, i);
+		}
 		public MultiLineStringGeometryContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -452,17 +466,17 @@ public class WKTParser extends Parser {
 			setState(57); 
 			match(MULTILINESTRING);
 			setState(58); 
-			match(T__0);
+			match(LPAR);
 			setState(59); 
 			lineString();
 			setState(64);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-			while (_la==T__2) {
+			while (_la==COMMA) {
 				{
 				{
 				setState(60); 
-				match(T__2);
+				match(COMMA);
 				setState(61); 
 				lineString();
 				}
@@ -472,7 +486,7 @@ public class WKTParser extends Parser {
 				_la = _input.LA(1);
 			}
 			setState(67); 
-			match(T__1);
+			match(RPAR);
 			setState(68); 
 			match(EOF);
 			}
@@ -490,13 +504,19 @@ public class WKTParser extends Parser {
 
 	public static class MultiPolygonGeometryContext extends ParserRuleContext {
 		public TerminalNode MULTIPOLYGON() { return getToken(WKTParser.MULTIPOLYGON, 0); }
+		public TerminalNode LPAR() { return getToken(WKTParser.LPAR, 0); }
 		public List<PolygonContext> polygon() {
 			return getRuleContexts(PolygonContext.class);
 		}
 		public PolygonContext polygon(int i) {
 			return getRuleContext(PolygonContext.class,i);
 		}
+		public TerminalNode RPAR() { return getToken(WKTParser.RPAR, 0); }
 		public TerminalNode EOF() { return getToken(WKTParser.EOF, 0); }
+		public List<TerminalNode> COMMA() { return getTokens(WKTParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(WKTParser.COMMA, i);
+		}
 		public MultiPolygonGeometryContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -526,17 +546,17 @@ public class WKTParser extends Parser {
 			setState(70); 
 			match(MULTIPOLYGON);
 			setState(71); 
-			match(T__0);
+			match(LPAR);
 			setState(72); 
 			polygon();
 			setState(77);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-			while (_la==T__2) {
+			while (_la==COMMA) {
 				{
 				{
 				setState(73); 
-				match(T__2);
+				match(COMMA);
 				setState(74); 
 				polygon();
 				}
@@ -546,7 +566,7 @@ public class WKTParser extends Parser {
 				_la = _input.LA(1);
 			}
 			setState(80); 
-			match(T__1);
+			match(RPAR);
 			setState(81); 
 			match(EOF);
 			}
@@ -566,6 +586,8 @@ public class WKTParser extends Parser {
 		public PointContext point() {
 			return getRuleContext(PointContext.class,0);
 		}
+		public TerminalNode LPAR() { return getToken(WKTParser.LPAR, 0); }
+		public TerminalNode RPAR() { return getToken(WKTParser.RPAR, 0); }
 		public PointOrClosedPointContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -598,15 +620,15 @@ public class WKTParser extends Parser {
 				point();
 				}
 				break;
-			case T__0:
+			case LPAR:
 				enterOuterAlt(_localctx, 2);
 				{
 				setState(84); 
-				match(T__0);
+				match(LPAR);
 				setState(85); 
 				point();
 				setState(86); 
-				match(T__1);
+				match(RPAR);
 				}
 				break;
 			default:
@@ -625,11 +647,17 @@ public class WKTParser extends Parser {
 	}
 
 	public static class PolygonContext extends ParserRuleContext {
+		public TerminalNode LPAR() { return getToken(WKTParser.LPAR, 0); }
 		public List<LineStringContext> lineString() {
 			return getRuleContexts(LineStringContext.class);
 		}
 		public LineStringContext lineString(int i) {
 			return getRuleContext(LineStringContext.class,i);
+		}
+		public TerminalNode RPAR() { return getToken(WKTParser.RPAR, 0); }
+		public List<TerminalNode> COMMA() { return getTokens(WKTParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(WKTParser.COMMA, i);
 		}
 		public PolygonContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -658,17 +686,17 @@ public class WKTParser extends Parser {
 			enterOuterAlt(_localctx, 1);
 			{
 			setState(90); 
-			match(T__0);
+			match(LPAR);
 			setState(91); 
 			lineString();
 			setState(96);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-			while (_la==T__2) {
+			while (_la==COMMA) {
 				{
 				{
 				setState(92); 
-				match(T__2);
+				match(COMMA);
 				setState(93); 
 				lineString();
 				}
@@ -678,7 +706,7 @@ public class WKTParser extends Parser {
 				_la = _input.LA(1);
 			}
 			setState(99); 
-			match(T__1);
+			match(RPAR);
 			}
 		}
 		catch (RecognitionException re) {
@@ -693,11 +721,17 @@ public class WKTParser extends Parser {
 	}
 
 	public static class LineStringContext extends ParserRuleContext {
+		public TerminalNode LPAR() { return getToken(WKTParser.LPAR, 0); }
 		public List<PointContext> point() {
 			return getRuleContexts(PointContext.class);
 		}
 		public PointContext point(int i) {
 			return getRuleContext(PointContext.class,i);
+		}
+		public TerminalNode RPAR() { return getToken(WKTParser.RPAR, 0); }
+		public List<TerminalNode> COMMA() { return getTokens(WKTParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(WKTParser.COMMA, i);
 		}
 		public LineStringContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -726,17 +760,17 @@ public class WKTParser extends Parser {
 			enterOuterAlt(_localctx, 1);
 			{
 			setState(101); 
-			match(T__0);
+			match(LPAR);
 			setState(102); 
 			point();
 			setState(107);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-			while (_la==T__2) {
+			while (_la==COMMA) {
 				{
 				{
 				setState(103); 
-				match(T__2);
+				match(COMMA);
 				setState(104); 
 				point();
 				}
@@ -746,7 +780,7 @@ public class WKTParser extends Parser {
 				_la = _input.LA(1);
 			}
 			setState(110); 
-			match(T__1);
+			match(RPAR);
 			}
 		}
 		catch (RecognitionException re) {
@@ -821,21 +855,21 @@ public class WKTParser extends Parser {
 		"\3\2\2\2\24g\3\2\2\2\26r\3\2\2\2\30\37\5\b\5\2\31\37\5\6\4\2\32\37\5\4"+
 		"\3\2\33\37\5\n\6\2\34\37\5\f\7\2\35\37\5\16\b\2\36\30\3\2\2\2\36\31\3"+
 		"\2\2\2\36\32\3\2\2\2\36\33\3\2\2\2\36\34\3\2\2\2\36\35\3\2\2\2\37\3\3"+
-		"\2\2\2 !\7\t\2\2!\"\7\3\2\2\"#\5\26\f\2#$\7\4\2\2$%\7\2\2\3%\5\3\2\2\2"+
+		"\2\2\2 !\7\t\2\2!\"\7\7\2\2\"#\5\26\f\2#$\7\b\2\2$%\7\2\2\3%\5\3\2\2\2"+
 		"&\'\7\n\2\2\'(\5\24\13\2()\7\2\2\3)\7\3\2\2\2*+\7\13\2\2+,\5\22\n\2,-"+
-		"\7\2\2\3-\t\3\2\2\2./\7\f\2\2/\60\7\3\2\2\60\65\5\20\t\2\61\62\7\5\2\2"+
+		"\7\2\2\3-\t\3\2\2\2./\7\f\2\2/\60\7\7\2\2\60\65\5\20\t\2\61\62\7\6\2\2"+
 		"\62\64\5\20\t\2\63\61\3\2\2\2\64\67\3\2\2\2\65\63\3\2\2\2\65\66\3\2\2"+
-		"\2\668\3\2\2\2\67\65\3\2\2\289\7\4\2\29:\7\2\2\3:\13\3\2\2\2;<\7\r\2\2"+
-		"<=\7\3\2\2=B\5\24\13\2>?\7\5\2\2?A\5\24\13\2@>\3\2\2\2AD\3\2\2\2B@\3\2"+
-		"\2\2BC\3\2\2\2CE\3\2\2\2DB\3\2\2\2EF\7\4\2\2FG\7\2\2\3G\r\3\2\2\2HI\7"+
-		"\16\2\2IJ\7\3\2\2JO\5\22\n\2KL\7\5\2\2LN\5\22\n\2MK\3\2\2\2NQ\3\2\2\2"+
-		"OM\3\2\2\2OP\3\2\2\2PR\3\2\2\2QO\3\2\2\2RS\7\4\2\2ST\7\2\2\3T\17\3\2\2"+
-		"\2U[\5\26\f\2VW\7\3\2\2WX\5\26\f\2XY\7\4\2\2Y[\3\2\2\2ZU\3\2\2\2ZV\3\2"+
-		"\2\2[\21\3\2\2\2\\]\7\3\2\2]b\5\24\13\2^_\7\5\2\2_a\5\24\13\2`^\3\2\2"+
-		"\2ad\3\2\2\2b`\3\2\2\2bc\3\2\2\2ce\3\2\2\2db\3\2\2\2ef\7\4\2\2f\23\3\2"+
-		"\2\2gh\7\3\2\2hm\5\26\f\2ij\7\5\2\2jl\5\26\f\2ki\3\2\2\2lo\3\2\2\2mk\3"+
-		"\2\2\2mn\3\2\2\2np\3\2\2\2om\3\2\2\2pq\7\4\2\2q\25\3\2\2\2rs\7\6\2\2s"+
-		"t\7\6\2\2t\27\3\2\2\2\t\36\65BOZbm";
+		"\2\668\3\2\2\2\67\65\3\2\2\289\7\b\2\29:\7\2\2\3:\13\3\2\2\2;<\7\r\2\2"+
+		"<=\7\7\2\2=B\5\24\13\2>?\7\6\2\2?A\5\24\13\2@>\3\2\2\2AD\3\2\2\2B@\3\2"+
+		"\2\2BC\3\2\2\2CE\3\2\2\2DB\3\2\2\2EF\7\b\2\2FG\7\2\2\3G\r\3\2\2\2HI\7"+
+		"\16\2\2IJ\7\7\2\2JO\5\22\n\2KL\7\6\2\2LN\5\22\n\2MK\3\2\2\2NQ\3\2\2\2"+
+		"OM\3\2\2\2OP\3\2\2\2PR\3\2\2\2QO\3\2\2\2RS\7\b\2\2ST\7\2\2\3T\17\3\2\2"+
+		"\2U[\5\26\f\2VW\7\7\2\2WX\5\26\f\2XY\7\b\2\2Y[\3\2\2\2ZU\3\2\2\2ZV\3\2"+
+		"\2\2[\21\3\2\2\2\\]\7\7\2\2]b\5\24\13\2^_\7\6\2\2_a\5\24\13\2`^\3\2\2"+
+		"\2ad\3\2\2\2b`\3\2\2\2bc\3\2\2\2ce\3\2\2\2db\3\2\2\2ef\7\b\2\2f\23\3\2"+
+		"\2\2gh\7\7\2\2hm\5\26\f\2ij\7\6\2\2jl\5\26\f\2ki\3\2\2\2lo\3\2\2\2mk\3"+
+		"\2\2\2mn\3\2\2\2np\3\2\2\2om\3\2\2\2pq\7\b\2\2q\25\3\2\2\2rs\7\3\2\2s"+
+		"t\7\3\2\2t\27\3\2\2\2\t\36\65BOZbm";
 	public static final ATN _ATN =
 		new ATNDeserializer().deserialize(_serializedATN.toCharArray());
 	static {

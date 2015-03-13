@@ -56,7 +56,7 @@ point
  * Coordinates
  */
 Decimal
-	: IntegerPart (DOT DecimalPart)?
+	: '-'? IntegerPart (DOT DecimalPart)?
 	;
 
 IntegerPart

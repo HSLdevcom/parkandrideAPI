@@ -36,6 +36,39 @@ public class Spatial {
         }
     };
 
+    public static Geometry fromWkt(String wkt) {
+        return parseWKT(wkt);
+    }
+
+    public static String toWkt(Geometry geometry) {
+        return Wkt.newEncoder(Wkt.Dialect.POSTGIS_EWKT_1).encode(geometry);
+    }
+
+    public static Polygon fromWktPolygon(String wkt) {
+        return (Polygon) parseWKT(wkt);
+    }
+
+    public static Geometry parseWKT(String wkt) {
+        if (isNullOrEmpty(wkt)) {
+            return null;
+        }
+        try {
+            return newParser(wkt).geometry().accept(WKT_VISITOR).toGeometry();
+        } catch (RuntimeException e) {
+            throw new IllegalArgumentException(e.getMessage(), e);
+        }
+    }
+
+    private static WKTParser newParser(String input) {
+        WKTLexer lexer = new WKTLexer(new ANTLRInputStream(input));
+        lexer.removeErrorListeners();
+        lexer.addErrorListener(ERROR_LISTENER);
+        WKTParser parser = new WKTParser(new CommonTokenStream(lexer));
+        parser.removeErrorListeners();
+        parser.addErrorListener(ERROR_LISTENER);
+        return parser;
+    }
+
     private static final WKTBaseVisitor<Builder> WKT_VISITOR = new WKTBaseVisitor<Builder>() {
 
         @Override
@@ -91,39 +124,6 @@ public class Spatial {
         }
 
     };
-
-    public static Geometry fromWkt(String wkt) {
-        return parseWKT(wkt);
-    }
-
-    public static String toWkt(Geometry geometry) {
-        return Wkt.newEncoder(Wkt.Dialect.POSTGIS_EWKT_1).encode(geometry);
-    }
-
-    public static Polygon fromWktPolygon(String wkt) {
-        return (Polygon) parseWKT(wkt);
-    }
-
-    public static Geometry parseWKT(String wkt) {
-        if (isNullOrEmpty(wkt)) {
-            return null;
-        }
-        try {
-            return newParser(wkt).geometry().accept(WKT_VISITOR).toGeometry();
-        } catch (RuntimeException e) {
-            throw new IllegalArgumentException(e.getMessage(), e);
-        }
-    }
-
-    private static WKTParser newParser(String input) {
-        WKTLexer lexer = new WKTLexer(new ANTLRInputStream(input));
-        lexer.removeErrorListeners();
-        lexer.addErrorListener(ERROR_LISTENER);
-        WKTParser parser = new WKTParser(new CommonTokenStream(lexer));
-        parser.removeErrorListeners();
-        parser.addErrorListener(ERROR_LISTENER);
-        return parser;
-    }
 
     private abstract static class Builder {
         Builder append(Builder builder) {

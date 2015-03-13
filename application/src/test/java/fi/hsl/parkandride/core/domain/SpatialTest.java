@@ -20,6 +20,11 @@ public class SpatialTest {
     }
 
     @Test
+    public void negative_coordinates() {
+        assertPoint((Point) Spatial.parseWKT("POINT(-0.1 -123)"), -0.1, -123);
+    }
+
+    @Test
     public void lineString() {
         LineString ls = (LineString) Spatial.parseWKT("\tLINESTRING (30.0 10.10, 10 30, 40 40)\n");
         assertPoint(ls.getPointN(0), 30, 10.1);

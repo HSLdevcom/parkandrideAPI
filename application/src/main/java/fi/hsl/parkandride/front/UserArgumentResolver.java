@@ -27,8 +27,6 @@ public class UserArgumentResolver implements HandlerMethodArgumentResolver {
     @Resource
     AuthenticationService authenticationService;
 
-    private final Base64.Decoder base64 = Base64.getDecoder();
-
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
         return User.class.equals(parameter.getParameterType());

@@ -11,8 +11,6 @@ import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 import static org.springframework.web.bind.annotation.RequestMethod.PUT;
 
-import java.net.URLEncoder;
-
 import javax.annotation.Resource;
 
 import org.slf4j.Logger;
@@ -54,7 +52,7 @@ public class UserController {
     public ResponseEntity<SearchResults<User>> findUsers(User actor) {
         log.info("findUsers");
         UserSearch search = new UserSearch();
-        search.operatorId = actor.operatorId;
+        search.setOperatorId(actor.operatorId);
         SearchResults<User> results = userService.findUsers(search, actor);
         return new ResponseEntity<>(results, OK);
     }

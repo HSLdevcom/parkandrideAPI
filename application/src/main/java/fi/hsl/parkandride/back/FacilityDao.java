@@ -550,13 +550,13 @@ public class FacilityDao implements FacilityRepository {
     private void orderBy(Sort sort, PostgresQuery qry) {
         sort = firstNonNull(sort, DEFAULT_SORT);
         ComparableExpression<String> sortField;
-        switch (firstNonNull(sort.by, DEFAULT_SORT.by)) {
+        switch (firstNonNull(sort.getBy(), DEFAULT_SORT.getBy())) {
             case "name.fi": sortField = qFacility.nameFi.lower(); break;
             case "name.sv": sortField = qFacility.nameSv.lower(); break;
             case "name.en": sortField = qFacility.nameEn.lower(); break;
             default: throw invalidSortBy();
         }
-        if (DESC.equals(sort.dir)) {
+        if (DESC.equals(sort.getDir())) {
             qry.orderBy(sortField.desc(), qFacility.id.desc());
         } else {
             qry.orderBy(sortField.asc(), qFacility.id.asc());
@@ -568,19 +568,19 @@ public class FacilityDao implements FacilityRepository {
     }
 
     private void buildWhere(FacilitySearch search, PostgresQuery qry) {
-        if (search.statuses != null && !search.statuses.isEmpty()) {
-            qry.where(qFacility.status.in(search.statuses));
+        if (search.getStatuses() != null && !search.getStatuses().isEmpty()) {
+            qry.where(qFacility.status.in(search.getStatuses()));
         }
 
-        if (search.ids != null && !search.ids.isEmpty()) {
-            qry.where(qFacility.id.in(search.ids));
+        if (search.getIds() != null && !search.getIds().isEmpty()) {
+            qry.where(qFacility.id.in(search.getIds()));
         }
 
-        if (search.geometry != null) {
-            if (search.maxDistance != null && search.maxDistance > 0) {
-                qry.where(dwithin(qFacility.location, ConstantImpl.create(search.geometry), search.maxDistance));
+        if (search.getGeometry() != null) {
+            if (search.getMaxDistance() != null && search.getMaxDistance() > 0) {
+                qry.where(dwithin(qFacility.location, ConstantImpl.create(search.getGeometry()), search.getMaxDistance()));
             } else {
-                qry.where(qFacility.location.intersects(search.geometry));
+                qry.where(qFacility.location.intersects(search.getGeometry()));
             }
         }
     }

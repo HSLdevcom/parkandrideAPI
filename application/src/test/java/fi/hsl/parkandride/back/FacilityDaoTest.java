@@ -29,7 +29,6 @@ import org.geolatte.geom.Point;
 import org.geolatte.geom.Polygon;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mock;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -269,7 +268,7 @@ public class FacilityDaoTest extends AbstractDaoTest {
 
     private List<FacilityInfo> findByGeometry(Polygon geometry) {
         PageableFacilitySearch search = new PageableFacilitySearch();
-        search.geometry = geometry;
+        search.setGeometry(geometry);
         return facilityDao.findFacilities(search).results;
     }
 

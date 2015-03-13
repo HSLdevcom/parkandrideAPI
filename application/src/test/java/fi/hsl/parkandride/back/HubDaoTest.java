@@ -3,9 +3,7 @@ package fi.hsl.parkandride.back;
 import static fi.hsl.parkandride.core.domain.Sort.Dir.ASC;
 import static fi.hsl.parkandride.core.domain.Sort.Dir.DESC;
 import static fi.hsl.parkandride.core.domain.Spatial.fromWkt;
-import static fi.hsl.parkandride.core.domain.Spatial.fromWktPolygon;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.setRemoveAssertJRelatedElementsFromStackTrace;
 import static org.junit.Assert.fail;
 
 import java.util.List;
@@ -119,41 +117,41 @@ public class HubDaoTest extends AbstractDaoTest {
 
         // ids = hub1.id
         HubSearch search = new HubSearch();
-        search.ids = ImmutableSet.of(hub1Id);
+        search.setIds(ImmutableSet.of(hub1Id));
         SearchResults<Hub> hubs = hubRepository.findHubs(search);
         assertThat(hubs.size()).isEqualTo(1);
         assertDefaultHub(hubs.get(0));
 
         // ids = hub2.id
-        search.ids = ImmutableSet.of(hub2Id);
+        search.setIds(ImmutableSet.of(hub2Id));
         hubs = hubRepository.findHubs(search);
         assertThat(hubs.size()).isEqualTo(1);
         assertThat(hubs.get(0).id).isEqualTo(hub2Id);
 
         // ids = [hub1.id, hub2.id]
-        search.ids = ImmutableSet.of(hub1Id, hub2Id);
+        search.setIds(ImmutableSet.of(hub1Id, hub2Id));
         hubs = hubRepository.findHubs(search);
         assertThat(hubs.size()).isEqualTo(2);
         assertThat(hubs.get(0).facilityIds).isEqualTo(hub1.facilityIds);
         assertThat(hubs.get(1).facilityIds).isEqualTo(hub2.facilityIds);
 
         // facilityIds in hub1.facilityIds
-        search.ids = null;
-        search.facilityIds = ImmutableSet.of(2l);
+        search.setIds(null);
+        search.setFacilityIds(ImmutableSet.of(2l));
         hubs = hubRepository.findHubs(search);
         assertThat(hubs.size()).isEqualTo(1);
         assertDefaultHub(hubs.get(0));
 
         // facilityIds in both hub1.facilityIds and hub2.facilityIds, with limit
-        search.facilityIds = ImmutableSet.of(3l);
-        search.limit = 1;
+        search.setFacilityIds(ImmutableSet.of(3l));
+        search.setLimit(1);
         hubs = hubRepository.findHubs(search);
         assertThat(hubs.size()).isEqualTo(1);
         assertThat(hubs.hasMore).isEqualTo(true);
         assertDefaultHub(hubs.get(0));
 
         // facilityIds in both hub1.facilityIds and hub2.facilityIds, with offset
-        search.offset = 1;
+        search.setOffset(1);
         hubs = hubRepository.findHubs(search);
         assertThat(hubs.size()).isEqualTo(1);
         assertThat(hubs.hasMore).isEqualTo(false);
@@ -177,17 +175,17 @@ public class HubDaoTest extends AbstractDaoTest {
         assertResultOrder(hubRepository.findHubs(search), h1.id, h2.id);
 
         // name.fi desc
-        search.sort = new Sort("name.fi", DESC);
+        search.setSort(new Sort("name.fi", DESC));
         assertResultOrder(hubRepository.findHubs(search), h2.id, h1.id);
 
 
         // name.sv desc
         // NOTE: This doesn't work on mac/postgresql because it's fi-collation is broken
-        search.sort = new Sort("name.sv", DESC);
+        search.setSort(new Sort("name.sv", DESC));
         assertResultOrder(hubRepository.findHubs(search), h2.id, h1.id);
 
         // name.en asc
-        search.sort = new Sort("name.en", ASC);
+        search.setSort(new Sort("name.en", ASC));
         assertResultOrder(hubRepository.findHubs(search), h1.id, h2.id);
     }
 
@@ -239,14 +237,14 @@ public class HubDaoTest extends AbstractDaoTest {
 
     private List<Hub> findByGeometry(Geometry geometry) {
         HubSearch search = new HubSearch();
-        search.geometry = geometry;
+        search.setGeometry(geometry);
         return hubRepository.findHubs(search).results;
     }
 
     private List<Hub> findByDistance(Geometry geometry, double distance) {
         HubSearch search = new HubSearch();
-        search.geometry = geometry;
-        search.maxDistance = distance;
+        search.setGeometry(geometry);
+        search.setMaxDistance(distance);
         return hubRepository.findHubs(search).results;
     }
 

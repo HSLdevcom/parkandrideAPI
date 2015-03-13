@@ -93,22 +93,22 @@ public class OperatorDao implements OperatorRepository {
     @TransactionalRead
     public SearchResults<Operator> findOperators(OperatorSearch search) {
         PostgresQuery qry = queryFactory.from(qOperator);
-        qry.limit(search.limit + 1);
-        qry.offset(search.offset);
-        orderBy(search.sort, qry);
-        return SearchResults.of(qry.list(operatorMapping), search.limit);
+        qry.limit(search.getLimit() + 1);
+        qry.offset(search.getOffset());
+        orderBy(search.getSort(), qry);
+        return SearchResults.of(qry.list(operatorMapping), search.getLimit());
     }
 
     private void orderBy(Sort sort, PostgresQuery qry) {
         sort = firstNonNull(sort, DEFAULT_SORT);
         ComparableExpression<String> sortField;
-        switch (firstNonNull(sort.by, DEFAULT_SORT.by)) {
+        switch (firstNonNull(sort.getBy(), DEFAULT_SORT.getBy())) {
             case "name.fi": sortField = qOperator.nameFi.lower(); break;
             case "name.sv": sortField = qOperator.nameSv.lower(); break;
             case "name.en": sortField = qOperator.nameEn.lower(); break;
             default: throw invalidSortBy();
         }
-        if (DESC.equals(sort.dir)) {
+        if (DESC.equals(sort.getDir())) {
             qry.orderBy(sortField.desc(), qOperator.id.desc());
         } else {
             qry.orderBy(sortField.asc(), qOperator.id.asc());

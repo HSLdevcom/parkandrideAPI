@@ -124,35 +124,35 @@ public class HubDao implements HubRepository {
     @TransactionalRead
     public SearchResults<Hub> findHubs(HubSearch search) {
         PostgresQuery qry = queryFactory.from(qHub);
-        qry.limit(search.limit + 1);
-        qry.offset(search.offset);
+        qry.limit(search.getLimit() + 1);
+        qry.offset(search.getOffset());
 
         buildWhere(search, qry);
 
-        orderBy(search.sort, qry);
+        orderBy(search.getSort(), qry);
 
         Map<Long, Hub> hubs = qry.map(qHub.id, hubMapping);
 
         fetchFacilityIds(hubs);
 
-        return SearchResults.of(hubs.values(), search.limit);
+        return SearchResults.of(hubs.values(), search.getLimit());
     }
 
     private void buildWhere(HubSearch search, PostgresQuery qry) {
-        if (search.geometry != null) {
-            if (search.maxDistance != null && search.maxDistance > 0) {
-                qry.where(dwithin(qHub.location, ConstantImpl.create(search.geometry), search.maxDistance));
+        if (search.getGeometry() != null) {
+            if (search.getMaxDistance() != null && search.getMaxDistance() > 0) {
+                qry.where(dwithin(qHub.location, ConstantImpl.create(search.getGeometry()), search.getMaxDistance()));
             } else {
-                qry.where(qHub.location.intersects(search.geometry));
+                qry.where(qHub.location.intersects(search.getGeometry()));
             }
         }
-        if (search.ids != null && !search.ids.isEmpty()) {
-            qry.where(qHub.id.in(search.ids));
+        if (search.getIds() != null && !search.getIds().isEmpty()) {
+            qry.where(qHub.id.in(search.getIds()));
         }
-        if (search.facilityIds != null && !search.facilityIds.isEmpty()) {
+        if (search.getFacilityIds() != null && !search.getFacilityIds().isEmpty()) {
             SQLSubQuery hasFacilityId = queryFactory
                     .subQuery(qHubFacility)
-                    .where(qHubFacility.hubId.eq(qHub.id), qHubFacility.facilityId.in(search.facilityIds));
+                    .where(qHubFacility.hubId.eq(qHub.id), qHubFacility.facilityId.in(search.getFacilityIds()));
             qry.where(hasFacilityId.exists());
         }
     }
@@ -189,13 +189,13 @@ public class HubDao implements HubRepository {
     private void orderBy(Sort sort, PostgresQuery qry) {
         sort = firstNonNull(sort, DEFAULT_SORT);
         ComparableExpression<String> sortField;
-        switch (firstNonNull(sort.by, DEFAULT_SORT.by)) {
+        switch (firstNonNull(sort.getBy(), DEFAULT_SORT.getBy())) {
             case "name.fi": sortField = qHub.nameFi.lower(); break;
             case "name.sv": sortField = qHub.nameSv.lower(); break;
             case "name.en": sortField = qHub.nameEn.lower(); break;
             default: throw invalidSortBy();
         }
-        if (DESC.equals(sort.dir)) {
+        if (DESC.equals(sort.getDir())) {
             qry.orderBy(sortField.desc(), qHub.id.desc());
         } else {
             qry.orderBy(sortField.asc(), qHub.id.asc());

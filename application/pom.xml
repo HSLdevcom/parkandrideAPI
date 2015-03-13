@@ -56,7 +56,7 @@
     <dependency>
       <groupId>org.geolatte</groupId>
       <artifactId>geolatte-geom</artifactId>
-      <version>0.13</version>
+      <version>0.14</version>
     </dependency>
     <dependency>
       <groupId>com.zaxxer</groupId>
@@ -129,6 +129,11 @@
       <groupId>commons-codec</groupId>
       <artifactId>commons-codec</artifactId>
       <version>1.10</version>
+    </dependency>
+    <dependency>
+      <groupId>org.antlr</groupId>
+      <artifactId>antlr4-runtime</artifactId>
+      <version>4.5</version>
     </dependency>
 
     <dependency>

@@ -130,17 +130,6 @@ public class ContactDao implements ContactRepository {
         if (search.getOperatorId() != null) {
             qry.where(qContact.operatorId.isNull().or(qContact.operatorId.eq(search.getOperatorId())));
         }
-        if (search.getName() != null) {
-            if (!isNullOrEmpty(search.getName().fi)) {
-                qry.where(qContact.nameFi.startsWith(search.getName().fi));
-            }
-            if (!isNullOrEmpty(search.getName().sv)) {
-                qry.where(qContact.nameSv.startsWith(search.getName().sv));
-            }
-            if (!isNullOrEmpty(search.getName().en)) {
-                qry.where(qContact.nameEn.startsWith(search.getName().en));
-            }
-        }
 
         orderBy(search.getSort(), qry);
         return SearchResults.of(qry.list(contactMapping), search.getLimit());

@@ -32,7 +32,7 @@ public class UserSearch implements OperatorEntity {
         this.offset = offset;
     }
 
-    public long getOperatorId() {
+    public Long getOperatorId() {
         return operatorId;
     }
 

@@ -14,8 +14,6 @@ public class ContactSearch {
 
     private Set<Long> ids;
 
-    private MultilingualString name;
-
     private Long operatorId;
 
 
@@ -53,14 +51,6 @@ public class ContactSearch {
 
     public void setSort(Sort sort) {
         this.sort = sort;
-    }
-
-    public MultilingualString getName() {
-        return name;
-    }
-
-    public void setName(MultilingualString name) {
-        this.name = name;
     }
 
     public Long getOperatorId() {

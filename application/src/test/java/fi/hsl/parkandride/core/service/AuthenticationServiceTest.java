@@ -16,13 +16,16 @@ import static org.mockito.Mockito.when;
 
 import java.util.regex.Matcher;
 
+import org.apache.commons.lang3.StringUtils;
 import org.jasypt.util.password.PasswordEncryptor;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeUtils;
 import org.joda.time.Period;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
@@ -30,6 +33,9 @@ import fi.hsl.parkandride.core.back.UserRepository;
 import fi.hsl.parkandride.core.domain.*;
 
 public class AuthenticationServiceTest {
+
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
 
     @Mock
     UserRepository userRepository;
@@ -39,24 +45,31 @@ public class AuthenticationServiceTest {
 
     private AuthenticationService service;
 
+    private final static String secret = StringUtils.repeat('x', AuthenticationService.SECRET_MIN_LENGTH);
     private final static int EXPIRES_IN_SECONDS = 30;
-
     private final static Period expires = Period.seconds(EXPIRES_IN_SECONDS);
-
     private final UserSecret adminUser = new UserSecret(1l, "admin", "admin-password", ADMIN);
-
     private final UserSecret apiUser = new UserSecret(2l, "api", null, OPERATOR_API);
 
     @Before
     public void initMocks() {
         MockitoAnnotations.initMocks(this);
         when(userRepository.getCurrentTime()).thenReturn(DateTime.now());
-        this.service = new AuthenticationService(userRepository, passwordEncryptor, "salaisuus", expires);
+        this.service = new AuthenticationService(userRepository, passwordEncryptor, secret, expires);
     }
 
     @After
     public void resetTime() {
         DateTimeUtils.setCurrentMillisSystem();
+    }
+
+    @Test
+    public void requires_a_long_enough_shared_secret() {
+        String tooShortSecret = StringUtils.repeat('x', AuthenticationService.SECRET_MIN_LENGTH - 1);
+
+        thrown.expect(IllegalArgumentException.class);
+        thrown.expectMessage("secret must be at least 32 characters long, but it was only 31");
+        new AuthenticationService(userRepository, passwordEncryptor, tooShortSecret, expires);
     }
 
     @Test
@@ -164,21 +177,21 @@ public class AuthenticationServiceTest {
     @Test
     public void authorize_all_operators() {
         User user = new User(1l, "admin", ADMIN);
-        authorize(user, () -> 5l, FACILITY_UPDATE );
+        authorize(user, () -> 5l, FACILITY_UPDATE);
     }
 
     @Test(expected = AccessDeniedException.class)
     public void authorize_operator_mismatch() {
         User user = new User(1l, "operator", OPERATOR);
         user.operatorId = 1l;
-        authorize(user, () -> 5l, FACILITY_UPDATE );
+        authorize(user, () -> 5l, FACILITY_UPDATE);
     }
 
     @Test(expected = AccessDeniedException.class)
     public void authorize_required_operator_missing() {
         User user = new User(1l, "operator", OPERATOR);
         user.operatorId = null;
-        authorize(user, () -> 5l, FACILITY_UPDATE );
+        authorize(user, () -> 5l, FACILITY_UPDATE);
     }
 
     @Test(expected = AccessDeniedException.class)
@@ -205,7 +218,7 @@ public class AuthenticationServiceTest {
     public void authorize_unnecessary_operator_parameter() {
         User user = new User(1l, "operator", OPERATOR);
         user.operatorId = 1l;
-        authorize(user, () -> 1l,  OPERATOR_CREATE);
+        authorize(user, () -> 1l, OPERATOR_CREATE);
     }
 
     @Test

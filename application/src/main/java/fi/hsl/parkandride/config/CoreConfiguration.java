@@ -6,6 +6,8 @@ import org.jasypt.util.password.PasswordEncryptor;
 import org.jasypt.util.password.StrongPasswordEncryptor;
 import org.joda.time.format.ISOPeriodFormat;
 import org.joda.time.format.PeriodFormatter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -26,14 +28,22 @@ import fi.hsl.parkandride.core.back.OperatorRepository;
 import fi.hsl.parkandride.core.back.UserRepository;
 import fi.hsl.parkandride.core.service.*;
 
+import java.security.SecureRandom;
+import java.util.Random;
+
 @Configuration
 @Import(JdbcConfiguration.class)
 @EnableTransactionManagement(proxyTargetClass = true)
 public class CoreConfiguration {
 
-    @Inject PostgresQueryFactory queryFactory;
+    private static final Logger log = LoggerFactory.getLogger(CoreConfiguration.class);
 
-    @Value("${security.token.secret}")
+    private static final String SECURITY_TOKEN_SECRET = "security.token.secret";
+
+    @Inject
+    PostgresQueryFactory queryFactory;
+
+    @Value("${" + SECURITY_TOKEN_SECRET + "}")
     String tokenSecret;
 
     @Value("${security.token.expires}")
@@ -46,9 +56,25 @@ public class CoreConfiguration {
         return new AuthenticationService(
                 userRepository(),
                 passwordEncryptor(),
-                tokenSecret,
+                tokenSecret(),
                 periodFormatter.parsePeriod(tokenExpires)
         );
+    }
+
+    String tokenSecret() {
+        String secret = tokenSecret;
+        int minLength = AuthenticationService.SECRET_MIN_LENGTH;
+        if (secret.length() < minLength) {
+            log.warn("The value of {} is shorter than {} characters; replacing it with a randomly generated value. " +
+                    "This may cause tokens to expire prematurely.", SECURITY_TOKEN_SECRET, minLength);
+            int[] chars = new SecureRandom()
+                    .ints(minLength)
+                    .map(i -> (char) i)
+                    .toArray();
+            return new String(chars, 0, chars.length);
+        } else {
+            return secret;
+        }
     }
 
     @Bean
@@ -93,7 +119,7 @@ public class CoreConfiguration {
     }
 
     @Bean
-    public FacilityService facilityService () {
+    public FacilityService facilityService() {
         return new FacilityService(facilityRepository(), contactRepository(), validationService());
     }
 

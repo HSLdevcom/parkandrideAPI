@@ -21,11 +21,13 @@ import fi.hsl.parkandride.core.domain.*;
 
 public class AuthenticationService {
 
+    public static final int SECRET_MIN_LENGTH = 32;
+
     public static final char DELIM = '|';
 
     private static final String DELIM_REGEX = "\\|";
 
-    public static final Pattern TOKEN_PATTERN = Pattern.compile(
+    public static final Pattern TOKEN_PATTERN = Pattern.compile("" +
             "^" + // start
             "(?<message>" + // message for hmac
             "(?<type>[PT])" + DELIM_REGEX + // token type
@@ -63,6 +65,10 @@ public class AuthenticationService {
     private UserRepository userRepository;
 
     public AuthenticationService(UserRepository userRepository, PasswordEncryptor passwordEncryptor, String secret, Period expiresDuration) {
+        if (secret.length() < SECRET_MIN_LENGTH) {
+            throw new IllegalArgumentException("secret must be at least " + SECRET_MIN_LENGTH + " characters long, " +
+                    "but it was only " + secret.length());
+        }
         this.userRepository = userRepository;
         this.passwordEncryptor = passwordEncryptor;
         this.expiresDuration = expiresDuration;
@@ -195,7 +201,8 @@ public class AuthenticationService {
             case "P":
                 perpetualToken = true;
                 break;
-            default: new AuthenticationRequiredException();
+            default:
+                new AuthenticationRequiredException();
         }
 
         UserSecret userSecret = loadUser(userId);
@@ -213,7 +220,7 @@ public class AuthenticationService {
         return userSecret.user;
     }
 
-    private  DateTime now() {
+    private DateTime now() {
         return userRepository.getCurrentTime();
     }
 }

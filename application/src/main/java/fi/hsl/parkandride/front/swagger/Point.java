@@ -14,7 +14,8 @@ public class Point { // TODO: extends Geometry {
     @ApiModelProperty(required = true, allowableValues = "[Point]")
     public String type;
 
-    @ApiModelProperty(required = true)
+    @ApiModelProperty(required = true,
+            value="Coordinates as defined by GeoJSON Point")
     public double[] coordinates;
 
 }

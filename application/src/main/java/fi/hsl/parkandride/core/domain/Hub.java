@@ -10,8 +10,8 @@ import org.geolatte.geom.Point;
 import com.google.common.collect.Sets;
 import com.wordnik.swagger.annotations.ApiModelProperty;
 
-import fi.hsl.parkandride.core.domain.validation.NotNullElement;
 import fi.hsl.parkandride.core.domain.validation.Coordinates;
+import fi.hsl.parkandride.core.domain.validation.NotNullElement;
 
 public class Hub {
 

@@ -23,6 +23,7 @@ import fi.hsl.parkandride.core.domain.validation.NotNullElement;
 
 public class Facility extends FacilityInfo {
 
+    @ApiModelProperty(required = true)
     @NotNull
     @NotNullElement
     @Valid
@@ -35,7 +36,6 @@ public class Facility extends FacilityInfo {
 
     @NotNull
     @NotBlankElement
-
     @ElementLength(min=0, max=255)
     public Set<String> aliases = newLinkedHashSet();
 
@@ -57,9 +57,6 @@ public class Facility extends FacilityInfo {
     @Valid
     public FacilityPaymentInfo paymentInfo = new FacilityPaymentInfo();
 
-    /**
-     * Summary of min( pricing.from ) and max( pricing.until )
-     */
     @NotNull
     @Valid
     public OpeningHours openingHours = new OpeningHours();

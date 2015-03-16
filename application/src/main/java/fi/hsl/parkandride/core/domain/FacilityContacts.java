@@ -8,14 +8,15 @@ import com.wordnik.swagger.annotations.ApiModelProperty;
 
 public class FacilityContacts {
 
-    @ApiModelProperty(required = true)
+    @ApiModelProperty(required = true, value="Emergency contact ID")
     @NotNull
     public Long emergency;
 
-    @ApiModelProperty(required = true)
+    @ApiModelProperty(required = true, value="Operator contact ID")
     @NotNull
     public Long operator;
 
+    @ApiModelProperty(required = false, value="Service contact ID")
     public Long service;
 
     public FacilityContacts() {}

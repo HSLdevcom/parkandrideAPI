@@ -11,9 +11,9 @@ import org.geolatte.geom.Polygon;
 
 import com.wordnik.swagger.annotations.ApiModelProperty;
 
+import fi.hsl.parkandride.core.domain.validation.Coordinates;
 import fi.hsl.parkandride.core.domain.validation.MinElement;
 import fi.hsl.parkandride.core.domain.validation.NotNullElement;
-import fi.hsl.parkandride.core.domain.validation.Coordinates;
 
 public class FacilityInfo implements OperatorEntity {
 
@@ -29,7 +29,7 @@ public class FacilityInfo implements OperatorEntity {
     @Coordinates
     public Polygon location;
 
-    @ApiModelProperty(required = true)
+    @ApiModelProperty(required = true, value="Operator ID")
     @NotNull
     public Long operatorId;
 
@@ -45,6 +45,7 @@ public class FacilityInfo implements OperatorEntity {
     @Valid
     public MultilingualString statusDescription;
 
+    @ApiModelProperty(required = true, value = "Built capacity by CapacityType, may be split or shared by different Usage types as defined by pricing")
     @NotNullElement
     @MinElement(1)
     @NotNull
@@ -53,6 +54,7 @@ public class FacilityInfo implements OperatorEntity {
     /**
      * Summary of unique( pricing[*].usage )
      */
+    @ApiModelProperty(required = false, value = "Read-only summary of distinct pricing rows' usages")
     public NullSafeSortedSet<Usage> usages = new NullSafeSortedSet<>();
 
     @Override

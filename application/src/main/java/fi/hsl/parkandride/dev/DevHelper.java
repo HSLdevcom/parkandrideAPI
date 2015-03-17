@@ -110,6 +110,7 @@ public class DevHelper {
     @TransactionalWrite
     public void deleteFacilities() {
         delete(
+                QFacilityPrediction.facilityPrediction,
                 QFacilityUtilization.facilityUtilization,
                 QFacilityService.facilityService,
                 QFacilityPaymentMethod.facilityPaymentMethod,
@@ -117,8 +118,7 @@ public class DevHelper {
                 QPricing.pricing,
                 QPort.port,
                 QUnavailableCapacity.unavailableCapacity,
-                QFacility.facility)
-        ;
+                QFacility.facility);
         resetFacilitySequence();
     }
 

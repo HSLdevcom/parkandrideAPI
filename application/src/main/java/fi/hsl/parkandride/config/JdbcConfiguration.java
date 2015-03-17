@@ -142,6 +142,9 @@ public class JdbcConfiguration {
         conf.register("FACILITY_UTILIZATION", "CAPACITY_TYPE", new EnumByNameType<>(CapacityType.class));
         conf.register("FACILITY_UTILIZATION", "USAGE", new EnumByNameType<>(Usage.class));
 
+        conf.register("FACILITY_PREDICTION", "CAPACITY_TYPE", new EnumByNameType<>(CapacityType.class));
+        conf.register("FACILITY_PREDICTION", "USAGE", new EnumByNameType<>(Usage.class));
+
         conf.register("FACILITY_SERVICE", "SERVICE", new EnumByNameType<>(Service.class));
 
         conf.register("FACILITY_PAYMENT_METHOD", "PAYMENT_METHOD", new EnumByNameType<>(PaymentMethod.class));

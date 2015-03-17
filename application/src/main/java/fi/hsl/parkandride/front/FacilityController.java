@@ -56,6 +56,7 @@ public class FacilityController {
         return new ResponseEntity<>(newFacility, headers, CREATED);
     }
 
+    @ApiOperation(value = "Get facility details")
     @RequestMapping(method = GET, value = FACILITY, produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<Facility> getFacility(@PathVariable(FACILITY_ID) long facilityId) {
         log.info(format("getFacility(%s)", facilityId));
@@ -63,6 +64,7 @@ public class FacilityController {
         return new ResponseEntity<>(facility, OK);
     }
 
+    @ApiOperation(value = "Get facility info as GeoJSON Feature")
     @RequestMapping(method = GET, value = FACILITY, produces = GEOJSON)
     public ResponseEntity<Feature> getFacilityAsFeature(@PathVariable(FACILITY_ID) long facilityId) {
         log.info(format("getFacilityAsFeature(%s)", facilityId));
@@ -80,6 +82,7 @@ public class FacilityController {
         return new ResponseEntity<>(response, OK);
     }
 
+    @ApiOperation(value = "Find facilities")
     @RequestMapping(method = GET, value = FACILITIES, produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<SearchResults<FacilityInfo>> findFacilities(PageableFacilitySearch search) {
         log.info("findFacilities");
@@ -87,6 +90,7 @@ public class FacilityController {
         return new ResponseEntity<>(results, OK);
     }
 
+    @ApiOperation(value = "Summarize built capacity of matching facilities")
     @RequestMapping(method = GET, value = FACILITIES, params = "summary", produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<FacilitySummary> summarizeFacilities(FacilitySearch search) {
         log.info("summarizeFacilities");
@@ -94,6 +98,7 @@ public class FacilityController {
         return new ResponseEntity<>(summary, OK);
     }
 
+    @ApiOperation(value = "Find facilities as GeoJSON FeatureCollection")
     @RequestMapping(method = GET, value = FACILITIES, produces = GEOJSON)
     public ResponseEntity<FeatureCollection> findFacilitiesAsFeatureCollection(PageableFacilitySearch search) {
         log.info("findFacilitiesAsFeatureCollection");
@@ -101,7 +106,7 @@ public class FacilityController {
         return new ResponseEntity<>(FeatureCollection.ofFacilities(results), OK);
     }
 
-    @ApiOperation(value = "Update facility status", authorizations = @Authorization(API_KEY))
+    @ApiOperation(value = "Update facility utilization status", authorizations = @Authorization(API_KEY))
     @RequestMapping(method = PUT, value = FACILITY_UTILIZATION, produces = APPLICATION_JSON_VALUE)
     public void registerUtilization(@PathVariable(FACILITY_ID) long facilityId,
                                     @RequestBody List<Utilization> statuses,

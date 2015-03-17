@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.List;
 
 import com.google.common.collect.ImmutableList;
+import com.wordnik.swagger.annotations.ApiModelProperty;
 
 public class SearchResults<T> {
 
@@ -32,8 +33,10 @@ public class SearchResults<T> {
 
     public static final SearchResults EMPTY = new SearchResults(ImmutableList.of(), false);
 
+    @ApiModelProperty(required = true)
     public final List<T> results;
 
+    @ApiModelProperty(required = true)
     public final boolean hasMore;
 
     private SearchResults(List<T> results, boolean hasMore) {

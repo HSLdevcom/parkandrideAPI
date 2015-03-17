@@ -67,12 +67,14 @@ public class OperatorController {
         return new ResponseEntity<>(response, OK);
     }
 
+    @ApiOperation(value = "Get operator details")
     @RequestMapping(method = GET, value = OPERATOR, produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<Operator> getOperator(@PathVariable(OPERATOR_ID) long operatorId) {
         Operator operator = operatorService.getOperator(operatorId);
         return new ResponseEntity<>(operator, OK);
     }
 
+    @ApiOperation(value = "Find operators")
     @RequestMapping(method = GET, value = OPERATORS, produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<SearchResults<Operator>> findOperators(OperatorSearch search) {
         SearchResults<Operator> results = operatorService.search(search);

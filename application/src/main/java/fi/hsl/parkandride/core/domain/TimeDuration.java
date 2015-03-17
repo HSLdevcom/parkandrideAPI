@@ -10,6 +10,8 @@ import java.util.Objects;
 
 import javax.validation.constraints.NotNull;
 
+import com.wordnik.swagger.annotations.ApiModelProperty;
+
 import fi.hsl.parkandride.core.domain.validation.ValidTimeDuration;
 
 @ValidTimeDuration
@@ -19,9 +21,11 @@ public class TimeDuration implements Comparable<TimeDuration> {
             comparing(TimeDuration::getFrom, nullsLast(naturalOrder()))
                     .thenComparing(TimeDuration::getUntil, nullsLast(naturalOrder()));
 
+    @ApiModelProperty(required = true, value="Time of day as hh[:mm] - hour (00-24) and optional minute (00-59)")
     @NotNull
     public Time from;
 
+    @ApiModelProperty(required = true, value="Time of day as hh[:mm] - hour (00-24) and optional minute (00-59)")
     @NotNull
     public Time until;
 

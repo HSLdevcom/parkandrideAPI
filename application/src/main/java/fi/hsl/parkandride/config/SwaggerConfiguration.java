@@ -13,6 +13,7 @@ import com.mangofactory.swagger.plugin.EnableSwagger;
 import com.mangofactory.swagger.plugin.SwaggerSpringMvcPlugin;
 
 import fi.hsl.parkandride.core.domain.Phone;
+import fi.hsl.parkandride.core.domain.Time;
 import fi.hsl.parkandride.core.domain.User;
 import fi.hsl.parkandride.front.swagger.Geometry;
 import fi.hsl.parkandride.front.swagger.Point;
@@ -33,6 +34,7 @@ public class SwaggerConfiguration {
                 .directModelSubstitute(org.geolatte.geom.Polygon.class, Polygon.class)
                 .directModelSubstitute(org.geolatte.geom.Point.class, Point.class)
                 .directModelSubstitute(Phone.class, String.class)
+                .directModelSubstitute(Time.class, String.class)
                 .ignoredParameterTypes(User.class)
                 .authorizationTypes(ImmutableList.of(new ApiKey("Authorization", "header")))
                 .apiInfo(publicApiInfo())

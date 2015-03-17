@@ -603,6 +603,16 @@
       "edit": "Muokkaa käyttäjää"
     }
   },
+  "login": {
+    "title": "Kirjaudu sisään",
+    "error": "Virheellinen käyttäjätunnus tai salasana. Yritä uudestaan.",
+    "username": {
+      "label": "Käyttäjätunnus"
+    },
+    "password": {
+      "label": "Salasana"
+    }
+  },
   "common": {
     "action": {
       "back": "Takaisin listaukseen",

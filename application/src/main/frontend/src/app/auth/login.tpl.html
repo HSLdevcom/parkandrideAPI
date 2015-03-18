@@ -1,18 +1,18 @@
 <div id="loginModal">
 	<form name="editContactForm" class="form-horizontal" role="form" novalidate  ng-submit="login(credentials)">
 		<div class="modal-header">
-			<h3 class="modal-title">Kirjaudu sisään</h3>
+			<h3 class="modal-title">{{ "login.title" | translate }}</h3>
 		</div>
 		<div class="modal-body">
 			<div class="row errorRow" ng-show="loginError">
 				<div id="loginError" class="wdViolation">
-					<span class="wdViolationMessage">Virheellinen käyttäjätunnus tai salasana. Yritä uudestaan.</span>
+					<span class="wdViolationMessage">{{ "login.error" | translate }}</span>
 				</div>
 			</div>
 			<div class="row">
 				<div class="column3 first-column">
 					<div class="form-group">
-						<label>Käyttäjätunnus</label>
+						<label>{{ "login.username.label" | translate }}</label>
 						<div>
 							<input name="username" type="input" ng-model="credentials.username" class="form-control" empty-to-null focus>
 						</div>
@@ -22,7 +22,7 @@
 			<div class="row">
 				<div class="column3 first-column">
 					<div class="form-group">
-						<label>Salasana</label>
+						<label>{{ "login.password.label" | translate }}</label>
 						<div>
 							<input name="password" type="password" ng-model="credentials.password" class="form-control" empty-to-null>
 						</div>

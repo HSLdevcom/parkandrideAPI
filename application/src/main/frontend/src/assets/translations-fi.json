@@ -98,6 +98,12 @@
   },
   "operators": {
     "title": "Operaattorit",
+    "help": {
+      "summary": "Tälle sivulle on koottu järjestelmään tallennetut operaattorit",
+      "bullet1": "Operaattorit vastaavat pysäköintipaikkojen hallinnoinnista",
+      "bullet2": "Operaattorit voivat muokata omia tietojaan",
+      "bullet3": "HSL voi lisätä ja muokata kaikkia operaattoreita"
+    },
     "label": "Operaattori",
     "select": "Valitse operaattori...",
     "action": {
@@ -119,6 +125,13 @@
   },
   "contacts": {
     "title": "Yhteystiedot",
+    "help": {
+      "summary": "Tälle sivulle on koottu järjestelmään tallennetut yhteystiedot",
+      "bullet1": "Yhteystietoja käytetään pysäköintipaikoissa",
+      "bullet2": "Yhteystiedot ovat joko operaattorikohtaisia tai HSL:n hallinnoimia kaikille näkyviä yleisiä yhteystietoja",
+      "bullet3": "Sisäänkirjautuneet operaattorikäyttäjät voivat lisätä ja muokata omia yhteystietojaan",
+      "bullet4": "HSL voi lisätä ja muokata kaikkia yhteystietoja"
+    },
     "label": "Yhteystieto",
     "select": "Valitse yhteystieto...",
     "action": {
@@ -218,10 +231,7 @@
     },
     "basic_info": "Perustiedot",
     "action": {
-      "new": "Lisää uusi pysäköintipaikka",
-      "addPricingRow": "+ Lisää rivi",
-      "removePricingRows": "Poista valitut",
-      "clonePricingRows": "Kloonaa valitut"
+      "new": "Lisää uusi pysäköintipaikka"
     },
     "hubs": {
       "heading": "Kuuluu alueisiin"
@@ -413,6 +423,7 @@
       "ELECTRIC_CAR": { "label": "Sähköauto, rakennettu kapasiteetti" }
     },
     "pricing": {
+      "noPricingRows": "Pysäköintipaikkaan ei ole lisätty pysäköintihinnoittelua",
       "label": "Pysäköintihinnoittelu",
       "capacityTypePlaceholder": "Valitse...",
       "capacity": "Kapasiteetti",
@@ -463,6 +474,14 @@
           "title": "Hinta en",
           "label": "Hinnoittelu / Hinta en"
         }
+      },
+      "action": {
+        "copy": "Kopioi",
+        "copyFirst": "Kopioi ensimmäinen",
+        "paste": "Liitä",
+        "remove": "Poista",
+        "addPricingRow": "+ Lisää rivi",
+        "additionalFeatures": "Lisätoiminnot"
       }
     },
     "unavailableCapacities": {
@@ -493,7 +512,7 @@
     }
   },
   "footer": {
-    "hslabbr": "HSL",
+    "copyright": "Copyright HSL",
     "contact": "Helsingin seudun liikenne, puh. 09 4766 4444, hsl@hsl.fi"
   },
   "header": {
@@ -501,6 +520,15 @@
   },
   "hubs": {
     "title": "Pysäköintipaikat",
+    "help": {
+      "summary": "Tälle sivulle on koottu järjestelmään tallennetut pysäköintipaikat ja alueet",
+      "bullet1": "Pysäköintipaikka vastaa yksittäistä pysäköintikenttää tai -laitosta",
+      "bullet2": "Alue vastaa joukkoliikenteen solmukohtaa, kuten juna- tai linja-autoasemaa",
+      "bullet3": "Pysäköintipaikat on järjestetty alueittain",
+      "bullet4": "Yksi pysäköintipaikka voi kuulua useampaan alueeseen",
+      "bullet5": "Sisäänkirjautuneet operaattorikäyttäjät voivat lisätä ja muokata omia pysäköintipaikkoja",
+      "bullet6": "HSL voi lisätä ja muokata kaikkia pysäköintipaikkoja ja alueita"
+    },
     "label": "Alue",
     "list": {
       "name": "Nimi"
@@ -564,6 +592,13 @@
   },
   "users": {
     "title": "Käyttäjät",
+    "help": {
+      "summary": "Tälle sivulle on koottu järjestelmään tallennetut käyttäjät",
+      "bullet1": "Operaattorit voivat lisätä ja hallinnoida omia käyttäjiään",
+      "bullet2": "HSL voi lisätä ja hallinnoida kaikkia käyttäjiä",
+      "bullet3": "Poista-toiminto poistaa valitun käyttäjän pysyvästi järjestelmästä",
+      "bullet4": "Päivitä token -toiminto vaihtaa API-käyttäjän tokenin uudeksi. Uusi token tulee lisätä heti Liipi-järjestelmää kutsuvaan viestiin tai viestit eivät tule perille."
+    },
     "username": {
       "label": "Käyttäjätunnus"
     },
@@ -603,6 +638,16 @@
       "edit": "Muokkaa käyttäjää"
     }
   },
+  "login": {
+    "title": "Kirjaudu sisään",
+    "error": "Virheellinen käyttäjätunnus tai salasana. Yritä uudestaan.",
+    "username": {
+      "label": "Käyttäjätunnus"
+    },
+    "password": {
+      "label": "Salasana"
+    }
+  },
   "common": {
     "action": {
       "back": "Takaisin listaukseen",
@@ -611,7 +656,9 @@
       "logout": "Kirjaudu ulos",
       "ok": "Valmis",
       "remove": "Poista",
-      "save": "Tallenna muutokset"
+      "save": "Tallenna muutokset",
+      "removeSymbol": "x",
+      "addSymbol": "+"
     },
     "lang": {
       "fi": "fi",

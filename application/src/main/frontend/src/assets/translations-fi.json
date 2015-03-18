@@ -120,7 +120,7 @@
   "contacts": {
     "title": "Yhteystiedot",
     "help": {
-      "summary": "Tälle sivulle on koottu järjestelmään tallennetut yhteystiedo",
+      "summary": "Tälle sivulle on koottu järjestelmään tallennetut yhteystiedot",
       "bullet1": "Yhteystietoja käytetään pysäköintipaikoissa",
       "bullet2": "Yhteystiedot ovat joko operaattorikohtaisia tai HSL:n hallinnoimia kaikille näkyviä yleisiä yhteystietoja",
       "bullet3": "Sisäänkirjautuneet operaattorikäyttäjät voivat lisätä ja muokata omia yhteystietojaan",
@@ -514,6 +514,15 @@
   },
   "hubs": {
     "title": "Pysäköintipaikat",
+    "help": {
+      "summary": "Tälle sivulle on koottu järjestelmään tallennetut pysäköintipaikat ja alueet",
+      "bullet1": "Pysäköintipaikka vastaa yksittäistä pysäköintikenttää tai -laitosta",
+      "bullet2": "Alue vastaa joukkoliikenteen solmukohtaa, kuten juna- tai linja-autoasemaa",
+      "bullet3": "Pysäköintipaikat on järjestetty alueittain",
+      "bullet4": "Yksi pysäköintipaikka voi kuulua useampaan alueeseen",
+      "bullet5": "Sisäänkirjautuneet operaattorikäyttäjät voivat lisätä ja muokata omia pysäköintipaikkoja",
+      "bullet6": "HSL voi lisätä ja muokata kaikkia pysäköintipaikkoja ja alueita"
+    },
     "label": "Alue",
     "list": {
       "name": "Nimi"

@@ -1,3 +1,5 @@
+// Copyright © 2015 HSL
+
 package fi.hsl.parkandride.config;
 
 import fi.hsl.parkandride.core.service.AuthenticationService;

@@ -1,3 +1,5 @@
+// Copyright © 2015 HSL
+
 package fi.hsl.parkandride.core;
 
 import static org.assertj.core.api.Assertions.assertThat;

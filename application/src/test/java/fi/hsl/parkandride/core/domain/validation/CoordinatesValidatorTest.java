@@ -1,3 +1,5 @@
+// Copyright © 2015 HSL
+
 package fi.hsl.parkandride.core.domain.validation;
 
 import static fi.hsl.parkandride.core.domain.Spatial.fromWkt;

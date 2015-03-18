@@ -1,3 +1,5 @@
+// Copyright © 2015 HSL
+
 package org.geolatte.geom;
 
 import static com.google.common.base.Strings.isNullOrEmpty;

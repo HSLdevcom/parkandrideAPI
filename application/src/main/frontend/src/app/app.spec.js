@@ -1,3 +1,5 @@
+// Copyright © 2015 HSL
+
 describe( 'AppCtrl', function() {
   describe( 'isCurrentUrl', function() {
     var AppCtrl, $location, $scope;

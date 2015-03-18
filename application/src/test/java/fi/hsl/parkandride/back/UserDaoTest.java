@@ -1,3 +1,5 @@
+// Copyright © 2015 HSL
+
 package fi.hsl.parkandride.back;
 
 import static fi.hsl.parkandride.core.domain.Role.ADMIN;

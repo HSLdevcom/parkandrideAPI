@@ -1,5 +1,5 @@
 <div class="row">
-	<p  class="largeMargin" ng-hide="ctrl.hasPricingRows()">Pysäköintipaikkaan ei ole lisätty pysäköintihinnoittelua.</p>
+	<p  class="largeMargin" ng-hide="ctrl.hasPricingRows()">{{'facilities.pricing.noPricingRows' | translate }}</p>
 </div>
 <div class="row">
 	<div id="pricing-edit" class="panel panel-default row largeMargin" ng-show="ctrl.hasPricingRows()">
@@ -43,36 +43,36 @@
 
 				<th>
 					<a class="btn btn-xs btn-responsive" role="button" ng-click="ctrl.pastePricingValues('capacityType')">
-						Liitä
+						{{'facilities.pricing.action.paste' | translate }}
 					</a>
 				</th>
 				<th>
 					<a class="btn btn-xs btn-responsive" role="button" ng-click="ctrl.pastePricingValues('usage')">
-						Liitä
+						{{'facilities.pricing.action.paste' | translate }}
 					</a>
 				</th>
 				<th>
 					<a class="btn btn-xs btn-responsive" role="button" ng-click="ctrl.pastePricingValues('maxCapacity')">
-						Liitä
+						{{'facilities.pricing.action.paste' | translate }}
 					</a>
 				</th>
 
 				<th>
 					<a class="btn btn-xs btn-responsive" role="button" ng-click="ctrl.pastePricingValues('dayType')">
-						Liitä
+						{{'facilities.pricing.action.paste' | translate }}
 					</a>
 				</th>
 				<th></th>
 				<th colspan="2">
 					<a class="btn btn-xs btn-responsive" role="button" ng-click="ctrl.pastePricingValues('time')">
-						Liitä
+						{{'facilities.pricing.action.paste' | translate }}
 					</a>
 				</th>
 
 				<th></th>
 				<th colspan="3">
 					<a class="btn btn-xs btn-responsive" role="button" ng-click="ctrl.pastePricingValues('price')">
-						Liitä
+						{{'facilities.pricing.action.paste' | translate }}
 					</a>
 				</th>
 			</tr>
@@ -84,28 +84,28 @@
 <div class="row smallMargin">
 	<div class="col-sm-8 first-column">
 		<a id="pricingAddRow" class="btn btn-xs btn-responsive" role="button" ng-click="ctrl.addPricingRow()">
-			{{'facilities.action.addPricingRow' | translate }}
+			{{'facilities.pricing.action.addPricingRow' | translate }}
 		</a>
 		<a id="pricingPasteRows" class="btn btn-xs btn-responsive" role="button"
 		   ng-click="ctrl.pastePricingRows()" ng-disabled="ctrl.isPasteDisabled()" ng-show="ctrl.hasPricingRows()">
-			Liitä
+			{{'facilities.pricing.action.paste' | translate }}
 		</a>
 		<a id="pricingCopyRows" class="btn btn-xs btn-responsive" role="button"
 		   ng-click="ctrl.copyPricingRows()" ng-disabled="ctrl.isCopyDisabled()" ng-show="ctrl.hasPricingRows()">
-			Kopioi
+			{{'facilities.pricing.action.copy' | translate }}
 		</a>
 		<a id="pricingCopyFirst" class="btn btn-xs btn-responsive" role="button"
-		   ng-click="ctrl.copyPricingRows(true)" ng-disabled="ctrl.isCopyFirstDisabled()" ng-show="ctrl.advancedMode">
-			Kopioi ensimmäinen
+		   ng-click="ctrl.copyPricingRows(true)" ng-disabled="ctrl.isCopyFirstDisabled()" ng-show="ctrl.advancedMode && ctrl.hasPricingRows()">
+			{{'facilities.pricing.action.copyFirst' | translate }}
 		</a>
 		<a id="pricingRemoveRows" class="btn btn-xs btn-responsive" role="button"
 		   ng-click="ctrl.deletePricingRows()" ng-disabled="ctrl.isRemoveDisabled()" ng-show="ctrl.hasPricingRows()">
-			Poista
+			{{'facilities.pricing.action.remove' | translate }}
 		</a>
 	</div>
 	<div class="col-sm-4 last-column">
 		<button id="advanced-mode" btn-checkbox ng-model="ctrl.advancedMode" class="btn btn-xs" type="button" ng-show="ctrl.hasPricingRows()">
-			Lisätoiminnot
+			{{'facilities.pricing.action.additionalFeatures' | translate }}
 		</button>
 	</div>
 </div>

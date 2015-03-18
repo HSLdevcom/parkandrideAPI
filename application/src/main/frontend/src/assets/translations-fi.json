@@ -119,6 +119,13 @@
   },
   "contacts": {
     "title": "Yhteystiedot",
+    "help": {
+      "summary": "Tälle sivulle on koottu järjestelmään tallennetut yhteystiedo",
+      "bullet1": "Yhteystietoja käytetään pysäköintipaikoissa",
+      "bullet2": "Yhteystiedot ovat joko operaattorikohtaisia tai HSL:n hallinnoimia kaikille näkyviä yleisiä yhteystietoja",
+      "bullet3": "Sisäänkirjautuneet operaattorikäyttäjät voivat lisätä ja muokata omia yhteystietojaan",
+      "bullet4": "HSL voi lisätä ja muokata kaikkia yhteystietoja"
+    },
     "label": "Yhteystieto",
     "select": "Valitse yhteystieto...",
     "action": {
@@ -218,10 +225,7 @@
     },
     "basic_info": "Perustiedot",
     "action": {
-      "new": "Lisää uusi pysäköintipaikka",
-      "addPricingRow": "+ Lisää rivi",
-      "removePricingRows": "Poista valitut",
-      "clonePricingRows": "Kloonaa valitut"
+      "new": "Lisää uusi pysäköintipaikka"
     },
     "hubs": {
       "heading": "Kuuluu alueisiin"
@@ -413,6 +417,7 @@
       "ELECTRIC_CAR": { "label": "Sähköauto, rakennettu kapasiteetti" }
     },
     "pricing": {
+      "noPricingRows": "Pysäköintipaikkaan ei ole lisätty pysäköintihinnoittelua",
       "label": "Pysäköintihinnoittelu",
       "capacityTypePlaceholder": "Valitse...",
       "capacity": "Kapasiteetti",
@@ -463,6 +468,14 @@
           "title": "Hinta en",
           "label": "Hinnoittelu / Hinta en"
         }
+      },
+      "action": {
+        "copy": "Kopioi",
+        "copyFirst": "Kopioi ensimmäinen",
+        "paste": "Liitä",
+        "remove": "Poista",
+        "addPricingRow": "+ Lisää rivi",
+        "additionalFeatures": "Lisätoiminnot"
       }
     },
     "unavailableCapacities": {
@@ -621,7 +634,9 @@
       "logout": "Kirjaudu ulos",
       "ok": "Valmis",
       "remove": "Poista",
-      "save": "Tallenna muutokset"
+      "save": "Tallenna muutokset",
+      "removeSymbol": "x",
+      "addSymbol": "+"
     },
     "lang": {
       "fi": "fi",

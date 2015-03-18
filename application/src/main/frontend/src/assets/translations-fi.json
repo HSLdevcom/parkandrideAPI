@@ -98,6 +98,12 @@
   },
   "operators": {
     "title": "Operaattorit",
+    "help": {
+      "summary": "Tälle sivulle on koottu järjestelmään tallennetut operaattorit",
+      "bullet1": "Operaattorit vastaavat pysäköintipaikkojen hallinnoinnista",
+      "bullet2": "Operaattorit voivat muokata omia tietojaan",
+      "bullet3": "HSL voi lisätä ja muokata kaikkia operaattoreita"
+    },
     "label": "Operaattori",
     "select": "Valitse operaattori...",
     "action": {

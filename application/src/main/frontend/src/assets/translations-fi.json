@@ -592,6 +592,13 @@
   },
   "users": {
     "title": "Käyttäjät",
+    "help": {
+      "summary": "Tälle sivulle on koottu järjestelmään tallennetut käyttäjät",
+      "bullet1": "Operaattorit voivat lisätä ja hallinnoida omia käyttäjiään",
+      "bullet2": "HSL voi lisätä ja hallinnoida kaikkia käyttäjiä",
+      "bullet3": "Poista-toiminto poistaa valitun käyttäjän pysyvästi järjestelmästä",
+      "bullet4": "Päivitä token -toiminto vaihtaa API-käyttäjän tokenin uudeksi. Uusi token tulee lisätä heti Liipi-järjestelmää kutsuvaan viestiin tai viestit eivät tule perille."
+    },
     "username": {
       "label": "Käyttäjätunnus"
     },

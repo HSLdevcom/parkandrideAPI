@@ -17,7 +17,9 @@
     <option name="PASS_PARENT_ENVS" value="true" />
     <module name="parkandride-application" />
     <envs />
+    <RunnerSettings RunnerId="Cover" />
     <RunnerSettings RunnerId="Run" />
+    <ConfigurationWrapper RunnerId="Cover" />
     <ConfigurationWrapper RunnerId="Run" />
     <method />
   </configuration>

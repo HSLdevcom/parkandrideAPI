@@ -1,3 +1,5 @@
+// Copyright © 2015 HSL
+
 package fi.hsl.parkandride.front;
 
 import static fi.hsl.parkandride.front.UrlSchema.FEATURES;

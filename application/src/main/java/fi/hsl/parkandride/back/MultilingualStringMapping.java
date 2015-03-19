@@ -1,3 +1,5 @@
+// Copyright © 2015 HSL
+
 package fi.hsl.parkandride.back;
 
 import com.mysema.query.types.path.StringPath;

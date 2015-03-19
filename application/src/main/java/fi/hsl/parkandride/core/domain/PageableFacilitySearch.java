@@ -1,3 +1,5 @@
+// Copyright © 2015 HSL
+
 package fi.hsl.parkandride.core.domain;
 
 public class PageableFacilitySearch extends FacilitySearch {

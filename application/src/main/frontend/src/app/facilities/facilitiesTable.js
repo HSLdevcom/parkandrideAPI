@@ -1,3 +1,5 @@
+// Copyright © 2015 HSL
+
 (function() {
     var m = angular.module('parkandride.facilitiesTable', [
         'parkandride.i18n',

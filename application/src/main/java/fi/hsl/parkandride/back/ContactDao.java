@@ -1,3 +1,5 @@
+// Copyright © 2015 HSL
+
 package fi.hsl.parkandride.back;
 
 import static com.google.common.base.MoreObjects.firstNonNull;

@@ -1,3 +1,5 @@
+// Copyright © 2015 HSL
+
 package fi.hsl.parkandride.front.swagger;
 
 import com.wordnik.swagger.annotations.ApiModel;

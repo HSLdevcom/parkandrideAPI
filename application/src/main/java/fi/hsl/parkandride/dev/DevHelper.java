@@ -1,3 +1,5 @@
+// Copyright © 2015 HSL
+
 package fi.hsl.parkandride.dev;
 
 import static fi.hsl.parkandride.back.ContactDao.CONTACT_ID_SEQ;

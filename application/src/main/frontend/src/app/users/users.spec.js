@@ -1,3 +1,5 @@
+// Copyright © 2015 HSL
+
 describe('UsersCtrl', function() {
     beforeEach(module('parkandride.users'));
 

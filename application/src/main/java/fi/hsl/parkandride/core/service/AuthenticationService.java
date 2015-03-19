@@ -1,3 +1,5 @@
+// Copyright © 2015 HSL
+
 package fi.hsl.parkandride.core.service;
 
 import static com.google.common.base.Charsets.UTF_8;

@@ -11,7 +11,6 @@ import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.sql.Connection;
-import java.sql.SQLException;
 
 import javax.inject.Inject;
 import javax.sql.DataSource;
@@ -20,7 +19,6 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Profile;
 
@@ -33,10 +31,6 @@ import fi.hsl.parkandride.config.JdbcConfiguration;
 /**
  * NOTES:
  * - expected to be run from parkandride-application module
- * - after generation, the following classes should be removed as they are not used (TODO: automate this)
- *   - QGeometryColumns
- *   - QSchemaVersion
- *   - QSpatialRefSys
  */
 @org.springframework.context.annotation.Configuration
 @EnableAutoConfiguration
@@ -55,51 +49,51 @@ public class ExportQTypes {
         application.run(args);
     }
 
-    @Inject DataSource dataSource;
+    @Inject
+    DataSource dataSource;
 
-    @Inject Configuration configuration;
+    @Inject
+    Configuration configuration;
 
     @Bean
     public CommandLineRunner runner() {
-        return new CommandLineRunner() {
-            @Override
-            public void run(String... args) throws Exception {
-                MetaDataExporter exporter = new MetaDataExporter();
-                exporter.setPackageName(PACKAGE_NAME);
-                exporter.setInnerClassesForKeys(false);
-                exporter.setSpatial(true);
-                exporter.setNamePrefix(NAME_PREFIX);
-                exporter.setNamingStrategy(new DefaultNamingStrategy());
-                exporter.setTargetFolder(new File(TARGET_FOLDER));
-                exporter.setConfiguration(configuration);
-                Connection conn = null;
-                try {
-                    conn = dataSource.getConnection();
-                    deleteOldQTypes(TARGET_FOLDER, PACKAGE_NAME);
-                    exporter.export(conn.getMetaData());
-                } catch (Exception e) {
-                    e.printStackTrace();
-                } finally {
-                    if (conn != null) {
-                        try {
-                            conn.close();
-                        } catch (SQLException e) {}
-                    }
-                }
+        return args -> {
+            MetaDataExporter exporter = new MetaDataExporter();
+            exporter.setPackageName(PACKAGE_NAME);
+            exporter.setInnerClassesForKeys(false);
+            exporter.setSpatial(true);
+            exporter.setNamePrefix(NAME_PREFIX);
+            exporter.setNamingStrategy(new DefaultNamingStrategy());
+            exporter.setTargetFolder(new File(TARGET_FOLDER));
+            exporter.setConfiguration(configuration);
+            Path packageDir = FileSystems.getDefault().getPath(TARGET_FOLDER, PACKAGE_NAME.replace(".", "/"));
+            try (Connection conn = dataSource.getConnection()) {
+                deleteOldQTypes(packageDir);
+                exporter.export(conn.getMetaData());
+                deleteUnusedQTypes(packageDir,
+                        "QGeometryColumns.java",
+                        "QSchemaVersion.java",
+                        "QSpatialRefSys.java");
             }
+            System.out.println("Export done");
         };
     }
-    private static void deleteOldQTypes(final String target, final String pack)
-            throws IOException {
-        Path targetDir = FileSystems.getDefault().getPath(target, pack.replace(".", "/"));
-        Files.walkFileTree(targetDir, new SimpleFileVisitor<Path>() {
+
+    private static void deleteOldQTypes(Path packageDir) throws IOException {
+        Files.walkFileTree(packageDir, new SimpleFileVisitor<Path>() {
             @Override
             public FileVisitResult visitFile(Path path, BasicFileAttributes attrs) throws IOException {
                 if (path.getFileName().toString().startsWith(NAME_PREFIX)) {
-                    System.out.println("Delete " + path + ": " + path.toFile().delete());
+                    Files.delete(path);
                 }
                 return FileVisitResult.CONTINUE;
             }
         });
+    }
+
+    private static void deleteUnusedQTypes(Path packageDir, String... filesToRemove) throws IOException {
+        for (String filename : filesToRemove) {
+            Files.delete(packageDir.resolve(filename));
+        }
     }
 }

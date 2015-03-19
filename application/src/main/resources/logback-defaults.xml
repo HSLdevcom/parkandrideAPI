@@ -2,7 +2,7 @@
 <included>
 
     <property name="LOG_PATTERN"
-              value="%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%X{srcip}] [%X{username}] [%X{requestid}] [%X{appid}] [%thread] %-40.40logger{39} - %msg %rEx{full}%n"/>
+              value="%date{&quot;yyyy-MM-dd'T'HH:mm:ss,SSSXXX&quot;} %-5level [%X{srcip}] [%X{username}] [%X{requestid}] [%X{appid}] [%thread] %-40.40logger{39} - %msg %rEx{full}%n"/>
 
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>

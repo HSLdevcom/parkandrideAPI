@@ -2,12 +2,9 @@
 
 package fi.hsl.parkandride;
 
-import static fi.hsl.parkandride.front.UrlSchema.API;
 import static fi.hsl.parkandride.front.UrlSchema.GEOJSON;
-import static java.util.Arrays.asList;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 
-import java.util.Arrays;
 import java.util.List;
 
 import org.geolatte.common.Feature;
@@ -15,7 +12,10 @@ import org.geolatte.common.dataformats.json.jackson.JsonMapper;
 import org.geolatte.geom.Geometry;
 import org.geolatte.geom.Point;
 import org.geolatte.geom.Polygon;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.actuate.system.ApplicationPidListener;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -43,7 +43,6 @@ import org.springframework.web.servlet.mvc.method.annotation.ExceptionHandlerExc
 import com.fasterxml.jackson.databind.Module;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
-import com.google.common.base.Preconditions;
 
 import fi.hsl.parkandride.config.SwaggerConfiguration;
 import fi.hsl.parkandride.core.domain.Phone;
@@ -60,6 +59,8 @@ import fi.hsl.parkandride.front.geojson.GeojsonSerializer;
 @Import(Application.UiConfig.class)
 public class Application {
 
+    private static final Logger log = LoggerFactory.getLogger(Application.class);
+
     public static void main(String[] args) {
         SpringApplication app = new SpringApplication(Application.class);
         app.addListeners(new ApplicationPidListener());
@@ -67,7 +68,7 @@ public class Application {
     }
 
     @Configuration
-    @Import({ WebMvcAutoConfiguration.class, SwaggerConfiguration.class, DevUIConfig.class })
+    @Import({WebMvcAutoConfiguration.class, SwaggerConfiguration.class, DevUIConfig.class})
     public static class UiConfig extends WebMvcAutoConfiguration.WebMvcAutoConfigurationAdapter implements EmbeddedServletContainerCustomizer {
 
         @Autowired
@@ -159,12 +160,12 @@ public class Application {
             }
 
             registry.addResourceHandler("/**").addResourceLocations(
-                    "file://" + projectDir + "/src/main/frontend/build/"
-                    ,"/"
-                    ,"classpath:/META-INF/resources/"
-                    ,"classpath:/resources/"
-                    ,"classpath:/static/"
-                    ,"classpath:/public/"
+                    "file://" + projectDir + "/src/main/frontend/build/",
+                    "/",
+                    "classpath:/META-INF/resources/",
+                    "classpath:/resources/",
+                    "classpath:/static/",
+                    "classpath:/public/"
             );
         }
 
@@ -189,4 +190,11 @@ public class Application {
         return b;
     }
 
+    @Bean
+    public FilterRegistrationBean registerApplicationVersionFilter(@Value("${app.version}") String version) {
+        log.info("Application version is {}", version);
+        FilterRegistrationBean b = new FilterRegistrationBean(new ApplicationVersionFilter(version));
+        b.setMatchAfter(true);
+        return b;
+    }
 }

@@ -2,6 +2,27 @@
 
 package fi.hsl.parkandride.itest;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.google.common.collect.Lists;
+import com.jayway.restassured.response.Response;
+import fi.hsl.parkandride.back.ContactDao;
+import fi.hsl.parkandride.back.FacilityDao;
+import fi.hsl.parkandride.back.OperatorDao;
+import fi.hsl.parkandride.core.domain.*;
+import fi.hsl.parkandride.core.service.TransactionalWrite;
+import fi.hsl.parkandride.core.service.ValidationException;
+import fi.hsl.parkandride.front.UrlSchema;
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
+import org.joda.time.format.ISODateTimeFormat;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import org.springframework.http.HttpStatus;
+
+import javax.inject.Inject;
+import java.util.List;
+
 import static com.jayway.restassured.RestAssured.when;
 import static fi.hsl.parkandride.core.domain.FacilityStatus.IN_OPERATION;
 import static fi.hsl.parkandride.core.domain.PricingMethod.PARK_AND_RIDE_247_FREE;
@@ -10,27 +31,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
-
-import java.util.List;
-
-import javax.inject.Inject;
-
-import com.jayway.restassured.response.Response;
-import org.joda.time.DateTime;
-import org.junit.Before;
-import org.junit.Test;
-import org.springframework.http.HttpStatus;
-
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.google.common.collect.Lists;
-
-import fi.hsl.parkandride.back.ContactDao;
-import fi.hsl.parkandride.back.FacilityDao;
-import fi.hsl.parkandride.back.OperatorDao;
-import fi.hsl.parkandride.core.domain.*;
-import fi.hsl.parkandride.core.service.TransactionalWrite;
-import fi.hsl.parkandride.core.service.ValidationException;
-import fi.hsl.parkandride.front.UrlSchema;
 
 public class UtilizationITest extends AbstractIntegrationTest {
 
@@ -53,6 +53,19 @@ public class UtilizationITest extends AbstractIntegrationTest {
     private Facility f;
 
     private String authToken;
+
+    private DateTimeZone originalDateTimeZone;
+
+    @Before
+    public void setTimezone() {
+        originalDateTimeZone = DateTimeZone.getDefault();
+        DateTimeZone.setDefault(DateTimeZone.UTC);
+    }
+
+    @After
+    public void restoreTimezone() {
+        DateTimeZone.setDefault(originalDateTimeZone);
+    }
 
     @Before
     @TransactionalWrite
@@ -103,32 +116,11 @@ public class UtilizationITest extends AbstractIntegrationTest {
         facilityDao.insertFacility(f2, f2.id);
 
         givenWithContent(authToken)
-            .body(minValidPayload().asArray())
-        .when()
-            .put(UrlSchema.FACILITY_UTILIZATION, f2.id)
-        .then()
-            .statusCode(HttpStatus.FORBIDDEN.value())
-        ;
-    }
-
-    @Test
-    public void returns_ISO8601_UTC_timestamp() {
-        JSONObjectBuilder expected = minValidPayload();
-        givenWithContent(authToken)
-            .body(expected.asArray())
-        .when()
-            .put(UrlSchema.FACILITY_UTILIZATION, f.id)
-        .then()
-            .statusCode(HttpStatus.OK.value())
-        ;
-
-        when()
-            .get(UrlSchema.FACILITY_UTILIZATION, f.id)
-        .then()
-            .statusCode(HttpStatus.OK.value())
-            .body("results[0]." + Key.TIMESTAMP, new ISO8601UTCTimestampMatcher())
-            .body("results[0]." + Key.CAPACITY_TYPE, is(expected.jsonObject.get(Key.CAPACITY_TYPE).toString()))
-            .body("results[0]." + Key.SPACES_AVAILABLE, is(expected.jsonObject.get(Key.SPACES_AVAILABLE)))
+                .body(minValidPayload().asArray())
+                .when()
+                .put(UrlSchema.FACILITY_UTILIZATION, f2.id)
+                .then()
+                .statusCode(HttpStatus.FORBIDDEN.value())
         ;
     }
 
@@ -136,21 +128,30 @@ public class UtilizationITest extends AbstractIntegrationTest {
     public void accepts_ISO8601_UTC_timestamp() {
         submitUtilization(minValidPayload().put(Key.TIMESTAMP, "2015-01-01T11:00:00.000Z"));
 
-        assertThat(getUtilizationTimestamp()).isEqualTo("2015-01-01T11:00:00.000Z");
+        assertThat(getUtilizationTimestamp()).isEqualTo(new DateTime(2015, 1, 1, 11, 0, 0, DateTimeZone.UTC));
     }
 
     @Test
-    public void accepts_ISO8601_non_UTC_timestamp_and_converts_it_to_UTC() {
+    public void accepts_ISO8601_non_UTC_timestamp() {
         submitUtilization(minValidPayload().put(Key.TIMESTAMP, "2015-01-01T13:00:00.000+02:00"));
 
-        assertThat(getUtilizationTimestamp()).isEqualTo("2015-01-01T11:00:00.000Z");
+        assertThat(getUtilizationTimestamp()).isEqualTo(new DateTime(2015, 1, 1, 11, 0, 0, DateTimeZone.UTC));
     }
 
     @Test
     public void accepts_epoch_timestamp_in_milliseconds() {
         submitUtilization(minValidPayload().put(Key.TIMESTAMP, 1420110000123L));
 
-        assertThat(getUtilizationTimestamp()).isEqualTo("2015-01-01T11:00:00.123Z");
+        assertThat(getUtilizationTimestamp()).isEqualTo(new DateTime(2015, 1, 1, 11, 0, 0, 123, DateTimeZone.UTC));
+    }
+
+    @Test
+    public void returns_timestamps_in_default_timezone() {
+        DateTimeZone.setDefault(DateTimeZone.forOffsetHours(8));
+
+        submitUtilization(minValidPayload().put(Key.TIMESTAMP, "2015-01-01T11:00:00.000Z"));
+
+        assertThat(getUtilizationTimestampString()).isEqualTo("2015-01-01T19:00:00.000+08:00");
     }
 
     private void submitUtilization(JSONObjectBuilder builder) {
@@ -159,7 +160,11 @@ public class UtilizationITest extends AbstractIntegrationTest {
                 .then().statusCode(HttpStatus.OK.value());
     }
 
-    private String getUtilizationTimestamp() {
+    private DateTime getUtilizationTimestamp() {
+        return ISODateTimeFormat.dateTimeParser().parseDateTime(getUtilizationTimestampString());
+    }
+
+    private String getUtilizationTimestampString() {
         Response response = when().get(UrlSchema.FACILITY_UTILIZATION, f.id);
         response.then().assertThat().body("results", hasSize(1));
         return response.body().jsonPath().getString("results[0].timestamp");
@@ -170,6 +175,7 @@ public class UtilizationITest extends AbstractIntegrationTest {
         objectMapper.setSerializationInclusion(JsonInclude.Include.ALWAYS);
         multiCapacityCreate();
     }
+
     @Test
     public void accepts_unset_optional_values_to_be_absent() {
         objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
@@ -200,20 +206,19 @@ public class UtilizationITest extends AbstractIntegrationTest {
         List<Utilization> payload = Lists.newArrayList(u1, u2, u3);
 
         givenWithContent(authToken)
-            .body(payload)
+                .body(payload)
                 .when()
                 .put(UrlSchema.FACILITY_UTILIZATION, f.id)
-        .then()
-            .statusCode(HttpStatus.OK.value())
+                .then()
+                .statusCode(HttpStatus.OK.value())
         ;
 
         StatusResults r =
-            when()
-                .get(UrlSchema.FACILITY_UTILIZATION, f.id)
-            .then()
-                .statusCode(HttpStatus.OK.value())
-                .extract().as(StatusResults.class)
-                ;
+                when()
+                        .get(UrlSchema.FACILITY_UTILIZATION, f.id)
+                        .then()
+                        .statusCode(HttpStatus.OK.value())
+                        .extract().as(StatusResults.class);
 
         assertThat(r.results)
                 .extracting("capacityType", "usage", "spacesAvailable", "timestamp")
@@ -228,26 +233,26 @@ public class UtilizationITest extends AbstractIntegrationTest {
     @Test
     public void timestamp_is_required() {
         givenWithContent(authToken)
-            .body(minValidPayload().put(Key.TIMESTAMP, null).asArray())
-        .when()
-            .put(UrlSchema.FACILITY_UTILIZATION, f.id)
-        .then()
-            .spec(assertResponse(HttpStatus.BAD_REQUEST, ValidationException.class))
-            .body("violations[0].path", is(Key.TIMESTAMP))
-            .body("violations[0].type", is("NotNull"))
+                .body(minValidPayload().put(Key.TIMESTAMP, null).asArray())
+                .when()
+                .put(UrlSchema.FACILITY_UTILIZATION, f.id)
+                .then()
+                .spec(assertResponse(HttpStatus.BAD_REQUEST, ValidationException.class))
+                .body("violations[0].path", is(Key.TIMESTAMP))
+                .body("violations[0].type", is("NotNull"))
         ;
     }
 
     @Test
     public void capacity_type_is_required() {
         givenWithContent(authToken)
-            .body(minValidPayload().put(Key.CAPACITY_TYPE, null).asArray())
-        .when()
-            .put(UrlSchema.FACILITY_UTILIZATION, f.id)
-        .then()
-            .spec(assertResponse(HttpStatus.BAD_REQUEST, ValidationException.class))
-            .body("violations[0].path", is(Key.CAPACITY_TYPE))
-            .body("violations[0].type", is("NotNull"))
+                .body(minValidPayload().put(Key.CAPACITY_TYPE, null).asArray())
+                .when()
+                .put(UrlSchema.FACILITY_UTILIZATION, f.id)
+                .then()
+                .spec(assertResponse(HttpStatus.BAD_REQUEST, ValidationException.class))
+                .body("violations[0].path", is(Key.CAPACITY_TYPE))
+                .body("violations[0].type", is("NotNull"))
         ;
     }
 

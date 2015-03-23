@@ -3,16 +3,18 @@
 package fi.hsl.parkandride.core.domain;
 
 
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
-
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.wordnik.swagger.annotations.ApiModelProperty;
 import org.joda.time.DateTime;
+
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 
 public class Utilization {
 
     @NotNull
     @ApiModelProperty(required = true)
+    @JsonSerialize(using = DefaultTimeZoneDateTimeSerializer.class)
     public DateTime timestamp;
 
     @NotNull

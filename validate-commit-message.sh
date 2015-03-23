@@ -5,7 +5,7 @@
 
 MESSAGE=`head -n 1 "$1"`
 
-MAX_LENGTH=80
+MAX_LENGTH=70
 TYPES="chore demo docs feat fix refactor revert style test"
 PATTERN="^([a-z]+)\([a-z\-]+|\*\)\:\ (.*)$"
 

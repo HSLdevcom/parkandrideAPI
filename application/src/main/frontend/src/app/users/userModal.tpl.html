@@ -65,7 +65,7 @@
 						<div class="form-group">
 							<ui-select name="operator" ng-model="ctrl.user.operatorId" on-select="ctrl.onOperatorSelect($item, $model)" theme="bootstrap"
 									   reset-search-input="true" ng-disabled="ctrl.isOperatorCreator">
-								<ui-select-match placeholder="{{'operators.select' | translate}}" allow-clear="true">
+								<ui-select-match placeholder="{{'operators.select' | translate}}">
 									{{$select.selected.name.fi}}
 								</ui-select-match>
 								<ui-select-choices repeat="operator.id as operator in ctrl.operators | filter: {name: {fi: $select.search}}">

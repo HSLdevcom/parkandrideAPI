@@ -204,7 +204,7 @@ public class AuthenticationService {
                 perpetualToken = true;
                 break;
             default:
-                new AuthenticationRequiredException();
+                throw new AuthenticationRequiredException();
         }
 
         UserSecret userSecret = loadUser(userId);

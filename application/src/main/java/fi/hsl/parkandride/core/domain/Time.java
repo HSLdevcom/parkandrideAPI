@@ -64,6 +64,7 @@ public class Time extends Number implements Comparable<Time> {
         return time;
     }
 
+    @Override
     public int hashCode() {
         return time;
     }
@@ -85,6 +86,7 @@ public class Time extends Number implements Comparable<Time> {
         return compare(this.time, other.time);
     }
 
+    @Override
     public String toString() {
         StringBuilder sb = new StringBuilder(5);
         append(getHour(), sb);

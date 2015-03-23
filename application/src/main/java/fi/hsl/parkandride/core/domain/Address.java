@@ -67,6 +67,7 @@ public class Address {
         return city;
     }
 
+    @Override
     public String toString() {
         return MoreObjects.toStringHelper(Address.class)
                 .add("streetAddress", streetAddress)

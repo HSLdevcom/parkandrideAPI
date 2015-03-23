@@ -35,6 +35,7 @@ public class UnavailableCapacity {
         this.capacity = capacity;
     }
 
+    @Override
     public int hashCode() {
         int hashCode = (capacityType == null ? 0 : capacityType.hashCode());
         hashCode = 31*hashCode + (usage == null ? 0 : usage.hashCode());
@@ -42,6 +43,7 @@ public class UnavailableCapacity {
         return hashCode;
     }
 
+    @Override
     public boolean equals(Object obj) {
         if (obj == this) {
             return true;

@@ -33,12 +33,14 @@ public class FacilityContacts {
         this.service = service;
     }
 
+    @Override
     public int hashCode() {
         int hashCode = emergency==null ? 1 : emergency.hashCode();
         hashCode = 31*hashCode + (operator==null ? 0 : operator.hashCode());
         return 31*hashCode + (service==null ? 0 : service.hashCode());
     }
 
+    @Override
     public boolean equals(Object obj) {
         if (obj == this) {
             return true;

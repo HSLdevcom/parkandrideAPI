@@ -43,6 +43,7 @@ public final class Phone {
         throw new IllegalArgumentException("Invalid phone number", e);
     }
 
+    @Override
     public String toString() {
         return number;
     }

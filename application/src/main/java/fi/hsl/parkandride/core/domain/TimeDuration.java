@@ -46,6 +46,7 @@ public class TimeDuration implements Comparable<TimeDuration> {
         return from.getMinuteOfDay() < that.until.getMinuteOfDay() && that.from.getMinuteOfDay() < until.getMinuteOfDay();
     }
 
+    @Override
     public boolean equals(Object obj) {
         if (obj == this) {
             return true;
@@ -58,6 +59,7 @@ public class TimeDuration implements Comparable<TimeDuration> {
         }
     }
 
+    @Override
     public int hashCode() {
         int hashCode = (from == null ? 0 : from.hashCode());
         return 31*hashCode + (until == null ? 0 : until.hashCode());

@@ -63,15 +63,28 @@
         </plugin>
       </plugins>
     </pluginManagement>
+
     <plugins>
+
+      <plugin>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <includes>
+            <include>**/*Test.class</include>
+          </includes>
+        </configuration>
+      </plugin>
+
       <plugin>
         <groupId>org.eluder.coveralls</groupId>
         <artifactId>coveralls-maven-plugin</artifactId>
       </plugin>
+
       <plugin>
         <groupId>org.jacoco</groupId>
         <artifactId>jacoco-maven-plugin</artifactId>
       </plugin>
+
     </plugins>
   </build>
 

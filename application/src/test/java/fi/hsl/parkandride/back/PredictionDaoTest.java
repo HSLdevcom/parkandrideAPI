@@ -11,6 +11,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import javax.inject.Inject;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -41,6 +42,36 @@ public class PredictionDaoTest extends AbstractDaoTest {
         PredictionBatch pb = newPredictionBatch(now, new Prediction(now, 123));
         predictionDao.updatePredictions(pb);
 
+        assertPredictionsSavedAsIs(pb);
+    }
+
+    @Test
+    public void keeps_newest_of_too_fine_grained_predictions() {
+        DateTime now = toPredictionResolution(this.now); // ensure that all predictions are rounded to the same value
+
+        PredictionBatch pb = newPredictionBatch(now,
+                new Prediction(now, 10),
+                new Prediction(now.plusSeconds(1), 11),
+                new Prediction(now.plusSeconds(2), 12));
+        Collections.shuffle(pb.predictions); // input order does not matter
+        predictionDao.updatePredictions(pb);
+
+        assertPredictionEquals(new Prediction(now, 12), pb);
+    }
+
+    @Test
+    public void does_linear_interpolation_between_too_coarse_grained_predictions() {
+        PredictionBatch pb = newPredictionBatch(now,
+                new Prediction(now, 10),
+                new Prediction(now.plus(PREDICTION_RESOLUTION.multipliedBy(3)), 40));
+        Collections.shuffle(pb.predictions); // input order does not matter
+        predictionDao.updatePredictions(pb);
+
+        pb.predictions = Arrays.asList(
+                new Prediction(now, 10),
+                new Prediction(now.plus(PREDICTION_RESOLUTION.multipliedBy(1)), 20),
+                new Prediction(now.plus(PREDICTION_RESOLUTION.multipliedBy(2)), 30),
+                new Prediction(now.plus(PREDICTION_RESOLUTION.multipliedBy(3)), 40));
         assertPredictionsSavedAsIs(pb);
     }
 
@@ -88,7 +119,7 @@ public class PredictionDaoTest extends AbstractDaoTest {
         );
         predictionDao.updatePredictions(pb);
 
-        assertPredictionEquals("prediction", new Prediction(now, 123), pb);
+        assertPredictionEquals(new Prediction(now, 123), pb);
     }
 
     @Test
@@ -133,8 +164,8 @@ public class PredictionDaoTest extends AbstractDaoTest {
         assertPredictionsSavedAsIs(pb2);
     }
 
-    // TODO: linear interpolation between predictions
-    // TODO: linear interpolation from sourceTimestamp
+
+    // helpers
 
     private PredictionBatch newPredictionBatch(DateTime sourceTimestamp, Prediction... predictions) {
         PredictionBatch batch = new PredictionBatch();
@@ -146,15 +177,6 @@ public class PredictionDaoTest extends AbstractDaoTest {
         return batch;
     }
 
-    private void assertPredictionDoesNotExist(DateTime time, PredictionBatch pb) {
-        assertPredictionDoesNotExist("prediction", time, pb);
-    }
-
-    private void assertPredictionDoesNotExist(String message, DateTime time, PredictionBatch pb) {
-        Optional<Prediction> outsideRange = predictionDao.getPrediction(pb.facilityId, pb.capacityType, pb.usage, time);
-        assertThat(outsideRange).as(message).isEqualTo(Optional.empty());
-    }
-
     private void assertPredictionsSavedAsIs(PredictionBatch pb) {
         List<Prediction> predictions = pb.predictions;
         for (int i = 0; i < predictions.size(); i++) {
@@ -162,10 +184,23 @@ public class PredictionDaoTest extends AbstractDaoTest {
         }
     }
 
+    private void assertPredictionEquals(Prediction expected, PredictionBatch pb) {
+        assertPredictionEquals("prediction", expected, pb);
+    }
+
     private void assertPredictionEquals(String message, Prediction expected, PredictionBatch pb) {
         Optional<Prediction> actual = predictionDao.getPrediction(pb.facilityId, pb.capacityType, pb.usage, expected.timestamp);
         assertThat(actual).as(message).isNotEqualTo(Optional.empty());
         assertThat(actual.get().timestamp).as(message + ".timestamp").isEqualTo(toPredictionResolution(expected.timestamp));
         assertThat(actual.get().spacesAvailable).as(message + ".spacesAvailable").isEqualTo(expected.spacesAvailable);
+    }
+
+    private void assertPredictionDoesNotExist(DateTime time, PredictionBatch pb) {
+        assertPredictionDoesNotExist("prediction", time, pb);
+    }
+
+    private void assertPredictionDoesNotExist(String message, DateTime time, PredictionBatch pb) {
+        Optional<Prediction> outsideRange = predictionDao.getPrediction(pb.facilityId, pb.capacityType, pb.usage, time);
+        assertThat(outsideRange).as(message).isEqualTo(Optional.empty());
     }
 }

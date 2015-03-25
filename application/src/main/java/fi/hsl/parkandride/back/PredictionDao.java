@@ -15,13 +15,15 @@ import fi.hsl.parkandride.core.domain.PredictionBatch;
 import fi.hsl.parkandride.core.domain.Usage;
 import fi.hsl.parkandride.core.service.TransactionalRead;
 import fi.hsl.parkandride.core.service.TransactionalWrite;
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
-import org.joda.time.Hours;
-import org.joda.time.Minutes;
+import org.joda.time.*;
 import org.joda.time.format.DateTimeFormat;
 
-import java.util.Optional;
+import java.util.*;
+import java.util.function.BinaryOperator;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class PredictionDao implements PredictionRepository {
@@ -49,19 +51,66 @@ public class PredictionDao implements PredictionRepository {
                         qPrediction.usage.eq(pb.usage))
                 .set(qPrediction.start, start);
 
-        for (Prediction prediction : pb.predictions) {
-            DateTime timestamp = toPredictionResolution(prediction.timestamp);
-            if (timestamp.isBefore(start) || timestamp.isAfter(end)) {
-                continue;
-            }
-            update.set(spacesAvailableAt(timestamp), prediction.spacesAvailable);
-        }
+        pb.predictions.stream()
+                .sorted(Comparator.comparing(p -> p.timestamp))
+                .map(toPredictionResolution())
+                .filter(isWithin(start, end))
+                .collect(groupByTimeKeepingNewest())
+                .values()
+                .stream()
+                .map(Collections::singletonList)
+                .reduce(new ArrayList<>(), linearInterpolation())
+                .forEach(p -> update.set(spacesAvailableAt(p.timestamp), p.spacesAvailable));
 
         long updatedRows = update.execute();
         if (updatedRows == 0) {
             insertBlankPredictionRow(pb);
             updatePredictions(pb);
         }
+    }
+
+    private static Predicate<Prediction> isWithin(DateTime start, DateTime end) {
+        return p -> !p.timestamp.isBefore(start) && !p.timestamp.isAfter(end);
+    }
+
+    private static Function<Prediction, Prediction> toPredictionResolution() {
+        return p -> new Prediction(toPredictionResolution(p.timestamp), p.spacesAvailable);
+    }
+
+    private static Collector<Prediction, ?, TreeMap<DateTime, Prediction>> groupByTimeKeepingNewest() {
+        return Collectors.toMap(
+                p -> p.timestamp,
+                Function.identity(),
+                (a, b) -> a.timestamp.isAfter(b.timestamp) ? a : b,
+                TreeMap::new
+        );
+    }
+
+    private static BinaryOperator<List<Prediction>> linearInterpolation() {
+        return (interpolated, input) -> {
+            if (input.size() != 1) {
+                throw new IllegalArgumentException("expected one element, but got " + input);
+            }
+            if (interpolated.isEmpty()) {
+                interpolated.addAll(input);
+                return interpolated;
+            }
+            Prediction previous = interpolated.get(interpolated.size() - 1);
+            Prediction next = input.get(0);
+            for (DateTime timestamp = previous.timestamp.plus(PREDICTION_RESOLUTION);
+                 timestamp.isBefore(next.timestamp);
+                 timestamp = timestamp.plus(PREDICTION_RESOLUTION)) {
+                double totalDuration = new Duration(previous.timestamp, next.timestamp).getMillis();
+                double currentDuration = new Duration(previous.timestamp, timestamp).getMillis();
+                double proportion = currentDuration / totalDuration;
+                int totalChange = next.spacesAvailable - previous.spacesAvailable;
+                int currentChange = (int) Math.round(totalChange * proportion);
+                int spacesAvailable = previous.spacesAvailable + currentChange;
+                interpolated.add(new Prediction(timestamp, spacesAvailable));
+            }
+            interpolated.add(next);
+            return interpolated;
+        };
     }
 
     private void insertBlankPredictionRow(PredictionBatch pb) {

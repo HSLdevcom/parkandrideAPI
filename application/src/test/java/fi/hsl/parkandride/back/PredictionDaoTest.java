@@ -55,9 +55,10 @@ public class PredictionDaoTest extends AbstractDaoTest {
 
     @Test
     public void cannot_predict_beyond_the_prediction_window() {
-        DateTime withinWindow = now.plus(PREDICTION_WINDOW);
-        DateTime outsideWindow = now.plus(PREDICTION_WINDOW).plus(PREDICTION_RESOLUTION);
+        DateTime withinWindow = now.plus(PREDICTION_WINDOW).minus(PREDICTION_RESOLUTION);
+        DateTime outsideWindow = now.plus(PREDICTION_WINDOW);
         PredictionBatch pb = newPredictionBatch(now,
+                new Prediction(now, 5),
                 new Prediction(withinWindow, 10),
                 new Prediction(outsideWindow, 20));
         predictionDao.updatePredictions(pb);
@@ -65,31 +66,36 @@ public class PredictionDaoTest extends AbstractDaoTest {
         Optional<Prediction> inRange = predictionDao.getPrediction(pb.facilityId, pb.capacityType, pb.usage, withinWindow);
         assertThat(inRange).as("inRange").isNotEqualTo(Optional.empty());
         assertThat(inRange.get().timestamp).as("inRange.timestamp").isEqualTo(toPredictionResolution(withinWindow));
+        assertThat(inRange.get().spacesAvailable).as("inRange.spacesAvailable").isEqualTo(10);
 
         Optional<Prediction> outsideRange = predictionDao.getPrediction(pb.facilityId, pb.capacityType, pb.usage, outsideWindow);
         assertThat(outsideRange).as("outsideRange").isEqualTo(Optional.empty());
 
-        Optional<Prediction> overflow = predictionDao.getPrediction(pb.facilityId, pb.capacityType, pb.usage, outsideWindow.minus(PREDICTION_WINDOW));
-        assertThat(overflow).as("overflow").isEqualTo(Optional.empty());
+        Optional<Prediction> overflowCheck = predictionDao.getPrediction(pb.facilityId, pb.capacityType, pb.usage, outsideWindow.minus(PREDICTION_WINDOW));
+        assertThat(overflowCheck).as("overflowCheck").isNotEqualTo(Optional.empty());
+        assertThat(overflowCheck.get().spacesAvailable).as("overflowCheck.spacesAvailable").isEqualTo(5);
     }
 
     @Test
     public void cannot_predict_into_past() {
         DateTime past = now.minus(PREDICTION_RESOLUTION);
         PredictionBatch pb = newPredictionBatch(now,
-                new Prediction(past, 10),
-                new Prediction(now, 20));
+                new Prediction(past, 20),
+                new Prediction(now, 10),
+                new Prediction(past.plus(PREDICTION_WINDOW), 5));
         predictionDao.updatePredictions(pb);
 
         Optional<Prediction> inRange = predictionDao.getPrediction(pb.facilityId, pb.capacityType, pb.usage, now);
         assertThat(inRange).as("inRange").isNotEqualTo(Optional.empty());
         assertThat(inRange.get().timestamp).as("inRange.timestamp").isEqualTo(toPredictionResolution(now));
+        assertThat(inRange.get().spacesAvailable).as("inRange.spacesAvailable").isEqualTo(10);
 
         Optional<Prediction> outsideRange = predictionDao.getPrediction(pb.facilityId, pb.capacityType, pb.usage, past);
         assertThat(outsideRange).as("outsideRange").isEqualTo(Optional.empty());
 
-        Optional<Prediction> overflow = predictionDao.getPrediction(pb.facilityId, pb.capacityType, pb.usage, past.plus(PREDICTION_WINDOW));
-        assertThat(overflow).as("overflow").isEqualTo(Optional.empty());
+        Optional<Prediction> overflowCheck = predictionDao.getPrediction(pb.facilityId, pb.capacityType, pb.usage, past.plus(PREDICTION_WINDOW));
+        assertThat(overflowCheck).as("overflowCheck").isNotEqualTo(Optional.empty());
+        assertThat(overflowCheck.get().spacesAvailable).as("overflowCheck.spacesAvailable").isEqualTo(5);
     }
 
     // TODO: predictions_are_timezone_independed (saved internally as UTC)
@@ -98,7 +104,6 @@ public class PredictionDaoTest extends AbstractDaoTest {
     // TODO: predictions_are_capacity_type_specific
     // TODO: linear interpolation between predictions
     // TODO: linear interpolation from sourceTimestamp
-
 
     private PredictionBatch newPredictionBatch(DateTime sourceTimestamp, Prediction... predictions) {
         PredictionBatch batch = new PredictionBatch();

@@ -40,7 +40,7 @@ public class PredictionDao implements PredictionRepository {
     @Override
     public void updatePredictions(PredictionBatch batch) {
         DateTime start = toPredictionResolution(batch.sourceTimestamp);
-        DateTime end = start.plus(PREDICTION_WINDOW);
+        DateTime end = start.plus(PREDICTION_WINDOW).minus(PREDICTION_RESOLUTION);
         SQLUpdateClause update = queryFactory.update(qPrediction)
                 .where(qPrediction.facilityId.eq(batch.facilityId))
                 .set(qPrediction.start, start);
@@ -72,14 +72,14 @@ public class PredictionDao implements PredictionRepository {
     @Override
     public Optional<Prediction> getPrediction(long facilityId, CapacityType capacityType, Usage usage, DateTime timeWithFullPrecision) {
         DateTime time = toPredictionResolution(timeWithFullPrecision);
-        Path<Integer> spacesAvailablePath = spacesAvailableAt(time);
+        Path<Integer> pSpacesAvailable = spacesAvailableAt(time);
         return Optional.ofNullable(queryFactory
                 .from(qPrediction)
-                .where(qPrediction.start.between(time.minus(PREDICTION_WINDOW), time))
-                .singleResult(new MappingProjection<Prediction>(Prediction.class, spacesAvailablePath) {
+                .where(qPrediction.start.between(time.minus(PREDICTION_WINDOW).plus(PREDICTION_RESOLUTION), time))
+                .singleResult(new MappingProjection<Prediction>(Prediction.class, pSpacesAvailable) {
                     @Override
                     protected Prediction map(Tuple row) {
-                        Integer spacesAvailable = row.get(spacesAvailablePath);
+                        Integer spacesAvailable = row.get(pSpacesAvailable);
                         if (spacesAvailable == null) {
                             return null;
                         }

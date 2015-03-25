@@ -14,5 +14,5 @@ public interface PredictionRepository {
 
     void updatePredictions(PredictionBatch predictions);
 
-    Optional<Prediction> getPrediction(long facilityId, CapacityType capacityType, Usage usage, DateTime target);
+    Optional<Prediction> getPrediction(long facilityId, CapacityType capacityType, Usage usage, DateTime time);
 }

@@ -2,7 +2,7 @@ CREATE TABLE facility_prediction (
   facility_id              BIGINT      NOT NULL,
   capacity_type            VARCHAR(64) NOT NULL,
   usage                    VARCHAR(64) NOT NULL,
-  source_timestamp         TIMESTAMP   NOT NULL DEFAULT '1970-01-01 00:00:00',
+  start                    TIMESTAMP   NOT NULL DEFAULT '1970-01-01 00:00:00',
   spaces_available_at_0000 INT,
   spaces_available_at_0005 INT,
   spaces_available_at_0010 INT,

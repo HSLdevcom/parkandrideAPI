@@ -16,12 +16,17 @@ import fi.hsl.parkandride.core.domain.Usage;
 import fi.hsl.parkandride.core.service.TransactionalRead;
 import fi.hsl.parkandride.core.service.TransactionalWrite;
 import org.joda.time.DateTime;
+import org.joda.time.Hours;
+import org.joda.time.Minutes;
 import org.joda.time.format.DateTimeFormat;
 
 import java.util.Optional;
 import java.util.stream.Stream;
 
 public class PredictionDao implements PredictionRepository {
+
+    public static final Hours PREDICTION_WINDOW = Hours.hours(24);
+    public static final Minutes PREDICTION_RESOLUTION = Minutes.minutes(5);
 
     private static final QFacilityPrediction qPrediction = QFacilityPrediction.facilityPrediction;
 
@@ -34,11 +39,18 @@ public class PredictionDao implements PredictionRepository {
     @TransactionalWrite
     @Override
     public void updatePredictions(PredictionBatch batch) {
+        DateTime start = toPredictionResolution(batch.sourceTimestamp);
+        DateTime end = start.plus(PREDICTION_WINDOW);
         SQLUpdateClause update = queryFactory.update(qPrediction)
-                .where(qPrediction.facilityId.eq(batch.facilityId));
+                .where(qPrediction.facilityId.eq(batch.facilityId))
+                .set(qPrediction.start, start);
 
         for (Prediction prediction : batch.predictions) {
-            update.set(spacesAvailableAt(prediction.timestamp), prediction.spacesAvailable);
+            DateTime timestamp = toPredictionResolution(prediction.timestamp);
+            if (timestamp.isBefore(start) || timestamp.isAfter(end)) {
+                continue;
+            }
+            update.set(spacesAvailableAt(timestamp), prediction.spacesAvailable);
         }
 
         long updatedRows = update.execute();
@@ -58,25 +70,32 @@ public class PredictionDao implements PredictionRepository {
 
     @TransactionalRead
     @Override
-    public Optional<Prediction> getPrediction(long facilityId, CapacityType capacityType, Usage usage, DateTime target) {
-        DateTime timestamp = toPredictionResolution(target);
-        Path<Integer> spacesAvailable = spacesAvailableAt(target);
-        return Optional.ofNullable(queryFactory.from(qPrediction).singleResult(new MappingProjection<Prediction>(Prediction.class, spacesAvailable) {
-            @Override
-            protected Prediction map(Tuple row) {
-                // TODO: handle null values for spaces available
-                // TODO: handle outdated predictions
-                return new Prediction(
-                        timestamp,
-                        row.get(spacesAvailable)
-                );
-            }
-        }));
+    public Optional<Prediction> getPrediction(long facilityId, CapacityType capacityType, Usage usage, DateTime timeWithFullPrecision) {
+        DateTime time = toPredictionResolution(timeWithFullPrecision);
+        Path<Integer> spacesAvailablePath = spacesAvailableAt(time);
+        return Optional.ofNullable(queryFactory
+                .from(qPrediction)
+                .where(qPrediction.start.between(time.minus(PREDICTION_WINDOW), time))
+                .singleResult(new MappingProjection<Prediction>(Prediction.class, spacesAvailablePath) {
+                    @Override
+                    protected Prediction map(Tuple row) {
+                        Integer spacesAvailable = row.get(spacesAvailablePath);
+                        if (spacesAvailable == null) {
+                            return null;
+                        }
+                        return new Prediction(time, spacesAvailable);
+                    }
+                }));
     }
 
     private static Path<Integer> spacesAvailableAt(DateTime timestamp) {
+        // Also other parts of this class assume prediction resolution,
+        // so we don't do the rounding here, but require the timestamp
+        // to already have been properly rounded.
+        assert timestamp.equals(toPredictionResolution(timestamp)) : "not in prediction resolution: " + timestamp;
+
         // TODO: use UTC
-        String hhmm = DateTimeFormat.forPattern("HHmm").print(toPredictionResolution(timestamp));
+        String hhmm = DateTimeFormat.forPattern("HHmm").print(timestamp);
         return Stream.of(qPrediction.all())
                 .filter(p -> p.getMetadata().getName().equals("spacesAvailableAt" + hhmm))
                 .map(PredictionDao::castToIntegerPath)
@@ -84,8 +103,8 @@ public class PredictionDao implements PredictionRepository {
                 .get();
     }
 
-    private static DateTime toPredictionResolution(DateTime timestamp) {
-        return TimeUtil.roundMinutes(5, timestamp);
+    static DateTime toPredictionResolution(DateTime timestamp) {
+        return TimeUtil.roundMinutes(PREDICTION_RESOLUTION.getMinutes(), timestamp);
     }
 
     @SuppressWarnings("unchecked")

@@ -6,6 +6,7 @@ import fi.hsl.parkandride.core.back.PredictionRepository;
 import fi.hsl.parkandride.core.domain.Prediction;
 import fi.hsl.parkandride.core.domain.PredictionBatch;
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -98,7 +99,21 @@ public class PredictionDaoTest extends AbstractDaoTest {
         assertThat(overflowCheck.get().spacesAvailable).as("overflowCheck.spacesAvailable").isEqualTo(5);
     }
 
-    // TODO: predictions_are_timezone_independed (saved internally as UTC)
+    @Test
+    public void predictions_are_timezone_independent() { // i.e. everything in database is in UTC
+        PredictionBatch pb = newPredictionBatch(
+                now.withZone(DateTimeZone.forOffsetHours(7)),
+                new Prediction(now.withZone(DateTimeZone.forOffsetHours(8)), 123)
+        );
+        predictionDao.updatePredictions(pb);
+
+        Optional<Prediction> prediction = predictionDao.getPrediction(pb.facilityId, pb.capacityType, pb.usage, now);
+
+        assertThat(prediction).as("prediction").isNotEqualTo(Optional.empty());
+        assertThat(prediction.get().timestamp).as("prediction.timestamp").isEqualTo(toPredictionResolution(now));
+        assertThat(prediction.get().spacesAvailable).as("prediction.spacesAvailable").isEqualTo(123);
+    }
+
     // TODO: predictions_are_facility_specific
     // TODO: predictions_are_usage_specific
     // TODO: predictions_are_capacity_type_specific

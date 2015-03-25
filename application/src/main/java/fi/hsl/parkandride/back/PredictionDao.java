@@ -16,6 +16,7 @@ import fi.hsl.parkandride.core.domain.Usage;
 import fi.hsl.parkandride.core.service.TransactionalRead;
 import fi.hsl.parkandride.core.service.TransactionalWrite;
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 import org.joda.time.Hours;
 import org.joda.time.Minutes;
 import org.joda.time.format.DateTimeFormat;
@@ -94,8 +95,7 @@ public class PredictionDao implements PredictionRepository {
         // to already have been properly rounded.
         assert timestamp.equals(toPredictionResolution(timestamp)) : "not in prediction resolution: " + timestamp;
 
-        // TODO: use UTC
-        String hhmm = DateTimeFormat.forPattern("HHmm").print(timestamp);
+        String hhmm = DateTimeFormat.forPattern("HHmm").print(timestamp.withZone(DateTimeZone.UTC));
         return Stream.of(qPrediction.all())
                 .filter(p -> p.getMetadata().getName().equals("spacesAvailableAt" + hhmm))
                 .map(PredictionDao::castToIntegerPath)

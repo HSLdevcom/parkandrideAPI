@@ -10,7 +10,7 @@ TYPES="chore demo docs feat fix refactor revert style test"
 PATTERN="^([a-z]+)\([a-z\-]+|\*\)\:\ (.*)$"
 
 if [[ ${#MESSAGE} > $MAX_LENGTH ]]; then
-     echo "ERROR: Commit message was than longer than $MAX_LENGTH characters"
+     echo "ERROR: Commit message was ${#MESSAGE} characters long, but should be at most $MAX_LENGTH characters"
      exit 1
 fi
 

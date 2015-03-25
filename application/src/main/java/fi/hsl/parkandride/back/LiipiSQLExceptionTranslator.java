@@ -2,16 +2,15 @@
 
 package fi.hsl.parkandride.back;
 
+import com.mysema.query.QueryException;
+import com.mysema.query.sql.SQLExceptionTranslator;
+import fi.hsl.parkandride.core.domain.Violation;
+import fi.hsl.parkandride.core.service.ValidationException;
+
 import java.sql.SQLException;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import com.mysema.query.QueryException;
-import com.mysema.query.sql.SQLExceptionTranslator;
-
-import fi.hsl.parkandride.core.domain.Violation;
-import fi.hsl.parkandride.core.service.ValidationException;
 
 public class LiipiSQLExceptionTranslator implements SQLExceptionTranslator {
 
@@ -33,7 +32,9 @@ public class LiipiSQLExceptionTranslator implements SQLExceptionTranslator {
             String message = e.getMessage().toLowerCase();
             Matcher m = UNIQUE_CONSTRAINT_NAME.matcher(message);
             if (m.find()) {
-                return new ValidationException(new Violation("Unique", m.group(1).replace('_', '.'), e.getMessage()));
+                return (ValidationException)
+                        new ValidationException(new Violation("Unique", m.group(1).replace('_', '.'), e.getMessage()))
+                                .initCause(e);
             }
         }
         return new QueryException(e);
@@ -43,5 +44,4 @@ public class LiipiSQLExceptionTranslator implements SQLExceptionTranslator {
     public RuntimeException translate(SQLException e) {
         return new QueryException(e);
     }
-
 }

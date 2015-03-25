@@ -12,11 +12,12 @@ import org.junit.Test;
 
 import javax.inject.Inject;
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 import static fi.hsl.parkandride.back.PredictionDao.*;
-import static fi.hsl.parkandride.core.domain.CapacityType.CAR;
-import static fi.hsl.parkandride.core.domain.Usage.PARK_AND_RIDE;
+import static fi.hsl.parkandride.core.domain.CapacityType.*;
+import static fi.hsl.parkandride.core.domain.Usage.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class PredictionDaoTest extends AbstractDaoTest {
@@ -40,18 +41,14 @@ public class PredictionDaoTest extends AbstractDaoTest {
         PredictionBatch pb = newPredictionBatch(now, new Prediction(now, 123));
         predictionDao.updatePredictions(pb);
 
-        Optional<Prediction> prediction = predictionDao.getPrediction(pb.facilityId, pb.capacityType, pb.usage, now);
-
-        assertThat(prediction).as("prediction").isNotEqualTo(Optional.empty());
-        assertThat(prediction.get().timestamp).as("prediction.timestamp").isEqualTo(toPredictionResolution(now));
-        assertThat(prediction.get().spacesAvailable).as("prediction.spacesAvailable").isEqualTo(123);
+        assertPredictionsSavedAsIs(pb);
     }
 
     @Test
     public void cannot_predict_when_there_are_no_predictions() {
-        Optional<Prediction> prediction = predictionDao.getPrediction(facilityId, CAR, PARK_AND_RIDE, now);
+        PredictionBatch pb = newPredictionBatch(now, new Prediction(now, 123));
 
-        assertThat(prediction).as("prediction").isEqualTo(Optional.empty());
+        assertPredictionDoesNotExist(now, pb);
     }
 
     @Test
@@ -64,17 +61,9 @@ public class PredictionDaoTest extends AbstractDaoTest {
                 new Prediction(outsideWindow, 20));
         predictionDao.updatePredictions(pb);
 
-        Optional<Prediction> inRange = predictionDao.getPrediction(pb.facilityId, pb.capacityType, pb.usage, withinWindow);
-        assertThat(inRange).as("inRange").isNotEqualTo(Optional.empty());
-        assertThat(inRange.get().timestamp).as("inRange.timestamp").isEqualTo(toPredictionResolution(withinWindow));
-        assertThat(inRange.get().spacesAvailable).as("inRange.spacesAvailable").isEqualTo(10);
-
-        Optional<Prediction> outsideRange = predictionDao.getPrediction(pb.facilityId, pb.capacityType, pb.usage, outsideWindow);
-        assertThat(outsideRange).as("outsideRange").isEqualTo(Optional.empty());
-
-        Optional<Prediction> overflowCheck = predictionDao.getPrediction(pb.facilityId, pb.capacityType, pb.usage, outsideWindow.minus(PREDICTION_WINDOW));
-        assertThat(overflowCheck).as("overflowCheck").isNotEqualTo(Optional.empty());
-        assertThat(overflowCheck.get().spacesAvailable).as("overflowCheck.spacesAvailable").isEqualTo(5);
+        assertPredictionEquals("inRange", new Prediction(withinWindow, 10), pb);
+        assertPredictionDoesNotExist("outsideRange", outsideWindow, pb);
+        assertPredictionEquals("overflowCheck", new Prediction(outsideWindow.minus(PREDICTION_WINDOW), 5), pb);
     }
 
     @Test
@@ -86,17 +75,9 @@ public class PredictionDaoTest extends AbstractDaoTest {
                 new Prediction(past.plus(PREDICTION_WINDOW), 5));
         predictionDao.updatePredictions(pb);
 
-        Optional<Prediction> inRange = predictionDao.getPrediction(pb.facilityId, pb.capacityType, pb.usage, now);
-        assertThat(inRange).as("inRange").isNotEqualTo(Optional.empty());
-        assertThat(inRange.get().timestamp).as("inRange.timestamp").isEqualTo(toPredictionResolution(now));
-        assertThat(inRange.get().spacesAvailable).as("inRange.spacesAvailable").isEqualTo(10);
-
-        Optional<Prediction> outsideRange = predictionDao.getPrediction(pb.facilityId, pb.capacityType, pb.usage, past);
-        assertThat(outsideRange).as("outsideRange").isEqualTo(Optional.empty());
-
-        Optional<Prediction> overflowCheck = predictionDao.getPrediction(pb.facilityId, pb.capacityType, pb.usage, past.plus(PREDICTION_WINDOW));
-        assertThat(overflowCheck).as("overflowCheck").isNotEqualTo(Optional.empty());
-        assertThat(overflowCheck.get().spacesAvailable).as("overflowCheck.spacesAvailable").isEqualTo(5);
+        assertPredictionEquals("inRange", new Prediction(now, 10), pb);
+        assertPredictionDoesNotExist("outsideRange", past, pb);
+        assertPredictionEquals("overflowCheck", new Prediction(past.plus(PREDICTION_WINDOW), 5), pb);
     }
 
     @Test
@@ -107,16 +88,51 @@ public class PredictionDaoTest extends AbstractDaoTest {
         );
         predictionDao.updatePredictions(pb);
 
-        Optional<Prediction> prediction = predictionDao.getPrediction(pb.facilityId, pb.capacityType, pb.usage, now);
-
-        assertThat(prediction).as("prediction").isNotEqualTo(Optional.empty());
-        assertThat(prediction.get().timestamp).as("prediction.timestamp").isEqualTo(toPredictionResolution(now));
-        assertThat(prediction.get().spacesAvailable).as("prediction.spacesAvailable").isEqualTo(123);
+        assertPredictionEquals("prediction", new Prediction(now, 123), pb);
     }
 
-    // TODO: predictions_are_facility_specific
-    // TODO: predictions_are_usage_specific
-    // TODO: predictions_are_capacity_type_specific
+    @Test
+    public void predictions_are_facility_specific() {
+        PredictionBatch pb1 = newPredictionBatch(now, new Prediction(now, 111));
+        pb1.facilityId = dummies.createFacility();
+        predictionDao.updatePredictions(pb1);
+
+        PredictionBatch pb2 = newPredictionBatch(now, new Prediction(now, 222));
+        pb2.facilityId = dummies.createFacility();
+        predictionDao.updatePredictions(pb2);
+
+        assertPredictionsSavedAsIs(pb1);
+        assertPredictionsSavedAsIs(pb2);
+    }
+
+    @Test
+    public void predictions_are_capacity_type_specific() {
+        PredictionBatch pb1 = newPredictionBatch(now, new Prediction(now, 111));
+        pb1.capacityType = ELECTRIC_CAR;
+        predictionDao.updatePredictions(pb1);
+
+        PredictionBatch pb2 = newPredictionBatch(now, new Prediction(now, 222));
+        pb2.capacityType = MOTORCYCLE;
+        predictionDao.updatePredictions(pb2);
+
+        assertPredictionsSavedAsIs(pb1);
+        assertPredictionsSavedAsIs(pb2);
+    }
+
+    @Test
+    public void predictions_are_usage_specific() {
+        PredictionBatch pb1 = newPredictionBatch(now, new Prediction(now, 111));
+        pb1.usage = HSL;
+        predictionDao.updatePredictions(pb1);
+
+        PredictionBatch pb2 = newPredictionBatch(now, new Prediction(now, 222));
+        pb2.usage = COMMERCIAL;
+        predictionDao.updatePredictions(pb2);
+
+        assertPredictionsSavedAsIs(pb1);
+        assertPredictionsSavedAsIs(pb2);
+    }
+
     // TODO: linear interpolation between predictions
     // TODO: linear interpolation from sourceTimestamp
 
@@ -128,5 +144,28 @@ public class PredictionDaoTest extends AbstractDaoTest {
         batch.sourceTimestamp = sourceTimestamp;
         Collections.addAll(batch.predictions, predictions);
         return batch;
+    }
+
+    private void assertPredictionDoesNotExist(DateTime time, PredictionBatch pb) {
+        assertPredictionDoesNotExist("prediction", time, pb);
+    }
+
+    private void assertPredictionDoesNotExist(String message, DateTime time, PredictionBatch pb) {
+        Optional<Prediction> outsideRange = predictionDao.getPrediction(pb.facilityId, pb.capacityType, pb.usage, time);
+        assertThat(outsideRange).as(message).isEqualTo(Optional.empty());
+    }
+
+    private void assertPredictionsSavedAsIs(PredictionBatch pb) {
+        List<Prediction> predictions = pb.predictions;
+        for (int i = 0; i < predictions.size(); i++) {
+            assertPredictionEquals("prediction[" + i + "]", predictions.get(i), pb);
+        }
+    }
+
+    private void assertPredictionEquals(String message, Prediction expected, PredictionBatch pb) {
+        Optional<Prediction> actual = predictionDao.getPrediction(pb.facilityId, pb.capacityType, pb.usage, expected.timestamp);
+        assertThat(actual).as(message).isNotEqualTo(Optional.empty());
+        assertThat(actual.get().timestamp).as(message + ".timestamp").isEqualTo(toPredictionResolution(expected.timestamp));
+        assertThat(actual.get().spacesAvailable).as(message + ".spacesAvailable").isEqualTo(expected.spacesAvailable);
     }
 }

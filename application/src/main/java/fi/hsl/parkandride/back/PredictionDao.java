@@ -39,14 +39,17 @@ public class PredictionDao implements PredictionRepository {
 
     @TransactionalWrite
     @Override
-    public void updatePredictions(PredictionBatch batch) {
-        DateTime start = toPredictionResolution(batch.sourceTimestamp);
+    public void updatePredictions(PredictionBatch pb) {
+        DateTime start = toPredictionResolution(pb.sourceTimestamp);
         DateTime end = start.plus(PREDICTION_WINDOW).minus(PREDICTION_RESOLUTION);
+
         SQLUpdateClause update = queryFactory.update(qPrediction)
-                .where(qPrediction.facilityId.eq(batch.facilityId))
+                .where(qPrediction.facilityId.eq(pb.facilityId),
+                        qPrediction.capacityType.eq(pb.capacityType),
+                        qPrediction.usage.eq(pb.usage))
                 .set(qPrediction.start, start);
 
-        for (Prediction prediction : batch.predictions) {
+        for (Prediction prediction : pb.predictions) {
             DateTime timestamp = toPredictionResolution(prediction.timestamp);
             if (timestamp.isBefore(start) || timestamp.isAfter(end)) {
                 continue;
@@ -56,16 +59,16 @@ public class PredictionDao implements PredictionRepository {
 
         long updatedRows = update.execute();
         if (updatedRows == 0) {
-            insertBlankPredictionRow(batch);
-            updatePredictions(batch);
+            insertBlankPredictionRow(pb);
+            updatePredictions(pb);
         }
     }
 
-    private void insertBlankPredictionRow(PredictionBatch batch) {
+    private void insertBlankPredictionRow(PredictionBatch pb) {
         queryFactory.insert(qPrediction)
-                .set(qPrediction.facilityId, batch.facilityId)
-                .set(qPrediction.capacityType, batch.capacityType)
-                .set(qPrediction.usage, batch.usage)
+                .set(qPrediction.facilityId, pb.facilityId)
+                .set(qPrediction.capacityType, pb.capacityType)
+                .set(qPrediction.usage, pb.usage)
                 .execute();
     }
 
@@ -76,7 +79,10 @@ public class PredictionDao implements PredictionRepository {
         Path<Integer> pSpacesAvailable = spacesAvailableAt(time);
         return Optional.ofNullable(queryFactory
                 .from(qPrediction)
-                .where(qPrediction.start.between(time.minus(PREDICTION_WINDOW).plus(PREDICTION_RESOLUTION), time))
+                .where(qPrediction.facilityId.eq(facilityId),
+                        qPrediction.capacityType.eq(capacityType),
+                        qPrediction.usage.eq(usage),
+                        qPrediction.start.between(time.minus(PREDICTION_WINDOW).plus(PREDICTION_RESOLUTION), time))
                 .singleResult(new MappingProjection<Prediction>(Prediction.class, pSpacesAvailable) {
                     @Override
                     protected Prediction map(Tuple row) {

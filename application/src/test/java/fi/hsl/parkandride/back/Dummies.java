@@ -14,7 +14,7 @@ import org.geolatte.geom.Polygon;
 
 import javax.inject.Inject;
 import java.util.Arrays;
-import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static fi.hsl.parkandride.core.domain.CapacityType.CAR;
 import static fi.hsl.parkandride.core.domain.CapacityType.ELECTRIC_CAR;
@@ -44,21 +44,21 @@ public class Dummies {
     }
 
     private Long createDummyOperator() {
-        Operator operator = new Operator("SMOOTH");
+        Operator operator = new Operator("SMOOTH" + uniqueNumber());
         return operatorDao.insertOperator(operator);
     }
 
     private Long createDummyContact() {
         Contact contact = new Contact();
-        contact.name = new MultilingualString("TEST " + UUID.randomUUID());
+        contact.name = new MultilingualString("TEST " + uniqueNumber());
         contact.email = "test@example.com";
         return contactDao.insertContact(contact);
     }
 
-    public static Facility createFacility(Long operatorId, FacilityContacts contacts) {
+    public Facility createFacility(Long operatorId, FacilityContacts contacts) {
         Facility facility = new Facility();
         facility.id = 0l;
-        facility.name = new MultilingualString("Facility");
+        facility.name = new MultilingualString("Facility " + uniqueNumber());
         facility.location = (Polygon) Spatial.fromWkt("POLYGON((" +
                 "25.010822 60.25054, " +
                 "25.010822 60.250023, " +
@@ -88,5 +88,11 @@ public class Dummies {
         facility.openingHours.info = new MultilingualString("Opening Hours");
         facility.openingHours.url = new MultilingualUrl("http://www.hsl.fi");
         return facility;
+    }
+
+    private final AtomicInteger seq = new AtomicInteger(0);
+
+    private int uniqueNumber() {
+        return seq.incrementAndGet();
     }
 }

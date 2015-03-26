@@ -32,6 +32,13 @@ public class PredictionDao implements PredictionRepository {
     public static final Minutes PREDICTION_RESOLUTION = Minutes.minutes(5);
 
     private static final QFacilityPrediction qPrediction = QFacilityPrediction.facilityPrediction;
+    private static final Map<String, Path<Integer>> spacesAvailableColumnsByHHmm = Collections.unmodifiableMap(
+            Stream.of(qPrediction.all())
+                    .filter(p -> p.getMetadata().getName().startsWith("spacesAvailableAt"))
+                    .map(PredictionDao::castToIntegerPath)
+                    .collect(Collectors.toMap(
+                            p -> p.getMetadata().getName().substring("spacesAvailableAt".length()),
+                            Function.identity())));
 
     private final PostgresQueryFactory queryFactory;
 
@@ -150,12 +157,7 @@ public class PredictionDao implements PredictionRepository {
         assert timestamp.equals(toPredictionResolution(timestamp)) : "not in prediction resolution: " + timestamp;
 
         String hhmm = DateTimeFormat.forPattern("HHmm").print(timestamp.withZone(DateTimeZone.UTC));
-        return Stream.of(qPrediction.all())
-                // FIXME: Use lookup table!
-                .filter(p -> p.getMetadata().getName().equals("spacesAvailableAt" + hhmm))
-                .map(PredictionDao::castToIntegerPath)
-                .findFirst()
-                .get();
+        return spacesAvailableColumnsByHHmm.get(hhmm);
     }
 
     static DateTime toPredictionResolution(DateTime timestamp) {

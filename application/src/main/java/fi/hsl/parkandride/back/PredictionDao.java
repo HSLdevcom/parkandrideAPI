@@ -60,12 +60,12 @@ public class PredictionDao implements PredictionRepository {
 
         pb.predictions.stream()
                 .sorted(Comparator.comparing(p -> p.timestamp))
-                .map(toPredictionResolution()) // Round to closest resolution matching time (e.g. 5 min)
-                .collect(groupByTimeKeepingNewest()) // Map<DateTime, Prediction>
+                .map(roundTimestampsToPredictionResolution())
+                .collect(groupByTimeKeepingNewest()) // -> Map<DateTime, Prediction>
                 .values().stream()
-                .map(Collections::singletonList) // wrap values in immutable singleton list
-                .reduce(new ArrayList<>(), linearInterpolation()).stream() // mutable ArrayList as accumulator
-                .filter(isWithin(start, end)) // Because PredictionDaoTest.does_linear_interpolation_also_between_values_outside_the_prediction_window
+                .map(Collections::singletonList)                            // 1. wrap values in immutable singleton lists
+                .reduce(new ArrayList<>(), linearInterpolation()).stream()  // 2. mutable ArrayList as accumulator
+                .filter(isWithin(start, end)) // after interpolation because of PredictionDaoTest.does_linear_interpolation_also_between_values_outside_the_prediction_window
                 .forEach(p -> update.set(spacesAvailableAt(p.timestamp), p.spacesAvailable));
 
         long updatedRows = update.execute();
@@ -75,11 +75,19 @@ public class PredictionDao implements PredictionRepository {
         }
     }
 
+    private void insertBlankPredictionRow(PredictionBatch pb) {
+        queryFactory.insert(qPrediction)
+                .set(qPrediction.facilityId, pb.facilityId)
+                .set(qPrediction.capacityType, pb.capacityType)
+                .set(qPrediction.usage, pb.usage)
+                .execute();
+    }
+
     private static Predicate<Prediction> isWithin(DateTime start, DateTime end) {
         return p -> !p.timestamp.isBefore(start) && !p.timestamp.isAfter(end);
     }
 
-    private static Function<Prediction, Prediction> toPredictionResolution() {
+    private static Function<Prediction, Prediction> roundTimestampsToPredictionResolution() {
         return p -> new Prediction(toPredictionResolution(p.timestamp), p.spacesAvailable);
     }
 
@@ -119,29 +127,21 @@ public class PredictionDao implements PredictionRepository {
         };
     }
 
-    private void insertBlankPredictionRow(PredictionBatch pb) {
-        queryFactory.insert(qPrediction)
-                .set(qPrediction.facilityId, pb.facilityId)
-                .set(qPrediction.capacityType, pb.capacityType)
-                .set(qPrediction.usage, pb.usage)
-                .execute();
-    }
-
     @TransactionalRead
     @Override
     public Optional<Prediction> getPrediction(long facilityId, CapacityType capacityType, Usage usage, DateTime timeWithFullPrecision) {
         DateTime time = toPredictionResolution(timeWithFullPrecision);
-        Path<Integer> pSpacesAvailable = spacesAvailableAt(time);
+        Path<Integer> spacesAvailableColumn = spacesAvailableAt(time);
         return Optional.ofNullable(queryFactory
                 .from(qPrediction)
                 .where(qPrediction.facilityId.eq(facilityId),
                         qPrediction.capacityType.eq(capacityType),
                         qPrediction.usage.eq(usage),
                         qPrediction.start.between(time.minus(PREDICTION_WINDOW).plus(PREDICTION_RESOLUTION), time))
-                .singleResult(new MappingProjection<Prediction>(Prediction.class, pSpacesAvailable) {
+                .singleResult(new MappingProjection<Prediction>(Prediction.class, spacesAvailableColumn) {
                     @Override
                     protected Prediction map(Tuple row) {
-                        Integer spacesAvailable = row.get(pSpacesAvailable);
+                        Integer spacesAvailable = row.get(spacesAvailableColumn);
                         if (spacesAvailable == null) {
                             return null;
                         }

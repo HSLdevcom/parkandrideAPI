@@ -2,11 +2,12 @@
 
 package fi.hsl.parkandride.itest;
 
-import static com.jayway.restassured.RestAssured.when;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
-import static org.hamcrest.Matchers.nullValue;
-
+import com.jayway.restassured.http.ContentType;
+import fi.hsl.parkandride.core.domain.Facility;
+import fi.hsl.parkandride.core.domain.NewUser;
+import fi.hsl.parkandride.core.domain.Role;
+import fi.hsl.parkandride.core.service.ValidationException;
+import fi.hsl.parkandride.front.UrlSchema;
 import org.junit.Test;
 import org.springframework.beans.TypeMismatchException;
 import org.springframework.http.HttpStatus;
@@ -14,13 +15,8 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 
-import com.jayway.restassured.http.ContentType;
-
-import fi.hsl.parkandride.core.domain.Facility;
-import fi.hsl.parkandride.core.domain.NewUser;
-import fi.hsl.parkandride.core.domain.Role;
-import fi.hsl.parkandride.core.service.ValidationException;
-import fi.hsl.parkandride.front.UrlSchema;
+import static com.jayway.restassured.RestAssured.when;
+import static org.hamcrest.Matchers.*;
 
 public class ErrorHandlingITest extends AbstractIntegrationTest {
     @Test
@@ -53,7 +49,7 @@ public class ErrorHandlingITest extends AbstractIntegrationTest {
         .then()
             .spec(assertResponse(HttpStatus.BAD_REQUEST, ValidationException.class))
             .contentType(ContentType.JSON)
-            .body("message", is("Invalid data. See violations for details."))
+            .body("message", startsWith("Invalid data. Violations in"))
             .body("violations", is(notNullValue()))
         ;
     }

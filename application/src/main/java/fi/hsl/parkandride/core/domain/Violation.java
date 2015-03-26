@@ -2,18 +2,18 @@
 
 package fi.hsl.parkandride.core.domain;
 
-import static com.google.common.collect.Maps.filterKeys;
-import static fi.hsl.parkandride.core.domain.PropertyPathTranslator.translate;
-
-import java.util.Map;
-import java.util.Set;
-
-import javax.annotation.Nullable;
-import javax.validation.ConstraintViolation;
-
+import com.google.common.base.MoreObjects;
 import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
+
+import javax.annotation.Nullable;
+import javax.validation.ConstraintViolation;
+import java.util.Map;
+import java.util.Set;
+
+import static com.google.common.collect.Maps.filterKeys;
+import static fi.hsl.parkandride.core.domain.PropertyPathTranslator.translate;
 
 public class Violation {
 
@@ -37,7 +37,7 @@ public class Violation {
 
     public Violation(String type, Map<String, Object> args, String path, String message) {
         this.type = type;
-        this.args = args;
+        this.args = ImmutableMap.copyOf(args);
         this.path = path;
         this.message = message;
     }
@@ -64,4 +64,13 @@ public class Violation {
         return constraintViolation.getConstraintDescriptor().getAnnotation().annotationType().getSimpleName();
     }
 
+    @Override
+    public String toString() {
+        return MoreObjects.toStringHelper(getClass())
+                .add("type", type)
+                .add("args", args)
+                .add("path", path)
+                .add("message", message)
+                .toString();
+    }
 }

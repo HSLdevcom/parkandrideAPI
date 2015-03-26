@@ -4,6 +4,6 @@ package fi.hsl.parkandride.core.domain;
 
 public enum Usage {
     PARK_AND_RIDE,
-    HSL,
+    HSL_TRAVEL_CARD,
     COMMERCIAL
 }

@@ -3,3 +3,4 @@
 *.iml
 .DS_Store
 application.pid
+protractor-results.xml

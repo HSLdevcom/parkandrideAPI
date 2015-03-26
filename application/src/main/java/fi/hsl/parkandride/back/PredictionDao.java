@@ -53,12 +53,12 @@ public class PredictionDao implements PredictionRepository {
 
         pb.predictions.stream()
                 .sorted(Comparator.comparing(p -> p.timestamp))
-                .map(toPredictionResolution())
-                .collect(groupByTimeKeepingNewest())
+                .map(toPredictionResolution()) // Round to closest resolution matching time (e.g. 5 min)
+                .collect(groupByTimeKeepingNewest()) // Map<DateTime, Prediction>
                 .values().stream()
-                .map(Collections::singletonList)
-                .reduce(new ArrayList<>(), linearInterpolation()).stream()
-                .filter(isWithin(start, end))
+                .map(Collections::singletonList) // wrap values in immutable singleton list
+                .reduce(new ArrayList<>(), linearInterpolation()).stream() // mutable ArrayList as accumulator
+                .filter(isWithin(start, end)) // Because PredictionDaoTest.does_linear_interpolation_also_between_values_outside_the_prediction_window
                 .forEach(p -> update.set(spacesAvailableAt(p.timestamp), p.spacesAvailable));
 
         long updatedRows = update.execute();
@@ -151,6 +151,7 @@ public class PredictionDao implements PredictionRepository {
 
         String hhmm = DateTimeFormat.forPattern("HHmm").print(timestamp.withZone(DateTimeZone.UTC));
         return Stream.of(qPrediction.all())
+                // FIXME: Use lookup table!
                 .filter(p -> p.getMetadata().getName().equals("spacesAvailableAt" + hhmm))
                 .map(PredictionDao::castToIntegerPath)
                 .findFirst()

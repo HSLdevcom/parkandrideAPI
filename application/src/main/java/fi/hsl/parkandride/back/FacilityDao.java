@@ -2,25 +2,6 @@
 
 package fi.hsl.parkandride.back;
 
-import static com.google.common.base.MoreObjects.firstNonNull;
-import static com.google.common.base.Preconditions.checkNotNull;
-import static com.mysema.query.group.GroupBy.groupBy;
-import static com.mysema.query.group.GroupBy.list;
-import static com.mysema.query.group.GroupBy.set;
-import static com.mysema.query.spatial.GeometryExpressions.dwithin;
-import static fi.hsl.parkandride.back.GSortedSet.sortedSet;
-import static fi.hsl.parkandride.core.domain.CapacityType.*;
-import static fi.hsl.parkandride.core.domain.Sort.Dir.ASC;
-import static fi.hsl.parkandride.core.domain.Sort.Dir.DESC;
-import static fi.hsl.parkandride.core.domain.Usage.COMMERCIAL;
-import static fi.hsl.parkandride.core.domain.Usage.HSL;
-import static fi.hsl.parkandride.core.domain.Usage.PARK_AND_RIDE;
-
-import java.util.*;
-import java.util.Map.Entry;
-
-import org.geolatte.geom.Point;
-
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -37,13 +18,26 @@ import com.mysema.query.types.MappingProjection;
 import com.mysema.query.types.expr.ComparableExpression;
 import com.mysema.query.types.expr.SimpleExpression;
 import com.mysema.query.types.path.NumberPath;
-
 import fi.hsl.parkandride.back.sql.*;
 import fi.hsl.parkandride.core.back.FacilityRepository;
 import fi.hsl.parkandride.core.domain.*;
 import fi.hsl.parkandride.core.service.TransactionalRead;
 import fi.hsl.parkandride.core.service.TransactionalWrite;
 import fi.hsl.parkandride.core.service.ValidationException;
+import org.geolatte.geom.Point;
+
+import java.util.*;
+import java.util.Map.Entry;
+
+import static com.google.common.base.MoreObjects.firstNonNull;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.mysema.query.group.GroupBy.*;
+import static com.mysema.query.spatial.GeometryExpressions.dwithin;
+import static fi.hsl.parkandride.back.GSortedSet.sortedSet;
+import static fi.hsl.parkandride.core.domain.CapacityType.*;
+import static fi.hsl.parkandride.core.domain.Sort.Dir.ASC;
+import static fi.hsl.parkandride.core.domain.Sort.Dir.DESC;
+import static fi.hsl.parkandride.core.domain.Usage.*;
 
 public class FacilityDao implements FacilityRepository {
 
@@ -176,7 +170,7 @@ public class FacilityDao implements FacilityRepository {
             facility.usages.add(PARK_AND_RIDE);
         }
         if (row.get(qFacility.usageHsl)) {
-            facility.usages.add(HSL);
+            facility.usages.add(HSL_TRAVEL_CARD);
         }
         if (row.get(qFacility.usageCommercial)) {
             facility.usages.add(COMMERCIAL);
@@ -744,7 +738,7 @@ public class FacilityDao implements FacilityRepository {
 
         Set<Usage> usages = facility.analyzeUsages();
         store.set(qFacility.usageParkAndRide, usages.contains(PARK_AND_RIDE));
-        store.set(qFacility.usageHsl, usages.contains(HSL));
+        store.set(qFacility.usageHsl, usages.contains(HSL_TRAVEL_CARD));
         store.set(qFacility.usageCommercial, usages.contains(COMMERCIAL));
 
         Map<CapacityType, Integer> builtCapacity = facility.builtCapacity != null ? facility.builtCapacity : ImmutableMap.of();

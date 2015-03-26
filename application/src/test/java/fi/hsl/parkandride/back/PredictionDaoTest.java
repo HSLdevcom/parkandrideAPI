@@ -170,7 +170,7 @@ public class PredictionDaoTest extends AbstractDaoTest {
     @Test
     public void predictions_are_usage_specific() {
         PredictionBatch pb1 = newPredictionBatch(now, new Prediction(now, 111));
-        pb1.usage = HSL;
+        pb1.usage = HSL_TRAVEL_CARD;
         predictionDao.updatePredictions(pb1);
 
         PredictionBatch pb2 = newPredictionBatch(now, new Prediction(now, 222));

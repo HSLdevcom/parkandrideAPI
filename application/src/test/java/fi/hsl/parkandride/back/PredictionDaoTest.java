@@ -75,6 +75,23 @@ public class PredictionDaoTest extends AbstractDaoTest {
         assertPredictionsSavedAsIs(pb);
     }
 
+    /**
+     * This makes it easier to implement coarse grained prediction algorithms,
+     * so that the prediction window will be completely filled, without having to be
+     * precise about where the prediction window ends.
+     */
+    @Test
+    public void does_linear_interpolation_also_between_values_outside_the_prediction_window() {
+        PredictionBatch pb = newPredictionBatch(now,
+                new Prediction(now.minusHours(1), 123),
+                new Prediction(now.plus(PREDICTION_WINDOW).plusHours(1), 123));
+        Collections.shuffle(pb.predictions); // input order does not matter
+        predictionDao.updatePredictions(pb);
+
+        assertPredictionEquals("windowStart", new Prediction(now, 123), pb);
+        assertPredictionEquals("windowEnd", new Prediction(now.plus(PREDICTION_WINDOW).minus(PREDICTION_RESOLUTION), 123), pb);
+    }
+
     @Test
     public void cannot_predict_when_there_are_no_predictions() {
         PredictionBatch pb = newPredictionBatch(now, new Prediction(now, 123));

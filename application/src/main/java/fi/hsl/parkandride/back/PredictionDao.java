@@ -54,12 +54,11 @@ public class PredictionDao implements PredictionRepository {
         pb.predictions.stream()
                 .sorted(Comparator.comparing(p -> p.timestamp))
                 .map(toPredictionResolution())
-                .filter(isWithin(start, end))
                 .collect(groupByTimeKeepingNewest())
-                .values()
-                .stream()
+                .values().stream()
                 .map(Collections::singletonList)
-                .reduce(new ArrayList<>(), linearInterpolation())
+                .reduce(new ArrayList<>(), linearInterpolation()).stream()
+                .filter(isWithin(start, end))
                 .forEach(p -> update.set(spacesAvailableAt(p.timestamp), p.spacesAvailable));
 
         long updatedRows = update.execute();

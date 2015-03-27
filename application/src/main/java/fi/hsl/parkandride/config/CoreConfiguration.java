@@ -132,4 +132,9 @@ public class CoreConfiguration {
     public PredictionRepository predictionRepository() {
         return new PredictionDao(queryFactory);
     }
+
+    @Bean
+    public PredictionService predictionService() {
+        return new PredictionService();
+    }
 }

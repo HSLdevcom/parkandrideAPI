@@ -60,10 +60,11 @@ public class PredictionServiceTest extends AbstractDaoTest {
         List<String> spy = new ArrayList<>();
         predictionService.predictor = new SameAsLatestPredictor() {
             @Override
-            public void predict(PredictorState state, PredictionBatch batch, UtilizationHistory history) {
-                spy.add(state.internalState + "@" + state.latestProcessed);
-                super.predict(state, batch, history);
+            public List<Prediction> predict(PredictorState state, UtilizationHistory history) {
+                spy.add(state.internalState + "@" + state.latestUtilization);
+                super.predict(state, history);
                 state.internalState += "x";
+                return Collections.emptyList();
             }
         };
 
@@ -98,7 +99,7 @@ public class PredictionServiceTest extends AbstractDaoTest {
         predictionService.updatePredictions();
         predictionService.updatePredictions();
 
-        verify(predictor, times(1)).predict(Matchers.<PredictorState>any(), Matchers.<PredictionBatch>any(), Matchers.<UtilizationHistory>any());
+        verify(predictor, times(1)).predict(Matchers.<PredictorState>any(), Matchers.<UtilizationHistory>any());
     }
 
     private static Utilization newUtilization(DateTime now, int spacesAvailable) {

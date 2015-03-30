@@ -2,7 +2,9 @@
 
 package fi.hsl.parkandride.core.domain;
 
+import java.util.List;
+
 public interface Predictor {
 
-    void predict(PredictorState state, PredictionBatch batch, UtilizationHistory history);
+    List<Prediction> predict(PredictorState state, UtilizationHistory history);
 }

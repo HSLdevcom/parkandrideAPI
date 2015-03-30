@@ -2,16 +2,21 @@
 
 package fi.hsl.parkandride.core.domain;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class SameAsLatestPredictor implements Predictor {
 
     @Override
-    public void predict(PredictorState state, PredictionBatch batch, UtilizationHistory history) {
-        history.getUpdatesSince(state.latestProcessed)
+    public List<Prediction> predict(PredictorState state, UtilizationHistory history) {
+        List<Prediction> predictions = new ArrayList<>();
+        history.getUpdatesSince(state.latestUtilization)
                 .reduce((older, newer) -> newer)
                 .ifPresent(lastUpdate -> {
-                    state.latestProcessed = lastUpdate.timestamp;
-                    batch.predictions.add(new Prediction(lastUpdate.timestamp, lastUpdate.spacesAvailable));
-                    batch.predictions.add(new Prediction(lastUpdate.timestamp.plusDays(1), lastUpdate.spacesAvailable));
+                    state.latestUtilization = lastUpdate.timestamp;
+                    predictions.add(new Prediction(lastUpdate.timestamp, lastUpdate.spacesAvailable));
+                    predictions.add(new Prediction(lastUpdate.timestamp.plusDays(1), lastUpdate.spacesAvailable));
                 });
+        return predictions;
     }
 }

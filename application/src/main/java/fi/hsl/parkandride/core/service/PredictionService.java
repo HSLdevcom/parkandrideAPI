@@ -7,6 +7,7 @@ import fi.hsl.parkandride.core.back.PredictionRepository;
 import fi.hsl.parkandride.core.domain.*;
 import org.joda.time.DateTime;
 
+import java.util.List;
 import java.util.stream.Stream;
 
 public class PredictionService {
@@ -40,28 +41,32 @@ public class PredictionService {
         //      - lookup table
         // - save predictor state
 
-        PredictionBatch batch = new PredictionBatch();
-        batch.facilityId = 1L;
-        batch.capacityType = CapacityType.CAR;
-        batch.usage = Usage.PARK_AND_RIDE;
-
         UtilizationHistory history = new UtilizationHistory() {
             @Override
             public boolean hasUpdatesSince(DateTime startExclusive) {
-                return getUpdatesSince(state.latestProcessed).findAny().isPresent();
+                return getUpdatesSince(state.latestUtilization).findAny().isPresent();
             }
 
             @Override
             public Stream<Utilization> getUpdatesSince(DateTime startExclusive) {
-                return facilityRepository.getStatuses(batch.facilityId).stream()
+                return facilityRepository.getStatuses(state.facilityId).stream()
                         .filter(u -> u.timestamp.isAfter(startExclusive));
             }
         };
 
-        if (history.hasUpdatesSince(state.latestProcessed)) {
-            predictor.predict(state, batch, history);
-            batch.sourceTimestamp = state.latestProcessed;
-            predictionRepository.updatePredictions(batch);
+        if (history.hasUpdatesSince(state.latestUtilization)) {
+            List<Prediction> predictions = predictor.predict(state, history);
+            predictionRepository.updatePredictions(toPredictionBatch(state, predictions));
         }
+    }
+
+    private static PredictionBatch toPredictionBatch(PredictorState state, List<Prediction> predictions) {
+        PredictionBatch batch = new PredictionBatch();
+        batch.facilityId = state.facilityId;
+        batch.capacityType = state.capacityType;
+        batch.usage = state.usage;
+        batch.sourceTimestamp = state.latestUtilization;
+        batch.predictions = predictions;
+        return batch;
     }
 }

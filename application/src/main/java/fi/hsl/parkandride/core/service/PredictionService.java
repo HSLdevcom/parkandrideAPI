@@ -10,6 +10,8 @@ import org.joda.time.DateTime;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class PredictionService {
@@ -18,9 +20,7 @@ public class PredictionService {
     private final PredictionRepository predictionRepository;
 
     private final ConcurrentMap<String, Predictor> predictorsByType = new ConcurrentHashMap<>();
-
-    // TODO: save to database, lookup by id
-    private PredictorState state = new PredictorState();
+    private final List<PredictorState> predictorStates = new CopyOnWriteArrayList<>(); // TODO: remove me
 
     public PredictionService(FacilityRepository facilityRepository, PredictionRepository predictionRepository) {
         this.facilityRepository = facilityRepository;
@@ -37,38 +37,34 @@ public class PredictionService {
         });
     }
 
+    public void enablePrediction(PredictorState initialState) {
+        // TODO: save to database
+        predictorStates.add(initialState);
+    }
+
+    @TransactionalWrite
     public void updatePredictions() {
-        // TODO
-        // - choose which sets of [predictor type, facility id, capacity type, usage] need to have their predictions updated
-        //      - update interval of prediction type?
-        //      - are there new utilization updates?
-        // - block other servers from processing the same work set
-        //      - use a message queue?
-        //      - choose one at random and lock it?
-        // - get predictor state
-        // - run predictor
-        // - save predictions
-        //      - full log
-        //      - lookup table
-        // - save predictor state
+        // TODO: block other servers from processing the same work set (use a message queue? choose one at random and lock it?)
+        // TODO: consider the update interval of prediction types? or leave that that to the predictor?
 
-        UtilizationHistory history = new UtilizationHistory() {
-            @Override
-            public boolean hasUpdatesSince(DateTime startExclusive) {
-                return getUpdatesSince(state.latestUtilization).findAny().isPresent();
-            }
-
-            @Override
-            public Stream<Utilization> getUpdatesSince(DateTime startExclusive) {
-                return facilityRepository.getStatuses(state.facilityId).stream()
-                        .filter(u -> u.timestamp.isAfter(startExclusive));
-            }
-        };
-
-        if (history.hasUpdatesSince(state.latestUtilization)) {
-            List<Prediction> predictions = getPredictor(state.predictorType).predict(state, history);
+        for (PredictorState state : getPredictionsNeedingUpdate()) {
+            Predictor predictor = getPredictor(state.predictorType);
+            List<Prediction> predictions = predictor.predict(state, new PredictorUtilizationHistory(state));
+            // TODO: save to prediction log
             predictionRepository.updatePredictions(toPredictionBatch(state, predictions));
+            savePredictorState(state);
         }
+    }
+
+    private List<PredictorState> getPredictionsNeedingUpdate() {
+        // TODO: search from database
+        return predictorStates.stream()
+                .filter(state -> new PredictorUtilizationHistory(state).hasUpdatesSince(state.latestUtilization))
+                .collect(Collectors.toList());
+    }
+
+    private void savePredictorState(PredictorState state) {
+        // TODO: save to database
     }
 
     private static PredictionBatch toPredictionBatch(PredictorState state, List<Prediction> predictions) {
@@ -79,5 +75,25 @@ public class PredictionService {
         batch.sourceTimestamp = state.latestUtilization;
         batch.predictions = predictions;
         return batch;
+    }
+
+    private class PredictorUtilizationHistory implements UtilizationHistory {
+        private final PredictorState state;
+
+        public PredictorUtilizationHistory(PredictorState state) {
+            this.state = state;
+        }
+
+        @Override
+        public boolean hasUpdatesSince(DateTime startExclusive) {
+            return getUpdatesSince(state.latestUtilization).findAny().isPresent();
+        }
+
+        @Override
+        public Stream<Utilization> getUpdatesSince(DateTime startExclusive) {
+            // TODO: more effective search
+            return facilityRepository.getStatuses(state.facilityId).stream()
+                    .filter(u -> u.timestamp.isAfter(startExclusive));
+        }
     }
 }

@@ -40,6 +40,8 @@ public class PredictionServiceTest extends AbstractDaoTest {
     public void initTestData() {
         predictionService = new PredictionService(facilityRepository, predictionRepository);
         facilityId = dummies.createFacility();
+        Utilization u = newUtilization(now, 0);
+        predictionService.enablePrediction(new PredictorState(SameAsLatestPredictor.TYPE, facilityId, u.capacityType, u.usage));
     }
 
     @Test
@@ -110,6 +112,4 @@ public class PredictionServiceTest extends AbstractDaoTest {
         u.spacesAvailable = spacesAvailable;
         return u;
     }
-
-    // TODO: multiple prediction sets
 }

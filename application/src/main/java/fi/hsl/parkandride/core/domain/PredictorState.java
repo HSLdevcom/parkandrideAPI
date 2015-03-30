@@ -6,12 +6,18 @@ import org.joda.time.DateTime;
 
 public class PredictorState {
 
-    // TODO: parameterize
-    public final String predictorType = SameAsLatestPredictor.TYPE;
-    public final long facilityId = 1;
-    public final CapacityType capacityType = CapacityType.CAR;
-    public final Usage usage = Usage.PARK_AND_RIDE;
+    public final String predictorType;
+    public final long facilityId;
+    public final CapacityType capacityType;
+    public final Usage usage;
 
     public DateTime latestUtilization = new DateTime(0);
     public String internalState = "";
+
+    public PredictorState(String predictorType, long facilityId, CapacityType capacityType, Usage usage) {
+        this.predictorType = predictorType;
+        this.facilityId = facilityId;
+        this.capacityType = capacityType;
+        this.usage = usage;
+    }
 }

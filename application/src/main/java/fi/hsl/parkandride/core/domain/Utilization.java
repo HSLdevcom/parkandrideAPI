@@ -4,6 +4,7 @@ package fi.hsl.parkandride.core.domain;
 
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.google.common.base.MoreObjects;
 import com.wordnik.swagger.annotations.ApiModelProperty;
 import org.joda.time.DateTime;
 
@@ -30,4 +31,13 @@ public class Utilization {
     @ApiModelProperty(required = true)
     public Integer spacesAvailable;
 
+    @Override
+    public String toString() {
+        return MoreObjects.toStringHelper(this)
+                .addValue(timestamp)
+                .addValue(capacityType)
+                .addValue(usage)
+                .add("spacesAvailable", spacesAvailable)
+                .toString();
+    }
 }

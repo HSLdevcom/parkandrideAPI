@@ -135,6 +135,6 @@ public class CoreConfiguration {
 
     @Bean
     public PredictionService predictionService() {
-        return new PredictionService();
+        return new PredictionService(facilityRepository(), predictionRepository());
     }
 }

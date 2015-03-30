@@ -9,7 +9,7 @@ public class SameAsLatestPredictor implements Predictor {
         history.getUpdatesSince(state.latestProcessed)
                 .reduce((older, newer) -> newer)
                 .ifPresent(lastUpdate -> {
-                    batch.sourceTimestamp = state.latestProcessed = lastUpdate.timestamp;
+                    state.latestProcessed = lastUpdate.timestamp;
                     batch.predictions.add(new Prediction(lastUpdate.timestamp, lastUpdate.spacesAvailable));
                     batch.predictions.add(new Prediction(lastUpdate.timestamp.plusDays(1), lastUpdate.spacesAvailable));
                 });

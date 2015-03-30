@@ -8,5 +8,7 @@ import java.util.stream.Stream;
 
 public interface UtilizationHistory {
 
+    boolean hasUpdatesSince(DateTime startExclusive);
+
     Stream<Utilization> getUpdatesSince(DateTime startExclusive);
 }

@@ -6,5 +6,6 @@ import org.joda.time.DateTime;
 
 public class PredictorState {
     // TODO: same as PredictionBatch.sourceTimestamp? rename to latestUtilization (but nupic needs other state as well)
-    public DateTime latestProcessed;
+    public DateTime latestProcessed = new DateTime(0);
+    public String internalState = "";
 }

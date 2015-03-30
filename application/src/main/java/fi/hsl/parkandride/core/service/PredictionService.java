@@ -8,6 +8,8 @@ import fi.hsl.parkandride.core.domain.*;
 import org.joda.time.DateTime;
 
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.stream.Stream;
 
 public class PredictionService {
@@ -15,8 +17,7 @@ public class PredictionService {
     private final FacilityRepository facilityRepository;
     private final PredictionRepository predictionRepository;
 
-    // TODO: inject predictors, lookup by id
-    public Predictor predictor = new SameAsLatestPredictor();
+    private final ConcurrentMap<String, Predictor> predictorsByType = new ConcurrentHashMap<>();
 
     // TODO: save to database, lookup by id
     private PredictorState state = new PredictorState();
@@ -24,6 +25,16 @@ public class PredictionService {
     public PredictionService(FacilityRepository facilityRepository, PredictionRepository predictionRepository) {
         this.facilityRepository = facilityRepository;
         this.predictionRepository = predictionRepository;
+    }
+
+    public void registerPredictor(Predictor predictor) {
+        predictorsByType.put(predictor.getType(), predictor);
+    }
+
+    private Predictor getPredictor(String predictorType) {
+        return predictorsByType.computeIfAbsent(predictorType, k -> {
+            throw new IllegalArgumentException("Predictor not found: " + predictorType);
+        });
     }
 
     public void updatePredictions() {
@@ -55,7 +66,7 @@ public class PredictionService {
         };
 
         if (history.hasUpdatesSince(state.latestUtilization)) {
-            List<Prediction> predictions = predictor.predict(state, history);
+            List<Prediction> predictions = getPredictor(state.predictorType).predict(state, history);
             predictionRepository.updatePredictions(toPredictionBatch(state, predictions));
         }
     }

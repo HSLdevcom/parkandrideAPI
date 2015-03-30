@@ -5,6 +5,7 @@ package fi.hsl.parkandride.config;
 import com.mysema.query.sql.postgres.PostgresQueryFactory;
 import fi.hsl.parkandride.back.*;
 import fi.hsl.parkandride.core.back.*;
+import fi.hsl.parkandride.core.domain.SameAsLatestPredictor;
 import fi.hsl.parkandride.core.service.*;
 import org.jasypt.util.password.PasswordEncryptor;
 import org.jasypt.util.password.StrongPasswordEncryptor;
@@ -135,6 +136,8 @@ public class CoreConfiguration {
 
     @Bean
     public PredictionService predictionService() {
-        return new PredictionService(facilityRepository(), predictionRepository());
+        PredictionService service = new PredictionService(facilityRepository(), predictionRepository());
+        service.registerPredictor(new SameAsLatestPredictor());
+        return service;
     }
 }

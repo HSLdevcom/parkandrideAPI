@@ -44,7 +44,7 @@ public class PredictionServiceTest extends AbstractDaoTest {
 
     @Test
     public void updates_predictions() {
-        predictionService.predictor = new SameAsLatestPredictor();
+        predictionService.registerPredictor(new SameAsLatestPredictor());
         Utilization u = newUtilization(now, 42);
         facilityRepository.insertUtilization(facilityId, Collections.singletonList(u));
 
@@ -58,7 +58,7 @@ public class PredictionServiceTest extends AbstractDaoTest {
     @Test
     public void saves_predictor_state_between_updates() {
         List<String> spy = new ArrayList<>();
-        predictionService.predictor = new SameAsLatestPredictor() {
+        predictionService.registerPredictor(new SameAsLatestPredictor() {
             @Override
             public List<Prediction> predict(PredictorState state, UtilizationHistory history) {
                 spy.add(state.internalState + "@" + state.latestUtilization);
@@ -66,7 +66,7 @@ public class PredictionServiceTest extends AbstractDaoTest {
                 state.internalState += "x";
                 return Collections.emptyList();
             }
-        };
+        });
 
         facilityRepository.insertUtilization(facilityId, Collections.singletonList(newUtilization(now.plusHours(1), 10)));
         predictionService.updatePredictions();
@@ -84,16 +84,16 @@ public class PredictionServiceTest extends AbstractDaoTest {
     @Test
     public void does_not_update_predictions_if_there_is_no_utilization_data() {
         Predictor predictor = spy(SameAsLatestPredictor.class);
-        predictionService.predictor = predictor;
+        predictionService.registerPredictor(predictor);
 
         predictionService.updatePredictions();
-        verifyZeroInteractions(predictor);
+        verify(predictor, never()).predict(Matchers.<PredictorState>any(), Matchers.<UtilizationHistory>any());
     }
 
     @Test
     public void does_not_update_predictions_if_there_is_no_new_utilization_data_since_last_update() {
         Predictor predictor = spy(SameAsLatestPredictor.class);
-        predictionService.predictor = predictor;
+        predictionService.registerPredictor(predictor);
 
         facilityRepository.insertUtilization(facilityId, Collections.singletonList(newUtilization(now, 42)));
         predictionService.updatePredictions();

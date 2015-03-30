@@ -7,6 +7,13 @@ import java.util.List;
 
 public class SameAsLatestPredictor implements Predictor {
 
+    public static final String TYPE = "same-as-latest";
+
+    @Override
+    public String getType() {
+        return TYPE;
+    }
+
     @Override
     public List<Prediction> predict(PredictorState state, UtilizationHistory history) {
         List<Prediction> predictions = new ArrayList<>();

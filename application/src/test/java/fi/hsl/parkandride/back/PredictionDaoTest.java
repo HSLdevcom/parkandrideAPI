@@ -5,10 +5,13 @@ package fi.hsl.parkandride.back;
 import fi.hsl.parkandride.core.back.PredictionRepository;
 import fi.hsl.parkandride.core.domain.Prediction;
 import fi.hsl.parkandride.core.domain.PredictionBatch;
+import fi.hsl.parkandride.core.service.ValidationException;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 import javax.inject.Inject;
 import java.util.Arrays;
@@ -23,11 +26,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class PredictionDaoTest extends AbstractDaoTest {
 
-    @Inject
-    Dummies dummies;
+    @Rule
+    public final ExpectedException thrown = ExpectedException.none();
 
-    @Inject
-    PredictionRepository predictionDao;
+    @Inject Dummies dummies;
+    @Inject PredictionRepository predictionDao;
 
     private final DateTime now = new DateTime();
     private long facilityId;
@@ -179,6 +182,17 @@ public class PredictionDaoTest extends AbstractDaoTest {
 
         assertPredictionsSavedAsIs(pb1);
         assertPredictionsSavedAsIs(pb2);
+    }
+
+    @Test
+    public void rejects_invalid_prediction_batches() {
+        PredictionBatch pb = newPredictionBatch(now, new Prediction(now, -1));
+        pb.capacityType = null;
+
+        thrown.expect(ValidationException.class);
+        thrown.expectMessage("capacityType (NotNull)");                 // validate fields of PredictionBatch
+        thrown.expectMessage("predictions[0].spacesAvailable (Min)");   // validate fields of every Prediction
+        predictionDao.updatePredictions(pb);
     }
 
 

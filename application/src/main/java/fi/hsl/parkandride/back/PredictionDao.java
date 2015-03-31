@@ -15,6 +15,7 @@ import fi.hsl.parkandride.core.domain.PredictionBatch;
 import fi.hsl.parkandride.core.domain.Usage;
 import fi.hsl.parkandride.core.service.TransactionalRead;
 import fi.hsl.parkandride.core.service.TransactionalWrite;
+import fi.hsl.parkandride.core.service.ValidationService;
 import org.joda.time.*;
 import org.joda.time.format.DateTimeFormat;
 
@@ -41,14 +42,17 @@ public class PredictionDao implements PredictionRepository {
                             Function.identity())));
 
     private final PostgresQueryFactory queryFactory;
+    private final ValidationService validationService;
 
-    public PredictionDao(PostgresQueryFactory queryFactory) {
+    public PredictionDao(PostgresQueryFactory queryFactory, ValidationService validationService) {
         this.queryFactory = queryFactory;
+        this.validationService = validationService;
     }
 
     @TransactionalWrite
     @Override
     public void updatePredictions(PredictionBatch pb) {
+        validationService.validate(pb);
         DateTime start = toPredictionResolution(pb.sourceTimestamp);
         DateTime end = start.plus(PREDICTION_WINDOW).minus(PREDICTION_RESOLUTION);
 

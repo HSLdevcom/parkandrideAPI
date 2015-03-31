@@ -40,6 +40,9 @@ public class PredictionDaoTest extends AbstractDaoTest {
         facilityId = dummies.createFacility();
     }
 
+
+    // basics
+
     @Test
     public void predict_now() {
         PredictionBatch pb = newPredictionBatch(now, new Prediction(now, 123));
@@ -47,6 +50,20 @@ public class PredictionDaoTest extends AbstractDaoTest {
 
         assertPredictionsSavedAsIs(pb);
     }
+
+    @Test
+    public void rejects_invalid_prediction_batches() {
+        PredictionBatch pb = newPredictionBatch(now, new Prediction(now, -1));
+        pb.capacityType = null;
+
+        thrown.expect(ValidationException.class);
+        thrown.expectMessage("capacityType (NotNull)");                 // validate fields of PredictionBatch
+        thrown.expectMessage("predictions[0].spacesAvailable (Min)");   // validate fields of every Prediction
+        predictionDao.updatePredictions(pb);
+    }
+
+
+    // interpolation
 
     @Test
     public void keeps_newest_of_too_fine_grained_predictions() {
@@ -95,6 +112,9 @@ public class PredictionDaoTest extends AbstractDaoTest {
         assertPredictionEquals("windowEnd", new Prediction(now.plus(PREDICTION_WINDOW).minus(PREDICTION_RESOLUTION), 123), pb);
     }
 
+
+    // prediction window
+
     @Test
     public void cannot_predict_when_there_are_no_predictions() {
         PredictionBatch pb = newPredictionBatch(now, new Prediction(now, 123));
@@ -142,6 +162,9 @@ public class PredictionDaoTest extends AbstractDaoTest {
         assertPredictionEquals(new Prediction(now, 123), pb);
     }
 
+
+    // uniqueness
+
     @Test
     public void predictions_are_facility_specific() {
         PredictionBatch pb1 = newPredictionBatch(now, new Prediction(now, 111));
@@ -182,17 +205,6 @@ public class PredictionDaoTest extends AbstractDaoTest {
 
         assertPredictionsSavedAsIs(pb1);
         assertPredictionsSavedAsIs(pb2);
-    }
-
-    @Test
-    public void rejects_invalid_prediction_batches() {
-        PredictionBatch pb = newPredictionBatch(now, new Prediction(now, -1));
-        pb.capacityType = null;
-
-        thrown.expect(ValidationException.class);
-        thrown.expectMessage("capacityType (NotNull)");                 // validate fields of PredictionBatch
-        thrown.expectMessage("predictions[0].spacesAvailable (Min)");   // validate fields of every Prediction
-        predictionDao.updatePredictions(pb);
     }
 
 

@@ -4,17 +4,21 @@ package fi.hsl.parkandride.core.domain;
 
 import org.joda.time.DateTime;
 
+import javax.validation.constraints.NotNull;
+
 public class PredictorState {
 
-    public final String predictorType;
-    public final long facilityId;
-    public final CapacityType capacityType;
-    public final Usage usage;
+    @NotNull public Long predictorId;
+    @NotNull public final String predictorType;
+    @NotNull public final Long facilityId;
+    @NotNull public final CapacityType capacityType;
+    @NotNull public final Usage usage;
 
-    public DateTime latestUtilization = new DateTime(0);
-    public String internalState = "";
+    @NotNull public DateTime latestUtilization = new DateTime(0);
+    public boolean moreUtilizations = true;
+    @NotNull public String internalState = "";
 
-    public PredictorState(String predictorType, long facilityId, CapacityType capacityType, Usage usage) {
+    public PredictorState(String predictorType, Long facilityId, CapacityType capacityType, Usage usage) {
         this.predictorType = predictorType;
         this.facilityId = facilityId;
         this.capacityType = capacityType;

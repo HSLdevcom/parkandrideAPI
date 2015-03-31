@@ -39,6 +39,8 @@ public class QUsage extends RelationalPathSpatial<QUsage> {
 
     public final com.mysema.query.sql.ForeignKey<QUnavailableCapacity> _unavailableCapacityUsageFk = createInvForeignKey(name, "USAGE");
 
+    public final com.mysema.query.sql.ForeignKey<QPredictor> _predictorUsageFk = createInvForeignKey(name, "USAGE");
+
     public QUsage(String variable) {
         super(QUsage.class, forVariable(variable), "PUBLIC", "USAGE");
         addMetadata();

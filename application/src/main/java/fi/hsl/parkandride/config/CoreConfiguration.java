@@ -140,4 +140,9 @@ public class CoreConfiguration {
         service.registerPredictor(new SameAsLatestPredictor());
         return service;
     }
+
+    @Bean
+    public PredictorRepository predictorRepository() {
+        return new PredictorDao(queryFactory);
+    }
 }

@@ -21,3 +21,5 @@ CREATE TABLE predictor (
   CONSTRAINT predictor_usage_fk FOREIGN KEY (usage)
   REFERENCES usage (name)
 );
+
+CREATE SEQUENCE predictor_id_seq INCREMENT BY 1 START WITH 1;

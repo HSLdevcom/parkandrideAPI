@@ -23,6 +23,7 @@ import static fi.hsl.parkandride.back.ContactDao.CONTACT_ID_SEQ;
 import static fi.hsl.parkandride.back.FacilityDao.FACILITY_ID_SEQ;
 import static fi.hsl.parkandride.back.HubDao.HUB_ID_SEQ;
 import static fi.hsl.parkandride.back.OperatorDao.OPERATOR_ID_SEQ;
+import static fi.hsl.parkandride.back.PredictorDao.PREDICTOR_ID_SEQ;
 import static fi.hsl.parkandride.back.UserDao.USER_ID_SEQ;
 import static java.lang.String.format;
 
@@ -46,6 +47,7 @@ public class DevHelper {
 
     @TransactionalWrite
     public void deleteAll() {
+        deletePredictors();
         deleteHubs();
         deleteFacilities();
         deleteContacts();
@@ -104,7 +106,6 @@ public class DevHelper {
     @TransactionalWrite
     public void deleteFacilities() {
         delete(
-                QPredictor.predictor,
                 QFacilityPrediction.facilityPrediction,
                 QFacilityUtilization.facilityUtilization,
                 QFacilityService.facilityService,
@@ -124,6 +125,12 @@ public class DevHelper {
     }
 
     @TransactionalWrite
+    public void deletePredictors() {
+        delete(QPredictor.predictor);
+        resetPredictorSequence();
+    }
+
+    @TransactionalWrite
     public void resetHubSequence() {
         resetSequence(HUB_ID_SEQ, queryFactory.from(QHub.hub).singleResult(QHub.hub.id.max()));
     }
@@ -131,6 +138,11 @@ public class DevHelper {
     @TransactionalWrite
     public void resetFacilitySequence() {
         resetSequence(FACILITY_ID_SEQ, queryFactory.from(QFacility.facility).singleResult(QFacility.facility.id.max()));
+    }
+
+    @TransactionalWrite
+    public void resetPredictorSequence() {
+        resetSequence(PREDICTOR_ID_SEQ, queryFactory.from(QPredictor.predictor).singleResult(QPredictor.predictor.id.max()));
     }
 
     @TransactionalWrite
@@ -156,7 +168,7 @@ public class DevHelper {
 
     private void resetSequence(String sequence, Long currentMax) {
         if (currentMax == null) {
-            currentMax = 0l;
+            currentMax = 0L;
         }
         jdbcTemplate.execute(format("drop sequence %s", sequence));
         jdbcTemplate.execute(format("create sequence %s increment by 1 start with %s", sequence, currentMax + 1));

@@ -130,15 +130,15 @@ public class CoreConfiguration {
     }
 
     @Bean
-    public PredictionRepository predictionRepository() {
-        return new PredictionDao(queryFactory, validationService());
+    public PredictionService predictionService() {
+        PredictionService service = new PredictionService(facilityRepository(), predictionRepository(), predictorRepository());
+        service.registerPredictor(new SameAsLatestPredictor());
+        return service;
     }
 
     @Bean
-    public PredictionService predictionService() {
-        PredictionService service = new PredictionService(facilityRepository(), predictionRepository());
-        service.registerPredictor(new SameAsLatestPredictor());
-        return service;
+    public PredictionRepository predictionRepository() {
+        return new PredictionDao(queryFactory, validationService());
     }
 
     @Bean

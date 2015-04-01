@@ -40,4 +40,8 @@ public class Utilization {
                 .add("spacesAvailable", spacesAvailable)
                 .toString();
     }
+
+    public UtilizationKey getUtilizationKey(long facilityId) {
+        return new UtilizationKey(facilityId, capacityType, usage);
+    }
 }

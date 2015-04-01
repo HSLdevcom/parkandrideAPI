@@ -26,7 +26,7 @@ public interface FacilityRepository {
 
     FacilitySummary summarizeFacilities(FacilitySearch search);
 
-    void insertUtilization(long facilityId, List<Utilization> statuses);
+    void insertUtilizations(List<Utilization> utilizations);
 
     Set<Utilization> findLatestUtilization(long facilityId);
 

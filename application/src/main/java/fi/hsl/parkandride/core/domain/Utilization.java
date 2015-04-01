@@ -3,6 +3,7 @@
 package fi.hsl.parkandride.core.domain;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.google.common.base.MoreObjects;
 import com.wordnik.swagger.annotations.ApiModelProperty;
@@ -15,9 +16,8 @@ import java.util.Objects;
 public class Utilization {
 
     @NotNull
-    @ApiModelProperty(required = true)
-    @JsonSerialize(using = DefaultTimeZoneDateTimeSerializer.class)
-    public DateTime timestamp;
+    @ApiModelProperty(required = false, notes = "defaults to facilityId from URI")
+    public Long facilityId;
 
     @NotNull
     @ApiModelProperty(required = true)
@@ -28,11 +28,17 @@ public class Utilization {
     public Usage usage;
 
     @NotNull
+    @ApiModelProperty(required = true)
+    @JsonSerialize(using = DefaultTimeZoneDateTimeSerializer.class)
+    public DateTime timestamp;
+
+    @NotNull
     @Min(0)
     @ApiModelProperty(required = true)
     public Integer spacesAvailable;
 
-    public UtilizationKey getUtilizationKey(long facilityId) {
+    @JsonIgnore
+    public UtilizationKey getUtilizationKey() {
         return new UtilizationKey(facilityId, capacityType, usage);
     }
 
@@ -42,23 +48,25 @@ public class Utilization {
             return false;
         }
         Utilization that = (Utilization) obj;
-        return Objects.equals(this.timestamp, that.timestamp)
+        return Objects.equals(this.facilityId, that.facilityId)
                 && Objects.equals(this.capacityType, that.capacityType)
                 && Objects.equals(this.usage, that.usage)
+                && Objects.equals(this.timestamp, that.timestamp)
                 && Objects.equals(this.spacesAvailable, that.spacesAvailable);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(timestamp, capacityType, usage, spacesAvailable);
+        return Objects.hash(facilityId, capacityType, usage, timestamp, spacesAvailable);
     }
 
     @Override
     public String toString() {
         return MoreObjects.toStringHelper(this)
-                .addValue(timestamp)
+                .add("facilityId", facilityId)
                 .add("capacityType", capacityType)
                 .add("usage", usage)
+                .add("timestamp", timestamp)
                 .add("spacesAvailable", spacesAvailable)
                 .toString();
     }

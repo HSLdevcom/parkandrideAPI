@@ -17,6 +17,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
@@ -31,8 +32,8 @@ public class PredictionServiceTest extends AbstractDaoTest {
     @Before
     public void initTestData() {
         facilityId = dummies.createFacility();
-        Utilization u = newUtilization(now, 0);
-        predictionService.enablePrediction(SameAsLatestPredictor.TYPE, u.getUtilizationKey(facilityId));
+        Utilization u = newUtilization(facilityId, now, 0);
+        predictionService.enablePrediction(SameAsLatestPredictor.TYPE, u.getUtilizationKey());
     }
 
     @After
@@ -43,12 +44,12 @@ public class PredictionServiceTest extends AbstractDaoTest {
     @Test
     public void updates_predictions() {
         predictionService.registerPredictor(new SameAsLatestPredictor());
-        Utilization u = newUtilization(now, 42);
-        predictionService.registerUtilizations(facilityId, Collections.singletonList(u));
+        Utilization u = newUtilization(facilityId, now, 42);
+        predictionService.registerUtilizations(singletonList(u));
 
         predictionService.updatePredictions();
 
-        Optional<Prediction> prediction = predictionService.getPrediction(u.getUtilizationKey(facilityId), now.plusHours(1));
+        Optional<Prediction> prediction = predictionService.getPrediction(u.getUtilizationKey(), now.plusHours(1));
         assertThat(prediction).as("prediction").isNotEqualTo(Optional.empty());
         assertThat(prediction.get().spacesAvailable).as("prediction.spacesAvailable").isEqualTo(42);
     }
@@ -66,11 +67,11 @@ public class PredictionServiceTest extends AbstractDaoTest {
             }
         });
 
-        predictionService.registerUtilizations(facilityId, Collections.singletonList(newUtilization(now.plusHours(1), 10)));
+        predictionService.registerUtilizations(singletonList(newUtilization(facilityId, now.plusHours(1), 10)));
         predictionService.updatePredictions();
-        predictionService.registerUtilizations(facilityId, Collections.singletonList(newUtilization(now.plusHours(2), 20)));
+        predictionService.registerUtilizations(singletonList(newUtilization(facilityId, now.plusHours(2), 20)));
         predictionService.updatePredictions();
-        predictionService.registerUtilizations(facilityId, Collections.singletonList(newUtilization(now.plusHours(3), 30)));
+        predictionService.registerUtilizations(singletonList(newUtilization(facilityId, now.plusHours(3), 30)));
         predictionService.updatePredictions();
 
         assertThat(spy).containsExactly(
@@ -84,7 +85,7 @@ public class PredictionServiceTest extends AbstractDaoTest {
         Predictor predictor = spy(SameAsLatestPredictor.class);
         predictionService.registerPredictor(predictor);
 
-        predictionService.registerUtilizations(facilityId, Collections.singletonList(newUtilization(now, 42)));
+        predictionService.registerUtilizations(singletonList(newUtilization(facilityId, now, 42)));
         predictionService.updatePredictions();
         predictionService.updatePredictions();
 
@@ -94,8 +95,9 @@ public class PredictionServiceTest extends AbstractDaoTest {
 
     // helpers
 
-    private static Utilization newUtilization(DateTime now, int spacesAvailable) {
+    private static Utilization newUtilization(long facilityId, DateTime now, int spacesAvailable) {
         Utilization u = new Utilization();
+        u.facilityId = facilityId;
         u.capacityType = CapacityType.CAR;
         u.usage = Usage.PARK_AND_RIDE;
         u.timestamp = now;

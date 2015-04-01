@@ -6,10 +6,7 @@ import fi.hsl.parkandride.core.back.ContactRepository;
 import fi.hsl.parkandride.core.back.FacilityRepository;
 import fi.hsl.parkandride.core.domain.*;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static fi.hsl.parkandride.core.domain.Permission.*;
 import static fi.hsl.parkandride.core.service.AuthenticationService.authorize;
@@ -92,8 +89,26 @@ public class FacilityService {
     public void registerUtilization(long facilityId, List<Utilization> utilization, User currentUser) {
         authorize(currentUser, repository.getFacilityInfo(facilityId), FACILITY_UTILIZATION_UPDATE);
 
-        utilization.forEach(validationService::validate);
-        predictionService.registerUtilizations(facilityId, utilization);
+        initUtilizationDefaults(facilityId, utilization);
+        utilization.forEach(u -> validateUtilization(u, facilityId));
+        predictionService.registerUtilizations(utilization);
+    }
+
+    private static void initUtilizationDefaults(long facilityId, List<Utilization> utilization) {
+        utilization.stream()
+                .filter(u -> u.facilityId == null)
+                .forEach(u -> u.facilityId = facilityId);
+    }
+
+    private void validateUtilization(Utilization u, long expectedFacilityId) {
+        List<Violation> violations = new ArrayList<>();
+        validationService.validate(u, violations);
+        if (!Objects.equals(u.facilityId, expectedFacilityId)) {
+            violations.add(new Violation("NotEqual", "facilityId", "Expected to be " + expectedFacilityId + " but was " + u.facilityId));
+        }
+        if (!violations.isEmpty()) {
+            throw new ValidationException(violations);
+        }
     }
 
     @TransactionalRead

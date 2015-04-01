@@ -29,10 +29,10 @@ public class PredictionService {
     }
 
     @TransactionalWrite
-    public void registerUtilizations(long facilityId, List<Utilization> utilizations) {
+    public void registerUtilizations(List<Utilization> utilizations) {
         // TODO: move the authorization and validation from FacilityService into here and remove the method from FacilityService?
-        facilityRepository.insertUtilization(facilityId, utilizations);
-        utilizations.forEach(u -> predictorRepository.markPredictorsNeedAnUpdate(u.getUtilizationKey(facilityId)));
+        facilityRepository.insertUtilizations(utilizations);
+        utilizations.forEach(u -> predictorRepository.markPredictorsNeedAnUpdate(u.getUtilizationKey()));
     }
 
     public void registerPredictor(Predictor predictor) {

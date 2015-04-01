@@ -59,6 +59,7 @@ public class FacilityDao implements FacilityRepository {
         @Override
         protected Utilization map(Tuple row) {
             Utilization u = new Utilization();
+            u.facilityId = row.get(qUtilization.facilityId);
             u.capacityType = row.get(qUtilization.capacityType);
             u.usage = row.get(qUtilization.usage);
             u.timestamp = row.get(qUtilization.ts);
@@ -388,14 +389,14 @@ public class FacilityDao implements FacilityRepository {
 
     @TransactionalWrite
     @Override
-    public void insertUtilization(long facilityId, List<Utilization> statuses) {
+    public void insertUtilizations(List<Utilization> utilizations) {
         SQLInsertClause insertBatch = queryFactory.insert(qUtilization);
-        statuses.forEach((status) -> {
-            insertBatch.set(qUtilization.facilityId, facilityId);
-            insertBatch.set(qUtilization.capacityType, status.capacityType);
-            insertBatch.set(qUtilization.usage, status.usage);
-            insertBatch.set(qUtilization.spacesAvailable, status.spacesAvailable);
-            insertBatch.set(qUtilization.ts, status.timestamp);
+        utilizations.forEach(u -> {
+            insertBatch.set(qUtilization.facilityId, u.facilityId);
+            insertBatch.set(qUtilization.capacityType, u.capacityType);
+            insertBatch.set(qUtilization.usage, u.usage);
+            insertBatch.set(qUtilization.spacesAvailable, u.spacesAvailable);
+            insertBatch.set(qUtilization.ts, u.timestamp);
             insertBatch.addBatch();
         });
         insertBatch.execute();

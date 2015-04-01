@@ -111,7 +111,7 @@ public class CoreConfiguration {
 
     @Bean
     public FacilityService facilityService() {
-        return new FacilityService(facilityRepository(), contactRepository(), validationService(), predictionService());
+        return new FacilityService(facilityRepository(), utilizationRepository(), contactRepository(), validationService(), predictionService());
     }
 
     @Bean
@@ -131,9 +131,14 @@ public class CoreConfiguration {
 
     @Bean
     public PredictionService predictionService() {
-        PredictionService service = new PredictionService(facilityRepository(), predictionRepository(), predictorRepository());
+        PredictionService service = new PredictionService(utilizationRepository(), predictionRepository(), predictorRepository());
         service.registerPredictor(new SameAsLatestPredictor());
         return service;
+    }
+
+    @Bean
+    public UtilizationRepository utilizationRepository() {
+        return new UtilizationDao(queryFactory);
     }
 
     @Bean

@@ -4,6 +4,7 @@ package fi.hsl.parkandride.core.service;
 
 import fi.hsl.parkandride.core.back.ContactRepository;
 import fi.hsl.parkandride.core.back.FacilityRepository;
+import fi.hsl.parkandride.core.back.UtilizationRepository;
 import fi.hsl.parkandride.core.domain.*;
 
 import java.util.*;
@@ -14,12 +15,14 @@ import static fi.hsl.parkandride.core.service.AuthenticationService.authorize;
 public class FacilityService {
 
     private final FacilityRepository repository;
+    private final UtilizationRepository utilizationRepository;
     private final ContactRepository contactRepository;
     private final ValidationService validationService;
     private final PredictionService predictionService;
 
-    public FacilityService(FacilityRepository repository, ContactRepository contactRepository, ValidationService validationService, PredictionService predictionService) {
+    public FacilityService(FacilityRepository repository, UtilizationRepository utilizationRepository, ContactRepository contactRepository, ValidationService validationService, PredictionService predictionService) {
         this.repository = repository;
+        this.utilizationRepository = utilizationRepository;
         this.contactRepository = contactRepository;
         this.validationService = validationService;
         this.predictionService = predictionService;
@@ -113,6 +116,6 @@ public class FacilityService {
 
     @TransactionalRead
     public Set<Utilization> findLatestUtilization(long facilityId) {
-        return repository.findLatestUtilization(facilityId);
+        return utilizationRepository.findLatestUtilization(facilityId);
     }
 }

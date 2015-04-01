@@ -2,9 +2,9 @@
 
 package fi.hsl.parkandride.core.service;
 
-import fi.hsl.parkandride.core.back.FacilityRepository;
 import fi.hsl.parkandride.core.back.PredictionRepository;
 import fi.hsl.parkandride.core.back.PredictorRepository;
+import fi.hsl.parkandride.core.back.UtilizationRepository;
 import fi.hsl.parkandride.core.domain.*;
 import org.joda.time.DateTime;
 
@@ -16,14 +16,14 @@ import java.util.stream.Stream;
 
 public class PredictionService {
 
-    private final FacilityRepository facilityRepository;
+    private final UtilizationRepository utilizationRepository;
     private final PredictionRepository predictionRepository;
     private final PredictorRepository predictorRepository;
 
     private final ConcurrentMap<String, Predictor> predictorsByType = new ConcurrentHashMap<>();
 
-    public PredictionService(FacilityRepository facilityRepository, PredictionRepository predictionRepository, PredictorRepository predictorRepository) {
-        this.facilityRepository = facilityRepository;
+    public PredictionService(UtilizationRepository utilizationRepository, PredictionRepository predictionRepository, PredictorRepository predictorRepository) {
+        this.utilizationRepository = utilizationRepository;
         this.predictionRepository = predictionRepository;
         this.predictorRepository = predictorRepository;
     }
@@ -31,7 +31,7 @@ public class PredictionService {
     @TransactionalWrite
     public void registerUtilizations(List<Utilization> utilizations) {
         // TODO: move the authorization and validation from FacilityService into here and remove the method from FacilityService?
-        facilityRepository.insertUtilizations(utilizations);
+        utilizationRepository.insertUtilizations(utilizations);
         utilizations.forEach(u -> predictorRepository.markPredictorsNeedAnUpdate(u.getUtilizationKey()));
     }
 
@@ -87,7 +87,7 @@ public class PredictionService {
         public Stream<Utilization> getUpdatesSince(DateTime startExclusive) {
             DateTime start = startExclusive.plusMillis(1);
             DateTime end = new DateTime().plusYears(1);
-            return facilityRepository.findUtilizationsBetween(utilizationKey, start, end).stream();
+            return utilizationRepository.findUtilizationsBetween(utilizationKey, start, end).stream();
         }
     }
 }

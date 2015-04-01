@@ -3,10 +3,6 @@
 package fi.hsl.parkandride.core.back;
 
 import fi.hsl.parkandride.core.domain.*;
-import org.joda.time.DateTime;
-
-import java.util.List;
-import java.util.Set;
 
 public interface FacilityRepository {
 
@@ -25,10 +21,4 @@ public interface FacilityRepository {
     SearchResults<FacilityInfo> findFacilities(PageableFacilitySearch search);
 
     FacilitySummary summarizeFacilities(FacilitySearch search);
-
-    void insertUtilizations(List<Utilization> utilizations);
-
-    Set<Utilization> findLatestUtilization(long facilityId);
-
-    List<Utilization> findUtilizationsBetween(UtilizationKey utilizationKey, DateTime start, DateTime end);
 }

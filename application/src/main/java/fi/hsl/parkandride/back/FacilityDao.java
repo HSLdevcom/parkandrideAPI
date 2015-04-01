@@ -25,11 +25,9 @@ import fi.hsl.parkandride.core.service.TransactionalRead;
 import fi.hsl.parkandride.core.service.TransactionalWrite;
 import fi.hsl.parkandride.core.service.ValidationException;
 import org.geolatte.geom.Point;
-import org.joda.time.DateTime;
 
 import java.util.*;
 import java.util.Map.Entry;
-import java.util.stream.Collectors;
 
 import static com.google.common.base.MoreObjects.firstNonNull;
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -52,21 +50,6 @@ public class FacilityDao implements FacilityRepository {
     private static final QPort qPort = QPort.port;
 
     private static final QFacilityService qService = QFacilityService.facilityService;
-
-    private static final QFacilityUtilization qUtilization = QFacilityUtilization.facilityUtilization;
-
-    private static final MappingProjection<Utilization> utilizationMapping = new MappingProjection<Utilization>(Utilization.class, qUtilization.all()) {
-        @Override
-        protected Utilization map(Tuple row) {
-            Utilization u = new Utilization();
-            u.facilityId = row.get(qUtilization.facilityId);
-            u.capacityType = row.get(qUtilization.capacityType);
-            u.usage = row.get(qUtilization.usage);
-            u.timestamp = row.get(qUtilization.ts);
-            u.spacesAvailable = row.get(qUtilization.spacesAvailable);
-            return u;
-        }
-    };
 
     private static final QFacilityPaymentMethod qPaymentMethod = QFacilityPaymentMethod.facilityPaymentMethod;
 
@@ -385,52 +368,6 @@ public class FacilityDao implements FacilityRepository {
         mapCapacity(capacities, BICYCLE_SECURE_SPACE, result.get(qFacility.capacityBicycleSecureSpace.sum()));
 
         return new FacilitySummary(result.get(qFacility.id.count()), capacities);
-    }
-
-    @TransactionalWrite
-    @Override
-    public void insertUtilizations(List<Utilization> utilizations) {
-        SQLInsertClause insertBatch = queryFactory.insert(qUtilization);
-        utilizations.forEach(u -> {
-            insertBatch.set(qUtilization.facilityId, u.facilityId);
-            insertBatch.set(qUtilization.capacityType, u.capacityType);
-            insertBatch.set(qUtilization.usage, u.usage);
-            insertBatch.set(qUtilization.spacesAvailable, u.spacesAvailable);
-            insertBatch.set(qUtilization.ts, u.timestamp);
-            insertBatch.addBatch();
-        });
-        insertBatch.execute();
-    }
-
-    @TransactionalRead
-    @Override
-    public Set<Utilization> findLatestUtilization(long facilityId) {
-        // TODO: do with a single query
-        List<Tuple> utilizationKeyCombinations = queryFactory.from(qUtilization)
-                .where(qUtilization.facilityId.eq(facilityId))
-                .distinct()
-                .list(qUtilization.capacityType, qUtilization.usage);
-        return utilizationKeyCombinations.stream()
-                .map(utilizationKey -> queryFactory.from(qUtilization)
-                        .where(qUtilization.facilityId.eq(facilityId),
-                                qUtilization.capacityType.eq(utilizationKey.get(qUtilization.capacityType)),
-                                qUtilization.usage.eq(utilizationKey.get(qUtilization.usage)))
-                        .orderBy(qUtilization.ts.desc())
-                        .singleResult(utilizationMapping))
-                .collect(Collectors.toSet());
-    }
-
-    @TransactionalRead
-    @Override
-    public List<Utilization> findUtilizationsBetween(UtilizationKey utilizationKey, DateTime start, DateTime end) {
-        // TODO: limit the amount of results per query or return a lazy iterator (must also update UtilizationHistory)
-        return queryFactory.from(qUtilization)
-                .where(qUtilization.facilityId.eq(utilizationKey.facilityId),
-                        qUtilization.capacityType.eq(utilizationKey.capacityType),
-                        qUtilization.usage.eq(utilizationKey.usage),
-                        qUtilization.ts.between(start, end))
-                .orderBy(qUtilization.ts.asc())
-                .list(utilizationMapping);
     }
 
     private void updateAliases(long facilityId, Set<String> newAliases, Set<String> oldAliases) {

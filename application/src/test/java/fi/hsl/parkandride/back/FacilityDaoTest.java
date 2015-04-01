@@ -13,14 +13,14 @@ import fi.hsl.parkandride.core.domain.*;
 import fi.hsl.parkandride.core.service.ValidationException;
 import org.geolatte.geom.Point;
 import org.geolatte.geom.Polygon;
-import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 
 import javax.inject.Inject;
 import java.util.*;
 
-import static fi.hsl.parkandride.core.domain.CapacityType.*;
+import static fi.hsl.parkandride.core.domain.CapacityType.CAR;
+import static fi.hsl.parkandride.core.domain.CapacityType.ELECTRIC_CAR;
 import static fi.hsl.parkandride.core.domain.DayType.*;
 import static fi.hsl.parkandride.core.domain.FacilityStatus.EXCEPTIONAL_SITUATION;
 import static fi.hsl.parkandride.core.domain.FacilityStatus.IN_OPERATION;
@@ -29,7 +29,7 @@ import static fi.hsl.parkandride.core.domain.PricingMethod.PARK_AND_RIDE_247_FRE
 import static fi.hsl.parkandride.core.domain.Service.*;
 import static fi.hsl.parkandride.core.domain.Sort.Dir.ASC;
 import static fi.hsl.parkandride.core.domain.Sort.Dir.DESC;
-import static fi.hsl.parkandride.core.domain.Usage.*;
+import static fi.hsl.parkandride.core.domain.Usage.PARK_AND_RIDE;
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.fail;
@@ -380,118 +380,5 @@ public class FacilityDaoTest extends AbstractDaoTest {
     @Test(expected = NotFoundException.class)
     public void update_throws_an_exception_if_not_found() {
         facilityDao.updateFacility(0, createFacility());
-    }
-
-    @Test
-    public void findLatestUtilization_when_nothing_to_find() {
-        long facilityId = facilityDao.insertFacility(createFacility());
-
-        Set<Utilization> results = facilityDao.findLatestUtilization(facilityId);
-
-        assertThat(results).isEmpty();
-    }
-
-    @Test
-    public void findLatestUtilization_returns_latest_entry() {
-        long facilityId = facilityDao.insertFacility(createFacility());
-        Utilization u1 = newUtilization(facilityId, new DateTime(2000, 1, 1, 12, 0), 100);
-        Utilization u2 = newUtilization(facilityId, new DateTime(2000, 1, 1, 13, 0), 200);
-        facilityDao.insertUtilizations(asList(u1, u2));
-
-        Set<Utilization> results = facilityDao.findLatestUtilization(facilityId);
-
-        assertThat(results).containsOnly(u2);
-    }
-
-    @Test
-    public void findLatestUtilization_returns_each_capacity_type_and_usage_combination() {
-        long facilityId = facilityDao.insertFacility(createFacility());
-        Utilization u1 = newUtilization(facilityId, new DateTime(2000, 1, 1, 12, 0), 100);
-        u1.capacityType = CAR;
-        u1.usage = HSL_TRAVEL_CARD;
-        Utilization u2 = newUtilization(facilityId, new DateTime(2000, 1, 1, 13, 0), 200);
-        u2.capacityType = CAR;
-        u2.usage = COMMERCIAL;
-        Utilization u3 = newUtilization(facilityId, new DateTime(2000, 1, 1, 14, 0), 300);
-        u3.capacityType = MOTORCYCLE;
-        u3.usage = HSL_TRAVEL_CARD;
-        facilityDao.insertUtilizations(asList(u1, u2, u3));
-
-        Set<Utilization> results = facilityDao.findLatestUtilization(facilityId);
-
-        assertThat(results).containsOnly(u1, u2, u3);
-    }
-
-    @Test
-    public void findUtilizationsBetween_limits_to_start_and_end_time_inclusive_ordered_by_time() {
-        long facilityId = facilityDao.insertFacility(createFacility());
-        Utilization u1 = newUtilization(facilityId, new DateTime(2000, 1, 1, 12, 0, 0, 1), 100);
-        Utilization u2 = newUtilization(facilityId, new DateTime(2000, 1, 1, 12, 0, 0, 2), 200);
-        Utilization u3 = newUtilization(facilityId, new DateTime(2000, 1, 1, 12, 0, 0, 3), 300);
-        Utilization u4 = newUtilization(facilityId, new DateTime(2000, 1, 1, 12, 0, 0, 4), 400);
-        Utilization u5 = newUtilization(facilityId, new DateTime(2000, 1, 1, 12, 0, 0, 5), 500);
-        UtilizationKey key = u1.getUtilizationKey();
-        facilityDao.insertUtilizations(asList(u1, u2, u3, u4, u5));
-
-        List<Utilization> results = facilityDao.findUtilizationsBetween(key, u2.timestamp, u4.timestamp);
-
-        assertThat(results).containsExactly(u2, u3, u4);
-    }
-
-    @Test
-    public void findUtilizationsBetween_is_facility_specific() {
-        DateTime time = new DateTime(2000, 1, 1, 12, 0);
-        Facility facility = createFacility();
-        facility.name = new MultilingualString("first");
-        long facilityId1 = facilityDao.insertFacility(facility);
-        facility.name = new MultilingualString("second");
-        long facilityId2 = facilityDao.insertFacility(facility);
-        Utilization u1 = newUtilization(facilityId1, time, 100);
-        Utilization u2 = newUtilization(facilityId2, time, 200);
-        facilityDao.insertUtilizations(asList(u1, u2));
-
-        List<Utilization> results = facilityDao.findUtilizationsBetween(u1.getUtilizationKey(), time, time);
-
-        assertThat(results).containsExactly(u1);
-    }
-
-    @Test
-    public void findUtilizationsBetween_is_capacity_type_specific() {
-        DateTime time = new DateTime(2000, 1, 1, 12, 0);
-        long facilityId = facilityDao.insertFacility(createFacility());
-        Utilization u1 = newUtilization(facilityId, time, 100);
-        u1.capacityType = CAR;
-        Utilization u2 = newUtilization(facilityId, time, 200);
-        u2.capacityType = MOTORCYCLE;
-        facilityDao.insertUtilizations(asList(u1, u2));
-
-        List<Utilization> results = facilityDao.findUtilizationsBetween(u1.getUtilizationKey(), time, time);
-
-        assertThat(results).containsExactly(u1);
-    }
-
-    @Test
-    public void findUtilizationsBetween_is_usage_specific() {
-        DateTime time = new DateTime(2000, 1, 1, 12, 0);
-        long facilityId = facilityDao.insertFacility(createFacility());
-        Utilization u1 = newUtilization(facilityId, time, 100);
-        u1.usage = COMMERCIAL;
-        Utilization u2 = newUtilization(facilityId, time, 200);
-        u2.usage = HSL_TRAVEL_CARD;
-        facilityDao.insertUtilizations(asList(u1, u2));
-
-        List<Utilization> results = facilityDao.findUtilizationsBetween(u1.getUtilizationKey(), time, time);
-
-        assertThat(results).containsExactly(u1);
-    }
-
-    private static Utilization newUtilization(long facilityId, DateTime time, int spacesAvailable) {
-        Utilization u = new Utilization();
-        u.facilityId = facilityId;
-        u.capacityType = CAR;
-        u.usage = HSL_TRAVEL_CARD;
-        u.timestamp = time;
-        u.spacesAvailable = spacesAvailable;
-        return u;
     }
 }

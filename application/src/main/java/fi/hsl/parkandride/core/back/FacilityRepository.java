@@ -2,10 +2,9 @@
 
 package fi.hsl.parkandride.core.back;
 
-import java.util.List;
-
 import fi.hsl.parkandride.core.domain.*;
-import fi.hsl.parkandride.core.service.TransactionalRead;
+
+import java.util.List;
 
 public interface FacilityRepository {
 
@@ -15,11 +14,11 @@ public interface FacilityRepository {
 
     void updateFacility(long facilityId, Facility newFacility, Facility oldFacility);
 
-    Facility getFacility(long id);
+    Facility getFacility(long facilityId);
 
     FacilityInfo getFacilityInfo(long facilityId);
 
-    Facility getFacilityForUpdate(long id);
+    Facility getFacilityForUpdate(long facilityId);
 
     SearchResults<FacilityInfo> findFacilities(PageableFacilitySearch search);
 
@@ -27,6 +26,7 @@ public interface FacilityRepository {
 
     void insertUtilization(long facilityId, List<Utilization> statuses);
 
-    List<Utilization> getStatuses(long facilityId);
+    List<Utilization> getUtilizations(long facilityId);
 
+    List<Utilization> findLatestUtilization(long facilityId);
 }

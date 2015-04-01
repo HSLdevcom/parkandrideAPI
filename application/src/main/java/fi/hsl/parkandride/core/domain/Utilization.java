@@ -10,6 +10,7 @@ import org.joda.time.DateTime;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import java.util.Objects;
 
 public class Utilization {
 
@@ -31,17 +32,34 @@ public class Utilization {
     @ApiModelProperty(required = true)
     public Integer spacesAvailable;
 
+    public UtilizationKey getUtilizationKey(long facilityId) {
+        return new UtilizationKey(facilityId, capacityType, usage);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof Utilization)) {
+            return false;
+        }
+        Utilization that = (Utilization) obj;
+        return Objects.equals(this.timestamp, that.timestamp)
+                && Objects.equals(this.capacityType, that.capacityType)
+                && Objects.equals(this.usage, that.usage)
+                && Objects.equals(this.spacesAvailable, that.spacesAvailable);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(timestamp, capacityType, usage, spacesAvailable);
+    }
+
     @Override
     public String toString() {
         return MoreObjects.toStringHelper(this)
                 .addValue(timestamp)
-                .addValue(capacityType)
-                .addValue(usage)
+                .add("capacityType", capacityType)
+                .add("usage", usage)
                 .add("spacesAvailable", spacesAvailable)
                 .toString();
-    }
-
-    public UtilizationKey getUtilizationKey(long facilityId) {
-        return new UtilizationKey(facilityId, capacityType, usage);
     }
 }

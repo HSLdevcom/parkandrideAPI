@@ -96,7 +96,7 @@ public class FacilityService {
     }
 
     @TransactionalRead
-    public List<Utilization> getStatuses(long facilityId) {
-        return repository.getStatuses(facilityId);
+    public List<Utilization> findLatestUtilization(long facilityId) {
+        return repository.findLatestUtilization(facilityId);
     }
 }

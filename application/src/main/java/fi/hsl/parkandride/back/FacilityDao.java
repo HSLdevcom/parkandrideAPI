@@ -28,6 +28,7 @@ import org.geolatte.geom.Point;
 
 import java.util.*;
 import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
 import static com.google.common.base.MoreObjects.firstNonNull;
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -53,7 +54,19 @@ public class FacilityDao implements FacilityRepository {
 
     private static final QFacilityUtilization qUtilization = QFacilityUtilization.facilityUtilization;
 
-    private static final QFacilityPaymentMethod  qPaymentMethod = QFacilityPaymentMethod.facilityPaymentMethod;
+    private static final MappingProjection<Utilization> utilizationMapping = new MappingProjection<Utilization>(Utilization.class, qUtilization.all()) {
+        @Override
+        protected Utilization map(Tuple row) {
+            Utilization u = new Utilization();
+            u.capacityType = row.get(qUtilization.capacityType);
+            u.usage = row.get(qUtilization.usage);
+            u.timestamp = row.get(qUtilization.ts);
+            u.spacesAvailable = row.get(qUtilization.spacesAvailable);
+            return u;
+        }
+    };
+
+    private static final QFacilityPaymentMethod qPaymentMethod = QFacilityPaymentMethod.facilityPaymentMethod;
 
     private static final QUnavailableCapacity qUnavailableCapacity = QUnavailableCapacity.unavailableCapacity;
 
@@ -71,14 +84,12 @@ public class FacilityDao implements FacilityRepository {
     private static final MultilingualStringMapping pricingPriceMapping =
             new MultilingualStringMapping(qPricing.priceFi, qPricing.priceSv, qPricing.priceEn);
 
-
     private static final AddressMapping addressMapping = new AddressMapping(qPort);
 
     private static final MultilingualStringMapping portInfoMapping =
             new MultilingualStringMapping(qPort.infoFi, qPort.infoSv, qPort.infoEn);
 
     private static final MappingProjection<Port> portMapping = new MappingProjection<Port>(Port.class, qPort.all()) {
-
         @Override
         protected Port map(Tuple row) {
             Boolean entry = row.get(qPort.entry);
@@ -391,20 +402,28 @@ public class FacilityDao implements FacilityRepository {
 
     @TransactionalRead
     @Override
-    public List<Utilization> getStatuses(long facilityId) {
+    public List<Utilization> getUtilizations(long facilityId) { // TODO: remove me
         return queryFactory.from(qUtilization)
                 .where(qUtilization.facilityId.eq(facilityId))
-                .list(new MappingProjection<Utilization>(Utilization.class, qUtilization.all()) {
-                    @Override
-                    protected Utilization map(Tuple row) {
-                        Utilization status = new Utilization();
-                        status.capacityType = row.get(qUtilization.capacityType);
-                        status.usage = row.get(qUtilization.usage);
-                        status.timestamp = row.get(qUtilization.ts);
-                        status.spacesAvailable = row.get(qUtilization.spacesAvailable);
-                        return status;
-                    }
-                });
+                .list(utilizationMapping);
+    }
+
+    @TransactionalRead
+    @Override
+    public List<Utilization> findLatestUtilization(long facilityId) {
+        // TODO: do with a single query
+        return queryFactory.from(qUtilization)
+                .distinct()
+                .where(qUtilization.facilityId.eq(facilityId))
+                .list(qUtilization.capacityType, qUtilization.usage)
+                .stream()
+                .map(tuple -> queryFactory.from(qUtilization)
+                        .where(qUtilization.facilityId.eq(facilityId),
+                                qUtilization.capacityType.eq(tuple.get(qUtilization.capacityType)),
+                                qUtilization.usage.eq(tuple.get(qUtilization.usage)))
+                        .orderBy(qUtilization.ts.desc())
+                        .singleResult(utilizationMapping))
+                .collect(Collectors.toList());
     }
 
     private void updateAliases(long facilityId, Set<String> newAliases, Set<String> oldAliases) {
@@ -436,7 +455,7 @@ public class FacilityDao implements FacilityRepository {
         Map<Integer, Port> addedPorts = new HashMap<>();
         Map<Integer, Port> updatedPorts = new HashMap<>();
 
-        for (int i=0; i < newPorts.size(); i++) {
+        for (int i = 0; i < newPorts.size(); i++) {
             Port newPort = newPorts.get(i);
             Port oldPort = i < oldPorts.size() ? oldPorts.get(i) : null;
             if (oldPort == null) {
@@ -547,10 +566,17 @@ public class FacilityDao implements FacilityRepository {
         sort = firstNonNull(sort, DEFAULT_SORT);
         ComparableExpression<String> sortField;
         switch (firstNonNull(sort.getBy(), DEFAULT_SORT.getBy())) {
-            case "name.fi": sortField = qFacility.nameFi.lower(); break;
-            case "name.sv": sortField = qFacility.nameSv.lower(); break;
-            case "name.en": sortField = qFacility.nameEn.lower(); break;
-            default: throw invalidSortBy();
+            case "name.fi":
+                sortField = qFacility.nameFi.lower();
+                break;
+            case "name.sv":
+                sortField = qFacility.nameSv.lower();
+                break;
+            case "name.en":
+                sortField = qFacility.nameEn.lower();
+                break;
+            default:
+                throw invalidSortBy();
         }
         if (DESC.equals(sort.getDir())) {
             qry.orderBy(sortField.desc(), qFacility.id.desc());

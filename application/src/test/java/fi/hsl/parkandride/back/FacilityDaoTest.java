@@ -2,46 +2,39 @@
 
 package fi.hsl.parkandride.back;
 
-import static fi.hsl.parkandride.core.domain.CapacityType.CAR;
-import static fi.hsl.parkandride.core.domain.CapacityType.ELECTRIC_CAR;
-import static fi.hsl.parkandride.core.domain.DayType.BUSINESS_DAY;
-import static fi.hsl.parkandride.core.domain.DayType.SATURDAY;
-import static fi.hsl.parkandride.core.domain.DayType.SUNDAY;
-import static fi.hsl.parkandride.core.domain.FacilityStatus.EXCEPTIONAL_SITUATION;
-import static fi.hsl.parkandride.core.domain.FacilityStatus.IN_OPERATION;
-import static fi.hsl.parkandride.core.domain.PricingMethod.CUSTOM;
-import static fi.hsl.parkandride.core.domain.PricingMethod.PARK_AND_RIDE_247_FREE;
-import static fi.hsl.parkandride.core.domain.Service.ACCESSIBLE_TOILETS;
-import static fi.hsl.parkandride.core.domain.Service.ELEVATOR;
-import static fi.hsl.parkandride.core.domain.Service.LIGHTING;
-import static fi.hsl.parkandride.core.domain.Service.TOILETS;
-import static fi.hsl.parkandride.core.domain.Sort.Dir.ASC;
-import static fi.hsl.parkandride.core.domain.Sort.Dir.DESC;
-import static fi.hsl.parkandride.core.domain.Usage.PARK_AND_RIDE;
-import static java.util.Arrays.asList;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.fail;
-import static org.mockito.Mockito.*;
-
-import java.util.*;
-
-import javax.inject.Inject;
-
-import org.geolatte.geom.Point;
-import org.geolatte.geom.Polygon;
-import org.junit.Before;
-import org.junit.Test;
-
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSortedSet;
-
 import fi.hsl.parkandride.core.back.ContactRepository;
 import fi.hsl.parkandride.core.back.FacilityRepository;
 import fi.hsl.parkandride.core.back.OperatorRepository;
 import fi.hsl.parkandride.core.domain.*;
 import fi.hsl.parkandride.core.service.ValidationException;
+import org.geolatte.geom.Point;
+import org.geolatte.geom.Polygon;
+import org.joda.time.DateTime;
+import org.junit.Before;
+import org.junit.Test;
+
+import javax.inject.Inject;
+import java.util.*;
+
+import static fi.hsl.parkandride.core.domain.CapacityType.*;
+import static fi.hsl.parkandride.core.domain.DayType.*;
+import static fi.hsl.parkandride.core.domain.FacilityStatus.EXCEPTIONAL_SITUATION;
+import static fi.hsl.parkandride.core.domain.FacilityStatus.IN_OPERATION;
+import static fi.hsl.parkandride.core.domain.PricingMethod.CUSTOM;
+import static fi.hsl.parkandride.core.domain.PricingMethod.PARK_AND_RIDE_247_FREE;
+import static fi.hsl.parkandride.core.domain.Service.*;
+import static fi.hsl.parkandride.core.domain.Sort.Dir.ASC;
+import static fi.hsl.parkandride.core.domain.Sort.Dir.DESC;
+import static fi.hsl.parkandride.core.domain.Usage.*;
+import static java.util.Arrays.asList;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.fail;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 public class FacilityDaoTest extends AbstractDaoTest {
 
@@ -123,12 +116,12 @@ public class FacilityDaoTest extends AbstractDaoTest {
 
         CapacityType[] capacityTypes = CapacityType.values();
         Usage[] usages = Usage.values();
-        for (int i=0; i < capacityTypes.length || i < usages.length; i++) {
+        for (int i = 0; i < capacityTypes.length || i < usages.length; i++) {
             CapacityType type = capacityTypes[i % capacityTypes.length];
             Usage usage = usages[i % usages.length];
 
-            builtCapacity.put(type, i+1);
-            facility.pricing.add(new Pricing(type, usage, i+1, BUSINESS_DAY, "0", "24", null));
+            builtCapacity.put(type, i + 1);
+            facility.pricing.add(new Pricing(type, usage, i + 1, BUSINESS_DAY, "0", "24", null));
         }
         facility.builtCapacity = builtCapacity;
         final long id = facilityDao.insertFacility(facility);
@@ -145,7 +138,8 @@ public class FacilityDaoTest extends AbstractDaoTest {
         Facility facility = mock(Facility.class);
         try {
             facilityDao.insertFacility(facility);
-        } catch (RuntimeException e) {}
+        } catch (RuntimeException e) {
+        }
         verify(facility).normalize();
     }
 
@@ -154,7 +148,8 @@ public class FacilityDaoTest extends AbstractDaoTest {
         Facility facility = mock(Facility.class);
         try {
             facilityDao.updateFacility(123l, facility, facility);
-        } catch (RuntimeException e) {}
+        } catch (RuntimeException e) {
+        }
         verify(facility).normalize();
     }
 
@@ -385,5 +380,54 @@ public class FacilityDaoTest extends AbstractDaoTest {
     @Test(expected = NotFoundException.class)
     public void update_throws_an_exception_if_not_found() {
         facilityDao.updateFacility(0, createFacility());
+    }
+
+    @Test
+    public void findLatestUtilization_when_nothing_to_find() {
+        long facilityId = facilityDao.insertFacility(createFacility());
+
+        List<Utilization> results = facilityDao.findLatestUtilization(facilityId);
+
+        assertThat(results).isEmpty();
+    }
+
+    @Test
+    public void findLatestUtilization_returns_latest_entry() {
+        long facilityId = facilityDao.insertFacility(createFacility());
+        Utilization u1 = newUtilization(new DateTime(2000, 1, 1, 12, 0), 100);
+        Utilization u2 = newUtilization(new DateTime(2000, 1, 1, 13, 0), 200);
+        facilityDao.insertUtilization(facilityId, asList(u1, u2));
+
+        List<Utilization> results = facilityDao.findLatestUtilization(facilityId);
+
+        assertThat(results).containsOnly(u2);
+    }
+
+    @Test
+    public void findLatestUtilization_returns_each_capacity_type_and_usage_combination() {
+        long facilityId = facilityDao.insertFacility(createFacility());
+        Utilization u1 = newUtilization(new DateTime(2000, 1, 1, 12, 0), 100);
+        u1.capacityType = CAR;
+        u1.usage = HSL_TRAVEL_CARD;
+        Utilization u2 = newUtilization(new DateTime(2000, 1, 1, 13, 0), 200);
+        u2.capacityType = CAR;
+        u2.usage = COMMERCIAL;
+        Utilization u3 = newUtilization(new DateTime(2000, 1, 1, 14, 0), 300);
+        u3.capacityType = MOTORCYCLE;
+        u3.usage = HSL_TRAVEL_CARD;
+        facilityDao.insertUtilization(facilityId, asList(u1, u2, u3));
+
+        List<Utilization> results = facilityDao.findLatestUtilization(facilityId);
+
+        assertThat(results).containsOnly(u1, u2, u3);
+    }
+
+    private static Utilization newUtilization(DateTime time, int spacesAvailable) {
+        Utilization u = new Utilization();
+        u.capacityType = CAR;
+        u.usage = HSL_TRAVEL_CARD;
+        u.timestamp = time;
+        u.spacesAvailable = spacesAvailable;
+        return u;
     }
 }

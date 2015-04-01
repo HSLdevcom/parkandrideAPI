@@ -2,20 +2,13 @@
 
 package fi.hsl.parkandride.front;
 
-import static fi.hsl.parkandride.front.UrlSchema.*;
-import static fi.hsl.parkandride.front.geojson.FeatureCollection.FACILITY_TO_FEATURE;
-import static java.lang.String.format;
-import static org.springframework.http.HttpStatus.CREATED;
-import static org.springframework.http.HttpStatus.OK;
-import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-import static org.springframework.web.bind.annotation.RequestMethod.POST;
-import static org.springframework.web.bind.annotation.RequestMethod.PUT;
-
-import java.util.List;
-
-import javax.inject.Inject;
-
+import com.wordnik.swagger.annotations.Api;
+import com.wordnik.swagger.annotations.ApiOperation;
+import com.wordnik.swagger.annotations.Authorization;
+import fi.hsl.parkandride.core.domain.*;
+import fi.hsl.parkandride.core.service.FacilityService;
+import fi.hsl.parkandride.front.geojson.Feature;
+import fi.hsl.parkandride.front.geojson.FeatureCollection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
@@ -26,14 +19,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
-import com.wordnik.swagger.annotations.Authorization;
+import javax.inject.Inject;
+import java.util.List;
 
-import fi.hsl.parkandride.core.domain.*;
-import fi.hsl.parkandride.core.service.FacilityService;
-import fi.hsl.parkandride.front.geojson.Feature;
-import fi.hsl.parkandride.front.geojson.FeatureCollection;
+import static fi.hsl.parkandride.front.UrlSchema.*;
+import static fi.hsl.parkandride.front.geojson.FeatureCollection.FACILITY_TO_FEATURE;
+import static java.lang.String.format;
+import static org.springframework.http.HttpStatus.CREATED;
+import static org.springframework.http.HttpStatus.OK;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.web.bind.annotation.RequestMethod.*;
 
 @RestController
 @Api("facilities")
@@ -117,11 +112,10 @@ public class FacilityController {
         facilityService.registerUtilization(facilityId, statuses, currentUser);
     }
 
-    // FIXME: Only latest utilization...
     @RequestMapping(method = GET, value = FACILITY_UTILIZATION, produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<Results<Utilization>> getUtilization(@PathVariable(FACILITY_ID) long facilityId) {
         log.info(format("getUtilization(%s)", facilityId));
-        List<Utilization> statuses = facilityService.getStatuses(facilityId);
-        return new ResponseEntity<>(Results.of(statuses), OK);
+        List<Utilization> utilizations = facilityService.findLatestUtilization(facilityId);
+        return new ResponseEntity<>(Results.of(utilizations), OK);
     }
 }

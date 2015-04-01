@@ -23,14 +23,9 @@ import static org.mockito.Mockito.*;
 
 public class PredictionServiceTest extends AbstractDaoTest {
 
-    @Inject
-    Dummies dummies;
-
-    @Inject
-    FacilityRepository facilityRepository;
-
-    @Inject
-    PredictionRepository predictionRepository;
+    @Inject Dummies dummies;
+    @Inject FacilityRepository facilityRepository;
+    @Inject PredictionRepository predictionRepository;
 
     private final DateTime now = new DateTime();
     private long facilityId;
@@ -41,7 +36,7 @@ public class PredictionServiceTest extends AbstractDaoTest {
         predictionService = new PredictionService(facilityRepository, predictionRepository);
         facilityId = dummies.createFacility();
         Utilization u = newUtilization(now, 0);
-        predictionService.enablePrediction(new PredictorState(SameAsLatestPredictor.TYPE, facilityId, u.capacityType, u.usage));
+        predictionService.enablePrediction(new PredictorState(SameAsLatestPredictor.TYPE, new UtilizationKey(facilityId, u.capacityType, u.usage)));
     }
 
     @Test
@@ -52,7 +47,7 @@ public class PredictionServiceTest extends AbstractDaoTest {
 
         predictionService.updatePredictions();
 
-        Optional<Prediction> prediction = predictionRepository.getPrediction(facilityId, u.capacityType, u.usage, now.plusHours(1));
+        Optional<Prediction> prediction = predictionRepository.getPrediction(new UtilizationKey(facilityId, u.capacityType, u.usage), now.plusHours(1));
         assertThat(prediction).as("prediction").isNotEqualTo(Optional.empty());
         assertThat(prediction.get().spacesAvailable).as("prediction.spacesAvailable").isEqualTo(42);
     }

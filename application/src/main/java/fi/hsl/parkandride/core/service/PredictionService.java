@@ -69,9 +69,7 @@ public class PredictionService {
 
     private static PredictionBatch toPredictionBatch(PredictorState state, List<Prediction> predictions) {
         PredictionBatch batch = new PredictionBatch();
-        batch.facilityId = state.facilityId;
-        batch.capacityType = state.capacityType;
-        batch.usage = state.usage;
+        batch.utilizationKey = state.utilizationKey;
         batch.sourceTimestamp = state.latestUtilization;
         batch.predictions = predictions;
         return batch;
@@ -92,7 +90,7 @@ public class PredictionService {
         @Override
         public Stream<Utilization> getUpdatesSince(DateTime startExclusive) {
             // TODO: more effective search
-            return facilityRepository.getStatuses(state.facilityId).stream()
+            return facilityRepository.getStatuses(state.utilizationKey.facilityId).stream()
                     .filter(u -> u.timestamp.isAfter(startExclusive));
         }
     }

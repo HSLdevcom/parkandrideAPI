@@ -9,9 +9,8 @@ import com.mysema.query.types.MappingProjection;
 import com.mysema.query.types.expr.SimpleExpression;
 import fi.hsl.parkandride.back.sql.QPredictor;
 import fi.hsl.parkandride.core.back.PredictorRepository;
-import fi.hsl.parkandride.core.domain.CapacityType;
 import fi.hsl.parkandride.core.domain.PredictorState;
-import fi.hsl.parkandride.core.domain.Usage;
+import fi.hsl.parkandride.core.domain.UtilizationKey;
 import fi.hsl.parkandride.core.service.TransactionalWrite;
 
 public class PredictorDao implements PredictorRepository {
@@ -29,20 +28,17 @@ public class PredictorDao implements PredictorRepository {
 
     @TransactionalWrite
     @Override
-    public PredictorState enablePrediction(String predictorType, Long facilityId, CapacityType capacityType, Usage usage) {
+    public PredictorState enablePrediction(String predictorType, UtilizationKey utilizationKey) {
         PredictorState existing = queryFactory.from(qPredictor)
                 .where(qPredictor.type.eq(predictorType),
-                        qPredictor.facilityId.eq(facilityId),
-                        qPredictor.capacityType.eq(capacityType),
-                        qPredictor.usage.eq(usage))
+                        qPredictor.facilityId.eq(utilizationKey.facilityId),
+                        qPredictor.capacityType.eq(utilizationKey.capacityType),
+                        qPredictor.usage.eq(utilizationKey.usage))
                 .singleResult(new MappingProjection<PredictorState>(PredictorState.class, qPredictor.all()) {
                     @Override
                     protected PredictorState map(Tuple row) {
-                        PredictorState state = new PredictorState(
-                                row.get(qPredictor.type),
-                                row.get(qPredictor.facilityId),
-                                row.get(qPredictor.capacityType),
-                                row.get(qPredictor.usage));
+                        UtilizationKey utilizationKey = new UtilizationKey(row.get(qPredictor.facilityId), row.get(qPredictor.capacityType), row.get(qPredictor.usage));
+                        PredictorState state = new PredictorState(row.get(qPredictor.type), utilizationKey);
                         state.predictorId = row.get(qPredictor.id);
                         // TODO: the rest of the fields
                         return state;
@@ -54,10 +50,10 @@ public class PredictorDao implements PredictorRepository {
         queryFactory.insert(qPredictor)
                 .set(qPredictor.id, queryFactory.query().singleResult(nextPredictorId))
                 .set(qPredictor.type, predictorType)
-                .set(qPredictor.facilityId, facilityId)
-                .set(qPredictor.capacityType, capacityType)
-                .set(qPredictor.usage, usage)
+                .set(qPredictor.facilityId, utilizationKey.facilityId)
+                .set(qPredictor.capacityType, utilizationKey.capacityType)
+                .set(qPredictor.usage, utilizationKey.usage)
                 .execute();
-        return enablePrediction(predictorType, facilityId, capacityType, usage);
+        return enablePrediction(predictorType, utilizationKey);
     }
 }

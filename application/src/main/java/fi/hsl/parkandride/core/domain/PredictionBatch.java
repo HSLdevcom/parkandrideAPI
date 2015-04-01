@@ -12,10 +12,7 @@ import java.util.List;
 
 public class PredictionBatch {
 
-    @NotNull public Long facilityId;
-    @NotNull public CapacityType capacityType;
-    @NotNull public Usage usage;
-
+    @NotNull @Valid public UtilizationKey utilizationKey = new UtilizationKey();
     @NotNull public DateTime sourceTimestamp;
     @NotNull @Valid public List<Prediction> predictions = new ArrayList<>();
 }

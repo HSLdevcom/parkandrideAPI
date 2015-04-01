@@ -11,11 +11,8 @@ import javax.validation.constraints.NotNull;
 
 public class Prediction {
 
-    @NotNull
-    public final DateTime timestamp;
-
-    @Min(0)
-    public final int spacesAvailable;
+    @NotNull public final DateTime timestamp;
+    @Min(0) public final int spacesAvailable;
 
     public Prediction(DateTime timestamp, int spacesAvailable) {
         this.timestamp = timestamp;

@@ -9,10 +9,9 @@ import com.mysema.query.types.MappingProjection;
 import com.mysema.query.types.Path;
 import fi.hsl.parkandride.back.sql.QFacilityPrediction;
 import fi.hsl.parkandride.core.back.PredictionRepository;
-import fi.hsl.parkandride.core.domain.CapacityType;
 import fi.hsl.parkandride.core.domain.Prediction;
 import fi.hsl.parkandride.core.domain.PredictionBatch;
-import fi.hsl.parkandride.core.domain.Usage;
+import fi.hsl.parkandride.core.domain.UtilizationKey;
 import fi.hsl.parkandride.core.service.TransactionalRead;
 import fi.hsl.parkandride.core.service.TransactionalWrite;
 import fi.hsl.parkandride.core.service.ValidationService;
@@ -57,9 +56,9 @@ public class PredictionDao implements PredictionRepository {
         DateTime end = start.plus(PREDICTION_WINDOW).minus(PREDICTION_RESOLUTION);
 
         SQLUpdateClause update = queryFactory.update(qPrediction)
-                .where(qPrediction.facilityId.eq(pb.facilityId),
-                        qPrediction.capacityType.eq(pb.capacityType),
-                        qPrediction.usage.eq(pb.usage))
+                .where(qPrediction.facilityId.eq(pb.utilizationKey.facilityId),
+                        qPrediction.capacityType.eq(pb.utilizationKey.capacityType),
+                        qPrediction.usage.eq(pb.utilizationKey.usage))
                 .set(qPrediction.start, start);
 
         pb.predictions.stream()
@@ -81,9 +80,9 @@ public class PredictionDao implements PredictionRepository {
 
     private void insertBlankPredictionRow(PredictionBatch pb) {
         queryFactory.insert(qPrediction)
-                .set(qPrediction.facilityId, pb.facilityId)
-                .set(qPrediction.capacityType, pb.capacityType)
-                .set(qPrediction.usage, pb.usage)
+                .set(qPrediction.facilityId, pb.utilizationKey.facilityId)
+                .set(qPrediction.capacityType, pb.utilizationKey.capacityType)
+                .set(qPrediction.usage, pb.utilizationKey.usage)
                 .execute();
     }
 
@@ -133,14 +132,14 @@ public class PredictionDao implements PredictionRepository {
 
     @TransactionalRead
     @Override
-    public Optional<Prediction> getPrediction(long facilityId, CapacityType capacityType, Usage usage, DateTime timeWithFullPrecision) {
+    public Optional<Prediction> getPrediction(UtilizationKey utilizationKey, DateTime timeWithFullPrecision) {
         DateTime time = toPredictionResolution(timeWithFullPrecision);
         Path<Integer> spacesAvailableColumn = spacesAvailableAt(time);
         return Optional.ofNullable(queryFactory
                 .from(qPrediction)
-                .where(qPrediction.facilityId.eq(facilityId),
-                        qPrediction.capacityType.eq(capacityType),
-                        qPrediction.usage.eq(usage),
+                .where(qPrediction.facilityId.eq(utilizationKey.facilityId),
+                        qPrediction.capacityType.eq(utilizationKey.capacityType),
+                        qPrediction.usage.eq(utilizationKey.usage),
                         qPrediction.start.between(time.minus(PREDICTION_WINDOW).plus(PREDICTION_RESOLUTION), time))
                 .singleResult(new MappingProjection<Prediction>(Prediction.class, spacesAvailableColumn) {
                     @Override

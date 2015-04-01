@@ -29,10 +29,11 @@ public class PredictionService {
     }
 
     @TransactionalWrite
-    public void registerUtilizations(List<Utilization> utilizations) {
-        // TODO: move the authorization and validation from FacilityService into here and remove the method from FacilityService?
-        utilizationRepository.insertUtilizations(utilizations);
-        utilizations.forEach(u -> predictorRepository.markPredictorsNeedAnUpdate(u.getUtilizationKey()));
+    public void signalUpdateNeeded(List<Utilization> utilizations) {
+        utilizations.stream()
+                .map(Utilization::getUtilizationKey)
+                .distinct()
+                .forEach(predictorRepository::markPredictorsNeedAnUpdate);
     }
 
     public void registerPredictor(Predictor predictor) {

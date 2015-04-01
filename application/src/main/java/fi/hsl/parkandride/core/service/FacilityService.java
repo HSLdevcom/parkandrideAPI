@@ -94,7 +94,8 @@ public class FacilityService {
 
         initUtilizationDefaults(facilityId, utilization);
         utilization.forEach(u -> validateUtilization(u, facilityId));
-        predictionService.registerUtilizations(utilization);
+        utilizationRepository.insertUtilizations(utilization);
+        predictionService.signalUpdateNeeded(utilization);
     }
 
     private static void initUtilizationDefaults(long facilityId, List<Utilization> utilization) {

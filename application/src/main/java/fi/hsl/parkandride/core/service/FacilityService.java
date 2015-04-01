@@ -2,31 +2,29 @@
 
 package fi.hsl.parkandride.core.service;
 
-import static fi.hsl.parkandride.core.domain.Permission.FACILITY_CREATE;
-import static fi.hsl.parkandride.core.domain.Permission.FACILITY_UPDATE;
-import static fi.hsl.parkandride.core.domain.Permission.FACILITY_UTILIZATION_UPDATE;
-import static fi.hsl.parkandride.core.service.AuthenticationService.authorize;
+import fi.hsl.parkandride.core.back.ContactRepository;
+import fi.hsl.parkandride.core.back.FacilityRepository;
+import fi.hsl.parkandride.core.domain.*;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import fi.hsl.parkandride.core.back.ContactRepository;
-import fi.hsl.parkandride.core.back.FacilityRepository;
-import fi.hsl.parkandride.core.domain.*;
+import static fi.hsl.parkandride.core.domain.Permission.*;
+import static fi.hsl.parkandride.core.service.AuthenticationService.authorize;
 
 public class FacilityService {
 
     private final FacilityRepository repository;
-
-    private final ValidationService validationService;
-
     private final ContactRepository contactRepository;
+    private final ValidationService validationService;
+    private final PredictionService predictionService;
 
-    public FacilityService(FacilityRepository repository, ContactRepository contactRepository, ValidationService validationService) {
+    public FacilityService(FacilityRepository repository, ContactRepository contactRepository, ValidationService validationService, PredictionService predictionService) {
         this.repository = repository;
         this.contactRepository = contactRepository;
         this.validationService = validationService;
+        this.predictionService = predictionService;
     }
 
     @TransactionalWrite
@@ -68,8 +66,7 @@ public class FacilityService {
             Contact contact = contactRepository.getContact(contactId);
             if (contact == null) {
                 violations.add(new Violation("NotFound", "contacts." + contactType, "contact not found"));
-            }
-            else if (contact.operatorId != null && !contact.operatorId.equals(facilityOperatorId)) {
+            } else if (contact.operatorId != null && !contact.operatorId.equals(facilityOperatorId)) {
                 violations.add(new Violation("OperatorMismatch", "contacts." + contactType, "operator should match facility operator"));
             }
         }
@@ -94,8 +91,8 @@ public class FacilityService {
     public void registerUtilization(long facilityId, List<Utilization> utilization, User currentUser) {
         authorize(currentUser, repository.getFacilityInfo(facilityId), FACILITY_UTILIZATION_UPDATE);
 
-        utilization.forEach((status) -> validationService.validate(status));
-        repository.insertUtilization(facilityId, utilization);
+        utilization.forEach(validationService::validate);
+        predictionService.registerUtilizations(facilityId, utilization);
     }
 
     @TransactionalRead

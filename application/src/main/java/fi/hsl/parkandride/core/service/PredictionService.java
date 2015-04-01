@@ -85,9 +85,9 @@ public class PredictionService {
 
         @Override
         public Stream<Utilization> getUpdatesSince(DateTime startExclusive) {
-            // TODO: more effective search
-            return facilityRepository.getUtilizations(utilizationKey.facilityId).stream()
-                    .filter(u -> u.timestamp.isAfter(startExclusive));
+            DateTime start = startExclusive.plusMillis(1);
+            DateTime end = new DateTime().plusYears(1);
+            return facilityRepository.findUtilizationsBetween(utilizationKey, start, end).stream();
         }
     }
 }

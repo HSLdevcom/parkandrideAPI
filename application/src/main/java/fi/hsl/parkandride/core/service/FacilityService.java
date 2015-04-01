@@ -9,6 +9,7 @@ import fi.hsl.parkandride.core.domain.*;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 import static fi.hsl.parkandride.core.domain.Permission.*;
 import static fi.hsl.parkandride.core.service.AuthenticationService.authorize;
@@ -96,7 +97,7 @@ public class FacilityService {
     }
 
     @TransactionalRead
-    public List<Utilization> findLatestUtilization(long facilityId) {
+    public Set<Utilization> findLatestUtilization(long facilityId) {
         return repository.findLatestUtilization(facilityId);
     }
 }

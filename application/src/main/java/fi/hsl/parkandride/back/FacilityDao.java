@@ -25,6 +25,7 @@ import fi.hsl.parkandride.core.service.TransactionalRead;
 import fi.hsl.parkandride.core.service.TransactionalWrite;
 import fi.hsl.parkandride.core.service.ValidationException;
 import org.geolatte.geom.Point;
+import org.joda.time.DateTime;
 
 import java.util.*;
 import java.util.Map.Entry;
@@ -137,7 +138,7 @@ public class FacilityDao implements FacilityRepository {
                     unavailableCapacity.capacityType = capacityType;
                     unavailableCapacity.usage = row.get(qPricing.usage);
                     Integer capacity = row.get(qUnavailableCapacity.capacity);
-                    unavailableCapacity.capacity = (capacity != null ? capacity.intValue() : 0);
+                    unavailableCapacity.capacity = (capacity != null ? capacity : 0);
                     return unavailableCapacity;
                 }
             };
@@ -217,7 +218,7 @@ public class FacilityDao implements FacilityRepository {
     };
 
     private static void mapCapacity(Map<CapacityType, Integer> capacities, CapacityType type, Integer capacity) {
-        if (capacity != null && capacity.intValue() > 0) {
+        if (capacity != null && capacity > 0) {
             capacities.put(type, capacity);
         }
     }
@@ -402,15 +403,7 @@ public class FacilityDao implements FacilityRepository {
 
     @TransactionalRead
     @Override
-    public List<Utilization> getUtilizations(long facilityId) { // TODO: remove me
-        return queryFactory.from(qUtilization)
-                .where(qUtilization.facilityId.eq(facilityId))
-                .list(utilizationMapping);
-    }
-
-    @TransactionalRead
-    @Override
-    public List<Utilization> findLatestUtilization(long facilityId) {
+    public Set<Utilization> findLatestUtilization(long facilityId) {
         // TODO: do with a single query
         return queryFactory.from(qUtilization)
                 .distinct()
@@ -423,7 +416,20 @@ public class FacilityDao implements FacilityRepository {
                                 qUtilization.usage.eq(tuple.get(qUtilization.usage)))
                         .orderBy(qUtilization.ts.desc())
                         .singleResult(utilizationMapping))
-                .collect(Collectors.toList());
+                .collect(Collectors.toSet());
+    }
+
+    @TransactionalRead
+    @Override
+    public List<Utilization> findUtilizationsBetween(UtilizationKey utilizationKey, DateTime start, DateTime end) {
+        // TODO: limit the amount of results per or return a lazy iterator (must also update UtilizationHistory)
+        return queryFactory.from(qUtilization)
+                .where(qUtilization.facilityId.eq(utilizationKey.facilityId),
+                        qUtilization.capacityType.eq(utilizationKey.capacityType),
+                        qUtilization.usage.eq(utilizationKey.usage),
+                        qUtilization.ts.between(start, end))
+                .orderBy(qUtilization.ts.asc())
+                .list(utilizationMapping);
     }
 
     private void updateAliases(long facilityId, Set<String> newAliases, Set<String> oldAliases) {
@@ -487,7 +493,7 @@ public class FacilityDao implements FacilityRepository {
 
     private void insertPorts(long facilityId, List<Port> ports) {
         if (ports != null && !ports.isEmpty()) {
-            Map<Integer, Port> addedPorts = new HashMap<Integer, Port>();
+            Map<Integer, Port> addedPorts = new HashMap<>();
             for (int i = 0; i < ports.size(); i++) {
                 addedPorts.put(i, ports.get(i));
             }

@@ -21,6 +21,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.inject.Inject;
 import java.util.List;
+import java.util.Set;
 
 import static fi.hsl.parkandride.front.UrlSchema.*;
 import static fi.hsl.parkandride.front.geojson.FeatureCollection.FACILITY_TO_FEATURE;
@@ -115,7 +116,7 @@ public class FacilityController {
     @RequestMapping(method = GET, value = FACILITY_UTILIZATION, produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<Results<Utilization>> getUtilization(@PathVariable(FACILITY_ID) long facilityId) {
         log.info(format("getUtilization(%s)", facilityId));
-        List<Utilization> utilizations = facilityService.findLatestUtilization(facilityId);
+        Set<Utilization> utilizations = facilityService.findLatestUtilization(facilityId);
         return new ResponseEntity<>(Results.of(utilizations), OK);
     }
 }

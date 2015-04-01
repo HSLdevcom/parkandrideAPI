@@ -405,15 +405,15 @@ public class FacilityDao implements FacilityRepository {
     @Override
     public Set<Utilization> findLatestUtilization(long facilityId) {
         // TODO: do with a single query
-        return queryFactory.from(qUtilization)
-                .distinct()
+        List<Tuple> utilizationKeyCombinations = queryFactory.from(qUtilization)
                 .where(qUtilization.facilityId.eq(facilityId))
-                .list(qUtilization.capacityType, qUtilization.usage)
-                .stream()
-                .map(tuple -> queryFactory.from(qUtilization)
+                .distinct()
+                .list(qUtilization.capacityType, qUtilization.usage);
+        return utilizationKeyCombinations.stream()
+                .map(utilizationKey -> queryFactory.from(qUtilization)
                         .where(qUtilization.facilityId.eq(facilityId),
-                                qUtilization.capacityType.eq(tuple.get(qUtilization.capacityType)),
-                                qUtilization.usage.eq(tuple.get(qUtilization.usage)))
+                                qUtilization.capacityType.eq(utilizationKey.get(qUtilization.capacityType)),
+                                qUtilization.usage.eq(utilizationKey.get(qUtilization.usage)))
                         .orderBy(qUtilization.ts.desc())
                         .singleResult(utilizationMapping))
                 .collect(Collectors.toSet());
@@ -422,7 +422,7 @@ public class FacilityDao implements FacilityRepository {
     @TransactionalRead
     @Override
     public List<Utilization> findUtilizationsBetween(UtilizationKey utilizationKey, DateTime start, DateTime end) {
-        // TODO: limit the amount of results per or return a lazy iterator (must also update UtilizationHistory)
+        // TODO: limit the amount of results per query or return a lazy iterator (must also update UtilizationHistory)
         return queryFactory.from(qUtilization)
                 .where(qUtilization.facilityId.eq(utilizationKey.facilityId),
                         qUtilization.capacityType.eq(utilizationKey.capacityType),

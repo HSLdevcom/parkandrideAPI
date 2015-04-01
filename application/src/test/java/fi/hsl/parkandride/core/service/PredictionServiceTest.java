@@ -36,7 +36,7 @@ public class PredictionServiceTest extends AbstractDaoTest {
         predictionService = new PredictionService(facilityRepository, predictionRepository);
         facilityId = dummies.createFacility();
         Utilization u = newUtilization(now, 0);
-        predictionService.enablePrediction(new PredictorState(SameAsLatestPredictor.TYPE, new UtilizationKey(facilityId, u.capacityType, u.usage)));
+        predictionService.enablePrediction(SameAsLatestPredictor.TYPE, new UtilizationKey(facilityId, u.capacityType, u.usage));
     }
 
     @Test

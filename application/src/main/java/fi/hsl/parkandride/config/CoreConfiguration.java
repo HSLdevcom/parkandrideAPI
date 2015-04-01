@@ -143,6 +143,6 @@ public class CoreConfiguration {
 
     @Bean
     public PredictorRepository predictorRepository() {
-        return new PredictorDao(queryFactory);
+        return new PredictorDao(queryFactory, validationService());
     }
 }

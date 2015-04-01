@@ -37,9 +37,9 @@ public class PredictionService {
         });
     }
 
-    public void enablePrediction(PredictorState initialState) {
+    public void enablePrediction(String predictorType, UtilizationKey utilizationKey) {
         // TODO: save to database
-        predictorStates.add(initialState);
+        predictorStates.add(new PredictorState(123L, predictorType, utilizationKey));
     }
 
     @TransactionalWrite

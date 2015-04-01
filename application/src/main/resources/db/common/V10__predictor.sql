@@ -4,7 +4,7 @@ CREATE TABLE predictor (
   facility_id        BIGINT      NOT NULL,
   capacity_type      VARCHAR(64) NOT NULL,
   usage              VARCHAR(64) NOT NULL,
-  latest_utilization TIMESTAMP   NOT NULL DEFAULT '1970-01-01 00:00:00',
+  latest_utilization TIMESTAMP   NOT NULL DEFAULT '1970-01-01 00:00:00 UTC',
   more_utilizations  BOOLEAN     NOT NULL DEFAULT TRUE,
   internal_state     TEXT        NOT NULL DEFAULT '',
 

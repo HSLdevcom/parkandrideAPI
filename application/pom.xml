@@ -15,7 +15,7 @@
 
   <properties>
     <maven-plugin.exec.version>1.3.2</maven-plugin.exec.version>
-    <maven-plugin.frontend.version>0.0.16</maven-plugin.frontend.version>
+    <maven-plugin.frontend.version>0.0.23</maven-plugin.frontend.version>
     <maven-plugin.frontend.node.version>v0.10.31</maven-plugin.frontend.node.version>
     <maven-plugin.frontend.npm.version>1.4.26</maven-plugin.frontend.npm.version>
     <hikaricp.version>2.0.1</hikaricp.version>

@@ -295,15 +295,15 @@
         }
       },
       "url": {
-        "label": "Lisätiedot, linkki",
+        "label": "Lisätietolinkki",
         "fi": {
-          "label": "Aukioloajat / Lisätiedot, linkki (fi)"
+          "label": "Aukioloajat / Lisätietolinkki (fi)"
         },
         "sv": {
-          "label": "Aukioloajat / Lisätiedot, linkki (sv)"
+          "label": "Aukioloajat / Lisätietolinkki (sv)"
         },
         "en": {
-          "label": "Aukioloajat / Lisätiedot, linkki (en)"
+          "label": "Aukioloajat / Lisätietolinkki (en)"
         }
       },
       "byDayType": {
@@ -332,15 +332,15 @@
         }
       },
       "url": {
-        "label": "Lisätiedot, linkki",
+        "label": "Lisätietolinkki",
         "fi": {
-          "label": "Lisätiedot, linkki (fi)"
+          "label": "Lisätietolinkki (fi)"
         },
         "sv": {
-          "label": "Lisätiedot, linkki (sv)"
+          "label": "Lisätietolinkki (sv)"
         },
         "en": {
-          "label": "Lisätiedot, linkki (en)"
+          "label": "Lisätietolinkki (en)"
         }
       }
     },

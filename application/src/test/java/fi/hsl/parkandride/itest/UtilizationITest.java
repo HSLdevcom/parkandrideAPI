@@ -34,26 +34,20 @@ import static org.hamcrest.Matchers.is;
 
 public class UtilizationITest extends AbstractIntegrationTest {
 
-    interface Key {
+    private interface Key {
+        String FACILITY_ID = "facilityId";
         String CAPACITY_TYPE = "capacityType";
         String USAGE = "usage";
         String SPACES_AVAILABLE = "spacesAvailable";
         String TIMESTAMP = "timestamp";
     }
 
-    @Inject
-    private ContactDao contactDao;
-
-    @Inject
-    private FacilityDao facilityDao;
-
-    @Inject
-    private OperatorDao operatorDao;
+    @Inject ContactDao contactDao;
+    @Inject FacilityDao facilityDao;
+    @Inject OperatorDao operatorDao;
 
     private Facility f;
-
     private String authToken;
-
     private DateTimeZone originalDateTimeZone;
 
     @Before
@@ -120,8 +114,7 @@ public class UtilizationITest extends AbstractIntegrationTest {
                 .when()
                 .put(UrlSchema.FACILITY_UTILIZATION, f2.id)
                 .then()
-                .statusCode(HttpStatus.FORBIDDEN.value())
-        ;
+                .statusCode(HttpStatus.FORBIDDEN.value());
     }
 
     @Test
@@ -210,8 +203,7 @@ public class UtilizationITest extends AbstractIntegrationTest {
                 .when()
                 .put(UrlSchema.FACILITY_UTILIZATION, f.id)
                 .then()
-                .statusCode(HttpStatus.OK.value())
-        ;
+                .statusCode(HttpStatus.OK.value());
 
         StatusResults r =
                 when()
@@ -221,13 +213,11 @@ public class UtilizationITest extends AbstractIntegrationTest {
                         .extract().as(StatusResults.class);
 
         assertThat(r.results)
-                .extracting("capacityType", "usage", "spacesAvailable", "timestamp")
+                .extracting("facilityId", "capacityType", "usage", "spacesAvailable", "timestamp")
                 .contains(
-                        tuple(u1.capacityType, u1.usage, u1.spacesAvailable, u1.timestamp.toInstant()),
-                        tuple(u2.capacityType, u2.usage, u2.spacesAvailable, u2.timestamp.toInstant()),
-                        tuple(u3.capacityType, u3.usage, u3.spacesAvailable, u3.timestamp.toInstant())
-                )
-        ;
+                        tuple(f.id, u1.capacityType, u1.usage, u1.spacesAvailable, u1.timestamp.toInstant()),
+                        tuple(f.id, u2.capacityType, u2.usage, u2.spacesAvailable, u2.timestamp.toInstant()),
+                        tuple(f.id, u3.capacityType, u3.usage, u3.spacesAvailable, u3.timestamp.toInstant()));
     }
 
     @Test
@@ -252,11 +242,63 @@ public class UtilizationITest extends AbstractIntegrationTest {
                 .then()
                 .spec(assertResponse(HttpStatus.BAD_REQUEST, ValidationException.class))
                 .body("violations[0].path", is(Key.CAPACITY_TYPE))
-                .body("violations[0].type", is("NotNull"))
-        ;
+                .body("violations[0].type", is("NotNull"));
     }
 
-    private JSONObjectBuilder minValidPayload() {
+    @Test
+    public void usage_is_required() {
+        givenWithContent(authToken)
+                .body(minValidPayload().put(Key.USAGE, null).asArray())
+                .when()
+                .put(UrlSchema.FACILITY_UTILIZATION, f.id)
+                .then()
+                .spec(assertResponse(HttpStatus.BAD_REQUEST, ValidationException.class))
+                .body("violations[0].path", is(Key.USAGE))
+                .body("violations[0].type", is("NotNull"));
+    }
+
+    @Test
+    public void spaces_available_is_required() {
+        givenWithContent(authToken)
+                .body(minValidPayload().put(Key.SPACES_AVAILABLE, null).asArray())
+                .when()
+                .put(UrlSchema.FACILITY_UTILIZATION, f.id)
+                .then()
+                .spec(assertResponse(HttpStatus.BAD_REQUEST, ValidationException.class))
+                .body("violations[0].path", is(Key.SPACES_AVAILABLE))
+                .body("violations[0].type", is("NotNull"));
+    }
+
+    @Test
+    public void facility_id_in_playload_is_optional() {
+        givenWithContent(authToken)
+                .body(minValidPayload().put(Key.FACILITY_ID, null).asArray())
+                .when()
+                .put(UrlSchema.FACILITY_UTILIZATION, f.id)
+                .then()
+                .statusCode(HttpStatus.OK.value());
+
+        givenWithContent(authToken)
+                .body(minValidPayload().put(Key.FACILITY_ID, f.id).asArray())
+                .when()
+                .put(UrlSchema.FACILITY_UTILIZATION, f.id)
+                .then()
+                .statusCode(HttpStatus.OK.value());
+    }
+
+    @Test
+    public void facility_id_in_playload_cannot_be_different_from_facility_id_in_path() {
+        givenWithContent(authToken)
+                .body(minValidPayload().put(Key.FACILITY_ID, f.id + 1).asArray())
+                .when()
+                .put(UrlSchema.FACILITY_UTILIZATION, f.id)
+                .then()
+                .spec(assertResponse(HttpStatus.BAD_REQUEST, ValidationException.class))
+                .body("violations[0].path", is(Key.FACILITY_ID))
+                .body("violations[0].type", is("NotEqual"));
+    }
+
+    private static JSONObjectBuilder minValidPayload() {
         return new JSONObjectBuilder()
                 .put(Key.CAPACITY_TYPE, CapacityType.CAR)
                 .put(Key.USAGE, Usage.PARK_AND_RIDE)

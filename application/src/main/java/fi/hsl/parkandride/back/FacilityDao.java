@@ -51,9 +51,7 @@ public class FacilityDao implements FacilityRepository {
 
     private static final QFacilityService qService = QFacilityService.facilityService;
 
-    private static final QFacilityUtilization qUtilization = QFacilityUtilization.facilityUtilization;
-
-    private static final QFacilityPaymentMethod  qPaymentMethod = QFacilityPaymentMethod.facilityPaymentMethod;
+    private static final QFacilityPaymentMethod qPaymentMethod = QFacilityPaymentMethod.facilityPaymentMethod;
 
     private static final QUnavailableCapacity qUnavailableCapacity = QUnavailableCapacity.unavailableCapacity;
 
@@ -71,14 +69,12 @@ public class FacilityDao implements FacilityRepository {
     private static final MultilingualStringMapping pricingPriceMapping =
             new MultilingualStringMapping(qPricing.priceFi, qPricing.priceSv, qPricing.priceEn);
 
-
     private static final AddressMapping addressMapping = new AddressMapping(qPort);
 
     private static final MultilingualStringMapping portInfoMapping =
             new MultilingualStringMapping(qPort.infoFi, qPort.infoSv, qPort.infoEn);
 
     private static final MappingProjection<Port> portMapping = new MappingProjection<Port>(Port.class, qPort.all()) {
-
         @Override
         protected Port map(Tuple row) {
             Boolean entry = row.get(qPort.entry);
@@ -126,7 +122,7 @@ public class FacilityDao implements FacilityRepository {
                     unavailableCapacity.capacityType = capacityType;
                     unavailableCapacity.usage = row.get(qPricing.usage);
                     Integer capacity = row.get(qUnavailableCapacity.capacity);
-                    unavailableCapacity.capacity = (capacity != null ? capacity.intValue() : 0);
+                    unavailableCapacity.capacity = (capacity != null ? capacity : 0);
                     return unavailableCapacity;
                 }
             };
@@ -206,7 +202,7 @@ public class FacilityDao implements FacilityRepository {
     };
 
     private static void mapCapacity(Map<CapacityType, Integer> capacities, CapacityType type, Integer capacity) {
-        if (capacity != null && capacity.intValue() > 0) {
+        if (capacity != null && capacity > 0) {
             capacities.put(type, capacity);
         }
     }
@@ -374,39 +370,6 @@ public class FacilityDao implements FacilityRepository {
         return new FacilitySummary(result.get(qFacility.id.count()), capacities);
     }
 
-    @TransactionalWrite
-    @Override
-    public void insertUtilization(long facilityId, List<Utilization> statuses) {
-        SQLInsertClause insertBatch = queryFactory.insert(qUtilization);
-        statuses.forEach((status) -> {
-            insertBatch.set(qUtilization.facilityId, facilityId);
-            insertBatch.set(qUtilization.capacityType, status.capacityType);
-            insertBatch.set(qUtilization.usage, status.usage);
-            insertBatch.set(qUtilization.spacesAvailable, status.spacesAvailable);
-            insertBatch.set(qUtilization.ts, status.timestamp);
-            insertBatch.addBatch();
-        });
-        insertBatch.execute();
-    }
-
-    @TransactionalRead
-    @Override
-    public List<Utilization> getStatuses(long facilityId) {
-        return queryFactory.from(qUtilization)
-                .where(qUtilization.facilityId.eq(facilityId))
-                .list(new MappingProjection<Utilization>(Utilization.class, qUtilization.all()) {
-                    @Override
-                    protected Utilization map(Tuple row) {
-                        Utilization status = new Utilization();
-                        status.capacityType = row.get(qUtilization.capacityType);
-                        status.usage = row.get(qUtilization.usage);
-                        status.timestamp = row.get(qUtilization.ts);
-                        status.spacesAvailable = row.get(qUtilization.spacesAvailable);
-                        return status;
-                    }
-                });
-    }
-
     private void updateAliases(long facilityId, Set<String> newAliases, Set<String> oldAliases) {
         Set<String> toBeRemoved = new HashSet<>(oldAliases);
         Set<String> addedAliases = Sets.newHashSet();
@@ -436,7 +399,7 @@ public class FacilityDao implements FacilityRepository {
         Map<Integer, Port> addedPorts = new HashMap<>();
         Map<Integer, Port> updatedPorts = new HashMap<>();
 
-        for (int i=0; i < newPorts.size(); i++) {
+        for (int i = 0; i < newPorts.size(); i++) {
             Port newPort = newPorts.get(i);
             Port oldPort = i < oldPorts.size() ? oldPorts.get(i) : null;
             if (oldPort == null) {
@@ -468,7 +431,7 @@ public class FacilityDao implements FacilityRepository {
 
     private void insertPorts(long facilityId, List<Port> ports) {
         if (ports != null && !ports.isEmpty()) {
-            Map<Integer, Port> addedPorts = new HashMap<Integer, Port>();
+            Map<Integer, Port> addedPorts = new HashMap<>();
             for (int i = 0; i < ports.size(); i++) {
                 addedPorts.put(i, ports.get(i));
             }
@@ -547,10 +510,17 @@ public class FacilityDao implements FacilityRepository {
         sort = firstNonNull(sort, DEFAULT_SORT);
         ComparableExpression<String> sortField;
         switch (firstNonNull(sort.getBy(), DEFAULT_SORT.getBy())) {
-            case "name.fi": sortField = qFacility.nameFi.lower(); break;
-            case "name.sv": sortField = qFacility.nameSv.lower(); break;
-            case "name.en": sortField = qFacility.nameEn.lower(); break;
-            default: throw invalidSortBy();
+            case "name.fi":
+                sortField = qFacility.nameFi.lower();
+                break;
+            case "name.sv":
+                sortField = qFacility.nameSv.lower();
+                break;
+            case "name.en":
+                sortField = qFacility.nameEn.lower();
+                break;
+            default:
+                throw invalidSortBy();
         }
         if (DESC.equals(sort.getDir())) {
             qry.orderBy(sortField.desc(), qFacility.id.desc());

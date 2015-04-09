@@ -2,12 +2,20 @@
 
 package fi.hsl.parkandride.config;
 
-import java.sql.Connection;
-
-import javax.inject.Inject;
-import javax.inject.Provider;
-import javax.sql.DataSource;
-
+import com.mysema.query.sql.SQLExceptionTranslator;
+import com.mysema.query.sql.SQLTemplates;
+import com.mysema.query.sql.postgres.PostgresQueryFactory;
+import com.mysema.query.sql.spatial.GeoDBTemplates;
+import com.mysema.query.sql.spatial.PostGISTemplates;
+import com.mysema.query.sql.types.DateTimeType;
+import com.mysema.query.sql.types.EnumByNameType;
+import fi.hsl.parkandride.FeatureProfile;
+import fi.hsl.parkandride.back.H2GeometryType;
+import fi.hsl.parkandride.back.LiipiSQLExceptionTranslator;
+import fi.hsl.parkandride.back.PGGeometryType;
+import fi.hsl.parkandride.back.TimeType;
+import fi.hsl.parkandride.core.back.PhoneType;
+import fi.hsl.parkandride.core.domain.*;
 import org.geolatte.geom.Point;
 import org.geolatte.geom.Polygon;
 import org.slf4j.Logger;
@@ -19,21 +27,10 @@ import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.jdbc.datasource.DataSourceUtils;
 import org.springframework.transaction.PlatformTransactionManager;
 
-import com.mysema.query.sql.SQLExceptionTranslator;
-import com.mysema.query.sql.SQLTemplates;
-import com.mysema.query.sql.postgres.PostgresQueryFactory;
-import com.mysema.query.sql.spatial.GeoDBTemplates;
-import com.mysema.query.sql.spatial.PostGISTemplates;
-import com.mysema.query.sql.types.DateTimeType;
-import com.mysema.query.sql.types.EnumByNameType;
-
-import fi.hsl.parkandride.FeatureProfile;
-import fi.hsl.parkandride.back.H2GeometryType;
-import fi.hsl.parkandride.back.LiipiSQLExceptionTranslator;
-import fi.hsl.parkandride.back.PGGeometryType;
-import fi.hsl.parkandride.back.TimeType;
-import fi.hsl.parkandride.core.back.PhoneType;
-import fi.hsl.parkandride.core.domain.*;
+import javax.inject.Inject;
+import javax.inject.Provider;
+import javax.sql.DataSource;
+import java.sql.Connection;
 
 @Configuration
 public class JdbcConfiguration {
@@ -69,9 +66,11 @@ public class JdbcConfiguration {
         }
     }
 
-    @Inject SQLTemplates sqlTemplates;
+    @Inject
+    SQLTemplates sqlTemplates;
 
-    @Inject DataSource dataSource;
+    @Inject
+    DataSource dataSource;
 
     @Bean
     public PostgresQueryFactory queryFactory(com.mysema.query.sql.Configuration configuration) {
@@ -148,6 +147,9 @@ public class JdbcConfiguration {
         conf.register("FACILITY_SERVICE", "SERVICE", new EnumByNameType<>(Service.class));
 
         conf.register("FACILITY_PAYMENT_METHOD", "PAYMENT_METHOD", new EnumByNameType<>(PaymentMethod.class));
+
+        conf.register("PREDICTOR", "CAPACITY_TYPE", new EnumByNameType<>(CapacityType.class));
+        conf.register("PREDICTOR", "USAGE", new EnumByNameType<>(Usage.class));
 
         conf.register(new DateTimeType());
         return conf;

@@ -61,7 +61,6 @@ public class PredictionITest extends AbstractIntegrationTest {
         assertThat(capacityType).as("capacityType").isEqualTo(u.capacityType.name());
         assertThat(usage).as("usage").isEqualTo(u.usage.name());
         assertThat(timestamp.getOffset()).as("time should be in local timezone")
-                .isNotEqualTo(ZoneOffset.UTC)
                 .isEqualTo(ZoneOffset.systemDefault().getRules().getOffset(timestamp.toInstant()));
         assertThat(spacesAvailable).as("spacesAvailable").isEqualTo(u.spacesAvailable);
     }

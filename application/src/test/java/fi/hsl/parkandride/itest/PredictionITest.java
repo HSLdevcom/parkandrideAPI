@@ -19,6 +19,7 @@ import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.Collections;
+import java.util.Map;
 
 import static com.jayway.restassured.RestAssured.when;
 import static fi.hsl.parkandride.core.domain.Role.OPERATOR_API;
@@ -63,6 +64,20 @@ public class PredictionITest extends AbstractIntegrationTest {
                 .isNotEqualTo(ZoneOffset.UTC)
                 .isEqualTo(ZoneOffset.systemDefault().getRules().getOffset(timestamp.toInstant()));
         assertThat(spacesAvailable).as("spacesAvailable").isEqualTo(u.spacesAvailable);
+    }
+
+    @Test
+    public void predictions_are_symmetric_with_utilizations() {
+        makeDummyPredictions();
+
+        // TODO: make both APIs either return a plain array or wrap them both in a results field
+        Map<String, Object> utilization = when().get(UrlSchema.FACILITY_UTILIZATION, facilityId).jsonPath().getMap("results[0]");
+        Map<String, Object> prediction = when().get(UrlSchema.FACILITY_PREDICTION, facilityId).jsonPath().getMap("[0]");
+
+        assertThat(utilization).as("utilization").isNotEmpty();
+        assertThat(prediction).as("prediction").isNotEmpty();
+        assertThat(prediction.keySet()).as("prediction's fields should be a superset of utilization's fields")
+                .containsAll(utilization.keySet());
     }
 
     // TODO: returns all capacity types and usages

@@ -57,7 +57,7 @@ public class JdbcConfiguration {
     public static class Postgresql {
 
         public Postgresql() {
-            log.info("USING H2");
+            log.info("USING POSTGRESQL");
         }
 
         @Bean

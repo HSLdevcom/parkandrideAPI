@@ -7,8 +7,10 @@ import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.Authorization;
 import fi.hsl.parkandride.core.domain.*;
 import fi.hsl.parkandride.core.service.FacilityService;
+import fi.hsl.parkandride.core.service.PredictionService;
 import fi.hsl.parkandride.front.geojson.Feature;
 import fi.hsl.parkandride.front.geojson.FeatureCollection;
+import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
@@ -20,7 +22,9 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.inject.Inject;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import static fi.hsl.parkandride.front.UrlSchema.*;
@@ -37,8 +41,8 @@ public class FacilityController {
 
     private final Logger log = LoggerFactory.getLogger(FacilityController.class);
 
-    @Inject
-    FacilityService facilityService;
+    @Inject FacilityService facilityService;
+    @Inject PredictionService predictionService;
 
     @ApiOperation(value = "Create facility", authorizations = @Authorization(API_KEY))
     @RequestMapping(method = POST, value = FACILITIES, produces = APPLICATION_JSON_VALUE)
@@ -118,5 +122,20 @@ public class FacilityController {
         log.info(format("getUtilization(%s)", facilityId));
         Set<Utilization> utilizations = facilityService.findLatestUtilization(facilityId);
         return new ResponseEntity<>(Results.of(utilizations), OK);
+    }
+
+    @RequestMapping(method = GET, value = FACILITY_PREDICTION, produces = APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<PredictionResult>> getPrediction(@PathVariable(FACILITY_ID) long facilityId) {
+        log.info(format("getPrediction(%s)", facilityId));
+
+        // TODO: get predictions for all capacity types and usages
+        DateTime time = new DateTime();
+        UtilizationKey uk = new UtilizationKey(facilityId, CapacityType.CAR, Usage.PARK_AND_RIDE);
+        Optional<Prediction> prediction = predictionService.getPrediction(uk, time);
+        System.out.println("FacilityController.getPrediction");
+        System.out.println("prediction = " + prediction);
+        ArrayList<PredictionResult> results = new ArrayList<>();
+        prediction.ifPresent(p -> results.add(PredictionResult.from(uk, p)));
+        return new ResponseEntity<>(results, OK);
     }
 }

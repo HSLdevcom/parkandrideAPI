@@ -66,7 +66,7 @@ public class PredictionITest extends AbstractIntegrationTest {
     }
 
     @Test
-    public void predictions_are_symmetric_with_utilizations() {
+    public void prediction_API_is_symmetric_with_utilization_API() {
         makeDummyPredictions();
 
         Map<String, Object> utilization = when().get(UrlSchema.FACILITY_UTILIZATION, facilityId).jsonPath().getMap("[0]");
@@ -78,7 +78,17 @@ public class PredictionITest extends AbstractIntegrationTest {
                 .containsAll(utilization.keySet());
     }
 
-    // TODO: returns all capacity types and usages
+    @Test
+    public void returns_predictions_for_all_capacity_types_and_usages() {
+        makeDummyPredictions(Usage.HSL_TRAVEL_CARD);
+        makeDummyPredictions(Usage.COMMERCIAL);
+
+        PredictionResult[] predictions = when().get(UrlSchema.FACILITY_PREDICTION, facilityId)
+                .then().assertThat().statusCode(200)
+                .extract().as(PredictionResult[].class);
+
+        assertThat(predictions).hasSize(2);
+    }
 
     @Test
     public void defaults_to_prediction_for_current_time() {
@@ -106,10 +116,14 @@ public class PredictionITest extends AbstractIntegrationTest {
     }
 
     private Utilization makeDummyPredictions() {
+        return makeDummyPredictions(Usage.PARK_AND_RIDE);
+    }
+
+    private Utilization makeDummyPredictions(Usage usage) {
         Utilization u = new Utilization();
         u.facilityId = facilityId;
         u.capacityType = CapacityType.CAR;
-        u.usage = Usage.PARK_AND_RIDE;
+        u.usage = usage;
         u.timestamp = new DateTime();
         u.spacesAvailable = 42;
         facilityService.registerUtilization(facilityId, Collections.singletonList(u), user);

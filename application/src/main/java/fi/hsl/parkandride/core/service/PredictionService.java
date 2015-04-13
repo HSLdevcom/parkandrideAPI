@@ -54,6 +54,10 @@ public class PredictionService {
         return predictionRepository.getPrediction(utilizationKey, time);
     }
 
+    public List<PredictionBatch> getPredictionsByFacility(Long facilityId, DateTime time) {
+        return predictionRepository.getPredictionsByFacility(facilityId, time);
+    }
+
     @TransactionalWrite
     public void updatePredictions() {
         // TODO: block other servers from processing the same work set (use a message queue? choose one at random and lock it?)

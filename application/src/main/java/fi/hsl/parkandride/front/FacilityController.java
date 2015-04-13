@@ -23,11 +23,11 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.inject.Inject;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 
 import static fi.hsl.parkandride.front.UrlSchema.*;
 import static fi.hsl.parkandride.front.geojson.FeatureCollection.FACILITY_TO_FEATURE;
+import static java.util.stream.Collectors.toList;
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
@@ -125,13 +125,11 @@ public class FacilityController {
     @RequestMapping(method = GET, value = FACILITY_PREDICTION, produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<List<PredictionResult>> getPrediction(@PathVariable(FACILITY_ID) long facilityId) {
         log.info("getPrediction({})", facilityId);
-
-        // TODO: get predictions for all capacity types and usages
-        DateTime time = new DateTime();
-        UtilizationKey uk = new UtilizationKey(facilityId, CapacityType.CAR, Usage.PARK_AND_RIDE);
-        Optional<PredictionBatch> prediction = predictionService.getPrediction(uk, time);
-        System.out.println("FacilityController.getPrediction");
-        System.out.println("prediction = " + prediction);
-        return new ResponseEntity<>(PredictionResult.from(prediction), OK);
+        DateTime time = DateTime.now();
+        List<PredictionBatch> predictions = predictionService.getPredictionsByFacility(facilityId, time);
+        List<PredictionResult> results = predictions.stream()
+                .flatMap(pb -> PredictionResult.from(pb).stream())
+                .collect(toList());
+        return new ResponseEntity<>(results, OK);
     }
 }

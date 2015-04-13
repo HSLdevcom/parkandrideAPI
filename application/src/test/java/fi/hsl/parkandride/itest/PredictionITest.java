@@ -69,8 +69,7 @@ public class PredictionITest extends AbstractIntegrationTest {
     public void predictions_are_symmetric_with_utilizations() {
         makeDummyPredictions();
 
-        // TODO: make both APIs either return a plain array or wrap them both in a results field
-        Map<String, Object> utilization = when().get(UrlSchema.FACILITY_UTILIZATION, facilityId).jsonPath().getMap("results[0]");
+        Map<String, Object> utilization = when().get(UrlSchema.FACILITY_UTILIZATION, facilityId).jsonPath().getMap("[0]");
         Map<String, Object> prediction = when().get(UrlSchema.FACILITY_PREDICTION, facilityId).jsonPath().getMap("[0]");
 
         assertThat(utilization).as("utilization").isNotEmpty();

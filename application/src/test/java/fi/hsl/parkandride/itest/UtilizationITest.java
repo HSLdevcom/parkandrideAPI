@@ -159,8 +159,8 @@ public class UtilizationITest extends AbstractIntegrationTest {
 
     private String getUtilizationTimestampString() {
         Response response = when().get(UrlSchema.FACILITY_UTILIZATION, f.id);
-        response.then().assertThat().body("results", hasSize(1));
-        return response.body().jsonPath().getString("results[0].timestamp");
+        response.then().assertThat().body(".", hasSize(1));
+        return response.body().jsonPath().getString("[0].timestamp");
     }
 
     @Test
@@ -205,14 +205,11 @@ public class UtilizationITest extends AbstractIntegrationTest {
                 .then()
                 .statusCode(HttpStatus.OK.value());
 
-        StatusResults r =
-                when()
-                        .get(UrlSchema.FACILITY_UTILIZATION, f.id)
-                        .then()
-                        .statusCode(HttpStatus.OK.value())
-                        .extract().as(StatusResults.class);
+        Utilization[] results = when().get(UrlSchema.FACILITY_UTILIZATION, f.id)
+                .then().statusCode(HttpStatus.OK.value())
+                .extract().as(Utilization[].class);
 
-        assertThat(r.results)
+        assertThat(results)
                 .extracting("facilityId", "capacityType", "usage", "spacesAvailable", "timestamp")
                 .contains(
                         tuple(f.id, u1.capacityType, u1.usage, u1.spacesAvailable, u1.timestamp.toInstant()),
@@ -304,9 +301,5 @@ public class UtilizationITest extends AbstractIntegrationTest {
                 .put(Key.USAGE, Usage.PARK_AND_RIDE)
                 .put(Key.SPACES_AVAILABLE, 42)
                 .put(Key.TIMESTAMP, DateTime.now().getMillis());
-    }
-
-    public static class StatusResults {
-        public List<Utilization> results;
     }
 }

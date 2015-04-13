@@ -118,10 +118,10 @@ public class FacilityController {
     }
 
     @RequestMapping(method = GET, value = FACILITY_UTILIZATION, produces = APPLICATION_JSON_VALUE)
-    public ResponseEntity<Results<Utilization>> getUtilization(@PathVariable(FACILITY_ID) long facilityId) {
+    public ResponseEntity<Set<Utilization>> getUtilization(@PathVariable(FACILITY_ID) long facilityId) {
         log.info(format("getUtilization(%s)", facilityId));
         Set<Utilization> utilizations = facilityService.findLatestUtilization(facilityId);
-        return new ResponseEntity<>(Results.of(utilizations), OK);
+        return new ResponseEntity<>(utilizations, OK);
     }
 
     @RequestMapping(method = GET, value = FACILITY_PREDICTION, produces = APPLICATION_JSON_VALUE)

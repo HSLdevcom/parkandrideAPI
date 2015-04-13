@@ -7,6 +7,9 @@ import fi.hsl.parkandride.core.back.PredictorRepository;
 import fi.hsl.parkandride.core.back.UtilizationRepository;
 import fi.hsl.parkandride.core.domain.*;
 import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.scheduling.annotation.Scheduled;
 
 import java.util.List;
 import java.util.Optional;
@@ -15,6 +18,8 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.stream.Stream;
 
 public class PredictionService {
+
+    private static final Logger log = LoggerFactory.getLogger(PredictionService.class);
 
     private final UtilizationRepository utilizationRepository;
     private final PredictionRepository predictionRepository;
@@ -58,8 +63,11 @@ public class PredictionService {
         return predictionRepository.getPredictionsByFacility(facilityId, time);
     }
 
+    @Scheduled(cron = "0 */5 * * * *") // every 5 minutes to match PredictionDao.PREDICTION_RESOLUTION
     @TransactionalWrite
     public void updatePredictions() {
+        log.info("updatePredictions");
+
         // TODO: block other servers from processing the same work set (use a message queue? choose one at random and lock it?)
         // TODO: consider the update interval of prediction types? or leave that up to the predictor?
 

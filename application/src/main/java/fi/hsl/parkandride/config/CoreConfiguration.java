@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.inject.Inject;
@@ -25,6 +26,7 @@ import java.security.SecureRandom;
 @Configuration
 @Import(JdbcConfiguration.class)
 @EnableTransactionManagement(proxyTargetClass = true)
+@EnableScheduling
 public class CoreConfiguration {
 
     private static final Logger log = LoggerFactory.getLogger(CoreConfiguration.class);

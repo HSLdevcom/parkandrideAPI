@@ -25,8 +25,10 @@ public final class UrlSchema {
     public static final String FACILITY = FACILITIES + "/{" + FACILITY_ID + "}";
     public static final String FACILITY_UTILIZATION = FACILITY + "/utilization";
     public static final String FACILITY_PREDICTION = FACILITY + "/prediction";
-    public static final String FACILITY_PREDICTION_ABSOLUTE = FACILITY_PREDICTION + "?at={time}";
-    public static final String FACILITY_PREDICTION_RELATIVE = FACILITY_PREDICTION + "?afterMinutes={minutes}";
+    public static final String ABSOLUTE_TIME = "at";
+    public static final String FACILITY_PREDICTION_ABSOLUTE = FACILITY_PREDICTION + "?" + ABSOLUTE_TIME + "={timestamp}";
+    public static final String RELATIVE_TIME = "after";
+    public static final String FACILITY_PREDICTION_RELATIVE = FACILITY_PREDICTION + "?" + RELATIVE_TIME + "={hhmm}";
 
     public static final String CAPACITY_TYPES = API + "/capacity-types";
     public static final String USAGES = API + "/usages";

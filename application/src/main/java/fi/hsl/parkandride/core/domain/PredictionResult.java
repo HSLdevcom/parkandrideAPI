@@ -3,6 +3,7 @@
 package fi.hsl.parkandride.core.domain;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.google.common.base.MoreObjects;
 import org.joda.time.DateTime;
 
 import java.util.ArrayList;
@@ -40,5 +41,16 @@ public class PredictionResult {
         result.timestamp = prediction.timestamp;
         result.spacesAvailable = prediction.spacesAvailable;
         return result;
+    }
+
+    @Override
+    public String toString() {
+        return MoreObjects.toStringHelper(this)
+                .add("facilityId", facilityId)
+                .add("capacityType", capacityType)
+                .add("usage", usage)
+                .add("timestamp", timestamp)
+                .add("spacesAvailable", spacesAvailable)
+                .toString();
     }
 }

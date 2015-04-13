@@ -2,8 +2,9 @@
 
 package fi.hsl.parkandride.itest;
 
-import com.jayway.restassured.response.Response;
+import com.jayway.restassured.path.json.JsonPath;
 import fi.hsl.parkandride.back.Dummies;
+import fi.hsl.parkandride.back.PredictionDao;
 import fi.hsl.parkandride.core.domain.*;
 import fi.hsl.parkandride.core.service.FacilityService;
 import fi.hsl.parkandride.core.service.PredictionService;
@@ -12,9 +13,11 @@ import fi.hsl.parkandride.front.UrlSchema;
 import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.http.HttpStatus;
 
 import javax.inject.Inject;
 import java.time.Duration;
+import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
@@ -24,7 +27,7 @@ import java.util.Map;
 import static com.jayway.restassured.RestAssured.when;
 import static fi.hsl.parkandride.core.domain.Role.OPERATOR_API;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.containsString;
 
 public class PredictionITest extends AbstractIntegrationTest {
 
@@ -35,6 +38,7 @@ public class PredictionITest extends AbstractIntegrationTest {
     private long facilityId;
     private String authToken;
     private User user;
+    private final DateTime now = new DateTime();
 
     @Before
     @TransactionalWrite
@@ -47,15 +51,15 @@ public class PredictionITest extends AbstractIntegrationTest {
     }
 
     @Test
-    public void prediction_contents() {
+    public void prediction_JSON_structure() {
         Utilization u = makeDummyPredictions();
 
-        Response response = getPrediction(facilityId);
-        long facilityId = response.jsonPath().getLong("[0].facilityId");
-        String capacityType = response.jsonPath().getString("[0].capacityType");
-        String usage = response.jsonPath().getString("[0].usage");
-        OffsetDateTime timestamp = OffsetDateTime.parse(response.jsonPath().getString("[0].timestamp"), DateTimeFormatter.ISO_OFFSET_DATE_TIME);
-        int spacesAvailable = response.jsonPath().getInt("[0].spacesAvailable");
+        JsonPath json = when().get(UrlSchema.FACILITY_PREDICTION, facilityId).jsonPath();
+        long facilityId = json.getLong("[0].facilityId");
+        String capacityType = json.getString("[0].capacityType");
+        String usage = json.getString("[0].usage");
+        OffsetDateTime timestamp = OffsetDateTime.parse(json.getString("[0].timestamp"), DateTimeFormatter.ISO_OFFSET_DATE_TIME);
+        int spacesAvailable = json.getInt("[0].spacesAvailable");
 
         assertThat(facilityId).as("facilityId").isEqualTo(u.facilityId);
         assertThat(capacityType).as("capacityType").isEqualTo(u.capacityType.name());
@@ -83,9 +87,7 @@ public class PredictionITest extends AbstractIntegrationTest {
         makeDummyPredictions(Usage.HSL_TRAVEL_CARD);
         makeDummyPredictions(Usage.COMMERCIAL);
 
-        PredictionResult[] predictions = when().get(UrlSchema.FACILITY_PREDICTION, facilityId)
-                .then().assertThat().statusCode(200)
-                .extract().as(PredictionResult[].class);
+        PredictionResult[] predictions = getPredictions(facilityId);
 
         assertThat(predictions).hasSize(2);
     }
@@ -94,25 +96,56 @@ public class PredictionITest extends AbstractIntegrationTest {
     public void defaults_to_prediction_for_current_time() {
         makeDummyPredictions();
 
-        Response response = getPrediction(facilityId);
-        OffsetDateTime timestamp = OffsetDateTime.parse(response.jsonPath().getString("[0].timestamp"), DateTimeFormatter.ISO_OFFSET_DATE_TIME);
+        PredictionResult[] predictions = getPredictions(facilityId);
 
-        Duration d = Duration.between(OffsetDateTime.now(), timestamp).abs();
-        assertThat(d.toMinutes()).as("distance to now").isLessThanOrEqualTo(5);
+        assertThat(predictions).hasSize(1);
+        assertIsNear(DateTime.now(), predictions[0].timestamp);
     }
 
-    // TODO: can find by absolute time
-    // TODO: timezone is required for absolute time
+    @Test
+    public void can_find_predictions_by_absolute_time() {
+        makeDummyPredictions();
+        DateTime requestedTime = now.plusHours(5);
+
+        PredictionResult[] predictions = getPredictionsAtAbsoluteTime(facilityId, requestedTime);
+
+        assertThat(predictions).hasSize(1);
+        assertIsNear(requestedTime, predictions[0].timestamp);
+    }
+
+    @Test
+    public void timezone_is_required_for_absolute_time() {
+        makeDummyPredictions();
+        DateTime requestedTime = now.plusHours(5);
+
+        // TODO: make it return HTTP 400 Bad Request and message "timezone is required"
+        when().get(UrlSchema.FACILITY_PREDICTION_ABSOLUTE, facilityId, requestedTime.toLocalDateTime())
+                .then().assertThat().statusCode(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                .assertThat().content(containsString("Invalid format"));
+    }
+
     // TODO: can find by relative time
     // TODO: hours are optional for relative time, can use minutes >60
 
 
-    private static Response getPrediction(long facilityId) {
-        Response response = when().get(UrlSchema.FACILITY_PREDICTION, facilityId);
-        response.then()
-                .assertThat().statusCode(200)
-                .assertThat().body("results", hasSize(1));
-        return response;
+    private static void assertIsNear(DateTime expected, DateTime actual) {
+        Instant i1 = Instant.ofEpochMilli(expected.getMillis());
+        Instant i2 = Instant.ofEpochMilli(actual.getMillis());
+        Duration d = Duration.between(i1, i2).abs();
+        assertThat(d.toMinutes()).as("distance to " + expected + " in minutes")
+                .isLessThanOrEqualTo(PredictionDao.PREDICTION_RESOLUTION.getMinutes());
+    }
+
+    private static PredictionResult[] getPredictions(long facilityId) {
+        return when().get(UrlSchema.FACILITY_PREDICTION, facilityId)
+                .then().assertThat().statusCode(HttpStatus.OK.value())
+                .extract().as(PredictionResult[].class);
+    }
+
+    private static PredictionResult[] getPredictionsAtAbsoluteTime(long facilityId, DateTime time) {
+        return when().get(UrlSchema.FACILITY_PREDICTION_ABSOLUTE, facilityId, time)
+                .then().assertThat().statusCode(HttpStatus.OK.value())
+                .extract().as(PredictionResult[].class);
     }
 
     private Utilization makeDummyPredictions() {
@@ -124,7 +157,7 @@ public class PredictionITest extends AbstractIntegrationTest {
         u.facilityId = facilityId;
         u.capacityType = CapacityType.CAR;
         u.usage = usage;
-        u.timestamp = new DateTime();
+        u.timestamp = now;
         u.spacesAvailable = 42;
         facilityService.registerUtilization(facilityId, Collections.singletonList(u), user);
         predictionService.enablePrediction(SameAsLatestPredictor.TYPE, u.getUtilizationKey());

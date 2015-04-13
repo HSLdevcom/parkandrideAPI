@@ -13,13 +13,13 @@ import fi.hsl.parkandride.front.geojson.FeatureCollection;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.inject.Inject;
+import javax.validation.Valid;
 import java.util.List;
 import java.util.Set;
 
@@ -121,14 +121,9 @@ public class FacilityController {
     }
 
     @RequestMapping(method = GET, value = FACILITY_PREDICTION, produces = APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<PredictionResult>> getPrediction(
-            @PathVariable(FACILITY_ID) long facilityId,
-            @RequestParam(value = ABSOLUTE_TIME, required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime absoluteTime,
-            @RequestParam(value = RELATIVE_TIME, required = false) String relativeTime) {
-        DateTime time = DateTime.now();
-        if (absoluteTime != null) {
-            time = absoluteTime;
-        }
+    public ResponseEntity<List<PredictionResult>> getPrediction(@PathVariable(FACILITY_ID) long facilityId,
+                                                                @ModelAttribute @Valid PredictionRequest request) {
+        DateTime time = request.requestedTime();
         log.info("getPrediction({}, {})", facilityId, time);
         List<PredictionBatch> predictions = predictionService.getPredictionsByFacility(facilityId, time);
         List<PredictionResult> results = predictions.stream()

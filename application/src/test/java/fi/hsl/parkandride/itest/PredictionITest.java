@@ -3,6 +3,7 @@
 package fi.hsl.parkandride.itest;
 
 import com.jayway.restassured.path.json.JsonPath;
+import com.jayway.restassured.response.Response;
 import fi.hsl.parkandride.back.Dummies;
 import fi.hsl.parkandride.back.PredictionDao;
 import fi.hsl.parkandride.core.domain.*;
@@ -118,15 +119,36 @@ public class PredictionITest extends AbstractIntegrationTest {
         makeDummyPredictions();
         DateTime requestedTime = now.plusHours(5);
 
-        // TODO: make it return HTTP 400 Bad Request and message "timezone is required"
+        // TODO: make it return the error message "timezone is required" or similar
         when().get(UrlSchema.FACILITY_PREDICTION_ABSOLUTE, facilityId, requestedTime.toLocalDateTime())
-                .then().assertThat().statusCode(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                .then().assertThat().statusCode(HttpStatus.BAD_REQUEST.value())
                 .assertThat().content(containsString("Invalid format"));
     }
 
-    // TODO: can find by relative time
-    // TODO: hours are optional for relative time, can use minutes >60
+    @Test
+    public void can_find_predictions_by_relative_time() {
+        makeDummyPredictions();
+        DateTime requestedTime = now.plusHours(5).plusMinutes(30);
 
+        PredictionResult[] predictions = getPredictionsAfterRelativeTime(facilityId, "5:30");
+
+        assertThat(predictions).hasSize(1);
+        assertIsNear(requestedTime, predictions[0].timestamp);
+    }
+
+    @Test
+    public void relative_time_may_be_expressed_in_minutes() { // i.e. hours are optional and minutes can be over 60
+        makeDummyPredictions();
+        DateTime requestedTime = now.plusMinutes(180);
+
+        PredictionResult[] predictions = getPredictionsAfterRelativeTime(facilityId, "180");
+
+        assertThat(predictions).hasSize(1);
+        assertIsNear(requestedTime, predictions[0].timestamp);
+    }
+
+
+    // helpers
 
     private static void assertIsNear(DateTime expected, DateTime actual) {
         Instant i1 = Instant.ofEpochMilli(expected.getMillis());
@@ -137,14 +159,19 @@ public class PredictionITest extends AbstractIntegrationTest {
     }
 
     private static PredictionResult[] getPredictions(long facilityId) {
-        return when().get(UrlSchema.FACILITY_PREDICTION, facilityId)
-                .then().assertThat().statusCode(HttpStatus.OK.value())
-                .extract().as(PredictionResult[].class);
+        return toPredictions(when().get(UrlSchema.FACILITY_PREDICTION, facilityId));
     }
 
     private static PredictionResult[] getPredictionsAtAbsoluteTime(long facilityId, DateTime time) {
-        return when().get(UrlSchema.FACILITY_PREDICTION_ABSOLUTE, facilityId, time)
-                .then().assertThat().statusCode(HttpStatus.OK.value())
+        return toPredictions(when().get(UrlSchema.FACILITY_PREDICTION_ABSOLUTE, facilityId, time));
+    }
+
+    private static PredictionResult[] getPredictionsAfterRelativeTime(long facilityId, String hhmm) {
+        return toPredictions(when().get(UrlSchema.FACILITY_PREDICTION_RELATIVE, facilityId, hhmm));
+    }
+
+    private static PredictionResult[] toPredictions(Response response) {
+        return response.then().assertThat().statusCode(HttpStatus.OK.value())
                 .extract().as(PredictionResult[].class);
     }
 

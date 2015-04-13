@@ -254,9 +254,13 @@ public class PredictionDaoTest extends AbstractDaoTest {
         copy.utilizationKey = pb.utilizationKey;
         copy.sourceTimestamp = toPredictionResolution(pb.sourceTimestamp);
         copy.predictions = pb.predictions.stream()
-                .map(p -> new Prediction(toPredictionResolution(p.timestamp), p.spacesAvailable))
+                .map(PredictionDaoTest::toPredictionResolution)
                 .collect(toList());
         return copy;
+    }
+
+    private static Prediction toPredictionResolution(Prediction p) {
+        return new Prediction(toPredictionResolution(p.timestamp), p.spacesAvailable);
     }
 
     private static DateTime toPredictionResolution(DateTime time) {
@@ -275,10 +279,9 @@ public class PredictionDaoTest extends AbstractDaoTest {
     }
 
     private void assertPredictionEquals(String message, Prediction expected, PredictionBatch pb) {
-        Optional<Prediction> actual = predictionDao.getPrediction(pb.utilizationKey, expected.timestamp);
+        Optional<PredictionBatch> actual = predictionDao.getPrediction(pb.utilizationKey, expected.timestamp);
         assertThat(actual).as(message).isNotEqualTo(Optional.empty());
-        assertThat(actual.get().timestamp).as(message + ".timestamp").isEqualTo(toPredictionResolution(expected.timestamp));
-        assertThat(actual.get().spacesAvailable).as(message + ".spacesAvailable").isEqualTo(expected.spacesAvailable);
+        assertThat(actual.get().predictions).as(message).containsExactly(toPredictionResolution(expected));
     }
 
     private void assertPredictionDoesNotExist(DateTime time, PredictionBatch pb) {
@@ -286,7 +289,7 @@ public class PredictionDaoTest extends AbstractDaoTest {
     }
 
     private void assertPredictionDoesNotExist(String message, DateTime time, PredictionBatch pb) {
-        Optional<Prediction> outsideRange = predictionDao.getPrediction(pb.utilizationKey, time);
+        Optional<PredictionBatch> outsideRange = predictionDao.getPrediction(pb.utilizationKey, time);
         assertThat(outsideRange).as(message).isEqualTo(Optional.empty());
     }
 }

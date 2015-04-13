@@ -50,7 +50,7 @@ public class PredictionService {
         predictorRepository.enablePrediction(predictorType, utilizationKey);
     }
 
-    public Optional<Prediction> getPrediction(UtilizationKey utilizationKey, DateTime time) {
+    public Optional<PredictionBatch> getPrediction(UtilizationKey utilizationKey, DateTime time) {
         return predictionRepository.getPrediction(utilizationKey, time);
     }
 

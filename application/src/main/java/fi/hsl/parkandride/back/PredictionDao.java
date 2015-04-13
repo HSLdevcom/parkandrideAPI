@@ -133,16 +133,14 @@ public class PredictionDao implements PredictionRepository {
 
     @TransactionalRead
     @Override
-    public Optional<Prediction> getPrediction(UtilizationKey utilizationKey, DateTime time) {
-        PredictionBatch pb = queryFactory
+    public Optional<PredictionBatch> getPrediction(UtilizationKey utilizationKey, DateTime time) {
+        return asOptional(queryFactory
                 .from(qPrediction)
                 .where(qPrediction.facilityId.eq(utilizationKey.facilityId),
                         qPrediction.capacityType.eq(utilizationKey.capacityType),
                         qPrediction.usage.eq(utilizationKey.usage))
                 .where(isWithinPredictionWindow(time))
-                .singleResult(predictionMapping(time));
-        return Optional.ofNullable(pb)
-                .flatMap(extractPrediction());
+                .singleResult(predictionMapping(time)));
     }
 
     @TransactionalRead
@@ -153,10 +151,6 @@ public class PredictionDao implements PredictionRepository {
                 .where(qPrediction.facilityId.eq(facilityId))
                 .where(isWithinPredictionWindow(time))
                 .list(predictionMapping(time));
-    }
-
-    private static Function<PredictionBatch, Optional<Prediction>> extractPrediction() {
-        return pb -> Optional.ofNullable(pb.predictions.isEmpty() ? null : pb.predictions.get(0));
     }
 
     private static BooleanExpression isWithinPredictionWindow(DateTime time) {
@@ -203,6 +197,14 @@ public class PredictionDao implements PredictionRepository {
 
     static DateTime toPredictionResolution(DateTime time) {
         return TimeUtil.roundMinutes(PREDICTION_RESOLUTION.getMinutes(), time);
+    }
+
+    private static Optional<PredictionBatch> asOptional(PredictionBatch pb) {
+        if (pb == null || pb.predictions.isEmpty()) {
+            return Optional.empty();
+        } else {
+            return Optional.of(pb);
+        }
     }
 
     @SuppressWarnings("unchecked")

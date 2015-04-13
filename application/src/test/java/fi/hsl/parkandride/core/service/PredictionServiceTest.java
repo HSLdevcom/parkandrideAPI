@@ -47,9 +47,9 @@ public class PredictionServiceTest extends AbstractDaoTest {
 
         predictionService.updatePredictions();
 
-        Optional<Prediction> prediction = predictionService.getPrediction(u.getUtilizationKey(), now.plusHours(1));
+        Optional<PredictionBatch> prediction = predictionService.getPrediction(u.getUtilizationKey(), now.plusHours(1));
         assertThat(prediction).as("prediction").isNotEqualTo(Optional.empty());
-        assertThat(prediction.get().spacesAvailable).as("prediction.spacesAvailable").isEqualTo(42);
+        assertThat(prediction.get().predictions.get(0).spacesAvailable).as("prediction.spacesAvailable").isEqualTo(42);
     }
 
     @Test

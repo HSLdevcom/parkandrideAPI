@@ -22,7 +22,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.inject.Inject;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -130,11 +129,9 @@ public class FacilityController {
         // TODO: get predictions for all capacity types and usages
         DateTime time = new DateTime();
         UtilizationKey uk = new UtilizationKey(facilityId, CapacityType.CAR, Usage.PARK_AND_RIDE);
-        Optional<Prediction> prediction = predictionService.getPrediction(uk, time);
+        Optional<PredictionBatch> prediction = predictionService.getPrediction(uk, time);
         System.out.println("FacilityController.getPrediction");
         System.out.println("prediction = " + prediction);
-        ArrayList<PredictionResult> results = new ArrayList<>();
-        prediction.ifPresent(p -> results.add(PredictionResult.from(uk, p)));
-        return new ResponseEntity<>(results, OK);
+        return new ResponseEntity<>(PredictionResult.from(prediction), OK);
     }
 }

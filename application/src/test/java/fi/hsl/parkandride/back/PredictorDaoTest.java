@@ -40,14 +40,17 @@ public class PredictorDaoTest extends AbstractDaoTest {
 
     @Test
     public void creates_predictor_when_enabled_for_the_first_time() {
-        PredictorState state = predictorRepository.enablePrediction("the-type", utilizationKey);
+        assertThat(predictorRepository.findAllPredictors()).as("all predictors, before").isEmpty();
 
+        PredictorState state = enablePredictor("the-type", utilizationKey);
+
+        assertThat(predictorRepository.findAllPredictors()).as("all predictors, after").containsOnly(state);
         // identifying fields:
         assertThat(state.predictorId).as("predictorId").isNotNull();
         assertThat(state.predictorType).as("predictorType").isEqualTo("the-type");
-        assertThat(state.utilizationKey.facilityId).as("facilityId").isEqualTo(facilityId);
-        assertThat(state.utilizationKey.capacityType).as("capacityType").isEqualTo(CapacityType.CAR);
-        assertThat(state.utilizationKey.usage).as("usage").isEqualTo(Usage.PARK_AND_RIDE);
+        assertThat(state.utilizationKey.facilityId).as("facilityId").isEqualTo(utilizationKey.facilityId);
+        assertThat(state.utilizationKey.capacityType).as("capacityType").isEqualTo(utilizationKey.capacityType);
+        assertThat(state.utilizationKey.usage).as("usage").isEqualTo(utilizationKey.usage);
         // default values:
         assertThat(state.latestUtilization).as("latestUtilization").isEqualTo(new DateTime(0)); // safe default: before all possible utilizations
         assertThat(state.moreUtilizations).as("moreUtilizations").isTrue(); // safe default: assume there are some utilizations to process
@@ -61,15 +64,15 @@ public class PredictorDaoTest extends AbstractDaoTest {
 
     @Test
     public void returns_existing_predictor_when_enabled_for_the_second_time() {
-        PredictorState state1 = predictorRepository.enablePrediction("predictor-type", utilizationKey);
-        PredictorState state2 = predictorRepository.enablePrediction("predictor-type", utilizationKey);
+        PredictorState state1 = enablePredictor("predictor-type", utilizationKey);
+        PredictorState state2 = enablePredictor("predictor-type", utilizationKey);
 
         assertThat(state2.predictorId).as("state2.predictorId").isEqualTo(state1.predictorId);
     }
 
     @Test
     public void predictor_state_can_be_modified() {
-        PredictorState expected = predictorRepository.enablePrediction("type", utilizationKey);
+        PredictorState expected = enablePredictor("type", utilizationKey);
 
         expected.latestUtilization = new DateTime();
         expected.moreUtilizations = !expected.moreUtilizations;
@@ -85,7 +88,7 @@ public class PredictorDaoTest extends AbstractDaoTest {
 
     @Test
     public void predictor_state_is_validated_before_saving() {
-        PredictorState state = predictorRepository.enablePrediction("type", utilizationKey);
+        PredictorState state = enablePredictor("type", utilizationKey);
         state.latestUtilization = null;
         state.internalState = null;
 
@@ -104,14 +107,14 @@ public class PredictorDaoTest extends AbstractDaoTest {
      */
     @Test
     public void finds_recently_enabled_predictors_even_if_they_have_no_utilizations() {
-        PredictorState state = predictorRepository.enablePrediction("type", utilizationKey);
+        PredictorState state = enablePredictor("type", utilizationKey);
 
         assertThat(predictorRepository.findPredictorsNeedingUpdate()).containsExactly(state);
     }
 
     @Test
     public void can_mark_predictors_to_have_processed_all_utilizations() {
-        PredictorState state = predictorRepository.enablePrediction("type", utilizationKey);
+        PredictorState state = enablePredictor("type", utilizationKey);
         state.moreUtilizations = false;
         predictorRepository.save(state);
 
@@ -120,7 +123,7 @@ public class PredictorDaoTest extends AbstractDaoTest {
 
     @Test
     public void can_mark_predictors_to_have_received_new_utilizations_to_be_processed() {
-        PredictorState state = predictorRepository.enablePrediction("type", utilizationKey);
+        PredictorState state = enablePredictor("type", utilizationKey);
         state.moreUtilizations = false;
         predictorRepository.save(state);
 
@@ -135,8 +138,8 @@ public class PredictorDaoTest extends AbstractDaoTest {
 
     @Test
     public void predictors_are_predictor_type_specific() {
-        PredictorState state1 = predictorRepository.enablePrediction("type1", utilizationKey);
-        PredictorState state2 = predictorRepository.enablePrediction("type2", utilizationKey);
+        PredictorState state1 = enablePredictor("type1", utilizationKey);
+        PredictorState state2 = enablePredictor("type2", utilizationKey);
 
         assertThat(state2.predictorId).as("state2.predictorId").isNotEqualTo(state1.predictorId);
     }
@@ -144,24 +147,24 @@ public class PredictorDaoTest extends AbstractDaoTest {
     @Test
     public void predictors_are_facility_specific() {
         long facilityId2 = dummies.createFacility();
-        PredictorState state1 = predictorRepository.enablePrediction("predictor-type", new UtilizationKey(facilityId, CapacityType.CAR, Usage.PARK_AND_RIDE));
-        PredictorState state2 = predictorRepository.enablePrediction("predictor-type", new UtilizationKey(facilityId2, CapacityType.CAR, Usage.PARK_AND_RIDE));
+        PredictorState state1 = enablePredictor("predictor-type", new UtilizationKey(facilityId, CapacityType.CAR, Usage.PARK_AND_RIDE));
+        PredictorState state2 = enablePredictor("predictor-type", new UtilizationKey(facilityId2, CapacityType.CAR, Usage.PARK_AND_RIDE));
 
         assertThat(state2.predictorId).as("state2.predictorId").isNotEqualTo(state1.predictorId);
     }
 
     @Test
     public void predictors_are_capacity_type_specific() {
-        PredictorState state1 = predictorRepository.enablePrediction("predictor-type", new UtilizationKey(facilityId, CapacityType.CAR, Usage.PARK_AND_RIDE));
-        PredictorState state2 = predictorRepository.enablePrediction("predictor-type", new UtilizationKey(facilityId, CapacityType.ELECTRIC_CAR, Usage.PARK_AND_RIDE));
+        PredictorState state1 = enablePredictor("predictor-type", new UtilizationKey(facilityId, CapacityType.CAR, Usage.PARK_AND_RIDE));
+        PredictorState state2 = enablePredictor("predictor-type", new UtilizationKey(facilityId, CapacityType.ELECTRIC_CAR, Usage.PARK_AND_RIDE));
 
         assertThat(state2.predictorId).as("state2.predictorId").isNotEqualTo(state1.predictorId);
     }
 
     @Test
     public void predictors_are_usage_specific() {
-        PredictorState state1 = predictorRepository.enablePrediction("predictor-type", new UtilizationKey(facilityId, CapacityType.CAR, Usage.PARK_AND_RIDE));
-        PredictorState state2 = predictorRepository.enablePrediction("predictor-type", new UtilizationKey(facilityId, CapacityType.CAR, Usage.COMMERCIAL));
+        PredictorState state1 = enablePredictor("predictor-type", new UtilizationKey(facilityId, CapacityType.CAR, Usage.PARK_AND_RIDE));
+        PredictorState state2 = enablePredictor("predictor-type", new UtilizationKey(facilityId, CapacityType.CAR, Usage.COMMERCIAL));
 
         assertThat(state2.predictorId).as("state2.predictorId").isNotEqualTo(state1.predictorId);
     }
@@ -202,9 +205,14 @@ public class PredictorDaoTest extends AbstractDaoTest {
         assertThat(predictorRepository.findPredictorsNeedingUpdate()).hasSize(1);
     }
 
-    private void createPredictorNotNeedingUpdate(UtilizationKey key1) {
-        PredictorState state1 = predictorRepository.enablePrediction("predictor-type", key1);
-        state1.moreUtilizations = false;
-        predictorRepository.save(state1);
+    private void createPredictorNotNeedingUpdate(UtilizationKey utilizationKey) {
+        PredictorState state = enablePredictor("predictor-type", utilizationKey);
+        state.moreUtilizations = false;
+        predictorRepository.save(state);
+    }
+
+    private PredictorState enablePredictor(String predictorType, UtilizationKey utilizationKey) {
+        Long predictorId = predictorRepository.enablePredictor(predictorType, utilizationKey);
+        return predictorRepository.getById(predictorId);
     }
 }

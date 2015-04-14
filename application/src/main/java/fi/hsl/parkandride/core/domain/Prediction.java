@@ -8,6 +8,7 @@ import org.joda.time.DateTime;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import java.util.Objects;
 
 public class Prediction {
 
@@ -17,6 +18,21 @@ public class Prediction {
     public Prediction(DateTime timestamp, int spacesAvailable) {
         this.timestamp = timestamp;
         this.spacesAvailable = spacesAvailable;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof Prediction)) {
+            return false;
+        }
+        Prediction that = (Prediction) obj;
+        return Objects.equals(this.timestamp, that.timestamp)
+                && Objects.equals(this.spacesAvailable, that.spacesAvailable);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(timestamp, spacesAvailable);
     }
 
     @Override

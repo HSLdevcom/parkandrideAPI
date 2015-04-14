@@ -2,20 +2,14 @@
 
 package fi.hsl.parkandride.front;
 
-import static fi.hsl.parkandride.front.UrlSchema.API_KEY;
-import static fi.hsl.parkandride.front.UrlSchema.CONTACT;
-import static fi.hsl.parkandride.front.UrlSchema.CONTACTS;
-import static fi.hsl.parkandride.front.UrlSchema.CONTACT_ID;
-import static java.lang.String.format;
-import static org.springframework.http.HttpStatus.CREATED;
-import static org.springframework.http.HttpStatus.OK;
-import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-import static org.springframework.web.bind.annotation.RequestMethod.POST;
-import static org.springframework.web.bind.annotation.RequestMethod.PUT;
-
-import javax.inject.Inject;
-
+import com.wordnik.swagger.annotations.Api;
+import com.wordnik.swagger.annotations.ApiOperation;
+import com.wordnik.swagger.annotations.Authorization;
+import fi.hsl.parkandride.core.domain.Contact;
+import fi.hsl.parkandride.core.domain.ContactSearch;
+import fi.hsl.parkandride.core.domain.SearchResults;
+import fi.hsl.parkandride.core.domain.User;
+import fi.hsl.parkandride.core.service.ContactService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
@@ -26,15 +20,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
-import com.wordnik.swagger.annotations.Authorization;
+import javax.inject.Inject;
 
-import fi.hsl.parkandride.core.domain.Contact;
-import fi.hsl.parkandride.core.domain.ContactSearch;
-import fi.hsl.parkandride.core.domain.SearchResults;
-import fi.hsl.parkandride.core.domain.User;
-import fi.hsl.parkandride.core.service.ContactService;
+import static fi.hsl.parkandride.front.UrlSchema.*;
+import static org.springframework.http.HttpStatus.CREATED;
+import static org.springframework.http.HttpStatus.OK;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.web.bind.annotation.RequestMethod.*;
 
 @RestController
 @Api("contacts")
@@ -52,7 +44,7 @@ public class ContactController {
                                                  UriComponentsBuilder builder) {
         log.info("createContact");
         Contact newContact = contactService.createContact(contact, currentUser);
-        log.info(format("createContact(%s)", newContact.id));
+        log.info("createContact({})", newContact.id);
 
         HttpHeaders headers = new HttpHeaders();
         headers.setLocation(builder.path(CONTACT).buildAndExpand(newContact.id).toUri());
@@ -68,9 +60,9 @@ public class ContactController {
     @ApiOperation(value = "Update contact", authorizations = @Authorization(API_KEY))
     @RequestMapping(method = PUT, value = CONTACT, produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<Contact> updateContact(@PathVariable(CONTACT_ID) long contactId,
-                                                   @RequestBody Contact contact,
-                                                   User currentUser) {
-        log.info(format("updateContact(%s)", contactId));
+                                                 @RequestBody Contact contact,
+                                                 User currentUser) {
+        log.info("updateContact({})", contactId);
         Contact response = contactService.updateContact(contactId, contact, currentUser);
         return new ResponseEntity<>(response, OK);
     }
@@ -80,5 +72,4 @@ public class ContactController {
         SearchResults<Contact> results = contactService.search(search);
         return new ResponseEntity<>(results, OK);
     }
-
 }

@@ -7,6 +7,7 @@ import com.mysema.query.sql.dml.SQLUpdateClause;
 import com.mysema.query.sql.postgres.PostgresQueryFactory;
 import com.mysema.query.types.MappingProjection;
 import com.mysema.query.types.Path;
+import com.mysema.query.types.expr.BooleanExpression;
 import fi.hsl.parkandride.back.sql.QFacilityPrediction;
 import fi.hsl.parkandride.core.back.PredictionRepository;
 import fi.hsl.parkandride.core.domain.Prediction;
@@ -132,25 +133,56 @@ public class PredictionDao implements PredictionRepository {
 
     @TransactionalRead
     @Override
-    public Optional<Prediction> getPrediction(UtilizationKey utilizationKey, DateTime timeWithFullPrecision) {
-        DateTime time = toPredictionResolution(timeWithFullPrecision);
-        Path<Integer> spacesAvailableColumn = spacesAvailableAt(time);
-        return Optional.ofNullable(queryFactory
+    public Optional<PredictionBatch> getPrediction(UtilizationKey utilizationKey, DateTime time) {
+        return asOptional(queryFactory
                 .from(qPrediction)
                 .where(qPrediction.facilityId.eq(utilizationKey.facilityId),
                         qPrediction.capacityType.eq(utilizationKey.capacityType),
-                        qPrediction.usage.eq(utilizationKey.usage),
-                        qPrediction.start.between(time.minus(PREDICTION_WINDOW).plus(PREDICTION_RESOLUTION), time))
-                .singleResult(new MappingProjection<Prediction>(Prediction.class, spacesAvailableColumn) {
-                    @Override
-                    protected Prediction map(Tuple row) {
-                        Integer spacesAvailable = row.get(spacesAvailableColumn);
-                        if (spacesAvailable == null) {
-                            return null;
-                        }
-                        return new Prediction(time, spacesAvailable);
-                    }
-                }));
+                        qPrediction.usage.eq(utilizationKey.usage))
+                .where(isWithinPredictionWindow(time))
+                .singleResult(predictionMapping(time)));
+    }
+
+    @TransactionalRead
+    @Override
+    public List<PredictionBatch> getPredictionsByFacility(Long facilityId, DateTime time) {
+        return queryFactory
+                .from(qPrediction)
+                .where(qPrediction.facilityId.eq(facilityId))
+                .where(isWithinPredictionWindow(time))
+                .list(predictionMapping(time));
+    }
+
+    private static BooleanExpression isWithinPredictionWindow(DateTime time) {
+        time = toPredictionResolution(time);
+        return qPrediction.start.between(time.minus(PREDICTION_WINDOW).plus(PREDICTION_RESOLUTION), time);
+    }
+
+    private static MappingProjection<PredictionBatch> predictionMapping(DateTime timeWithFullPrecision) {
+        DateTime time = toPredictionResolution(timeWithFullPrecision);
+        Path<Integer> spacesAvailableColumn = spacesAvailableAt(time);
+        return new MappingProjection<PredictionBatch>(PredictionBatch.class,
+                qPrediction.facilityId,
+                qPrediction.capacityType,
+                qPrediction.usage,
+                qPrediction.start,
+                spacesAvailableColumn) {
+            @Override
+            protected PredictionBatch map(Tuple row) {
+                PredictionBatch pb = new PredictionBatch();
+                pb.utilizationKey = new UtilizationKey(
+                        row.get(qPrediction.facilityId),
+                        row.get(qPrediction.capacityType),
+                        row.get(qPrediction.usage)
+                );
+                pb.sourceTimestamp = row.get(qPrediction.start);
+                Integer spacesAvailable = row.get(spacesAvailableColumn);
+                if (spacesAvailable != null) {
+                    pb.predictions.add(new Prediction(time, spacesAvailable));
+                }
+                return pb;
+            }
+        };
     }
 
     private static Path<Integer> spacesAvailableAt(DateTime timestamp) {
@@ -163,8 +195,16 @@ public class PredictionDao implements PredictionRepository {
         return spacesAvailableColumnsByHHmm.get(hhmm);
     }
 
-    static DateTime toPredictionResolution(DateTime timestamp) {
-        return TimeUtil.roundMinutes(PREDICTION_RESOLUTION.getMinutes(), timestamp);
+    static DateTime toPredictionResolution(DateTime time) {
+        return TimeUtil.roundMinutes(PREDICTION_RESOLUTION.getMinutes(), time);
+    }
+
+    private static Optional<PredictionBatch> asOptional(PredictionBatch pb) {
+        if (pb == null || pb.predictions.isEmpty()) {
+            return Optional.empty();
+        } else {
+            return Optional.of(pb);
+        }
     }
 
     @SuppressWarnings("unchecked")

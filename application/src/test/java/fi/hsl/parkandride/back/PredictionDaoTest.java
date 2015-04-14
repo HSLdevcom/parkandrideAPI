@@ -19,9 +19,11 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import static fi.hsl.parkandride.back.PredictionDao.*;
+import static fi.hsl.parkandride.back.PredictionDao.PREDICTION_RESOLUTION;
+import static fi.hsl.parkandride.back.PredictionDao.PREDICTION_WINDOW;
 import static fi.hsl.parkandride.core.domain.CapacityType.*;
 import static fi.hsl.parkandride.core.domain.Usage.*;
+import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class PredictionDaoTest extends AbstractDaoTest {
@@ -210,6 +212,31 @@ public class PredictionDaoTest extends AbstractDaoTest {
     }
 
 
+    // aggregate accessors
+
+    @Test
+    public void finds_all_predictions_for_a_facility() {
+        PredictionBatch pb1 = newPredictionBatch(now, new Prediction(now, 10));
+        PredictionBatch pb2 = newPredictionBatch(now, new Prediction(now, 20));
+        pb2.utilizationKey.capacityType = MOTORCYCLE;               // included: all capacity types
+        PredictionBatch pb3 = newPredictionBatch(now, new Prediction(now, 30));
+        pb3.utilizationKey.usage = COMMERCIAL;                      // included: all usages
+        PredictionBatch pb4 = newPredictionBatch(now, new Prediction(now, 40));
+        pb4.utilizationKey.facilityId = dummies.createFacility();   // excluded: other facilities
+        predictionDao.updatePredictions(pb1);
+        predictionDao.updatePredictions(pb2);
+        predictionDao.updatePredictions(pb3);
+        predictionDao.updatePredictions(pb4);
+
+        List<PredictionBatch> results = predictionDao.getPredictionsByFacility(pb1.utilizationKey.facilityId, now);
+
+        assertThat(results).containsOnly(
+                toPredictionResolution(pb1),
+                toPredictionResolution(pb2),
+                toPredictionResolution(pb3));
+    }
+
+
     // helpers
 
     private PredictionBatch newPredictionBatch(DateTime sourceTimestamp, Prediction... predictions) {
@@ -220,6 +247,24 @@ public class PredictionDaoTest extends AbstractDaoTest {
         batch.sourceTimestamp = sourceTimestamp;
         Collections.addAll(batch.predictions, predictions);
         return batch;
+    }
+
+    private static PredictionBatch toPredictionResolution(PredictionBatch pb) {
+        PredictionBatch copy = new PredictionBatch();
+        copy.utilizationKey = pb.utilizationKey;
+        copy.sourceTimestamp = toPredictionResolution(pb.sourceTimestamp);
+        copy.predictions = pb.predictions.stream()
+                .map(PredictionDaoTest::toPredictionResolution)
+                .collect(toList());
+        return copy;
+    }
+
+    private static Prediction toPredictionResolution(Prediction p) {
+        return new Prediction(toPredictionResolution(p.timestamp), p.spacesAvailable);
+    }
+
+    private static DateTime toPredictionResolution(DateTime time) {
+        return PredictionDao.toPredictionResolution(time);
     }
 
     private void assertPredictionsSavedAsIs(PredictionBatch pb) {
@@ -234,10 +279,9 @@ public class PredictionDaoTest extends AbstractDaoTest {
     }
 
     private void assertPredictionEquals(String message, Prediction expected, PredictionBatch pb) {
-        Optional<Prediction> actual = predictionDao.getPrediction(pb.utilizationKey, expected.timestamp);
+        Optional<PredictionBatch> actual = predictionDao.getPrediction(pb.utilizationKey, expected.timestamp);
         assertThat(actual).as(message).isNotEqualTo(Optional.empty());
-        assertThat(actual.get().timestamp).as(message + ".timestamp").isEqualTo(toPredictionResolution(expected.timestamp));
-        assertThat(actual.get().spacesAvailable).as(message + ".spacesAvailable").isEqualTo(expected.spacesAvailable);
+        assertThat(actual.get().predictions).as(message).containsExactly(toPredictionResolution(expected));
     }
 
     private void assertPredictionDoesNotExist(DateTime time, PredictionBatch pb) {
@@ -245,7 +289,7 @@ public class PredictionDaoTest extends AbstractDaoTest {
     }
 
     private void assertPredictionDoesNotExist(String message, DateTime time, PredictionBatch pb) {
-        Optional<Prediction> outsideRange = predictionDao.getPrediction(pb.utilizationKey, time);
+        Optional<PredictionBatch> outsideRange = predictionDao.getPrediction(pb.utilizationKey, time);
         assertThat(outsideRange).as(message).isEqualTo(Optional.empty());
     }
 }

@@ -4,6 +4,7 @@ package fi.hsl.parkandride.core.service;
 
 import fi.hsl.parkandride.back.AbstractDaoTest;
 import fi.hsl.parkandride.back.Dummies;
+import fi.hsl.parkandride.core.back.PredictorRepository;
 import fi.hsl.parkandride.core.back.UtilizationRepository;
 import fi.hsl.parkandride.core.domain.*;
 import org.joda.time.DateTime;
@@ -23,6 +24,7 @@ public class PredictionServiceTest extends AbstractDaoTest {
     @Inject Dummies dummies;
     @Inject UtilizationRepository utilizationRepository;
     @Inject PredictionService predictionService;
+    @Inject PredictorRepository predictorRepository;
 
     private final DateTime now = new DateTime();
     private long facilityId;
@@ -30,13 +32,20 @@ public class PredictionServiceTest extends AbstractDaoTest {
     @Before
     public void initTestData() {
         facilityId = dummies.createFacility();
-        Utilization u = newUtilization(facilityId, now, 0);
-        predictionService.enablePrediction(SameAsLatestPredictor.TYPE, u.getUtilizationKey());
     }
 
     @After
     public void resetRegisteredPredictors() {
         predictionService.registerPredictor(new SameAsLatestPredictor());
+    }
+
+    @Test
+    public void enables_all_registered_predictors_when_signaling_that_update_is_needed() {
+        assertThat(predictorRepository.findAllPredictors()).as("all predictors, before").isEmpty();
+
+        predictionService.signalUpdateNeeded(Collections.singletonList(newUtilization(facilityId, now, 0)));
+
+        assertThat(predictorRepository.findAllPredictors()).as("all predictors, after").isNotEmpty();
     }
 
     @Test
@@ -47,9 +56,9 @@ public class PredictionServiceTest extends AbstractDaoTest {
 
         predictionService.updatePredictions();
 
-        Optional<Prediction> prediction = predictionService.getPrediction(u.getUtilizationKey(), now.plusHours(1));
+        Optional<PredictionBatch> prediction = predictionService.getPrediction(u.getUtilizationKey(), now.plusHours(1));
         assertThat(prediction).as("prediction").isNotEqualTo(Optional.empty());
-        assertThat(prediction.get().spacesAvailable).as("prediction.spacesAvailable").isEqualTo(42);
+        assertThat(prediction.get().predictions.get(0).spacesAvailable).as("prediction.spacesAvailable").isEqualTo(42);
     }
 
     @Test

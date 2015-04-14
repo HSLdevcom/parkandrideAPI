@@ -104,7 +104,7 @@ public class FacilityController {
         return new ResponseEntity<>(FeatureCollection.ofFacilities(results), OK);
     }
 
-    @ApiOperation(value = "Update facility utilization status", authorizations = @Authorization(API_KEY))
+    @ApiOperation(value = "Update facility utilization", authorizations = @Authorization(API_KEY))
     @RequestMapping(method = PUT, value = FACILITY_UTILIZATION, produces = APPLICATION_JSON_VALUE)
     public void registerUtilization(@PathVariable(FACILITY_ID) long facilityId,
                                     @RequestBody List<Utilization> statuses,
@@ -113,6 +113,7 @@ public class FacilityController {
         facilityService.registerUtilization(facilityId, statuses, currentUser);
     }
 
+    @ApiOperation(value = "Get current facility utilization")
     @RequestMapping(method = GET, value = FACILITY_UTILIZATION, produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<Set<Utilization>> getUtilization(@PathVariable(FACILITY_ID) long facilityId) {
         log.info("getUtilization({})", facilityId);
@@ -120,6 +121,7 @@ public class FacilityController {
         return new ResponseEntity<>(utilizations, OK);
     }
 
+    @ApiOperation(value = "Get predicted facility utilization")
     @RequestMapping(method = GET, value = FACILITY_PREDICTION, produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<List<PredictionResult>> getPrediction(@PathVariable(FACILITY_ID) long facilityId,
                                                                 @ModelAttribute @Valid PredictionRequest request) {

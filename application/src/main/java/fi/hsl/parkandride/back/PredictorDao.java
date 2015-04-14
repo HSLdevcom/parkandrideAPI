@@ -57,13 +57,12 @@ public class PredictorDao implements PredictorRepository {
 
     @TransactionalWrite
     @Override
-    public PredictorState enablePrediction(String predictorType, UtilizationKey utilizationKey) {
-        // TODO: just return the ID, so that we can call this more often
+    public Long enablePredictor(String predictorType, UtilizationKey utilizationKey) {
         validationService.validate(utilizationKey);
-        PredictorState existing = queryFactory.from(qPredictor)
+        Long existing = queryFactory.from(qPredictor)
                 .where(qPredictor.type.eq(predictorType))
                 .where(utilizationKeyEquals(utilizationKey))
-                .singleResult(predictorMapping);
+                .singleResult(qPredictor.id);
         if (existing != null) {
             return existing;
         }
@@ -74,7 +73,7 @@ public class PredictorDao implements PredictorRepository {
                 .set(qPredictor.capacityType, utilizationKey.capacityType)
                 .set(qPredictor.usage, utilizationKey.usage)
                 .execute();
-        return enablePrediction(predictorType, utilizationKey);
+        return enablePredictor(predictorType, utilizationKey);
     }
 
     @TransactionalWrite

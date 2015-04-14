@@ -42,8 +42,9 @@ public class PredictionService {
     }
 
     private void signalUpdateNeeded(UtilizationKey utilizationKey) {
+        // TODO: should we cache that which predictors are already enabled? it would require resetting the cache when DevHelper.deleteAll() is called
         predictorsByType.keySet().stream()
-                .forEach(predictorType -> predictorRepository.enablePrediction(predictorType, utilizationKey));
+                .forEach(predictorType -> predictorRepository.enablePredictor(predictorType, utilizationKey));
         predictorRepository.markPredictorsNeedAnUpdate(utilizationKey);
     }
 

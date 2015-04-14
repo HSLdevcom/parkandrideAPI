@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface PredictorRepository {
 
-    PredictorState enablePrediction(String predictorType, UtilizationKey utilizationKey);
+    Long enablePredictor(String predictorType, UtilizationKey utilizationKey);
 
     void save(PredictorState state);
 

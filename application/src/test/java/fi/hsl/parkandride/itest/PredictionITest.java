@@ -187,7 +187,6 @@ public class PredictionITest extends AbstractIntegrationTest {
         u.timestamp = now;
         u.spacesAvailable = 42;
         facilityService.registerUtilization(facilityId, Collections.singletonList(u), user);
-        predictionService.enablePrediction(SameAsLatestPredictor.TYPE, u.getUtilizationKey());
         predictionService.updatePredictions();
         return u;
     }

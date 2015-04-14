@@ -38,7 +38,13 @@ public class PredictionService {
         utilizations.stream()
                 .map(Utilization::getUtilizationKey)
                 .distinct()
-                .forEach(predictorRepository::markPredictorsNeedAnUpdate);
+                .forEach(this::signalUpdateNeeded);
+    }
+
+    private void signalUpdateNeeded(UtilizationKey utilizationKey) {
+        predictorsByType.keySet().stream()
+                .forEach(predictorType -> predictorRepository.enablePrediction(predictorType, utilizationKey));
+        predictorRepository.markPredictorsNeedAnUpdate(utilizationKey);
     }
 
     public void registerPredictor(Predictor predictor) {
@@ -49,10 +55,6 @@ public class PredictionService {
         return predictorsByType.computeIfAbsent(predictorType, k -> {
             throw new IllegalArgumentException("Predictor not found: " + predictorType);
         });
-    }
-
-    public void enablePrediction(String predictorType, UtilizationKey utilizationKey) {
-        predictorRepository.enablePrediction(predictorType, utilizationKey);
     }
 
     public Optional<PredictionBatch> getPrediction(UtilizationKey utilizationKey, DateTime time) {

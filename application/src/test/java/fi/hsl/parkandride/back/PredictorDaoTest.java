@@ -40,14 +40,17 @@ public class PredictorDaoTest extends AbstractDaoTest {
 
     @Test
     public void creates_predictor_when_enabled_for_the_first_time() {
+        assertThat(predictorRepository.findAllPredictors()).as("all predictors, before").isEmpty();
+
         PredictorState state = predictorRepository.enablePrediction("the-type", utilizationKey);
 
+        assertThat(predictorRepository.findAllPredictors()).as("all predictors, after").containsOnly(state);
         // identifying fields:
         assertThat(state.predictorId).as("predictorId").isNotNull();
         assertThat(state.predictorType).as("predictorType").isEqualTo("the-type");
-        assertThat(state.utilizationKey.facilityId).as("facilityId").isEqualTo(facilityId);
-        assertThat(state.utilizationKey.capacityType).as("capacityType").isEqualTo(CapacityType.CAR);
-        assertThat(state.utilizationKey.usage).as("usage").isEqualTo(Usage.PARK_AND_RIDE);
+        assertThat(state.utilizationKey.facilityId).as("facilityId").isEqualTo(utilizationKey.facilityId);
+        assertThat(state.utilizationKey.capacityType).as("capacityType").isEqualTo(utilizationKey.capacityType);
+        assertThat(state.utilizationKey.usage).as("usage").isEqualTo(utilizationKey.usage);
         // default values:
         assertThat(state.latestUtilization).as("latestUtilization").isEqualTo(new DateTime(0)); // safe default: before all possible utilizations
         assertThat(state.moreUtilizations).as("moreUtilizations").isTrue(); // safe default: assume there are some utilizations to process

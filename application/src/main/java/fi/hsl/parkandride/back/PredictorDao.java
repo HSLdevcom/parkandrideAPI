@@ -58,6 +58,7 @@ public class PredictorDao implements PredictorRepository {
     @TransactionalWrite
     @Override
     public PredictorState enablePrediction(String predictorType, UtilizationKey utilizationKey) {
+        // TODO: just return the ID, so that we can call this more often
         validationService.validate(utilizationKey);
         PredictorState existing = queryFactory.from(qPredictor)
                 .where(qPredictor.type.eq(predictorType))
@@ -96,6 +97,13 @@ public class PredictorDao implements PredictorRepository {
                         .where(qPredictor.id.eq(predictorId))
                         .singleResult(predictorMapping),
                 "No predictors with id " + predictorId);
+    }
+
+    @TransactionalRead
+    @Override
+    public List<PredictorState> findAllPredictors() {
+        return queryFactory.from(qPredictor)
+                .list(predictorMapping);
     }
 
     @TransactionalRead

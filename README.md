@@ -51,3 +51,10 @@ psql    |postgres is used instead of the default H2
 
 Schema and default test-user (liipi) can be installed on running Postgresql with [etc/scripts/db/psql-init-db.sh](https://github.com/HSLdevcom/parkandrideAPI/blob/master/etc/scripts/db/psql-init-db.sh). See the file for example usage.
 
+# License
+
+Copyright © 2015 HSL <https://www.hsl.fi>
+
+The source code of this program is dual-licensed under the [EUPL v1.2](LICENSE-EUPL.txt) and [AGPLv3](LICENSE-AGPL.txt) licenses.
+
+The data hosted in this service is licensed under the [CC BY 4.0](http://creativecommons.org/licenses/by/4.0/) license.

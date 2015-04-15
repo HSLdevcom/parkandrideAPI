@@ -53,7 +53,7 @@ Schema and default test-user (liipi) can be installed on running Postgresql with
 
 # License
 
-Copyright © 2015 HSL <https://www.hsl.fi>
+Copyright © 2015 [HSL](https://www.hsl.fi/)
 
 The source code of this program is dual-licensed under the [EUPL v1.2](LICENSE-EUPL.txt) and [AGPLv3](LICENSE-AGPL.txt) licenses.
 

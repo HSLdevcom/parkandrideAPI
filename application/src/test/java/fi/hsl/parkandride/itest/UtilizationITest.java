@@ -225,7 +225,7 @@ public class UtilizationITest extends AbstractIntegrationTest {
                 .put(UrlSchema.FACILITY_UTILIZATION, f.id)
                 .then()
                 .spec(assertResponse(HttpStatus.BAD_REQUEST, ValidationException.class))
-                .body("violations[0].path", is(Key.TIMESTAMP))
+                .body("violations[0].path", is("[0]." + Key.TIMESTAMP))
                 .body("violations[0].type", is("NotNull"));
     }
 
@@ -247,7 +247,7 @@ public class UtilizationITest extends AbstractIntegrationTest {
                 .put(UrlSchema.FACILITY_UTILIZATION, f.id)
                 .then()
                 .spec(assertResponse(HttpStatus.BAD_REQUEST, ValidationException.class))
-                .body("violations[0].path", is(Key.TIMESTAMP))
+                .body("violations[0].path", is("[0]." + Key.TIMESTAMP))
                 .body("violations[0].type", is("NotFuture"));
     }
 
@@ -259,7 +259,7 @@ public class UtilizationITest extends AbstractIntegrationTest {
                 .put(UrlSchema.FACILITY_UTILIZATION, f.id)
                 .then()
                 .spec(assertResponse(HttpStatus.BAD_REQUEST, ValidationException.class))
-                .body("violations[0].path", is(Key.CAPACITY_TYPE))
+                .body("violations[0].path", is("[0]." + Key.CAPACITY_TYPE))
                 .body("violations[0].type", is("NotNull"));
     }
 
@@ -271,7 +271,7 @@ public class UtilizationITest extends AbstractIntegrationTest {
                 .put(UrlSchema.FACILITY_UTILIZATION, f.id)
                 .then()
                 .spec(assertResponse(HttpStatus.BAD_REQUEST, ValidationException.class))
-                .body("violations[0].path", is(Key.USAGE))
+                .body("violations[0].path", is("[0]." + Key.USAGE))
                 .body("violations[0].type", is("NotNull"));
     }
 
@@ -283,7 +283,7 @@ public class UtilizationITest extends AbstractIntegrationTest {
                 .put(UrlSchema.FACILITY_UTILIZATION, f.id)
                 .then()
                 .spec(assertResponse(HttpStatus.BAD_REQUEST, ValidationException.class))
-                .body("violations[0].path", is(Key.SPACES_AVAILABLE))
+                .body("violations[0].path", is("[0]." + Key.SPACES_AVAILABLE))
                 .body("violations[0].type", is("NotNull"));
     }
 
@@ -312,7 +312,7 @@ public class UtilizationITest extends AbstractIntegrationTest {
                 .put(UrlSchema.FACILITY_UTILIZATION, f.id)
                 .then()
                 .spec(assertResponse(HttpStatus.BAD_REQUEST, ValidationException.class))
-                .body("violations[0].path", is(Key.FACILITY_ID))
+                .body("violations[0].path", is("[0]." + Key.FACILITY_ID))
                 .body("violations[0].type", is("NotEqual"));
     }
 

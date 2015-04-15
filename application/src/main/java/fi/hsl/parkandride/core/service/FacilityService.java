@@ -96,7 +96,7 @@ public class FacilityService {
         authorize(currentUser, repository.getFacilityInfo(facilityId), FACILITY_UTILIZATION_UPDATE);
 
         initUtilizationDefaults(facilityId, utilization);
-        utilization.forEach(u -> validateUtilization(u, facilityId));
+        validateUtilizations(facilityId, utilization);
         utilizationRepository.insertUtilizations(utilization);
         predictionService.signalUpdateNeeded(utilization);
         return findLatestUtilization(facilityId);
@@ -108,7 +108,16 @@ public class FacilityService {
                 .forEach(u -> u.facilityId = facilityId);
     }
 
-    private void validateUtilization(Utilization u, long expectedFacilityId) {
+    public void validateUtilizations(long facilityId, List<Utilization> utilizations) {
+        for (int i = 0; i < utilizations.size(); i++) {
+            List<Violation> violations = Violation.withPathPrefix("[" + i + "].", validateUtilization(utilizations.get(i), facilityId));
+            if (!violations.isEmpty()) {
+                throw new ValidationException(violations);
+            }
+        }
+    }
+
+    private List<Violation> validateUtilization(Utilization u, long expectedFacilityId) {
         List<Violation> violations = new ArrayList<>();
         validationService.validate(u, violations);
         if (!Objects.equals(u.facilityId, expectedFacilityId)) {
@@ -117,9 +126,7 @@ public class FacilityService {
         if (isFarIntoFuture(u.timestamp)) {
             violations.add(new Violation("NotFuture", "timestamp", u.timestamp + " is too far into future; the current time is " + DateTime.now()));
         }
-        if (!violations.isEmpty()) {
-            throw new ValidationException(violations);
-        }
+        return violations;
     }
 
     private static boolean isFarIntoFuture(DateTime time) {

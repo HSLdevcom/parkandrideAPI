@@ -15,7 +15,13 @@ import org.mockito.Matchers;
 
 import javax.inject.Inject;
 import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Stream;
 
+import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
@@ -99,6 +105,34 @@ public class PredictionServiceTest extends AbstractDaoTest {
         verify(predictor, times(1)).predict(Matchers.<PredictorState>any(), Matchers.<UtilizationHistory>any());
     }
 
+    @Test
+    public void prevents_updating_the_same_predictor_concurrently() throws InterruptedException {
+        ConcurrentPredictorsSpy spy = new ConcurrentPredictorsSpy();
+        predictionService.registerPredictor(spy);
+        registerUtilizations(newUtilization(facilityId, now, 42));
+
+        inParallel(
+                predictionService::updatePredictions,
+                predictionService::updatePredictions);
+
+        assertThat(spy.getMaxConcurrentPredictors()).as("max concurrent predictors").isEqualTo(1);
+    }
+
+    @Test
+    public void allows_updating_different_predictors_concurrently() throws InterruptedException {
+        ConcurrentPredictorsSpy spy = new ConcurrentPredictorsSpy();
+        predictionService.registerPredictor(spy);
+        registerUtilizations(Stream.generate(() -> newUtilization(dummies.createFacility(), now, 42))
+                .limit(10)
+                .toArray(Utilization[]::new));
+
+        inParallel(
+                predictionService::updatePredictions,
+                predictionService::updatePredictions);
+
+        assertThat(spy.getMaxConcurrentPredictors()).as("max concurrent predictors").isEqualTo(2);
+    }
+
 
     // helpers
 
@@ -116,5 +150,56 @@ public class PredictionServiceTest extends AbstractDaoTest {
         u.timestamp = now;
         u.spacesAvailable = spacesAvailable;
         return u;
+    }
+
+    private static void inParallel(Runnable... commands) throws InterruptedException {
+        ExecutorService executor = Executors.newFixedThreadPool(commands.length);
+        List<Future<?>> futures = Stream.of(commands)
+                .map(executor::submit)
+                .collect(toList());
+        List<Exception> exceptions = futures.stream()
+                .flatMap(future -> {
+                    try {
+                        future.get();
+                        return Stream.empty();
+                    } catch (Exception e) {
+                        return Stream.of(e);
+                    }
+                })
+                .collect(toList());
+        if (!exceptions.isEmpty()) {
+            AssertionError e = new AssertionError("There were " + exceptions.size() + " uncaught exceptions in the background threads");
+            exceptions.forEach(e::addSuppressed);
+            throw e;
+        }
+    }
+
+    private static class ConcurrentPredictorsSpy extends SameAsLatestPredictor {
+        private final AtomicInteger concurrentPredictors = new AtomicInteger(0);
+        private final AtomicInteger maxConcurrentPredictors = new AtomicInteger(0);
+
+        @Override
+        public List<Prediction> predict(PredictorState state, UtilizationHistory history) {
+            int current = concurrentPredictors.incrementAndGet();
+            maxConcurrentPredictors.updateAndGet(max -> Math.max(max, current));
+            try {
+                increaseProbabilityOfConcurrency();
+                return super.predict(state, history);
+            } finally {
+                concurrentPredictors.decrementAndGet();
+            }
+        }
+
+        private static void increaseProbabilityOfConcurrency() {
+            try {
+                Thread.sleep(5);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        }
+
+        public int getMaxConcurrentPredictors() {
+            return maxConcurrentPredictors.get();
+        }
     }
 }

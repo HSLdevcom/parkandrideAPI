@@ -109,7 +109,7 @@ public class PredictorDaoTest extends AbstractDaoTest {
     public void finds_recently_enabled_predictors_even_if_they_have_no_utilizations() {
         PredictorState state = enablePredictor("type", utilizationKey);
 
-        assertThat(predictorRepository.findPredictorsNeedingUpdate()).containsExactly(state);
+        assertThat(predictorRepository.findPredictorsNeedingUpdate()).containsExactly(state.predictorId);
     }
 
     @Test
@@ -130,7 +130,7 @@ public class PredictorDaoTest extends AbstractDaoTest {
         predictorRepository.markPredictorsNeedAnUpdate(utilizationKey);
 
         state.moreUtilizations = true;
-        assertThat(predictorRepository.findPredictorsNeedingUpdate()).containsExactly(state);
+        assertThat(predictorRepository.findPredictorsNeedingUpdate()).containsExactly(state.predictorId);
     }
 
 

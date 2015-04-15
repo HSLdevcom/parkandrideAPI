@@ -9,11 +9,13 @@ import com.google.common.collect.ImmutableSet;
 
 import javax.annotation.Nullable;
 import javax.validation.ConstraintViolation;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import static com.google.common.collect.Maps.filterKeys;
 import static fi.hsl.parkandride.core.domain.PropertyPathTranslator.translate;
+import static java.util.stream.Collectors.toList;
 
 public class Violation {
 
@@ -72,5 +74,11 @@ public class Violation {
                 .add("path", path)
                 .add("message", message)
                 .toString();
+    }
+
+    public static List<Violation> withPathPrefix(String pathPrefix, List<Violation> violations) {
+        return violations.stream()
+                .map(v -> new Violation(v.type, v.args, pathPrefix + v.path, v.message))
+                .collect(toList());
     }
 }

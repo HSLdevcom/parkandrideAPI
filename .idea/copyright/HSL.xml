@@ -1,6 +1,6 @@
 <component name="CopyrightManager">
   <copyright>
-    <option name="notice" value="Copyright © &amp;#36;today.year HSL" />
+    <option name="notice" value="Copyright © &amp;#36;today.year HSL &lt;https://www.hsl.fi&gt;&#10;This program is dual-licensed under the EUPL v1.2 and AGPLv3 licenses." />
     <option name="keyword" value="Copyright" />
     <option name="allowReplaceKeyword" value="" />
     <option name="myName" value="HSL" />

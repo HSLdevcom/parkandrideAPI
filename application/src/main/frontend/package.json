@@ -1,11 +1,11 @@
 {
-  "author": "TODO(author)",
+  "author": "HSL",
   "name": "parkandrideAPI",
   "version": "0.0.1-SNAPSHOT",
   "homepage": "https://github.com/HSLdevcom/parkandrideAPI",
   "licenses": {
-    "type": "TODO(licence type)",
-    "url": "TODO(licence url)"
+    "type": "EUPL v1.2",
+    "url": "https://github.com/HSLdevcom/parkandrideAPI/blob/master/LICENSE-EUPL.txt"
   },
   "bugs": "https://github.com/HSLdevcom/parkandrideAPI",
   "repository": {

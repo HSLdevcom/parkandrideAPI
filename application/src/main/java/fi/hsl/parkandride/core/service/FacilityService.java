@@ -2,10 +2,13 @@
 
 package fi.hsl.parkandride.core.service;
 
+import fi.hsl.parkandride.back.PredictionDao;
 import fi.hsl.parkandride.core.back.ContactRepository;
 import fi.hsl.parkandride.core.back.FacilityRepository;
 import fi.hsl.parkandride.core.back.UtilizationRepository;
 import fi.hsl.parkandride.core.domain.*;
+import org.joda.time.DateTime;
+import org.joda.time.Seconds;
 
 import java.util.*;
 
@@ -89,13 +92,14 @@ public class FacilityService {
     }
 
     @TransactionalWrite
-    public void registerUtilization(long facilityId, List<Utilization> utilization, User currentUser) {
+    public Set<Utilization> registerUtilization(long facilityId, List<Utilization> utilization, User currentUser) {
         authorize(currentUser, repository.getFacilityInfo(facilityId), FACILITY_UTILIZATION_UPDATE);
 
         initUtilizationDefaults(facilityId, utilization);
         utilization.forEach(u -> validateUtilization(u, facilityId));
         utilizationRepository.insertUtilizations(utilization);
         predictionService.signalUpdateNeeded(utilization);
+        return findLatestUtilization(facilityId);
     }
 
     private static void initUtilizationDefaults(long facilityId, List<Utilization> utilization) {
@@ -110,9 +114,18 @@ public class FacilityService {
         if (!Objects.equals(u.facilityId, expectedFacilityId)) {
             violations.add(new Violation("NotEqual", "facilityId", "Expected to be " + expectedFacilityId + " but was " + u.facilityId));
         }
+        if (isFarIntoFuture(u.timestamp)) {
+            violations.add(new Violation("NotFuture", "timestamp", u.timestamp + " is too far into future; the current time is " + DateTime.now()));
+        }
         if (!violations.isEmpty()) {
             throw new ValidationException(violations);
         }
+    }
+
+    private static boolean isFarIntoFuture(DateTime time) {
+        Seconds gracePeriod = PredictionDao.PREDICTION_RESOLUTION.toStandardSeconds().dividedBy(2);
+        DateTime timeLimit = DateTime.now().plus(gracePeriod);
+        return time != null && time.isAfter(timeLimit);
     }
 
     @TransactionalRead

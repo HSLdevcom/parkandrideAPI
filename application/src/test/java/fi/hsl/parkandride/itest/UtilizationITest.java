@@ -226,8 +226,29 @@ public class UtilizationITest extends AbstractIntegrationTest {
                 .then()
                 .spec(assertResponse(HttpStatus.BAD_REQUEST, ValidationException.class))
                 .body("violations[0].path", is(Key.TIMESTAMP))
-                .body("violations[0].type", is("NotNull"))
-        ;
+                .body("violations[0].type", is("NotNull"));
+    }
+
+    @Test
+    public void timestamp_may_be_a_little_into_the_future() { // in case the server clocks are in different time
+        givenWithContent(authToken)
+                .body(minValidPayload().put(Key.TIMESTAMP, DateTime.now().plusMinutes(2)).asArray())
+                .when()
+                .put(UrlSchema.FACILITY_UTILIZATION, f.id)
+                .then()
+                .statusCode(HttpStatus.OK.value());
+    }
+
+    @Test
+    public void timestamp_must_not_be_far_into_the_future() {
+        givenWithContent(authToken)
+                .body(minValidPayload().put(Key.TIMESTAMP, DateTime.now().plusMinutes(3)).asArray())
+                .when()
+                .put(UrlSchema.FACILITY_UTILIZATION, f.id)
+                .then()
+                .spec(assertResponse(HttpStatus.BAD_REQUEST, ValidationException.class))
+                .body("violations[0].path", is(Key.TIMESTAMP))
+                .body("violations[0].type", is("NotFuture"));
     }
 
     @Test

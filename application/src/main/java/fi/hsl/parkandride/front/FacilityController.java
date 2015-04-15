@@ -106,19 +106,20 @@ public class FacilityController {
 
     @ApiOperation(value = "Update facility utilization", authorizations = @Authorization(API_KEY))
     @RequestMapping(method = PUT, value = FACILITY_UTILIZATION, produces = APPLICATION_JSON_VALUE)
-    public void registerUtilization(@PathVariable(FACILITY_ID) long facilityId,
-                                    @RequestBody List<Utilization> statuses,
-                                    User currentUser) {
+    public ResponseEntity<Set<Utilization>> registerUtilization(@PathVariable(FACILITY_ID) long facilityId,
+                                                                @RequestBody List<Utilization> utilization,
+                                                                User currentUser) {
         log.info("registerUtilization({})", facilityId);
-        facilityService.registerUtilization(facilityId, statuses, currentUser);
+        Set<Utilization> results = facilityService.registerUtilization(facilityId, utilization, currentUser);
+        return new ResponseEntity<>(results, OK);
     }
 
     @ApiOperation(value = "Get current facility utilization")
     @RequestMapping(method = GET, value = FACILITY_UTILIZATION, produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<Set<Utilization>> getUtilization(@PathVariable(FACILITY_ID) long facilityId) {
         log.info("getUtilization({})", facilityId);
-        Set<Utilization> utilizations = facilityService.findLatestUtilization(facilityId);
-        return new ResponseEntity<>(utilizations, OK);
+        Set<Utilization> results = facilityService.findLatestUtilization(facilityId);
+        return new ResponseEntity<>(results, OK);
     }
 
     @ApiOperation(value = "Get predicted facility utilization")

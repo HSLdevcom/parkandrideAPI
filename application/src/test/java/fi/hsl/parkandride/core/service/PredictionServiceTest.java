@@ -15,7 +15,13 @@ import org.mockito.Matchers;
 
 import javax.inject.Inject;
 import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Stream;
 
+import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
@@ -99,6 +105,27 @@ public class PredictionServiceTest extends AbstractDaoTest {
         verify(predictor, times(1)).predict(Matchers.<PredictorState>any(), Matchers.<UtilizationHistory>any());
     }
 
+    @Test
+    public void concurrent_predictor_updates_will_block_at_the_database_level() throws InterruptedException {
+        AtomicInteger concurrentPredictors = new AtomicInteger(0);
+        AtomicInteger maxConcurrentPredictors = new AtomicInteger(0);
+        predictionService.registerPredictor(new SameAsLatestPredictor() {
+            @Override
+            public List<Prediction> predict(PredictorState state, UtilizationHistory history) {
+                int current = concurrentPredictors.incrementAndGet();
+                maxConcurrentPredictors.updateAndGet(max -> Math.max(max, current));
+                return super.predict(state, history);
+            }
+        });
+        registerUtilizations(newUtilization(facilityId, now, 42));
+
+        inParallel(
+                predictionService::updatePredictions,
+                predictionService::updatePredictions);
+
+        assertThat(maxConcurrentPredictors.get()).isEqualTo(1);
+    }
+
 
     // helpers
 
@@ -116,5 +143,27 @@ public class PredictionServiceTest extends AbstractDaoTest {
         u.timestamp = now;
         u.spacesAvailable = spacesAvailable;
         return u;
+    }
+
+    private static void inParallel(Runnable... commands) throws InterruptedException {
+        ExecutorService executor = Executors.newFixedThreadPool(commands.length);
+        List<Future<?>> futures = Stream.of(commands)
+                .map(executor::submit)
+                .collect(toList());
+        List<Exception> exceptions = futures.stream()
+                .flatMap(future -> {
+                    try {
+                        future.get();
+                        return Stream.empty();
+                    } catch (Exception e) {
+                        return Stream.of(e);
+                    }
+                })
+                .collect(toList());
+        if (!exceptions.isEmpty()) {
+            AssertionError e = new AssertionError("There were " + exceptions.size() + " uncaught exceptions in the background threads");
+            exceptions.forEach(e::addSuppressed);
+            throw e;
+        }
     }
 }

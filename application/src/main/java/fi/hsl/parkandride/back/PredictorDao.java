@@ -110,6 +110,7 @@ public class PredictorDao implements PredictorRepository {
     public List<PredictorState> findPredictorsNeedingUpdate() {
         return queryFactory.from(qPredictor)
                 .where(qPredictor.moreUtilizations.eq(true))
+                .forUpdate() // TODO: do small transactions, locking at the level of a single predictor for better concurrency
                 .list(predictorMapping);
     }
 

@@ -70,10 +70,7 @@ public class PredictionService {
     @TransactionalWrite
     public void updatePredictions() {
         log.info("updatePredictions");
-
-        // TODO: block other servers from processing the same work set (use a message queue? choose one at random and lock it?)
         // TODO: consider the update interval of prediction types? or leave that up to the predictor?
-
         for (PredictorState state : predictorRepository.findPredictorsNeedingUpdate()) {
             state.moreUtilizations = false; // by default mark everything as processed, but allow the predictor to override it
             Predictor predictor = getPredictor(state.predictorType);

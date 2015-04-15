@@ -15,9 +15,11 @@ public interface PredictorRepository {
 
     PredictorState getById(Long predictorId);
 
+    PredictorState getForUpdate(Long predictorId);
+
     List<PredictorState> findAllPredictors();
 
-    List<PredictorState> findPredictorsNeedingUpdate();
+    List<Long> findPredictorsNeedingUpdate();
 
     void markPredictorsNeedAnUpdate(UtilizationKey utilizationKey);
 }

@@ -106,24 +106,31 @@ public class PredictionServiceTest extends AbstractDaoTest {
     }
 
     @Test
-    public void concurrent_predictor_updates_will_block_at_the_database_level() throws InterruptedException {
-        AtomicInteger concurrentPredictors = new AtomicInteger(0);
-        AtomicInteger maxConcurrentPredictors = new AtomicInteger(0);
-        predictionService.registerPredictor(new SameAsLatestPredictor() {
-            @Override
-            public List<Prediction> predict(PredictorState state, UtilizationHistory history) {
-                int current = concurrentPredictors.incrementAndGet();
-                maxConcurrentPredictors.updateAndGet(max -> Math.max(max, current));
-                return super.predict(state, history);
-            }
-        });
+    public void prevents_updating_the_same_predictor_concurrently() throws InterruptedException {
+        ConcurrentPredictorsSpy spy = new ConcurrentPredictorsSpy();
+        predictionService.registerPredictor(spy);
         registerUtilizations(newUtilization(facilityId, now, 42));
 
         inParallel(
                 predictionService::updatePredictions,
                 predictionService::updatePredictions);
 
-        assertThat(maxConcurrentPredictors.get()).isEqualTo(1);
+        assertThat(spy.getMaxConcurrentPredictors()).as("max concurrent predictors").isEqualTo(1);
+    }
+
+    @Test
+    public void allows_updating_different_predictors_concurrently() throws InterruptedException {
+        ConcurrentPredictorsSpy spy = new ConcurrentPredictorsSpy();
+        predictionService.registerPredictor(spy);
+        registerUtilizations(Stream.generate(() -> newUtilization(dummies.createFacility(), now, 42))
+                .limit(10)
+                .toArray(Utilization[]::new));
+
+        inParallel(
+                predictionService::updatePredictions,
+                predictionService::updatePredictions);
+
+        assertThat(spy.getMaxConcurrentPredictors()).as("max concurrent predictors").isEqualTo(2);
     }
 
 
@@ -164,6 +171,35 @@ public class PredictionServiceTest extends AbstractDaoTest {
             AssertionError e = new AssertionError("There were " + exceptions.size() + " uncaught exceptions in the background threads");
             exceptions.forEach(e::addSuppressed);
             throw e;
+        }
+    }
+
+    private static class ConcurrentPredictorsSpy extends SameAsLatestPredictor {
+        private final AtomicInteger concurrentPredictors = new AtomicInteger(0);
+        private final AtomicInteger maxConcurrentPredictors = new AtomicInteger(0);
+
+        @Override
+        public List<Prediction> predict(PredictorState state, UtilizationHistory history) {
+            int current = concurrentPredictors.incrementAndGet();
+            maxConcurrentPredictors.updateAndGet(max -> Math.max(max, current));
+            try {
+                increaseProbabilityOfConcurrency();
+                return super.predict(state, history);
+            } finally {
+                concurrentPredictors.decrementAndGet();
+            }
+        }
+
+        private static void increaseProbabilityOfConcurrency() {
+            try {
+                Thread.sleep(5);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        }
+
+        public int getMaxConcurrentPredictors() {
+            return maxConcurrentPredictors.get();
         }
     }
 }

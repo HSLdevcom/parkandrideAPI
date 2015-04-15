@@ -10,7 +10,12 @@ import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.support.TransactionTemplate;
 
+import javax.inject.Inject;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
@@ -24,6 +29,7 @@ public class PredictionService {
     private final UtilizationRepository utilizationRepository;
     private final PredictionRepository predictionRepository;
     private final PredictorRepository predictorRepository;
+    @Inject PlatformTransactionManager transactionManager;
 
     private final ConcurrentMap<String, Predictor> predictorsByType = new ConcurrentHashMap<>();
 
@@ -67,18 +73,35 @@ public class PredictionService {
     }
 
     @Scheduled(cron = "0 */5 * * * *") // every 5 minutes to match PredictionDao.PREDICTION_RESOLUTION
-    @TransactionalWrite
     public void updatePredictions() {
         log.info("updatePredictions");
-        // TODO: consider the update interval of prediction types? or leave that up to the predictor?
-        for (PredictorState state : predictorRepository.findPredictorsNeedingUpdate()) {
-            state.moreUtilizations = false; // by default mark everything as processed, but allow the predictor to override it
-            Predictor predictor = getPredictor(state.predictorType);
-            List<Prediction> predictions = predictor.predict(state, new UtilizationHistoryImpl(state.utilizationKey));
-            // TODO: save to prediction log
-            predictionRepository.updatePredictions(toPredictionBatch(state, predictions));
-            predictorRepository.save(state);
+        TransactionTemplate txTemplate = new TransactionTemplate(transactionManager);
+        txTemplate.setIsolationLevel(TransactionDefinition.ISOLATION_READ_COMMITTED); // TODO: set in Core/JdbcConfiguration
+        txTemplate.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
+
+        for (Long predictorId : findPredictorsNeedingUpdate()) {
+            txTemplate.execute(tx -> {
+                updatePredictor(predictorId);
+                return null;
+            });
         }
+    }
+
+    private List<Long> findPredictorsNeedingUpdate() {
+        List<Long> predictorIds = predictorRepository.findPredictorsNeedingUpdate();
+        Collections.shuffle(predictorIds); // distribute the load over all servers
+        return predictorIds;
+    }
+
+    private void updatePredictor(Long predictorId) {
+        PredictorState state = predictorRepository.getForUpdate(predictorId);
+        state.moreUtilizations = false; // by default mark everything as processed, but allow the predictor to override it
+        Predictor predictor = getPredictor(state.predictorType);
+        // TODO: consider the update interval of prediction types? or leave that up to the predictor?
+        List<Prediction> predictions = predictor.predict(state, new UtilizationHistoryImpl(state.utilizationKey));
+        // TODO: save to prediction log
+        predictionRepository.updatePredictions(toPredictionBatch(state, predictions));
+        predictorRepository.save(state);
     }
 
     private static PredictionBatch toPredictionBatch(PredictorState state, List<Prediction> predictions) {

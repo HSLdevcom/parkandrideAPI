@@ -100,6 +100,17 @@ public class PredictorDao implements PredictorRepository {
 
     @TransactionalRead
     @Override
+    public PredictorState getForUpdate(Long predictorId) {
+        return Objects.requireNonNull(
+                queryFactory.from(qPredictor)
+                        .where(qPredictor.id.eq(predictorId))
+                        .forUpdate()
+                        .singleResult(predictorMapping),
+                "No predictors with id " + predictorId);
+    }
+
+    @TransactionalRead
+    @Override
     public List<PredictorState> findAllPredictors() {
         return queryFactory.from(qPredictor)
                 .list(predictorMapping);
@@ -107,11 +118,10 @@ public class PredictorDao implements PredictorRepository {
 
     @TransactionalRead
     @Override
-    public List<PredictorState> findPredictorsNeedingUpdate() {
+    public List<Long> findPredictorsNeedingUpdate() {
         return queryFactory.from(qPredictor)
                 .where(qPredictor.moreUtilizations.eq(true))
-                .forUpdate() // TODO: do small transactions, locking at the level of a single predictor for better concurrency
-                .list(predictorMapping);
+                .list(qPredictor.id);
     }
 
     @TransactionalWrite

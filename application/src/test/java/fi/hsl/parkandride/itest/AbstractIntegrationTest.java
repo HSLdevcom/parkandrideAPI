@@ -3,16 +3,20 @@
 
 package fi.hsl.parkandride.itest;
 
-import static com.jayway.restassured.RestAssured.given;
-import static com.jayway.restassured.config.ObjectMapperConfig.objectMapperConfig;
-import static com.jayway.restassured.config.RestAssuredConfig.config;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
-
-import java.io.IOException;
-
-import javax.inject.Inject;
-
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.joda.JodaModule;
+import com.google.common.base.Charsets;
+import com.google.common.io.Resources;
+import com.jayway.restassured.RestAssured;
+import com.jayway.restassured.builder.RequestSpecBuilder;
+import com.jayway.restassured.builder.ResponseSpecBuilder;
+import com.jayway.restassured.specification.RequestSpecification;
+import com.jayway.restassured.specification.ResponseSpecification;
+import fi.hsl.parkandride.Application;
+import fi.hsl.parkandride.DevApiProfileAppender;
+import fi.hsl.parkandride.dev.DevHelper;
+import org.hamcrest.Matcher;
 import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Value;
@@ -24,23 +28,17 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.test.context.web.WebAppConfiguration;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.datatype.joda.JodaModule;
-import com.google.common.base.Charsets;
-import com.google.common.io.Resources;
-import com.jayway.restassured.RestAssured;
-import com.jayway.restassured.builder.RequestSpecBuilder;
-import com.jayway.restassured.builder.ResponseSpecBuilder;
-import com.jayway.restassured.specification.RequestSpecification;
-import com.jayway.restassured.specification.ResponseSpecification;
+import javax.inject.Inject;
+import java.io.IOException;
 
-import fi.hsl.parkandride.Application;
-import fi.hsl.parkandride.DevApiProfileAppender;
-import fi.hsl.parkandride.dev.DevHelper;
+import static com.jayway.restassured.RestAssured.given;
+import static com.jayway.restassured.config.ObjectMapperConfig.objectMapperConfig;
+import static com.jayway.restassured.config.RestAssuredConfig.config;
+import static org.hamcrest.Matchers.greaterThanOrEqualTo;
+import static org.hamcrest.Matchers.is;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@TransactionConfiguration(defaultRollback=false)
+@TransactionConfiguration(defaultRollback = false)
 @SpringApplicationConfiguration(classes = Application.class)
 @ActiveProfiles(resolver = DevApiProfileAppender.class)
 @WebAppConfiguration
@@ -57,7 +55,7 @@ public abstract class AbstractIntegrationTest {
 
         objectMapper.registerModule(new JodaModule());
         objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
-        RestAssured.config =  config().objectMapperConfig(objectMapperConfig().jackson2ObjectMapperFactory((cls, charset) -> objectMapper));
+        RestAssured.config = config().objectMapperConfig(objectMapperConfig().jackson2ObjectMapperFactory((cls, charset) -> objectMapper));
     }
 
     @Inject
@@ -86,10 +84,17 @@ public abstract class AbstractIntegrationTest {
         }
     }
 
+    public static ResponseSpecification assertResponse(Class<?> exClass) {
+        return assertResponse(null, exClass);
+    }
+
     public static ResponseSpecification assertResponse(HttpStatus status, Class<?> exClass) {
+        Matcher<Integer> statusMatcher = (status == null)
+                ? is(greaterThanOrEqualTo(HttpStatus.BAD_REQUEST.value()))
+                : is(status.value());
         return new ResponseSpecBuilder()
-                .expectStatusCode(status.value())
-                .expectBody("status", is(status.value()))
+                .expectStatusCode(statusMatcher)
+                .expectBody("status", statusMatcher)
                 .expectBody("exception", is(exClass.getCanonicalName()))
                 .expectBody("timestamp", new ISO8601UTCTimestampMatcher())
                 .build();

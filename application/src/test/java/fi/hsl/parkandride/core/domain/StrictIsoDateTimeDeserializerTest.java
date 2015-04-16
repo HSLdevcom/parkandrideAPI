@@ -36,6 +36,7 @@ public class StrictIsoDateTimeDeserializerTest {
     @Parameters({
             "1429178598",               // unix timestamp
             "1429178598648",            // unix timestamp in milliseconds
+            "2015-04-12 18:51:19Z",     // no date-time delimiter
             "15-04-12T18:51:19Z",       // year with 2 numbers
             "20150412T185119Z",         // no date nor time separators
             "20150412T18:51:19Z",       // no date separators

@@ -5,6 +5,7 @@ package fi.hsl.parkandride.core.domain;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.google.common.base.MoreObjects;
 import com.wordnik.swagger.annotations.ApiModelProperty;
@@ -31,6 +32,7 @@ public class Utilization {
     @NotNull
     @ApiModelProperty(required = true)
     @JsonSerialize(using = DefaultTimeZoneDateTimeSerializer.class)
+    @JsonDeserialize(using = StrictIsoDateTimeDeserializer.class)
     public DateTime timestamp;
 
     @NotNull

@@ -20,6 +20,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 
 import javax.inject.Inject;
 import java.util.List;
@@ -30,8 +31,7 @@ import static fi.hsl.parkandride.core.domain.PricingMethod.PARK_AND_RIDE_247_FRE
 import static fi.hsl.parkandride.core.domain.Role.OPERATOR_API;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.*;
 import static org.springframework.http.HttpStatus.*;
 
 public class UtilizationITest extends AbstractIntegrationTest {
@@ -128,10 +128,9 @@ public class UtilizationITest extends AbstractIntegrationTest {
     }
 
     @Test
-    public void accepts_epoch_timestamp_in_milliseconds() {
-        submitUtilization(OK, f.id, minValidPayload().put(Key.TIMESTAMP, 1420110000123L));
-
-        assertThat(getUtilizationTimestamp()).isEqualTo(new DateTime(2015, 1, 1, 11, 0, 0, 123, DateTimeZone.UTC));
+    public void rejects_epoch_timestamps() {
+        submitUtilization(BAD_REQUEST, f.id, minValidPayload().put(Key.TIMESTAMP, System.currentTimeMillis() / 1000)); // in seconds
+        submitUtilization(BAD_REQUEST, f.id, minValidPayload().put(Key.TIMESTAMP, System.currentTimeMillis())); // in milliseconds
     }
 
     @Test
@@ -161,6 +160,32 @@ public class UtilizationITest extends AbstractIntegrationTest {
                 .spec(assertResponse(ValidationException.class))
                 .body("violations[0].path", is("[0]." + Key.TIMESTAMP))
                 .body("violations[0].type", is("NotNull"));
+    }
+
+    @Test
+    public void timestamp_must_have_timezone() {
+        submitUtilization(BAD_REQUEST, f.id, minValidPayload().put(Key.TIMESTAMP, "2015-01-01T11:00:00.000"))
+                .spec(assertResponse(HttpMessageNotReadableException.class))
+                .body("violations[0].path", is("[0]." + Key.TIMESTAMP))
+                .body("violations[0].type", is("TypeMismatch"))
+                .body("violations[0].message", containsString("expected ISO 8601 date time with timezone"));
+    }
+
+    @Test
+    public void timestamp_must_have_at_least_second_precision() {
+        submitUtilization(OK, f.id, minValidPayload().put(Key.TIMESTAMP, "2015-01-01T11:00:00Z")); // second precision
+
+        submitUtilization(BAD_REQUEST, f.id, minValidPayload().put(Key.TIMESTAMP, "2015-01-01T11:00Z")) // minute precision
+                .spec(assertResponse(HttpMessageNotReadableException.class))
+                .body("violations[0].path", is("[0]." + Key.TIMESTAMP))
+                .body("violations[0].type", is("TypeMismatch"))
+                .body("violations[0].message", containsString("expected ISO 8601 date time with timezone"));
+
+        submitUtilization(BAD_REQUEST, f.id, minValidPayload().put(Key.TIMESTAMP, "2015-01-01")) // date precision
+                .spec(assertResponse(HttpMessageNotReadableException.class))
+                .body("violations[0].path", is("[0]." + Key.TIMESTAMP))
+                .body("violations[0].type", is("TypeMismatch"))
+                .body("violations[0].message", containsString("expected ISO 8601 date time with timezone"));
     }
 
     @Test
@@ -222,7 +247,7 @@ public class UtilizationITest extends AbstractIntegrationTest {
                 .put(Key.CAPACITY_TYPE, CapacityType.CAR)
                 .put(Key.USAGE, Usage.PARK_AND_RIDE)
                 .put(Key.SPACES_AVAILABLE, 42)
-                .put(Key.TIMESTAMP, DateTime.now().getMillis());
+                .put(Key.TIMESTAMP, DateTime.now());
     }
 
     private ValidatableResponse submitUtilization(HttpStatus expectedStatus, Long facilityId, JSONObjectBuilder builder) {

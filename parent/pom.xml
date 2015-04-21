@@ -25,6 +25,7 @@
 
     <maven-plugin.coveralls.version>3.0.0</maven-plugin.coveralls.version>
     <maven-plugin.jacoco.version>0.7.2.201409121644</maven-plugin.jacoco.version>
+    <generatedSnippetsDir>${project.build.directory}/generated-snippets</generatedSnippetsDir>
   </properties>
 
   <build>
@@ -71,7 +72,11 @@
         <configuration>
           <includes>
             <include>**/*Test.class</include>
+            <include>**/*Documentation.class</include>
           </includes>
+          <systemPropertyVariables>
+            <org.springframework.restdocs.outputDir>${generatedSnippetsDir}</org.springframework.restdocs.outputDir>
+          </systemPropertyVariables>
         </configuration>
       </plugin>
 

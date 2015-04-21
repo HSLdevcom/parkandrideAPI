@@ -118,6 +118,12 @@
         <version>${jackson.version}</version>
       </dependency>
 
+      <dependency>
+        <groupId>org.springframework.restdocs</groupId>
+        <artifactId>spring-restdocs</artifactId>
+        <version>0.1.0.BUILD-20150421.092914-36</version>
+      </dependency>
+
     </dependencies>
   </dependencyManagement>
 
@@ -157,10 +163,29 @@
   </dependencies>
 
   <repositories>
+
     <repository>
       <id>spring-releases</id>
       <url>http://repo.spring.io/libs-release</url>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
     </repository>
+
+    <repository>
+      <id>spring-snapshots</id>
+      <url>https://repo.spring.io/snapshot</url>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </repository>
+
     <repository>
       <id>jcenter-release</id>
       <name>jcenter</name>
@@ -172,6 +197,7 @@
         <enabled>false</enabled>
       </snapshots>
     </repository>
+
     <repository>
       <id>querydsl-snapshots</id>
       <url>https://oss.sonatype.org/content/repositories/snapshots</url>
@@ -182,12 +208,21 @@
         <enabled>true</enabled>
       </snapshots>
     </repository>
+
   </repositories>
   <pluginRepositories>
+
     <pluginRepository>
       <id>spring-releases</id>
       <url>http://repo.spring.io/libs-release</url>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
     </pluginRepository>
+
   </pluginRepositories>
 
 </project>

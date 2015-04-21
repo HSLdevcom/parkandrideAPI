@@ -1,1 +1,14 @@
 = HSL Liipi Documentation
+:doctype: book
+:toc:
+:sectanchors:
+:sectlinks:
+:toclevels: 4
+:source-highlighter: highlightjs
+
+[[authentication]]
+= Authentication
+
+Mutable operations require authentication using the `Authorization` header as shown in the following example. The value is the string `Bearer` followed by the API user's token.
+
+include::{generated}/authentication-example/http-request.adoc[]

@@ -211,6 +211,12 @@
       <scope>test</scope>
     </dependency>
 
+    <dependency>
+      <groupId>org.springframework.restdocs</groupId>
+      <artifactId>spring-restdocs</artifactId>
+      <scope>test</scope>
+    </dependency>
+
   </dependencies>
 
   <build>
@@ -399,6 +405,7 @@
   </build>
 
   <profiles>
+
     <profile>
       <!-- Skips UI tests -->
       <id>noui</id>
@@ -415,6 +422,24 @@
         </plugins>
       </build>
     </profile>
+
+    <profile>
+      <!-- Runs only documentation tests -->
+      <id>docs</id>
+      <build>
+        <plugins>
+          <plugin>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <configuration>
+              <includes>
+                <include>**/*Documentation.class</include>
+              </includes>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
   </profiles>
 
 </project>

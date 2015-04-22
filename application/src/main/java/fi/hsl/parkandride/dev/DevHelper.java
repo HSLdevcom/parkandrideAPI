@@ -74,7 +74,7 @@ public class DevHelper {
         UserSecret userSecret;
         try {
             userSecret = userRepository.getUser(newUser.username);
-            if (!Objects.equals(newUser.operatorId, userSecret.user.operatorId)) {
+            if (newUser.operatorId != null && !Objects.equals(newUser.operatorId, userSecret.user.operatorId)) {
                 throw new IllegalArgumentException("Tried to create user '" + newUser.username + "' with operatorId " + newUser.operatorId
                         + ", but there already was a user with same name and operatorId " + userSecret.user.operatorId
                         + " and we can't change the operatorId afterwards");

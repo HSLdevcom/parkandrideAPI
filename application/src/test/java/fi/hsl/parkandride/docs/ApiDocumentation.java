@@ -23,7 +23,6 @@ import javax.inject.Inject;
 import static fi.hsl.parkandride.core.domain.Role.OPERATOR_API;
 import static org.springframework.restdocs.RestDocumentation.document;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class ApiDocumentation extends AbstractIntegrationTest {
@@ -53,7 +52,7 @@ public class ApiDocumentation extends AbstractIntegrationTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("[]");
         mockMvc.perform(request)
-                .andDo(print()).andExpect(status().isOk())
+                .andExpect(status().isOk())
                 .andDo(document("authentication-example"));
     }
 

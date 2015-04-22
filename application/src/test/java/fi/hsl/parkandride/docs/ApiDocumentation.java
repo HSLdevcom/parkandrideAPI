@@ -38,6 +38,7 @@ public class ApiDocumentation extends AbstractIntegrationTest {
 
     @Before
     public void init() {
+        devHelper.deleteAll();
         mockMvc = MockMvcBuilders.webAppContextSetup(context)
                 .apply(new RestDocumentationConfigurer())
                 .build();

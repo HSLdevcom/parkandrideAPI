@@ -10,7 +10,6 @@ import fi.hsl.parkandride.back.PredictionDao;
 import fi.hsl.parkandride.core.domain.*;
 import fi.hsl.parkandride.core.service.FacilityService;
 import fi.hsl.parkandride.core.service.PredictionService;
-import fi.hsl.parkandride.core.service.TransactionalWrite;
 import fi.hsl.parkandride.front.UrlSchema;
 import org.joda.time.DateTime;
 import org.junit.Before;
@@ -43,7 +42,6 @@ public class PredictionITest extends AbstractIntegrationTest {
     private final DateTime now = new DateTime();
 
     @Before
-    @TransactionalWrite
     public void initFixture() {
         devHelper.deleteAll();
         facilityId = dummies.createFacility();

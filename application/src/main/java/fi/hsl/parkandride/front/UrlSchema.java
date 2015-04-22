@@ -18,6 +18,7 @@ public final class UrlSchema {
     public static final String API_KEY = "apiKey";
 
     public static final String DOCS = "/docs";
+    public static final String DOCS2 = "/docs2";
 
     public static final String API = "/api/v1";
 

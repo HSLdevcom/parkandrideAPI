@@ -44,6 +44,9 @@ public class UtilizationDao implements UtilizationRepository {
     @TransactionalWrite
     @Override
     public void insertUtilizations(List<Utilization> utilizations) {
+        if (utilizations.isEmpty()) {
+            return;
+        }
         SQLInsertClause insertBatch = queryFactory.insert(qUtilization);
         utilizations.forEach(u -> {
             insertBatch.set(qUtilization.facilityId, u.facilityId);

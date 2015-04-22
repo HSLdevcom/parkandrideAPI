@@ -19,6 +19,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;
+import java.util.Objects;
 
 import static fi.hsl.parkandride.back.ContactDao.CONTACT_ID_SEQ;
 import static fi.hsl.parkandride.back.FacilityDao.FACILITY_ID_SEQ;
@@ -73,6 +74,11 @@ public class DevHelper {
         UserSecret userSecret;
         try {
             userSecret = userRepository.getUser(newUser.username);
+            if (newUser.operatorId != null && !Objects.equals(newUser.operatorId, userSecret.user.operatorId)) {
+                throw new IllegalArgumentException("Tried to create user '" + newUser.username + "' with operatorId " + newUser.operatorId
+                        + ", but there already was a user with same name and operatorId " + userSecret.user.operatorId
+                        + " and we can't change the operatorId afterwards");
+            }
             if (newUser.role != userSecret.user.role) {
                 userRepository.updateUser(userSecret.user.id, newUser);
             }

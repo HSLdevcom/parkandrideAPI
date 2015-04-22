@@ -10,6 +10,7 @@ import fi.hsl.parkandride.core.back.ContactRepository;
 import fi.hsl.parkandride.core.back.FacilityRepository;
 import fi.hsl.parkandride.core.back.OperatorRepository;
 import fi.hsl.parkandride.core.domain.*;
+import fi.hsl.parkandride.core.service.TransactionalWrite;
 import org.geolatte.geom.Point;
 import org.geolatte.geom.Polygon;
 
@@ -37,6 +38,7 @@ public class Dummies {
     @Inject
     OperatorRepository operatorDao;
 
+    @TransactionalWrite
     public long createFacility() {
         Long operatorId = createDummyOperator();
         FacilityContacts contacts = new FacilityContacts(createDummyContact(), createDummyContact());
@@ -56,6 +58,7 @@ public class Dummies {
         return contactDao.insertContact(contact);
     }
 
+    @TransactionalWrite
     public Facility createFacility(Long operatorId, FacilityContacts contacts) {
         Facility facility = new Facility();
         facility.id = 0l;

@@ -19,6 +19,7 @@ import static fi.hsl.parkandride.core.domain.CapacityType.MOTORCYCLE;
 import static fi.hsl.parkandride.core.domain.Usage.COMMERCIAL;
 import static fi.hsl.parkandride.core.domain.Usage.HSL_TRAVEL_CARD;
 import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class UtilizationDaoTest extends AbstractDaoTest {
@@ -39,6 +40,15 @@ public class UtilizationDaoTest extends AbstractDaoTest {
     @Test
     public void findLatestUtilization_when_nothing_to_find() {
         Set<Utilization> results = utilizationDao.findLatestUtilization(facilityId);
+
+        assertThat(results).isEmpty();
+    }
+
+    @Test
+    public void findLatestUtilization_when_empty_list_registered() {
+        Set<Utilization> results = utilizationDao.findLatestUtilization(facilityId);
+
+        utilizationDao.insertUtilizations(emptyList());
 
         assertThat(results).isEmpty();
     }

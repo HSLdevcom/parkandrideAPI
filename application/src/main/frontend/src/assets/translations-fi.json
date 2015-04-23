@@ -554,7 +554,7 @@
     },
     "location": {
       "label": "Sijainti",
-      "help": "Lisää alueen sijainti tuplaklikkaamalla karttaa. Valitse alueeseen kuuluvat pysäköintipaikat klikkaamalla niitä kartalla."
+      "help": "Lisää alueen sijainti tuplaklikkaamalla karttaa. Jos alueeseen kuuluvia pysäköintipaikkoja on jo luotu, niin voit valita ne klikkaamalla."
     },
     "address": {
       "label": "Käyntiosoite",

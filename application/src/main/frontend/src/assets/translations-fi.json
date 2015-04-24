@@ -234,7 +234,9 @@
     },
     "basic_info": "Perustiedot",
     "action": {
-      "new": "Lisää uusi pysäköintipaikka"
+      "new": "Lisää uusi pysäköintipaikka",
+      "addLocation": "Lisää sijainti",
+      "addPorts": "Lisää sisään- ja uloskäynnit"
     },
     "hubs": {
       "heading": "Kuuluu alueisiin"

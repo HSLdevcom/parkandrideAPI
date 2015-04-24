@@ -160,6 +160,9 @@
     "email": {
       "label": "Sähköposti"
     },
+    "contactRequired": {
+      "label": "Täytä puhelinnumero tai sähköposti"
+    },
     "address": {
       "label": "Osoite"
     },

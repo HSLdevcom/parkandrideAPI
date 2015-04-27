@@ -1,9 +1,9 @@
 <div class="column3 first-column">
-	<p ng-show="value.fi"><span class="lang-fi">{{value.fi}}</span> ({{ "common.lang.fi" | translate }})</p>
+	<p ng-show="value.fi"><span class="lang-fi">{{value.fi | linky:'_blank'}}</span> ({{ "common.lang.fi" | translate }})</p>
 </div>
 <div class="column3">
-	<p ng-show="value.sv"><span class="lang-sv">{{value.sv}}</span> ({{ "common.lang.sv" | translate }})</p>
+	<p ng-show="value.sv"><span class="lang-sv">{{value.sv | linky:'_blank'}}</span> ({{ "common.lang.sv" | translate }})</p>
 </div>
 <div class="column3 last-column">
-	<p ng-show="value.en"><span class="lang-en">{{value.en}}</span> ({{ "common.lang.en" | translate }})</p>
+	<p ng-show="value.en"><span class="lang-en">{{value.en | linky:'_blank'}}</span> ({{ "common.lang.en" | translate }})</p>
 </div>

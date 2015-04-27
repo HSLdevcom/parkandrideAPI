@@ -55,15 +55,4 @@
             transclude: false
         };
     });
-
-    m.directive('multilingualViewLinks', function () {
-        return {
-            restrict: 'E',
-            scope: {
-                value: '=value'
-            },
-            templateUrl: 'directives/multilingualViewLinks.tpl.html',
-            transclude: false
-        };
-    });
 })();

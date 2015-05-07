@@ -229,8 +229,8 @@
     "label": "Pysäköintipaikka",
     "list": {
       "name": "Nimi",
-      "types": "Tyypit",
-      "usages": "Käyttö"
+      "types": "Ajoneuvotyypit",
+      "usages": "Käyttötapa"
     },
     "basic_info": "Perustiedot",
     "action": {
@@ -414,7 +414,7 @@
     },
     "capacity": {
       "heading": "Kapasiteetti",
-      "type": "Tyyppi",
+      "type": "Ajoneuvotyyppi",
       "built": "Rakennettu kapasiteetti",
       "unavailable": "Tilapäisesti poissa käytöstä"
     },
@@ -433,8 +433,8 @@
       "capacityTypePlaceholder": "Valitse...",
       "capacity": "Kapasiteetti",
       "capacityType": {
-        "title": "Tyyppi",
-        "label": "Hinnoittelu / Tyyppi"
+        "title": "Ajoneuvotyyppi",
+        "label": "Hinnoittelu / Ajoneuvotyyppi"
       },
       "usagePlaceholder": "Valitse...",
       "usage": {
@@ -493,10 +493,10 @@
       "label": "Tilapäisesti pois käytöstä",
       "disclaimer": "Pysäköintipaikkaan ei ole tallennettu pysäköintihinnoittelua",
       "capacityType": {
-        "label": "Tyyppi"
+        "label": "Ajoneuvotyyppi"
       },
       "usage": {
-        "label": "Käyttö"
+        "label": "Käyttötapa"
       },
       "capacity": {
         "label": "Tilapäisesti pois käytöstä"

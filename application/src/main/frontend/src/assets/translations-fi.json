@@ -518,7 +518,8 @@
   },
   "footer": {
     "copyright": "Copyright HSL",
-    "contact": "Helsingin seudun liikenne, puh. 09 4766 4444, hsl@hsl.fi"
+    "contact": "Helsingin seudun liikenne, puh. 09 4766 4444, ",
+    "contactMail": "hsl@hsl.fi"
   },
   "header": {
     "logodesc": "HSL Liityntäpysäköinti"

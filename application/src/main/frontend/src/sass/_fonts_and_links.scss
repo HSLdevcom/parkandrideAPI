@@ -50,6 +50,10 @@ a:focus {
   outline: none;
 }
 
+.page-footer a {
+  color: inherit;
+}
+
 .nav > li > a:focus {
   background-color: $primarycolor;
 }

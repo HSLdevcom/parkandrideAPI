@@ -64,6 +64,14 @@
 
 .btn-group {
   margin-bottom: 20px;
+  > label {
+    background-color: $secondarycolor;
+    color: $k80;
+  }
+  > .active {
+    background-color: $primarycolor;
+    color: #fff;
+  }
 }
 
 .btn.disabled, .btn[disabled] {

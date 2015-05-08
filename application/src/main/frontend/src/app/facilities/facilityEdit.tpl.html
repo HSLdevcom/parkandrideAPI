@@ -77,8 +77,12 @@
 	</div>
 	<div class="row smallMargin">
 		<div class="btn-group">
-			<label id="editModeLocation" class="btn btn-xs" ng-model="editCtrl.editMode" btn-radio="'location'">{{ "facilities.action.addLocation" | translate }}</label>
-			<label id="editModePorts" class="btn btn-xs" ng-model="editCtrl.editMode" btn-radio="'ports'">{{ "facilities.action.addPorts" | translate }}</label>
+			<label id="editModeLocation" class="btn btn-xs" ng-model="editCtrl.editMode" btn-radio="'location'">
+				<span class="checkmark">✓ </span>{{ "facilities.action.addLocation" | translate }}
+			</label>
+			<label id="editModePorts" class="btn btn-xs" ng-model="editCtrl.editMode" btn-radio="'ports'">
+				<span class="checkmark">✓ </span>{{ "facilities.action.addPorts" | translate }}
+			</label>
 		</div>
 	</div>
 </div>

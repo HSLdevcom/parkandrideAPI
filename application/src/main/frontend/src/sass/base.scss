@@ -64,13 +64,19 @@
 
 .btn-group {
   margin-bottom: 20px;
-  > label {
+  label {
     background-color: $secondarycolor;
     color: $k80;
+    .checkmark {
+      display: none;
+    }
   }
-  > .active {
+  .active {
     background-color: $primarycolor;
     color: #fff;
+    .checkmark {
+      display: inline;
+    }
   }
 }
 

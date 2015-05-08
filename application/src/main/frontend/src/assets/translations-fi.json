@@ -635,7 +635,7 @@
       "remove": {
         "label": "Poista",
         "confirmTitle": "Haluatko varmasti poistaa valitsemasi käyttäjän?",
-        "confirmText": "Haluatko varmasti poistaa valitsemasi käyttäjän?",
+        "confirmText": "Haluatko varmasti poistaa käyttäjän",
         "confirmButtonText": "Kyllä, poista käyttäjä"
       }
     },

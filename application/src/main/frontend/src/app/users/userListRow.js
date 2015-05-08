@@ -65,7 +65,7 @@
 
         function remove() {
             swal({
-                text: $translate.instant('users.listActions.remove.confirmText') + ' \"' + vm.user.username + '\"?',
+                text: $translate.instant('users.listActions.remove.confirmText', {username: vm.user.username}),
                 width: 400,
                 showCancelButton: true,
                 cancelButtonText: $translate.instant('common.action.cancel'),

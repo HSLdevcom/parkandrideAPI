@@ -172,7 +172,6 @@
                 controls.push(new ol.control.FullScreen({tipLabel: "Koko näyttö"}));
 
                 interactions.push(new ol.interaction.DoubleClickZoom());
-                interactions.push(new ol.interaction.MouseWheelZoom());
                 interactions.push(new ol.interaction.DragZoom());
                 interactions.push(new ol.interaction.PinchZoom());
                 interactions.push(new ol.interaction.KeyboardPan());

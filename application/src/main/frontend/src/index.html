@@ -28,7 +28,7 @@
 					</div>
 					<div class="navi-col">
 						<ul class="nav nav-tabs">
-							<li ng-class="{active: $state.includes('hubstab')}"><a ui-sref="hub-list" translate="hubs.title"></a></li>
+							<li ng-class="{active: $state.includes('hubstab') , semiactive: ( $state.includes('facility-create') || $state.includes('facility-edit') || $state.includes('facility-view') || $state.includes('hub-edit') || $state.includes('hub-view') || $state.includes('hub-create') )}"><a ui-sref="hub-list" translate="hubs.title"></a></li>
 							<li ng-class="{active: $state.includes('contactstab')}"><a ui-sref="contact-list" translate="contacts.title"></a></li>
 							<li ng-class="{active: $state.includes('operatorstab')}"><a ui-sref="operator-list" translate="operators.title"></a></li>
 							<li ng-class="{active: $state.includes('userstab')}"><a ui-sref="user-list" translate="users.title"></a></li>

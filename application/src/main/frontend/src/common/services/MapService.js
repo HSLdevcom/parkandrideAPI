@@ -116,10 +116,10 @@
                 image: new ol.style.Circle({
                     radius: 8,
                     fill: new ol.style.Fill({
-                        color: '#007AC9' //HSL blue
+                        color: '#4DC7FF' //HSL light blue
                     }),
                     stroke: new ol.style.Stroke({
-                        color: '#007AC9', //not used
+                        color: '#4DC7FF', //not used
                         width: 0
                     })
                 })

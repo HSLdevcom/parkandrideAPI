@@ -26,6 +26,7 @@ import static org.springframework.restdocs.RestDocumentation.document;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @IntegrationTest("spring.jackson.serialization.indent_output:true")
@@ -48,6 +49,53 @@ public class ApiDocumentation extends AbstractIntegrationTest {
                 .build();
         facilityId = dummies.createFacility();
         authToken = loginApiUserForFacility(facilityId);
+    }
+
+    @Test
+    public void jsonDefaultExample() throws Exception {
+        MockHttpServletRequestBuilder request = get(UrlSchema.FACILITIES);
+        mockMvc.perform(request)
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andDo(document("json-default-example"));
+    }
+
+    @Test
+    public void jsonSuffixExample() throws Exception {
+        MockHttpServletRequestBuilder request = get(UrlSchema.FACILITIES + ".json");
+        mockMvc.perform(request)
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andDo(document("json-suffix-example"));
+    }
+
+    @Test
+    public void geojsonSuffixExample() throws Exception {
+        MockHttpServletRequestBuilder request = get(UrlSchema.FACILITIES + ".geojson");
+        mockMvc.perform(request)
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(UrlSchema.GEOJSON))
+                .andDo(document("geojson-suffix-example"));
+    }
+
+    @Test
+    public void jsonHeaderExample() throws Exception {
+        MockHttpServletRequestBuilder request = get(UrlSchema.FACILITIES)
+                .accept(MediaType.APPLICATION_JSON);
+        mockMvc.perform(request)
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andDo(document("json-header-example"));
+    }
+
+    @Test
+    public void geojsonHeaderExample() throws Exception {
+        MockHttpServletRequestBuilder request = get(UrlSchema.FACILITIES)
+                .accept(UrlSchema.GEOJSON);
+        mockMvc.perform(request)
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(UrlSchema.GEOJSON))
+                .andDo(document("geojson-header-example"));
     }
 
     @Test

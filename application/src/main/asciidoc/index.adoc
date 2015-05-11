@@ -79,11 +79,21 @@ GeoJSON's feature centric view contains only basic metadata of given entity.
 
 Required format is specified either with `.json` or `.geojson` suffix or by using `Accept` header with
 `application/json` or `application/vnd.geo+json` value.
+
+include::{generated}/json-suffix-example/curl-request.adoc[]
+
+include::{generated}/geojson-suffix-example/curl-request.adoc[]
+
+include::{generated}/json-header-example/curl-request.adoc[]
+
+include::{generated}/geojson-header-example/curl-request.adoc[]
+
 If no suffix or `Accept` header is given, JSON is used by default.
 
-TODO: CURL-examples using .json or .geojson AND headers alternatives.
+include::{generated}/json-default-example/curl-request.adoc[]
 
-[[searching]] 
+
+[[searching]]
 = General Search Features
 
 While simple listings (e.g. enums) may return arrays of values directly, searches return results

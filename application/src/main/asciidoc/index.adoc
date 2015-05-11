@@ -13,6 +13,10 @@
 HSL Park and Ride application contains information about parking facilities near public transportation hubs.
 Data is provided free-or-charge with XXX License.
 
+API follows REST conventions roughly. Resources are divided into collection and item URLs.
+Collection URL's typically accept GET-parameters for filtering, paging and sorting items.
+Reading data uses GET-method and doesn't require authorization - except for user management.
+Restricted modifications use either POST on collection-URL for creating new items and
 
 [[authentication]]
 = Authentication
@@ -53,9 +57,14 @@ or not there's more result rows available:
 }
 ----
 
-Search API's accept order specifier via `sort.by` and `sort.dir` parameters.
-Direction is given as `ASC` or `DESC`. Allowed values of `sort.by` depend on API but typically
-it supports at least `name.fi`, `name.sv` and `name.en`
+Limiting result size is done via `limit` and `offset` int-parameters.
+Limit defines the maximum number of items to be returned and offset the zero-based index of
+the first row to be returned.
+
+Ordering of result items is done via `sort.by` and `sort.dir` parameters.
+Allowed values of `sort.by` is resource dependent but typically
+at least `name.fi`, `name.sv` and `name.en` are supported.
+Direction is given as `ASC` or `DESC`.
 
 CURL-EXAMPLE!
 
@@ -141,17 +150,20 @@ Contacts can be searched with optional `ids` [0..n] and `operatorId` [0..1] para
 
 EXAMPLE!
 
-
 Contact details can fetched by id:
 
 EXAMPLE!
 
+
+
 [[facilities]]
 = Facilities
-== Overview
 
 [[facility-search]]
 == Search Facilities
+
+
+
 === By Status
 === By Ids
 === Spatial

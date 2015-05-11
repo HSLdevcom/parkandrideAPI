@@ -159,6 +159,13 @@ EXAMPLE!
 [[facilities]]
 = Facilities
 
+include::{generated}/facility-example/response-fields.adoc[]
+
+include::{generated}/facility-example/http-request.adoc[]
+
+include::{generated}/facility-example/http-response.adoc[]
+
+
 [[facility-search]]
 == Search Facilities
 

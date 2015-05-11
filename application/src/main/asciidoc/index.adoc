@@ -38,12 +38,33 @@ If no suffix or `Accept` header is given, JSON is used by default.
 
 TODO: CURL-examples using .json or .geojson AND headers alternatives.
 
+[[searching]] 
+= General Search Features
+
+While simple listings (e.g. enums) may return arrays of values directly, searches return results
+that are wrapped within an object. This result object has boolean field `hasMore` that indicates whether
+or not there's more result rows available:
+
+[source,json]
+----
+{
+  "results": [...]
+  "hasMore": false
+}
+----
+
+Search API's accept order specifier via `sort.by` and `sort.dir` parameters.
+Direction is given as `ASC` or `DESC`. Allowed values of `sort.by` depend on API but typically
+it supports at least `name.fi`, `name.sv` and `name.en`
+
+CURL-EXAMPLE!
+
+
 [[localization]]
 = Localization
 
 Park and Ride data is localized in Finnish, Swedish and English.
-Localized fields are represented as objects with `fi`, `sv` and `en` fields.
-Optional localized fields are either `null` or localized for all supported languages.
+Localized fields are represented as objects with `fi`, `sv` and `en` fields:
 
 [source,json]
 ----
@@ -56,23 +77,45 @@ Optional localized fields are either `null` or localized for all supported langu
 }
 ----
 
+Optional localized fields are either `null` or localized for all supported languages.
+For example missing (optional) info:
+
+[source,json]
+----
+{
+  "info": null
+}
+----
+
 
 [[enumerations]]
 = Enumerations
 
-Park and Ride utilizes enumerated values for much of it's metadata. Current value-sets are available via REST:
+Park and Ride utilizes enumerated values for much of it's metadata. Current value-sets are available via REST.
 
 CapacityType defines different kind of parking slot types:
 
+EXAMPLE!
+
 DayType, a rough categorization of day types with different opening hours and/or pricing:
+
+EXAMPLE!
 
 Services provided by parking facility:
 
+EXAMPLE!
+
 PaymentMethods accepted by facility:
+
+EXAMPLE!
 
 FacilityStatuses:
 
+EXAMPLE!
+
 PricingMethod is a short-cut for maintaining actual facility pricing information:
+
+EXAMPLE!
 
 
 [[operators]]
@@ -80,17 +123,28 @@ PricingMethod is a short-cut for maintaining actual facility pricing information
 
 All facilities are operated by an operator. Operator can be listed with:
 
-Details (localized name) of an operator can be fetched with:
+EXAMPLE!
+
+Details (i.e. localized name) of an operator can be fetched with:
+
+EXAMPLE!
 
 
 [[contacts]]
 = Contacts
 
-Facilities have emergency, operator and service (optional) contacts. Contacts are either general,
+Facilities have emergency, operator and (optional) service contacts. Contacts are either general,
 maintained by HSL and shared by all operators, or operator specific. Operator specific contacts have
+`operatorId` property.
 
-Contact details
+Contacts can be searched with optional `ids` [0..n] and `operatorId` [0..1] parameters:
 
+EXAMPLE!
+
+
+Contact details can fetched by id:
+
+EXAMPLE!
 
 [[facilities]]
 = Facilities

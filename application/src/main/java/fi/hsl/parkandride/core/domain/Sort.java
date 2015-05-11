@@ -7,7 +7,7 @@ import static fi.hsl.parkandride.core.domain.Sort.Dir.ASC;
 
 public class Sort {
 
-    public static enum Dir { ASC, DESC }
+    public enum Dir { ASC, DESC }
 
 
     private String by;

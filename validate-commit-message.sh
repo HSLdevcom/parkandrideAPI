@@ -24,7 +24,7 @@ if ! [[ "$MESSAGE" =~ $PATTERN ]]; then
 fi
 TYPE=${BASH_REMATCH[1]}
 
-if ! [[ $TYPES == *"$TYPE"* ]]; then
+if ! [[ $TYPES =~ (^| )$TYPE($| ) ]]; then
     echo "ERROR: Commit message's type '$TYPE' must be one of '$TYPES'"
     exit 1
 fi

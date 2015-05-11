@@ -54,6 +54,8 @@ Most API-features are used by our own maintenance UI (http://p.hsl.fi) and
 it's source code is a good source for real life examples.
 See also https://github.com/HSLdevcom/parkandrideAPI/tree/master/application/src/main/frontend/src[GitHub].
 
+Upcoming features can be tested in https://test.p.hsl.fi
+
 == License
 
 Source code is licensed under AGPL and EUPL licenses. For details, see
@@ -216,28 +218,82 @@ TODO: EXAMPLE!
 [[facilities]]
 = Facilities
 
+[[facility-search]]
+== Search Facilities
+
+Facility collection resource allows filtering returned items by status, ids and location.
+These parameters can be mixed and matched to suite your use-case.
+
+=== By Status
+
+Use multi-valued `statuses` parameter to filter by status, e.g. only facilities that are
+IN_OPERATION or have some EXCEPTIONAL_SITUATION:
+
+EXAMPLE!
+
+For status details, e.g. information about EXCEPTIONAL_SITUATION, see `statusDescription`.
+
+=== By Ids
+
+Sometimes you know IDs of multiple facilities and want to get their basic information as
+quickly as possible. This is the case with hubs, that only know the `facilityIds` of
+related facilities. Multi-valued `ids` -parameter is made for just this:
+
+EXAMPLE!
+
+=== Spatial Searches
+
+Facilities have a `location` that is a Polygon in WGS84 (or EPSG:4326) projection.
+Facilities can be searched using http://en.wikipedia.org/wiki/Well-known_text[WKT]-formatted
+`geometry` query parameter.
+Supported geometry types are
+
+* Point
+* LineString
+* Polygon
+* MultiPoint
+* MultiLineString
+* MultiPolygon
+
+You may test spatial searches with link:/#search-demo[Search Demo].
+
+==== Within Shape
+
+If only `geometry` is specified, facilities whose location overlaps with it are returned.
+
+EXAMPLE!
+
+==== Within Max Distance
+
+If `maxDistance` (double) is specified along side `geometry` then facilities whose location
+is within given max distance (meters) are returned.
+
+EXAMPLE!
+
+=== Summary
+
+An existence of a special parameter named `summary` transforms results into a summary of matched
+facilities. This summary consists of `facilityCount` and sum of capacity by type.
+
+EXAMPLE!
+
+
+[[facility-details]]
+== Facility Details
+
+Below is an example of details of a facility.
+
 include::{generated}/facility-example/response-fields.adoc[]
 
 include::{generated}/facility-example/http-request.adoc[]
 
 include::{generated}/facility-example/http-response.adoc[]
 
-
-[[facility-search]]
-== Search Facilities
-
-
-
-=== By Status
-=== By Ids
-=== Spatial
-==== Within Shape
-==== Within Max Distance
-=== Summary
-
-[[facility-details]]
-== Facility Details
 === Pricing
+
+Park and Ride facility model supports basic pricing use cases: by capacityType, usage, dayType and time (of day).
+
+
 === Minimal Information
 === Full Information
 

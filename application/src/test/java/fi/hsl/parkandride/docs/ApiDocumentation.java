@@ -29,7 +29,9 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@IntegrationTest("spring.jackson.serialization.indent_output:true")
+@IntegrationTest({
+        "server.port:0",
+        "spring.jackson.serialization.indent_output:true"})
 public class ApiDocumentation extends AbstractIntegrationTest {
 
     @Inject Dummies dummies;

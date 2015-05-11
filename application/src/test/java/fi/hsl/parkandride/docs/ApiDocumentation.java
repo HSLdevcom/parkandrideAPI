@@ -26,7 +26,6 @@ import static org.springframework.restdocs.RestDocumentation.document;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @IntegrationTest("spring.jackson.serialization.indent_output:true")
@@ -66,7 +65,7 @@ public class ApiDocumentation extends AbstractIntegrationTest {
     public void facilityExample() throws Exception {
         MockHttpServletRequestBuilder request = get(UrlSchema.FACILITY, facilityId);
         this.mockMvc.perform(request)
-                .andDo(print())
+                //.andDo(print())
                 .andExpect(status().isOk())
                 .andDo(document("facility-example")
                         .withResponseFields(
@@ -79,14 +78,34 @@ public class ApiDocumentation extends AbstractIntegrationTest {
                                 fieldWithPath("statusDescription").description("TODO"),
                                 fieldWithPath("builtCapacity").description("Built capacity by CapacityType, may be split or shared by different Usage types as defined by pricing"),
                                 fieldWithPath("usages").description("Read-only summary of distinct pricing rows' usages"),
-                                fieldWithPath("pricing").description("TODO, deep"),
-                                fieldWithPath("unavailableCapacities").description("TODO, deep"),
+                                fieldWithPath("pricing[].usage").description("TODO"),
+                                fieldWithPath("pricing[].capacityType").description("TODO"),
+                                fieldWithPath("pricing[].maxCapacity").description("TODO"),
+                                fieldWithPath("pricing[].dayType").description("TODO"),
+                                fieldWithPath("pricing[].time.from").description("TODO"),
+                                fieldWithPath("pricing[].time.until").description("TODO"),
+                                fieldWithPath("pricing[].price").description("TODO"),
+                                fieldWithPath("unavailableCapacities[].capacityType").description("TODO"),
+                                fieldWithPath("unavailableCapacities[].usage").description("TODO"),
+                                fieldWithPath("unavailableCapacities[].capacity").description("TODO"),
                                 fieldWithPath("aliases").description("TODO"),
-                                fieldWithPath("ports").description("TODO, deep"),
+                                fieldWithPath("ports[].location").description("TODO"),
+                                fieldWithPath("ports[].entry").description("TODO"),
+                                fieldWithPath("ports[].exit").description("TODO"),
+                                fieldWithPath("ports[].pedestrian").description("TODO"),
+                                fieldWithPath("ports[].bicycle").description("TODO"),
+                                fieldWithPath("ports[].address").description("TODO"),
+                                fieldWithPath("ports[].info").description("TODO"),
                                 fieldWithPath("services").description("TODO"),
-                                fieldWithPath("contacts").description("TODO, deep"),
-                                fieldWithPath("paymentInfo").description("TODO, deep"),
-                                fieldWithPath("openingHours").description("TODO, deep")));
+                                fieldWithPath("contacts.emergency").description("Emergency contact ID"),
+                                fieldWithPath("contacts.operator").description("Operator contact ID"),
+                                fieldWithPath("contacts.service").description("Service contact ID"),
+                                fieldWithPath("paymentInfo.detail").description("TODO"),
+                                fieldWithPath("paymentInfo.url").description("TODO"),
+                                fieldWithPath("paymentInfo.paymentMethods").description("TODO"),
+                                fieldWithPath("openingHours.byDayType").description("Read-only summary of pricing rows' opening hours"),
+                                fieldWithPath("openingHours.info").description("TODO"),
+                                fieldWithPath("openingHours.url").description("TODO")));
     }
 
 

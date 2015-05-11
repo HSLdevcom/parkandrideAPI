@@ -7,6 +7,7 @@ import fi.hsl.parkandride.back.Dummies;
 import fi.hsl.parkandride.core.back.FacilityRepository;
 import fi.hsl.parkandride.core.domain.Facility;
 import fi.hsl.parkandride.core.domain.NewUser;
+import fi.hsl.parkandride.core.domain.Sort;
 import fi.hsl.parkandride.front.UrlSchema;
 import fi.hsl.parkandride.itest.AbstractIntegrationTest;
 import org.junit.Before;
@@ -22,12 +23,13 @@ import org.springframework.web.context.WebApplicationContext;
 import javax.inject.Inject;
 
 import static fi.hsl.parkandride.core.domain.Role.OPERATOR_API;
+import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.is;
 import static org.springframework.restdocs.RestDocumentation.document;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @IntegrationTest({
         "server.port:0",
@@ -101,6 +103,21 @@ public class ApiDocumentation extends AbstractIntegrationTest {
     }
 
     @Test
+    public void limitOffsetSortExample() throws Exception {
+        MockHttpServletRequestBuilder request = get(UrlSchema.FACILITIES)
+                .param("limit", "10")
+                .param("offset", "4")
+                .param("sort.by", "name.fi")
+                .param("sort.dir", Sort.Dir.ASC.name());
+        // XXX: not really testing whether all the parameters work
+        mockMvc.perform(request)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("results", is(empty())))
+                .andExpect(jsonPath("hasMore", is(false)))
+                .andDo(document("limit-offset-sort-example"));
+    }
+
+    @Test
     public void authenticationExample() throws Exception {
         MockHttpServletRequestBuilder request = put(UrlSchema.FACILITY_UTILIZATION, facilityId)
                 .header("Authorization", "Bearer " + authToken)
@@ -115,7 +132,6 @@ public class ApiDocumentation extends AbstractIntegrationTest {
     public void facilityExample() throws Exception {
         MockHttpServletRequestBuilder request = get(UrlSchema.FACILITY, facilityId);
         this.mockMvc.perform(request)
-                //.andDo(print())
                 .andExpect(status().isOk())
                 .andDo(document("facility-example")
                         .withResponseFields(

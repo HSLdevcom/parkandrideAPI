@@ -119,7 +119,7 @@ Allowed values of `sort.by` is resource dependent but typically
 at least `name.fi`, `name.sv` and `name.en` are supported.
 Direction is given as `ASC` or `DESC`.
 
-TODO: CURL-EXAMPLE!
+include::{generated}/limit-offset-sort-example/curl-request.adoc[]
 
 
 [[localization]]

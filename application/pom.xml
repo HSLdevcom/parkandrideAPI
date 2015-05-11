@@ -214,6 +214,7 @@
     <dependency>
       <groupId>org.springframework.restdocs</groupId>
       <artifactId>spring-restdocs</artifactId>
+      <version>0.1.0.BUILD-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
 

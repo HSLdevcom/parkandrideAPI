@@ -6,9 +6,119 @@
 :toclevels: 4
 :source-highlighter: highlightjs
 
+
+[[overview]]
+= Overview
+
+HSL Park and Ride application contains information about parking facilities near public transportation hubs.
+Data is provided free-or-charge with XXX License.
+
+
 [[authentication]]
 = Authentication
 
-Mutable operations require authentication using the `Authorization` header as shown in the following example. The value is the string `Bearer` followed by the API user's token.
+Mutable operations require authentication using the `Authorization` header as shown in the following example.
+The value is the string `Bearer` followed by the API user's token.
 
 include::{generated}/authentication-example/http-request.adoc[]
+
+NOTE: Authentication is *not* needed for read-only (GET) methods.
+
+
+[[supported-formats]]
+= Supported Formats
+
+Both JSON and http://geojson.org[GeoJSON] (Feature/FeatureCollection) are supported for facilities and hubs.
+In JSON format locations are provided using GeoJSON Geometries (Point or Polygon).
+GeoJSON's feature centric view contains only basic metadata of given entity.
+
+Required format is specified either with `.json` or `.geojson` suffix or by using `Accept` header with
+`application/json` or `application/vnd.geo+json` value.
+If no suffix or `Accept` header is given, JSON is used by default.
+
+TODO: CURL-examples using .json or .geojson AND headers alternatives.
+
+[[localization]]
+= Localization
+
+Park and Ride data is localized in Finnish, Swedish and English.
+Localized fields are represented as objects with `fi`, `sv` and `en` fields.
+Optional localized fields are either `null` or localized for all supported languages.
+
+[source,json]
+----
+{
+  "name": {
+    "fi": "Nimi",
+    "sv": "Namn",
+    "en": "Name"
+  }
+}
+----
+
+
+[[enumerations]]
+= Enumerations
+
+Park and Ride utilizes enumerated values for much of it's metadata. Current value-sets are available via REST:
+
+CapacityType defines different kind of parking slot types:
+
+DayType, a rough categorization of day types with different opening hours and/or pricing:
+
+Services provided by parking facility:
+
+PaymentMethods accepted by facility:
+
+FacilityStatuses:
+
+PricingMethod is a short-cut for maintaining actual facility pricing information:
+
+
+[[operators]]
+= Operators
+
+All facilities are operated by an operator. Operator can be listed with:
+
+Details (localized name) of an operator can be fetched with:
+
+
+[[contacts]]
+= Contacts
+
+Facilities have emergency, operator and service (optional) contacts. Contacts are either general,
+maintained by HSL and shared by all operators, or operator specific. Operator specific contacts have
+
+Contact details
+
+
+[[facilities]]
+= Facilities
+== Overview
+
+[[facility-search]]
+== Search Facilities
+=== By Status
+=== By Ids
+=== Spatial
+==== Within Shape
+==== Within Max Distance
+=== Summary
+
+[[facility-details]]
+== Facility Details
+=== Pricing
+=== Minimal Information
+=== Full Information
+
+[[utilization]]
+= Utilization
+== Update
+== Prediction
+
+
+[[hubs]]
+= Hubs
+== Overview
+== Search Hubs
+== Hub Details

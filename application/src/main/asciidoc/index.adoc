@@ -117,7 +117,7 @@ Allowed values of `sort.by` is resource dependent but typically
 at least `name.fi`, `name.sv` and `name.en` are supported.
 Direction is given as `ASC` or `DESC`.
 
-CURL-EXAMPLE!
+TODO: CURL-EXAMPLE!
 
 
 [[localization]]
@@ -155,27 +155,33 @@ Park and Ride utilizes enumerated values for much of it's metadata. Current valu
 
 CapacityType defines different kind of parking slot types:
 
-EXAMPLE!
+include::{generated}/enumeration-capacity-types-example/http-request.adoc[]
+include::{generated}/enumeration-capacity-types-example/http-response.adoc[]
 
 DayType, a rough categorization of day types with different opening hours and/or pricing:
 
-EXAMPLE!
+include::{generated}/enumeration-day-types-example/http-request.adoc[]
+include::{generated}/enumeration-day-types-example/http-response.adoc[]
 
 Services provided by parking facility:
 
-EXAMPLE!
+include::{generated}/enumeration-services-example/http-request.adoc[]
+include::{generated}/enumeration-services-example/http-response.adoc[]
 
 PaymentMethods accepted by facility:
 
-EXAMPLE!
+include::{generated}/enumeration-payment-methods-example/http-request.adoc[]
+include::{generated}/enumeration-payment-methods-example/http-response.adoc[]
 
 FacilityStatuses:
 
-EXAMPLE!
+include::{generated}/enumeration-facility-statuses-example/http-request.adoc[]
+include::{generated}/enumeration-facility-statuses-example/http-response.adoc[]
 
-PricingMethod is a short-cut for maintaining actual facility pricing information:
+PricingMethod is a shortcut for maintaining actual facility pricing information:
 
-EXAMPLE!
+include::{generated}/enumeration-pricing-methods-example/http-request.adoc[]
+include::{generated}/enumeration-pricing-methods-example/http-response.adoc[]
 
 
 [[operators]]
@@ -183,11 +189,11 @@ EXAMPLE!
 
 All facilities are operated by an operator. Operator can be listed with:
 
-EXAMPLE!
+TODO: EXAMPLE!
 
 Details (i.e. localized name) of an operator can be fetched with:
 
-EXAMPLE!
+TODO: EXAMPLE!
 
 
 [[contacts]]
@@ -199,11 +205,11 @@ maintained by HSL and shared by all operators, or operator specific. Operator sp
 
 Contacts can be searched with optional `ids` [0..n] and `operatorId` [0..1] parameters:
 
-EXAMPLE!
+TODO: EXAMPLE!
 
 Contact details can fetched by id:
 
-EXAMPLE!
+TODO: EXAMPLE!
 
 
 

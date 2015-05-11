@@ -156,6 +156,47 @@ public class ApiDocumentation extends AbstractIntegrationTest {
                                 fieldWithPath("openingHours.url").description("TODO")));
     }
 
+    @Test
+    public void enumerationCapacityTypesExample() throws Exception {
+        mockMvc.perform(get(UrlSchema.CAPACITY_TYPES))
+                .andExpect(status().isOk())
+                .andDo(document("enumeration-capacity-types-example"));
+    }
+
+    @Test
+    public void enumerationDayTypesExample() throws Exception {
+        mockMvc.perform(get(UrlSchema.DAY_TYPES))
+                .andExpect(status().isOk())
+                .andDo(document("enumeration-day-types-example"));
+    }
+
+    @Test
+    public void enumerationServicesExample() throws Exception {
+        mockMvc.perform(get(UrlSchema.SERVICES))
+                .andExpect(status().isOk())
+                .andDo(document("enumeration-services-example"));
+    }
+
+    @Test
+    public void enumerationPaymentMethodsExample() throws Exception {
+        mockMvc.perform(get(UrlSchema.PAYMENT_METHODS))
+                .andExpect(status().isOk())
+                .andDo(document("enumeration-payment-methods-example"));
+    }
+
+    @Test
+    public void enumerationFacilityStatusesExample() throws Exception {
+        mockMvc.perform(get(UrlSchema.FACILITY_STATUSES))
+                .andExpect(status().isOk())
+                .andDo(document("enumeration-facility-statuses-example"));
+    }
+
+    @Test
+    public void enumerationPricingMethodsExample() throws Exception {
+        mockMvc.perform(get(UrlSchema.PRICING_METHODS))
+                .andExpect(status().isOk())
+                .andDo(document("enumeration-pricing-methods-example"));
+    }
 
     // helpers
 

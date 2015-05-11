@@ -13,10 +13,51 @@
 HSL Park and Ride application contains information about parking facilities near public transportation hubs.
 Data is provided free-or-charge with XXX License.
 
-API follows REST conventions roughly. Resources are divided into collection and item URLs.
-Collection URL's typically accept GET-parameters for filtering, paging and sorting items.
+API follows REST conventions (roughly). Resources are divided into collection and item URLs.
+Collection resources typically accept GET-parameters for filtering, paging and sorting items.
 Reading data uses GET-method and doesn't require authorization - except for user management.
-Restricted modifications use either POST on collection-URL for creating new items and
+Restricted modifications use either POST on collection-URL for creating new items and PUT
+on item URL for updates.
+
+DELETE is not directly supported (currently) but the goal is achieved using e.g. a status field.
+However, if sometime in the future we need to delete something for reason or another,
+*please prepare for 404 on a resource that has previously returned a result*.
+
+Somewhat contrary to strict REST ideology we provide all dependent (deep) information directly from
+item URLs. You need not get basic relations using nested calls.
+Shared resources are referenced using IDs (not URIs), and until HATEOAS-type links are implemented
+one needs to know and construct URIs using templates in order get details of such shared resources
+(e.g. operator or contacts).
+For most cases there exists an ID-based filtering parameter (`ids`) for collection URLs
+that allow getting basic information of all referred resources with single request.
+
+== Changes to the API
+
+We aim to develop the API in a backwards compatible manner, i.e. features are only added while
+maintaining old semantics. However, we appreciate your feedback and will take it into account
+in future development. In the end, this may lead to a need to refactor the APIs.
+Unless such a breaking change is due to some critical security related issue, we will give you
+a warning about it well in advance.
+_Please register yourself and your app to a (TODO!) mailing list
+in order to receive announcements of comming changes._
+
+== Development
+
+Park and Ride application developed as an Open Source project in GitHub:
+https://github.com/HSLdevcom/parkandrideAPI.
+
+Please, report bugs and feature requests as GitHub issues.
+
+== Examples
+
+Most API-features are used by our own maintenance UI (http://p.hsl.fi) and
+it's source code is a good source for real life examples.
+See also https://github.com/HSLdevcom/parkandrideAPI/tree/master/application/src/main/frontend/src[GitHub].
+
+== License
+
+Source code is licensed under AGPL and EUPL licenses. For details, see
+https://github.com/HSLdevcom/parkandrideAPI#license.
 
 [[authentication]]
 = Authentication

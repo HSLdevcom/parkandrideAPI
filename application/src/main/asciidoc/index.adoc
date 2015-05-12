@@ -8,7 +8,7 @@
 
 
 [[overview]]
-= Overview
+== Overview
 
 HSL Park and Ride application contains information about parking facilities near public transportation hubs.
 Data is provided free-or-charge with XXX License.
@@ -31,7 +31,7 @@ one needs to know and construct URIs using templates in order get details of suc
 For most cases there exists an ID-based filtering parameter (`ids`) for collection URLs
 that allow getting basic information of all referred resources with single request.
 
-== Changes to the API
+=== Changes to the API
 
 We aim to develop the API in a backwards compatible manner, i.e. features are only added while
 maintaining old semantics. However, we appreciate your feedback and will take it into account
@@ -41,14 +41,14 @@ a warning about it well in advance.
 _Please register yourself and your app to a (TODO!) mailing list
 in order to receive announcements of comming changes._
 
-== Development
+=== Development
 
 Park and Ride application developed as an Open Source project in GitHub:
 https://github.com/HSLdevcom/parkandrideAPI.
 
 Please, report bugs and feature requests as GitHub issues.
 
-== Examples
+=== Examples
 
 Most API-features are used by our own maintenance UI (http://p.hsl.fi) and
 it's source code is a good source for real life examples.
@@ -56,13 +56,15 @@ See also https://github.com/HSLdevcom/parkandrideAPI/tree/master/application/src
 
 Upcoming features can be tested in https://test.p.hsl.fi
 
-== License
+=== License
 
 Source code is licensed under AGPL and EUPL licenses. For details, see
 https://github.com/HSLdevcom/parkandrideAPI#license.
 
+== General Features
+
 [[authentication]]
-= Authentication
+=== Authentication
 
 Mutable operations require authentication using the `Authorization` header as shown in the following example.
 The value is the string `Bearer` followed by the API user's token.
@@ -71,9 +73,8 @@ include::{generated}/authentication-example/http-request.adoc[]
 
 NOTE: Authentication is *not* needed for read-only (GET) methods.
 
-
-[[supported-formats]]
-= Supported Formats
+[[formats]]
+=== Supported Formats
 
 Both JSON and http://geojson.org[GeoJSON] (Feature/FeatureCollection) are supported for facilities and hubs.
 In JSON format locations are provided using GeoJSON Geometries (Point or Polygon).
@@ -96,7 +97,7 @@ include::{generated}/json-default-example/curl-request.adoc[]
 
 
 [[searching]]
-= General Search Features
+=== General Search Features
 
 While simple listings (e.g. enums) may return arrays of values directly, searches return results
 that are wrapped within an object. This result object has boolean field `hasMore` that indicates whether
@@ -123,7 +124,7 @@ include::{generated}/limit-offset-sort-example/curl-request.adoc[]
 
 
 [[localization]]
-= Localization
+=== Localization
 
 Park and Ride data is localized in Finnish, Swedish and English.
 Localized fields are represented as objects with `fi`, `sv` and `en` fields:
@@ -151,7 +152,7 @@ For example missing (optional) info:
 
 
 [[enumerations]]
-= Enumerations
+=== Enumerations
 
 Park and Ride utilizes enumerated values for much of it's metadata. Current value-sets are available via REST.
 
@@ -187,7 +188,7 @@ include::{generated}/enumeration-pricing-methods-example/http-response.adoc[]
 
 
 [[operators]]
-= Operators
+== Operators
 
 All facilities are operated by an operator. Operator can be listed with:
 
@@ -199,7 +200,7 @@ TODO: EXAMPLE!
 
 
 [[contacts]]
-= Contacts
+== Contacts
 
 Facilities have emergency, operator and (optional) service contacts. Contacts are either general,
 maintained by HSL and shared by all operators, or operator specific. Operator specific contacts have
@@ -215,15 +216,15 @@ TODO: EXAMPLE!
 
 
 [[facilities]]
-= Facilities
+== Facilities
 
 [[facility-search]]
-== Search Facilities
+=== Search Facilities
 
 Facility collection resource allows filtering returned items by status, ids and location.
 These parameters can be mixed and matched to suite your use-case.
 
-=== By Status
+==== By Status
 
 Use multi-valued `statuses` parameter to filter by status, e.g. only facilities that are
 IN_OPERATION or have some EXCEPTIONAL_SITUATION:
@@ -232,7 +233,7 @@ TODO: EXAMPLE!
 
 For status details, e.g. information about EXCEPTIONAL_SITUATION, see `statusDescription`.
 
-=== By Ids
+==== By Ids
 
 Sometimes you know IDs of multiple facilities and want to get their basic information as
 quickly as possible. This is the case with hubs, that only know the `facilityIds` of
@@ -240,7 +241,8 @@ related facilities. Multi-valued `ids` -parameter is made for just this:
 
 TODO: EXAMPLE!
 
-=== Spatial Searches
+[[spatial-search]]
+==== Spatial Search
 
 Facilities have a `location` that is a Polygon in WGS84 (or EPSG:4326) projection.
 Facilities can be searched using http://en.wikipedia.org/wiki/Well-known_text[WKT]-formatted
@@ -256,20 +258,20 @@ Supported geometry types are
 
 You may test spatial searches with link:/#search-demo[Search Demo].
 
-==== Within Shape
+===== Within Shape
 
 If only `geometry` is specified, facilities whose location overlaps with it are returned.
 
 TODO: EXAMPLE!
 
-==== Within Max Distance
+===== Within Max Distance
 
 If `maxDistance` (double) is specified along side `geometry` then facilities whose location
 is within given max distance (meters) are returned.
 
 TODO: EXAMPLE!
 
-=== Summary
+==== Summary
 
 An existence of a special parameter named `summary` transforms results into a summary of matched
 facilities. This summary consists of `facilityCount` and sum of capacity by type.
@@ -278,7 +280,7 @@ TODO: EXAMPLE!
 
 
 [[facility-details]]
-== Facility Details
+=== Facility Details
 
 Below is an example of details of a facility.
 
@@ -288,13 +290,42 @@ include::{generated}/facility-example/http-request.adoc[]
 
 include::{generated}/facility-example/http-response.adoc[]
 
-=== Pricing
+[[capacity]]
+==== Capacity
 
-Park and Ride facility model supports basic pricing use cases: by capacityType, usage, dayType and time (of day).
+Facilities have built capacity for different types of vehicles.
+This capacity may be divided for different purposes (usage).
+As the time of writing this document, we have identified three different usage types
 
+`PARK_AND_RIDE`::
+This kind of parking slots are meant for commuters that continue to their work place by public transportation.
+`HSL_TRAVEL_CARD`::
+As above, but valid HSL Travel Card is required to get in.
+`COMMERCIAL`::
+Normal parking facility without restrictions for purpose of use.
 
-=== Minimal Information
-=== Full Information
+[[pricing]]
+==== Pricing
+
+Park and Ride facility model supports basic pricing use cases: by `capacityType`, `usage`, `dayType` and `time` (of day).
+There may be limitations to `maxCapacity` available for different usage types when comparing to builtCapacity.
+There are no overlapping pricing rows and full opening hours are accounted.
+Time is an interval of `hh[:mm]` - hour of day (00-24) and optional minute (00-59).
+Actual prices are described as localized text, while null price means that parking is free-of-charge.
+Additional pricing details may be found following `paymentInfo.url` (localized) link or as text
+from `paymentInfo.detail` field.
+
+As there are many free 24 hours a day, 7 days a week parking facilities near public transportation hubs,
+there exists a short cut for that: `pricingMethod` with value `PARK_AND_RIDE_247_FREE`.
+However, even in this case all implied pricing rows are accounted for all specified `buildCapacity` types.
+
+==== Unavailable Capacity
+
+Temporarily unavailable capacity is defined in `unavailableCapacities` with at most one entry
+for capacityType-usage pair. This should be discounted from `pricing[].maxCapacity`.
+
+NOTE: This information is mainly useful for facilities from which there is
+no dynamic utilization information available. Otherwise one should refer to utilization and prediction.
 
 [[utilization]]
 = Utilization
@@ -303,7 +334,33 @@ Park and Ride facility model supports basic pricing use cases: by capacityType, 
 
 
 [[hubs]]
-= Hubs
-== Overview
-== Search Hubs
-== Hub Details
+== Hubs
+
+Public transportation hubs are places where trains, buses, cars and bicycles converge.
+From a hub on may continue to all places reachable via public transportation.
+Hubs are named and defined as a location with optional address as well as a list
+of `facilityIds` that refer to parking facilities that are easily reachable from the hub.
+Basic information of those facilities may be searched from `facilities` resource using `ids`-parameter,
+or by querying for details of each facility separately.
+
+=== Search Hubs
+
+Hubs may be searched by (hub) `ids`, `facilityIds` and `geometry` within optional `maxDistance`.
+<<spatial-search>> of hubs works similarly to facilities.
+
+
+=== Hub Details
+
+At the time of writing this document there is no structural difference between individual hub resource
+(`hubs/123`) and an item in `hubs` collection resource.
+
+
+[[use-cases]]
+== Use-Case Examples
+
+=== Park and Ride With a Navigator
+
+A navigation app may search for hubs within `maxDistance` of 1000 m of the selected route.
+A route is defined as a `LineString` `geometry` which is in essence just a list of coorinates.
+From the result a list of recommended facilities may be extracted and then
+prediction of spaces available at the estimated arrival time.

@@ -192,11 +192,13 @@ include::{generated}/enumeration-pricing-methods-example/http-response.adoc[]
 
 All facilities are operated by an operator. Operator can be listed with:
 
-TODO: EXAMPLE!
+include::{generated}/all-operators-example/http-request.adoc[]
+include::{generated}/all-operators-example/http-response.adoc[]
 
-Details (i.e. localized name) of an operator can be fetched with:
+Details of an operator can be fetched with:
 
-TODO: EXAMPLE!
+include::{generated}/operator-details-example/http-request.adoc[]
+include::{generated}/operator-details-example/http-response.adoc[]
 
 
 [[contacts]]
@@ -206,13 +208,18 @@ Facilities have emergency, operator and (optional) service contacts. Contacts ar
 maintained by HSL and shared by all operators, or operator specific. Operator specific contacts have
 `operatorId` property.
 
+include::{generated}/all-contacts-example/http-request.adoc[]
+include::{generated}/all-contacts-example/http-response.adoc[]
+
 Contacts can be searched with optional `ids` [0..n] and `operatorId` [0..1] parameters:
 
-TODO: EXAMPLE!
+include::{generated}/find-contacts-by-ids-example/http-request.adoc[]
+include::{generated}/find-contacts-by-operator-id-example/http-request.adoc[]
 
 Contact details can fetched by id:
 
-TODO: EXAMPLE!
+include::{generated}/contact-details-example/http-request.adoc[]
+include::{generated}/contact-details-example/http-response.adoc[]
 
 
 [[facilities]]
@@ -229,9 +236,9 @@ These parameters can be mixed and matched to suite your use-case.
 Use multi-valued `statuses` parameter to filter by status, e.g. only facilities that are
 IN_OPERATION or have some EXCEPTIONAL_SITUATION:
 
-TODO: EXAMPLE!
+include::{generated}/find-facilities-by-statuses-example/http-request.adoc[]
 
-For status details, e.g. information about EXCEPTIONAL_SITUATION, see `statusDescription`.
+For status details, e.g. information about EXCEPTIONAL_SITUATION, see xref:facility-details[`statusDescription`].
 
 ==== By Ids
 
@@ -239,7 +246,7 @@ Sometimes you know IDs of multiple facilities and want to get their basic inform
 quickly as possible. This is the case with hubs, that only know the `facilityIds` of
 related facilities. Multi-valued `ids` -parameter is made for just this:
 
-TODO: EXAMPLE!
+include::{generated}/find-facilities-by-ids-example/http-request.adoc[]
 
 [[spatial-search]]
 ==== Spatial Search
@@ -262,21 +269,22 @@ You may test spatial searches with link:/#search-demo[Search Demo].
 
 If only `geometry` is specified, facilities whose location overlaps with it are returned.
 
-TODO: EXAMPLE!
+include::{generated}/find-facilities-by-geometry-example/http-request.adoc[]
 
 ===== Within Max Distance
 
 If `maxDistance` (double) is specified along side `geometry` then facilities whose location
 is within given max distance (meters) are returned.
 
-TODO: EXAMPLE!
+include::{generated}/find-facilities-by-geometry-max-distance-example/http-request.adoc[]
 
 ==== Summary
 
 An existence of a special parameter named `summary` transforms results into a summary of matched
 facilities. This summary consists of `facilityCount` and sum of capacity by type.
 
-TODO: EXAMPLE!
+include::{generated}/find-facilities-summary-example/http-request.adoc[]
+include::{generated}/find-facilities-summary-example/http-response.adoc[]
 
 
 [[facility-details]]
@@ -329,8 +337,16 @@ no dynamic utilization information available. Otherwise one should refer to util
 
 [[utilization]]
 = Utilization
+
+TODO
+
 == Update
+
+TODO
+
 == Prediction
+
+TODO
 
 
 [[hubs]]
@@ -343,16 +359,22 @@ of `facilityIds` that refer to parking facilities that are easily reachable from
 Basic information of those facilities may be searched from `facilities` resource using `ids`-parameter,
 or by querying for details of each facility separately.
 
+TODO: example
+
 === Search Hubs
 
 Hubs may be searched by (hub) `ids`, `facilityIds` and `geometry` within optional `maxDistance`.
 <<spatial-search>> of hubs works similarly to facilities.
+
+TODO: example
 
 
 === Hub Details
 
 At the time of writing this document there is no structural difference between individual hub resource
 (`hubs/123`) and an item in `hubs` collection resource.
+
+TODO: example
 
 
 [[use-cases]]

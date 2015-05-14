@@ -4,8 +4,10 @@
 package fi.hsl.parkandride.docs;
 
 import fi.hsl.parkandride.back.Dummies;
+import fi.hsl.parkandride.back.FacilityDaoTest;
 import fi.hsl.parkandride.core.back.FacilityRepository;
 import fi.hsl.parkandride.core.domain.Facility;
+import fi.hsl.parkandride.core.domain.FacilityStatus;
 import fi.hsl.parkandride.core.domain.NewUser;
 import fi.hsl.parkandride.core.domain.Sort;
 import fi.hsl.parkandride.front.UrlSchema;
@@ -215,6 +217,95 @@ public class ApiDocumentation extends AbstractIntegrationTest {
                 .andExpect(status().isOk())
                 .andDo(document("enumeration-pricing-methods-example"));
     }
+
+    @Test
+    public void allOperatorsExample() throws Exception {
+        mockMvc.perform(get(UrlSchema.OPERATORS))
+                .andExpect(status().isOk())
+                .andDo(document("all-operators-example"));
+    }
+
+    @Test
+    public void operatorsDetailsExample() throws Exception {
+        mockMvc.perform(get(UrlSchema.OPERATOR, 1))
+                .andExpect(status().isOk())
+                .andDo(document("operator-details-example"));
+    }
+
+    @Test
+    public void allContactsExample() throws Exception {
+        mockMvc.perform(get(UrlSchema.CONTACTS))
+                .andExpect(status().isOk())
+                .andDo(document("all-contacts-example"));
+    }
+
+    @Test
+    public void findContactsByIdsExample() throws Exception {
+        // XXX: not really testing whether all the parameters work
+        mockMvc.perform(get(UrlSchema.CONTACTS).param("ids", "101", "102"))
+                .andExpect(status().isOk())
+                .andDo(document("find-contacts-by-ids-example"));
+    }
+
+    @Test
+    public void findContactsByOperatorIdExample() throws Exception {
+        // XXX: not really testing whether all the parameters work
+        mockMvc.perform(get(UrlSchema.CONTACTS).param("operatorId", "42"))
+                .andExpect(status().isOk())
+                .andDo(document("find-contacts-by-operator-id-example"));
+    }
+
+    @Test
+    public void contactsDetailsExample() throws Exception {
+        mockMvc.perform(get(UrlSchema.CONTACT, 1))
+                .andExpect(status().isOk())
+                .andDo(document("contact-details-example"));
+    }
+
+    @Test
+    public void findFacilitiesByStatusesExample() throws Exception {
+        // XXX: not really testing whether all the parameters work
+        mockMvc.perform(get(UrlSchema.FACILITIES).param("statuses", FacilityStatus.IN_OPERATION.name(), FacilityStatus.EXCEPTIONAL_SITUATION.name()))
+                .andExpect(status().isOk())
+                .andDo(document("find-facilities-by-statuses-example"));
+    }
+
+    @Test
+    public void findFacilitiesByIdsExample() throws Exception {
+        // XXX: not really testing whether all the parameters work
+        mockMvc.perform(get(UrlSchema.FACILITIES).param("ids", "11", "12"))
+                .andExpect(status().isOk())
+                .andDo(document("find-facilities-by-ids-example"));
+    }
+
+    @Test
+    public void findFacilitiesByGeometryExample() throws Exception {
+        // XXX: not really testing whether all the parameters work
+        String geometry = FacilityDaoTest.OVERLAPPING_AREA.asText();
+        geometry = geometry.substring(geometry.indexOf(";") + 1);
+        mockMvc.perform(get(UrlSchema.FACILITIES).param("geometry", geometry))
+                .andExpect(status().isOk())
+                .andDo(document("find-facilities-by-geometry-example"));
+    }
+
+    @Test
+    public void findFacilitiesByGeometryMaxDistanceExample() throws Exception {
+        // XXX: not really testing whether all the parameters work
+        String geometry = FacilityDaoTest.OVERLAPPING_AREA.asText();
+        geometry = geometry.substring(geometry.indexOf(";") + 1);
+        mockMvc.perform(get(UrlSchema.FACILITIES).param("geometry", geometry).param("maxDistance", "123.45"))
+                .andExpect(status().isOk())
+                .andDo(document("find-facilities-by-geometry-max-distance-example"));
+    }
+
+    @Test
+    public void findFacilitiesSummaryExample() throws Exception {
+        // XXX: not really testing whether all the parameters work
+        mockMvc.perform(get(UrlSchema.FACILITIES).param("summary", "true"))
+                .andExpect(status().isOk())
+                .andDo(document("find-facilities-summary-example"));
+    }
+
 
     // helpers
 

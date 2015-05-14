@@ -238,7 +238,7 @@ IN_OPERATION or have some EXCEPTIONAL_SITUATION:
 
 include::{generated}/find-facilities-by-statuses-example/http-request.adoc[]
 
-For status details, e.g. information about EXCEPTIONAL_SITUATION, see xref:facility-details[`statusDescription`].
+For status details, e.g. information about EXCEPTIONAL_SITUATION, see <<facility-details,`statusDescription`>>.
 
 ==== By Ids
 
@@ -344,12 +344,14 @@ include::{generated}/utilization-example/http-request.adoc[]
 include::{generated}/utilization-example/http-response.adoc[]
 include::{generated}/utilization-example/response-fields.adoc[]
 
-==== Update
+[[utilization-update]]
+==== Updating
 
-xref:authentication[Authenticated] operators may update the utilization for their facilities.
+<<authentication,Authenticated>> operators may update the utilization for their facilities.
 
 include::{generated}/utilization-update-example/http-request.adoc[]
 
+[[utilization-prediction]]
 ==== Prediction
 
 Utilization predictions are available for all facilities which have utilization data.
@@ -369,28 +371,34 @@ include::{generated}/prediction-absolute-example/http-response.adoc[]
 == Hubs
 
 Public transportation hubs are places where trains, buses, cars and bicycles converge.
-From a hub on may continue to all places reachable via public transportation.
+From a hub one may continue to all places reachable via public transportation.
 Hubs are named and defined as a location with optional address as well as a list
 of `facilityIds` that refer to parking facilities that are easily reachable from the hub.
-Basic information of those facilities may be searched from `facilities` resource using `ids`-parameter,
+Basic information of those facilities may be searched from the <<facilities,`facilities`>> resource using the `ids` parameter,
 or by querying for details of each facility separately.
 
-TODO: example
+include::{generated}/all-hubs-example/http-request.adoc[]
+include::{generated}/all-hubs-example/http-response.adoc[]
 
+[[hub-search]]
 === Search Hubs
 
 Hubs may be searched by (hub) `ids`, `facilityIds` and `geometry` within optional `maxDistance`.
 <<spatial-search>> of hubs works similarly to facilities.
 
-TODO: example
+include::{generated}/find-hubs-by-ids-example/http-request.adoc[]
+include::{generated}/find-hubs-by-facility-ids-example/http-request.adoc[]
+include::{generated}/find-hubs-by-geometry-example/http-request.adoc[]
+include::{generated}/find-hubs-by-geometry-max-distance-example/http-request.adoc[]
 
-
+[[hub-details]]
 === Hub Details
 
 At the time of writing this document there is no structural difference between individual hub resource
 (`hubs/123`) and an item in `hubs` collection resource.
 
-TODO: example
+include::{generated}/hub-details-example/http-request.adoc[]
+include::{generated}/hub-details-example/http-response.adoc[]
 
 
 [[use-cases]]

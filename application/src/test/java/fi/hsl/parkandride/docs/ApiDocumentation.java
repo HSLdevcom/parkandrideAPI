@@ -354,13 +354,58 @@ public class ApiDocumentation extends AbstractIntegrationTest {
                 .andDo(document("prediction-relative-example"));
     }
 
-    public static Utilization newUtilization() {
-        Utilization u = new Utilization();
-        u.capacityType = CapacityType.CAR;
-        u.usage = Usage.HSL_TRAVEL_CARD;
-        u.spacesAvailable = 30;
-        u.timestamp = new DateTime();
-        return u;
+    @Test
+    public void allHubsExample() throws Exception {
+        dummies.createHub();
+
+        mockMvc.perform(get(UrlSchema.HUBS))
+                .andExpect(status().isOk())
+                .andDo(document("all-hubs-example"));
+    }
+
+    @Test
+    public void hubDetailsExample() throws Exception {
+        long hubId = dummies.createHub();
+
+        mockMvc.perform(get(UrlSchema.HUB, hubId))
+                .andExpect(status().isOk())
+                .andDo(document("hub-details-example"));
+    }
+
+    @Test
+    public void findHubsByIdsExample() throws Exception {
+        // XXX: not really testing whether all the parameters work
+        mockMvc.perform(get(UrlSchema.HUBS).param("ids", "11", "12"))
+                .andExpect(status().isOk())
+                .andDo(document("find-hubs-by-ids-example"));
+    }
+
+    @Test
+    public void findHubsByFacilityIdsExample() throws Exception {
+        // XXX: not really testing whether all the parameters work
+        mockMvc.perform(get(UrlSchema.HUBS).param("facilityIds", "11", "12"))
+                .andExpect(status().isOk())
+                .andDo(document("find-hubs-by-facility-ids-example"));
+    }
+
+    @Test
+    public void findHubsByGeometryExample() throws Exception {
+        // XXX: not really testing whether all the parameters work
+        String geometry = FacilityDaoTest.OVERLAPPING_AREA.asText();
+        geometry = geometry.substring(geometry.indexOf(";") + 1);
+        mockMvc.perform(get(UrlSchema.HUBS).param("geometry", geometry))
+                .andExpect(status().isOk())
+                .andDo(document("find-hubs-by-geometry-example"));
+    }
+
+    @Test
+    public void findHubsByGeometryMaxDistanceExample() throws Exception {
+        // XXX: not really testing whether all the parameters work
+        String geometry = FacilityDaoTest.OVERLAPPING_AREA.asText();
+        geometry = geometry.substring(geometry.indexOf(";") + 1);
+        mockMvc.perform(get(UrlSchema.HUBS).param("geometry", geometry).param("maxDistance", "123.45"))
+                .andExpect(status().isOk())
+                .andDo(document("find-hubs-by-geometry-max-distance-example"));
     }
 
 
@@ -372,5 +417,14 @@ public class ApiDocumentation extends AbstractIntegrationTest {
         currentUser = new NewUser(1L, "dummyoperator", OPERATOR_API, facility.operatorId, "secret");
         devHelper.createOrUpdateUser(currentUser);
         return devHelper.login("dummyoperator").token;
+    }
+
+    public static Utilization newUtilization() {
+        Utilization u = new Utilization();
+        u.capacityType = CapacityType.CAR;
+        u.usage = Usage.HSL_TRAVEL_CARD;
+        u.spacesAvailable = 30;
+        u.timestamp = new DateTime();
+        return u;
     }
 }

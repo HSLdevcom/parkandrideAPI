@@ -5,9 +5,11 @@ package fi.hsl.parkandride.back;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSortedSet;
 import fi.hsl.parkandride.core.back.ContactRepository;
 import fi.hsl.parkandride.core.back.FacilityRepository;
+import fi.hsl.parkandride.core.back.HubRepository;
 import fi.hsl.parkandride.core.back.OperatorRepository;
 import fi.hsl.parkandride.core.domain.*;
 import fi.hsl.parkandride.core.service.TransactionalWrite;
@@ -24,19 +26,26 @@ import static fi.hsl.parkandride.core.domain.DayType.SATURDAY;
 import static fi.hsl.parkandride.core.domain.DayType.SUNDAY;
 import static fi.hsl.parkandride.core.domain.FacilityStatus.EXCEPTIONAL_SITUATION;
 import static fi.hsl.parkandride.core.domain.Service.*;
+import static fi.hsl.parkandride.core.domain.Spatial.fromWkt;
 import static fi.hsl.parkandride.core.domain.Usage.PARK_AND_RIDE;
 import static java.util.Arrays.asList;
 
 public class Dummies {
 
-    @Inject
-    ContactRepository contactDao;
+    @Inject ContactRepository contactDao;
+    @Inject FacilityRepository facilityDao;
+    @Inject OperatorRepository operatorDao;
+    @Inject HubRepository hubDao;
 
-    @Inject
-    FacilityRepository facilityDao;
-
-    @Inject
-    OperatorRepository operatorDao;
+    @TransactionalWrite
+    public long createHub() {
+        final Hub hub = new Hub();
+        hub.name = new MultilingualString("Malmi");
+        hub.location = (Point) fromWkt("POINT(25.010563 60.251022)");
+        hub.facilityIds = ImmutableSet.of(1L, 2L, 3L);
+        hub.address = new Address(new MultilingualString("street"), "00100", new MultilingualString("city"));
+        return hubDao.insertHub(hub);
+    }
 
     @TransactionalWrite
     public long createFacility() {

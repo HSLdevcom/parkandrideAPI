@@ -314,6 +314,7 @@ public class ApiDocumentation extends AbstractIntegrationTest {
     }
 
     // FIXME: fails with "JsonMappingException: Can not deserialize instance of java.util.LinkedHashMap out of START_ARRAY token"
+    // TODO: wait for response to https://github.com/spring-projects/spring-restdocs/issues/69
     @Ignore
     @Test
     public void utilizationExample() throws Exception {

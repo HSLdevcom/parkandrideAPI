@@ -276,7 +276,7 @@ public class FacilityDaoTest extends AbstractDaoTest {
 
     public static Facility createFacility(Long operatorId, FacilityContacts contacts) {
         Facility facility = new Facility();
-        facility.id = 0l;
+        facility.id = 0L;
         facility.name = NAME;
         facility.location = LOCATION;
         facility.operatorId = operatorId;

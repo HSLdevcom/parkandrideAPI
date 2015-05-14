@@ -7,7 +7,7 @@ MESSAGE=`head -n 1 "$1"`
 
 MAX_LENGTH=70
 TYPES="chore demo docs feat fix refactor revert style test"
-PATTERN="^([a-z]+)\([a-z\-]+|\*\)\:\ (.*)$"
+PATTERN="^([a-z]+)\([a-z\-\*]+\)\:\ (.*)$"
 
 if [[ ${#MESSAGE} > $MAX_LENGTH ]]; then
      echo "ERROR: Commit message was ${#MESSAGE} characters long, but should be at most $MAX_LENGTH characters"

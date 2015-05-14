@@ -61,7 +61,7 @@ public class Dummies {
     @TransactionalWrite
     public Facility createFacility(Long operatorId, FacilityContacts contacts) {
         Facility facility = new Facility();
-        facility.id = 0l;
+        facility.id = 0L;
         facility.name = new MultilingualString("Facility " + uniqueNumber());
         facility.location = (Polygon) Spatial.fromWkt("POLYGON((" +
                 "25.010822 60.25054, " +

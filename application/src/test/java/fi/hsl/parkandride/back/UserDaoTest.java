@@ -3,19 +3,18 @@
 
 package fi.hsl.parkandride.back;
 
-import static fi.hsl.parkandride.core.domain.Role.ADMIN;
-import static org.assertj.core.api.Assertions.assertThat;
-
-import javax.inject.Inject;
-
-import org.joda.time.DateTime;
-import org.junit.Test;
-
 import fi.hsl.parkandride.core.back.UserRepository;
 import fi.hsl.parkandride.core.domain.SearchResults;
 import fi.hsl.parkandride.core.domain.User;
 import fi.hsl.parkandride.core.domain.UserSearch;
 import fi.hsl.parkandride.core.domain.UserSecret;
+import org.joda.time.DateTime;
+import org.junit.Test;
+
+import javax.inject.Inject;
+
+import static fi.hsl.parkandride.core.domain.Role.ADMIN;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class UserDaoTest extends AbstractDaoTest {
 
@@ -25,11 +24,11 @@ public class UserDaoTest extends AbstractDaoTest {
     @Test
     public void create_read_and_update() throws InterruptedException {
         DateTime referenceTime = userRepository.getCurrentTime();
-        final UserSecret newUser = new UserSecret(0l, "user", "user-password", ADMIN);
+        final UserSecret newUser = new UserSecret(0, "user", "user-password", ADMIN);
         Thread.sleep(1);
         long userId = userRepository.insertUser(newUser);
         newUser.user.id = userId;
-        assertThat(userId).isGreaterThan(0l);
+        assertThat(userId).isGreaterThan(0);
 
         UserSecret userSecret = userRepository.getUser(userId);
 

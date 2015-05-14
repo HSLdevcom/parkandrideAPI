@@ -9,7 +9,7 @@ public class PageableFacilitySearch extends FacilitySearch {
 
     public int limit = 100;
 
-    public long offset = 0l;
+    public long offset = 0;
 
     // NOTE: getters'n'setters are required for Spring GET request binding
 

@@ -3,26 +3,23 @@
 
 package fi.hsl.parkandride.back;
 
+import com.google.common.collect.ImmutableSet;
+import fi.hsl.parkandride.core.back.HubRepository;
+import fi.hsl.parkandride.core.domain.*;
+import fi.hsl.parkandride.core.service.ValidationException;
+import org.geolatte.geom.Geometry;
+import org.geolatte.geom.Point;
+import org.junit.Test;
+
+import javax.inject.Inject;
+import java.util.List;
+import java.util.Set;
+
 import static fi.hsl.parkandride.core.domain.Sort.Dir.ASC;
 import static fi.hsl.parkandride.core.domain.Sort.Dir.DESC;
 import static fi.hsl.parkandride.core.domain.Spatial.fromWkt;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.fail;
-
-import java.util.List;
-import java.util.Set;
-
-import javax.inject.Inject;
-
-import org.geolatte.geom.Geometry;
-import org.geolatte.geom.Point;
-import org.junit.Test;
-
-import com.google.common.collect.ImmutableSet;
-
-import fi.hsl.parkandride.core.back.HubRepository;
-import fi.hsl.parkandride.core.domain.*;
-import fi.hsl.parkandride.core.service.ValidationException;
 
 public class HubDaoTest extends AbstractDaoTest {
 
@@ -43,8 +40,8 @@ public class HubDaoTest extends AbstractDaoTest {
         Hub hub = createHub();
 
         final long hubId = hubRepository.insertHub(hub);
-        assertThat(hubId).isGreaterThan(0l);
 
+        assertThat(hubId).isGreaterThan(0);
         // Get
         hub = hubRepository.getHub(hubId);
         assertDefaultHub(hub);

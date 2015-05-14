@@ -9,7 +9,7 @@ public class UserSearch implements OperatorEntity {
 
     private int limit = 100;
 
-    private long offset = 0l;
+    private long offset = 0;
 
     private Long operatorId;
 

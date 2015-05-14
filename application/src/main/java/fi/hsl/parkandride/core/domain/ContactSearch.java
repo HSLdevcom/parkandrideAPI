@@ -11,7 +11,7 @@ public class ContactSearch {
 
     private int limit = 100;
 
-    private long offset = 0l;
+    private long offset = 0;
 
     private Sort sort;
 

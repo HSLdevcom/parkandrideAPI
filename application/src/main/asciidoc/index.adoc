@@ -336,17 +336,33 @@ NOTE: This information is mainly useful for facilities from which there is
 no dynamic utilization information available. Otherwise one should refer to utilization and prediction.
 
 [[utilization]]
-= Utilization
+=== Utilization
 
-TODO
+If available, the the latest known number of available parking places is reported for each facility, capacity type and usage combination.
 
-== Update
+include::{generated}/utilization-example/http-request.adoc[]
+include::{generated}/utilization-example/http-response.adoc[]
+include::{generated}/utilization-example/response-fields.adoc[]
 
-TODO
+==== Update
 
-== Prediction
+xref:authentication[Authenticated] operators may update the utilization for their facilities.
 
-TODO
+include::{generated}/utilization-update-example/http-request.adoc[]
+
+==== Prediction
+
+Utilization predictions are available for all facilities which have utilization data.
+The predictions are updated at regular intervals and they are available for up to 24 hours into the future.
+It is possible to query predictions using relative time (`after` parameter in `hhmm` format)
+or absolute time (`at` parameter in ISO 8601 date time format).
+
+NOTE: As of May 2015, the actual prediction algorithms have not yet been implemented,
+so the predictions are not yet useful, but it's possible to start implementing applications which use the API.
+
+include::{generated}/prediction-relative-example/http-request.adoc[]
+include::{generated}/prediction-absolute-example/http-request.adoc[]
+include::{generated}/prediction-absolute-example/http-response.adoc[]
 
 
 [[hubs]]

@@ -19,6 +19,7 @@ public class Utilization {
 
     @NotNull
     @ApiModelProperty(required = false, notes = "defaults to facilityId from URI")
+    @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
     public Long facilityId;
 
     @NotNull

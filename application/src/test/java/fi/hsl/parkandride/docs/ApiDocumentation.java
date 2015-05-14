@@ -3,16 +3,18 @@
 
 package fi.hsl.parkandride.docs;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import fi.hsl.parkandride.back.Dummies;
 import fi.hsl.parkandride.back.FacilityDaoTest;
 import fi.hsl.parkandride.core.back.FacilityRepository;
-import fi.hsl.parkandride.core.domain.Facility;
-import fi.hsl.parkandride.core.domain.FacilityStatus;
-import fi.hsl.parkandride.core.domain.NewUser;
-import fi.hsl.parkandride.core.domain.Sort;
+import fi.hsl.parkandride.core.domain.*;
+import fi.hsl.parkandride.core.service.FacilityService;
+import fi.hsl.parkandride.core.service.PredictionService;
 import fi.hsl.parkandride.front.UrlSchema;
 import fi.hsl.parkandride.itest.AbstractIntegrationTest;
+import org.joda.time.DateTime;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.boot.test.IntegrationTest;
 import org.springframework.http.MediaType;
@@ -23,6 +25,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import javax.inject.Inject;
+import java.util.Collections;
 
 import static fi.hsl.parkandride.core.domain.Role.OPERATOR_API;
 import static org.hamcrest.Matchers.empty;
@@ -40,12 +43,16 @@ public class ApiDocumentation extends AbstractIntegrationTest {
 
     @Inject Dummies dummies;
     @Inject FacilityRepository facilityRepository;
+    @Inject FacilityService facilityService;
+    @Inject PredictionService predictionService;
     @Inject WebApplicationContext context;
+    @Inject ObjectMapper objectMapper;
 
     private MockMvc mockMvc;
 
     private String authToken;
     private long facilityId;
+    private NewUser currentUser;
 
     @Before
     public void init() {
@@ -306,13 +313,64 @@ public class ApiDocumentation extends AbstractIntegrationTest {
                 .andDo(document("find-facilities-summary-example"));
     }
 
+    // FIXME: fails with "JsonMappingException: Can not deserialize instance of java.util.LinkedHashMap out of START_ARRAY token"
+    @Ignore
+    @Test
+    public void utilizationExample() throws Exception {
+        facilityService.registerUtilization(facilityId, Collections.singletonList(newUtilization()), currentUser);
+
+        mockMvc.perform(get(UrlSchema.FACILITY_UTILIZATION, facilityId))
+                .andExpect(status().isOk())
+                .andDo(document("utilization-example")
+                        .withResponseFields(
+                                fieldWithPath("[]facilityId").description("The facility"),
+                                fieldWithPath("[]capacityType").description("The capacity type"),
+                                fieldWithPath("[]usage").description("The usage"),
+                                fieldWithPath("[]timestamp").description("When this information was last updated"),
+                                fieldWithPath("[]spacesAvailable").description("Number of available parking spaces for this facility, capacity type and usage combination")));
+    }
+
+    @Test
+    public void utilizationUpdateExample() throws Exception {
+        MockHttpServletRequestBuilder request = put(UrlSchema.FACILITY_UTILIZATION, facilityId)
+                .header("Authorization", "Bearer " + authToken)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(Collections.singletonList(newUtilization())));
+        mockMvc.perform(request)
+                .andExpect(status().isOk())
+                .andDo(document("utilization-update-example"));
+    }
+
+    @Test
+    public void predictionExample() throws Exception {
+        facilityService.registerUtilization(facilityId, Collections.singletonList(newUtilization()), currentUser);
+        predictionService.updatePredictions();
+
+        mockMvc.perform(get(UrlSchema.FACILITY_PREDICTION_ABSOLUTE, facilityId, new DateTime().plusMinutes(15)))
+                .andExpect(status().isOk())
+                .andDo(document("prediction-absolute-example"));
+        mockMvc.perform(get(UrlSchema.FACILITY_PREDICTION_RELATIVE, facilityId, "0015"))
+                .andExpect(status().isOk())
+                .andDo(document("prediction-relative-example"));
+    }
+
+    public static Utilization newUtilization() {
+        Utilization u = new Utilization();
+        u.capacityType = CapacityType.CAR;
+        u.usage = Usage.HSL_TRAVEL_CARD;
+        u.spacesAvailable = 30;
+        u.timestamp = new DateTime();
+        return u;
+    }
+
 
     // helpers
 
     public String loginApiUserForFacility(long facilityId) {
         Facility facility = facilityRepository.getFacility(facilityId);
         devHelper.deleteUsers();
-        devHelper.createOrUpdateUser(new NewUser(1L, "dummyoperator", OPERATOR_API, facility.operatorId, "secret"));
+        currentUser = new NewUser(1L, "dummyoperator", OPERATOR_API, facility.operatorId, "secret");
+        devHelper.createOrUpdateUser(currentUser);
         return devHelper.login("dummyoperator").token;
     }
 }

@@ -10,8 +10,12 @@
 [[overview]]
 == Overview
 
-HSL Park and Ride application contains information about parking facilities near public transportation hubs.
-Data is provided free-or-charge with XXX License.
+Park and ride is one of the solutions to tackle Helsinki regions growing population and traffic
+by encouraging citizens to leave their cars outside of the most congested areas and continuing
+their trip with public transportation. HSL Park and Ride application contains all the important
+information about parking facilities and their services near public transportation hubs. The
+application is used by HSL, parking operators, roadside displays and third party applications.
+All data is provided free of charge with (TODO) License.
 
 API follows REST conventions (roughly). Resources are divided into collection and item URLs.
 Collection resources typically accept GET-parameters for filtering, paging and sorting items.
@@ -43,7 +47,7 @@ in order to receive announcements of comming changes._
 
 === Development
 
-Park and Ride application developed as an Open Source project in GitHub:
+Park and Ride application is developed as an Open Source project in GitHub:
 https://github.com/HSLdevcom/parkandrideAPI.
 
 Please, report bugs and feature requests as GitHub issues.

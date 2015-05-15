@@ -8,7 +8,7 @@
 	</ui-select>
 	<span class="input-group-btn">
 		<button type="button" class="btn btn-default clearOperator" ng-click="object.operatorId = undefined"
-				ng-show="!mandatory && object.operatorId">{{ "common.action.removeSymbol" | translate }}</button>
+				ng-show="!mandatory && object.operatorId" ng-disabled="disabled">{{ "common.action.removeSymbol" | translate }}</button>
 		<button type="button" class="btn btn-default createOperator" ng-click="createOperator()"
 				ng-disabled="!$parent.permit($parent.OPERATOR_CREATE)">{{ "common.action.addSymbol" | translate }}</button>
 	</span>

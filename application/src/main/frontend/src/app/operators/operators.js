@@ -101,7 +101,8 @@
             scope: {
                 object: '=',
                 mandatory: '=',
-                placeholder: '@'
+                placeholder: '@',
+                disabled: '='
             },
             templateUrl: 'operators/operatorSelect.tpl.html',
             transclude: false,

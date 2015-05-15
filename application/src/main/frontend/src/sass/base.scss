@@ -64,6 +64,20 @@
 
 .btn-group {
   margin-bottom: 20px;
+  label {
+    background-color: $secondarycolor;
+    color: $k80;
+    .checkmark {
+      display: none;
+    }
+  }
+  .active {
+    background-color: $primarycolor;
+    color: #fff;
+    .checkmark {
+      display: inline;
+    }
+  }
 }
 
 .btn.disabled, .btn[disabled] {

@@ -82,6 +82,12 @@ html, body {
         text-decoration: none;
       }
     }
+    &.semiactive > a {
+      &:hover{
+        cursor: pointer;
+        text-decoration: underline;
+      }
+    }
   }
 }
 

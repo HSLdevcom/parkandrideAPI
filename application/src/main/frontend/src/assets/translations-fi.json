@@ -22,12 +22,12 @@
     }
   },
   "capacityTypes": {
-    "CAR": { "label": "Henkilöauto" },
-    "BICYCLE": { "label": "Polkupyörä" },
-    "BICYCLE_SECURE_SPACE": { "label": "Polkupyörä, lukittu tila" },
-    "DISABLED": { "label": "Invapaikka" },
-    "MOTORCYCLE": { "label": "Moottoripyörä" },
-    "ELECTRIC_CAR": { "label": "Sähköauto" }
+    "CAR": {"label": "Henkilöauto"},
+    "BICYCLE": {"label": "Polkupyörä"},
+    "BICYCLE_SECURE_SPACE": {"label": "Polkupyörä, lukittu tila"},
+    "DISABLED": {"label": "Invapaikka"},
+    "MOTORCYCLE": {"label": "Moottoripyörä"},
+    "ELECTRIC_CAR": {"label": "Sähköauto"}
   },
   "services": {
     "ELEVATOR": {"label": "Hissi"},
@@ -52,16 +52,16 @@
     "BICYCLE_FRAME_LOCK": {"label": "Polkupyörän runkolukitus"}
   },
   "paymentMethods": {
-    "COINS": { "label": "Kolikko" },
-    "NOTES": { "label": "Seteli" },
-    "DEBIT_CARD": { "label": "Pankkikortti" },
-    "VISA_CREDIT": { "label": "Visa" },
-    "VISA_ELECTRON": { "label": "Visa Electron" },
-    "AMERICAN_EXPRESS": { "label": "American Express" },
-    "MASTERCARD": { "label": "MasterCard" },
-    "DINERS_CLUB": { "label": "Diners Club" },
-    "HSL_TRAVEL_CARD": { "label": "HSL matkakortti" },
-    "OTHER": { "label": "Muu" }
+    "COINS": {"label": "Kolikko"},
+    "NOTES": {"label": "Seteli"},
+    "DEBIT_CARD": {"label": "Pankkikortti"},
+    "VISA_CREDIT": {"label": "Visa"},
+    "VISA_ELECTRON": {"label": "Visa Electron"},
+    "AMERICAN_EXPRESS": {"label": "American Express"},
+    "MASTERCARD": {"label": "MasterCard"},
+    "DINERS_CLUB": {"label": "Diners Club"},
+    "HSL_TRAVEL_CARD": {"label": "HSL matkakortti"},
+    "OTHER": {"label": "Muu"}
   },
   "facilityStatuses": {
     "IN_OPERATION": {
@@ -160,6 +160,9 @@
     "email": {
       "label": "Sähköposti"
     },
+    "contactRequired": {
+      "label": "Täytä puhelinnumero tai sähköposti"
+    },
     "address": {
       "label": "Osoite"
     },
@@ -226,12 +229,14 @@
     "label": "Pysäköintipaikka",
     "list": {
       "name": "Nimi",
-      "types": "Tyypit",
-      "usages": "Käyttö"
+      "types": "Ajoneuvotyypit",
+      "usages": "Käyttötapa"
     },
     "basic_info": "Perustiedot",
     "action": {
-      "new": "Lisää uusi pysäköintipaikka"
+      "new": "Lisää uusi pysäköintipaikka",
+      "addLocation": "Lisää sijainti",
+      "addPorts": "Lisää sisään- ja uloskäynnit"
     },
     "hubs": {
       "heading": "Kuuluu alueisiin"
@@ -409,18 +414,18 @@
     },
     "capacity": {
       "heading": "Kapasiteetti",
-      "type": "Tyyppi",
+      "type": "Ajoneuvotyyppi",
       "built": "Rakennettu kapasiteetti",
       "unavailable": "Tilapäisesti poissa käytöstä"
     },
     "builtCapacity": {
       "label": "Rakennettu kapasiteetti",
-      "CAR": { "label": "Henkilöauto, rakennettu kapasiteetti" },
-      "BICYCLE": { "label": "Polkupyörä, rakennettu kapasiteetti" },
-      "BICYCLE_SECURE_SPACE": { "label": "Polkupyörä, lukittu tila, rakennettu kapasiteetti" },
-      "DISABLED": { "label": "Invapaikka, rakennettu kapasiteetti" },
-      "MOTORCYCLE": { "label": "Moottoripyörä, rakennettu kapasiteetti" },
-      "ELECTRIC_CAR": { "label": "Sähköauto, rakennettu kapasiteetti" }
+      "CAR": {"label": "Henkilöauto, rakennettu kapasiteetti"},
+      "BICYCLE": {"label": "Polkupyörä, rakennettu kapasiteetti"},
+      "BICYCLE_SECURE_SPACE": {"label": "Polkupyörä, lukittu tila, rakennettu kapasiteetti"},
+      "DISABLED": {"label": "Invapaikka, rakennettu kapasiteetti"},
+      "MOTORCYCLE": {"label": "Moottoripyörä, rakennettu kapasiteetti"},
+      "ELECTRIC_CAR": {"label": "Sähköauto, rakennettu kapasiteetti"}
     },
     "pricing": {
       "noPricingRows": "Pysäköintipaikkaan ei ole lisätty pysäköintihinnoittelua",
@@ -428,8 +433,8 @@
       "capacityTypePlaceholder": "Valitse...",
       "capacity": "Kapasiteetti",
       "capacityType": {
-        "title": "Tyyppi",
-        "label": "Hinnoittelu / Tyyppi"
+        "title": "Ajoneuvotyyppi",
+        "label": "Hinnoittelu / Ajoneuvotyyppi"
       },
       "usagePlaceholder": "Valitse...",
       "usage": {
@@ -488,10 +493,10 @@
       "label": "Tilapäisesti pois käytöstä",
       "disclaimer": "Pysäköintipaikkaan ei ole tallennettu pysäköintihinnoittelua",
       "capacityType": {
-        "label": "Tyyppi"
+        "label": "Ajoneuvotyyppi"
       },
       "usage": {
-        "label": "Käyttö"
+        "label": "Käyttötapa"
       },
       "capacity": {
         "label": "Tilapäisesti pois käytöstä"
@@ -513,7 +518,8 @@
   },
   "footer": {
     "copyright": "Copyright HSL",
-    "contact": "Helsingin seudun liikenne, puh. 09 4766 4444, hsl@hsl.fi"
+    "contact": "Helsingin seudun liikenne, puh. 09 4766 4444, ",
+    "contactMail": "hsl@hsl.fi"
   },
   "header": {
     "logodesc": "HSL Liityntäpysäköinti"
@@ -554,7 +560,7 @@
     },
     "location": {
       "label": "Sijainti",
-      "help": "Lisää alueen sijainti tuplaklikkaamalla karttaa. Valitse alueeseen kuuluvat pysäköintipaikat klikkaamalla niitä kartalla."
+      "help": "Lisää alueen sijainti tuplaklikkaamalla karttaa. Jos alueeseen kuuluvia pysäköintipaikkoja on jo luotu, niin voit valita ne klikkaamalla."
     },
     "address": {
       "label": "Käyntiosoite",
@@ -628,8 +634,7 @@
       },
       "remove": {
         "label": "Poista",
-        "confirmTitle": "Haluatko varmasti poistaa valitsemasi käyttäjän?",
-        "confirmText": "Haluatko varmasti poistaa valitsemasi käyttäjän?",
+        "confirmText": "Haluatko varmasti poistaa käyttäjän \"{{username}}\"?",
         "confirmButtonText": "Kyllä, poista käyttäjä"
       }
     },

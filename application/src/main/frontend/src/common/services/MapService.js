@@ -7,6 +7,8 @@
     var portResolutionThresholds = {
         hide: 7,
         dot: 4
+    }, facilityResolutionTreshold = {
+        dot: 15
     };
 
     var formatOptions = {
@@ -16,32 +18,52 @@
     var geoJsonFormat = new ol.format.GeoJSON();
     var wktFormat = new ol.format.WKT();
 
-    m.value('MapService', {
-            facilityStyle: new ol.style.Style({
+    function getPolygonCircleStyle(feature, color) {
+        return [new ol.style.Style({
+            image: new ol.style.Circle({
+                radius: 7,
                 fill: new ol.style.Fill({
-                    color: 'rgba(255, 99, 25, 0.4)' //HSL orange, transparent
-                }),
-                stroke: new ol.style.Stroke({
-                    color: '#FF6319', //HSL orange
-                    width: 2
-                }),
-                image: new ol.style.Circle({
-                    radius: 7,
-                    fill: new ol.style.Fill({
-                        color: '#FF6319' //HSL orange
-                    })
+                    color: color
                 })
             }),
+            geometry: function(feature) {
+                return feature.getGeometry().getInteriorPoint();
+            }
+        })];
+    }
 
-            selectedFacilityStyle: new ol.style.Style({
-                fill: new ol.style.Fill({
-                    color: 'rgba(0, 122, 201, 0.4)' //HSL blue, transparent
-                }),
-                stroke: new ol.style.Stroke({
-                    color: '#007AC9', //HSL blue
-                    width: 2
-                })
-            }),
+    m.value('MapService', {
+            facilityStyle: function(feature, resolution) {
+                if (resolution >= facilityResolutionTreshold.dot) {
+                    return getPolygonCircleStyle(feature, '#FF6319'); //HSL orange
+                } else {
+                    return [new ol.style.Style({
+                        fill: new ol.style.Fill({
+                            color: 'rgba(255, 99, 25, 0.4)' //HSL orange, transparent
+                        }),
+                        stroke: new ol.style.Stroke({
+                            color: '#FF6319', //HSL orange
+                            width: 2
+                        })
+                    })];
+                }
+            },
+
+            selectedFacilityStyle: function(feature, resolution) {
+                if (resolution >= facilityResolutionTreshold.dot) {
+                    return getPolygonCircleStyle(feature, '#007AC9'); //HSL blue
+                } else {
+                    return [new ol.style.Style({
+                        fill: new ol.style.Fill({
+                            color: 'rgba(0, 122, 201, 0.4)' //HSL blue, transparent
+                        }),
+                        stroke: new ol.style.Stroke({
+                            color: '#007AC9', //HSL blue
+                            width: 2
+                        })
+                    })];
+                }
+            },
 
             facilityDrawStyle: function(feature, resolution) {
                 switch(feature.getGeometry().getType()) {
@@ -116,10 +138,10 @@
                 image: new ol.style.Circle({
                     radius: 8,
                     fill: new ol.style.Fill({
-                        color: '#007AC9' //HSL blue
+                        color: '#4DC7FF' //HSL light blue
                     }),
                     stroke: new ol.style.Stroke({
-                        color: '#007AC9', //not used
+                        color: '#4DC7FF', //not used
                         width: 0
                     })
                 })
@@ -172,7 +194,6 @@
                 controls.push(new ol.control.FullScreen({tipLabel: "Koko näyttö"}));
 
                 interactions.push(new ol.interaction.DoubleClickZoom());
-                interactions.push(new ol.interaction.MouseWheelZoom());
                 interactions.push(new ol.interaction.DragZoom());
                 interactions.push(new ol.interaction.PinchZoom());
                 interactions.push(new ol.interaction.KeyboardPan());

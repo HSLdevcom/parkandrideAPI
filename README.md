@@ -16,11 +16,11 @@ In both the approaches described below, the application runs in `localhost:8080`
 * run application with env_local profile. Application can be run
   * from an IDE by running [fi.hsl.parkandride.Application](https://github.com/HSLdevcom/parkandrideAPI/blob/master/application/src/main/java/fi/hsl/parkandride/Application.java) 
   * from command line by running the packaged jar (non-frontend changes require restart) 
-     * `java -jar application/target/parkandride-application-0.0.1-SNAPSHOT.jar --spring.profiles.active=env_local`
+     * `java -jar application/target/parkandride-application-1-SNAPSHOT.jar --spring.profiles.active=env_local`
 
 ### With livereload
 * do the steps defined in 'Without livereload' with the distinction that application is started at port 9100, e.g.
- * `java -jar application/target/parkandride-application-0.0.1-SNAPSHOT.jar --server.port=9100 --spring.profiles.active=env_local`
+ * `java -jar application/target/parkandride-application-1-SNAPSHOT.jar --server.port=9100 --spring.profiles.active=env_local`
 * install nginx and configure it as described in [etc/nginx.conf](https://github.com/HSLdevcom/parkandrideAPI/blob/master/etc/nginx.conf). It routes
   * /api requests to localhost:9100
   * other requests to localhost:9000 (grunt-connect listens at this port)

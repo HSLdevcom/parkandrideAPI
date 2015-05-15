@@ -28,7 +28,7 @@
 					</div>
 					<div class="navi-col">
 						<ul class="nav nav-tabs">
-							<li ng-class="{active: $state.includes('hubstab')}"><a ui-sref="hub-list" translate="hubs.title"></a></li>
+							<li ng-class="{active: $state.includes('hubstab') , semiactive: ( $state.includes('facility-create') || $state.includes('facility-edit') || $state.includes('facility-view') || $state.includes('hub-edit') || $state.includes('hub-view') || $state.includes('hub-create') )}"><a ui-sref="hub-list" translate="hubs.title"></a></li>
 							<li ng-class="{active: $state.includes('contactstab')}"><a ui-sref="contact-list" translate="contacts.title"></a></li>
 							<li ng-class="{active: $state.includes('operatorstab')}"><a ui-sref="operator-list" translate="operators.title"></a></li>
 							<li ng-class="{active: $state.includes('userstab')}"><a ui-sref="user-list" translate="users.title"></a></li>
@@ -58,7 +58,10 @@
 			<div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 first-column">
 				&copy {{ "footer.copyright" | translate }}
 			</div>
-			<div class="col-lg-8 col-md-8 col-sm-8 col-xs-12 text-right last-column" translate="footer.contact"></div>
+			<div class="col-lg-8 col-md-8 col-sm-8 col-xs-12 text-right last-column">
+				<span translate="footer.contact"></span>
+				<a ng-href="mailto:{{ 'footer.contactMail' | translate}}" translate="footer.contactMail"></a>
+			</div>
 		</div>
 	</div>
 

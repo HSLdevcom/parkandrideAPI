@@ -15,15 +15,15 @@ by encouraging citizens to leave their cars outside of the most congested areas 
 their trip with public transportation. HSL Park and Ride application contains all the important
 information about parking facilities and their services near public transportation hubs. The
 application is used by HSL, parking operators, roadside displays and third party applications.
-All data is provided free of charge with (TODO) License.
+All data is provided free of charge with CC BY 4.0 license (http://creativecommons.org/licenses/by/4.0/).
 
-API follows REST conventions (roughly). Resources are divided into collection and item URLs.
+API follows REST conventions roughly. Resources are divided into collection and item URLs.
 Collection resources typically accept GET-parameters for filtering, paging and sorting items.
 Reading data uses GET-method and doesn't require authorization - except for user management.
 Restricted modifications use either POST on collection-URL for creating new items and PUT
 on item URL for updates.
 
-DELETE is not directly supported (currently) but the goal is achieved using e.g. a status field.
+DELETE is not directly supported currently but the goal is achieved using e.g. a status field.
 However, if sometime in the future we need to delete something for reason or another,
 *please prepare for 404 on a resource that has previously returned a result*.
 
@@ -209,7 +209,7 @@ include::{generated}/operator-details-example/http-response.adoc[]
 [[contacts]]
 == Contacts
 
-Facilities have emergency, operator and (optional) service contacts. Contacts are either general,
+Facilities have emergency, operator and service contacts, where the two first are mandatory and service contact optional. Contacts are either general,
 maintained by HSL and shared by all operators, or operator specific. Operator specific contacts have
 `operatorId` property.
 

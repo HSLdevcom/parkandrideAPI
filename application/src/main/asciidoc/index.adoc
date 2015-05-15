@@ -150,6 +150,7 @@ For example missing (optional) info:
 }
 ----
 
+WARNING: None of the textual fields may contain HTML-markup, and *must be escaped before rendering*.
 
 [[enumerations]]
 === Enumerations
@@ -278,7 +279,7 @@ is within given max distance (meters) are returned.
 
 include::{generated}/find-facilities-by-geometry-max-distance-example/http-request.adoc[]
 
-==== Summary
+==== Summary of Matching Facilities
 
 An existence of a special parameter named `summary` transforms results into a summary of matched
 facilities. This summary consists of `facilityCount` and sum of capacity by type.
@@ -289,10 +290,6 @@ include::{generated}/find-facilities-summary-example/http-response.adoc[]
 
 [[facility-details]]
 === Facility Details
-
-Below is an example of details of a facility.
-
-include::{generated}/facility-example/response-fields.adoc[]
 
 include::{generated}/facility-example/http-request.adoc[]
 
@@ -366,6 +363,10 @@ include::{generated}/prediction-relative-example/http-request.adoc[]
 include::{generated}/prediction-absolute-example/http-request.adoc[]
 include::{generated}/prediction-absolute-example/http-response.adoc[]
 
+==== Summary of Facility Model
+
+include::{generated}/facility-example/response-fields.adoc[]
+
 
 [[hubs]]
 == Hubs
@@ -410,3 +411,6 @@ A navigation app may search for hubs within `maxDistance` of 1000 m of the selec
 A route is defined as a `LineString` `geometry` which is in essence just a list of coorinates.
 From the result a list of recommended facilities may be extracted and then
 prediction of spaces available at the estimated arrival time.
+
+
+&copy; Copyright HSL

@@ -14,7 +14,6 @@ import fi.hsl.parkandride.front.UrlSchema;
 import fi.hsl.parkandride.itest.AbstractIntegrationTest;
 import org.joda.time.DateTime;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.boot.test.IntegrationTest;
 import org.springframework.http.MediaType;
@@ -313,9 +312,6 @@ public class ApiDocumentation extends AbstractIntegrationTest {
                 .andDo(document("find-facilities-summary-example"));
     }
 
-    // FIXME: fails with "JsonMappingException: Can not deserialize instance of java.util.LinkedHashMap out of START_ARRAY token"
-    // TODO: wait for response to https://github.com/spring-projects/spring-restdocs/issues/69
-    @Ignore
     @Test
     public void utilizationExample() throws Exception {
         facilityService.registerUtilization(facilityId, Collections.singletonList(newUtilization()), currentUser);

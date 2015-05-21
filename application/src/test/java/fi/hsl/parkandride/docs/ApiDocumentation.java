@@ -13,6 +13,8 @@ import fi.hsl.parkandride.core.service.PredictionService;
 import fi.hsl.parkandride.front.UrlSchema;
 import fi.hsl.parkandride.itest.AbstractIntegrationTest;
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.boot.test.IntegrationTest;
@@ -48,6 +50,7 @@ public class ApiDocumentation extends AbstractIntegrationTest {
     @Inject ObjectMapper objectMapper;
 
     private MockMvc mockMvc;
+    private DateTimeZone originalDateTimeZone;
 
     private String authToken;
     private long facilityId;
@@ -62,6 +65,18 @@ public class ApiDocumentation extends AbstractIntegrationTest {
         facilityId = dummies.createFacility();
         authToken = loginApiUserForFacility(facilityId);
     }
+
+    @Before
+    public void setTimezone() {
+        originalDateTimeZone = DateTimeZone.getDefault();
+        DateTimeZone.setDefault(DateTimeZone.forID("Europe/Helsinki"));
+    }
+
+    @After
+    public void restoreTimezone() {
+        DateTimeZone.setDefault(originalDateTimeZone);
+    }
+
 
     @Test
     public void jsonDefaultExample() throws Exception {

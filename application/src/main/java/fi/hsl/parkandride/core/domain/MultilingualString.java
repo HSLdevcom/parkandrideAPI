@@ -3,36 +3,32 @@
 
 package fi.hsl.parkandride.core.domain;
 
+import com.google.common.base.MoreObjects;
+import com.google.common.collect.ImmutableSet;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.NotBlank;
+
 import java.util.AbstractMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
-import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.NotBlank;
-
-import com.google.common.base.MoreObjects;
-import com.google.common.collect.ImmutableSet;
-import com.wordnik.swagger.annotations.ApiModelProperty;
-
 public class MultilingualString {
 
-    @ApiModelProperty(value="Value in Finnish", required = true)
     @NotBlank
-    @Length(min=0, max=255)
+    @Length(min = 0, max = 255)
     public String fi;
 
-    @ApiModelProperty(value="Value in Swedish", required = true)
     @NotBlank
-    @Length(min=0, max=255)
+    @Length(min = 0, max = 255)
     public String sv;
 
-    @ApiModelProperty(value="Value in English", required = true)
     @NotBlank
-    @Length(min=0, max=255)
+    @Length(min = 0, max = 255)
     public String en;
 
-    public MultilingualString() {}
+    public MultilingualString() {
+    }
 
     public MultilingualString(String all) {
         this(all, all, all);
@@ -58,9 +54,9 @@ public class MultilingualString {
 
     @Override
     public final int hashCode() {
-        int hashCode = fi==null ? 1 : fi.hashCode();
-        hashCode = 31*hashCode + (sv==null ? 0 : sv.hashCode());
-        return 31*hashCode + (en==null ? 0 : en.hashCode());
+        int hashCode = fi == null ? 1 : fi.hashCode();
+        hashCode = 31 * hashCode + (sv == null ? 0 : sv.hashCode());
+        return 31 * hashCode + (en == null ? 0 : en.hashCode());
     }
 
     @Override
@@ -99,10 +95,20 @@ public class MultilingualString {
             public String put(String key, String value) {
                 String oldValue;
                 switch (key) {
-                    case "fi": oldValue = fi; fi = value; break;
-                    case "sv": oldValue = sv; sv = value; break;
-                    case "en": oldValue = en; en = value; break;
-                    default: throw new IllegalArgumentException("Unsupported lang: " + key);
+                    case "fi":
+                        oldValue = fi;
+                        fi = value;
+                        break;
+                    case "sv":
+                        oldValue = sv;
+                        sv = value;
+                        break;
+                    case "en":
+                        oldValue = en;
+                        en = value;
+                        break;
+                    default:
+                        throw new IllegalArgumentException("Unsupported lang: " + key);
                 }
                 return oldValue;
             }

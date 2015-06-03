@@ -3,21 +3,17 @@
 
 package fi.hsl.parkandride.core.domain;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-
+import fi.hsl.parkandride.core.domain.validation.PhoneOrEmailRequired;
 import org.hibernate.validator.constraints.Email;
 
-import com.wordnik.swagger.annotations.ApiModelProperty;
-
-import fi.hsl.parkandride.core.domain.validation.PhoneOrEmailRequired;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 
 @PhoneOrEmailRequired
 public class Contact implements OperatorEntity {
 
     public Long id;
 
-    @ApiModelProperty(required = true)
     @NotNull
     @Valid
     public MultilingualString name;

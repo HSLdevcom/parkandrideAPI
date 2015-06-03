@@ -3,9 +3,6 @@
 
 package fi.hsl.parkandride.front;
 
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
-import com.wordnik.swagger.annotations.Authorization;
 import fi.hsl.parkandride.core.domain.Contact;
 import fi.hsl.parkandride.core.domain.ContactSearch;
 import fi.hsl.parkandride.core.domain.SearchResults;
@@ -30,7 +27,6 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.web.bind.annotation.RequestMethod.*;
 
 @RestController
-@Api("contacts")
 public class ContactController {
 
     private final Logger log = LoggerFactory.getLogger(ContactController.class);
@@ -38,7 +34,6 @@ public class ContactController {
     @Inject
     ContactService contactService;
 
-    @ApiOperation(value = "Create contact", authorizations = @Authorization(API_KEY))
     @RequestMapping(method = POST, value = CONTACTS, produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<Contact> createContact(@RequestBody Contact contact,
                                                  User currentUser,
@@ -58,7 +53,6 @@ public class ContactController {
         return new ResponseEntity<>(contact, OK);
     }
 
-    @ApiOperation(value = "Update contact", authorizations = @Authorization(API_KEY))
     @RequestMapping(method = PUT, value = CONTACT, produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<Contact> updateContact(@PathVariable(CONTACT_ID) long contactId,
                                                  @RequestBody Contact contact,

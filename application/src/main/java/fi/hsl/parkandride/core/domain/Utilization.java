@@ -8,7 +8,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.google.common.base.MoreObjects;
-import com.wordnik.swagger.annotations.ApiModelProperty;
 import org.joda.time.DateTime;
 
 import javax.validation.constraints.Min;
@@ -18,27 +17,22 @@ import java.util.Objects;
 public class Utilization {
 
     @NotNull
-    @ApiModelProperty(required = false, notes = "defaults to facilityId from URI")
     @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
     public Long facilityId;
 
     @NotNull
-    @ApiModelProperty(required = true)
     public CapacityType capacityType;
 
     @NotNull
-    @ApiModelProperty(required = true)
     public Usage usage;
 
     @NotNull
-    @ApiModelProperty(required = true)
     @JsonSerialize(using = DefaultTimeZoneDateTimeSerializer.class)
     @JsonDeserialize(using = StrictIsoDateTimeDeserializer.class)
     public DateTime timestamp;
 
     @NotNull
     @Min(0)
-    @ApiModelProperty(required = true)
     public Integer spacesAvailable;
 
     @JsonIgnore

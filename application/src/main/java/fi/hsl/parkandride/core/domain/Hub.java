@@ -3,29 +3,23 @@
 
 package fi.hsl.parkandride.core.domain;
 
-import java.util.Set;
+import com.google.common.collect.Sets;
+import fi.hsl.parkandride.core.domain.validation.Coordinates;
+import fi.hsl.parkandride.core.domain.validation.NotNullElement;
+import org.geolatte.geom.Point;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-
-import org.geolatte.geom.Point;
-
-import com.google.common.collect.Sets;
-import com.wordnik.swagger.annotations.ApiModelProperty;
-
-import fi.hsl.parkandride.core.domain.validation.Coordinates;
-import fi.hsl.parkandride.core.domain.validation.NotNullElement;
+import java.util.Set;
 
 public class Hub {
 
     public Long id;
 
-    @ApiModelProperty(required = true)
     @NotNull
     @Valid
     public MultilingualString name;
 
-    @ApiModelProperty(required = true)
     @NotNull
     @Coordinates
     public Point location;

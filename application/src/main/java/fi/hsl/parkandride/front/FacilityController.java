@@ -3,9 +3,6 @@
 
 package fi.hsl.parkandride.front;
 
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
-import com.wordnik.swagger.annotations.Authorization;
 import fi.hsl.parkandride.core.domain.*;
 import fi.hsl.parkandride.core.service.FacilityService;
 import fi.hsl.parkandride.core.service.PredictionService;
@@ -33,7 +30,6 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.web.bind.annotation.RequestMethod.*;
 
 @RestController
-@Api("facilities")
 public class FacilityController {
 
     private final Logger log = LoggerFactory.getLogger(FacilityController.class);
@@ -41,7 +37,6 @@ public class FacilityController {
     @Inject FacilityService facilityService;
     @Inject PredictionService predictionService;
 
-    @ApiOperation(value = "Create facility", authorizations = @Authorization(API_KEY))
     @RequestMapping(method = POST, value = FACILITIES, produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<Facility> createFacility(@RequestBody Facility facility,
                                                    User currentUser,
@@ -55,7 +50,6 @@ public class FacilityController {
         return new ResponseEntity<>(newFacility, headers, CREATED);
     }
 
-    @ApiOperation(value = "Get facility details")
     @RequestMapping(method = GET, value = FACILITY, produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<Facility> getFacility(@PathVariable(FACILITY_ID) long facilityId) {
         log.info("getFacility({})", facilityId);
@@ -63,7 +57,6 @@ public class FacilityController {
         return new ResponseEntity<>(facility, OK);
     }
 
-    @ApiOperation(value = "Get facility info as GeoJSON Feature")
     @RequestMapping(method = GET, value = FACILITY, produces = GEOJSON)
     public ResponseEntity<Feature> getFacilityAsFeature(@PathVariable(FACILITY_ID) long facilityId) {
         log.info("getFacilityAsFeature({})", facilityId);
@@ -71,7 +64,6 @@ public class FacilityController {
         return new ResponseEntity<>(FACILITY_TO_FEATURE.apply(facility), OK);
     }
 
-    @ApiOperation(value = "Update facility", authorizations = @Authorization(API_KEY))
     @RequestMapping(method = PUT, value = FACILITY, produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<Facility> updateFacility(@PathVariable(FACILITY_ID) long facilityId,
                                                    @RequestBody Facility facility,
@@ -81,7 +73,6 @@ public class FacilityController {
         return new ResponseEntity<>(response, OK);
     }
 
-    @ApiOperation(value = "Find facilities")
     @RequestMapping(method = GET, value = FACILITIES, produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<SearchResults<FacilityInfo>> findFacilities(PageableFacilitySearch search) {
         log.info("findFacilities");
@@ -89,7 +80,6 @@ public class FacilityController {
         return new ResponseEntity<>(results, OK);
     }
 
-    @ApiOperation(value = "Summarize built capacity of matching facilities")
     @RequestMapping(method = GET, value = FACILITIES, params = "summary", produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<FacilitySummary> summarizeFacilities(FacilitySearch search) {
         log.info("summarizeFacilities");
@@ -97,7 +87,6 @@ public class FacilityController {
         return new ResponseEntity<>(summary, OK);
     }
 
-    @ApiOperation(value = "Find facilities as GeoJSON FeatureCollection")
     @RequestMapping(method = GET, value = FACILITIES, produces = GEOJSON)
     public ResponseEntity<FeatureCollection> findFacilitiesAsFeatureCollection(PageableFacilitySearch search) {
         log.info("findFacilitiesAsFeatureCollection");
@@ -105,7 +94,6 @@ public class FacilityController {
         return new ResponseEntity<>(FeatureCollection.ofFacilities(results), OK);
     }
 
-    @ApiOperation(value = "Update facility utilization", authorizations = @Authorization(API_KEY))
     @RequestMapping(method = PUT, value = FACILITY_UTILIZATION, produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<Set<Utilization>> registerUtilization(@PathVariable(FACILITY_ID) long facilityId,
                                                                 @RequestBody List<Utilization> utilization,
@@ -115,7 +103,6 @@ public class FacilityController {
         return new ResponseEntity<>(results, OK);
     }
 
-    @ApiOperation(value = "Get current facility utilization")
     @RequestMapping(method = GET, value = FACILITY_UTILIZATION, produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<Set<Utilization>> getUtilization(@PathVariable(FACILITY_ID) long facilityId) {
         log.info("getUtilization({})", facilityId);
@@ -123,7 +110,6 @@ public class FacilityController {
         return new ResponseEntity<>(results, OK);
     }
 
-    @ApiOperation(value = "Get predicted facility utilization")
     @RequestMapping(method = GET, value = FACILITY_PREDICTION, produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<List<PredictionResult>> getPrediction(@PathVariable(FACILITY_ID) long facilityId,
                                                                 @ModelAttribute @Valid PredictionRequest request) {

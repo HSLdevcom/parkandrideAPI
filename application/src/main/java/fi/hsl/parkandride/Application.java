@@ -3,11 +3,14 @@
 
 package fi.hsl.parkandride;
 
-import static fi.hsl.parkandride.front.UrlSchema.GEOJSON;
-import static org.springframework.http.MediaType.APPLICATION_JSON;
-
-import java.util.List;
-
+import com.fasterxml.jackson.databind.Module;
+import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
+import fi.hsl.parkandride.core.domain.Phone;
+import fi.hsl.parkandride.core.domain.Time;
+import fi.hsl.parkandride.front.*;
+import fi.hsl.parkandride.front.geojson.GeojsonDeserializer;
+import fi.hsl.parkandride.front.geojson.GeojsonSerializer;
 import org.geolatte.common.Feature;
 import org.geolatte.common.dataformats.json.jackson.JsonMapper;
 import org.geolatte.geom.Geometry;
@@ -34,27 +37,13 @@ import org.springframework.http.MediaType;
 import org.springframework.web.filter.CharacterEncodingFilter;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.HandlerExceptionResolver;
-import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
-import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
-import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import org.springframework.web.servlet.config.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.ExceptionHandlerExceptionResolver;
 
-import com.fasterxml.jackson.databind.Module;
-import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
+import java.util.List;
 
-import fi.hsl.parkandride.config.SwaggerConfiguration;
-import fi.hsl.parkandride.core.domain.Phone;
-import fi.hsl.parkandride.core.domain.Time;
-import fi.hsl.parkandride.front.CORSFilter;
-import fi.hsl.parkandride.front.Features;
-import fi.hsl.parkandride.front.PhoneSerializer;
-import fi.hsl.parkandride.front.UrlSchema;
-import fi.hsl.parkandride.front.UserArgumentResolver;
-import fi.hsl.parkandride.front.geojson.GeojsonDeserializer;
-import fi.hsl.parkandride.front.geojson.GeojsonSerializer;
+import static fi.hsl.parkandride.front.UrlSchema.GEOJSON;
+import static org.springframework.http.MediaType.APPLICATION_JSON;
 
 @SpringBootApplication
 @Import(Application.UiConfig.class)
@@ -69,7 +58,7 @@ public class Application {
     }
 
     @Configuration
-    @Import({WebMvcAutoConfiguration.class, SwaggerConfiguration.class, DevUIConfig.class})
+    @Import({WebMvcAutoConfiguration.class, DevUIConfig.class})
     public static class UiConfig extends WebMvcAutoConfiguration.WebMvcAutoConfigurationAdapter implements EmbeddedServletContainerCustomizer {
 
         @Autowired

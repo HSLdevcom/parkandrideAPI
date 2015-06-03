@@ -148,17 +148,6 @@
     </dependency>
 
     <dependency>
-      <groupId>com.mangofactory</groupId>
-      <artifactId>swagger-springmvc</artifactId>
-      <version>1.0.0</version>
-    </dependency>
-    <dependency>
-      <groupId>org.ajar</groupId>
-      <artifactId>swagger-spring-mvc-ui</artifactId>
-      <version>0.4</version>
-    </dependency>
-
-    <dependency>
       <groupId>javax.el</groupId>
       <artifactId>javax.el-api</artifactId>
       <version>${javax.el.version}</version>
@@ -397,7 +386,7 @@
               <goal>copy-resources</goal>
             </goals>
             <configuration>
-              <outputDirectory>${project.build.outputDirectory}/static/docs2</outputDirectory>
+              <outputDirectory>${project.build.outputDirectory}/static/docs</outputDirectory>
               <resources>
                 <resource>
                   <directory>${project.build.directory}/generated-docs</directory>

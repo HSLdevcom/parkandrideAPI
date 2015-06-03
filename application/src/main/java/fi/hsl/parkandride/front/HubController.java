@@ -3,9 +3,6 @@
 
 package fi.hsl.parkandride.front;
 
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
-import com.wordnik.swagger.annotations.Authorization;
 import fi.hsl.parkandride.core.domain.Hub;
 import fi.hsl.parkandride.core.domain.HubSearch;
 import fi.hsl.parkandride.core.domain.SearchResults;
@@ -33,7 +30,6 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.web.bind.annotation.RequestMethod.*;
 
 @RestController
-@Api("hubs")
 public class HubController {
 
     private final Logger log = LoggerFactory.getLogger(HubController.class);
@@ -41,7 +37,6 @@ public class HubController {
     @Inject
     HubService hubService;
 
-    @ApiOperation(value = "Create hub", authorizations = @Authorization(API_KEY))
     @RequestMapping(method = POST, value = HUBS, produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<Hub> createHub(@RequestBody Hub hub, User currentUser, UriComponentsBuilder builder) {
         log.info("createHub");
@@ -53,7 +48,6 @@ public class HubController {
         return new ResponseEntity<>(newHub, headers, CREATED);
     }
 
-    @ApiOperation(value = "Get hub details")
     @RequestMapping(method = GET, value = HUB, produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<Hub> getHub(@PathVariable(HUB_ID) long hubId) {
         log.info("getHub({})", hubId);
@@ -61,7 +55,6 @@ public class HubController {
         return new ResponseEntity<>(hub, OK);
     }
 
-    @ApiOperation(value = "Get hub details as GeoJSON Feature")
     @RequestMapping(method = GET, value = HUB, produces = GEOJSON)
     public ResponseEntity<Feature> getHubAsFeature(@PathVariable(HUB_ID) long hubId) {
         log.info("getHubAsFeature({})", hubId);
@@ -69,7 +62,6 @@ public class HubController {
         return new ResponseEntity<>(HUB_TO_FEATURE.apply(hub), OK);
     }
 
-    @ApiOperation(value = "Update hub", authorizations = @Authorization(API_KEY))
     @RequestMapping(method = PUT, value = HUB, produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<Hub> updateHub(@PathVariable(HUB_ID) long hubId,
                                          @RequestBody Hub hub,
@@ -79,7 +71,6 @@ public class HubController {
         return new ResponseEntity<>(updated, OK);
     }
 
-    @ApiOperation(value = "Find hubs")
     @RequestMapping(method = GET, value = HUBS, produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<SearchResults<Hub>> findHubs(HubSearch search) {
         log.info("findHubs");
@@ -87,7 +78,6 @@ public class HubController {
         return new ResponseEntity<>(results, OK);
     }
 
-    @ApiOperation(value = "Find hubs as GeoJSON FeatureCollection")
     @RequestMapping(method = GET, value = HUBS, produces = GEOJSON)
     public ResponseEntity<FeatureCollection> findHubsAsFeatureCollection(HubSearch search) {
         log.info("findHubsAsFeatureCollection");

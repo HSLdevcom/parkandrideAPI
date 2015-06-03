@@ -3,26 +3,21 @@
 
 package fi.hsl.parkandride.core.domain;
 
-import java.util.Objects;
-
 import javax.validation.constraints.NotNull;
-
-import com.wordnik.swagger.annotations.ApiModelProperty;
+import java.util.Objects;
 
 public class FacilityContacts {
 
-    @ApiModelProperty(required = true, value="Emergency contact ID")
     @NotNull
     public Long emergency;
 
-    @ApiModelProperty(required = true, value="Operator contact ID")
     @NotNull
     public Long operator;
 
-    @ApiModelProperty(required = false, value="Service contact ID")
     public Long service;
 
-    public FacilityContacts() {}
+    public FacilityContacts() {
+    }
 
     public FacilityContacts(Long emergency, Long operator) {
         this(emergency, operator, null);
@@ -36,9 +31,9 @@ public class FacilityContacts {
 
     @Override
     public int hashCode() {
-        int hashCode = emergency==null ? 1 : emergency.hashCode();
-        hashCode = 31*hashCode + (operator==null ? 0 : operator.hashCode());
-        return 31*hashCode + (service==null ? 0 : service.hashCode());
+        int hashCode = emergency == null ? 1 : emergency.hashCode();
+        hashCode = 31 * hashCode + (operator == null ? 0 : operator.hashCode());
+        return 31 * hashCode + (service == null ? 0 : service.hashCode());
     }
 
     @Override

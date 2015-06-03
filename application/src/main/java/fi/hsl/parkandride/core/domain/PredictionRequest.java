@@ -3,8 +3,6 @@
 
 package fi.hsl.parkandride.core.domain;
 
-import com.wordnik.swagger.annotations.ApiModel;
-import com.wordnik.swagger.annotations.ApiModelProperty;
 import org.joda.time.DateTime;
 import org.joda.time.Duration;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -15,14 +13,11 @@ import java.util.regex.Matcher;
 import static org.joda.time.Duration.standardHours;
 import static org.joda.time.Duration.standardMinutes;
 
-@ApiModel
 public class PredictionRequest {
 
-    @ApiModelProperty(value = "requested time, in ISO 8601 date time format with timezone")
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     public DateTime at;
 
-    @ApiModelProperty(value = "requested time relative to the current time, in \"hh:mm\" format or in minutes")
     @Pattern(regexp = "(\\d+:)?\\d+")
     public String after;
 

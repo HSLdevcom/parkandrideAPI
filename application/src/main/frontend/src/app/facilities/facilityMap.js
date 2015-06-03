@@ -38,14 +38,10 @@
 
         var options = opt_options || {};
 
-        var tip = document.createElement('span');
-        tip.setAttribute('role', 'tooltip');
-        tip.innerHTML = "Peruuta";
-
         var button = document.createElement('button');
-        button.className = 'map-cancel ol-unselectable ol-has-tooltip';
-        button.appendChild(tip);
-        button.appendChild(document.createTextNode("X"));
+        button.className = 'map-cancel ol-unselectable';
+        button.setAttribute('title', 'Peruuta');
+        button.innerHTML = "X";
 
         var handleCancel = function(e) {
             // prevent #rotate-north anchor from getting appended to the url

@@ -268,7 +268,7 @@ Supported geometry types are
 * MultiLineString
 * MultiPolygon
 
-You may test spatial searches with link:/#search-demo[Search Demo].
+You may test spatial searches with link:/#/search-demo[Search Demo].
 
 ===== Within Shape
 

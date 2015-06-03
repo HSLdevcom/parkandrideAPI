@@ -15,7 +15,7 @@ by encouraging citizens to leave their cars outside of the most congested areas 
 their trip with public transportation. HSL Park and Ride application contains all the important
 information about parking facilities and their services near public transportation hubs. The
 application is used by HSL, parking operators, roadside displays and third party applications.
-All data is provided free of charge with CC BY 4.0 license (http://creativecommons.org/licenses/by/4.0/).
+All data is provided free of charge under the link:http://creativecommons.org/licenses/by/4.0/[CC BY 4.0 license].
 
 API follows REST conventions roughly. Resources are divided into collection and item URLs.
 Collection resources typically accept GET-parameters for filtering, paging and sorting items.
@@ -71,7 +71,7 @@ https://github.com/HSLdevcom/parkandrideAPI#license.
 === Authentication
 
 Mutable operations require authentication using the `Authorization` header as shown in the following example.
-The value is the string `Bearer` followed by the API user's token.
+The value is the string `Bearer` followed by the API user's token. Operators can create API users and tokens for them through the link:/#/users[user administration page].
 
 include::{generated}/authentication-example/http-request.adoc[]
 

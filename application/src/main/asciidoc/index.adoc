@@ -54,9 +54,9 @@ Please, report bugs and feature requests as GitHub issues.
 
 === Examples
 
-Most API-features are used by our own maintenance UI (http://p.hsl.fi) and
-it's source code is a good source for real life examples.
-See also https://github.com/HSLdevcom/parkandrideAPI/tree/master/application/src/main/frontend/src[GitHub].
+Most API-features are used by the link:https://p.hsl.fi/[Park and Ride maintenance UI] and
+link:https://github.com/HSLdevcom/parkandrideAPI/tree/master/application/src/main/frontend/src[it's source code]
+contains real life example.
 
 Upcoming features can be tested in https://test.p.hsl.fi
 

@@ -16,6 +16,7 @@
         'filters',
         'featureToggle',
 
+        'parkandride.about',
         'parkandride.contacts',
         'parkandride.operators',
         'parkandride.hubList',
@@ -39,7 +40,7 @@
     });
 
     m.config(function myAppConfig($stateProvider, $urlRouterProvider, $httpProvider) {
-        $urlRouterProvider.otherwise('/hubs');
+        $urlRouterProvider.otherwise('/hubs'); // TODO: use "/about" (breaks many tests)
 
         function registerEnumValues(schema, type, values, $translate, $q) {
             var translationPromises = _.map(values, function(value) {
@@ -113,11 +114,18 @@
             }
         });
 
+        $stateProvider.state('abouttab', {
+            abstract: true,
+            parent: 'root',
+            views: { "main": { template: '<div ui-view="main"></div>' } }
+        });
+
         $stateProvider.state('hubstab', {
             abstract: true,
             parent: 'root',
             views: { "main": { template: '<div ui-view="main"></div>' } }
         });
+
         $stateProvider.state('contactstab', {
             abstract: true,
             parent: 'root',

@@ -524,6 +524,11 @@
   "header": {
     "logodesc": "HSL Liityntäpysäköinti"
   },
+  "about": {
+    "title": "Tietoa palvelusta",
+    "introduction": "HSL:n Liityntäpysäköintipalvelu tarjoaa tietoja pääkaupunkiseudun liityntäpystäköintipaikoista avoimena datana. <a href=\"/docs/\">Dokumentaatio sovelluskehittäjille</a>. Tämä hallintakäyttöliittymä tukee uusimpia selainversioita (IE 11+, Firefox 29+, Chrome 35+, Safari 7+).",
+    "disclaimer": "HSL:n avoin tietoaineisto on lisensoitu <a href=\"http://creativecommons.org/licenses/by/4.0/deed.fi\">Creative Commons Nimeä 4.0 Kansainvälinen</a> -lisenssillä. <a href=\"https://www.hsl.fi/kayttoehdot\">Lue käyttöehdot</a>."
+  },
   "hubs": {
     "title": "Pysäköintipaikat",
     "help": {

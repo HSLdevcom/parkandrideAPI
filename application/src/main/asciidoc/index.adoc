@@ -1,4 +1,4 @@
-= HSL Liipi Documentation
+= HSL Park and Ride Documentation
 :doctype: book
 :toc:
 :sectanchors:
@@ -10,7 +10,7 @@
 [[overview]]
 == Overview
 
-Park and ride is one of the solutions to tackle Helsinki regions growing population and traffic
+Park and Ride is one of the solutions to tackle Helsinki regions growing population and traffic
 by encouraging citizens to leave their cars outside of the most congested areas and continuing
 their trip with public transportation. HSL Park and Ride application contains all the important
 information about parking facilities and their services near public transportation hubs. The

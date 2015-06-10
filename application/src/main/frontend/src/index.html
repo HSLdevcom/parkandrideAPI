@@ -37,11 +37,11 @@
 					</div>
 					<div class="logout last-column">
 						<div class="pull-right">
+							<a class="link-btn" ui-sref="about-page" translate="about.title"></a>
 							<button id="openLoginPrompt" type="button" class="link-btn" ng-click="appCtrl.openLoginPrompt()"
 									ng-if="!appCtrl.isUserLoggedIn()">Kirjaudu sisään</button>
 							<button id="logout" type="button" class="link-btn" ng-click="appCtrl.logout()"
 									ng-if="appCtrl.isUserLoggedIn()">Kirjaudu ulos</button>
-							<a class="link-btn" ui-sref="about-page" translate="about.title"></a>
 						</div>
 					</div>
 				</div>

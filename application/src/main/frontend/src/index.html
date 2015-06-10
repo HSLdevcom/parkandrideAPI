@@ -28,7 +28,6 @@
 					</div>
 					<div class="navi-col">
 						<ul class="nav nav-tabs">
-							<li ng-class="{active: $state.includes('abouttab')}"><a ui-sref="about-page" translate="about.title"></a></li>
 							<li ng-class="{active: $state.includes('hubstab') , semiactive: ( $state.includes('facility-create') || $state.includes('facility-edit') || $state.includes('facility-view') || $state.includes('hub-edit') || $state.includes('hub-view') || $state.includes('hub-create') )}"><a ui-sref="hub-list" translate="hubs.title"></a></li>
 							<li ng-class="{active: $state.includes('contactstab')}"><a ui-sref="contact-list" translate="contacts.title"></a></li>
 							<li ng-class="{active: $state.includes('operatorstab')}"><a ui-sref="operator-list" translate="operators.title"></a></li>
@@ -42,6 +41,7 @@
 									ng-if="!appCtrl.isUserLoggedIn()">Kirjaudu sisään</button>
 							<button id="logout" type="button" class="link-btn" ng-click="appCtrl.logout()"
 									ng-if="appCtrl.isUserLoggedIn()">Kirjaudu ulos</button>
+							<a class="link-btn" ui-sref="about-page" translate="about.title"></a>
 						</div>
 					</div>
 				</div>

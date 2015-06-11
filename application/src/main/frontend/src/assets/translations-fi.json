@@ -317,9 +317,6 @@
     },
     "paymentInfo": {
       "heading": "Maksutavat",
-      "paymentMethods": {
-        "label": "Maksutavat"
-      },
       "methodPlaceholder": "Valitse maksutapa...",
       "details": {
         "heading": "Lisätiedot"

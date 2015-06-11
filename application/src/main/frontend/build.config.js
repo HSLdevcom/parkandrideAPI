@@ -70,7 +70,8 @@ module.exports = {
       'vendor/angular-sanitize/angular-sanitize.min.js',
       'vendor/angular-translate-loader-static-files/angular-translate-loader-static-files.js',
       'vendor/openlayers3/build/ol.js',
-      'vendor/sweetalert2/dist/sweetalert2.min.js'
+      'vendor/sweetalert2/dist/sweetalert2.min.js',
+      'vendor/file-saver-saveas-js/FileSaver.js'
     ],
     css: [
         'vendor/font-awesome/css/font-awesome.min.css',

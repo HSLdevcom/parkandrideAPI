@@ -648,6 +648,16 @@
       "edit": "Muokkaa käyttäjää"
     }
   },
+  "reports": {
+    "title": "Raportit",
+    "help": {
+      "summary": "Tältä sivulta voi generoida raportteja",
+      "bullet1": "Raportteja voi parametrien avulla rajata pienemmiksi"
+    },
+    "action": {
+      "do": "Hae raportti"
+    }
+  },
   "login": {
     "title": "Kirjaudu sisään",
     "error": "Virheellinen käyttäjätunnus tai salasana. Yritä uudestaan.",

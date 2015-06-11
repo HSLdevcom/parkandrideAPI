@@ -21,6 +21,7 @@
         'parkandride.operators',
         'parkandride.hubList',
         'parkandride.users',
+        'parkandride.reports',
         'parkandride.dev',
         'parkandride.auth',
         'parkandride.searchDemo',
@@ -142,6 +143,12 @@
             abstract: true,
             parent: 'root',
             views: { "main": { template: '<div ui-view="main"></div>' } }
+        });
+
+        $stateProvider.state('reportstab', {
+          abstract: true,
+          parent: 'root',
+          views: { "main": { template: '<div ui-view="main"></div>' } }
         });
 
         $stateProvider.state('devtab', {

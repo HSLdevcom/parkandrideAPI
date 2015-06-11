@@ -316,7 +316,10 @@
             </goals>
             <phase>generate-resources</phase>
             <configuration>
-              <arguments>--no-color</arguments>
+              <srcdir>${basedir}/src/main/frontend/src</srcdir>
+              <triggerfiles>
+                <triggerfile>${basedir}/src/main/frontend/Gruntfile.js</triggerfile>
+              </triggerfiles>
             </configuration>
           </execution>
 

@@ -105,9 +105,48 @@
 		</div>
 	</div>
 
-	<div ng-show="viewCtrl.facility.pricing.length > 0">
+	<div ng-show="viewCtrl.facility.unavailableCapacities.length > 0">
 		<div class="row smallMargin">
-			<h4 translate="facilities.pricing.label"></h4>
+			<h4 translate="facilities.unavailableCapacities.capacity.label"></h4>
+		</div>
+		<div class="row">
+			<div class="column2 first-column">
+				<div class="panel panel-default">
+					<table id="unavailable-capacities" class="table table-bordered table-striped table-condensed">
+						<thead>
+						<tr>
+							<th translate="facilities.unavailableCapacities.capacityType.label"></th>
+							<th translate="facilities.unavailableCapacities.usage.label"></th>
+							<th translate="facilities.unavailableCapacities.capacity.label"></th>
+						</tr>
+						</thead>
+						<tbody>
+						<tr ng-repeat="unavailableCapacity in viewCtrl.facility.unavailableCapacities">
+							<td>
+								<div ng-hide="viewCtrl.isRepeatingValue(viewCtrl.facility.unavailableCapacities, $index, 'capacityType')">
+									{{'capacityTypes.' + unavailableCapacity.capacityType + '.label' | translate}}
+								</div>
+							</td>
+							<td>{{'usages.' + unavailableCapacity.usage + '.label' | translate}}</td>
+							<td>
+								{{ unavailableCapacity.capacity }}
+							</td>
+						</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="row wdServices" ng-show="viewCtrl.hasServices()">
+		<h4>{{"facilities.services.heading" | translate}}</h4>
+		<p class="wdService">{{viewCtrl.getServiceNames() | joinBy: ", "}}</p>
+	</div>
+
+	<div ng-show="viewCtrl.facility.pricing.length > 0">
+		<div class="row contacts">
+			<h3 class="h3-view" translate="facilities.pricing.label"></h3>
 		</div>
 		<div class="row">
 			<p>{{"pricingMethods." + viewCtrl.facility.pricingMethod + ".label" | translate}}</p>
@@ -168,41 +207,18 @@
 						</tbody>
 					</table>
 				</div>
-				<div ng-show="viewCtrl.facility.unavailableCapacities.length > 0">
-					<div class="row smallMargin">
-						<h4 translate="facilities.unavailableCapacities.capacity.label"></h4>
-					</div>
-					<div class="row">
-						<div class="column2 first-column">
-							<div class="panel panel-default">
-								<table id="unavailable-capacities" class="table table-bordered table-striped table-condensed">
-									<thead>
-									<tr>
-										<th translate="facilities.unavailableCapacities.capacityType.label"></th>
-										<th translate="facilities.unavailableCapacities.usage.label"></th>
-										<th translate="facilities.unavailableCapacities.capacity.label"></th>
-									</tr>
-									</thead>
-									<tbody>
-									<tr ng-repeat="unavailableCapacity in viewCtrl.facility.unavailableCapacities">
-										<td>
-											<div ng-hide="viewCtrl.isRepeatingValue(viewCtrl.facility.unavailableCapacities, $index, 'capacityType')">
-												{{'capacityTypes.' + unavailableCapacity.capacityType + '.label' | translate}}
-											</div>
-										</td>
-										<td>{{'usages.' + unavailableCapacity.usage + '.label' | translate}}</td>
-										<td>
-											{{ unavailableCapacity.capacity }}
-										</td>
-									</tr>
-									</tbody>
-								</table>
-							</div>
-						</div>
-					</div>
-				</div>
 			</div>
 		</div>
+	</div>
+</div>
+
+<div class="wdPaymentInfo" ng-show="viewCtrl.hasPaymentInfo()">
+	<h4>{{"facilities.paymentInfo.heading" | translate }}</h4>
+	<div class="row wdPaymentMethodNames" ng-show="viewCtrl.hasPaymentMethods()">{{viewCtrl.getPaymentMethodNames() | joinBy: ", "}}</div>
+	<div class="wdPaymentInfoDetails" ng-show="viewCtrl.hasPaymentInfoDetails()">
+		<div class="row"><h4>{{"facilities.paymentInfo.details.heading" | translate }}</h4></div>
+		<div class="row"><multilingual-view class="wdPaymentInfoDetail" value="viewCtrl.facility.paymentInfo.detail"></multilingual-view></div>
+		<div class="row"><multilingual-view class="wdPaymentInfoUrl"value="viewCtrl.facility.paymentInfo.url"></multilingual-view></div>
 	</div>
 </div>
 
@@ -213,22 +229,6 @@
 	<facility-contact-view contact="viewCtrl.contacts[viewCtrl.facility.contacts.service]" contact-type="service"></facility-contact-view>
 </div>
 
-<div class="wdPaymentInfo" ng-show="viewCtrl.hasPaymentInfo()">
-	<h3 class="h3-view">{{"facilities.paymentInfo.heading" | translate }}</h3>
-	<div ng-show="viewCtrl.hasPaymentMethods()"><h4>{{"facilities.paymentInfo.paymentMethods.label" | translate }}</h4></div>
-	<div class="row wdPaymentMethodNames" ng-show="viewCtrl.hasPaymentMethods()">{{viewCtrl.getPaymentMethodNames() | joinBy: ", "}}</div>
-	<div class="wdPaymentInfoDetails" ng-show="viewCtrl.hasPaymentInfoDetails()">
-		<div class="row"><h4>{{"facilities.paymentInfo.details.heading" | translate }}</h4></div>
-		<div class="row"><multilingual-view class="wdPaymentInfoDetail" value="viewCtrl.facility.paymentInfo.detail"></multilingual-view></div>
-		<div class="row"><multilingual-view class="wdPaymentInfoUrl"value="viewCtrl.facility.paymentInfo.url"></multilingual-view></div>
-	</div>
 </div>
-
-<div class="row wdServices" ng-show="viewCtrl.hasServices()">
-	<h3 class="h3-view">{{"facilities.services.heading" | translate}}</h3>
-	<p class="wdService">{{viewCtrl.getServiceNames() | joinBy: ", "}}</p>
-</div>
-</div>
-
 </content>
 </main-layout>

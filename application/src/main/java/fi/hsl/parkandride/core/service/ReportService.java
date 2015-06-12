@@ -3,19 +3,15 @@
 
 package fi.hsl.parkandride.core.service;
 
-import static fi.hsl.parkandride.core.domain.CapacityType.BICYCLE;
-import static fi.hsl.parkandride.core.domain.CapacityType.BICYCLE_SECURE_SPACE;
-import static fi.hsl.parkandride.core.domain.CapacityType.CAR;
-import static fi.hsl.parkandride.core.domain.CapacityType.DISABLED;
-import static fi.hsl.parkandride.core.domain.CapacityType.ELECTRIC_CAR;
-import static fi.hsl.parkandride.core.domain.CapacityType.MOTORCYCLE;
-import static fi.hsl.parkandride.core.domain.CapacityType.bicycleCapacities;
-import static fi.hsl.parkandride.core.domain.CapacityType.bicycleCapacityList;
-import static fi.hsl.parkandride.core.domain.CapacityType.motorCapacities;
-import static fi.hsl.parkandride.core.domain.CapacityType.motorCapacityList;
-import static fi.hsl.parkandride.core.domain.DayType.BUSINESS_DAY;
-import static fi.hsl.parkandride.core.domain.DayType.SATURDAY;
-import static fi.hsl.parkandride.core.domain.DayType.SUNDAY;
+import fi.hsl.parkandride.core.domain.*;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static fi.hsl.parkandride.core.domain.CapacityType.*;
+import static fi.hsl.parkandride.core.domain.DayType.*;
 import static fi.hsl.parkandride.core.domain.Permission.REPORT_GENERATE;
 import static fi.hsl.parkandride.core.service.AuthenticationService.authorize;
 import static fi.hsl.parkandride.core.service.Excel.TableColumn.col;
@@ -23,31 +19,7 @@ import static java.lang.String.format;
 import static java.lang.String.join;
 import static java.util.Arrays.asList;
 import static java.util.function.Function.identity;
-import static java.util.stream.Collectors.joining;
-import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toMap;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import fi.hsl.parkandride.core.domain.Address;
-import fi.hsl.parkandride.core.domain.CapacityType;
-import fi.hsl.parkandride.core.domain.Contact;
-import fi.hsl.parkandride.core.domain.Facility;
-import fi.hsl.parkandride.core.domain.FacilityInfo;
-import fi.hsl.parkandride.core.domain.Hub;
-import fi.hsl.parkandride.core.domain.HubSearch;
-import fi.hsl.parkandride.core.domain.MultilingualString;
-import fi.hsl.parkandride.core.domain.PageableFacilitySearch;
-import fi.hsl.parkandride.core.domain.PaymentMethod;
-import fi.hsl.parkandride.core.domain.Service;
-import fi.hsl.parkandride.core.domain.TimeDuration;
-import fi.hsl.parkandride.core.domain.User;
+import static java.util.stream.Collectors.*;
 
 public class ReportService {
     private final FacilityService facilityService;
@@ -71,7 +43,7 @@ public class ReportService {
         // fetch data and precalculate some values
         List<Facility> facilities = getFacilities();
         List<Hub> hubs = getHubs();
-        Map<Long, Facility> facilitiesByFacilityId = facilities.stream().collect(toMap(f -> f.id, identity()));
+        Map<Long, Facility> facilitiesByFacilityId = facilities.stream().collect(toMap((Facility f) -> f.id, identity()));
         Map<Long, List<Facility>> facilitiesByHubId = new HashMap<>();
         Map<Long, List<Hub>> hubsByFacilityId = new HashMap<>();
 
@@ -103,35 +75,35 @@ public class ReportService {
 
     private void addFacilitiesSheet(Excel excel, List<Facility> facilities, Map<Long, List<Hub>> hubsByFacilityId) {
         excel.addSheet("Pysäköintipaikat", facilities,
-                       asList(col("Pysäköintipaikan nimi", f -> f.name),
-                              col("Aliakset", f -> join(", ", f.aliases)),
-                              col("Kuuluu alueisiin", f -> hubsByFacilityId.get(f.id).stream().map(h -> h.name.fi).collect(joining(", "))),
-                              col("Operaattori", f -> operatorService.getOperator(f.operatorId).name),
-                              col("Status", f -> translationService.translate(f.status)),
-                              col("Statuksen lisätiedot / poikkeustiedote", f -> f.statusDescription),
-                              col("Sijainti, pituuspiiri", f -> f.location.getCentroid().getX()),
-                              col("Sijainti, leveyspiiri", f -> f.location.getCentroid().getY()),
-                              col("Aukiolo, arki", f -> time(f.openingHours.byDayType.get(BUSINESS_DAY))),
-                              col("Aukiolo, la", f -> time(f.openingHours.byDayType.get(SATURDAY))),
-                              col("Aukiolo, su", f -> time(f.openingHours.byDayType.get(SUNDAY))),
-                              col("Aukiolo, lisätiedot", f -> f.openingHours.info),
-                              col("Kaikki moottoriajoneuvot", f -> capacitySum(f.builtCapacity, motorCapacityList)),
-                              col("Kaikki polkupyörät", f -> capacitySum(f.builtCapacity, bicycleCapacityList)),
-                              col("Henkilöauto", f -> f.builtCapacity.get(CAR)),
-                              col("Invapaikka", f -> f.builtCapacity.get(DISABLED)),
-                              col("Sähköauto", f -> f.builtCapacity.get(ELECTRIC_CAR)),
-                              col("Moottoripyörä", f -> f.builtCapacity.get(MOTORCYCLE)),
-                              col("Polkupyörä", f -> f.builtCapacity.get(BICYCLE)),
-                              col("Polkupyörä, lukittu tila", f -> f.builtCapacity.get(BICYCLE_SECURE_SPACE)),
+                       asList(col("Pysäköintipaikan nimi", (Facility f) -> f.name),
+                              col("Aliakset", (Facility f) -> join(", ", f.aliases)),
+                              col("Kuuluu alueisiin", (Facility f) -> hubsByFacilityId.get(f.id).stream().map(h -> h.name.fi).collect(joining(", "))),
+                              col("Operaattori", (Facility f) -> operatorService.getOperator(f.operatorId).name),
+                              col("Status", (Facility f) -> translationService.translate(f.status)),
+                              col("Statuksen lisätiedot / poikkeustiedote", (Facility f) -> f.statusDescription),
+                              col("Sijainti, pituuspiiri", (Facility f) -> f.location.getCentroid().getX()),
+                              col("Sijainti, leveyspiiri", (Facility f) -> f.location.getCentroid().getY()),
+                              col("Aukiolo, arki", (Facility f) -> time(f.openingHours.byDayType.get(BUSINESS_DAY))),
+                              col("Aukiolo, la", (Facility f) -> time(f.openingHours.byDayType.get(SATURDAY))),
+                              col("Aukiolo, su", (Facility f) -> time(f.openingHours.byDayType.get(SUNDAY))),
+                              col("Aukiolo, lisätiedot", (Facility f) -> f.openingHours.info),
+                              col("Kaikki moottoriajoneuvot", (Facility f) -> capacitySum(f.builtCapacity, motorCapacityList)),
+                              col("Kaikki polkupyörät", (Facility f) -> capacitySum(f.builtCapacity, bicycleCapacityList)),
+                              col("Henkilöauto", (Facility f) -> f.builtCapacity.get(CAR)),
+                              col("Invapaikka", (Facility f) -> f.builtCapacity.get(DISABLED)),
+                              col("Sähköauto", (Facility f) -> f.builtCapacity.get(ELECTRIC_CAR)),
+                              col("Moottoripyörä", (Facility f) -> f.builtCapacity.get(MOTORCYCLE)),
+                              col("Polkupyörä", (Facility f) -> f.builtCapacity.get(BICYCLE)),
+                              col("Polkupyörä, lukittu tila", (Facility f) -> f.builtCapacity.get(BICYCLE_SECURE_SPACE)),
                               col("Hinnoittelu",
-                                  f -> f.pricing.stream().map((p) -> translationService.translate(p.usage)).distinct()
+                                  (Facility f) -> f.pricing.stream().map((p) -> translationService.translate(p.usage)).distinct()
                                                   .collect(joining(", "))),
-                              col("Maksutavat", f -> f.paymentInfo.paymentMethods.stream().map(m -> translationService.translate(m)).collect(joining(", "))),
-                              col("Maksutapojen lisätiedot", f -> f.paymentInfo.detail),
-                              col("Palvelut", f -> f.services.stream().map(s -> translationService.translate(s)).collect(joining(", "))),
-                              col("Yhteystiedot, Hätänumero", f -> contactText(f.contacts.emergency)),
-                              col("Yhteystiedot, Operaattorin yhteystieto", f -> contactText(f.contacts.operator)),
-                              col("Yhteystiedot, Palveluyhtiö", f -> contactText(f.contacts.service))));
+                              col("Maksutavat", (Facility f) -> f.paymentInfo.paymentMethods.stream().map(m -> translationService.translate(m)).collect(joining(", "))),
+                              col("Maksutapojen lisätiedot", (Facility f) -> f.paymentInfo.detail),
+                              col("Palvelut", (Facility f) -> f.services.stream().map(s -> translationService.translate(s)).collect(joining(", "))),
+                              col("Yhteystiedot, Hätänumero", (Facility f) -> contactText(f.contacts.emergency)),
+                              col("Yhteystiedot, Operaattorin yhteystieto", (Facility f) -> contactText(f.contacts.operator)),
+                              col("Yhteystiedot, Palveluyhtiö", (Facility f) -> contactText(f.contacts.service))));
 
     }
 
@@ -149,14 +121,14 @@ public class ReportService {
                               col("Moottoripyörä", h -> capcitySum(facilitiesByHubId, h.id, MOTORCYCLE)),
                               col("Polkupyörä", h -> capcitySum(facilitiesByHubId, h.id, BICYCLE)),
                               col("Polkupyörä, lukittu tila", h -> capcitySum(facilitiesByHubId, h.id, BICYCLE_SECURE_SPACE)),
-                              col("Pysäköintipaikat", h -> facilitiesByHubId.get(h.id).stream().map(f -> f.name.fi).collect(toList()))));
+                              col("Pysäköintipaikat", h -> facilitiesByHubId.get(h.id).stream().map((Facility f) -> f.name.fi).collect(toList()))));
     }
 
     private int capcitySum(Map<Long, List<Facility>> facilitiesByHubId, long hubId, CapacityType... types) {
         List<Facility> facilities = facilitiesByHubId.get(hubId);
         int sum = 0;
         for (CapacityType type : types) {
-          sum += facilities.stream().mapToInt(f -> f.builtCapacity.get(type)).sum();
+          sum += facilities.stream().mapToInt((Facility f) -> f.builtCapacity.get(type)).sum();
         }
         return sum;
     }
@@ -171,7 +143,7 @@ public class ReportService {
         PageableFacilitySearch search = new PageableFacilitySearch();
         search.setLimit(10000);
         List<FacilityInfo> facilityInfos = facilityService.search(search).results;
-        List<Facility> facilities = facilityInfos.stream().map(f -> facilityService.getFacility(f.id))
+        List<Facility> facilities = facilityInfos.stream().map((Facility f) -> facilityService.getFacility(f.id))
                                                  .collect(toList());
         return facilities;
     }

@@ -405,6 +405,10 @@ At the time of writing this document there is no structural difference between i
 include::{generated}/hub-details-example/http-request.adoc[]
 include::{generated}/hub-details-example/http-response.adoc[]
 
+==== Summary of Hub Model
+
+include::{generated}/hub-details-example/response-fields.adoc[]
+
 
 [[use-cases]]
 == Use-Case Examples

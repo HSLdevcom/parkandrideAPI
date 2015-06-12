@@ -381,7 +381,17 @@ public class ApiDocumentation extends AbstractIntegrationTest {
 
         mockMvc.perform(get(UrlSchema.HUB, hubId))
                 .andExpect(status().isOk())
-                .andDo(document("hub-details-example"));
+                .andDo(document("hub-details-example")
+                        .withResponseFields(
+                                fieldWithPath("id").description("Hub ID: `/api/v1/hubs/{id}`"),
+                                fieldWithPath("name").description("Localized name"),
+                                fieldWithPath("location").description("Hub location, GeoJSON Point"),
+                                fieldWithPath("address").description("Hub address"),
+                                fieldWithPath("address.streetAddress").description("Localized street name"),
+                                fieldWithPath("address.postalCode").description("Postal code"),
+                                fieldWithPath("address.city").description("Localized city name"),
+                                fieldWithPath("facilityIds").description("A list of facility IDs (number), `/api/v1/facilities/{id}`")
+                        ));
     }
 
     @Test

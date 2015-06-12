@@ -14,10 +14,9 @@
   <packaging>jar</packaging>
 
   <properties>
-    <maven-plugin.exec.version>1.3.2</maven-plugin.exec.version>
     <maven-plugin.frontend.version>0.0.23</maven-plugin.frontend.version>
-    <maven-plugin.frontend.node.version>v0.10.31</maven-plugin.frontend.node.version>
-    <maven-plugin.frontend.npm.version>1.4.26</maven-plugin.frontend.npm.version>
+    <maven-plugin.frontend.node.version>v0.10.38</maven-plugin.frontend.node.version>
+    <maven-plugin.frontend.npm.version>2.1.18</maven-plugin.frontend.npm.version>
     <hikaricp.version>2.0.1</hikaricp.version>
     <querydsl.version>3.5.0</querydsl.version>
     <flyway.version>3.0</flyway.version>
@@ -203,7 +202,6 @@
     <dependency>
       <groupId>org.springframework.restdocs</groupId>
       <artifactId>spring-restdocs</artifactId>
-      <version>0.1.0.BUILD-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -300,13 +298,27 @@
           </execution>
 
           <execution>
+            <id>bower install</id>
+            <goals>
+              <goal>bower</goal>
+            </goals>
+            <phase>process-sources</phase>
+            <configuration>
+              <arguments>install --force-latest</arguments>
+            </configuration>
+          </execution>
+
+          <execution>
             <id>grunt build</id>
             <goals>
               <goal>grunt</goal>
             </goals>
             <phase>generate-resources</phase>
             <configuration>
-              <arguments>--no-color</arguments>
+              <srcdir>${basedir}/src/main/frontend/src</srcdir>
+              <triggerfiles>
+                <triggerfile>${basedir}/src/main/frontend/Gruntfile.js</triggerfile>
+              </triggerfiles>
             </configuration>
           </execution>
 
@@ -323,33 +335,6 @@
           -->
 
         </executions>
-      </plugin>
-
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>exec-maven-plugin</artifactId>
-        <version>${maven-plugin.exec.version}</version>
-        <executions>
-          <execution>
-            <id>bower install</id>
-            <phase>process-sources</phase>
-            <goals>
-              <goal>exec</goal>
-            </goals>
-            <configuration>
-              <executable>node_modules/.bin/bower</executable>
-              <workingDirectory>src/main/frontend</workingDirectory>
-              <arguments>
-                <argument>install</argument>
-              </arguments>
-            </configuration>
-          </execution>
-        </executions>
-        <configuration>
-          <environmentVariables>
-            <PATH>${project.basedir}/src/main/frontend/node:${env.PATH}</PATH>
-          </environmentVariables>
-        </configuration>
       </plugin>
 
       <!-- REST API Documentation -->

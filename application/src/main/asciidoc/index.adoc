@@ -226,6 +226,10 @@ Contact details can fetched by id:
 include::{generated}/contact-details-example/http-request.adoc[]
 include::{generated}/contact-details-example/http-response.adoc[]
 
+=== Summary of Contacts Model
+
+include::{generated}/contact-details-example/response-fields.adoc[]
+
 
 [[facilities]]
 == Facilities

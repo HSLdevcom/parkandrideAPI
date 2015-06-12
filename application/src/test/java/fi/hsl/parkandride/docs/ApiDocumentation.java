@@ -20,6 +20,7 @@ import org.junit.Test;
 import org.springframework.boot.test.IntegrationTest;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.config.RestDocumentationConfigurer;
+import org.springframework.restdocs.payload.FieldType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -32,6 +33,7 @@ import static fi.hsl.parkandride.core.domain.Role.OPERATOR_API;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.is;
 import static org.springframework.restdocs.RestDocumentation.document;
+import static org.springframework.restdocs.payload.FieldType.NUMBER;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -280,7 +282,20 @@ public class ApiDocumentation extends AbstractIntegrationTest {
     public void contactsDetailsExample() throws Exception {
         mockMvc.perform(get(UrlSchema.CONTACT, 1))
                 .andExpect(status().isOk())
-                .andDo(document("contact-details-example"));
+                .andDo(document("contact-details-example")
+                        .withResponseFields(
+                                fieldWithPath("id").description("Contact ID: `/api/v1/contacts/{id}`"),
+                                fieldWithPath("name").description("Localized name"),
+                                fieldWithPath("operatorId").type(NUMBER).description("Contact operator ID: `/api/v1/operators/{operatorId}` (OPTIONAL)"),
+                                fieldWithPath("email").description("Email address (OPTIONAL)"),
+                                fieldWithPath("phone").description("Phone number (OPTIONAL)"),
+                                fieldWithPath("address").description("Contact address (OPTIONAL)"),
+                                fieldWithPath("address.streetAddress").description("Localized street name (OPTIONAL)"),
+                                fieldWithPath("address.postalCode").description("Postal code (OPTIONAL)"),
+                                fieldWithPath("address.city").description("Localized city name (OPTIONAL)"),
+                                fieldWithPath("openingHours").description("Localized opening hours (OPTIONAL)"),
+                                fieldWithPath("info").description("Localized information (OPTIONAL)")
+                        ));
     }
 
     @Test
@@ -386,10 +401,10 @@ public class ApiDocumentation extends AbstractIntegrationTest {
                                 fieldWithPath("id").description("Hub ID: `/api/v1/hubs/{id}`"),
                                 fieldWithPath("name").description("Localized name"),
                                 fieldWithPath("location").description("Hub location, GeoJSON Point"),
-                                fieldWithPath("address").description("Hub address"),
-                                fieldWithPath("address.streetAddress").description("Localized street name"),
-                                fieldWithPath("address.postalCode").description("Postal code"),
-                                fieldWithPath("address.city").description("Localized city name"),
+                                fieldWithPath("address").description("Hub address (OPTIONAL)"),
+                                fieldWithPath("address.streetAddress").description("Localized street name (OPTIONAL)"),
+                                fieldWithPath("address.postalCode").description("Postal code (OPTIONAL)"),
+                                fieldWithPath("address.city").description("Localized city name (OPTIONAL)"),
                                 fieldWithPath("facilityIds").description("A list of facility IDs (number), `/api/v1/facilities/{id}`")
                         ));
     }

@@ -64,6 +64,10 @@ public class Dummies {
         Contact contact = new Contact();
         contact.name = new MultilingualString("TEST " + uniqueNumber());
         contact.email = "test@example.com";
+        contact.phone = new Phone("09 4766 4000");
+        contact.address = new Address(new MultilingualString("street"), "00100", new MultilingualString("city"));
+        contact.info = new MultilingualString("info");
+        contact.openingHours = new MultilingualString("opening hours");
         return contactDao.insertContact(contact);
     }
 

@@ -143,7 +143,7 @@ public class ReportService {
         PageableFacilitySearch search = new PageableFacilitySearch();
         search.setLimit(10000);
         List<FacilityInfo> facilityInfos = facilityService.search(search).results;
-        List<Facility> facilities = facilityInfos.stream().map((Facility f) -> facilityService.getFacility(f.id))
+        List<Facility> facilities = facilityInfos.stream().map((FacilityInfo f) -> facilityService.getFacility(f.id))
                                                  .collect(toList());
         return facilities;
     }

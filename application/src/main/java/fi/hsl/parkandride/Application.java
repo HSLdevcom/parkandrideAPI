@@ -38,16 +38,18 @@ import org.springframework.web.filter.CharacterEncodingFilter;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.web.servlet.config.annotation.*;
+import org.springframework.web.servlet.mvc.WebContentInterceptor;
 import org.springframework.web.servlet.mvc.method.annotation.ExceptionHandlerExceptionResolver;
 
 import java.util.List;
+import java.util.Properties;
 
 import static fi.hsl.parkandride.front.UrlSchema.GEOJSON;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 
 @SpringBootApplication
 @Import(Application.UiConfig.class)
-public class Application {
+public class Application extends WebMvcConfigurerAdapter {
 
     private static final Logger log = LoggerFactory.getLogger(Application.class);
 
@@ -186,5 +188,14 @@ public class Application {
         FilterRegistrationBean b = new FilterRegistrationBean(new ApplicationVersionFilter(version));
         b.setMatchAfter(true);
         return b;
+    }
+
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        WebContentInterceptor webContentInterceptor = new WebContentInterceptor();
+        Properties cacheMappings = new Properties();
+        cacheMappings.setProperty(UrlSchema.API + "/*", "0");
+        webContentInterceptor.setCacheMappings(cacheMappings);
+        registry.addInterceptor(webContentInterceptor);
     }
 }

@@ -194,7 +194,7 @@ public class Application extends WebMvcConfigurerAdapter {
     public void addInterceptors(InterceptorRegistry registry) {
         WebContentInterceptor webContentInterceptor = new WebContentInterceptor();
         Properties cacheMappings = new Properties();
-        cacheMappings.setProperty(UrlSchema.API + "/*", "0");
+        cacheMappings.setProperty(UrlSchema.API + "/**", "0");
         webContentInterceptor.setCacheMappings(cacheMappings);
         registry.addInterceptor(webContentInterceptor);
     }

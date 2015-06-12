@@ -77,7 +77,7 @@ public class ReportService {
         excel.addSheet("Pysäköintipaikat", facilities,
                        asList(col("Pysäköintipaikan nimi", (Facility f) -> f.name),
                               col("Aliakset", (Facility f) -> join(", ", f.aliases)),
-                              col("Kuuluu alueisiin", (Facility f) -> hubsByFacilityId.get(f.id).stream().map(h -> h.name.fi).collect(joining(", "))),
+                              col("Kuuluu alueisiin", (Facility f) -> hubsByFacilityId.get(f.id).stream().map((Hub h) -> h.name.fi).collect(joining(", "))),
                               col("Operaattori", (Facility f) -> operatorService.getOperator(f.operatorId).name),
                               col("Status", (Facility f) -> translationService.translate(f.status)),
                               col("Statuksen lisätiedot / poikkeustiedote", (Facility f) -> f.statusDescription),
@@ -109,19 +109,19 @@ public class ReportService {
 
     private void addRegionsSheet(Excel excel, List<Hub> hubs, Map<Long, List<Facility>> facilitiesByHubId) {
         excel.addSheet("Alueet", hubs,
-                       asList(col("Alueen nimi", h -> h.name),
-                              col("Käyntiosoite", h -> addressText(h.address)),
-                              col("Sijainti, pituuspiiri", h -> h.location.getX()),
-                              col("Sijainti, leveyspiiri", h -> h.location.getY()),
-                              col("Kaikki moottoriajoneuvot", h -> capcitySum(facilitiesByHubId, h.id, motorCapacities)),
-                              col("Kaikki polkupyörät", h -> capcitySum(facilitiesByHubId, h.id, bicycleCapacities)),
-                              col("Henkilöauto", h -> capcitySum(facilitiesByHubId, h.id, CAR)),
-                              col("Invapaikka", h -> capcitySum(facilitiesByHubId, h.id, DISABLED)),
-                              col("Sähköauto", h -> capcitySum(facilitiesByHubId, h.id, ELECTRIC_CAR)),
-                              col("Moottoripyörä", h -> capcitySum(facilitiesByHubId, h.id, MOTORCYCLE)),
-                              col("Polkupyörä", h -> capcitySum(facilitiesByHubId, h.id, BICYCLE)),
-                              col("Polkupyörä, lukittu tila", h -> capcitySum(facilitiesByHubId, h.id, BICYCLE_SECURE_SPACE)),
-                              col("Pysäköintipaikat", h -> facilitiesByHubId.get(h.id).stream().map((Facility f) -> f.name.fi).collect(toList()))));
+                       asList(col("Alueen nimi", (Hub h) -> h.name),
+                              col("Käyntiosoite", (Hub h) -> addressText(h.address)),
+                              col("Sijainti, pituuspiiri", (Hub h) -> h.location.getX()),
+                              col("Sijainti, leveyspiiri", (Hub h) -> h.location.getY()),
+                              col("Kaikki moottoriajoneuvot", (Hub h) -> capcitySum(facilitiesByHubId, h.id, motorCapacities)),
+                              col("Kaikki polkupyörät", (Hub h) -> capcitySum(facilitiesByHubId, h.id, bicycleCapacities)),
+                              col("Henkilöauto", (Hub h) -> capcitySum(facilitiesByHubId, h.id, CAR)),
+                              col("Invapaikka", (Hub h) -> capcitySum(facilitiesByHubId, h.id, DISABLED)),
+                              col("Sähköauto", (Hub h) -> capcitySum(facilitiesByHubId, h.id, ELECTRIC_CAR)),
+                              col("Moottoripyörä", (Hub h) -> capcitySum(facilitiesByHubId, h.id, MOTORCYCLE)),
+                              col("Polkupyörä", (Hub h) -> capcitySum(facilitiesByHubId, h.id, BICYCLE)),
+                              col("Polkupyörä, lukittu tila", (Hub h) -> capcitySum(facilitiesByHubId, h.id, BICYCLE_SECURE_SPACE)),
+                              col("Pysäköintipaikat", (Hub h) -> facilitiesByHubId.get(h.id).stream().map((Facility f) -> f.name.fi).collect(toList()))));
     }
 
     private int capcitySum(Map<Long, List<Facility>> facilitiesByHubId, long hubId, CapacityType... types) {

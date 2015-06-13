@@ -108,6 +108,16 @@ public class CoreConfiguration {
     }
 
     @Bean
+    public TranslationService translationService() {
+        return new TranslationService();
+    }
+
+    @Bean
+    public ReportService reportService() {
+        return new ReportService(facilityService(), operatorService(), contactService(), hubService(), translationService());
+    }
+
+    @Bean
     public FacilityRepository facilityRepository() {
         return new FacilityDao(queryFactory);
     }

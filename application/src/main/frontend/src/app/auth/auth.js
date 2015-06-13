@@ -52,7 +52,8 @@
         USER_VIEW: 'USER_VIEW',
         FACILITY_STATUS_UPDATE: 'FACILITY_STATUS_UPDATE',
         HUB_CREATE: 'HUB_CREATE',
-        HUB_UPDATE: 'HUB_UPDATE'
+        HUB_UPDATE: 'HUB_UPDATE',
+        REPORT_GENERATE: 'REPORT_GENERATE'
     });
 
     m.factory('permit', function(Session, Permission) {
@@ -108,7 +109,7 @@
         };
     });
 
-    m.factory("loginPrompt", function($modal) {
+    m.factory("loginPrompt", function ($modal) {
         return function() {
             var modalInstance = $modal.open({
                 templateUrl: 'auth/login.tpl.html',

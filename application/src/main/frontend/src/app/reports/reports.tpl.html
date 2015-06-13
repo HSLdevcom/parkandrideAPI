@@ -1,0 +1,16 @@
+<main-layout>
+	<headline>{{ "reports.title" | translate }}</h2></headline>
+    <actions>
+    </actions>
+	<content>
+		<div class="row smallMarginBottom">
+			<p>{{ "reports.help.summary" | translate }}</p>
+			<ul>
+				<li>{{ "reports.help.bullet1" | translate }}</li>
+			</ul>
+		</div>
+    <div class="panel panel-default wdReportsView">
+        <button class="btn btn-default" ng-click="generate('HubsAndFacilities.xlsx')">{{ "reports.action.do" | translate }}</button>
+    </div>
+	</content>
+</main-layout>

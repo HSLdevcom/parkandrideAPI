@@ -16,7 +16,8 @@ public enum Permission {
     USER_VIEW(true),
     FACILITY_UTILIZATION_UPDATE(true),
     HUB_CREATE(false),
-    HUB_UPDATE(false);
+    HUB_UPDATE(false),
+    REPORT_GENERATE(false);
 
     public final boolean requiresContext;
 

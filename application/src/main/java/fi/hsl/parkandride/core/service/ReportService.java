@@ -155,8 +155,8 @@ public class ReportService {
     }
 
     private static String time(TimeDuration time) {
-        return format("%02d:%02d - %02d:%02d", time.from.getHour(), time.from.getMinute(), time.until.getHour(),
-                      time.until.getMinute());
+        return time == null ? null :
+            format("%02d:%02d - %02d:%02d", time.from.getHour(), time.from.getMinute(), time.until.getHour(), time.until.getMinute());
     }
 
     private CharSequence contactText(Long contactId) {

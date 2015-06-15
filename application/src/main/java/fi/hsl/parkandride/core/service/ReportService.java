@@ -15,9 +15,11 @@ import static fi.hsl.parkandride.core.domain.DayType.*;
 import static fi.hsl.parkandride.core.domain.Permission.REPORT_GENERATE;
 import static fi.hsl.parkandride.core.service.AuthenticationService.authorize;
 import static fi.hsl.parkandride.core.service.Excel.TableColumn.col;
+
 import static java.lang.String.format;
 import static java.lang.String.join;
 import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.*;
 
@@ -77,7 +79,7 @@ public class ReportService {
         excel.addSheet("Pysäköintipaikat", facilities,
                        asList(col("Pysäköintipaikan nimi", (Facility f) -> f.name),
                               col("Aliakset", (Facility f) -> join(", ", f.aliases)),
-                              col("Kuuluu alueisiin", (Facility f) -> hubsByFacilityId.get(f.id).stream().map((Hub h) -> h.name.fi).collect(joining(", "))),
+                              col("Kuuluu alueisiin", (Facility f) -> hubsByFacilityId.getOrDefault(f.id, emptyList()).stream().map((Hub h) -> h.name.fi).collect(joining(", "))),
                               col("Operaattori", (Facility f) -> operatorService.getOperator(f.operatorId).name),
                               col("Status", (Facility f) -> translationService.translate(f.status)),
                               col("Statuksen lisätiedot / poikkeustiedote", (Facility f) -> f.statusDescription),
@@ -121,7 +123,7 @@ public class ReportService {
                               col("Moottoripyörä", (Hub h) -> capcitySum(facilitiesByHubId, h.id, MOTORCYCLE)),
                               col("Polkupyörä", (Hub h) -> capcitySum(facilitiesByHubId, h.id, BICYCLE)),
                               col("Polkupyörä, lukittu tila", (Hub h) -> capcitySum(facilitiesByHubId, h.id, BICYCLE_SECURE_SPACE)),
-                              col("Pysäköintipaikat", (Hub h) -> facilitiesByHubId.get(h.id).stream().map((Facility f) -> f.name.fi).collect(toList()))));
+                              col("Pysäköintipaikat", (Hub h) -> facilitiesByHubId.getOrDefault(h.id, emptyList()).stream().map((Facility f) -> f.name.fi).collect(toList()))));
     }
 
     private int capcitySum(Map<Long, List<Facility>> facilitiesByHubId, long hubId, CapacityType... types) {

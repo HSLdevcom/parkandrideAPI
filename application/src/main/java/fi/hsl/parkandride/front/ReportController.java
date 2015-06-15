@@ -37,8 +37,10 @@ public class ReportController {
             try {
                 report = (byte[]) reportService.getClass().getMethod("report" + reportName, User.class).invoke(reportService, currentUser);
             } catch (NoSuchMethodException e) {
+                log.info("Invalid report requested: " + reportName);
                 return ResponseEntity.notFound().build();
             } catch (Exception e) {
+                log.error("Failed to generate report", e);
                 return badRequest().body(new byte[0]);
             }
         return ok().header(CONTENT_DISPOSITION, "attachment; filename=\"" + reportId + "\"").body(report);

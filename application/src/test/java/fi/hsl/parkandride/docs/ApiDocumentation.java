@@ -121,7 +121,9 @@ public class ApiDocumentation extends AbstractIntegrationTest {
 
     @Test
     public void geojsonHeaderExample() throws Exception {
-        MockHttpServletRequestBuilder request = get(UrlSchema.FACILITIES)
+        dummies.createHub();
+
+        MockHttpServletRequestBuilder request = get(UrlSchema.HUBS)
                 .accept(UrlSchema.GEOJSON);
         mockMvc.perform(withBaseUrl(request))
                 .andExpect(status().isOk())
@@ -154,6 +156,15 @@ public class ApiDocumentation extends AbstractIntegrationTest {
                 .andExpect(status().isOk())
                 .andDo(document("authentication-example"));
     }
+
+    @Test
+    public void facilityGeojsonExample() throws Exception {
+        MockHttpServletRequestBuilder request = get(UrlSchema.FACILITY + ".geojson", facilityId);
+        this.mockMvc.perform(withBaseUrl(request))
+                .andExpect(status().isOk())
+                .andDo(document("facility-geojson-example"));
+    }
+
 
     @Test
     public void facilityExample() throws Exception {
@@ -394,6 +405,15 @@ public class ApiDocumentation extends AbstractIntegrationTest {
         mockMvc.perform(get(UrlSchema.HUBS))
                 .andExpect(status().isOk())
                 .andDo(document("all-hubs-example"));
+    }
+
+    @Test
+    public void hubGeojsonExample() throws Exception {
+        long hubId = dummies.createHub();
+
+        mockMvc.perform(withBaseUrl(get(UrlSchema.HUB + ".geojson", hubId)))
+                .andExpect(status().isOk())
+                .andDo(document("hub-geojson-example"));
     }
 
     @Test

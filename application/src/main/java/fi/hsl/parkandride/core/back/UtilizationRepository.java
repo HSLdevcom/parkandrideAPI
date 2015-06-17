@@ -3,10 +3,11 @@
 
 package fi.hsl.parkandride.core.back;
 
+import com.mysema.commons.lang.CloseableIterator;
 import fi.hsl.parkandride.core.domain.Utilization;
 import fi.hsl.parkandride.core.domain.UtilizationKey;
+import fi.hsl.parkandride.core.domain.UtilizationSearch;
 import org.joda.time.DateTime;
-
 import java.util.List;
 import java.util.Set;
 
@@ -16,5 +17,7 @@ public interface UtilizationRepository {
 
     Set<Utilization> findLatestUtilization(long facilityId);
 
-    List<Utilization> findUtilizationsBetween(UtilizationKey utilizationKey, DateTime start, DateTime end);
+    CloseableIterator<Utilization> findUtilizationsBetween(UtilizationKey utilizationKey, DateTime start, DateTime end);
+
+    CloseableIterator<Utilization> findUtilizations(UtilizationSearch search);
 }

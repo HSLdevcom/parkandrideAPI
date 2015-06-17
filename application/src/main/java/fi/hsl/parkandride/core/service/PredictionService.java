@@ -7,6 +7,15 @@ import fi.hsl.parkandride.core.back.PredictionRepository;
 import fi.hsl.parkandride.core.back.PredictorRepository;
 import fi.hsl.parkandride.core.back.UtilizationRepository;
 import fi.hsl.parkandride.core.domain.*;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+
+import javax.inject.Inject;
+
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,13 +24,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import javax.inject.Inject;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
-import java.util.stream.Stream;
+import com.mysema.commons.lang.CloseableIterator;
 
 public class PredictionService {
 
@@ -121,10 +124,10 @@ public class PredictionService {
         }
 
         @Override
-        public Stream<Utilization> getUpdatesSince(DateTime startExclusive) {
+        public CloseableIterator<Utilization> getUpdatesSince(DateTime startExclusive) {
             DateTime start = startExclusive.plusMillis(1);
             DateTime end = new DateTime().plusYears(1);
-            return utilizationRepository.findUtilizationsBetween(utilizationKey, start, end).stream();
+            return utilizationRepository.findUtilizationsBetween(utilizationKey, start, end);
         }
     }
 }

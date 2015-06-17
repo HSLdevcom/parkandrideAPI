@@ -9,8 +9,43 @@
 				<li>{{ "reports.help.bullet1" | translate }}</li>
 			</ul>
 		</div>
-    <div class="panel panel-default wdReportsView">
-        <button class="btn btn-default" ng-click="generate('HubsAndFacilities.xlsx')">{{ "reports.action.do" | translate }}</button>
+    <div class="panel panel-default wdReportsView" ng-init="reportType='MaxUtilization'">
+      <label class="radiobutton-label">
+        <input type="radio" ng-model="reportType" value="FacilityUsage"/>
+        Käyttöasteraportti
+      </label>
+      <label class="radiobutton-label">
+        <input type="radio" ng-model="reportType" value="MaxUtilization"/>
+        Tiivistelmäraportti
+      </label>
+      <label class="radiobutton-label">
+        <input type="radio" ng-model="reportType" value="HubsAndFacilities"/>
+        Alueiden ja pysäköintilaitosten tiedot
+      </label>
+
+        <div >
+          <div class="row" ng-show="reportType == 'FacilityUsage' || reportType == 'MaxUtilization'">
+          <label class="radiobutton-label">
+            Päivät(t) *
+            <input type="text" ng-model="report.startDate">
+            -
+            <input type="text" ng-model="report.endDate">
+          </label>
+          </div>
+          <div class="row" ng-show="reportType == 'FacilityUsage'">
+          <label ng-init="report.interval=60">
+            Raportoinnin tarkuus
+            <select ng-model="report.interval" convert-to-number>
+               <option value="5">5 min</option>
+               <option value="10">10 min</option>
+               <option value="15">15 min</option>
+               <option value="30">30 min</option>
+               <option value="60">60 min</option>
+            </select>
+          </label>
+          </div>
+        </div>
+        <button class="btn btn-default" ng-click="generate(reportType + '.xlsx', report)">{{ "reports.action.do" | translate }}</button>
     </div>
 	</content>
 </main-layout>

@@ -24,12 +24,17 @@
 
     m.controller('ReportsCtrl', function($scope, $http) {
       var contentType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
-      $scope.generate = function(name) {
+      $scope.generate = function(name, parameters) {
+        if (!parameters) {
+          parameters = {};
+        }
         $http({
           url: 'api/v1/reports/' + name,
-          method: "GET",
+          method: "POST",
+          data: parameters,
           headers: {
-            'Accept': contentType
+            'Accept': contentType,
+            'Content-Type': 'application/json'
           },
           responseType: 'arraybuffer'
         }).success(function (response) {

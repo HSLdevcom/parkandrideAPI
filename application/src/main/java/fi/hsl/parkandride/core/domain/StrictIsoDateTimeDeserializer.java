@@ -3,17 +3,18 @@
 
 package fi.hsl.parkandride.core.domain;
 
+import java.io.IOException;
+import java.util.regex.Pattern;
+
+import org.joda.time.DateTime;
+import org.springframework.util.StringUtils;
+
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.datatype.joda.deser.DateTimeDeserializer;
-import org.joda.time.DateTime;
-import org.springframework.util.StringUtils;
-
-import java.io.IOException;
-import java.util.regex.Pattern;
 
 public class StrictIsoDateTimeDeserializer extends JsonDeserializer<DateTime> {
 

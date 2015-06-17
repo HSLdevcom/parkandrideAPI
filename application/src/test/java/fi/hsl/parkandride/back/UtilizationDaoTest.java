@@ -3,29 +3,29 @@
 
 package fi.hsl.parkandride.back;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import com.mysema.commons.lang.CloseableIterator;
 import fi.hsl.parkandride.core.back.UtilizationRepository;
 import fi.hsl.parkandride.core.domain.Utilization;
 import fi.hsl.parkandride.core.domain.UtilizationKey;
 import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
-
+import org.springframework.transaction.support.TransactionTemplate;
 import javax.inject.Inject;
-import java.util.List;
 import java.util.Set;
-
 import static fi.hsl.parkandride.core.domain.CapacityType.CAR;
 import static fi.hsl.parkandride.core.domain.CapacityType.MOTORCYCLE;
 import static fi.hsl.parkandride.core.domain.Usage.COMMERCIAL;
 import static fi.hsl.parkandride.core.domain.Usage.HSL_TRAVEL_CARD;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
-import static org.assertj.core.api.Assertions.assertThat;
 
 public class UtilizationDaoTest extends AbstractDaoTest {
 
     @Inject Dummies dummies;
     @Inject UtilizationRepository utilizationDao;
+    @Inject TransactionTemplate transaction;
 
     private long facilityId;
 
@@ -95,9 +95,14 @@ public class UtilizationDaoTest extends AbstractDaoTest {
         UtilizationKey key = u1.getUtilizationKey();
         utilizationDao.insertUtilizations(asList(u1, u2, u3, u4, u5));
 
-        List<Utilization> results = utilizationDao.findUtilizationsBetween(key, u2.timestamp, u4.timestamp);
+        transaction.execute(tx -> {
+            try (CloseableIterator<Utilization> results = utilizationDao.findUtilizationsBetween(key, u2.timestamp, u4.timestamp)) {
 
-        assertThat(results).containsExactly(u2, u3, u4);
+                assertThat(results).containsExactly(u2, u3, u4);
+            }
+            return null;
+        });
+
     }
 
     @Test
@@ -107,9 +112,14 @@ public class UtilizationDaoTest extends AbstractDaoTest {
         Utilization u2 = newUtilization(dummies.createFacility(), time, 200);
         utilizationDao.insertUtilizations(asList(u1, u2));
 
-        List<Utilization> results = utilizationDao.findUtilizationsBetween(u1.getUtilizationKey(), time, time);
+        transaction.execute(tx -> {
+            try (CloseableIterator<Utilization> results = utilizationDao.findUtilizationsBetween(u1.getUtilizationKey(), time, time)) {
 
-        assertThat(results).containsExactly(u1);
+                assertThat(results).containsExactly(u1);
+            }
+            return null;
+        });
+
     }
 
     @Test
@@ -121,9 +131,13 @@ public class UtilizationDaoTest extends AbstractDaoTest {
         u2.capacityType = MOTORCYCLE;
         utilizationDao.insertUtilizations(asList(u1, u2));
 
-        List<Utilization> results = utilizationDao.findUtilizationsBetween(u1.getUtilizationKey(), time, time);
+        transaction.execute(tx -> {
+            try (CloseableIterator<Utilization> results = utilizationDao.findUtilizationsBetween(u1.getUtilizationKey(), time, time)) {
 
-        assertThat(results).containsExactly(u1);
+                assertThat(results).containsExactly(u1);
+            }
+            return null;
+        });
     }
 
     @Test
@@ -135,9 +149,13 @@ public class UtilizationDaoTest extends AbstractDaoTest {
         u2.usage = HSL_TRAVEL_CARD;
         utilizationDao.insertUtilizations(asList(u1, u2));
 
-        List<Utilization> results = utilizationDao.findUtilizationsBetween(u1.getUtilizationKey(), time, time);
+        transaction.execute(tx -> {
+            try (CloseableIterator<Utilization> results = utilizationDao.findUtilizationsBetween(u1.getUtilizationKey(), time, time)) {
 
-        assertThat(results).containsExactly(u1);
+                assertThat(results).containsExactly(u1);
+            }
+            return null;
+        });
     }
 
 

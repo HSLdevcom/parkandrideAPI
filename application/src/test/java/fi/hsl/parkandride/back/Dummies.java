@@ -111,7 +111,7 @@ public class Dummies {
         return facility;
     }
 
-    private final AtomicInteger seq = new AtomicInteger(0);
+    private static final AtomicInteger seq = new AtomicInteger(0);
 
     private int uniqueNumber() {
         return seq.incrementAndGet();

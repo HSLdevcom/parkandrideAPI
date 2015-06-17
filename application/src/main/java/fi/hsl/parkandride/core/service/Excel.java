@@ -1,10 +1,9 @@
 package fi.hsl.parkandride.core.service;
 
+import static com.google.common.base.Throwables.getStackTraceAsString;
+import static org.apache.poi.ss.usermodel.Cell.*;
+
 import fi.hsl.parkandride.core.domain.MultilingualString;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -12,8 +11,14 @@ import java.util.Collection;
 import java.util.List;
 import java.util.function.Function;
 
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import static java.lang.Math.max;
-import static org.apache.poi.ss.usermodel.Cell.*;
+import static java.util.Arrays.asList;
+import static java.util.stream.Collectors.joining;
 
 class Excel {
     private static final Logger log = LoggerFactory.getLogger(Excel.class);
@@ -23,6 +28,7 @@ class Excel {
     private final Font bold = wb.createFont();
     private final CellStyle title = wb.createCellStyle();
     private final CellStyle text = wb.createCellStyle();
+    private final CellStyle multiline = wb.createCellStyle();
     private final CellStyle integer = wb.createCellStyle();
     private final CellStyle decimal = wb.createCellStyle();
     private final DataFormat df = wb.createDataFormat();
@@ -35,6 +41,9 @@ class Excel {
         title.setFont(bold);
         text.setDataFormat(df.getFormat("TEXT"));
         text.setFont(font12pt);
+        multiline.setDataFormat(df.getFormat("TEXT"));
+        multiline.setFont(font12pt);
+        multiline.setWrapText(true);
         integer.setDataFormat(df.getFormat("0"));
         integer.setFont(font12pt);
         decimal.setDataFormat(df.getFormat("#,####0.0000"));
@@ -72,7 +81,13 @@ class Excel {
             Row row = sheet.createRow(r + 1);
             for (int column = 0; column < columns.size(); ++column) {
                 TableColumn<T> colType = columns.get(column);
-                Object value = colType.valueFunction.apply(rows.get(r));
+                Object value;
+                try {
+                  value = colType.valueFunction.apply(rows.get(r));
+                } catch (RuntimeException ex) {
+                  log.error("Failed to generate cell for column " + colType.name, ex);
+                  value = cleanExceptionMessage(ex);
+                }
                 if (value == null) {
                     row.createCell(column, CELL_TYPE_BLANK);
                 } else if (value instanceof Double) {
@@ -96,12 +111,21 @@ class Excel {
                     }
                 } else {
                     Cell cell = row.createCell(column, CELL_TYPE_STRING);
-                    cell.setCellStyle(text);
+                    String val = value.toString();
+                    if (val.indexOf('\n') > 0) {
+                        cell.setCellStyle(multiline);
+                    } else {
+                        cell.setCellStyle(text);
+                    }
                     cell.setCellValue(value.toString());
                 }
             }
         }
         autosize(maxColumns);
+    }
+
+    private static String cleanExceptionMessage(RuntimeException ex) {
+        return asList(getStackTraceAsString(ex).split("\n")).stream().filter(l -> !l.matches(".*(sun\\.reflect|java\\.lang\\.reflect|\\$\\$Lambda\\$.*Unknown Source).*")).limit(10).collect(joining("\n"));
     }
 
     public <T> void addSheet(String name, String... textRows) {

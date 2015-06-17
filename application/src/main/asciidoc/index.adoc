@@ -52,6 +52,10 @@ https://github.com/HSLdevcom/parkandrideAPI.
 
 Please, report bugs and feature requests as GitHub issues.
 
+=== Overview of the Data Model
+
+link:../assets/datamodel.png[UML diagram of the HSL Park and Ride data model]
+
 === Examples
 
 Most API-features are used by the link:https://p.hsl.fi/[Park and Ride maintenance UI] and

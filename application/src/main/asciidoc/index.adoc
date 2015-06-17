@@ -209,6 +209,10 @@ Details of an operator can be fetched with:
 include::{generated}/operator-details-example/http-request.adoc[]
 include::{generated}/operator-details-example/http-response.adoc[]
 
+=== Summary of Operator Model
+
+include::{generated}/operator-details-example/response-fields.adoc[]
+
 
 [[contacts]]
 == Contacts

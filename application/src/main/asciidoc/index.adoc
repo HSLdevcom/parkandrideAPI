@@ -209,6 +209,10 @@ Details of an operator can be fetched with:
 include::{generated}/operator-details-example/http-request.adoc[]
 include::{generated}/operator-details-example/http-response.adoc[]
 
+=== Summary of Operator Model
+
+include::{generated}/operator-details-example/response-fields.adoc[]
+
 
 [[contacts]]
 == Contacts
@@ -375,6 +379,18 @@ include::{generated}/prediction-relative-example/http-request.adoc[]
 include::{generated}/prediction-absolute-example/http-request.adoc[]
 include::{generated}/prediction-absolute-example/http-response.adoc[]
 
+==== Facility GeoJSON Example
+
+GeoJSON of a single facility contains only basic information of a facility, not full details:
+
+include::{generated}/facility-geojson-example/curl-request.adoc[]
+include::{generated}/facility-geojson-example/http-response.adoc[]
+
+GeoJSON FeatureCollection of facilities:
+
+include::{generated}/geojson-suffix-example/curl-request.adoc[]
+include::{generated}/geojson-suffix-example/http-response.adoc[]
+
 ==== Summary of Facility Model
 
 include::{generated}/facility-example/response-fields.adoc[]
@@ -412,6 +428,18 @@ At the time of writing this document there is no structural difference between i
 
 include::{generated}/hub-details-example/http-request.adoc[]
 include::{generated}/hub-details-example/http-response.adoc[]
+
+==== Hub GeoJSON Example
+
+GeoJSON of a single hub:
+
+include::{generated}/hub-geojson-example/curl-request.adoc[]
+include::{generated}/hub-geojson-example/http-response.adoc[]
+
+GeoJSON FeatureCollection of hubs:
+
+include::{generated}/geojson-header-example/curl-request.adoc[]
+include::{generated}/geojson-header-example/http-response.adoc[]
 
 ==== Summary of Hub Model
 

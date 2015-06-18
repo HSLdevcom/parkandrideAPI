@@ -4,6 +4,7 @@
 package fi.hsl.parkandride.itest;
 
 import fi.hsl.parkandride.back.Dummies;
+import org.junit.Before;
 import org.junit.Test;
 import org.springframework.http.HttpStatus;
 
@@ -14,6 +15,11 @@ import static com.jayway.restassured.RestAssured.when;
 public class CacheHeadersTest extends AbstractIntegrationTest {
 
     @Inject Dummies dummies;
+
+    @Before
+    public void init() {
+        devHelper.deleteAll();
+    }
 
     @Test
     public void api_urls_are_not_cached() {

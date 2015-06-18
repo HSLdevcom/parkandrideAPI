@@ -4,7 +4,9 @@
 package fi.hsl.parkandride.core.domain;
 
 
+import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.google.common.base.MoreObjects;
@@ -17,7 +19,7 @@ import java.util.Objects;
 public class Utilization {
 
     @NotNull
-    @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
+    @JsonInclude(NON_NULL)
     public Long facilityId;
 
     @NotNull

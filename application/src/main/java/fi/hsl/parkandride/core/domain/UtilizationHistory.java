@@ -5,9 +5,9 @@ package fi.hsl.parkandride.core.domain;
 
 import org.joda.time.DateTime;
 
-import java.util.stream.Stream;
+import com.mysema.commons.lang.CloseableIterator;
 
 public interface UtilizationHistory {
 
-    Stream<Utilization> getUpdatesSince(DateTime startExclusive);
+    CloseableIterator<Utilization> getUpdatesSince(DateTime startExclusive);
 }

@@ -20,7 +20,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
-
 import javax.inject.Inject;
 import java.security.SecureRandom;
 
@@ -114,7 +113,7 @@ public class CoreConfiguration {
 
     @Bean
     public ReportService reportService() {
-        return new ReportService(facilityService(), operatorService(), contactService(), hubService(), translationService());
+        return new ReportService(facilityService(), operatorService(), contactService(), hubService(), utilizationRepository(), translationService());
     }
 
     @Bean

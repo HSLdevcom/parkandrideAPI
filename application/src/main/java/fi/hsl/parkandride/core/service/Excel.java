@@ -11,26 +11,28 @@ import java.util.Collection;
 import java.util.List;
 import java.util.function.Function;
 
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static java.lang.Math.max;
 import static java.util.Arrays.asList;
+import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.joining;
 
 class Excel {
     private static final Logger log = LoggerFactory.getLogger(Excel.class);
 
-    private final Workbook wb = new HSSFWorkbook();
+    private final Workbook wb = new XSSFWorkbook();
     private final Font font12pt = wb.createFont();
     private final Font bold = wb.createFont();
     private final CellStyle title = wb.createCellStyle();
-    private final CellStyle text = wb.createCellStyle();
-    private final CellStyle multiline = wb.createCellStyle();
-    private final CellStyle integer = wb.createCellStyle();
-    private final CellStyle decimal = wb.createCellStyle();
+    final CellStyle text = wb.createCellStyle();
+    final CellStyle multiline = wb.createCellStyle();
+    final CellStyle integer = wb.createCellStyle();
+    final CellStyle decimal = wb.createCellStyle();
+    final CellStyle percent = wb.createCellStyle();
     private final DataFormat df = wb.createDataFormat();
     private Sheet sheet;
 
@@ -48,19 +50,27 @@ class Excel {
         integer.setFont(font12pt);
         decimal.setDataFormat(df.getFormat("#,####0.0000"));
         decimal.setFont(font12pt);
+        percent.setDataFormat(df.getFormat("0%"));
+        percent.setFont(font12pt);
     }
 
     static class TableColumn<T> {
         static <T> TableColumn<T> col(String name, Function<T, Object> valueFunction) {
-            return new TableColumn<>(name, valueFunction);
+            return new TableColumn<>(name, valueFunction, null);
+        }
+
+        static <T> TableColumn<T> col(String name, Function<T, Object> valueFunction, CellStyle style) {
+            return new TableColumn<>(name, valueFunction, style);
         }
 
         public final String name;
         public final Function<T, Object> valueFunction;
+        public final CellStyle style;
 
-        private TableColumn(String name, Function<T, Object> valueFunction) {
+        private TableColumn(String name, Function<T, Object> valueFunction, CellStyle style) {
             this.name = name;
             this.valueFunction = valueFunction;
+            this.style = style;
         }
     }
 
@@ -70,9 +80,9 @@ class Excel {
 
         int maxColumns = 0;
         Row headerRow = sheet.createRow(0);
-        for (int colunm = 0; colunm < columns.size(); ++colunm, maxColumns = max(maxColumns, colunm)) {
-            Cell cell = headerRow.createCell(colunm, CELL_TYPE_STRING);
-            TableColumn<T> colType = columns.get(colunm);
+        for (int column = 0; column < columns.size(); ++column, maxColumns = max(maxColumns, column)) {
+            Cell cell = headerRow.createCell(column, CELL_TYPE_STRING);
+            TableColumn<T> colType = columns.get(column);
             cell.setCellStyle(title);
             cell.setCellValue(colType.name);
         }
@@ -92,15 +102,15 @@ class Excel {
                     row.createCell(column, CELL_TYPE_BLANK);
                 } else if (value instanceof Double) {
                     Cell cell = row.createCell(column, CELL_TYPE_NUMERIC);
-                    cell.setCellStyle(decimal);
+                    cell.setCellStyle(ofNullable(colType.style).orElse(decimal));
                     cell.setCellValue((Double) value);
                 } else if (value instanceof Integer) {
                     Cell cell = row.createCell(column, CELL_TYPE_NUMERIC);
-                    cell.setCellStyle(integer);
+                    cell.setCellStyle(ofNullable(colType.style).orElse(integer));
                     cell.setCellValue((Integer) value);
                 } else if (value instanceof MultilingualString) {
                     Cell cell = row.createCell(column, CELL_TYPE_STRING);
-                    cell.setCellStyle(text);
+                    cell.setCellStyle(ofNullable(colType.style).orElse(text));
                     cell.setCellValue(((MultilingualString) value).fi);
                 } else if (value instanceof Collection) {
                     // currently must be last item in list

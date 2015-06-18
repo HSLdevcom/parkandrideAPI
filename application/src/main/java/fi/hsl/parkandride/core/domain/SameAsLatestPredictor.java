@@ -6,6 +6,13 @@ package fi.hsl.parkandride.core.domain;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.mysema.commons.lang.CloseableIterator;
+
+import static java.util.Spliterator.IMMUTABLE;
+import static java.util.Spliterator.NONNULL;
+import static java.util.Spliterators.spliteratorUnknownSize;
+import static java.util.stream.StreamSupport.stream;
+
 public class SameAsLatestPredictor implements Predictor {
 
     public static final String TYPE = "same-as-latest";
@@ -18,13 +25,15 @@ public class SameAsLatestPredictor implements Predictor {
     @Override
     public List<Prediction> predict(PredictorState state, UtilizationHistory history) {
         List<Prediction> predictions = new ArrayList<>();
-        history.getUpdatesSince(state.latestUtilization)
+        try (CloseableIterator<Utilization>  utilizations = history.getUpdatesSince(state.latestUtilization)) {
+            stream(spliteratorUnknownSize(utilizations, NONNULL | IMMUTABLE), false)
                 .reduce((older, newer) -> newer)
                 .ifPresent(lastUpdate -> {
                     state.latestUtilization = lastUpdate.timestamp;
                     predictions.add(new Prediction(lastUpdate.timestamp, lastUpdate.spacesAvailable));
                     predictions.add(new Prediction(lastUpdate.timestamp.plusDays(1), lastUpdate.spacesAvailable));
                 });
+        }
         return predictions;
     }
 }

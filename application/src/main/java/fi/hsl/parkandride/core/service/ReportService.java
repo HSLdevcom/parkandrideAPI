@@ -429,10 +429,10 @@ public class ReportService {
     }
 
     private int capcitySum(Map<Long, List<Facility>> facilitiesByHubId, long hubId, CapacityType... types) {
-        List<Facility> facilities = facilitiesByHubId.get(hubId);
+        List<Facility> facilities = facilitiesByHubId.getOrDefault(hubId, emptyList());
         int sum = 0;
         for (CapacityType type : types) {
-            sum += facilities.stream().mapToInt((Facility f) -> f.builtCapacity.get(type)).sum();
+            sum += facilities.stream().mapToInt((Facility f) -> f.builtCapacity.getOrDefault(type, 0)).sum();
         }
         return sum;
     }
@@ -452,7 +452,7 @@ public class ReportService {
     }
 
     private static int capacitySum(Map<CapacityType, Integer> capacityValues, List<CapacityType> capacityTypes) {
-        return capacityTypes.stream().map(type -> capacityValues.getOrDefault(type, 0)).filter((n) -> n != null).mapToInt((n) -> n).sum();
+        return capacityTypes.stream().mapToInt(type -> capacityValues.getOrDefault(type, 0)).sum();
     }
 
     private static String time(TimeDuration time) {

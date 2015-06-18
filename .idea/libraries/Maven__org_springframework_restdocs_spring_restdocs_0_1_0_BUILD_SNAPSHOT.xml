@@ -1,13 +1,13 @@
 <component name="libraryTable">
   <library name="Maven: org.springframework.restdocs:spring-restdocs:0.1.0.BUILD-SNAPSHOT">
     <CLASSES>
-      <root url="jar://$MAVEN_REPOSITORY$/org/springframework/restdocs/spring-restdocs/0.1.0.BUILD-SNAPSHOT/spring-restdocs-0.1.0.BUILD-20150515.200919-52.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/springframework/restdocs/spring-restdocs/0.1.0.BUILD-SNAPSHOT/spring-restdocs-0.1.0.BUILD-20150616.163110-55.jar!/" />
     </CLASSES>
     <JAVADOC>
-      <root url="jar://$MAVEN_REPOSITORY$/org/springframework/restdocs/spring-restdocs/0.1.0.BUILD-SNAPSHOT/spring-restdocs-0.1.0.BUILD-20150515.200919-52-javadoc.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/springframework/restdocs/spring-restdocs/0.1.0.BUILD-SNAPSHOT/spring-restdocs-0.1.0.BUILD-20150616.163110-55-javadoc.jar!/" />
     </JAVADOC>
     <SOURCES>
-      <root url="jar://$MAVEN_REPOSITORY$/org/springframework/restdocs/spring-restdocs/0.1.0.BUILD-SNAPSHOT/spring-restdocs-0.1.0.BUILD-20150515.200919-52-sources.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/springframework/restdocs/spring-restdocs/0.1.0.BUILD-SNAPSHOT/spring-restdocs-0.1.0.BUILD-20150616.163110-55-sources.jar!/" />
     </SOURCES>
   </library>
 </component>

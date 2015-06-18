@@ -173,7 +173,7 @@ public class ReportService {
                    col("Aukiolo, arki", (UtilizationReportRow r) -> time(r.key.facility.openingHours.byDayType.get(BUSINESS_DAY))),
                    col("Aukiolo, la", (UtilizationReportRow r) -> time(r.key.facility.openingHours.byDayType.get(SATURDAY))),
                    col("Aukiolo, su", (UtilizationReportRow r) -> time(r.key.facility.openingHours.byDayType.get(SUNDAY))),
-                   col("Rakennettu kapasiteetti", (UtilizationReportRow r) -> r.key.facility.builtCapacity.get(r.key.capacityType)),
+                   col("Pysäköintipaikkojen määrä", (UtilizationReportRow r) -> r.key.facility.builtCapacity.get(r.key.capacityType)),
                    col("Päivämäärä", (UtilizationReportRow r) -> r.key.date.toString("d.M.yyyy")));
         columns = new ArrayList<>(columns);
         for (int s = 0, i = 0; s < SECONDS_IN_DAY; s += intervalSeconds, i++) {
@@ -263,7 +263,7 @@ public class ReportService {
                    col("Käyttötapa", (MaxUtilizationReportRow r) -> translationService.translate(r.key.usage)),
                    col("Ajoneuvotyyppi", (MaxUtilizationReportRow r) -> translationService.translate(r.key.capacityType)),
                    col("Status", (MaxUtilizationReportRow r) -> translationService.translate(r.key.facility.status)),
-                   col("Rakennettu kapasiteetti", (MaxUtilizationReportRow r) -> r.totalCapacity),
+                   col("Pysäköintipaikkojen määrä", (MaxUtilizationReportRow r) -> r.totalCapacity),
                    col("Päivätyyppi", (MaxUtilizationReportRow r) -> translationService.translate(r.key.dayType)),
                    col("Keskimääräinen maksimikäyttöaste", (MaxUtilizationReportRow r) -> r.average, excel.percent));
         excel.addSheet("Tiivistelmäraportti", rows, columns);
@@ -452,7 +452,7 @@ public class ReportService {
     }
 
     private static int capacitySum(Map<CapacityType, Integer> capacityValues, List<CapacityType> capacityTypes) {
-        return capacityTypes.stream().map(capacityValues::get).filter((n) -> n != null).mapToInt((n) -> n).sum();
+        return capacityTypes.stream().map(type -> capacityValues.getOrDefault(type, 0)).filter((n) -> n != null).mapToInt((n) -> n).sum();
     }
 
     private static String time(TimeDuration time) {

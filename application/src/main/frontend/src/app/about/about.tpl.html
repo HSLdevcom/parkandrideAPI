@@ -2,11 +2,13 @@
 	<headline>{{ "about.title" | translate }}</h2></headline>
 	<content>
 		<div class="row smallMarginBottom">
-
 			<p ng-bind-html="'about.introduction' | translate"></p>
-
-			<p ng-bind-html="'about.disclaimer' | translate"></p>
-
+			<ul>
+				<li ng-bind-html="'about.termsOfService' | translate"></li>
+				<li ng-bind-html="'about.documentation' | translate"></li>
+				<li ng-bind-html="'about.browsers' | translate"></li>
+				<li ng-bind-html="'about.disclaimer' | translate"></li>
+			</ul>
 		</div>
 	</content>
 </main-layout>

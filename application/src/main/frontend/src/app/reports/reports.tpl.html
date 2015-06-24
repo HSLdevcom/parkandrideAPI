@@ -27,9 +27,9 @@
           <div class="row" ng-show="reportType == 'FacilityUsage' || reportType == 'MaxUtilization'">
           <label class="radiobutton-label">
             Päivät(t) *
-            <input type="text" ng-model="report.startDate">
+            <input type="text" ng-model="report.startDate" placeholder="{{date | date:'d.M.yyyy'}}">
             -
-            <input type="text" ng-model="report.endDate">
+            <input type="text" ng-model="report.endDate" placeholder="{{date | date:'d.M.yyyy'}}">
           </label>
           </div>
           <div class="row" ng-show="reportType == 'FacilityUsage'">

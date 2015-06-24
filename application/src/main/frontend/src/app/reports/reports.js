@@ -24,6 +24,7 @@
 
     m.controller('ReportsCtrl', function($scope, $http) {
       var contentType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+      $scope.date = new Date();
       $scope.generate = function(name, parameters) {
         if (!parameters) {
           parameters = {};

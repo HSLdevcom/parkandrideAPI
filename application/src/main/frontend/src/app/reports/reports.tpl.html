@@ -10,9 +10,10 @@
 			</ul>
 		</div>
     <div class="panel panel-default wdReportsView" ng-init="reportType='MaxUtilization'">
+      <form name="reportForm">
       <label class="radiobutton-label">
         <input type="radio" ng-model="reportType" value="FacilityUsage"/>
-        Käyttöasteraportti
+        Täyttöasteraportti
       </label>
       <label class="radiobutton-label">
         <input type="radio" ng-model="reportType" value="MaxUtilization"/>
@@ -24,10 +25,10 @@
       </label>
 
         <div >
-          <div class="row" ng-show="reportType == 'FacilityUsage' || reportType == 'MaxUtilization'">
+          <div class="row" ng-show="reportType != 'HubsAndFacilities'">
           <label class="radiobutton-label">
             Päivät(t) *
-            <input type="text" ng-model="report.startDate" placeholder="{{date | date:'d.M.yyyy'}}">
+            <input type="text" ng-model="report.startDate" ng-required="reportType != 'HubsAndFacilities'" placeholder="{{date | date:'d.M.yyyy'}}">
             -
             <input type="text" ng-model="report.endDate" placeholder="{{date | date:'d.M.yyyy'}}">
           </label>
@@ -44,8 +45,42 @@
             </select>
           </label>
           </div>
+          <div class="row" ng-show="reportType != 'HubsAndFacilities'">
+            <label>Operaattori
+            <select multiple ng-model="report.operators" ng-options="operator.id as operator.name.fi for operator in allOperators">
+              <option value="">Kaikki</option>
+            </select>
+            </label>
+          </div>
+          <div class="row" ng-show="reportType != 'HubsAndFacilities'">
+            <label>Käyttötapa
+            <select multiple ng-model="report.usages" ng-options="usage.id as usage.label for usage in usages">
+            </select>
+            </label>
+          </div>
+          <div class="row" ng-show="reportType != 'HubsAndFacilities'" ng-init="report.capacityTypes=['CAR']">
+            <label>Ajoneuvotyyppi
+            <select multiple ng-model="report.capacityTypes" ng-options="capacityType.id as capacityType.label for capacityType in capacityTypes">
+            </select>
+            </label>
+          </div>
+          <div class="row" ng-show="reportType != 'HubsAndFacilities'">
+            <label>Alueet
+            <select multiple ng-model="report.hubs" ng-options="hub.id as hub.name.fi for hub in allHubs">
+              <option value="">Kaikki</option>
+            </select>
+            </label>
+          </div>
+          <div class="row" ng-show="reportType != 'HubsAndFacilities'">
+            <label>Pysäköintipaikat
+            <select multiple ng-model="report.facilities" ng-options="facility.id as facility.name.fi for facility in allFacilities">
+              <option value="">Kaikki</option>
+            </select>
+            </label>
+          </div>
         </div>
-        <button class="btn btn-default" ng-click="generate(reportType + '.xlsx', report)">{{ "reports.action.do" | translate }}</button>
+        <button type="submit" class="btn btn-default" ng-disabled="reportForm.$invalid" ng-click="generate(reportType + '.xlsx', report)">{{ "reports.action.do" | translate }}</button>
+      </form>
     </div>
 	</content>
 </main-layout>

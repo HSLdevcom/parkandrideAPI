@@ -19,6 +19,8 @@ public class FacilitySearch {
 
     private Geometry geometry;
 
+    private Long operatorId;
+
     public Set<Long> getIds() {
         return ids;
     }
@@ -49,5 +51,13 @@ public class FacilitySearch {
 
     public void setMaxDistance(Double maxDistance) {
         this.maxDistance = maxDistance;
+    }
+
+    public Long getOperatorId() {
+        return operatorId;
+    }
+
+    public void setOperatorId(Long operatorId) {
+        this.operatorId = operatorId;
     }
 }

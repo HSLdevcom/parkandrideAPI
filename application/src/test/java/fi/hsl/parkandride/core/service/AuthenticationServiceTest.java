@@ -11,15 +11,16 @@ import static fi.hsl.parkandride.core.domain.Permission.OPERATOR_CREATE;
 import static fi.hsl.parkandride.core.domain.Role.ADMIN;
 import static fi.hsl.parkandride.core.domain.Role.OPERATOR;
 import static fi.hsl.parkandride.core.domain.Role.OPERATOR_API;
-import static fi.hsl.parkandride.core.service.AuthenticationService.TOKEN_PATTERN;
-import static fi.hsl.parkandride.core.service.AuthenticationService.authorize;
+import static fi.hsl.parkandride.core.service.AuthenticationService.*;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.Matchers.nullValue;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.regex.Matcher;
 
 import org.apache.commons.lang3.StringUtils;
+import org.hamcrest.core.IsNull;
 import org.jasypt.util.password.PasswordEncryptor;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeUtils;
@@ -237,5 +238,24 @@ public class AuthenticationServiceTest {
 
         User user = service.authenticate(token);
         assertThat(user).isSameAs(apiUser.user);
+    }
+
+    @Test
+    public void admin_limited_operator() {
+        User user = new User(1l, "admin", ADMIN);
+        assertThat(getLimitedOperatorId(user)).isNull();
+    }
+
+    @Test
+    public void operator_limited_operator() {
+        User user = new User(1l, "operator", OPERATOR);
+        user.operatorId = 42l;
+        assertThat(getLimitedOperatorId(user)).isEqualTo(42L);
+    }
+
+    @Test(expected = AccessDeniedException.class)
+    public void operator_operator_mismatch() {
+        User user = new User(1l, "operator", OPERATOR);
+        getLimitedOperatorId(user);
     }
 }

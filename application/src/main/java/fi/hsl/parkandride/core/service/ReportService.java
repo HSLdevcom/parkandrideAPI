@@ -3,7 +3,9 @@
 
 package fi.hsl.parkandride.core.service;
 
+import static com.google.common.collect.Iterators.filter;
 import static org.joda.time.format.DateTimeFormat.forPattern;
+import static org.springframework.util.CollectionUtils.isEmpty;
 import com.mysema.commons.lang.CloseableIterator;
 import fi.hsl.parkandride.core.back.UtilizationRepository;
 import fi.hsl.parkandride.core.domain.*;
@@ -17,6 +19,7 @@ import static fi.hsl.parkandride.core.domain.CapacityType.*;
 import static fi.hsl.parkandride.core.domain.DayType.*;
 import static fi.hsl.parkandride.core.domain.Permission.REPORT_GENERATE;
 import static fi.hsl.parkandride.core.service.AuthenticationService.authorize;
+import static fi.hsl.parkandride.core.service.AuthenticationService.getLimitedOperatorId;
 import static fi.hsl.parkandride.core.service.Excel.TableColumn.col;
 import static java.lang.Math.min;
 import static java.lang.String.format;
@@ -26,16 +29,15 @@ import static java.util.Arrays.asList;
 import static java.util.Arrays.fill;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.sort;
-import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.*;
 
 public class ReportService {
     private static final int SECONDS_IN_DAY = 60 * 60 * 24;
 
-    private final FacilityService facilityService;
-    private final OperatorService operatorService;
+    final FacilityService facilityService;
+    final OperatorService operatorService;
     private final ContactService contactService;
-    private final HubService hubService;
+    final HubService hubService;
     private final UtilizationRepository utilizationRepository;
     private final TranslationService translationService;
 
@@ -52,21 +54,11 @@ public class ReportService {
     public byte[] reportHubsAndFacilities(User currentUser, ReportParameters parameters) {
         authorize(currentUser, REPORT_GENERATE);
 
-        // fetch data and precalculate some values
-        List<Facility> facilities = getFacilities();
-        List<Hub> hubs = getHubs();
-        Map<Long, Facility> facilitiesByFacilityId = facilities.stream().collect(toMap((Facility f) -> f.id, identity()));
-        Map<Long, List<Facility>> facilitiesByHubId = new HashMap<>();
-        Map<Long, List<Hub>> hubsByFacilityId = new HashMap<>();
-
-        hubs.stream().forEach(hub -> {
-            facilitiesByHubId.put(hub.id, hub.facilityIds.stream().map(id -> facilitiesByFacilityId.get(id)).collect(toList()));
-            hubsToFacilities(hub, hubsByFacilityId);
-        });
+        ReportContext ctx = new ReportContext(this, getLimitedOperatorId(currentUser));
 
         Excel excel = new Excel();
-        addRegionsSheet(excel, hubs, facilitiesByHubId);
-        addFacilitiesSheet(excel, facilities, hubsByFacilityId);
+        addRegionsSheet(excel, new ArrayList<>(ctx.hubs.values()), ctx);
+        addFacilitiesSheet(excel, new ArrayList<>(ctx.facilities.values()), ctx);
         excel.addSheet("Selite", "Tämä dokumentti on vedos https://p.hsl.fi/ -sivuston tiedoista", "",
                        "Alueet-välilehdelle on koostettu kaikki järjestelmään syötetyt alueet, niihin liitetyt tiedot ja pysäköintipaikat",
                        "Pysäköintipaikat-välilehdelle on koostettu riveittäin kaikki järjestelmään syötetyt pysäköintipaikat tietoineen",
@@ -78,12 +70,12 @@ public class ReportService {
         return excel.toBytes();
     }
 
-    private void addFacilitiesSheet(Excel excel, List<Facility> facilities, Map<Long, List<Hub>> hubsByFacilityId) {
+    private void addFacilitiesSheet(Excel excel, List<Facility> facilities, ReportContext ctx) {
         excel.addSheet("Pysäköintipaikat", facilities,
                        asList(col("Pysäköintipaikan nimi", (Facility f) -> f.name),
                               col("Aliakset", (Facility f) -> join(", ", f.aliases)),
-                              col("Kuuluu alueisiin", (Facility f) -> hubsByFacilityId.getOrDefault(f.id, emptyList()).stream().map((Hub h) -> h.name.fi).collect(joining(", "))),
-                              col("Operaattori", (Facility f) -> operatorService.getOperator(f.operatorId).name),
+                              col("Kuuluu alueisiin", (Facility f) -> ctx.hubsByFacilityId.getOrDefault(f.id, emptyList()).stream().map((Hub h) -> h.name.fi).collect(joining(", "))),
+                              col("Operaattori", (Facility f) -> ctx.operators.get(f.operatorId).name),
                               col("Status", (Facility f) -> translationService.translate(f.status)),
                               col("Statuksen lisätiedot / poikkeustiedote", (Facility f) -> f.statusDescription),
                               col("Sijainti, pituuspiiri", (Facility f) -> f.location.getCentroid().getX()),
@@ -110,21 +102,21 @@ public class ReportService {
 
     }
 
-    private void addRegionsSheet(Excel excel, List<Hub> hubs, Map<Long, List<Facility>> facilitiesByHubId) {
+    private void addRegionsSheet(Excel excel, List<Hub> hubs, ReportContext ctx) {
         excel.addSheet("Alueet", hubs,
                        asList(col("Alueen nimi", (Hub h) -> h.name),
                               col("Käyntiosoite", (Hub h) -> addressText(h.address)),
                               col("Sijainti, pituuspiiri", (Hub h) -> h.location.getX()),
                               col("Sijainti, leveyspiiri", (Hub h) -> h.location.getY()),
-                              col("Kaikki moottoriajoneuvot", (Hub h) -> capcitySum(facilitiesByHubId, h.id, motorCapacities)),
-                              col("Kaikki polkupyörät", (Hub h) -> capcitySum(facilitiesByHubId, h.id, bicycleCapacities)),
-                              col("Henkilöauto", (Hub h) -> capcitySum(facilitiesByHubId, h.id, CAR)),
-                              col("Invapaikka", (Hub h) -> capcitySum(facilitiesByHubId, h.id, DISABLED)),
-                              col("Sähköauto", (Hub h) -> capcitySum(facilitiesByHubId, h.id, ELECTRIC_CAR)),
-                              col("Moottoripyörä", (Hub h) -> capcitySum(facilitiesByHubId, h.id, MOTORCYCLE)),
-                              col("Polkupyörä", (Hub h) -> capcitySum(facilitiesByHubId, h.id, BICYCLE)),
-                              col("Polkupyörä, lukittu tila", (Hub h) -> capcitySum(facilitiesByHubId, h.id, BICYCLE_SECURE_SPACE)),
-                              col("Pysäköintipaikat", (Hub h) -> facilitiesByHubId.getOrDefault(h.id, emptyList()).stream().map((Facility f) -> f.name.fi).collect(toList()))));
+                              col("Kaikki moottoriajoneuvot", (Hub h) -> capcitySum(ctx, h.id, motorCapacities)),
+                              col("Kaikki polkupyörät", (Hub h) -> capcitySum(ctx, h.id, bicycleCapacities)),
+                              col("Henkilöauto", (Hub h) -> capcitySum(ctx, h.id, CAR)),
+                              col("Invapaikka", (Hub h) -> capcitySum(ctx, h.id, DISABLED)),
+                              col("Sähköauto", (Hub h) -> capcitySum(ctx, h.id, ELECTRIC_CAR)),
+                              col("Moottoripyörä", (Hub h) -> capcitySum(ctx, h.id, MOTORCYCLE)),
+                              col("Polkupyörä", (Hub h) -> capcitySum(ctx, h.id, BICYCLE)),
+                              col("Polkupyörä, lukittu tila", (Hub h) -> capcitySum(ctx, h.id, BICYCLE_SECURE_SPACE)),
+                              col("Pysäköintipaikat", (Hub h) -> ctx.facilitiesByHubId.getOrDefault(h.id, emptyList()).stream().map((Facility f) -> f.name.fi).collect(toList()))));
     }
 
     @TransactionalRead
@@ -132,20 +124,15 @@ public class ReportService {
         authorize(currentUser, REPORT_GENERATE);
         int intervalSeconds = parameters.interval * 60;
 
-        List<Facility> facilities = getFacilities();
-        Map<Long, Facility> facilitiesByFacilityId = facilities.stream().collect(toMap((Facility f) -> f.id, identity()));
+        ReportContext ctx = new ReportContext(this, getLimitedOperatorId(currentUser));
 
-        List<Hub> hubs = getHubs();
-        Map<Long, List<Hub>> hubsByFacilityId = new HashMap<>();
-        hubs.stream().forEach(hub -> hubsToFacilities(hub, hubsByFacilityId));
-
-        UtilizationSearch search = convertToSearch(parameters);
+        UtilizationSearch search = toUtilizationSearch(parameters, ctx);
         Map<UtilizationReportKey, UtilizationReportRow> reportRows = new LinkedHashMap<>();
 
         try (CloseableIterator<Utilization> utilizations = utilizationRepository.findUtilizations(search)) {
-            utilizations.forEachRemaining(u -> {
+            addFilters(utilizations, ctx, parameters).forEachRemaining(u -> {
                 UtilizationReportKey key = new UtilizationReportKey(u);
-                key.facility = facilitiesByFacilityId.get(key.targetId);
+                key.facility = ctx.facilities.get(u.facilityId);
                 UtilizationReportRow value = reportRows.get(key);
                 if (value == null) {
                     UtilizationReportRow prevDayRow = reportRows.get(key.prevDay());
@@ -164,7 +151,7 @@ public class ReportService {
         List<UtilizationReportRow> rows = new ArrayList<>(reportRows.values());
         List<TableColumn<UtilizationReportRow>> columns =
             asList(col("Pysäköintipaikan nimi", (UtilizationReportRow r) -> r.key.facility.name),
-                   col("Alue", (UtilizationReportRow r) -> hubsByFacilityId.getOrDefault(r.key.targetId, emptyList()).stream().map((Hub h) -> h.name.fi).collect(joining(", "))),
+                   col("Alue", (UtilizationReportRow r) -> ctx.hubsByFacilityId.getOrDefault(r.key.targetId, emptyList()).stream().map((Hub h) -> h.name.fi).collect(joining(", "))),
                    col("Kunta", (UtilizationReportRow r) -> ""),
                    col("Operaattori", (UtilizationReportRow r) -> operatorService.getOperator(r.key.facility.operatorId).name),
                    col("Käyttötapa", (UtilizationReportRow r) -> translationService.translate(r.key.usage)),
@@ -187,7 +174,20 @@ public class ReportService {
         return excel.toBytes();
     }
 
-    UtilizationSearch convertToSearch(ReportParameters parameters) {
+    private Iterator<Utilization> addFilters(Iterator<Utilization> iter, ReportContext ctx, ReportParameters parameters) {
+        if (ctx.allowedOperatorId != null) {
+            iter = filter(iter, u -> ctx.facilities.containsKey(u.facilityId));
+        }
+        if (!isEmpty(parameters.operators)) {
+            iter = filter(iter, u -> parameters.operators.contains(ctx.facilities.get(u.facilityId).operatorId));
+        }
+        if (!isEmpty(parameters.hubs)) {
+            iter = filter(iter, u -> ctx.hubsByFacilityId.getOrDefault(u.facilityId, emptyList()).stream().filter(h -> parameters.hubs.contains(h.id)).findFirst().isPresent());
+        }
+        return iter;
+    }
+
+    UtilizationSearch toUtilizationSearch(ReportParameters parameters, final ReportContext ctx) {
         UtilizationSearch search = new UtilizationSearch();
         DateTimeFormatter finnishDateFormat = forPattern("d.M.yyyy");
         search.start = finnishDateFormat.parseLocalDate(parameters.startDate).toDateTimeAtStartOfDay();
@@ -196,6 +196,35 @@ public class ReportService {
         } else {
             search.end = finnishDateFormat.parseLocalDate(parameters.endDate).toDateTimeAtStartOfDay();
         }
+        if (!isEmpty(parameters.capacityTypes)) {
+            search.capacityTypes = parameters.capacityTypes;
+        }
+        if (!isEmpty(parameters.usages)) {
+            search.usages = parameters.usages;
+        }
+        boolean emptyResults = false;
+        if (!isEmpty(parameters.hubs)) {
+            Set<Long> facilityIds = parameters.hubs.stream().map(hubId -> ctx.facilitiesByHubId.getOrDefault(hubId, emptyList())).flatMap(ids -> ids.stream()).map(f -> f.id).collect(toSet());
+            emptyResults |= facilityIds.isEmpty();
+            search.facilityIds.addAll(facilityIds);
+        }
+        if (!isEmpty(parameters.operators)) {
+            Set<Long> facilityIds = parameters.operators.stream().map(oprId -> ctx.facilityIdsByOperatorId.getOrDefault(oprId, emptyList())).flatMap(ids -> ids.stream()).collect(toSet());
+            emptyResults |= facilityIds.isEmpty();
+            search.facilityIds.addAll(facilityIds);
+        }
+        if (emptyResults) {
+            search.facilityIds.clear();
+            search.facilityIds.add(-1L);
+        } else if (ctx.allowedOperatorId != null) {
+            if (isEmpty(parameters.facilities)) {
+                // only fetch facilities that the user is allowed to see
+                search.facilityIds = ctx.facilities.keySet();
+            } else {
+                // remove all facilities from search that the user is not allowed to see
+                parameters.facilities.retainAll(ctx.facilities.keySet());
+            }
+        }
         return search;
     }
 
@@ -203,21 +232,16 @@ public class ReportService {
     public byte[] reportMaxUtilization(User currentUser, ReportParameters parameters) {
         authorize(currentUser, REPORT_GENERATE);
 
-        List<Facility> facilities = getFacilities();
-        Map<Long, Facility> facilitiesByFacilityId = facilities.stream().collect(toMap((Facility f) -> f.id, identity()));
+        ReportContext ctx = new ReportContext(this, getLimitedOperatorId(currentUser));
 
-        UtilizationSearch search = convertToSearch(parameters);
-
-        List<Hub> hubs = getHubs();
-        Map<Long, List<Hub>> hubsByFacilityId = new HashMap<>();
-        hubs.stream().forEach(hub -> hubsToFacilities(hub, hubsByFacilityId));
+        UtilizationSearch search = toUtilizationSearch(parameters, ctx);
 
         // min available space per [facility, dayType, usage, capacity]
         Map<MaxUtilizationReportKey, Integer> facilityStats = new LinkedHashMap<>();
         try (CloseableIterator<Utilization> utilizations = utilizationRepository.findUtilizations(search)) {
-            utilizations.forEachRemaining(u -> {
+            addFilters(utilizations, ctx, parameters).forEachRemaining(u -> {
                 MaxUtilizationReportKey key = new MaxUtilizationReportKey(u);
-                key.facility = facilitiesByFacilityId.get(u.facilityId);
+                key.facility = ctx.facilities.get(u.facilityId);
                 facilityStats.merge(key, u.spacesAvailable, (o, n) -> min(o, n));
             });
         }
@@ -225,7 +249,7 @@ public class ReportService {
         // group facility keys by hubs
         Map<MaxUtilizationReportKey, List<MaxUtilizationReportKey>> hubStats = new LinkedHashMap<>();
         facilityStats.forEach((key, val) -> {
-            hubsByFacilityId.getOrDefault(key.targetId, emptyList()).forEach(hub -> {
+            ctx.hubsByFacilityId.getOrDefault(key.targetId, emptyList()).forEach(hub -> {
                 ArrayList<MaxUtilizationReportKey> l = new ArrayList<>();
                 l.add(key);
 
@@ -417,38 +441,13 @@ public class ReportService {
         }
     }
 
-    private static void hubsToFacilities(Hub hub, Map<Long, List<Hub>> hubsByFacilityId) {
-        for (long facilityId : hub.facilityIds) {
-            List<Hub> hubList = hubsByFacilityId.get(facilityId);
-            if (hubList == null) {
-                hubList = new ArrayList<>();
-                hubsByFacilityId.put(facilityId, hubList);
-            }
-            hubList.add(hub);
-        }
-    }
-
-    private int capcitySum(Map<Long, List<Facility>> facilitiesByHubId, long hubId, CapacityType... types) {
-        List<Facility> facilities = facilitiesByHubId.getOrDefault(hubId, emptyList());
+    private int capcitySum(ReportContext ctx, long hubId, CapacityType... types) {
+        List<Facility> facilities = ctx.facilitiesByHubId.getOrDefault(hubId, emptyList());
         int sum = 0;
         for (CapacityType type : types) {
             sum += facilities.stream().mapToInt((Facility f) -> f.builtCapacity.getOrDefault(type, 0)).sum();
         }
         return sum;
-    }
-
-    private List<Hub> getHubs() {
-        HubSearch search = new HubSearch();
-        search.setLimit(10000);
-        return hubService.search(search).results;
-    }
-
-    private List<Facility> getFacilities() {
-        PageableFacilitySearch search = new PageableFacilitySearch();
-        search.setLimit(10000);
-        List<FacilityInfo> facilityInfos = facilityService.search(search).results;
-        List<Facility> facilities = facilityInfos.stream().map((FacilityInfo f) -> facilityService.getFacility(f.id)).collect(toList());
-        return facilities;
     }
 
     private static int capacitySum(Map<CapacityType, Integer> capacityValues, List<CapacityType> capacityTypes) {

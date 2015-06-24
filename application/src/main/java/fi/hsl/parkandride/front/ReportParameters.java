@@ -3,8 +3,17 @@
 
 package fi.hsl.parkandride.front;
 
+import fi.hsl.parkandride.core.domain.CapacityType;
+import fi.hsl.parkandride.core.domain.Usage;
+import java.util.Set;
+
 public class ReportParameters {
   public String startDate;
   public String endDate;
   public int interval;
+  public Set<Long> operators;
+  public Set<Long> hubs;
+  public Set<Long> facilities;
+  public Set<Usage> usages;
+  public Set<CapacityType> capacityTypes;
 }

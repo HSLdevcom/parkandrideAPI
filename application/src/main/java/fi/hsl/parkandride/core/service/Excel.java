@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.function.Function;
 
 import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -133,6 +134,9 @@ class Excel {
                     cell.setCellValue(value.toString());
                 }
             }
+        }
+        if (!rows.isEmpty()) {
+            sheet.setAutoFilter(new CellRangeAddress(0, rows.size(), 0, maxColumns));
         }
         autosize(maxColumns);
     }

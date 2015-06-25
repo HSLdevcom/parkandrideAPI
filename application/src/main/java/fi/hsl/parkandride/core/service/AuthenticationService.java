@@ -92,11 +92,19 @@ public class AuthenticationService {
         }
         checkPermission(currentUser, permission);
 
+        Long operatorId = getLimitedOperatorId(currentUser);
+        if (operatorId != null && !operatorId.equals(entity.operatorId())) {
+            throw new AccessDeniedException();
+        }
+    }
+
+    public static Long getLimitedOperatorId(User currentUser) {
         if (!currentUser.hasPermission(ALL_OPERATORS)) {
-            if (currentUser.operatorId == null || !currentUser.operatorId.equals(entity.operatorId())) {
+            if (currentUser.operatorId == null) {
                 throw new AccessDeniedException();
             }
         }
+        return currentUser.operatorId;
     }
 
     private static void checkPermission(User currentUser, Permission permission) {

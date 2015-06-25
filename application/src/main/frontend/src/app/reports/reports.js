@@ -5,6 +5,9 @@
     var m = angular.module('parkandride.reports', [
         'ui.router',
         'parkandride.auth',
+        'parkandride.OperatorResource',
+        'parkandride.HubResource',
+        'parkandride.FacilityResource',
         'parkandride.layout'
     ]);
 
@@ -14,7 +17,7 @@
           url: '/reports',
           views: {
               "main": {
-                  controller: 'ReportsCtrl as listCtrl',
+                  controller: 'ReportsCtrl as ctrl',
                   templateUrl: 'reports/reports.tpl.html'
               }
           },
@@ -22,7 +25,21 @@
       });
     });
 
-    m.controller('ReportsCtrl', function($scope, $http) {
+    m.controller('ReportsCtrl', function($scope, $http, OperatorResource, HubResource, FacilityResource, schema) {
+      $scope.allOperators = [];
+      OperatorResource.listOperators().then(function(response) {
+        $scope.allOperators = response.results;
+      });
+      $scope.allHubs = [];
+      HubResource.listHubs().then(function(response) {
+        $scope.allHubs = response;
+      });
+      $scope.allFacilities = [];
+      FacilityResource.listFacilities().then(function(response) {
+        $scope.allFacilities = response;
+      });
+      $scope.capacityTypes = schema.capacityTypes.values;
+      $scope.usages = schema.usages.values;
       var contentType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
       $scope.date = new Date();
       $scope.generate = function(name, parameters) {

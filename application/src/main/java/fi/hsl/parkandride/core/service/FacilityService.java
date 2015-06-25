@@ -3,7 +3,7 @@
 
 package fi.hsl.parkandride.core.service;
 
-import fi.hsl.parkandride.back.PredictionDao;
+import fi.hsl.parkandride.back.prediction.PredictionDao;
 import fi.hsl.parkandride.core.back.ContactRepository;
 import fi.hsl.parkandride.core.back.FacilityRepository;
 import fi.hsl.parkandride.core.back.UtilizationRepository;

@@ -5,8 +5,10 @@ package fi.hsl.parkandride.config;
 
 import com.mysema.query.sql.postgres.PostgresQueryFactory;
 import fi.hsl.parkandride.back.*;
+import fi.hsl.parkandride.back.prediction.PredictionDao;
+import fi.hsl.parkandride.back.prediction.PredictorDao;
 import fi.hsl.parkandride.core.back.*;
-import fi.hsl.parkandride.core.domain.SameAsLatestPredictor;
+import fi.hsl.parkandride.core.domain.prediction.SameAsLatestPredictor;
 import fi.hsl.parkandride.core.service.*;
 import org.jasypt.util.password.PasswordEncryptor;
 import org.jasypt.util.password.StrongPasswordEncryptor;

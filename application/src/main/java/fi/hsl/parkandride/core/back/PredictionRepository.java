@@ -3,8 +3,8 @@
 
 package fi.hsl.parkandride.core.back;
 
-import fi.hsl.parkandride.core.domain.PredictionBatch;
 import fi.hsl.parkandride.core.domain.UtilizationKey;
+import fi.hsl.parkandride.core.domain.prediction.PredictionBatch;
 import org.joda.time.DateTime;
 
 import java.util.List;

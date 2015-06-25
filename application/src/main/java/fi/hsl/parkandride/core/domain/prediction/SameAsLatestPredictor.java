@@ -5,7 +5,6 @@ package fi.hsl.parkandride.core.domain.prediction;
 
 import com.mysema.commons.lang.CloseableIterator;
 import fi.hsl.parkandride.core.domain.Utilization;
-import fi.hsl.parkandride.core.domain.UtilizationHistory;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -11,7 +11,6 @@ import fi.hsl.parkandride.core.back.UtilizationRepository;
 import fi.hsl.parkandride.core.domain.CapacityType;
 import fi.hsl.parkandride.core.domain.Usage;
 import fi.hsl.parkandride.core.domain.Utilization;
-import fi.hsl.parkandride.core.domain.UtilizationHistory;
 import fi.hsl.parkandride.core.domain.prediction.*;
 import org.joda.time.DateTime;
 import org.junit.Before;

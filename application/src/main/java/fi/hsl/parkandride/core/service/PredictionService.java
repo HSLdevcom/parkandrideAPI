@@ -3,17 +3,12 @@
 
 package fi.hsl.parkandride.core.service;
 
-import com.mysema.commons.lang.CloseableIterator;
 import fi.hsl.parkandride.core.back.PredictionRepository;
 import fi.hsl.parkandride.core.back.PredictorRepository;
 import fi.hsl.parkandride.core.back.UtilizationRepository;
 import fi.hsl.parkandride.core.domain.Utilization;
-import fi.hsl.parkandride.core.domain.UtilizationHistory;
 import fi.hsl.parkandride.core.domain.UtilizationKey;
-import fi.hsl.parkandride.core.domain.prediction.Prediction;
-import fi.hsl.parkandride.core.domain.prediction.PredictionBatch;
-import fi.hsl.parkandride.core.domain.prediction.Predictor;
-import fi.hsl.parkandride.core.domain.prediction.PredictorState;
+import fi.hsl.parkandride.core.domain.prediction.*;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -107,7 +102,7 @@ public class PredictionService {
         state.moreUtilizations = false; // by default mark everything as processed, but allow the predictor to override it
         Predictor predictor = getPredictor(state.predictorType);
         // TODO: consider the update interval of prediction types? or leave that up to the predictor?
-        List<Prediction> predictions = predictor.predict(state, new UtilizationHistoryImpl(state.utilizationKey));
+        List<Prediction> predictions = predictor.predict(state, new UtilizationHistoryImpl(utilizationRepository, state.utilizationKey));
         // TODO: save to prediction log
         predictionRepository.updatePredictions(toPredictionBatch(state, predictions));
         predictorRepository.save(state);
@@ -121,18 +116,4 @@ public class PredictionService {
         return batch;
     }
 
-    private class UtilizationHistoryImpl implements UtilizationHistory {
-        private final UtilizationKey utilizationKey;
-
-        public UtilizationHistoryImpl(UtilizationKey utilizationKey) {
-            this.utilizationKey = utilizationKey;
-        }
-
-        @Override
-        public CloseableIterator<Utilization> getUpdatesSince(DateTime startExclusive) {
-            DateTime start = startExclusive.plusMillis(1);
-            DateTime end = new DateTime().plusYears(1);
-            return utilizationRepository.findUtilizationsBetween(utilizationKey, start, end);
-        }
-    }
 }

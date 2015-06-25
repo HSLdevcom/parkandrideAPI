@@ -3,8 +3,6 @@
 
 package fi.hsl.parkandride.core.domain.prediction;
 
-import fi.hsl.parkandride.core.domain.UtilizationHistory;
-
 import java.util.List;
 
 public interface Predictor {

@@ -19,7 +19,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+
 import javax.inject.Inject;
 import java.security.SecureRandom;
 
@@ -33,14 +35,10 @@ public class CoreConfiguration {
 
     private static final String SECURITY_TOKEN_SECRET = "security.token.secret";
 
-    @Inject
-    PostgresQueryFactory queryFactory;
-
-    @Value("${" + SECURITY_TOKEN_SECRET + "}")
-    String tokenSecret;
-
-    @Value("${security.token.expires}")
-    String tokenExpires;
+    @Inject PostgresQueryFactory queryFactory;
+    @Inject PlatformTransactionManager transactionManager;
+    @Value("${" + SECURITY_TOKEN_SECRET + "}") String tokenSecret;
+    @Value("${security.token.expires}") String tokenExpires;
 
     private PeriodFormatter periodFormatter = ISOPeriodFormat.standard();
 
@@ -143,9 +141,8 @@ public class CoreConfiguration {
 
     @Bean
     public PredictionService predictionService() {
-        PredictionService service = new PredictionService(utilizationRepository(), predictionRepository(), predictorRepository());
-        service.registerPredictor(new SameAsLatestPredictor());
-        return service;
+        return new PredictionService(utilizationRepository(), predictionRepository(), predictorRepository(),
+                transactionManager, new SameAsLatestPredictor());
     }
 
     @Bean

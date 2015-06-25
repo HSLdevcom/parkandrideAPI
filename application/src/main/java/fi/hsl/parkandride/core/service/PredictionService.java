@@ -3,19 +3,11 @@
 
 package fi.hsl.parkandride.core.service;
 
+import com.mysema.commons.lang.CloseableIterator;
 import fi.hsl.parkandride.core.back.PredictionRepository;
 import fi.hsl.parkandride.core.back.PredictorRepository;
 import fi.hsl.parkandride.core.back.UtilizationRepository;
 import fi.hsl.parkandride.core.domain.*;
-
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
-
-import javax.inject.Inject;
-
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,7 +16,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import com.mysema.commons.lang.CloseableIterator;
+import java.util.*;
 
 public class PredictionService {
 
@@ -33,14 +25,23 @@ public class PredictionService {
     private final UtilizationRepository utilizationRepository;
     private final PredictionRepository predictionRepository;
     private final PredictorRepository predictorRepository;
-    @Inject PlatformTransactionManager transactionManager;
+    private final PlatformTransactionManager transactionManager;
+    private final Map<String, Predictor> predictorsByType;
 
-    private final ConcurrentMap<String, Predictor> predictorsByType = new ConcurrentHashMap<>();
-
-    public PredictionService(UtilizationRepository utilizationRepository, PredictionRepository predictionRepository, PredictorRepository predictorRepository) {
+    public PredictionService(UtilizationRepository utilizationRepository,
+                             PredictionRepository predictionRepository,
+                             PredictorRepository predictorRepository,
+                             PlatformTransactionManager transactionManager,
+                             Predictor... predictors) {
         this.utilizationRepository = utilizationRepository;
         this.predictionRepository = predictionRepository;
         this.predictorRepository = predictorRepository;
+        this.transactionManager = transactionManager;
+        Map<String, Predictor> predictorsByType = new HashMap<>();
+        for (Predictor predictor : predictors) {
+            predictorsByType.put(predictor.getType(), predictor);
+        }
+        this.predictorsByType = Collections.unmodifiableMap(predictorsByType);
     }
 
     @TransactionalWrite
@@ -58,14 +59,12 @@ public class PredictionService {
         predictorRepository.markPredictorsNeedAnUpdate(utilizationKey);
     }
 
-    public void registerPredictor(Predictor predictor) {
-        predictorsByType.put(predictor.getType(), predictor);
-    }
-
     private Predictor getPredictor(String predictorType) {
-        return predictorsByType.computeIfAbsent(predictorType, k -> {
+        Predictor predictor = predictorsByType.get(predictorType);
+        if (predictor == null) {
             throw new IllegalArgumentException("Predictor not found: " + predictorType);
-        });
+        }
+        return predictor;
     }
 
     public Optional<PredictionBatch> getPrediction(UtilizationKey utilizationKey, DateTime time) {

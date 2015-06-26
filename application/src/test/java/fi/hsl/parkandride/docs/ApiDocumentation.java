@@ -390,12 +390,15 @@ public class ApiDocumentation extends AbstractIntegrationTest {
         facilityService.registerUtilization(facilityId, Collections.singletonList(newUtilization()), currentUser);
         predictionService.updatePredictions();
 
-        mockMvc.perform(get(UrlSchema.FACILITY_PREDICTION_ABSOLUTE, facilityId, new DateTime().plusMinutes(15)))
+        mockMvc.perform(get(UrlSchema.FACILITY_PREDICTION_ABSOLUTE, facilityId, new DateTime().plusHours(1).plusMinutes(30)))
                 .andExpect(status().isOk())
                 .andDo(document("prediction-absolute-example"));
-        mockMvc.perform(get(UrlSchema.FACILITY_PREDICTION_RELATIVE, facilityId, "0015"))
+        mockMvc.perform(get(UrlSchema.FACILITY_PREDICTION_RELATIVE, facilityId, "01:30"))
                 .andExpect(status().isOk())
-                .andDo(document("prediction-relative-example"));
+                .andDo(document("prediction-relative-example-hhmm"));
+        mockMvc.perform(get(UrlSchema.FACILITY_PREDICTION_RELATIVE, facilityId, "90"))
+                .andExpect(status().isOk())
+                .andDo(document("prediction-relative-example-minutes"));
     }
 
     @Test
@@ -483,7 +486,7 @@ public class ApiDocumentation extends AbstractIntegrationTest {
                 request.setRemotePort(80);
                 return request;
             }
-        } ;
+        };
     }
 
     public String loginApiUserForFacility(long facilityId) {

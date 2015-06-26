@@ -15,10 +15,12 @@ import static org.joda.time.Duration.standardMinutes;
 
 public class PredictionRequest {
 
+    public static final String HHMM_PATTERN = "((\\d+):)?(\\d+)";
+
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     public DateTime at;
 
-    @Pattern(regexp = "(\\d+:)?\\d+")
+    @Pattern(regexp = HHMM_PATTERN)
     public String after;
 
     public DateTime requestedTime() {
@@ -31,11 +33,11 @@ public class PredictionRequest {
         return DateTime.now();
     }
 
-    private static Duration parseRelativeTime(String relativeTime) {
-        Matcher matcher = java.util.regex.Pattern.compile("(?:(\\d+):)?(\\d+)").matcher(relativeTime);
+    static Duration parseRelativeTime(String relativeTime) {
+        Matcher matcher = java.util.regex.Pattern.compile(HHMM_PATTERN).matcher(relativeTime);
         if (matcher.matches()) {
-            int hours = parseOptionalInt(matcher.group(1));
-            int minutes = Integer.parseInt(matcher.group(2));
+            int hours = parseOptionalInt(matcher.group(2));
+            int minutes = Integer.parseInt(matcher.group(3));
             return standardHours(hours).plus(standardMinutes(minutes));
         } else {
             return Duration.ZERO;

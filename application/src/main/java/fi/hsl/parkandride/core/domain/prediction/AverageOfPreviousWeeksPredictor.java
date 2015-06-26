@@ -7,6 +7,8 @@ import fi.hsl.parkandride.core.back.PredictionRepository;
 import fi.hsl.parkandride.core.domain.Utilization;
 import org.joda.time.DateTime;
 import org.joda.time.Weeks;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -15,6 +17,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class AverageOfPreviousWeeksPredictor implements Predictor {
+
+    private static final Logger log = LoggerFactory.getLogger(AverageOfPreviousWeeksPredictor.class);
 
     public static final String TYPE = "average-of-previous-weeks";
 
@@ -48,6 +52,11 @@ public class AverageOfPreviousWeeksPredictor implements Predictor {
 
     private Prediction reduce(List<Prediction> predictions) {
         DateTime timestamp = predictions.get(0).timestamp;
+        if (!predictions.stream()
+                .map(p -> p.timestamp)
+                .allMatch(timestamp::equals)) {
+            log.warn("Something went wrong. Not all predictions have the same timestamp: {}", predictions);
+        }
         int spacesAvailable = (int) Math.round(predictions.stream()
                 .mapToInt(u -> u.spacesAvailable)
                 .average()

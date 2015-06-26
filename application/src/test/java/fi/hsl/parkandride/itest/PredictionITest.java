@@ -7,15 +7,22 @@ import com.jayway.restassured.path.json.JsonPath;
 import com.jayway.restassured.response.Response;
 import fi.hsl.parkandride.back.Dummies;
 import fi.hsl.parkandride.core.back.PredictionRepository;
+import fi.hsl.parkandride.core.back.PredictorRepository;
+import fi.hsl.parkandride.core.back.UtilizationRepository;
 import fi.hsl.parkandride.core.domain.*;
 import fi.hsl.parkandride.core.domain.prediction.PredictionResult;
+import fi.hsl.parkandride.core.domain.prediction.SameAsLatestPredictor;
 import fi.hsl.parkandride.core.service.FacilityService;
 import fi.hsl.parkandride.core.service.PredictionService;
 import fi.hsl.parkandride.front.UrlSchema;
 import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.transaction.PlatformTransactionManager;
 
 import javax.inject.Inject;
 import java.time.Duration;
@@ -31,6 +38,7 @@ import static fi.hsl.parkandride.core.domain.Role.OPERATOR_API;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.containsString;
 
+@ContextConfiguration(classes = PredictionITest.BeanOverrides.class)
 public class PredictionITest extends AbstractIntegrationTest {
 
     @Inject Dummies dummies;
@@ -41,6 +49,23 @@ public class PredictionITest extends AbstractIntegrationTest {
     private String authToken;
     private User user;
     private final DateTime now = new DateTime();
+
+    @Configuration
+    public static class BeanOverrides {
+        @Inject UtilizationRepository utilizationRepository;
+        @Inject PredictionRepository predictionRepository;
+        @Inject PredictorRepository predictorRepository;
+        @Inject PlatformTransactionManager transactionManager;
+
+        @Bean
+        public PredictionService predictionService() {
+            return new PredictionService(utilizationRepository,
+                    predictionRepository,
+                    predictorRepository,
+                    transactionManager,
+                    new SameAsLatestPredictor());
+        }
+    }
 
     @Before
     public void initFixture() {

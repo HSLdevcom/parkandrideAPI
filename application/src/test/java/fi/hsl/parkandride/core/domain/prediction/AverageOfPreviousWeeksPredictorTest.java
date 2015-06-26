@@ -68,9 +68,24 @@ public class AverageOfPreviousWeeksPredictorTest extends AbstractPredictorTest {
                 new Prediction(now.plusDays(1), 25));
     }
 
-    // TODO: more than 3 weeks of history, use only the last 3 weeks
+    @Test
+    public void when_more_than_3_weeks_of_history_then_uses_only_the_last_3_weeks() {
+        insertUtilization(now.minusWeeks(4).plusDays(0), 666);
+        insertUtilization(now.minusWeeks(3).plusDays(0), 10);
+        insertUtilization(now.minusWeeks(3).plusDays(1), 20);
+        insertUtilization(now.minusWeeks(2).plusDays(0), 10);
+        insertUtilization(now.minusWeeks(2).plusDays(1), 20);
+        insertUtilization(now.minusWeeks(1).plusDays(0), 10);
+        insertUtilization(now.minusWeeks(1).plusDays(1), 20);
 
-    // TODO: shift prediction up/down to start from current utilization
+        List<Prediction> predictions = predict();
+
+        assertThat(predictions).containsSubsequence(
+                new Prediction(now, 10),
+                new Prediction(now.plusDays(1), 20));
+    }
+
+    // TODO: shift prediction up/down to start from current utilization baseline
     // TODO: 5 weeks of history, discard 2 outliers, average
     // TODO: more than 5 weeks of history, use only the last 5 weeks
 }

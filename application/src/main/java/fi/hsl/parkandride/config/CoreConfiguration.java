@@ -5,8 +5,11 @@ package fi.hsl.parkandride.config;
 
 import com.mysema.query.sql.postgres.PostgresQueryFactory;
 import fi.hsl.parkandride.back.*;
+import fi.hsl.parkandride.back.prediction.PredictionDao;
+import fi.hsl.parkandride.back.prediction.PredictorDao;
 import fi.hsl.parkandride.core.back.*;
-import fi.hsl.parkandride.core.domain.SameAsLatestPredictor;
+import fi.hsl.parkandride.core.domain.prediction.AverageOfPreviousWeeksPredictor;
+import fi.hsl.parkandride.core.domain.prediction.Predictor;
 import fi.hsl.parkandride.core.service.*;
 import org.jasypt.util.password.PasswordEncryptor;
 import org.jasypt.util.password.StrongPasswordEncryptor;
@@ -19,7 +22,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+
 import javax.inject.Inject;
 import java.security.SecureRandom;
 
@@ -33,14 +38,10 @@ public class CoreConfiguration {
 
     private static final String SECURITY_TOKEN_SECRET = "security.token.secret";
 
-    @Inject
-    PostgresQueryFactory queryFactory;
-
-    @Value("${" + SECURITY_TOKEN_SECRET + "}")
-    String tokenSecret;
-
-    @Value("${security.token.expires}")
-    String tokenExpires;
+    @Inject PostgresQueryFactory queryFactory;
+    @Inject PlatformTransactionManager transactionManager;
+    @Value("${" + SECURITY_TOKEN_SECRET + "}") String tokenSecret;
+    @Value("${security.token.expires}") String tokenExpires;
 
     private PeriodFormatter periodFormatter = ISOPeriodFormat.standard();
 
@@ -143,9 +144,12 @@ public class CoreConfiguration {
 
     @Bean
     public PredictionService predictionService() {
-        PredictionService service = new PredictionService(utilizationRepository(), predictionRepository(), predictorRepository());
-        service.registerPredictor(new SameAsLatestPredictor());
-        return service;
+        return new PredictionService(utilizationRepository(), predictionRepository(), predictorRepository(), transactionManager, predictors());
+    }
+
+    @Bean
+    public Predictor[] predictors() {
+        return new Predictor[]{new AverageOfPreviousWeeksPredictor()};
     }
 
     @Bean

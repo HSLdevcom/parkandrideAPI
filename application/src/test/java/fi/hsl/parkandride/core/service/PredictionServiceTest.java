@@ -5,14 +5,18 @@ package fi.hsl.parkandride.core.service;
 
 import fi.hsl.parkandride.back.AbstractDaoTest;
 import fi.hsl.parkandride.back.Dummies;
+import fi.hsl.parkandride.core.back.PredictionRepository;
 import fi.hsl.parkandride.core.back.PredictorRepository;
 import fi.hsl.parkandride.core.back.UtilizationRepository;
-import fi.hsl.parkandride.core.domain.*;
+import fi.hsl.parkandride.core.domain.CapacityType;
+import fi.hsl.parkandride.core.domain.Usage;
+import fi.hsl.parkandride.core.domain.Utilization;
+import fi.hsl.parkandride.core.domain.prediction.*;
 import org.joda.time.DateTime;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Matchers;
+import org.springframework.transaction.PlatformTransactionManager;
 
 import javax.inject.Inject;
 import java.util.*;
@@ -30,8 +34,10 @@ public class PredictionServiceTest extends AbstractDaoTest {
 
     @Inject Dummies dummies;
     @Inject UtilizationRepository utilizationRepository;
-    @Inject PredictionService predictionService;
+    @Inject PredictionRepository predictionRepository;
     @Inject PredictorRepository predictorRepository;
+    @Inject PlatformTransactionManager transactionManager;
+    private PredictionService predictionService;
 
     private final DateTime now = new DateTime();
     private long facilityId;
@@ -41,13 +47,10 @@ public class PredictionServiceTest extends AbstractDaoTest {
         facilityId = dummies.createFacility();
     }
 
-    @After
-    public void resetRegisteredPredictors() {
-        predictionService.registerPredictor(new SameAsLatestPredictor());
-    }
 
     @Test
     public void enables_all_registered_predictors_when_signaling_that_update_is_needed() {
+        usePredictor(new SameAsLatestPredictor());
         assertThat(predictorRepository.findAllPredictors()).as("all predictors, before").isEmpty();
 
         predictionService.signalUpdateNeeded(Collections.singletonList(newUtilization(facilityId, now, 0)));
@@ -57,7 +60,7 @@ public class PredictionServiceTest extends AbstractDaoTest {
 
     @Test
     public void updates_predictions() {
-        predictionService.registerPredictor(new SameAsLatestPredictor());
+        usePredictor(new SameAsLatestPredictor());
         Utilization u = newUtilization(facilityId, now, 42);
         registerUtilizations(u);
 
@@ -71,7 +74,7 @@ public class PredictionServiceTest extends AbstractDaoTest {
     @Test
     public void saves_predictor_state_between_updates() {
         List<String> spy = new ArrayList<>();
-        predictionService.registerPredictor(new SameAsLatestPredictor() {
+        usePredictor(new SameAsLatestPredictor() {
             @Override
             public List<Prediction> predict(PredictorState state, UtilizationHistory history) {
                 spy.add(state.internalState + "@" + state.latestUtilization);
@@ -97,7 +100,7 @@ public class PredictionServiceTest extends AbstractDaoTest {
     @Test
     public void does_not_update_predictions_if_there_is_no_new_utilization_data_since_last_update() {
         Predictor predictor = spy(SameAsLatestPredictor.class);
-        predictionService.registerPredictor(predictor);
+        usePredictor(predictor);
 
         registerUtilizations(newUtilization(facilityId, now, 42));
         predictionService.updatePredictions();
@@ -109,7 +112,7 @@ public class PredictionServiceTest extends AbstractDaoTest {
     @Test
     public void prevents_updating_the_same_predictor_concurrently() throws InterruptedException {
         ConcurrentPredictorsSpy spy = new ConcurrentPredictorsSpy();
-        predictionService.registerPredictor(spy);
+        usePredictor(spy);
         registerUtilizations(newUtilization(facilityId, now, 42));
 
         inParallel(
@@ -122,7 +125,7 @@ public class PredictionServiceTest extends AbstractDaoTest {
     @Test
     public void allows_updating_different_predictors_concurrently() throws InterruptedException {
         ConcurrentPredictorsSpy spy = new ConcurrentPredictorsSpy();
-        predictionService.registerPredictor(spy);
+        usePredictor(spy);
         registerUtilizations(Stream.generate(() -> newUtilization(dummies.createFacility(), now, 42))
                 .limit(10)
                 .toArray(Utilization[]::new));
@@ -136,6 +139,11 @@ public class PredictionServiceTest extends AbstractDaoTest {
 
 
     // helpers
+
+    private void usePredictor(Predictor predictor) {
+        predictionService = new PredictionService(utilizationRepository, predictionRepository,
+                predictorRepository, transactionManager, predictor);
+    }
 
     private void registerUtilizations(Utilization... utilizations) {
         List<Utilization> us = Arrays.asList(utilizations);

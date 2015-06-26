@@ -1,7 +1,7 @@
 // Copyright © 2015 HSL <https://www.hsl.fi>
 // This program is dual-licensed under the EUPL v1.2 and AGPLv3 licenses.
 
-package fi.hsl.parkandride.back;
+package fi.hsl.parkandride.back.prediction;
 
 import com.mysema.query.Tuple;
 import com.mysema.query.sql.SQLExpressions;
@@ -11,8 +11,8 @@ import com.mysema.query.types.Predicate;
 import com.mysema.query.types.expr.SimpleExpression;
 import fi.hsl.parkandride.back.sql.QPredictor;
 import fi.hsl.parkandride.core.back.PredictorRepository;
-import fi.hsl.parkandride.core.domain.PredictorState;
 import fi.hsl.parkandride.core.domain.UtilizationKey;
+import fi.hsl.parkandride.core.domain.prediction.PredictorState;
 import fi.hsl.parkandride.core.service.TransactionalRead;
 import fi.hsl.parkandride.core.service.TransactionalWrite;
 import fi.hsl.parkandride.core.service.ValidationService;

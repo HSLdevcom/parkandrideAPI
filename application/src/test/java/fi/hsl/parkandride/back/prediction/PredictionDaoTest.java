@@ -1,11 +1,13 @@
 // Copyright © 2015 HSL <https://www.hsl.fi>
 // This program is dual-licensed under the EUPL v1.2 and AGPLv3 licenses.
 
-package fi.hsl.parkandride.back;
+package fi.hsl.parkandride.back.prediction;
 
+import fi.hsl.parkandride.back.AbstractDaoTest;
+import fi.hsl.parkandride.back.Dummies;
 import fi.hsl.parkandride.core.back.PredictionRepository;
-import fi.hsl.parkandride.core.domain.Prediction;
-import fi.hsl.parkandride.core.domain.PredictionBatch;
+import fi.hsl.parkandride.core.domain.prediction.Prediction;
+import fi.hsl.parkandride.core.domain.prediction.PredictionBatch;
 import fi.hsl.parkandride.core.service.ValidationException;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
@@ -20,8 +22,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import static fi.hsl.parkandride.back.PredictionDao.PREDICTION_RESOLUTION;
-import static fi.hsl.parkandride.back.PredictionDao.PREDICTION_WINDOW;
+import static fi.hsl.parkandride.core.back.PredictionRepository.PREDICTION_RESOLUTION;
+import static fi.hsl.parkandride.core.back.PredictionRepository.PREDICTION_WINDOW;
 import static fi.hsl.parkandride.core.domain.CapacityType.*;
 import static fi.hsl.parkandride.core.domain.Usage.*;
 import static java.util.stream.Collectors.toList;

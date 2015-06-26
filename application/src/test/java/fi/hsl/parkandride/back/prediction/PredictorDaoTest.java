@@ -1,13 +1,15 @@
 // Copyright © 2015 HSL <https://www.hsl.fi>
 // This program is dual-licensed under the EUPL v1.2 and AGPLv3 licenses.
 
-package fi.hsl.parkandride.back;
+package fi.hsl.parkandride.back.prediction;
 
+import fi.hsl.parkandride.back.AbstractDaoTest;
+import fi.hsl.parkandride.back.Dummies;
 import fi.hsl.parkandride.core.back.PredictorRepository;
 import fi.hsl.parkandride.core.domain.CapacityType;
-import fi.hsl.parkandride.core.domain.PredictorState;
 import fi.hsl.parkandride.core.domain.Usage;
 import fi.hsl.parkandride.core.domain.UtilizationKey;
+import fi.hsl.parkandride.core.domain.prediction.PredictorState;
 import fi.hsl.parkandride.core.service.ValidationException;
 import org.joda.time.DateTime;
 import org.junit.Before;

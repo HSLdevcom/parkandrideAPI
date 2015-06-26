@@ -4,6 +4,9 @@
 package fi.hsl.parkandride.front;
 
 import fi.hsl.parkandride.core.domain.*;
+import fi.hsl.parkandride.core.domain.prediction.PredictionBatch;
+import fi.hsl.parkandride.core.domain.prediction.PredictionRequest;
+import fi.hsl.parkandride.core.domain.prediction.PredictionResult;
 import fi.hsl.parkandride.core.service.FacilityService;
 import fi.hsl.parkandride.core.service.PredictionService;
 import fi.hsl.parkandride.front.geojson.Feature;

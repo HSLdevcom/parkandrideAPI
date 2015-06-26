@@ -14,6 +14,7 @@ public class ReportParameters {
   public Set<Long> operators;
   public Set<Long> hubs;
   public Set<Long> facilities;
+  public Set<Long> regions;
   public Set<Usage> usages;
   public Set<CapacityType> capacityTypes;
 }

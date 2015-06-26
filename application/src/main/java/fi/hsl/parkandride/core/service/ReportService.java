@@ -7,6 +7,7 @@ import static com.google.common.collect.Iterators.filter;
 import static org.joda.time.format.DateTimeFormat.forPattern;
 import static org.springframework.util.CollectionUtils.isEmpty;
 import com.mysema.commons.lang.CloseableIterator;
+import fi.hsl.parkandride.back.RegionRepository;
 import fi.hsl.parkandride.core.back.UtilizationRepository;
 import fi.hsl.parkandride.core.domain.*;
 import fi.hsl.parkandride.core.service.Excel.TableColumn;
@@ -40,14 +41,16 @@ public class ReportService {
     final HubService hubService;
     private final UtilizationRepository utilizationRepository;
     private final TranslationService translationService;
+    final RegionRepository regionRepository;
 
     public ReportService(FacilityService facilityService, OperatorService operatorService, ContactService contactService, HubService hubService,
-                         UtilizationRepository utilizationRepository, TranslationService translationService) {
+                         UtilizationRepository utilizationRepository, RegionRepository regionRepository, TranslationService translationService) {
         this.facilityService = facilityService;
         this.operatorService = operatorService;
         this.contactService = contactService;
         this.hubService = hubService;
         this.utilizationRepository = utilizationRepository;
+        this.regionRepository = regionRepository;
         this.translationService = translationService;
     }
 
@@ -152,7 +155,7 @@ public class ReportService {
         List<TableColumn<UtilizationReportRow>> columns =
             asList(col("Pysäköintipaikan nimi", (UtilizationReportRow r) -> r.key.facility.name),
                    col("Alue", (UtilizationReportRow r) -> ctx.hubsByFacilityId.getOrDefault(r.key.targetId, emptyList()).stream().map((Hub h) -> h.name.fi).collect(joining(", "))),
-                   col("Kunta", (UtilizationReportRow r) -> ""),
+                   col("Kunta", (UtilizationReportRow r) -> ctx.regionByFacilityId.get(r.key.targetId).name),
                    col("Operaattori", (UtilizationReportRow r) -> operatorService.getOperator(r.key.facility.operatorId).name),
                    col("Käyttötapa", (UtilizationReportRow r) -> translationService.translate(r.key.usage)),
                    col("Ajoneuvotyyppi", (UtilizationReportRow r) -> translationService.translate(r.key.capacityType)),
@@ -183,6 +186,9 @@ public class ReportService {
         }
         if (!isEmpty(parameters.hubs)) {
             iter = filter(iter, u -> ctx.hubsByFacilityId.getOrDefault(u.facilityId, emptyList()).stream().filter(h -> parameters.hubs.contains(h.id)).findFirst().isPresent());
+        }
+        if (!isEmpty(parameters.regions)) {
+            iter = filter(iter, u -> parameters.regions.contains(ctx.regionByFacilityId.get(u.facilityId).id));
         }
         return iter;
     }
@@ -282,7 +288,7 @@ public class ReportService {
         Excel excel = new Excel();
         List<TableColumn<MaxUtilizationReportRow>> columns =
             asList(col("Alueen nimi", (MaxUtilizationReportRow r) -> r.hub.name),
-                   col("Kunta", (MaxUtilizationReportRow r) -> ""),
+                   col("Kunta", (MaxUtilizationReportRow r) -> ctx.regionByHubId.get(r.key.targetId).name),
                    col("Operaattori", (MaxUtilizationReportRow r) -> operatorService.getOperator(r.key.facility.operatorId).name),
                    col("Käyttötapa", (MaxUtilizationReportRow r) -> translationService.translate(r.key.usage)),
                    col("Ajoneuvotyyppi", (MaxUtilizationReportRow r) -> translationService.translate(r.key.capacityType)),

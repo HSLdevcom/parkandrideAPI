@@ -28,47 +28,49 @@ public class AverageOfPreviousWeeksPredictor implements Predictor {
         Utilization latest = history.getLatest();
         DateTime now = latest.timestamp;
 
-        List<List<Utilization>> groupedByWeek = Stream.of(Weeks.weeks(1), Weeks.weeks(2), Weeks.weeks(3))
-                .map(weeks -> {
-                    DateTime start = now.minus(weeks);
+        List<List<Prediction>> groupedByWeek = Stream.of(Weeks.weeks(1), Weeks.weeks(2), Weeks.weeks(3))
+                .map(offset -> {
+                    DateTime start = now.minus(offset);
                     DateTime end = start.plus(PredictionRepository.PREDICTION_WINDOW);
-                    return history.getRange(start, end);
-                    // TODO: make timestamps relative to start
+                    List<Utilization> utilizations = history.getRange(start, end);
+                    return utilizations.stream()
+                            .map(u -> new Prediction(u.timestamp.plus(offset), u.spacesAvailable))
+                            .collect(Collectors.toList());
                 })
                 .collect(Collectors.toList());
 
-        List<List<Utilization>> groupedByTimeOfDay = transpose(groupedByWeek);
+        List<List<Prediction>> groupedByTimeOfDay = transpose(groupedByWeek);
 
         return groupedByTimeOfDay.stream()
-                .map(this::toPrediction)
+                .map(this::reduce)
                 .collect(Collectors.toList());
     }
 
-    private Prediction toPrediction(List<Utilization> utilizations) {
-        DateTime timestamp = utilizations.get(0).timestamp.plusWeeks(1); // XXX: shift time correctly
-        int spacesAvailable = (int) Math.round(utilizations.stream()
+    private Prediction reduce(List<Prediction> predictions) {
+        DateTime timestamp = predictions.get(0).timestamp;
+        int spacesAvailable = (int) Math.round(predictions.stream()
                 .mapToInt(u -> u.spacesAvailable)
                 .average()
                 .getAsDouble());
         return new Prediction(timestamp, spacesAvailable);
     }
 
-    private static List<List<Utilization>> transpose(List<List<Utilization>> sources) {
-        List<Iterator<Utilization>> iterators = sources.stream()
+    private static <T> List<List<T>> transpose(List<List<T>> sources) {
+        List<Iterator<T>> iterators = sources.stream()
                 .map(List::iterator)
                 .collect(Collectors.toList());
-        List<List<Utilization>> results = new ArrayList<>();
+        List<List<T>> results = new ArrayList<>();
         while (hasNexts(iterators)) {
             results.add(nexts(iterators));
         }
         return results;
     }
 
-    private static boolean hasNexts(List<Iterator<Utilization>> heads) {
+    private static <T> boolean hasNexts(List<Iterator<T>> heads) {
         return heads.stream().anyMatch(Iterator::hasNext);
     }
 
-    private static List<Utilization> nexts(List<Iterator<Utilization>> heads) {
+    private static <T> List<T> nexts(List<Iterator<T>> heads) {
         return heads.stream()
                 .filter(Iterator::hasNext)
                 .map(Iterator::next)

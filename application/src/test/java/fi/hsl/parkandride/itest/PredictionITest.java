@@ -7,10 +7,9 @@ import com.jayway.restassured.path.json.JsonPath;
 import com.jayway.restassured.response.Response;
 import fi.hsl.parkandride.back.Dummies;
 import fi.hsl.parkandride.core.back.PredictionRepository;
-import fi.hsl.parkandride.core.back.PredictorRepository;
-import fi.hsl.parkandride.core.back.UtilizationRepository;
 import fi.hsl.parkandride.core.domain.*;
 import fi.hsl.parkandride.core.domain.prediction.PredictionResult;
+import fi.hsl.parkandride.core.domain.prediction.Predictor;
 import fi.hsl.parkandride.core.domain.prediction.SameAsLatestPredictor;
 import fi.hsl.parkandride.core.service.FacilityService;
 import fi.hsl.parkandride.core.service.PredictionService;
@@ -22,7 +21,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.transaction.PlatformTransactionManager;
 
 import javax.inject.Inject;
 import java.time.Duration;
@@ -52,18 +50,9 @@ public class PredictionITest extends AbstractIntegrationTest {
 
     @Configuration
     public static class BeanOverrides {
-        @Inject UtilizationRepository utilizationRepository;
-        @Inject PredictionRepository predictionRepository;
-        @Inject PredictorRepository predictorRepository;
-        @Inject PlatformTransactionManager transactionManager;
-
         @Bean
-        public PredictionService predictionService() {
-            return new PredictionService(utilizationRepository,
-                    predictionRepository,
-                    predictorRepository,
-                    transactionManager,
-                    new SameAsLatestPredictor());
+        public Predictor[] predictors() {
+            return new Predictor[]{new SameAsLatestPredictor()};
         }
     }
 

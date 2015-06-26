@@ -9,6 +9,7 @@ import fi.hsl.parkandride.back.prediction.PredictionDao;
 import fi.hsl.parkandride.back.prediction.PredictorDao;
 import fi.hsl.parkandride.core.back.*;
 import fi.hsl.parkandride.core.domain.prediction.AverageOfPreviousWeeksPredictor;
+import fi.hsl.parkandride.core.domain.prediction.Predictor;
 import fi.hsl.parkandride.core.service.*;
 import org.jasypt.util.password.PasswordEncryptor;
 import org.jasypt.util.password.StrongPasswordEncryptor;
@@ -143,8 +144,12 @@ public class CoreConfiguration {
 
     @Bean
     public PredictionService predictionService() {
-        return new PredictionService(utilizationRepository(), predictionRepository(), predictorRepository(),
-                transactionManager, new AverageOfPreviousWeeksPredictor());
+        return new PredictionService(utilizationRepository(), predictionRepository(), predictorRepository(), transactionManager, predictors());
+    }
+
+    @Bean
+    public Predictor[] predictors() {
+        return new Predictor[]{new AverageOfPreviousWeeksPredictor()};
     }
 
     @Bean

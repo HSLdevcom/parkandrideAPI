@@ -22,8 +22,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import static fi.hsl.parkandride.back.prediction.PredictionDao.PREDICTION_RESOLUTION;
-import static fi.hsl.parkandride.back.prediction.PredictionDao.PREDICTION_WINDOW;
+import static fi.hsl.parkandride.core.back.PredictionRepository.PREDICTION_RESOLUTION;
+import static fi.hsl.parkandride.core.back.PredictionRepository.PREDICTION_WINDOW;
 import static fi.hsl.parkandride.core.domain.CapacityType.*;
 import static fi.hsl.parkandride.core.domain.Usage.*;
 import static java.util.stream.Collectors.toList;

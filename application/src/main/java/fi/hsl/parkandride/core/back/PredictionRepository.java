@@ -6,11 +6,16 @@ package fi.hsl.parkandride.core.back;
 import fi.hsl.parkandride.core.domain.UtilizationKey;
 import fi.hsl.parkandride.core.domain.prediction.PredictionBatch;
 import org.joda.time.DateTime;
+import org.joda.time.Hours;
+import org.joda.time.Minutes;
 
 import java.util.List;
 import java.util.Optional;
 
 public interface PredictionRepository {
+
+    Hours PREDICTION_WINDOW = Hours.hours(24);
+    Minutes PREDICTION_RESOLUTION = Minutes.minutes(5);
 
     void updatePredictions(PredictionBatch predictions);
 

@@ -7,7 +7,13 @@ import com.mysema.commons.lang.CloseableIterator;
 import fi.hsl.parkandride.core.domain.Utilization;
 import org.joda.time.DateTime;
 
+import java.util.List;
+
 public interface UtilizationHistory {
+
+    Utilization getLatest();
+
+    List<Utilization> getRange(DateTime startInclusive, DateTime endInclusive);
 
     CloseableIterator<Utilization> getUpdatesSince(DateTime startExclusive);
 }

@@ -6,7 +6,7 @@ package fi.hsl.parkandride.itest;
 import com.jayway.restassured.path.json.JsonPath;
 import com.jayway.restassured.response.Response;
 import fi.hsl.parkandride.back.Dummies;
-import fi.hsl.parkandride.back.prediction.PredictionDao;
+import fi.hsl.parkandride.core.back.PredictionRepository;
 import fi.hsl.parkandride.core.domain.*;
 import fi.hsl.parkandride.core.domain.prediction.PredictionResult;
 import fi.hsl.parkandride.core.service.FacilityService;
@@ -155,7 +155,7 @@ public class PredictionITest extends AbstractIntegrationTest {
         Instant i2 = Instant.ofEpochMilli(actual.getMillis());
         Duration d = Duration.between(i1, i2).abs();
         assertThat(d.toMinutes()).as("distance to " + expected + " in minutes")
-                .isLessThanOrEqualTo(PredictionDao.PREDICTION_RESOLUTION.getMinutes());
+                .isLessThanOrEqualTo(PredictionRepository.PREDICTION_RESOLUTION.getMinutes());
     }
 
     private static PredictionResult[] getPredictions(long facilityId) {

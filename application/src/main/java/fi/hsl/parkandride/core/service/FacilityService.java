@@ -3,9 +3,9 @@
 
 package fi.hsl.parkandride.core.service;
 
-import fi.hsl.parkandride.back.prediction.PredictionDao;
 import fi.hsl.parkandride.core.back.ContactRepository;
 import fi.hsl.parkandride.core.back.FacilityRepository;
+import fi.hsl.parkandride.core.back.PredictionRepository;
 import fi.hsl.parkandride.core.back.UtilizationRepository;
 import fi.hsl.parkandride.core.domain.*;
 import org.joda.time.DateTime;
@@ -131,7 +131,7 @@ public class FacilityService {
     }
 
     private static boolean isFarIntoFuture(DateTime time) {
-        Seconds gracePeriod = PredictionDao.PREDICTION_RESOLUTION.toStandardSeconds().dividedBy(2);
+        Seconds gracePeriod = PredictionRepository.PREDICTION_RESOLUTION.toStandardSeconds().dividedBy(2);
         DateTime timeLimit = DateTime.now().plus(gracePeriod);
         return time != null && time.isAfter(timeLimit);
     }

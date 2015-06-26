@@ -18,7 +18,9 @@ import fi.hsl.parkandride.core.domain.prediction.PredictionBatch;
 import fi.hsl.parkandride.core.service.TransactionalRead;
 import fi.hsl.parkandride.core.service.TransactionalWrite;
 import fi.hsl.parkandride.core.service.ValidationService;
-import org.joda.time.*;
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
+import org.joda.time.Duration;
 import org.joda.time.format.DateTimeFormat;
 
 import java.util.*;
@@ -30,9 +32,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class PredictionDao implements PredictionRepository {
-
-    public static final Hours PREDICTION_WINDOW = Hours.hours(24);
-    public static final Minutes PREDICTION_RESOLUTION = Minutes.minutes(5);
 
     private static final QFacilityPrediction qPrediction = QFacilityPrediction.facilityPrediction;
     private static final Map<String, Path<Integer>> spacesAvailableColumnsByHHmm = Collections.unmodifiableMap(

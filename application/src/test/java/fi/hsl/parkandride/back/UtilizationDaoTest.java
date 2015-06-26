@@ -8,11 +8,14 @@ import fi.hsl.parkandride.core.back.UtilizationRepository;
 import fi.hsl.parkandride.core.domain.Utilization;
 import fi.hsl.parkandride.core.domain.UtilizationKey;
 import org.joda.time.DateTime;
+import org.joda.time.Minutes;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.inject.Inject;
+import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import static fi.hsl.parkandride.core.domain.CapacityType.CAR;
@@ -85,6 +88,54 @@ public class UtilizationDaoTest extends AbstractDaoTest {
     }
 
 
+    // finding utilization at a point in time
+
+    @Test
+    public void findUtilizationAtInstant_when_instant_matches_utilization() {
+        DateTime time = new DateTime(2000, 1, 1, 12, 0);
+        Utilization u = newUtilization(facilityId, time, 100);
+        utilizationDao.insertUtilizations(asList(u));
+
+        Optional<Utilization> result = utilizationDao.findUtilizationAtInstant(u.getUtilizationKey(), time);
+
+        assertThat(result).isEqualTo(Optional.of(newUtilization(facilityId, time, 100)));
+    }
+
+    @Test
+    public void findUtilizationAtInstant_when_instant_is_after_utilization() {
+        DateTime time = new DateTime(2000, 1, 1, 12, 0);
+        Utilization u = newUtilization(facilityId, time, 100);
+        utilizationDao.insertUtilizations(asList(u));
+
+        Optional<Utilization> result = utilizationDao.findUtilizationAtInstant(u.getUtilizationKey(), time.plusHours(1));
+
+        assertThat(result).isEqualTo(Optional.of(newUtilization(facilityId, time.plusHours(1), 100)));
+    }
+
+    @Test
+    public void findUtilizationAtInstant_when_instant_is_before_utilization() {
+        DateTime time = new DateTime(2000, 1, 1, 12, 0);
+        Utilization u = newUtilization(facilityId, time, 100);
+        utilizationDao.insertUtilizations(asList(u));
+
+        Optional<Utilization> result = utilizationDao.findUtilizationAtInstant(u.getUtilizationKey(), time.minusHours(1));
+
+        assertThat(result).isEqualTo(Optional.empty());
+    }
+
+    @Test
+    public void findUtilizationAtInstant_when_multiple_utilizations_then_returns_the_latest_before_instant() {
+        DateTime time = new DateTime(2000, 1, 1, 12, 0);
+        Utilization u1 = newUtilization(facilityId, time.plusHours(1), 100);
+        Utilization u2 = newUtilization(facilityId, time.plusHours(2), 200);
+        utilizationDao.insertUtilizations(asList(u1, u2));
+
+        Optional<Utilization> result = utilizationDao.findUtilizationAtInstant(u1.getUtilizationKey(), time.plusHours(3));
+
+        assertThat(result).isEqualTo(Optional.of(newUtilization(facilityId, time.plusHours(3), 200)));
+    }
+
+
     // finding utilizations by date range
 
     @Test
@@ -144,6 +195,73 @@ public class UtilizationDaoTest extends AbstractDaoTest {
 
             assertThat(results).containsExactly(u1);
         }
+    }
+
+
+    // finding utilizations by date range and adjusted to specific resolution
+
+    @Test
+    public void findUtilizationsWithResolution_repeats_the_previous_utilization_at_resolution_intervals() {
+        DateTime start = new DateTime(2000, 1, 1, 12, 0);
+        DateTime end = start.plusHours(1);
+        Minutes resolution = Minutes.minutes(30);
+
+        Utilization u1 = newUtilization(facilityId, start.minusHours(1), 100);
+        utilizationDao.insertUtilizations(asList(u1));
+        UtilizationKey utilizationKey = u1.getUtilizationKey();
+
+        List<Utilization> results = utilizationDao.findUtilizationsWithResolution(utilizationKey, start, end, resolution);
+        assertThat(results).containsExactly(
+                newUtilization(facilityId, start, 100),
+                newUtilization(facilityId, start.plus(resolution), 100),
+                newUtilization(facilityId, end, 100));
+    }
+
+    @Test
+    public void findUtilizationsWithResolution_availability_is_updated_when_there_are_new_utilizations() {
+        DateTime start = new DateTime(2000, 1, 1, 12, 0);
+        DateTime end = start.plusHours(1);
+        Minutes resolution = Minutes.minutes(30);
+
+        Utilization u1 = newUtilization(facilityId, start, 100);
+        Utilization u2 = newUtilization(facilityId, start.plus(resolution), 200);
+        utilizationDao.insertUtilizations(asList(u1, u2));
+        UtilizationKey utilizationKey = u1.getUtilizationKey();
+
+        List<Utilization> results = utilizationDao.findUtilizationsWithResolution(utilizationKey, start, end, resolution);
+        assertThat(results).containsExactly(
+                newUtilization(facilityId, start, 100),
+                newUtilization(facilityId, start.plus(resolution), 200),
+                newUtilization(facilityId, end, 200));
+    }
+
+    @Test
+    public void findUtilizationsWithResolution_when_there_are_no_utilizations() {
+        DateTime start = new DateTime(2000, 1, 1, 12, 0);
+        DateTime end = start.plusHours(1);
+        Minutes resolution = Minutes.minutes(30);
+
+        Utilization dummy = newUtilization(facilityId, start, 100);
+        UtilizationKey utilizationKey = dummy.getUtilizationKey();
+
+        List<Utilization> results = utilizationDao.findUtilizationsWithResolution(utilizationKey, start, end, resolution);
+        assertThat(results).isEmpty();
+    }
+
+    @Test
+    public void findUtilizationsWithResolution_when_the_first_utilization_is_within_the_range() {
+        DateTime start = new DateTime(2000, 1, 1, 12, 0);
+        DateTime end = start.plusHours(1);
+        Minutes resolution = Minutes.minutes(30);
+
+        Utilization u1 = newUtilization(facilityId, start.plusMinutes(15), 100);
+        utilizationDao.insertUtilizations(asList(u1));
+        UtilizationKey utilizationKey = u1.getUtilizationKey();
+
+        List<Utilization> results = utilizationDao.findUtilizationsWithResolution(utilizationKey, start, end, resolution);
+        assertThat(results).containsExactly(
+                newUtilization(facilityId, start.plus(resolution), 100),
+                newUtilization(facilityId, end, 100));
     }
 
 

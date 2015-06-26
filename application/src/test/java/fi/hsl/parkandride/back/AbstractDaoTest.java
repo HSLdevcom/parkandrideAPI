@@ -14,7 +14,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import javax.inject.Inject;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = TestConfiguration.class)
+@SpringApplicationConfiguration(classes = DaoTestApplication.class)
 @ActiveProfiles(resolver = DevApiProfileAppender.class)
 public abstract class AbstractDaoTest {
 

@@ -15,6 +15,7 @@ import com.jayway.restassured.specification.RequestSpecification;
 import com.jayway.restassured.specification.ResponseSpecification;
 import fi.hsl.parkandride.Application;
 import fi.hsl.parkandride.DevApiProfileAppender;
+import fi.hsl.parkandride.config.TestConfiguration;
 import fi.hsl.parkandride.dev.DevHelper;
 import org.hamcrest.Matcher;
 import org.junit.Before;
@@ -39,11 +40,12 @@ import static org.hamcrest.Matchers.is;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @TransactionConfiguration(defaultRollback = false)
-@SpringApplicationConfiguration(classes = Application.class)
+@SpringApplicationConfiguration(classes = {Application.class, TestConfiguration.class})
 @ActiveProfiles(resolver = DevApiProfileAppender.class)
 @WebAppConfiguration
 @IntegrationTest("server.port:0")
 public abstract class AbstractIntegrationTest {
+
     @Value("${local.server.port}")
     protected int port;
 

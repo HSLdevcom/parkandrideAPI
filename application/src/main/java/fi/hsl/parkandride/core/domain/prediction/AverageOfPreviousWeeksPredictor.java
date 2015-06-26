@@ -30,7 +30,7 @@ public class AverageOfPreviousWeeksPredictor implements Predictor {
     @Override
     public List<Prediction> predict(PredictorState state, UtilizationHistory history) {
         Utilization latest = history.getLatest();
-        DateTime now = latest.timestamp;
+        DateTime now = state.latestUtilization = latest.timestamp;
 
         List<List<Prediction>> groupedByWeek = Stream.of(Weeks.weeks(1), Weeks.weeks(2), Weeks.weeks(3))
                 .map(offset -> {

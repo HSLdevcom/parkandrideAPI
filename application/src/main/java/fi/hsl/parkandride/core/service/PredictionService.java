@@ -103,6 +103,7 @@ public class PredictionService {
         getPredictor(state.predictorType).ifPresent(predictor -> {
             // TODO: consider the update interval of prediction types? or leave that up to the predictor?
             List<Prediction> predictions = predictor.predict(state, new UtilizationHistoryImpl(utilizationRepository, state.utilizationKey));
+            // TODO: should we set state.latestUtilization here so that all predictors don't need to remember do it? or will some predictors use different logic for it, for example if they process only part of the updates?
             // TODO: save to prediction log
             predictionRepository.updatePredictions(toPredictionBatch(state, predictions));
             predictorRepository.save(state);

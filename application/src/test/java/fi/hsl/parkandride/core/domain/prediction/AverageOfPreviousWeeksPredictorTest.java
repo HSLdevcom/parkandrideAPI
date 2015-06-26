@@ -3,6 +3,7 @@
 
 package fi.hsl.parkandride.core.domain.prediction;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,6 +23,11 @@ public class AverageOfPreviousWeeksPredictorTest extends AbstractPredictorTest {
     public void defineCurrentTime() {
         // the predictor is independent of system time, so the latest utilization defines "now"
         insertUtilization(now, 0);
+    }
+
+    @After
+    public void checkUpdatesLatestUtilization() {
+        assertThat(predictorState.latestUtilization).isEqualTo(now);
     }
 
     @Test

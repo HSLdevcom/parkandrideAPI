@@ -60,10 +60,10 @@ public class PredictionService {
         predictorRepository.markPredictorsNeedAnUpdate(utilizationKey);
     }
 
-    private Predictor getPredictor(String predictorType) {
-        Predictor predictor = predictorsByType.get(predictorType);
-        if (predictor == null) {
-            throw new IllegalArgumentException("Predictor not found: " + predictorType);
+    private Optional<Predictor> getPredictor(String predictorType) {
+        Optional<Predictor> predictor = Optional.ofNullable(predictorsByType.get(predictorType));
+        if (!predictor.isPresent()) {
+            log.warn("Predictor {} not installed", predictorType);
         }
         return predictor;
     }
@@ -100,12 +100,13 @@ public class PredictionService {
     private void updatePredictor(Long predictorId) {
         PredictorState state = predictorRepository.getForUpdate(predictorId);
         state.moreUtilizations = false; // by default mark everything as processed, but allow the predictor to override it
-        Predictor predictor = getPredictor(state.predictorType);
-        // TODO: consider the update interval of prediction types? or leave that up to the predictor?
-        List<Prediction> predictions = predictor.predict(state, new UtilizationHistoryImpl(utilizationRepository, state.utilizationKey));
-        // TODO: save to prediction log
-        predictionRepository.updatePredictions(toPredictionBatch(state, predictions));
-        predictorRepository.save(state);
+        getPredictor(state.predictorType).ifPresent(predictor -> {
+            // TODO: consider the update interval of prediction types? or leave that up to the predictor?
+            List<Prediction> predictions = predictor.predict(state, new UtilizationHistoryImpl(utilizationRepository, state.utilizationKey));
+            // TODO: save to prediction log
+            predictionRepository.updatePredictions(toPredictionBatch(state, predictions));
+            predictorRepository.save(state);
+        });
     }
 
     private static PredictionBatch toPredictionBatch(PredictorState state, List<Prediction> predictions) {

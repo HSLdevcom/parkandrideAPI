@@ -139,12 +139,24 @@
     <div class="row">
         <label>Alueet</label>
     </div>
-    <div class="row">
+    <!--<div class="row">
         <div class="column3 first-column">
             <div class="form-group">
                 <select multiple ng-model="report.hubs" ng-options="hub.id as hub.name.fi for hub in allHubs">
                     <option value="">Kaikki</option>
                 </select>
+            </div>
+        </div>
+    </div>-->
+    <div class="row">
+        <div class="column3 first-column">
+            <div class="form-group">
+                <ui-select multiple ng-model="report.hubs" theme="bootstrap" ng-disabled="disabled" name="hub" reset-search-input="true">
+                    <ui-select-match placeholder="Kaikki alueet valittuna">{{$item.name.fi}}</ui-select-match>
+                    <ui-select-choices repeat="hub.id as hub in allHubs | filter: {name: {fi: $select.search}}">
+                        <div ng-bind-html="hub.name.fi | highlight: $select.search">moi</div>
+                    </ui-select-choices>
+                </ui-select>
             </div>
         </div>
     </div>
@@ -154,12 +166,24 @@
     <div class="row">
         <label>{{"facilities.title" | translate}}</label>
     </div>
-    <div class="row">
+    <!--<div class="row">
         <div class="column3 first-column">
             <div class="form-group">
                 <select multiple ng-model="report.facilities" ng-options="facility.id as facility.name.fi for facility in allFacilities">
                     <option value="">Kaikki</option>
                 </select>
+            </div>
+        </div>
+    </div>-->
+    <div class="row">
+        <div class="column3 first-column">
+            <div class="form-group">
+                <ui-select multiple ng-model="report.facilities" theme="bootstrap" ng-disabled="disabled" name="facility" reset-search-input="true">
+                    <ui-select-match placeholder="Kaikki pysäköintipaikat valittuna">{{$item.name.fi}}</ui-select-match>
+                    <ui-select-choices repeat="facility.id as facility in allFacilities | filter: {name: {fi: $select.search}}">
+                        <div ng-bind-html="facility.name.fi | highlight: $select.search">moi</div>
+                    </ui-select-choices>
+                </ui-select>
             </div>
         </div>
     </div>

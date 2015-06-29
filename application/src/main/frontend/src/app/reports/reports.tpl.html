@@ -12,7 +12,7 @@
     <p>{{ "reports.help.summary" | translate }}</p>
     <ul>
         <li>{{ "reports.help.bullet1" | translate }}</li>
-        <li>Valittavissa on 3 eri raporttia</li>
+        <li>{{ "reports.help.bullet2" | translate }}</li>
     </ul>
 </div>-->
 
@@ -24,19 +24,19 @@
     <br>
     <label class="radiobutton-label">
         <input type="radio" ng-model="reportType" value="MaxUtilization"/>
-        Tiivistelmäraportti
+        Keskimääräinen maksimitäyttöaste
     </label>
     <br>
     <label class="radiobutton-label">
         <input type="radio" ng-model="reportType" value="HubsAndFacilities"/>
-        Alueiden ja pysäköintilaitosten tiedot
+        Alueiden ja pysäköintilaitosten perustiedot
     </label>
 </div>
 
 <div class="row smallMarginBottom">
     <div class="row" ng-show="reportType == 'FacilityUsage'"><h3>Täyttöasteraportti</h3><p>Raportilla voi tarkastella useamman tai yksittäisen pysäköintipaikan vapaita paikkoja eri ajanhetkinä.</p></div>
-    <div class="row" ng-show="reportType == 'MaxUtilization'"><h3>Tiivistelmäraportti</h3><p>Raportti kertoo maksimitäyttöasteen prosentteina arki-la-su-tarkkuudella valitulta aikaväliltä.</p></div>
-    <div class="row" ng-show="reportType == 'HubsAndFacilities'"><h3>Alueiden ja pysäköintilaitosten tiedot</h3><p>Raporttiin haetaan kaikkien järjestelmään tallennetut alueiden ja pysäköintipaikkojen perustiedot.</p></div>
+    <div class="row" ng-show="reportType == 'MaxUtilization'"><h3>Keskimääräinen maksimitäyttöaste</h3><p>Raportti kertoo maksimitäyttöasteen prosentteina arki-la-su-tarkkuudella valitulta aikaväliltä.</p></div>
+    <div class="row" ng-show="reportType == 'HubsAndFacilities'"><h3>Alueiden ja pysäköintilaitosten perustiedot</h3><p>Raporttiin haetaan kaikkien järjestelmään tallennetut alueiden ja pysäköintipaikkojen perustiedot.</p></div>
 </div>
 
 <div ng-show="reportType != 'HubsAndFacilities'">
@@ -78,9 +78,7 @@
 
 <div ng-show="reportType != 'HubsAndFacilities'">
   <div class="row">
-    <label>
-      Operaattori
-    </label>
+    <label>{{"operators.label" | translate}}</label>
   </div>
   <!--TODO option "all"
   <div class="row">
@@ -109,7 +107,7 @@
 
 <div ng-show="reportType != 'HubsAndFacilities'">
     <div class="row">
-        <label>Käyttötapa</label>
+        <label>{{"facilities.list.usages" | translate}}</label>
     </div>
     <div class="row">
         <div class="column3 first-column">
@@ -124,7 +122,7 @@
 
 <div ng-show="reportType != 'HubsAndFacilities'" ng-init="report.capacityTypes=['CAR']">
     <div class="row">
-        <label>Ajoneuvotyyppi</label>
+        <label>{{"facilities.capacity.type" | translate}}</label>
     </div>
     <div class="row">
         <div class="column3 first-column">
@@ -154,7 +152,7 @@
 
 <div ng-show="reportType != 'HubsAndFacilities'">
     <div class="row">
-        <label>Pysäköintipaikat</label>
+        <label>{{"facilities.title" | translate}}</label>
     </div>
     <div class="row">
         <div class="column3 first-column">
@@ -168,7 +166,7 @@
 </div>
 
 <div class="row smallMargin">
-    <p>Tässä voi mennä hetki!<br>
+    <p>Tässä menee hetki!<br>
         <button type="submit" class="btn btn-xs" ng-disabled="reportForm.$invalid" ng-click="generate(reportType + '.xlsx', report)">{{ "reports.action.do" | translate }}</button>
     </p>
 </div>

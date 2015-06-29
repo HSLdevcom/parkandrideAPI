@@ -655,10 +655,12 @@
         "title": "Raportit",
         "help": {
             "summary": "Tältä sivulta voi generoida raportteja",
-            "bullet1": "Raportteja voi parametrien avulla rajata pienemmiksi"
+            "bullet1": "Raportteja voi parametrien avulla rajata pienemmiksi",
+            "bullet2": "Valittavissa on 3 eri raporttia"
+
         },
         "action": {
-            "do": "Hae raportti"
+            "do": "Lataa raportti"
         }
     },
     "login": {

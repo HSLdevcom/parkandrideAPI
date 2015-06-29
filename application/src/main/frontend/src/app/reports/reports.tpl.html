@@ -46,10 +46,10 @@
     <div class="row">
         <div class="column3 first-column">
             <div class="form-group">
-                <input class="dateInput" type="text" ng-model="report.startDate" ng-required="reportType != 'HubsAndFacilities'"
-                       placeholder="{{date | date:'d.M.yyyy'}}">
+                <input class="form-control dateInput" type="text" ng-model="report.startDate"
+                       ng-required="reportType != 'HubsAndFacilities'" placeholder="{{date | date:'d.M.yyyy'}}">
                 -
-                <input class="dateInput" type="text" ng-model="report.endDate" placeholder="{{date | date:'d.M.yyyy'}}">
+                <input class="form-control dateInput" type="text" ng-model="report.endDate" placeholder="{{date | date:'d.M.yyyy'}}">
             </div>
         </div>
     </div>
@@ -64,7 +64,7 @@
   <div class="row">
     <div class="column3 first-column">
       <div class="form-group">
-        <select ng-model="report.interval" convert-to-number>
+        <select class="form-control dateInput" ng-model="report.interval" convert-to-number>
           <option value="5">5 min</option>
           <option value="10">10 min</option>
           <option value="15">15 min</option>
@@ -112,9 +112,17 @@
     <div class="row">
         <div class="column3 first-column">
             <div class="form-group">
+                <!--TODO option for "all"
                 <select ng-model="report.usages" ng-options="usage.id as usage.label for usage in usages">
                     <option value="">Kaikki</option>
-                </select>
+                </select>-->
+                <ui-select ng-model="report.usages" theme="bootstrap" ng-disabled="disabled" reset-search-input="true"
+                           name="usage" show-errors ng-required="mandatory">
+                    <ui-select-match placeholder="Kaikki">{{$select.selected.label}}</ui-select-match>
+                    <ui-select-choices repeat="usage.id as usage in usages | filter: {label: $select.search}">
+                        <div ng-bind-html="usage.label | highlight: $select.search"></div>
+                    </ui-select-choices>
+                </ui-select>
             </div>
         </div>
     </div>
@@ -127,9 +135,13 @@
     <div class="row">
         <div class="column3 first-column">
             <div class="form-group">
-              <select ng-model="report.capacityTypes" ng-options="capacityType.id as capacityType.label for capacityType in capacityTypes">
-                  <option value="">Henkilöauto</option>
-              </select>
+                <ui-select ng-model="report.capacityTypes" theme="bootstrap" ng-disabled="disabled" reset-search-input="true"
+                           name="capacity" show-errors ng-required="mandatory">
+                    <ui-select-match placeholder="Henkilöauto">{{$select.selected.label}}</ui-select-match>
+                    <ui-select-choices repeat="capacity.id as capacity in capacityTypes | filter: {label: $select.search}">
+                        <div ng-bind-html="capacity.label | highlight: $select.search"></div>
+                    </ui-select-choices>
+                </ui-select>
             </div>
         </div>
     </div>

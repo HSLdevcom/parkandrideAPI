@@ -304,6 +304,15 @@ th {
   text-align: center;
 }
 
+//Form elements
+.column3 select {
+  min-width: 326px;
+}
+
+.dateInput {
+  width: 100px;
+}
+
 //Number input spinner removal
 input[type=number]::-webkit-inner-spin-button,
 input[type=number]::-webkit-outer-spin-button {

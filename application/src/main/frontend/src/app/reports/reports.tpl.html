@@ -1,86 +1,179 @@
+<form name="reportForm" class="form-horizontal" role="form">
 <main-layout>
-	<headline>{{ "reports.title" | translate }}</h2></headline>
-    <actions>
-    </actions>
-	<content>
-		<div class="row smallMarginBottom">
-			<p>{{ "reports.help.summary" | translate }}</p>
-			<ul>
-				<li>{{ "reports.help.bullet1" | translate }}</li>
-			</ul>
-		</div>
-    <div class="panel panel-default wdReportsView" ng-init="reportType='MaxUtilization'">
-      <form name="reportForm">
-      <label class="radiobutton-label">
+
+<headline>{{ "reports.title" | translate }}</headline>
+<actions>
+</actions>
+
+<content>
+<div class="wdReportsView" ng-init="reportType='FacilityUsage'">
+
+<!--<div class="row smallMarginBottom">
+    <p>{{ "reports.help.summary" | translate }}</p>
+    <ul>
+        <li>{{ "reports.help.bullet1" | translate }}</li>
+        <li>Valittavissa on 3 eri raporttia</li>
+    </ul>
+</div>-->
+
+<div class="row">
+    <label class="radiobutton-label">
         <input type="radio" ng-model="reportType" value="FacilityUsage"/>
         Täyttöasteraportti
-      </label>
-      <label class="radiobutton-label">
+    </label>
+    <br>
+    <label class="radiobutton-label">
         <input type="radio" ng-model="reportType" value="MaxUtilization"/>
         Tiivistelmäraportti
-      </label>
-      <label class="radiobutton-label">
+    </label>
+    <br>
+    <label class="radiobutton-label">
         <input type="radio" ng-model="reportType" value="HubsAndFacilities"/>
         Alueiden ja pysäköintilaitosten tiedot
-      </label>
+    </label>
+</div>
 
-        <div >
-          <div class="row" ng-show="reportType != 'HubsAndFacilities'">
-          <label class="radiobutton-label">
-            Päivät(t) *
-            <input type="text" ng-model="report.startDate" ng-required="reportType != 'HubsAndFacilities'" placeholder="{{date | date:'d.M.yyyy'}}">
-            -
-            <input type="text" ng-model="report.endDate" placeholder="{{date | date:'d.M.yyyy'}}">
-          </label>
-          </div>
-          <div class="row" ng-show="reportType == 'FacilityUsage'">
-          <label ng-init="report.interval=60">
-            Raportoinnin tarkuus
-            <select ng-model="report.interval" convert-to-number>
-               <option value="5">5 min</option>
-               <option value="10">10 min</option>
-               <option value="15">15 min</option>
-               <option value="30">30 min</option>
-               <option value="60">60 min</option>
-            </select>
-          </label>
-          </div>
-          <div class="row" ng-show="reportType != 'HubsAndFacilities'">
-            <label>Operaattori
-            <select multiple ng-model="report.operators" ng-options="operator.id as operator.name.fi for operator in allOperators">
-              <option value="">Kaikki</option>
-            </select>
-            </label>
-          </div>
-          <div class="row" ng-show="reportType != 'HubsAndFacilities'">
-            <label>Käyttötapa
-            <select multiple ng-model="report.usages" ng-options="usage.id as usage.label for usage in usages">
-            </select>
-            </label>
-          </div>
-          <div class="row" ng-show="reportType != 'HubsAndFacilities'" ng-init="report.capacityTypes=['CAR']">
-            <label>Ajoneuvotyyppi
-            <select multiple ng-model="report.capacityTypes" ng-options="capacityType.id as capacityType.label for capacityType in capacityTypes">
-            </select>
-            </label>
-          </div>
-          <div class="row" ng-show="reportType != 'HubsAndFacilities'">
-            <label>Alueet
-            <select multiple ng-model="report.hubs" ng-options="hub.id as hub.name.fi for hub in allHubs">
-              <option value="">Kaikki</option>
-            </select>
-            </label>
-          </div>
-          <div class="row" ng-show="reportType != 'HubsAndFacilities'">
-            <label>Pysäköintipaikat
-            <select multiple ng-model="report.facilities" ng-options="facility.id as facility.name.fi for facility in allFacilities">
-              <option value="">Kaikki</option>
-            </select>
-            </label>
-          </div>
-        </div>
-        <button type="submit" class="btn btn-default" ng-disabled="reportForm.$invalid" ng-click="generate(reportType + '.xlsx', report)">{{ "reports.action.do" | translate }}</button>
-      </form>
+<div class="row smallMarginBottom">
+    <div class="row" ng-show="reportType == 'FacilityUsage'"><h3>Täyttöasteraportti</h3><p>Raportilla voi tarkastella useamman tai yksittäisen pysäköintipaikan vapaita paikkoja eri ajanhetkinä.</p></div>
+    <div class="row" ng-show="reportType == 'MaxUtilization'"><h3>Tiivistelmäraportti</h3><p>Raportti kertoo maksimitäyttöasteen prosentteina arki-la-su-tarkkuudella valitulta aikaväliltä.</p></div>
+    <div class="row" ng-show="reportType == 'HubsAndFacilities'"><h3>Alueiden ja pysäköintilaitosten tiedot</h3><p>Raporttiin haetaan kaikkien järjestelmään tallennetut alueiden ja pysäköintipaikkojen perustiedot.</p></div>
+</div>
+
+<div ng-show="reportType != 'HubsAndFacilities'">
+    <div class="row">
+        <label>Päivä(t) *</label>
     </div>
-	</content>
+    <div class="row">
+        <div class="column3 first-column">
+            <div class="form-group">
+                <input class="dateInput" type="text" ng-model="report.startDate" ng-required="reportType != 'HubsAndFacilities'"
+                       placeholder="{{date | date:'d.M.yyyy'}}">
+                -
+                <input class="dateInput" type="text" ng-model="report.endDate" placeholder="{{date | date:'d.M.yyyy'}}">
+            </div>
+        </div>
+    </div>
+</div>
+
+<div ng-show="reportType == 'FacilityUsage'">
+  <div class="row">
+    <label ng-init="report.interval=60">
+      Raportoinnin tarkuus
+    </label>
+  </div>
+  <div class="row">
+    <div class="column3 first-column">
+      <div class="form-group">
+        <select ng-model="report.interval" convert-to-number>
+          <option value="5">5 min</option>
+          <option value="10">10 min</option>
+          <option value="15">15 min</option>
+          <option value="30">30 min</option>
+          <option value="60">60 min</option>
+        </select>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div ng-show="reportType != 'HubsAndFacilities'">
+  <div class="row">
+    <label>
+      Operaattori
+    </label>
+  </div>
+  <!--TODO option "all"
+  <div class="row">
+    <div class="column3 first-column">
+      <div class="form-group">
+        <select ng-model="report.operators" ng-options="operator.id as operator.name.fi for operator in allOperators">
+          <option value="">Kaikki</option>
+        </select>
+      </div>
+    </div>
+  </div>-->
+  <div class="row">
+    <div class="column3 first-column">
+      <div class="form-group">
+        <ui-select ng-model="report.operators" theme="bootstrap" ng-disabled="disabled" reset-search-input="true"
+                   name="operator" show-errors ng-required="mandatory">
+          <ui-select-match placeholder="Kaikki">{{$select.selected.name.fi}}</ui-select-match>
+          <ui-select-choices repeat="operator.id as operator in allOperators | filter: {name: {fi: $select.search}}">
+            <div ng-bind-html="operator.name.fi | highlight: $select.search"></div>
+          </ui-select-choices>
+        </ui-select>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div ng-show="reportType != 'HubsAndFacilities'">
+    <div class="row">
+        <label>Käyttötapa</label>
+    </div>
+    <div class="row">
+        <div class="column3 first-column">
+            <div class="form-group">
+                <select ng-model="report.usages" ng-options="usage.id as usage.label for usage in usages">
+                    <option value="">Kaikki</option>
+                </select>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div ng-show="reportType != 'HubsAndFacilities'" ng-init="report.capacityTypes=['CAR']">
+    <div class="row">
+        <label>Ajoneuvotyyppi</label>
+    </div>
+    <div class="row">
+        <div class="column3 first-column">
+            <div class="form-group">
+              <select ng-model="report.capacityTypes" ng-options="capacityType.id as capacityType.label for capacityType in capacityTypes">
+                  <option value="">Henkilöauto</option>
+              </select>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div ng-show="reportType != 'HubsAndFacilities'">
+    <div class="row">
+        <label>Alueet</label>
+    </div>
+    <div class="row">
+        <div class="column3 first-column">
+            <div class="form-group">
+                <select multiple ng-model="report.hubs" ng-options="hub.id as hub.name.fi for hub in allHubs">
+                    <option value="">Kaikki</option>
+                </select>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div ng-show="reportType != 'HubsAndFacilities'">
+    <div class="row">
+        <label>Pysäköintipaikat</label>
+    </div>
+    <div class="row">
+        <div class="column3 first-column">
+            <div class="form-group">
+                <select multiple ng-model="report.facilities" ng-options="facility.id as facility.name.fi for facility in allFacilities">
+                    <option value="">Kaikki</option>
+                </select>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row smallMargin">
+    <p>Tässä voi mennä hetki!<br>
+        <button type="submit" class="btn btn-xs" ng-disabled="reportForm.$invalid" ng-click="generate(reportType + '.xlsx', report)">{{ "reports.action.do" | translate }}</button>
+    </p>
+</div>
+
+</div>
+</content>
 </main-layout>
+</form>

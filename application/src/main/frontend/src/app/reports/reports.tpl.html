@@ -8,13 +8,13 @@
 <content>
 <div class="wdReportsView" ng-init="reportType='FacilityUsage'">
 
-<!--<div class="row smallMarginBottom">
+<div class="row smallMarginBottom">
     <p>{{ "reports.help.summary" | translate }}</p>
     <ul>
         <li>{{ "reports.help.bullet1" | translate }}</li>
         <li>{{ "reports.help.bullet2" | translate }}</li>
     </ul>
-</div>-->
+</div>
 
 <div class="row">
     <label class="radiobutton-label" title="{{ 'reports.FacilityUsage.info' | translate }}">
@@ -50,7 +50,7 @@
             <div class="form-group">
                 <input class="form-control dateInput" type="text" ng-model="report.startDate" ng-required="reportType != 'HubsAndFacilities'">
                 -
-                <input class="form-control dateInput" type="text" ng-model="report.endDate"">
+                <input class="form-control dateInput" type="text" ng-model="report.endDate">
             </div>
         </div>
     </div>
@@ -81,16 +81,6 @@
   <div class="row">
     <label>{{"operators.label" | translate}}</label>
   </div>
-  <!--TODO option "all"
-  <div class="row">
-    <div class="column3 first-column">
-      <div class="form-group">
-        <select ng-model="report.operators" ng-options="operator.id as operator.name.fi for operator in allOperators">
-          <option value="">Kaikki</option>
-        </select>
-      </div>
-    </div>
-  </div>-->
   <div class="row">
     <div class="column3 first-column">
       <div class="form-group">
@@ -113,10 +103,6 @@
     <div class="row">
         <div class="column3 first-column">
             <div class="form-group">
-                <!--TODO option for "all"
-                <select ng-model="report.usages" ng-options="usage.id as usage.label for usage in usages">
-                    <option value="">Kaikki</option>
-                </select>-->
                 <ui-select ng-model="report.usages" theme="bootstrap" ng-disabled="disabled" reset-search-input="true"
                            name="usage" show-errors ng-required="mandatory">
                     <ui-select-match placeholder="Kaikki">{{$select.selected.label}}</ui-select-match>
@@ -152,22 +138,13 @@
     <div class="row">
         <label>Alueet</label>
     </div>
-    <!--<div class="row">
-        <div class="column3 first-column">
-            <div class="form-group">
-                <select multiple ng-model="report.hubs" ng-options="hub.id as hub.name.fi for hub in allHubs">
-                    <option value="">Kaikki</option>
-                </select>
-            </div>
-        </div>
-    </div>-->
     <div class="row">
         <div class="column3 first-column">
             <div class="form-group">
                 <ui-select multiple ng-model="report.hubs" theme="bootstrap" ng-disabled="disabled" name="hub" reset-search-input="true">
                     <ui-select-match placeholder="Kaikki alueet valittuna">{{$item.name.fi}}</ui-select-match>
                     <ui-select-choices repeat="hub.id as hub in allHubs | filter: {name: {fi: $select.search}}">
-                        <div ng-bind-html="hub.name.fi | highlight: $select.search">moi</div>
+                        <div ng-bind-html="hub.name.fi | highlight: $select.search"></div>
                     </ui-select-choices>
                 </ui-select>
             </div>
@@ -179,22 +156,13 @@
     <div class="row">
         <label>{{"facilities.title" | translate}}</label>
     </div>
-    <!--<div class="row">
-        <div class="column3 first-column">
-            <div class="form-group">
-                <select multiple ng-model="report.facilities" ng-options="facility.id as facility.name.fi for facility in allFacilities">
-                    <option value="">Kaikki</option>
-                </select>
-            </div>
-        </div>
-    </div>-->
     <div class="row">
         <div class="column3 first-column">
             <div class="form-group">
                 <ui-select multiple ng-model="report.facilities" theme="bootstrap" ng-disabled="disabled" name="facility" reset-search-input="true">
                     <ui-select-match placeholder="Kaikki pysäköintipaikat valittuna">{{$item.name.fi}}</ui-select-match>
                     <ui-select-choices repeat="facility.id as facility in allFacilities | filter: {name: {fi: $select.search}}">
-                        <div ng-bind-html="facility.name.fi | highlight: $select.search">moi</div>
+                        <div ng-bind-html="facility.name.fi | highlight: $select.search"></div>
                     </ui-select-choices>
                 </ui-select>
             </div>

@@ -84,9 +84,9 @@
   <div class="row">
     <div class="column3 first-column">
       <div class="form-group">
-        <ui-select ng-model="report.operators" theme="bootstrap" ng-disabled="disabled" reset-search-input="true"
+        <ui-select multiple ng-model="report.operators" theme="bootstrap" ng-disabled="disabled" reset-search-input="true"
                    name="operator" show-errors ng-required="mandatory">
-          <ui-select-match placeholder="Kaikki">{{$select.selected.name.fi}}</ui-select-match>
+          <ui-select-match placeholder="Kaikki operaattorit valittuna">{{$item.name.fi}}</ui-select-match>
           <ui-select-choices repeat="operator.id as operator in allOperators | filter: {name: {fi: $select.search}}">
             <div ng-bind-html="operator.name.fi | highlight: $select.search"></div>
           </ui-select-choices>
@@ -103,9 +103,9 @@
     <div class="row">
         <div class="column3 first-column">
             <div class="form-group">
-                <ui-select ng-model="report.usages" theme="bootstrap" ng-disabled="disabled" reset-search-input="true"
+                <ui-select multiple ng-model="report.usages" theme="bootstrap" ng-disabled="disabled" reset-search-input="true"
                            name="usage" show-errors ng-required="mandatory">
-                    <ui-select-match placeholder="Kaikki">{{$select.selected.label}}</ui-select-match>
+                    <ui-select-match placeholder="Kaikki käyttötavat valittuna">{{$item.label}}</ui-select-match>
                     <ui-select-choices repeat="usage.id as usage in usages | filter: {label: $select.search}">
                         <div ng-bind-html="usage.label | highlight: $select.search"></div>
                     </ui-select-choices>
@@ -122,9 +122,9 @@
     <div class="row">
         <div class="column3 first-column">
             <div class="form-group">
-                <ui-select ng-model="report.capacityTypes" theme="bootstrap" ng-disabled="disabled" reset-search-input="true"
+                <ui-select multiple ng-model="report.capacityTypes" theme="bootstrap" ng-disabled="disabled" reset-search-input="true"
                            name="capacity" show-errors ng-required="mandatory">
-                    <ui-select-match placeholder="Henkilöauto">{{$select.selected.label}}</ui-select-match>
+                    <ui-select-match placeholder="Henkilöauto">{{$item.label}}</ui-select-match>
                     <ui-select-choices repeat="capacity.id as capacity in capacityTypes | filter: {label: $select.search}">
                         <div ng-bind-html="capacity.label | highlight: $select.search"></div>
                     </ui-select-choices>

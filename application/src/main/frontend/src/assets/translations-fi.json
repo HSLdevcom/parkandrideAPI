@@ -654,13 +654,29 @@
     "reports": {
         "title": "Raportit",
         "help": {
-            "summary": "Tältä sivulta voi generoida raportteja",
+            "summary": "Tältä sivulta kirjautunut käyttäjä voi generoida raportteja järjestelmän tiedoista",
             "bullet1": "Raportteja voi parametrien avulla rajata pienemmiksi",
-            "bullet2": "Valittavissa on 3 eri raporttia"
-
+            "bullet2": "Valittavissa on 3 eri raporttityyppiä"
         },
         "action": {
-            "do": "Lataa raportti"
+            "do": "Lataa raportti",
+            "noticeLabel": "Tässä menee hetki!"
+        },
+        "label": {
+            "range": "Päivä(t)",
+            "interval": "Raportoinnin tarkuus",
+            "operator": "Operaattori",
+            "usage": "Käyttötapa",
+            "capacity":"Ajoneuvotyyppi",
+            "hub": "Alueet",
+            "facility": "Pysäköintipaikat"
+        },
+        "placeholder": {
+            "operator": "Kaikki operaattorit valittuna",
+            "usage": "Kaikki käyttötavat valittuna",
+            "capacity": "Henkilöauto",
+            "hub": "Kaikki alueet valittuna",
+            "facility": "Kaikki pysäköintipaikat valittuna"
         },
         "FacilityUsage": {
             "name": "Täyttöasteraportti",

@@ -39,17 +39,17 @@
     <div class="row" ng-show="reportType == 'HubsAndFacilities'"><h3>Alueiden ja pysäköintilaitosten perustiedot</h3><p>Raporttiin haetaan kaikkien järjestelmään tallennetut alueiden ja pysäköintipaikkojen perustiedot.</p></div>
 </div>
 
-<div ng-show="reportType != 'HubsAndFacilities'">
+<div ng-show="reportType != 'HubsAndFacilities'" ng-init="report.startDate=1 +'.'+ (date.getMonth()+1) +'.'+ date.getFullYear();
+        report.endDate=date.getDate() +'.'+ (date.getMonth()+1) +'.'+ date.getFullYear()">
     <div class="row">
         <label>Päivä(t) *</label>
     </div>
     <div class="row">
         <div class="column3 first-column">
             <div class="form-group">
-                <input class="form-control dateInput" type="text" ng-model="report.startDate"
-                       ng-required="reportType != 'HubsAndFacilities'" placeholder="{{date | date:'d.M.yyyy'}}">
+                <input class="form-control dateInput" type="text" ng-model="report.startDate" ng-required="reportType != 'HubsAndFacilities'">
                 -
-                <input class="form-control dateInput" type="text" ng-model="report.endDate" placeholder="{{date | date:'d.M.yyyy'}}">
+                <input class="form-control dateInput" type="text" ng-model="report.endDate"">
             </div>
         </div>
     </div>

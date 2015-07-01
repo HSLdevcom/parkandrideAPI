@@ -661,6 +661,18 @@
         },
         "action": {
             "do": "Lataa raportti"
+        },
+        "FacilityUsage": {
+            "name": "Täyttöasteraportti",
+            "info": "Raportilla voi tarkastella useamman tai yksittäisen pysäköintipaikan vapaita paikkoja eri ajanhetkinä."
+        },
+        "MaxUtilization": {
+            "name": "Keskimääräinen maksimitäyttöaste",
+            "info": "Raportti kertoo maksimitäyttöasteen prosentteina arki-la-su-tarkkuudella valitulta aikaväliltä."
+        },
+        "HubsAndFacilities": {
+            "name": "Alueiden ja pysäköintilaitosten perustiedot",
+            "info": "Raporttiin haetaan kaikkien järjestelmään tallennetut alueiden ja pysäköintipaikkojen perustiedot."
         }
     },
     "login": {

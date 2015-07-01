@@ -17,26 +17,27 @@
 </div>-->
 
 <div class="row">
-    <label class="radiobutton-label">
+    <label class="radiobutton-label" title="{{ 'reports.FacilityUsage.info' | translate }}">
         <input type="radio" ng-model="reportType" value="FacilityUsage"/>
-        Täyttöasteraportti
+        {{ "reports.FacilityUsage.name" | translate }}
     </label>
     <br>
-    <label class="radiobutton-label">
+    <label class="radiobutton-label" title="{{ 'reports.MaxUtilization.info' | translate }}">
         <input type="radio" ng-model="reportType" value="MaxUtilization"/>
-        Keskimääräinen maksimitäyttöaste
+        {{ "reports.MaxUtilization.name" | translate }}
     </label>
     <br>
-    <label class="radiobutton-label">
+    <label class="radiobutton-label" title="{{ 'reports.HubsAndFacilities.info' | translate }}">
         <input type="radio" ng-model="reportType" value="HubsAndFacilities"/>
-        Alueiden ja pysäköintilaitosten perustiedot
+        {{ "reports.HubsAndFacilities.name" | translate }}
     </label>
 </div>
 
 <div class="row smallMarginBottom">
-    <div class="row" ng-show="reportType == 'FacilityUsage'"><h3>Täyttöasteraportti</h3><p>Raportilla voi tarkastella useamman tai yksittäisen pysäköintipaikan vapaita paikkoja eri ajanhetkinä.</p></div>
-    <div class="row" ng-show="reportType == 'MaxUtilization'"><h3>Keskimääräinen maksimitäyttöaste</h3><p>Raportti kertoo maksimitäyttöasteen prosentteina arki-la-su-tarkkuudella valitulta aikaväliltä.</p></div>
-    <div class="row" ng-show="reportType == 'HubsAndFacilities'"><h3>Alueiden ja pysäköintilaitosten perustiedot</h3><p>Raporttiin haetaan kaikkien järjestelmään tallennetut alueiden ja pysäköintipaikkojen perustiedot.</p></div>
+    <h3>{{ "reports."+reportType+".name" | translate }}</h3>
+    <div class="row"><p>
+        {{ "reports."+reportType+".info" | translate }}
+    </p></div>
 </div>
 
 <div ng-show="reportType != 'HubsAndFacilities'" ng-init="report.startDate=1 +'.'+ (date.getMonth()+1) +'.'+ date.getFullYear();

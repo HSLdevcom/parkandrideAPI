@@ -25,7 +25,7 @@
       });
     });
 
-    m.controller('ReportsCtrl', function($scope, $http, OperatorResource, HubResource, FacilityResource, schema) {
+    m.controller('ReportsCtrl', function($scope, $translate, $http, OperatorResource, HubResource, FacilityResource, schema) {
       $scope.allOperators = [];
       OperatorResource.listOperators().then(function(response) {
         $scope.allOperators = response.results;
@@ -42,12 +42,27 @@
       $scope.usages = schema.usages.values;
       var contentType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
       $scope.date = new Date();
-      $scope.generate = function(name, parameters) {
+      $scope.generate = function(type, parameters) {
         if (!parameters) {
           parameters = {};
         }
+        //report name generation
+        var name = $translate.instant('reports.'+type+'.name');
+        if(type == 'FacilityUsage' || type == 'MaxUtilization') {
+            name += '_'+ parameters.startDate;
+            if (parameters.endDate || !/^\s*$/.test(parameters.endDate)) {
+                name += '-'+ parameters.endDate;
+            }
+        }
+        else if(type == 'HubsAndFacilities') {
+            var d = new Date();
+            name += '_' + d.getDate() +"."+ (d.getMonth()+1) +"."+ d.getFullYear();
+        }
+        name += ".xlsx";
+        name = name.replace(/ /g,"_");
+
         $http({
-          url: 'api/v1/reports/' + name,
+          url: 'api/v1/reports/' + type,
           method: "POST",
           data: parameters,
           headers: {

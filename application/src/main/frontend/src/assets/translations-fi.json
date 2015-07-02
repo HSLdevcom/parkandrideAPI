@@ -668,6 +668,7 @@
             "operator": "Operaattori",
             "usage": "Käyttötapa",
             "capacity":"Ajoneuvotyyppi",
+            "region": "Kunnat",
             "hub": "Alueet",
             "facility": "Pysäköintipaikat"
         },
@@ -675,6 +676,7 @@
             "operator": "Kaikki operaattorit valittuna",
             "usage": "Kaikki käyttötavat valittuna",
             "capacity": "Henkilöauto",
+            "region": "Kaikki kunnat valittuna",
             "hub": "Kaikki alueet valittuna",
             "facility": "Kaikki pysäköintipaikat valittuna"
         },

@@ -101,6 +101,7 @@ public class JdbcConfiguration {
         conf.register("FACILITY", "LOCATION", new PGGeometryType<>(Polygon.class));
         conf.register("PORT", "LOCATION", new PGGeometryType<>(Point.class));
         conf.register("HUB", "LOCATION", new PGGeometryType<>(Point.class));
+        conf.register("REGION", "AREA", new PGGeometryType<>(Polygon.class));
         return conf;
     }
 
@@ -111,6 +112,7 @@ public class JdbcConfiguration {
         conf.register("FACILITY", "LOCATION", new H2GeometryType<>(Polygon.class));
         conf.register("PORT", "LOCATION", new H2GeometryType<>(Point.class));
         conf.register("HUB", "LOCATION", new H2GeometryType<>(Point.class));
+        conf.register("REGION", "AREA", new H2GeometryType<>(Polygon.class));
         return conf;
     }
 

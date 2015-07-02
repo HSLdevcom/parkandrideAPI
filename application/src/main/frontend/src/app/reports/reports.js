@@ -7,6 +7,7 @@
         'parkandride.auth',
         'parkandride.OperatorResource',
         'parkandride.HubResource',
+        'parkandride.RegionResource',
         'parkandride.FacilityResource',
         'parkandride.layout'
     ]);
@@ -25,7 +26,7 @@
       });
     });
 
-    m.controller('ReportsCtrl', function($scope, $translate, $http, OperatorResource, HubResource, FacilityResource, schema) {
+    m.controller('ReportsCtrl', function($scope, $translate, $http, OperatorResource, HubResource, FacilityResource, RegionResource, schema) {
       $scope.allOperators = [];
       OperatorResource.listOperators().then(function(response) {
         $scope.allOperators = response.results;
@@ -37,6 +38,10 @@
       $scope.allFacilities = [];
       FacilityResource.listFacilities().then(function(response) {
         $scope.allFacilities = response;
+      });
+      $scope.allRegions = [];
+      RegionResource.listRegions().then(function(response) {
+        $scope.allRegions = response;
       });
       $scope.capacityTypes = schema.capacityTypes.values;
       $scope.usages = schema.usages.values;

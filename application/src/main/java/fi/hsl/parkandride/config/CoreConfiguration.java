@@ -114,7 +114,7 @@ public class CoreConfiguration {
 
     @Bean
     public ReportService reportService() {
-        return new ReportService(facilityService(), operatorService(), contactService(), hubService(), utilizationRepository(), translationService());
+        return new ReportService(facilityService(), operatorService(), contactService(), hubService(), utilizationRepository(), regionRepository(), translationService());
     }
 
     @Bean
@@ -155,6 +155,11 @@ public class CoreConfiguration {
     @Bean
     public UtilizationRepository utilizationRepository() {
         return new UtilizationDao(queryFactory);
+    }
+
+    @Bean
+    public RegionRepository regionRepository() {
+        return new RegionDao(queryFactory);
     }
 
     @Bean

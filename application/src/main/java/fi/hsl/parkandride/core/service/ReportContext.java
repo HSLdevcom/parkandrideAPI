@@ -1,6 +1,7 @@
 package fi.hsl.parkandride.core.service;
 
 import fi.hsl.parkandride.core.domain.*;
+import org.geolatte.geom.Geometry;
 import java.util.*;
 import static java.util.Collections.singletonMap;
 import static java.util.function.Function.identity;
@@ -13,7 +14,10 @@ class ReportContext {
     Map<Long, List<Facility>> facilitiesByHubId;
     Map<Long, List<Long>> facilityIdsByOperatorId;
     Map<Long, List<Hub>> hubsByFacilityId;
+    Map<Long, Region> regionByFacilityId;
+    Map<Long, Region> regionByHubId;
     Long allowedOperatorId;
+    Collection<Region> regions;
 
     public ReportContext(ReportService reportService, Long allowedOperatorId) {
         this.allowedOperatorId = allowedOperatorId;
@@ -22,12 +26,28 @@ class ReportContext {
         operators = getOperators(reportService, allowedOperatorId);
         facilitiesByHubId = new HashMap<>();
         hubsByFacilityId = new HashMap<>();
-        hubs.values().stream().forEach(hub -> {
+        regionByHubId = new HashMap<>();
+        regionByFacilityId = new HashMap<>();
+        regions = reportService.regionRepository.getRegions();
+        hubs.values().forEach(hub -> {
             List<Facility> hubFacilities = hub.facilityIds.stream().map(id -> facilities.get(id)).filter(f -> f != null).collect(toList());
             facilitiesByHubId.put(hub.id, hubFacilities);
             hubsToFacilities(hub, hubFacilities, hubsByFacilityId);
+            regionByHubId.put(hub.id, getRegion(hub.location));
+        });
+        facilities.values().forEach(facility -> {
+            regionByFacilityId.put(facility.id, getRegion(facility.location));
         });
         facilityIdsByOperatorId = facilities.values().stream().collect(groupingBy(f -> f.operatorId, mapping(f -> f.id, toList())));
+    }
+
+    private Region getRegion(Geometry location) {
+        for (Region r : regions) {
+            if (r.area.intersects(location)) {
+                return r;
+            }
+        };
+        return Region.UNKNOWN_REGION;
     }
 
     private Map<Long, Hub> getHubs(ReportService reportService) {

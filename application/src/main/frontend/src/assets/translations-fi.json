@@ -635,7 +635,7 @@
             "label": "Toiminnot",
             "updateToken": {
                 "label": "Päivitä token",
-                "successMessage": "Token päivitetty. Uusi token on "
+                "successMessage": "Token on päivitetty ja vanha token on poistettu käytöstä. Päivitä uusi token järjestelmään välittömästi. Uusi token on "
             },
             "updatePass": {
                 "label": "Päivitä salasana"

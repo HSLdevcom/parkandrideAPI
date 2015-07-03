@@ -164,7 +164,7 @@ public class ReportService {
                    col("Aukiolo, la", (UtilizationReportRow r) -> time(r.key.facility.openingHours.byDayType.get(SATURDAY))),
                    col("Aukiolo, su", (UtilizationReportRow r) -> time(r.key.facility.openingHours.byDayType.get(SUNDAY))),
                    col("Pysäköintipaikkojen määrä", (UtilizationReportRow r) -> r.key.facility.builtCapacity.get(r.key.capacityType)),
-                   col("Päivämäärä", (UtilizationReportRow r) -> r.key.date.toString("d.M.yyyy")));
+                   col("Päivämäärä", (UtilizationReportRow r) -> r.key.date));
         columns = new ArrayList<>(columns);
         for (int s = 0, i = 0; s < SECONDS_IN_DAY; s += intervalSeconds, i++) {
             final int idx = i;

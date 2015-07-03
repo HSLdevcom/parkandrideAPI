@@ -12,11 +12,14 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
+import java.util.Locale;
 import java.util.function.Function;
 
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.ss.util.DateFormatConverter;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.joda.time.LocalDate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,6 +40,7 @@ class Excel {
     final CellStyle integer = wb.createCellStyle();
     final CellStyle decimal = wb.createCellStyle();
     final CellStyle percent = wb.createCellStyle();
+    final CellStyle date = wb.createCellStyle();
     private final DataFormat df = wb.createDataFormat();
     private Sheet sheet;
 
@@ -56,6 +60,8 @@ class Excel {
         decimal.setFont(font12pt);
         percent.setDataFormat(df.getFormat("0%"));
         percent.setFont(font12pt);
+        date.setDataFormat(df.getFormat("d.M.yyyy"));
+        date.setFont(font12pt);
     }
 
     static class TableColumn<T> {
@@ -116,6 +122,10 @@ class Excel {
                     Cell cell = row.createCell(column, CELL_TYPE_STRING);
                     cell.setCellStyle(ofNullable(colType.style).orElse(text));
                     cell.setCellValue(((MultilingualString) value).fi);
+                } else if (value instanceof LocalDate) {
+                    Cell cell = row.createCell(column, CELL_TYPE_NUMERIC);
+                    cell.setCellStyle(ofNullable(colType.style).orElse(date));
+                    cell.setCellValue(((LocalDate) value).toDate());
                 } else if (value instanceof Collection) {
                     // currently must be last item in list
                     for (Object o : (Collection<?>) value) {

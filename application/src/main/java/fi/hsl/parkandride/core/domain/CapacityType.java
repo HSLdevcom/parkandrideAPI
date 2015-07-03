@@ -15,7 +15,7 @@ public enum CapacityType {
     BICYCLE,
     BICYCLE_SECURE_SPACE;
 
-    public static final CapacityType[] motorCapacities = new CapacityType[]{CAR, ELECTRIC_CAR, MOTORCYCLE};
+    public static final CapacityType[] motorCapacities = new CapacityType[]{CAR, ELECTRIC_CAR, MOTORCYCLE, DISABLED};
     public static final CapacityType[] bicycleCapacities = new CapacityType[]{BICYCLE, BICYCLE_SECURE_SPACE};
     public static final List<CapacityType> motorCapacityList = asList(motorCapacities);
     public static final List<CapacityType> bicycleCapacityList = asList(bicycleCapacities);

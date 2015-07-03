@@ -54,14 +54,16 @@
         //report name generation
         var name = $translate.instant('reports.'+type+'.name');
         if(type == 'FacilityUsage' || type == 'MaxUtilization') {
-            name += '_'+ parameters.startDate;
-            if (parameters.endDate || !/^\s*$/.test(parameters.endDate)) {
-                name += '-'+ parameters.endDate;
+            var date = parameters.startDate.split(".");
+            name += '_'+ date[2] + ("0" + date[1]).slice(-2) + ("0" + date[0]).slice(-2);
+            if (!/^\s*$/.test(parameters.endDate)) {
+                date = parameters.endDate.split(".");
+                name += '-'+ date[2] + ("0" + date[1]).slice(-2) + ("0" + date[0]).slice(-2);
             }
         }
         else if(type == 'HubsAndFacilities') {
             var d = new Date();
-            name += '_' + d.getDate() +"."+ (d.getMonth()+1) +"."+ d.getFullYear();
+            name += '_' + d.getFullYear() + ("0" + (d.getMonth() + 1)).slice(-2) +  ("0" + d.getDate()).slice(-2);
         }
         name += ".xlsx";
         name = name.replace(/ /g,"_");

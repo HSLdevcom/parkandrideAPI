@@ -79,6 +79,16 @@
             });
         };
 
+        api.getPredictions = function(id, after) {
+            return $http.get("api/v1/facilities/" + id + "/prediction", {
+                params: {
+                    after: after
+                }
+            }).then(function(response) {
+                return response.data;
+            });
+        };
+
         api.getFacility = function(id) {
             return $http.get("api/v1/facilities/" + id).then(function(response){
                 return assignPortIds(response.data);

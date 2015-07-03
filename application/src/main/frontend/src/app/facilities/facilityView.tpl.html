@@ -96,8 +96,49 @@
 	</div>
 </div>
 
-<div ng-show="viewCtrl.hasCapacities()">
+<div id="capacities" ng-show="viewCtrl.hasCapacities()">
 	<h3 class="h3-view">{{"facilities.capacity.heading" | translate}}</h3>
+
+	<div> <!--TODO ng-show="when usage data available"-->
+		<h4>Rakennettu kapasiteetti ja paikkoja vapaana</h4>
+		<!--TODO timestamp to notification text-->
+		<div class="row"><p>Vapaana nyt ja ennustetiedot vapaiden paikkojen määrälle on haettu 10:36. Jos haluat viimeisimmät tiedot, päivitä sivu.</p></div>
+		<div class="row">
+			<div class="column first-column">
+				<div class="panel panel-default row">
+					<table id="utilization" class="table table-bordered table-striped table-condensed">
+						<thead>
+						<tr>
+							<th id="facilities-view-pricing-capacityType" translate="facilities.pricing.capacityType.title"></th>
+							<th id="facilities-view-pricing-usage" translate="facilities.pricing.usage.title"></th>
+							<th id="facilities-utilization-capacity-build" translate="facilities.capacity.built"></th>
+							<th>Vapaana nyt</th>
+							<th>5 min</th>
+							<th>10 min</th>
+							<th>15 min</th>
+							<th>30 min</th>
+							<th>60 min</th>
+						</tr>
+						</thead>
+						<tbody>
+						<tr><!--TODO repetition according to capacity and usage type, utilization levels from prediction-->
+							<td>Henkilöauto</td>
+							<td>Liityntä</td>
+							<td>100</td>
+							<td>89</td>
+							<td>78</td>
+							<td>65</td>
+							<td>78</td>
+							<td>89</td>
+							<td>65</td>
+						</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+
 	<h4>{{"facilities.capacity.built" | translate}}</h4>
 	<div class="row">
 		<div class="column2 first-column">

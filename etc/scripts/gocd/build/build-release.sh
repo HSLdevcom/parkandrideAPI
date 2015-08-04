@@ -22,6 +22,16 @@ function run() {
   local version="$GO_PIPELINE_LABEL"
   echo "$version" > version
 
+  # clean all node / bower files if any of the versions have changed
+  if ! md5sum --check --status --strict lastchanged.version; then
+    # generate new checksum
+    md5sum application/src/main/frontend/{package.json,bower.json} > lastchanged.version
+    # clean all generated/downloaded files
+    rm -rf application/src/main/frontend/{bin,build,karma,node,node_modules,vendor}
+    # restore the single file that is actually in git
+    git checkout application/src/main/frontend/karma/karma-unit.tpl.js
+  fi
+
   mvn versions:set \
       --update-snapshots \
       --batch-mode \

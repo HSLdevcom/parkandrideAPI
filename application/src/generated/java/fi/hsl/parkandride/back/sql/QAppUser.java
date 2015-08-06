@@ -35,6 +35,8 @@ public class QAppUser extends RelationalPathSpatial<QAppUser> {
 
     public final StringPath password = createString("password");
 
+    public final DateTimePath<org.joda.time.DateTime> passwordUpdatedTimestamp = createDateTime("passwordUpdatedTimestamp", org.joda.time.DateTime.class);
+
     public final EnumPath<fi.hsl.parkandride.core.domain.Role> role = createEnum("role", fi.hsl.parkandride.core.domain.Role.class);
 
     public final StringPath username = createString("username");
@@ -68,6 +70,7 @@ public class QAppUser extends RelationalPathSpatial<QAppUser> {
         addMetadata(minTokenTimestamp, ColumnMetadata.named("MIN_TOKEN_TIMESTAMP").withIndex(5).ofType(Types.TIMESTAMP).withSize(23).withDigits(10));
         addMetadata(operatorId, ColumnMetadata.named("OPERATOR_ID").withIndex(4).ofType(Types.BIGINT).withSize(19));
         addMetadata(password, ColumnMetadata.named("PASSWORD").withIndex(6).ofType(Types.VARCHAR).withSize(128));
+        addMetadata(passwordUpdatedTimestamp, ColumnMetadata.named("PASSWORD_UPDATED_TIMESTAMP").withIndex(7).ofType(Types.TIMESTAMP).withSize(23).withDigits(10));
         addMetadata(role, ColumnMetadata.named("ROLE").withIndex(3).ofType(Types.VARCHAR).withSize(32).notNull());
         addMetadata(username, ColumnMetadata.named("USERNAME").withIndex(2).ofType(Types.VARCHAR).withSize(255).notNull());
     }

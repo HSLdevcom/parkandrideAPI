@@ -41,7 +41,7 @@ public class UserServiceTest {
         MockitoAnnotations.initMocks(this);
         userService = new UserService(
                 userRepository,
-                new AuthenticationService(userRepository, passwordEncryptor, StringUtils.repeat('x', AuthenticationService.SECRET_MIN_LENGTH), Period.seconds(60)),
+                new AuthenticationService(userRepository, passwordEncryptor, StringUtils.repeat('x', AuthenticationService.SECRET_MIN_LENGTH), Period.seconds(60), Period.days(60), Period.days(14)),
                 new ValidationService());
     }
 

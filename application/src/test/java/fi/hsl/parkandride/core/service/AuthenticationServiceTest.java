@@ -51,7 +51,11 @@ public class AuthenticationServiceTest {
 
     private final static String secret = StringUtils.repeat('x', AuthenticationService.SECRET_MIN_LENGTH);
     private final static int EXPIRES_IN_SECONDS = 30;
+    private final static int PASSWORD_EXPIRES_IN_DAYS = 60;
+    private final static int PASSWORD_REMINDER_IN_DAYS = 14;
     private final static Period expires = Period.seconds(EXPIRES_IN_SECONDS);
+    private final static Period passwordExpires = Period.days(PASSWORD_EXPIRES_IN_DAYS);
+    private final static Period passwordReminder = Period.days(PASSWORD_REMINDER_IN_DAYS);
     private final UserSecret adminUser = new UserSecret(1l, "admin", "admin-password", ADMIN);
     private final UserSecret apiUser = new UserSecret(2l, "api", null, OPERATOR_API);
 
@@ -59,7 +63,7 @@ public class AuthenticationServiceTest {
     public void initMocks() {
         MockitoAnnotations.initMocks(this);
         when(userRepository.getCurrentTime()).thenReturn(DateTime.now());
-        this.service = new AuthenticationService(userRepository, passwordEncryptor, secret, expires);
+        this.service = new AuthenticationService(userRepository, passwordEncryptor, secret, expires, passwordExpires, passwordReminder);
     }
 
     @After
@@ -73,7 +77,7 @@ public class AuthenticationServiceTest {
 
         thrown.expect(IllegalArgumentException.class);
         thrown.expectMessage("secret must be at least 32 characters long, but it was only 31");
-        new AuthenticationService(userRepository, passwordEncryptor, tooShortSecret, expires);
+        new AuthenticationService(userRepository, passwordEncryptor, tooShortSecret, expires, passwordExpires, passwordReminder);
     }
 
     @Test

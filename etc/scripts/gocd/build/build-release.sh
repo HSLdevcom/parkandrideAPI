@@ -35,6 +35,8 @@ function run() {
       --batch-mode \
       --errors \
       -DaltDeploymentRepository="staging::default::file:staging"
+
+  ln $(find staging -name 'parkandride-application-*.jar*') /opt/liipi-binaries/
 }
 
 VERBOSE="true"

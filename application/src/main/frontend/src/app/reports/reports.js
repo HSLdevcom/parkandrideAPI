@@ -161,6 +161,7 @@
             if (!parameters) {
                 parameters = {};
             }
+            document.documentElement.classList.add('wait');
             //report name generation
             var name = $translate.instant('reports.' + type + '.name');
             if (type == 'FacilityUsage' || type == 'MaxUtilization') {
@@ -178,6 +179,9 @@
             name += ".xlsx";
             name = name.replace(/ /g, "_");
 
+            function removeWait() {
+                document.documentElement.classList.remove('wait');
+            }
             $http({
                 url: 'api/v1/reports/' + type,
                 method: "POST",
@@ -191,7 +195,7 @@
                 var blob = new Blob([response], {type: contentType});
                 var objectUrl = URL.createObjectURL(blob);
                 saveAs(blob, name);
-            });
+            }).then(removeWait, removeWait);
         };
     });
 

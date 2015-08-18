@@ -101,6 +101,11 @@
   text-decoration: underline;
 }
 
+//button action
+html.wait, html.wait * {
+  cursor:wait;
+}
+
 //dropdowns, styles for angular-ui-select
 .ui-select-toggle.btn.form-control {
   text-align: left;

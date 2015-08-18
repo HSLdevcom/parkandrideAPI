@@ -51,6 +51,7 @@
         if (!parameters) {
           parameters = {};
         }
+        document.documentElement.classList.add('wait');
         //report name generation
         var name = $translate.instant('reports.'+type+'.name');
         if(type == 'FacilityUsage' || type == 'MaxUtilization') {
@@ -82,6 +83,7 @@
           var objectUrl = URL.createObjectURL(blob);
           saveAs(blob, name);
         });
+        document.documentElement.classList.remove('wait');
       };
     });
 

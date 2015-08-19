@@ -19,6 +19,7 @@ import java.util.*;
 import static fi.hsl.parkandride.core.domain.CapacityType.*;
 import static fi.hsl.parkandride.core.domain.DayType.*;
 import static fi.hsl.parkandride.core.domain.Permission.REPORT_GENERATE;
+import static fi.hsl.parkandride.core.domain.Region.UNKNOWN_REGION;
 import static fi.hsl.parkandride.core.service.AuthenticationService.authorize;
 import static fi.hsl.parkandride.core.service.AuthenticationService.getLimitedOperatorId;
 import static fi.hsl.parkandride.core.service.Excel.TableColumn.col;
@@ -288,7 +289,7 @@ public class ReportService {
         Excel excel = new Excel();
         List<TableColumn<MaxUtilizationReportRow>> columns =
             asList(col("Alueen nimi", (MaxUtilizationReportRow r) -> r.hub.name),
-                   col("Kunta", (MaxUtilizationReportRow r) -> ctx.regionByHubId.get(r.key.targetId).name),
+                   col("Kunta", (MaxUtilizationReportRow r) -> ctx.regionByHubId.getOrDefault(r.key.targetId, UNKNOWN_REGION).name),
                    col("Operaattori", (MaxUtilizationReportRow r) -> operatorService.getOperator(r.key.facility.operatorId).name),
                    col("Käyttötapa", (MaxUtilizationReportRow r) -> translationService.translate(r.key.usage)),
                    col("Ajoneuvotyyppi", (MaxUtilizationReportRow r) -> translationService.translate(r.key.capacityType)),

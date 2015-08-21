@@ -624,6 +624,12 @@
             "label": "Uusi salasana",
             "label2": "Vahvista uusi salasana"
         },
+        "expiredPassword": {
+            "title": "Päivitä salasana",
+            "text": "Salasanasi on vanhentunut ja se tulee päivittää välittömästi käytön jatkamiseksi",
+            "label": "Uusi salasana",
+            "label2": "Vahvista uusi salasana"
+        },
         "operator": {
             "label": "Operaattori"
         },
@@ -701,6 +707,11 @@
         },
         "password": {
             "label": "Salasana"
+        },
+        "passwordReminder": {
+            "title": "Salasanasi on vanhentumassa",
+            "text1": "Salasanasi vanhenee",
+            "text2": "päivään kuluttua. Salasanan voi päivittää Käyttäjät-välilehdellä oman käyttäjätunnuksen kohdalta"
         }
     },
     "common": {

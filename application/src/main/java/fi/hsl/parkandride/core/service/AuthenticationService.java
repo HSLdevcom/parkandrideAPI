@@ -5,6 +5,7 @@ package fi.hsl.parkandride.core.service;
 
 import static com.google.common.base.Charsets.UTF_8;
 import static fi.hsl.parkandride.core.domain.Permission.ALL_OPERATORS;
+import static org.joda.time.Days.daysBetween;
 
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
@@ -20,7 +21,13 @@ import org.joda.time.DateTime;
 import org.joda.time.Period;
 
 import fi.hsl.parkandride.core.back.UserRepository;
-import fi.hsl.parkandride.core.domain.*;
+import fi.hsl.parkandride.core.domain.Login;
+import fi.hsl.parkandride.core.domain.NotFoundException;
+import fi.hsl.parkandride.core.domain.OperatorEntity;
+import fi.hsl.parkandride.core.domain.Permission;
+import fi.hsl.parkandride.core.domain.User;
+import fi.hsl.parkandride.core.domain.UserSecret;
+import fi.hsl.parkandride.core.domain.Violation;
 
 public class AuthenticationService {
 
@@ -49,6 +56,10 @@ public class AuthenticationService {
 
     private final Period expiresDuration;
 
+    private final Period passwordExpiresDuration;
+
+    private final Period passwordReminderDuration;
+
     private final byte[] secret;
 
     private final ThreadLocal<Mac> hmacHolder = new ThreadLocal<Mac>() {
@@ -67,7 +78,7 @@ public class AuthenticationService {
 
     private UserRepository userRepository;
 
-    public AuthenticationService(UserRepository userRepository, PasswordEncryptor passwordEncryptor, String secret, Period expiresDuration) {
+    public AuthenticationService(UserRepository userRepository, PasswordEncryptor passwordEncryptor, String secret, Period expiresDuration, Period passwordExpiresDuration, Period passwordReminder) {
         if (secret.length() < SECRET_MIN_LENGTH) {
             throw new IllegalArgumentException("secret must be at least " + SECRET_MIN_LENGTH + " characters long, " +
                     "but it was only " + secret.length());
@@ -75,6 +86,8 @@ public class AuthenticationService {
         this.userRepository = userRepository;
         this.passwordEncryptor = passwordEncryptor;
         this.expiresDuration = expiresDuration;
+        this.passwordExpiresDuration = passwordExpiresDuration;
+        this.passwordReminderDuration = passwordReminder;
         this.base64 = new Base64(-1, null, true);
         this.secret = secret.getBytes(UTF_8);
     }
@@ -132,6 +145,14 @@ public class AuthenticationService {
             login.role = userSecret.user.role;
             login.permissions = login.role.permissions;
             login.operatorId = userSecret.user.operatorId;
+            int days = daysBetween(now(), userSecret.passwordUpdatedTimestamp.plus(passwordExpiresDuration)).getDays() + 1;
+        	login.passwordExpireInDays = 0;
+            if (days > 0 && days < passwordReminderDuration.getDays()) {
+            	login.passwordExpireInDays = days;
+            } else if (days <= 0) {
+            	login.passwordExpireInDays = -1;
+            }
+        	login.userId = userSecret.user.id;
             return login;
         } catch (NotFoundException e) {
             throw new ValidationException(new Violation("BadCredentials"));

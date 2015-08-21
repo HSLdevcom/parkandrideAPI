@@ -51,11 +51,12 @@ public class UserDao implements UserRepository {
 
 
     private static final MappingProjection<UserSecret> userSecretMapping = new MappingProjection<UserSecret>(UserSecret.class,
-            qUser.password, qUser.minTokenTimestamp, userMapping) {
+            qUser.password, qUser.minTokenTimestamp, qUser.passwordUpdatedTimestamp, userMapping) {
         @Override
         protected UserSecret map(Tuple row) {
             UserSecret userSecret = new UserSecret();
             userSecret.password = row.get(qUser.password);
+            userSecret.passwordUpdatedTimestamp = row.get(qUser.passwordUpdatedTimestamp);
             userSecret.minTokenTimestamp = row.get(qUser.minTokenTimestamp);
 //            userSecret.secret = row.get(qUser.secret);
             userSecret.user = row.get(userMapping);
@@ -82,6 +83,7 @@ public class UserDao implements UserRepository {
         SQLInsertClause insert = queryFactory.insert(qUser);
         insert.set(qUser.id, userId)
                 .set(qUser.password, userSecret.password)
+                .set(qUser.passwordUpdatedTimestamp, currentTime)
                 .set(qUser.minTokenTimestamp, currentTime)
                 .set(qUser.username, userSecret.user.username.toLowerCase())
                 .set(qUser.role, userSecret.user.role)
@@ -113,6 +115,7 @@ public class UserDao implements UserRepository {
         if (queryFactory.update(qUser)
                 .where(qUser.id.eq(userId))
                 .set(qUser.password, password)
+                .set(qUser.passwordUpdatedTimestamp, currentTime)
                 .set(qUser.minTokenTimestamp, currentTime)
                 .execute() != 1) {
             notFound(userId);

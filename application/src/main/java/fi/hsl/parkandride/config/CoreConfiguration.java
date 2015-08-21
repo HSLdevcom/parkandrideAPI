@@ -42,6 +42,8 @@ public class CoreConfiguration {
     @Inject PlatformTransactionManager transactionManager;
     @Value("${" + SECURITY_TOKEN_SECRET + "}") String tokenSecret;
     @Value("${security.token.expires}") String tokenExpires;
+    @Value("${password.expires}") String passwordExpires;
+    @Value("${password.reminder}") String passwordReminder;
 
     private PeriodFormatter periodFormatter = ISOPeriodFormat.standard();
 
@@ -51,7 +53,9 @@ public class CoreConfiguration {
                 userRepository(),
                 passwordEncryptor(),
                 tokenSecret(),
-                periodFormatter.parsePeriod(tokenExpires)
+                periodFormatter.parsePeriod(tokenExpires),
+                periodFormatter.parsePeriod(passwordExpires),
+                periodFormatter.parsePeriod(passwordReminder)
         );
     }
 

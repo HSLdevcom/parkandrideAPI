@@ -19,4 +19,7 @@ public class Login {
 
     public Long operatorId;
 
+    public Long userId;
+
+    public Integer passwordExpireInDays;
 }

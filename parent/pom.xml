@@ -121,7 +121,7 @@
       <dependency>
         <groupId>org.springframework.restdocs</groupId>
         <artifactId>spring-restdocs</artifactId>
-        <version>0.1.0.BUILD-SNAPSHOT</version>
+        <version>1.0.0.M1</version>
       </dependency>
 
     </dependencies>
@@ -163,15 +163,15 @@
   </dependencies>
 
   <repositories>
+    <!-- only required by spring-restdocs -->
     <repository>
-      <!-- only required by spring-restdocs -->
-      <id>spring-snapshots</id>
-      <url>https://repo.spring.io/snapshot</url>
+      <id>spring-milestones</id>
+      <url>https://repo.spring.io/milestone</url>
       <releases>
-        <enabled>false</enabled>
+        <enabled>true</enabled>
       </releases>
       <snapshots>
-        <enabled>true</enabled>
+        <enabled>false</enabled>
       </snapshots>
     </repository>
   </repositories>

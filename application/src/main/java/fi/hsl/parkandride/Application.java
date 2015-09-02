@@ -3,14 +3,12 @@
 
 package fi.hsl.parkandride;
 
-import com.fasterxml.jackson.databind.Module;
-import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
-import fi.hsl.parkandride.core.domain.Phone;
-import fi.hsl.parkandride.core.domain.Time;
-import fi.hsl.parkandride.front.*;
-import fi.hsl.parkandride.front.geojson.GeojsonDeserializer;
-import fi.hsl.parkandride.front.geojson.GeojsonSerializer;
+import static fi.hsl.parkandride.front.UrlSchema.GEOJSON;
+import static org.springframework.http.MediaType.APPLICATION_JSON;
+
+import java.util.List;
+import java.util.Properties;
+
 import org.geolatte.common.Feature;
 import org.geolatte.common.dataformats.json.jackson.JsonMapper;
 import org.geolatte.geom.Geometry;
@@ -29,6 +27,7 @@ import org.springframework.boot.context.embedded.ConfigurableEmbeddedServletCont
 import org.springframework.boot.context.embedded.EmbeddedServletContainerCustomizer;
 import org.springframework.boot.context.embedded.FilterRegistrationBean;
 import org.springframework.boot.context.embedded.MimeMappings;
+import org.springframework.boot.context.embedded.tomcat.TomcatEmbeddedServletContainerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
@@ -37,15 +36,29 @@ import org.springframework.http.MediaType;
 import org.springframework.web.filter.CharacterEncodingFilter;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.HandlerExceptionResolver;
-import org.springframework.web.servlet.config.annotation.*;
+import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
+import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import org.springframework.web.servlet.mvc.WebContentInterceptor;
 import org.springframework.web.servlet.mvc.method.annotation.ExceptionHandlerExceptionResolver;
 
-import java.util.List;
-import java.util.Properties;
+import com.fasterxml.jackson.databind.Module;
+import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
+import com.nitorcreations.willow.logging.tomcat8.WillowAccessValve;
 
-import static fi.hsl.parkandride.front.UrlSchema.GEOJSON;
-import static org.springframework.http.MediaType.APPLICATION_JSON;
+import fi.hsl.parkandride.core.domain.Phone;
+import fi.hsl.parkandride.core.domain.Time;
+import fi.hsl.parkandride.front.CORSFilter;
+import fi.hsl.parkandride.front.Features;
+import fi.hsl.parkandride.front.PhoneSerializer;
+import fi.hsl.parkandride.front.UrlSchema;
+import fi.hsl.parkandride.front.UserArgumentResolver;
+import fi.hsl.parkandride.front.geojson.GeojsonDeserializer;
+import fi.hsl.parkandride.front.geojson.GeojsonSerializer;
 
 @SpringBootApplication
 @Import(Application.UiConfig.class)
@@ -136,6 +149,13 @@ public class Application extends WebMvcConfigurerAdapter {
             mappings.add("html", "text/html;charset=UTF-8");
             mappings.add("json", "application/json;charset=UTF-8");
             container.setMimeMappings(mappings);
+            if (System.getProperty("wslogging.url") != null &&
+                  container instanceof TomcatEmbeddedServletContainerFactory) {
+                TomcatEmbeddedServletContainerFactory tomcat = (TomcatEmbeddedServletContainerFactory)container;
+                WillowAccessValve valve = new WillowAccessValve();
+                valve.setUrl(System.getProperty("wslogging.url"));
+                tomcat.addContextValves(valve);
+            }
         }
     }
 

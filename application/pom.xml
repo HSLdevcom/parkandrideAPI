@@ -25,9 +25,25 @@
     <postgis-jdbc.version>1.3.3</postgis-jdbc.version>
     <hibernate-validator.version>5.1.2.Final</hibernate-validator.version>
     <javax.el.version>2.2.4</javax.el.version>
-
     <rest-assured.version>2.4.0</rest-assured.version>
+    <willow-version>2.0.1</willow-version>
+    <jetty-version>9.3.1.v20150714</jetty-version>
   </properties>
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.eclipse.jetty</groupId>
+        <artifactId>jetty-util</artifactId>
+        <version>${jetty-version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.eclipse.jetty</groupId>
+        <artifactId>jetty-io</artifactId>
+        <version>${jetty-version}</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
 
   <dependencies>
     <dependency>
@@ -98,6 +114,16 @@
           <artifactId>postgresql</artifactId>
         </exclusion>
       </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>com.nitorcreations</groupId>
+      <artifactId>willow-logging-tomcat8</artifactId>
+      <version>${willow-version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.nitorcreations</groupId>
+      <artifactId>willow-logging-logback</artifactId>
+      <version>${willow-version}</version>
     </dependency>
     <dependency>
       <groupId>com.vividsolutions</groupId>

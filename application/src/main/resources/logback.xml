@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration scan="true">
-    <include resource="logback-defaults.xml"/>
+    <include resource="logback-${logging.profile}.xml"/>
 </configuration>

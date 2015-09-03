@@ -28,6 +28,7 @@
     <rest-assured.version>2.4.0</rest-assured.version>
     <willow-version>2.0.1</willow-version>
     <jetty-version>9.3.1.v20150714</jetty-version>
+    <jsch-version>0.1.53</jsch-version>
   </properties>
 
   <dependencyManagement>
@@ -41,6 +42,11 @@
         <groupId>org.eclipse.jetty</groupId>
         <artifactId>jetty-io</artifactId>
         <version>${jetty-version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.jcraft</groupId>
+        <artifactId>jsch</artifactId>
+        <version>${jsch-version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>

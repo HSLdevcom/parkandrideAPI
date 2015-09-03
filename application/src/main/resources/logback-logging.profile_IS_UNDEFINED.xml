@@ -11,16 +11,11 @@
         </encoder>
     </appender>
 
-    <appender name="WILLOW" class="com.nitorcreations.willow.logging.logback.WebSocketAppender">
-        <uri>${wslogging.url}</uri>
-    </appender>
-
     <logger name="fi.hsl.parkandride" level="INFO"/>
     <logger name="org.springframework" level="INFO"/>
 
     <root level="WARN">
         <appender-ref ref="CONSOLE"/>
-        <appender-ref ref="WILLOW"/>
     </root>
 
 </included>

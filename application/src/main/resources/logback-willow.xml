@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<included>
+
+    <appender name="WILLOW" class="com.nitorcreations.willow.logging.logback.WebSocketAppender">
+        <uri>${wslogging.url}</uri>
+    </appender>
+
+    <logger name="fi.hsl.parkandride" level="INFO"/>
+    <logger name="org.springframework" level="INFO"/>
+
+    <root level="WARN">
+        <appender-ref ref="WILLOW"/>
+    </root>
+
+</included>

@@ -374,6 +374,7 @@ just have multiple objects inside the request payload's top-level JSON array.
 The API allows inputting also old utilization data, but to avoid <<utilization-prediction,prediction>> hiccups,
 the utilization _should_ be inputted in timestamp order, oldest first.
 Utilizations with future timestamps are not allowed.
+The timestamps must be in ISO 8601 date time format, with timezone.
 The `Authorization` and `Content-Type` headers are required.
 The response reports the latest utilization, same as with a GET request.
 

@@ -220,6 +220,13 @@ public class ApiDocumentation extends AbstractIntegrationTest {
     }
 
     @Test
+    public void enumerationUsagesExample() throws Exception {
+        mockMvc.perform(get(UrlSchema.USAGES))
+                .andExpect(status().isOk())
+                .andDo(document("enumeration-usages-example"));
+    }
+
+    @Test
     public void enumerationDayTypesExample() throws Exception {
         mockMvc.perform(get(UrlSchema.DAY_TYPES))
                 .andExpect(status().isOk())

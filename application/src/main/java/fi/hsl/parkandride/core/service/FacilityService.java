@@ -93,14 +93,13 @@ public class FacilityService {
     }
 
     @TransactionalWrite
-    public Set<Utilization> registerUtilization(long facilityId, List<Utilization> utilization, User currentUser) {
+    public void registerUtilization(long facilityId, List<Utilization> utilization, User currentUser) {
         authorize(currentUser, repository.getFacilityInfo(facilityId), FACILITY_UTILIZATION_UPDATE);
 
         initUtilizationDefaults(facilityId, utilization);
         validateUtilizations(facilityId, utilization);
         utilizationRepository.insertUtilizations(utilization);
         predictionService.signalUpdateNeeded(utilization);
-        return findLatestUtilization(facilityId);
     }
 
     private static void initUtilizationDefaults(long facilityId, List<Utilization> utilization) {

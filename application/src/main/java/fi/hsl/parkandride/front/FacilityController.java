@@ -102,7 +102,8 @@ public class FacilityController {
                                                                 @RequestBody List<Utilization> utilization,
                                                                 User currentUser) {
         log.info("registerUtilization({})", facilityId);
-        Set<Utilization> results = facilityService.registerUtilization(facilityId, utilization, currentUser);
+        facilityService.registerUtilization(facilityId, utilization, currentUser);
+        Set<Utilization> results = facilityService.findLatestUtilization(facilityId);
         return new ResponseEntity<>(results, OK);
     }
 

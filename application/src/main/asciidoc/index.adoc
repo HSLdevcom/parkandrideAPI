@@ -170,6 +170,11 @@ CapacityType defines different kind of parking slot types:
 include::{generated}/enumeration-capacity-types-example/http-request.adoc[]
 include::{generated}/enumeration-capacity-types-example/http-response.adoc[]
 
+Usage specifies the purpose of the capacity. See <<capacity,Capacity>>.
+
+include::{generated}/enumeration-usages-example/http-request.adoc[]
+include::{generated}/enumeration-usages-example/http-response.adoc[]
+
 DayType, a rough categorization of day types with different opening hours and/or pricing:
 
 include::{generated}/enumeration-day-types-example/http-request.adoc[]
@@ -362,13 +367,25 @@ include::{generated}/utilization-example/response-fields.adoc[]
 
 <<authentication,Authenticated>> operators may update the utilization for their facilities.
 
+In case of network failure, the updater should keep a copy of the utilization snapshots and retry sending them later.
+It is possible to batch insert multiple utilization snapshots with a single request per facility;
+just have multiple objects inside the request payload's top-level JSON array.
+
+The API allows inputting also old utilization data, but to avoid <<utilization-prediction,prediction>> hiccups,
+the utilization _should_ be inputted in timestamp order, oldest first.
+Utilizations with future timestamps are not allowed.
+The `Authorization` and `Content-Type` headers are required.
+The response reports the latest utilization, same as with a GET request.
+
+include::{generated}/utilization-update-example/curl-request.adoc[]
 include::{generated}/utilization-update-example/http-request.adoc[]
+include::{generated}/utilization-update-example/http-response.adoc[]
 
 [[utilization-prediction]]
 ==== Prediction
 
 Utilization predictions are available for all facilities which have enough utilization data history.
-The predictions are updated at regular intervals and they are available for up to 24 hours into the future.
+The predictions are updated at regular intervals (e.g. 5 min) and they are available for up to 24 hours into the future.
 It is possible to query predictions using relative time (`after` parameter in `hh:mm` format or in minutes)
 or absolute time (`at` parameter in ISO 8601 date time format).
 

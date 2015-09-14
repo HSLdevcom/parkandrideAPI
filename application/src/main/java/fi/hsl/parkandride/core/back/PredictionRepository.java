@@ -4,6 +4,7 @@
 package fi.hsl.parkandride.core.back;
 
 import fi.hsl.parkandride.core.domain.UtilizationKey;
+import fi.hsl.parkandride.core.domain.prediction.Prediction;
 import fi.hsl.parkandride.core.domain.prediction.PredictionBatch;
 import org.joda.time.DateTime;
 import org.joda.time.Hours;
@@ -22,4 +23,6 @@ public interface PredictionRepository {
     Optional<PredictionBatch> getPrediction(UtilizationKey utilizationKey, DateTime time);
 
     List<PredictionBatch> getPredictionsByFacility(Long facilityId, DateTime time);
+
+    List<Prediction> getPredictionHistoryByPredictor(UtilizationKey utilizationKey, DateTime start, DateTime end, int forecastDistanceInMinutes);
 }

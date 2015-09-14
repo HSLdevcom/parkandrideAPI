@@ -114,6 +114,7 @@ public class DevHelper {
     public void deleteFacilities() {
         delete(
                 QFacilityPrediction.facilityPrediction,
+                QFacilityPredictionHistory.facilityPredictionHistory,
                 QFacilityUtilization.facilityUtilization,
                 QFacilityService.facilityService,
                 QFacilityPaymentMethod.facilityPaymentMethod,

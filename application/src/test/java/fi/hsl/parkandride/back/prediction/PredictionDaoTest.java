@@ -239,6 +239,29 @@ public class PredictionDaoTest extends AbstractDaoTest {
                 toPredictionResolution(pb3));
     }
 
+    // history
+
+    @Test
+    public void history_is_saved() {
+        PredictionBatch pb1 = newPredictionBatch(now,
+                new Prediction(now, 110),
+                new Prediction(now.plusDays(1), 110)
+        );
+        predictionDao.updatePredictions(pb1);
+
+        PredictionBatch pb2 = newPredictionBatch(now.plusMinutes(5),
+                new Prediction(now.plusMinutes(5), 115),
+                new Prediction(now.plusMinutes(5).plusDays(1), 115)
+        );
+        predictionDao.updatePredictions(pb2);
+
+        final List<Prediction> predictionHistory = predictionDao.getPredictionHistoryByPredictor(pb1.utilizationKey, now, now.plusDays(1), 15);
+        assertThat(predictionHistory).containsOnly(
+                new Prediction(toPredictionResolution(now.plusMinutes(15)), 110),
+                new Prediction(toPredictionResolution(now.plusMinutes(20)), 115)
+        );
+    }
+
 
     // helpers
 

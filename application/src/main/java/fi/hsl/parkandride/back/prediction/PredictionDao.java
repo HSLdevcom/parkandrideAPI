@@ -6,11 +6,14 @@ package fi.hsl.parkandride.back.prediction;
 import com.mysema.query.Tuple;
 import com.mysema.query.sql.dml.SQLUpdateClause;
 import com.mysema.query.sql.postgres.PostgresQueryFactory;
+import com.mysema.query.types.Expression;
 import com.mysema.query.types.MappingProjection;
 import com.mysema.query.types.Path;
+import com.mysema.query.types.Projections;
 import com.mysema.query.types.expr.BooleanExpression;
 import fi.hsl.parkandride.back.TimeUtil;
 import fi.hsl.parkandride.back.sql.QFacilityPrediction;
+import fi.hsl.parkandride.back.sql.QFacilityPredictionHistory;
 import fi.hsl.parkandride.core.back.PredictionRepository;
 import fi.hsl.parkandride.core.domain.UtilizationKey;
 import fi.hsl.parkandride.core.domain.prediction.Prediction;
@@ -31,9 +34,12 @@ import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static java.util.stream.Collectors.toList;
+
 public class PredictionDao implements PredictionRepository {
 
     private static final QFacilityPrediction qPrediction = QFacilityPrediction.facilityPrediction;
+    private static final QFacilityPredictionHistory qPredictionHistory = QFacilityPredictionHistory.facilityPredictionHistory;
     private static final Map<String, Path<Integer>> spacesAvailableColumnsByHHmm = Collections.unmodifiableMap(
             Stream.of(qPrediction.all())
                     .filter(p -> p.getMetadata().getName().startsWith("spacesAvailableAt"))
@@ -63,7 +69,32 @@ public class PredictionDao implements PredictionRepository {
                         qPrediction.usage.eq(pb.utilizationKey.usage))
                 .set(qPrediction.start, start);
 
-        pb.predictions.stream()
+        final List<Prediction> interpolatedPredictions = interpolateToPredictionResolution(start, end, pb.predictions);
+
+        interpolatedPredictions
+                .forEach(p -> update.set(spacesAvailableAt(p.timestamp), p.spacesAvailable));
+
+        long updatedRows = update.execute();
+        if (updatedRows == 0) {
+            insertBlankPredictionRow(pb);
+            updatePredictions(pb);
+        } else {
+            interpolatedPredictions.forEach(p -> {
+
+                queryFactory.insert(qPredictionHistory)
+                        .set(qPredictionHistory.facilityId, pb.utilizationKey.facilityId)
+                        .set(qPredictionHistory.capacityType, pb.utilizationKey.capacityType)
+                        .set(qPredictionHistory.usage, pb.utilizationKey.usage)
+                        .set(qPredictionHistory.forecastDistanceInMinutes, ((int) new Duration(start, p.timestamp).getStandardMinutes()))
+                        .set(qPredictionHistory.ts, p.timestamp)
+                        .set(qPredictionHistory.spacesAvailable, p.spacesAvailable)
+                        .execute();
+            });
+        }
+    }
+
+    private static List<Prediction> interpolateToPredictionResolution(DateTime start, DateTime end, List<Prediction> predictions) {
+        return predictions.stream()
                 .sorted(Comparator.comparing(p -> p.timestamp))
                 .map(roundTimestampsToPredictionResolution())
                 .collect(groupByTimeKeepingNewest()) // -> Map<DateTime, Prediction>
@@ -71,13 +102,7 @@ public class PredictionDao implements PredictionRepository {
                 .map(Collections::singletonList)                            // 1. wrap values in immutable singleton lists
                 .reduce(new ArrayList<>(), linearInterpolation()).stream()  // 2. mutable ArrayList as accumulator
                 .filter(isWithin(start, end)) // after interpolation because of PredictionDaoTest.does_linear_interpolation_also_between_values_outside_the_prediction_window
-                .forEach(p -> update.set(spacesAvailableAt(p.timestamp), p.spacesAvailable));
-
-        long updatedRows = update.execute();
-        if (updatedRows == 0) {
-            insertBlankPredictionRow(pb);
-            updatePredictions(pb);
-        }
+                .collect(toList());
     }
 
     private void insertBlankPredictionRow(PredictionBatch pb) {
@@ -152,6 +177,23 @@ public class PredictionDao implements PredictionRepository {
                 .where(qPrediction.facilityId.eq(facilityId))
                 .where(isWithinPredictionWindow(time))
                 .list(predictionMapping(time));
+    }
+
+    @TransactionalRead
+    @Override
+    public List<Prediction> getPredictionHistoryByPredictor(UtilizationKey utilizationKey, DateTime start, DateTime end, int forecastDistanceInMinutes) {
+        return queryFactory.from(qPredictionHistory)
+                .where(qPredictionHistory.facilityId.eq(utilizationKey.facilityId),
+                        qPredictionHistory.capacityType.eq(utilizationKey.capacityType),
+                        qPredictionHistory.usage.eq(utilizationKey.usage),
+                        qPredictionHistory.forecastDistanceInMinutes.eq(forecastDistanceInMinutes),
+                        qPredictionHistory.ts.between(start, end))
+                .orderBy(qPredictionHistory.ts.asc())
+                .list(historyToPredictionMapping());
+    }
+
+    private Expression<Prediction> historyToPredictionMapping() {
+        return Projections.constructor(Prediction.class, qPredictionHistory.ts, qPredictionHistory.spacesAvailable);
     }
 
     private static BooleanExpression isWithinPredictionWindow(DateTime time) {

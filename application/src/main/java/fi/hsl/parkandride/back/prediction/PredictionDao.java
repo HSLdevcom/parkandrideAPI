@@ -79,7 +79,6 @@ public class PredictionDao implements PredictionRepository {
             insertBlankPredictionRow(pb);
             updatePredictions(pb);
         } else {
-            System.out.println("interpolatedPredictions = " + interpolatedPredictions);
             interpolatedPredictions.forEach(p -> {
 
                 queryFactory.insert(qPredictionHistory)

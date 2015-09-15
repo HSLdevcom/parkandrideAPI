@@ -49,7 +49,6 @@ public class DevHelper {
 
     @TransactionalWrite
     public void deleteAll() {
-        deletePredictors();
         deleteHubs();
         deleteFacilities();
         deleteContacts();
@@ -115,6 +114,7 @@ public class DevHelper {
         delete(
                 QFacilityPrediction.facilityPrediction,
                 QFacilityPredictionHistory.facilityPredictionHistory,
+                QPredictor.predictor,
                 QFacilityUtilization.facilityUtilization,
                 QFacilityService.facilityService,
                 QFacilityPaymentMethod.facilityPaymentMethod,
@@ -123,6 +123,7 @@ public class DevHelper {
                 QPort.port,
                 QUnavailableCapacity.unavailableCapacity,
                 QFacility.facility);
+        resetPredictorSequence();
         resetFacilitySequence();
     }
 
@@ -130,12 +131,6 @@ public class DevHelper {
     public void deleteHubs() {
         delete(QHubFacility.hubFacility, QHub.hub);
         resetHubSequence();
-    }
-
-    @TransactionalWrite
-    public void deletePredictors() {
-        delete(QPredictor.predictor);
-        resetPredictorSequence();
     }
 
     @TransactionalWrite

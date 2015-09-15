@@ -60,57 +60,34 @@ public class PredictionDao implements PredictionRepository {
     @Override
     public void updatePredictions(PredictionBatch pb) {
         validationService.validate(pb);
+        UtilizationKey utilizationKey = pb.utilizationKey;
         DateTime start = toPredictionResolution(pb.sourceTimestamp);
-        DateTime end = start.plus(PREDICTION_WINDOW).minus(PREDICTION_RESOLUTION);
+        List<Prediction> predictions = normalizeToPredictionWindow(start, pb.predictions);
 
-        SQLUpdateClause update = queryFactory.update(qPrediction)
-                .where(qPrediction.facilityId.eq(pb.utilizationKey.facilityId),
-                        qPrediction.capacityType.eq(pb.utilizationKey.capacityType),
-                        qPrediction.usage.eq(pb.utilizationKey.usage))
-                .set(qPrediction.start, start);
-
-        final List<Prediction> interpolatedPredictions = interpolateToPredictionResolution(start, end, pb.predictions);
-
-        interpolatedPredictions
-                .forEach(p -> update.set(spacesAvailableAt(p.timestamp), p.spacesAvailable));
-
-        long updatedRows = update.execute();
+        long updatedRows = maybeUpdatePredictionLookupTable(utilizationKey, start, predictions);
         if (updatedRows == 0) {
-            insertBlankPredictionRow(pb);
-            updatePredictions(pb);
+            initializePredictionLookupTable(utilizationKey);
+            updatePredictions(pb); // retry now that the lookup table exists
         } else {
-            interpolatedPredictions.forEach(p -> {
-
-                queryFactory.insert(qPredictionHistory)
-                        .set(qPredictionHistory.facilityId, pb.utilizationKey.facilityId)
-                        .set(qPredictionHistory.capacityType, pb.utilizationKey.capacityType)
-                        .set(qPredictionHistory.usage, pb.utilizationKey.usage)
-                        .set(qPredictionHistory.forecastDistanceInMinutes, ((int) new Duration(start, p.timestamp).getStandardMinutes()))
-                        .set(qPredictionHistory.ts, p.timestamp)
-                        .set(qPredictionHistory.spacesAvailable, p.spacesAvailable)
-                        .execute();
-            });
+            savePredictionHistory(utilizationKey, start, predictions);
         }
     }
 
-    private static List<Prediction> interpolateToPredictionResolution(DateTime start, DateTime end, List<Prediction> predictions) {
+    private static List<Prediction> normalizeToPredictionWindow(DateTime start, List<Prediction> predictions) {
+        DateTime end = start.plus(PREDICTION_WINDOW).minus(PREDICTION_RESOLUTION);
         return predictions.stream()
-                .sorted(Comparator.comparing(p -> p.timestamp))
-                .map(roundTimestampsToPredictionResolution())
-                .collect(groupByTimeKeepingNewest()) // -> Map<DateTime, Prediction>
+                // remove too fine-grained predictions
+                .collect(groupByRoundedTimeKeepingNewest()) // -> Map<DateTime, Prediction>
                 .values().stream()
+                        // normalize resolution
+                .map(roundTimestampsToPredictionResolution())
+                        // interpolate too coarse-grained predictions
+                .sorted(Comparator.comparing(p -> p.timestamp))
                 .map(Collections::singletonList)                            // 1. wrap values in immutable singleton lists
                 .reduce(new ArrayList<>(), linearInterpolation()).stream()  // 2. mutable ArrayList as accumulator
+                        // normalize range
                 .filter(isWithin(start, end)) // after interpolation because of PredictionDaoTest.does_linear_interpolation_also_between_values_outside_the_prediction_window
                 .collect(toList());
-    }
-
-    private void insertBlankPredictionRow(PredictionBatch pb) {
-        queryFactory.insert(qPrediction)
-                .set(qPrediction.facilityId, pb.utilizationKey.facilityId)
-                .set(qPrediction.capacityType, pb.utilizationKey.capacityType)
-                .set(qPrediction.usage, pb.utilizationKey.usage)
-                .execute();
     }
 
     private static Predicate<Prediction> isWithin(DateTime start, DateTime end) {
@@ -121,12 +98,12 @@ public class PredictionDao implements PredictionRepository {
         return p -> new Prediction(toPredictionResolution(p.timestamp), p.spacesAvailable);
     }
 
-    private static Collector<Prediction, ?, TreeMap<DateTime, Prediction>> groupByTimeKeepingNewest() {
+    private static Collector<Prediction, ?, Map<DateTime, Prediction>> groupByRoundedTimeKeepingNewest() {
         return Collectors.toMap(
-                p -> p.timestamp,
+                p -> toPredictionResolution(p.timestamp),
                 Function.identity(),
                 (a, b) -> a.timestamp.isAfter(b.timestamp) ? a : b,
-                TreeMap::new
+                HashMap::new
         );
     }
 
@@ -155,6 +132,38 @@ public class PredictionDao implements PredictionRepository {
             interpolated.add(next);
             return interpolated;
         };
+    }
+
+    private void initializePredictionLookupTable(UtilizationKey utilizationKey) {
+        queryFactory.insert(qPrediction)
+                .set(qPrediction.facilityId, utilizationKey.facilityId)
+                .set(qPrediction.capacityType, utilizationKey.capacityType)
+                .set(qPrediction.usage, utilizationKey.usage)
+                .execute();
+    }
+
+    private long maybeUpdatePredictionLookupTable(UtilizationKey utilizationKey, DateTime start, List<Prediction> predictions) {
+        SQLUpdateClause update = queryFactory.update(qPrediction)
+                .where(qPrediction.facilityId.eq(utilizationKey.facilityId),
+                        qPrediction.capacityType.eq(utilizationKey.capacityType),
+                        qPrediction.usage.eq(utilizationKey.usage))
+                .set(qPrediction.start, start);
+        predictions.forEach(p -> update.set(spacesAvailableAt(p.timestamp), p.spacesAvailable));
+
+        return update.execute();
+    }
+
+    private void savePredictionHistory(UtilizationKey utilizationKey, DateTime start, List<Prediction> predictions) {
+        predictions.forEach(p -> {
+            queryFactory.insert(qPredictionHistory)
+                    .set(qPredictionHistory.facilityId, utilizationKey.facilityId)
+                    .set(qPredictionHistory.capacityType, utilizationKey.capacityType)
+                    .set(qPredictionHistory.usage, utilizationKey.usage)
+                    .set(qPredictionHistory.forecastDistanceInMinutes, ((int) new Duration(start, p.timestamp).getStandardMinutes()))
+                    .set(qPredictionHistory.ts, p.timestamp)
+                    .set(qPredictionHistory.spacesAvailable, p.spacesAvailable)
+                    .execute();
+        });
     }
 
     @TransactionalRead

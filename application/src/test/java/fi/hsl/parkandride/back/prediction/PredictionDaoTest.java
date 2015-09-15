@@ -242,23 +242,28 @@ public class PredictionDaoTest extends AbstractDaoTest {
     // history
 
     @Test
-    public void history_is_saved() {
-        PredictionBatch pb1 = newPredictionBatch(now,
-                new Prediction(now, 110),
-                new Prediction(now.plusDays(1), 110)
+    public void history_of_all_predictions_is_saved_per_forecast_distance() {
+        DateTime t1 = now;
+        PredictionBatch pb1 = newPredictionBatch(t1,
+                new Prediction(t1, 666),
+                new Prediction(t1.plusHours(1), 666)
         );
         predictionDao.updatePredictions(pb1);
 
-        PredictionBatch pb2 = newPredictionBatch(now.plusMinutes(5),
-                new Prediction(now.plusMinutes(5), 115),
-                new Prediction(now.plusMinutes(5).plusDays(1), 115)
+        DateTime t2 = now.plusMinutes(5);
+        PredictionBatch pb2 = newPredictionBatch(t2,
+                new Prediction(t2, 777),
+                new Prediction(t2.plusHours(1), 777)
         );
         predictionDao.updatePredictions(pb2);
 
-        final List<Prediction> predictionHistory = predictionDao.getPredictionHistoryByPredictor(pb1.utilizationKey, now, now.plusDays(1), 15);
+        int forecastDistanceInMinutes = 15;
+        // TODO: this method should be parameterized by predictor instead of utilization key, because there can be multiple predictors working on the same facility
+        List<Prediction> predictionHistory = predictionDao.getPredictionHistoryByPredictor(
+                pb1.utilizationKey, now, now.plusHours(1), forecastDistanceInMinutes);
         assertThat(predictionHistory).containsOnly(
-                new Prediction(toPredictionResolution(now.plusMinutes(15)), 110),
-                new Prediction(toPredictionResolution(now.plusMinutes(20)), 115)
+                new Prediction(toPredictionResolution(t1.plusMinutes(forecastDistanceInMinutes)), 666),
+                new Prediction(toPredictionResolution(t2.plusMinutes(forecastDistanceInMinutes)), 777)
         );
     }
 

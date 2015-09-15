@@ -27,11 +27,15 @@ module.exports = function (spec) {
     };
 
     that.getBuilt = function(type) {
-        return $('.wdCapacityType' + type);
+        return $('.wdBuiltCapacity' + type);
     };
 
     that.getCapacity = function (type) {
-        return that.getBuilt(type).then(function (value) { return spec.parseInt(value); });
+        return that.getBuilt(type).then(function (elem) {
+            return elem.getText()
+        }).then(function (value) {
+            return spec.parseInt(value);
+        });
     };
 
     that.getCapacities = function(types) {

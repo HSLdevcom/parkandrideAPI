@@ -5,6 +5,7 @@ package fi.hsl.parkandride.core.domain;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.google.common.base.MoreObjects;
@@ -14,10 +15,12 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.util.Objects;
 
-public class Utilization {
+import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
+
+public class Utilization implements Cloneable {
 
     @NotNull
-    @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
+    @JsonInclude(NON_NULL)
     public Long facilityId;
 
     @NotNull
@@ -38,6 +41,14 @@ public class Utilization {
     @JsonIgnore
     public UtilizationKey getUtilizationKey() {
         return new UtilizationKey(facilityId, capacityType, usage);
+    }
+
+    public Utilization copy() {
+        try {
+            return (Utilization) clone();
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override

@@ -6,7 +6,9 @@ package fi.hsl.parkandride.core.service;
 import fi.hsl.parkandride.core.back.PredictionRepository;
 import fi.hsl.parkandride.core.back.PredictorRepository;
 import fi.hsl.parkandride.core.back.UtilizationRepository;
-import fi.hsl.parkandride.core.domain.*;
+import fi.hsl.parkandride.core.domain.Utilization;
+import fi.hsl.parkandride.core.domain.UtilizationKey;
+import fi.hsl.parkandride.core.domain.prediction.*;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,13 +17,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import javax.inject.Inject;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
-import java.util.stream.Stream;
+import java.util.*;
 
 public class PredictionService {
 
@@ -30,14 +26,23 @@ public class PredictionService {
     private final UtilizationRepository utilizationRepository;
     private final PredictionRepository predictionRepository;
     private final PredictorRepository predictorRepository;
-    @Inject PlatformTransactionManager transactionManager;
+    private final PlatformTransactionManager transactionManager;
+    private final Map<String, Predictor> predictorsByType;
 
-    private final ConcurrentMap<String, Predictor> predictorsByType = new ConcurrentHashMap<>();
-
-    public PredictionService(UtilizationRepository utilizationRepository, PredictionRepository predictionRepository, PredictorRepository predictorRepository) {
+    public PredictionService(UtilizationRepository utilizationRepository,
+                             PredictionRepository predictionRepository,
+                             PredictorRepository predictorRepository,
+                             PlatformTransactionManager transactionManager,
+                             Predictor... predictors) {
         this.utilizationRepository = utilizationRepository;
         this.predictionRepository = predictionRepository;
         this.predictorRepository = predictorRepository;
+        this.transactionManager = transactionManager;
+        Map<String, Predictor> predictorsByType = new HashMap<>();
+        for (Predictor predictor : predictors) {
+            predictorsByType.put(predictor.getType(), predictor);
+        }
+        this.predictorsByType = Collections.unmodifiableMap(predictorsByType);
     }
 
     @TransactionalWrite
@@ -55,14 +60,12 @@ public class PredictionService {
         predictorRepository.markPredictorsNeedAnUpdate(utilizationKey);
     }
 
-    public void registerPredictor(Predictor predictor) {
-        predictorsByType.put(predictor.getType(), predictor);
-    }
-
-    private Predictor getPredictor(String predictorType) {
-        return predictorsByType.computeIfAbsent(predictorType, k -> {
-            throw new IllegalArgumentException("Predictor not found: " + predictorType);
-        });
+    private Optional<Predictor> getPredictor(String predictorType) {
+        Optional<Predictor> predictor = Optional.ofNullable(predictorsByType.get(predictorType));
+        if (!predictor.isPresent()) {
+            log.warn("Predictor {} not installed", predictorType);
+        }
+        return predictor;
     }
 
     public Optional<PredictionBatch> getPrediction(UtilizationKey utilizationKey, DateTime time) {
@@ -97,12 +100,14 @@ public class PredictionService {
     private void updatePredictor(Long predictorId) {
         PredictorState state = predictorRepository.getForUpdate(predictorId);
         state.moreUtilizations = false; // by default mark everything as processed, but allow the predictor to override it
-        Predictor predictor = getPredictor(state.predictorType);
-        // TODO: consider the update interval of prediction types? or leave that up to the predictor?
-        List<Prediction> predictions = predictor.predict(state, new UtilizationHistoryImpl(state.utilizationKey));
-        // TODO: save to prediction log
-        predictionRepository.updatePredictions(toPredictionBatch(state, predictions));
-        predictorRepository.save(state);
+        getPredictor(state.predictorType).ifPresent(predictor -> {
+            // TODO: consider the update interval of prediction types? or leave that up to the predictor?
+            List<Prediction> predictions = predictor.predict(state, new UtilizationHistoryImpl(utilizationRepository, state.utilizationKey));
+            // TODO: should we set state.latestUtilization here so that all predictors don't need to remember do it? or will some predictors use different logic for it, for example if they process only part of the updates?
+            // TODO: save to prediction log
+            predictionRepository.updatePredictions(toPredictionBatch(state, predictions));
+            predictorRepository.save(state);
+        });
     }
 
     private static PredictionBatch toPredictionBatch(PredictorState state, List<Prediction> predictions) {
@@ -113,18 +118,4 @@ public class PredictionService {
         return batch;
     }
 
-    private class UtilizationHistoryImpl implements UtilizationHistory {
-        private final UtilizationKey utilizationKey;
-
-        public UtilizationHistoryImpl(UtilizationKey utilizationKey) {
-            this.utilizationKey = utilizationKey;
-        }
-
-        @Override
-        public Stream<Utilization> getUpdatesSince(DateTime startExclusive) {
-            DateTime start = startExclusive.plusMillis(1);
-            DateTime end = new DateTime().plusYears(1);
-            return utilizationRepository.findUtilizationsBetween(utilizationKey, start, end).stream();
-        }
-    }
 }

@@ -42,8 +42,8 @@ maintaining old semantics. However, we appreciate your feedback and will take it
 in future development. In the end, this may lead to a need to refactor the APIs.
 Unless such a breaking change is due to some critical security related issue, we will give you
 a warning about it well in advance.
-_Please register yourself and your app to a (TODO!) mailing list
-in order to receive announcements of comming changes._
+_Upcoming: Please register yourself and your app to a mailing list
+in order to receive announcements of coming changes. For now, you can contact jari.honkonen@hsl.fi or kerkko.vanhanen@hsl.fi._
 
 === Development
 
@@ -51,6 +51,10 @@ Park and Ride application is developed as an Open Source project in GitHub:
 https://github.com/HSLdevcom/parkandrideAPI.
 
 Please, report bugs and feature requests as GitHub issues.
+
+=== Overview of the Data Model
+
+link:../assets/datamodel.png[UML diagram of the HSL Park and Ride data model]
 
 === Examples
 
@@ -166,6 +170,11 @@ CapacityType defines different kind of parking slot types:
 include::{generated}/enumeration-capacity-types-example/http-request.adoc[]
 include::{generated}/enumeration-capacity-types-example/http-response.adoc[]
 
+Usage specifies the purpose of the capacity. See <<capacity,Capacity>>.
+
+include::{generated}/enumeration-usages-example/http-request.adoc[]
+include::{generated}/enumeration-usages-example/http-response.adoc[]
+
 DayType, a rough categorization of day types with different opening hours and/or pricing:
 
 include::{generated}/enumeration-day-types-example/http-request.adoc[]
@@ -205,6 +214,10 @@ Details of an operator can be fetched with:
 include::{generated}/operator-details-example/http-request.adoc[]
 include::{generated}/operator-details-example/http-response.adoc[]
 
+=== Summary of Operator Model
+
+include::{generated}/operator-details-example/response-fields.adoc[]
+
 
 [[contacts]]
 == Contacts
@@ -225,6 +238,10 @@ Contact details can fetched by id:
 
 include::{generated}/contact-details-example/http-request.adoc[]
 include::{generated}/contact-details-example/http-response.adoc[]
+
+=== Summary of Contacts Model
+
+include::{generated}/contact-details-example/response-fields.adoc[]
 
 
 [[facilities]]
@@ -350,22 +367,49 @@ include::{generated}/utilization-example/response-fields.adoc[]
 
 <<authentication,Authenticated>> operators may update the utilization for their facilities.
 
+In case of network failure, the updater should keep a copy of the utilization snapshots and retry sending them later.
+It is possible to batch insert multiple utilization snapshots with a single request per facility;
+just have multiple objects inside the request payload's top-level JSON array.
+
+The API allows inputting also old utilization data, but to avoid <<utilization-prediction,prediction>> hiccups,
+the utilization _should_ be inputted in timestamp order, oldest first.
+Utilizations with future timestamps are not allowed.
+The timestamps must be in ISO 8601 date time format, with timezone.
+The `Authorization` and `Content-Type` headers are required.
+The response reports the latest utilization, same as with a GET request.
+
+include::{generated}/utilization-update-example/curl-request.adoc[]
 include::{generated}/utilization-update-example/http-request.adoc[]
+include::{generated}/utilization-update-example/http-response.adoc[]
 
 [[utilization-prediction]]
 ==== Prediction
 
-Utilization predictions are available for all facilities which have utilization data.
-The predictions are updated at regular intervals and they are available for up to 24 hours into the future.
-It is possible to query predictions using relative time (`after` parameter in `hhmm` format)
+Utilization predictions are available for all facilities which have enough utilization data history.
+The predictions are updated at regular intervals (e.g. 5 min) and they are available for up to 24 hours into the future.
+It is possible to query predictions using relative time (`after` parameter in `hh:mm` format or in minutes)
 or absolute time (`at` parameter in ISO 8601 date time format).
 
-NOTE: As of May 2015, the actual prediction algorithms have not yet been implemented,
-so the predictions are not yet useful, but it's possible to start implementing applications which use the API.
+include::{generated}/prediction-relative-example-hhmm/http-request.adoc[]
+include::{generated}/prediction-relative-example-hhmm/http-response.adoc[]
 
-include::{generated}/prediction-relative-example/http-request.adoc[]
+include::{generated}/prediction-relative-example-minutes/http-request.adoc[]
+include::{generated}/prediction-relative-example-minutes/http-response.adoc[]
+
 include::{generated}/prediction-absolute-example/http-request.adoc[]
 include::{generated}/prediction-absolute-example/http-response.adoc[]
+
+==== Facility GeoJSON Example
+
+GeoJSON of a single facility contains only basic information of a facility, not full details:
+
+include::{generated}/facility-geojson-example/curl-request.adoc[]
+include::{generated}/facility-geojson-example/http-response.adoc[]
+
+GeoJSON FeatureCollection of facilities:
+
+include::{generated}/geojson-suffix-example/curl-request.adoc[]
+include::{generated}/geojson-suffix-example/http-response.adoc[]
 
 ==== Summary of Facility Model
 
@@ -404,6 +448,22 @@ At the time of writing this document there is no structural difference between i
 
 include::{generated}/hub-details-example/http-request.adoc[]
 include::{generated}/hub-details-example/http-response.adoc[]
+
+==== Hub GeoJSON Example
+
+GeoJSON of a single hub:
+
+include::{generated}/hub-geojson-example/curl-request.adoc[]
+include::{generated}/hub-geojson-example/http-response.adoc[]
+
+GeoJSON FeatureCollection of hubs:
+
+include::{generated}/geojson-header-example/curl-request.adoc[]
+include::{generated}/geojson-header-example/http-response.adoc[]
+
+==== Summary of Hub Model
+
+include::{generated}/hub-details-example/response-fields.adoc[]
 
 
 [[use-cases]]

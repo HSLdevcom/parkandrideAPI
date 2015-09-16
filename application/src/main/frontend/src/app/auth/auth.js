@@ -2,7 +2,10 @@
 // This program is dual-licensed under the EUPL v1.2 and AGPLv3 licenses.
 
 (function() {
-    var m = angular.module('parkandride.auth', []);
+    var m = angular.module('parkandride.auth', [
+        'parkandride.auth.passwordReminderModal',
+        'parkandride.auth.passwordExpiredModal'
+    ]);
 
     m.factory('Session', function() {
         var storageKey = "login";
@@ -52,7 +55,8 @@
         USER_VIEW: 'USER_VIEW',
         FACILITY_STATUS_UPDATE: 'FACILITY_STATUS_UPDATE',
         HUB_CREATE: 'HUB_CREATE',
-        HUB_UPDATE: 'HUB_UPDATE'
+        HUB_UPDATE: 'HUB_UPDATE',
+        REPORT_GENERATE: 'REPORT_GENERATE'
     });
 
     m.factory('permit', function(Session, Permission) {
@@ -86,7 +90,7 @@
        };
     });
 
-    m.controller('LoginController', function($scope, $modalInstance, $http, Session) {
+    m.controller('LoginController', function($scope, $modalInstance, $http, Session, passwordReminderModal, passwordExpiredModal) {
         $scope.credentials = {
             username: "",
             password: ""
@@ -96,6 +100,20 @@
             $http.post("internal/login", credentials, {"skipDefaultViolationsHandling": true}).then(
                 function(result) {
                     Session.set(result.data);
+                    var user = Session.get();
+                    if (user.passwordExpireInDays > 0) {
+                        passwordReminderModal.open(user.passwordExpireInDays).result.then(function() { });
+                    }
+                    else if (user.passwordExpireInDays < 0) {
+                        passwordExpiredModal.open(user).result.then(
+                            function() {
+                                $state.reload();
+                            },
+                            function() {
+                            	Session.remove();
+                                $state.reload();
+                            });
+                    }
                     $modalInstance.close(result.data);
                 },
                 function(rejection) {
@@ -108,7 +126,7 @@
         };
     });
 
-    m.factory("loginPrompt", function($modal) {
+    m.factory("loginPrompt", function ($modal) {
         return function() {
             var modalInstance = $modal.open({
                 templateUrl: 'auth/login.tpl.html',

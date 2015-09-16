@@ -3,9 +3,9 @@
 
 package fi.hsl.parkandride.core.service;
 
-import fi.hsl.parkandride.back.PredictionDao;
 import fi.hsl.parkandride.core.back.ContactRepository;
 import fi.hsl.parkandride.core.back.FacilityRepository;
+import fi.hsl.parkandride.core.back.PredictionRepository;
 import fi.hsl.parkandride.core.back.UtilizationRepository;
 import fi.hsl.parkandride.core.domain.*;
 import org.joda.time.DateTime;
@@ -93,14 +93,13 @@ public class FacilityService {
     }
 
     @TransactionalWrite
-    public Set<Utilization> registerUtilization(long facilityId, List<Utilization> utilization, User currentUser) {
+    public void registerUtilization(long facilityId, List<Utilization> utilization, User currentUser) {
         authorize(currentUser, repository.getFacilityInfo(facilityId), FACILITY_UTILIZATION_UPDATE);
 
         initUtilizationDefaults(facilityId, utilization);
         validateUtilizations(facilityId, utilization);
         utilizationRepository.insertUtilizations(utilization);
         predictionService.signalUpdateNeeded(utilization);
-        return findLatestUtilization(facilityId);
     }
 
     private static void initUtilizationDefaults(long facilityId, List<Utilization> utilization) {
@@ -131,7 +130,7 @@ public class FacilityService {
     }
 
     private static boolean isFarIntoFuture(DateTime time) {
-        Seconds gracePeriod = PredictionDao.PREDICTION_RESOLUTION.toStandardSeconds().dividedBy(2);
+        Seconds gracePeriod = PredictionRepository.PREDICTION_RESOLUTION.toStandardSeconds().dividedBy(2);
         DateTime timeLimit = DateTime.now().plus(gracePeriod);
         return time != null && time.isAfter(timeLimit);
     }

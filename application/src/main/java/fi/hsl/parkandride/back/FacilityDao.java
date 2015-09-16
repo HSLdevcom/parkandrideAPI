@@ -26,7 +26,7 @@ import fi.hsl.parkandride.core.service.TransactionalRead;
 import fi.hsl.parkandride.core.service.TransactionalWrite;
 import fi.hsl.parkandride.core.service.ValidationException;
 import org.geolatte.geom.Point;
-
+import org.springframework.util.CollectionUtils;
 import java.util.*;
 import java.util.Map.Entry;
 
@@ -34,6 +34,7 @@ import static com.google.common.base.MoreObjects.firstNonNull;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.mysema.query.group.GroupBy.*;
 import static com.mysema.query.spatial.GeometryExpressions.dwithin;
+import static org.springframework.util.CollectionUtils.isEmpty;
 import static fi.hsl.parkandride.back.GSortedSet.sortedSet;
 import static fi.hsl.parkandride.core.domain.CapacityType.*;
 import static fi.hsl.parkandride.core.domain.Sort.Dir.ASC;
@@ -535,12 +536,16 @@ public class FacilityDao implements FacilityRepository {
     }
 
     private void buildWhere(FacilitySearch search, PostgresQuery qry) {
-        if (search.getStatuses() != null && !search.getStatuses().isEmpty()) {
+        if (!isEmpty(search.getStatuses())) {
             qry.where(qFacility.status.in(search.getStatuses()));
         }
 
-        if (search.getIds() != null && !search.getIds().isEmpty()) {
+        if (!isEmpty(search.getIds())) {
             qry.where(qFacility.id.in(search.getIds()));
+        }
+
+        if (search.getOperatorId() != null) {
+            qry.where(qFacility.operatorId.eq(search.getOperatorId()));
         }
 
         if (search.getGeometry() != null) {

@@ -304,6 +304,12 @@ th {
   text-align: center;
 }
 
+//Form elements
+.dateInput {
+  width: 100px;
+  display: inline;
+}
+
 //Number input spinner removal
 input[type=number]::-webkit-inner-spin-button,
 input[type=number]::-webkit-outer-spin-button {

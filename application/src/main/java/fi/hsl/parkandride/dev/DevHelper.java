@@ -25,8 +25,8 @@ import static fi.hsl.parkandride.back.ContactDao.CONTACT_ID_SEQ;
 import static fi.hsl.parkandride.back.FacilityDao.FACILITY_ID_SEQ;
 import static fi.hsl.parkandride.back.HubDao.HUB_ID_SEQ;
 import static fi.hsl.parkandride.back.OperatorDao.OPERATOR_ID_SEQ;
-import static fi.hsl.parkandride.back.PredictorDao.PREDICTOR_ID_SEQ;
 import static fi.hsl.parkandride.back.UserDao.USER_ID_SEQ;
+import static fi.hsl.parkandride.back.prediction.PredictorDao.PREDICTOR_ID_SEQ;
 import static java.lang.String.format;
 
 @Component
@@ -49,7 +49,6 @@ public class DevHelper {
 
     @TransactionalWrite
     public void deleteAll() {
-        deletePredictors();
         deleteHubs();
         deleteFacilities();
         deleteContacts();
@@ -114,6 +113,8 @@ public class DevHelper {
     public void deleteFacilities() {
         delete(
                 QFacilityPrediction.facilityPrediction,
+                QFacilityPredictionHistory.facilityPredictionHistory,
+                QPredictor.predictor,
                 QFacilityUtilization.facilityUtilization,
                 QFacilityService.facilityService,
                 QFacilityPaymentMethod.facilityPaymentMethod,
@@ -122,6 +123,7 @@ public class DevHelper {
                 QPort.port,
                 QUnavailableCapacity.unavailableCapacity,
                 QFacility.facility);
+        resetPredictorSequence();
         resetFacilitySequence();
     }
 
@@ -129,12 +131,6 @@ public class DevHelper {
     public void deleteHubs() {
         delete(QHubFacility.hubFacility, QHub.hub);
         resetHubSequence();
-    }
-
-    @TransactionalWrite
-    public void deletePredictors() {
-        delete(QPredictor.predictor);
-        resetPredictorSequence();
     }
 
     @TransactionalWrite

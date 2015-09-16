@@ -19,19 +19,23 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.boot.test.IntegrationTest;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.restdocs.config.RestDocumentationConfigurer;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import javax.inject.Inject;
+import javax.servlet.ServletContext;
 import java.util.Collections;
 
 import static fi.hsl.parkandride.core.domain.Role.OPERATOR_API;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.is;
 import static org.springframework.restdocs.RestDocumentation.document;
+import static org.springframework.restdocs.payload.FieldType.NUMBER;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -81,7 +85,7 @@ public class ApiDocumentation extends AbstractIntegrationTest {
     @Test
     public void jsonDefaultExample() throws Exception {
         MockHttpServletRequestBuilder request = get(UrlSchema.FACILITIES);
-        mockMvc.perform(request)
+        mockMvc.perform(withBaseUrl(request))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andDo(document("json-default-example"));
@@ -90,7 +94,7 @@ public class ApiDocumentation extends AbstractIntegrationTest {
     @Test
     public void jsonSuffixExample() throws Exception {
         MockHttpServletRequestBuilder request = get(UrlSchema.FACILITIES + ".json");
-        mockMvc.perform(request)
+        mockMvc.perform(withBaseUrl(request))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andDo(document("json-suffix-example"));
@@ -99,7 +103,7 @@ public class ApiDocumentation extends AbstractIntegrationTest {
     @Test
     public void geojsonSuffixExample() throws Exception {
         MockHttpServletRequestBuilder request = get(UrlSchema.FACILITIES + ".geojson");
-        mockMvc.perform(request)
+        mockMvc.perform(withBaseUrl(request))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(UrlSchema.GEOJSON))
                 .andDo(document("geojson-suffix-example"));
@@ -109,7 +113,7 @@ public class ApiDocumentation extends AbstractIntegrationTest {
     public void jsonHeaderExample() throws Exception {
         MockHttpServletRequestBuilder request = get(UrlSchema.FACILITIES)
                 .accept(MediaType.APPLICATION_JSON);
-        mockMvc.perform(request)
+        mockMvc.perform(withBaseUrl(request))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andDo(document("json-header-example"));
@@ -117,9 +121,11 @@ public class ApiDocumentation extends AbstractIntegrationTest {
 
     @Test
     public void geojsonHeaderExample() throws Exception {
-        MockHttpServletRequestBuilder request = get(UrlSchema.FACILITIES)
+        dummies.createHub();
+
+        MockHttpServletRequestBuilder request = get(UrlSchema.HUBS)
                 .accept(UrlSchema.GEOJSON);
-        mockMvc.perform(request)
+        mockMvc.perform(withBaseUrl(request))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(UrlSchema.GEOJSON))
                 .andDo(document("geojson-header-example"));
@@ -133,7 +139,7 @@ public class ApiDocumentation extends AbstractIntegrationTest {
                 .param("sort.by", "name.fi")
                 .param("sort.dir", Sort.Dir.ASC.name());
         // XXX: not really testing whether all the parameters work
-        mockMvc.perform(request)
+        mockMvc.perform(withBaseUrl(request))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("results", is(empty())))
                 .andExpect(jsonPath("hasMore", is(false)))
@@ -150,6 +156,15 @@ public class ApiDocumentation extends AbstractIntegrationTest {
                 .andExpect(status().isOk())
                 .andDo(document("authentication-example"));
     }
+
+    @Test
+    public void facilityGeojsonExample() throws Exception {
+        MockHttpServletRequestBuilder request = get(UrlSchema.FACILITY + ".geojson", facilityId);
+        this.mockMvc.perform(withBaseUrl(request))
+                .andExpect(status().isOk())
+                .andDo(document("facility-geojson-example"));
+    }
+
 
     @Test
     public void facilityExample() throws Exception {
@@ -205,6 +220,13 @@ public class ApiDocumentation extends AbstractIntegrationTest {
     }
 
     @Test
+    public void enumerationUsagesExample() throws Exception {
+        mockMvc.perform(get(UrlSchema.USAGES))
+                .andExpect(status().isOk())
+                .andDo(document("enumeration-usages-example"));
+    }
+
+    @Test
     public void enumerationDayTypesExample() throws Exception {
         mockMvc.perform(get(UrlSchema.DAY_TYPES))
                 .andExpect(status().isOk())
@@ -250,7 +272,11 @@ public class ApiDocumentation extends AbstractIntegrationTest {
     public void operatorsDetailsExample() throws Exception {
         mockMvc.perform(get(UrlSchema.OPERATOR, 1))
                 .andExpect(status().isOk())
-                .andDo(document("operator-details-example"));
+                .andDo(document("operator-details-example")
+                        .withResponseFields(
+                                fieldWithPath("id").description("Contact ID: `/api/v1/operators/{id}`"),
+                                fieldWithPath("name").description("Localized name")
+                        ));
     }
 
     @Test
@@ -280,7 +306,20 @@ public class ApiDocumentation extends AbstractIntegrationTest {
     public void contactsDetailsExample() throws Exception {
         mockMvc.perform(get(UrlSchema.CONTACT, 1))
                 .andExpect(status().isOk())
-                .andDo(document("contact-details-example"));
+                .andDo(document("contact-details-example")
+                        .withResponseFields(
+                                fieldWithPath("id").description("Contact ID: `/api/v1/contacts/{id}`"),
+                                fieldWithPath("name").description("Localized name"),
+                                fieldWithPath("operatorId").type(NUMBER).description("Contact operator ID: `/api/v1/operators/{operatorId}` (OPTIONAL)"),
+                                fieldWithPath("email").description("Email address (OPTIONAL)"),
+                                fieldWithPath("phone").description("Phone number (OPTIONAL)"),
+                                fieldWithPath("address").description("Contact address (OPTIONAL)"),
+                                fieldWithPath("address.streetAddress").description("Localized street name (OPTIONAL)"),
+                                fieldWithPath("address.postalCode").description("Postal code (OPTIONAL)"),
+                                fieldWithPath("address.city").description("Localized city name (OPTIONAL)"),
+                                fieldWithPath("openingHours").description("Localized opening hours (OPTIONAL)"),
+                                fieldWithPath("info").description("Localized information (OPTIONAL)")
+                        ));
     }
 
     @Test
@@ -358,12 +397,15 @@ public class ApiDocumentation extends AbstractIntegrationTest {
         facilityService.registerUtilization(facilityId, Collections.singletonList(newUtilization()), currentUser);
         predictionService.updatePredictions();
 
-        mockMvc.perform(get(UrlSchema.FACILITY_PREDICTION_ABSOLUTE, facilityId, new DateTime().plusMinutes(15)))
+        mockMvc.perform(get(UrlSchema.FACILITY_PREDICTION_ABSOLUTE, facilityId, new DateTime().plusHours(1).plusMinutes(30)))
                 .andExpect(status().isOk())
                 .andDo(document("prediction-absolute-example"));
-        mockMvc.perform(get(UrlSchema.FACILITY_PREDICTION_RELATIVE, facilityId, "0015"))
+        mockMvc.perform(get(UrlSchema.FACILITY_PREDICTION_RELATIVE, facilityId, "01:30"))
                 .andExpect(status().isOk())
-                .andDo(document("prediction-relative-example"));
+                .andDo(document("prediction-relative-example-hhmm"));
+        mockMvc.perform(get(UrlSchema.FACILITY_PREDICTION_RELATIVE, facilityId, "90"))
+                .andExpect(status().isOk())
+                .andDo(document("prediction-relative-example-minutes"));
     }
 
     @Test
@@ -376,12 +418,31 @@ public class ApiDocumentation extends AbstractIntegrationTest {
     }
 
     @Test
+    public void hubGeojsonExample() throws Exception {
+        long hubId = dummies.createHub();
+
+        mockMvc.perform(withBaseUrl(get(UrlSchema.HUB + ".geojson", hubId)))
+                .andExpect(status().isOk())
+                .andDo(document("hub-geojson-example"));
+    }
+
+    @Test
     public void hubDetailsExample() throws Exception {
         long hubId = dummies.createHub();
 
         mockMvc.perform(get(UrlSchema.HUB, hubId))
                 .andExpect(status().isOk())
-                .andDo(document("hub-details-example"));
+                .andDo(document("hub-details-example")
+                        .withResponseFields(
+                                fieldWithPath("id").description("Hub ID: `/api/v1/hubs/{id}`"),
+                                fieldWithPath("name").description("Localized name"),
+                                fieldWithPath("location").description("Hub location, GeoJSON Point"),
+                                fieldWithPath("address").description("Hub address (OPTIONAL)"),
+                                fieldWithPath("address.streetAddress").description("Localized street name (OPTIONAL)"),
+                                fieldWithPath("address.postalCode").description("Postal code (OPTIONAL)"),
+                                fieldWithPath("address.city").description("Localized city name (OPTIONAL)"),
+                                fieldWithPath("facilityIds").description("A list of facility IDs (number), `/api/v1/facilities/{id}`")
+                        ));
     }
 
     @Test
@@ -422,6 +483,18 @@ public class ApiDocumentation extends AbstractIntegrationTest {
 
 
     // helpers
+
+    private RequestBuilder withBaseUrl(final MockHttpServletRequestBuilder builder) {
+        return new RequestBuilder() {
+            @Override
+            public MockHttpServletRequest buildRequest(ServletContext servletContext) {
+                MockHttpServletRequest request = builder.buildRequest(servletContext);
+                request.setServerName("p.hsl.fi");
+                request.setRemotePort(80);
+                return request;
+            }
+        };
+    }
 
     public String loginApiUserForFacility(long facilityId) {
         Facility facility = facilityRepository.getFacility(facilityId);

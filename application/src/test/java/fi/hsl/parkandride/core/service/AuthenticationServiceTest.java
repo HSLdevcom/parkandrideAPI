@@ -11,15 +11,16 @@ import static fi.hsl.parkandride.core.domain.Permission.OPERATOR_CREATE;
 import static fi.hsl.parkandride.core.domain.Role.ADMIN;
 import static fi.hsl.parkandride.core.domain.Role.OPERATOR;
 import static fi.hsl.parkandride.core.domain.Role.OPERATOR_API;
-import static fi.hsl.parkandride.core.service.AuthenticationService.TOKEN_PATTERN;
-import static fi.hsl.parkandride.core.service.AuthenticationService.authorize;
+import static fi.hsl.parkandride.core.service.AuthenticationService.*;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.Matchers.nullValue;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.regex.Matcher;
 
 import org.apache.commons.lang3.StringUtils;
+import org.hamcrest.core.IsNull;
 import org.jasypt.util.password.PasswordEncryptor;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeUtils;
@@ -50,7 +51,11 @@ public class AuthenticationServiceTest {
 
     private final static String secret = StringUtils.repeat('x', AuthenticationService.SECRET_MIN_LENGTH);
     private final static int EXPIRES_IN_SECONDS = 30;
+    private final static int PASSWORD_EXPIRES_IN_DAYS = 60;
+    private final static int PASSWORD_REMINDER_IN_DAYS = 14;
     private final static Period expires = Period.seconds(EXPIRES_IN_SECONDS);
+    private final static Period passwordExpires = Period.days(PASSWORD_EXPIRES_IN_DAYS);
+    private final static Period passwordReminder = Period.days(PASSWORD_REMINDER_IN_DAYS);
     private final UserSecret adminUser = new UserSecret(1l, "admin", "admin-password", ADMIN);
     private final UserSecret apiUser = new UserSecret(2l, "api", null, OPERATOR_API);
 
@@ -58,7 +63,7 @@ public class AuthenticationServiceTest {
     public void initMocks() {
         MockitoAnnotations.initMocks(this);
         when(userRepository.getCurrentTime()).thenReturn(DateTime.now());
-        this.service = new AuthenticationService(userRepository, passwordEncryptor, secret, expires);
+        this.service = new AuthenticationService(userRepository, passwordEncryptor, secret, expires, passwordExpires, passwordReminder);
     }
 
     @After
@@ -72,7 +77,7 @@ public class AuthenticationServiceTest {
 
         thrown.expect(IllegalArgumentException.class);
         thrown.expectMessage("secret must be at least 32 characters long, but it was only 31");
-        new AuthenticationService(userRepository, passwordEncryptor, tooShortSecret, expires);
+        new AuthenticationService(userRepository, passwordEncryptor, tooShortSecret, expires, passwordExpires, passwordReminder);
     }
 
     @Test
@@ -237,5 +242,24 @@ public class AuthenticationServiceTest {
 
         User user = service.authenticate(token);
         assertThat(user).isSameAs(apiUser.user);
+    }
+
+    @Test
+    public void admin_limited_operator() {
+        User user = new User(1l, "admin", ADMIN);
+        assertThat(getLimitedOperatorId(user)).isNull();
+    }
+
+    @Test
+    public void operator_limited_operator() {
+        User user = new User(1l, "operator", OPERATOR);
+        user.operatorId = 42l;
+        assertThat(getLimitedOperatorId(user)).isEqualTo(42L);
+    }
+
+    @Test(expected = AccessDeniedException.class)
+    public void operator_operator_mismatch() {
+        User user = new User(1l, "operator", OPERATOR);
+        getLimitedOperatorId(user);
     }
 }

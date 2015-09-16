@@ -1,0 +1,197 @@
+<form name="reportForm" class="form-horizontal" role="form">
+<main-layout>
+
+<headline>{{ "reports.title" | translate }}</headline>
+<actions>
+</actions>
+
+<content>
+<div class="wdReportsView" ng-init="reportType='FacilityUsage'">
+
+<div class="row smallMarginBottom">
+    <p>{{ "reports.help.summary" | translate }}</p>
+    <ul>
+        <li>{{ "reports.help.bullet1" | translate }}</li>
+        <li>{{ "reports.help.bullet2" | translate }}</li>
+    </ul>
+</div>
+
+<div class="row">
+    <label class="radiobutton-label" title="{{ 'reports.FacilityUsage.info' | translate }}">
+        <input type="radio" ng-model="reportType" value="FacilityUsage"/>
+        {{ "reports.FacilityUsage.name" | translate }}
+    </label>
+    <br>
+    <label class="radiobutton-label" title="{{ 'reports.MaxUtilization.info' | translate }}">
+        <input type="radio" ng-model="reportType" value="MaxUtilization"/>
+        {{ "reports.MaxUtilization.name" | translate }}
+    </label>
+    <br>
+    <label class="radiobutton-label" title="{{ 'reports.HubsAndFacilities.info' | translate }}">
+        <input type="radio" ng-model="reportType" value="HubsAndFacilities"/>
+        {{ "reports.HubsAndFacilities.name" | translate }}
+    </label>
+</div>
+
+<div class="row smallMarginBottom">
+    <h3>{{ "reports."+reportType+".name" | translate }}</h3>
+    <div class="row"><p>
+        {{ "reports."+reportType+".info" | translate }}
+    </p></div>
+</div>
+
+<div ng-show="reportType != 'HubsAndFacilities'" ng-init="report.startDate=1 +'.'+ (date.getMonth()+1) +'.'+ date.getFullYear();
+        report.endDate=date.getDate() +'.'+ (date.getMonth()+1) +'.'+ date.getFullYear()">
+    <div class="row">
+        <label>{{ "reports.label.range" | translate }} *</label>
+    </div>
+    <div class="row">
+        <div class="column3 first-column">
+            <div class="form-group">
+                <input class="form-control dateInput" type="text" ng-model="report.startDate" ng-required="reportType != 'HubsAndFacilities'">
+                -
+                <input class="form-control dateInput" type="text" ng-model="report.endDate">
+            </div>
+        </div>
+    </div>
+</div>
+
+<div ng-show="reportType == 'FacilityUsage'">
+  <div class="row">
+    <label ng-init="report.interval=60">{{ "reports.label.interval" | translate }}</label>
+  </div>
+  <div class="row">
+    <div class="column3 first-column">
+      <div class="form-group">
+        <select class="form-control dateInput" ng-model="report.interval" convert-to-number>
+          <option value="5">5 min</option>
+          <option value="10">10 min</option>
+          <option value="15">15 min</option>
+          <option value="30">30 min</option>
+          <option value="60">60 min</option>
+        </select>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div ng-show="reportType != 'HubsAndFacilities'" ng-init="report.operators=['CAR']">
+  <div class="row">
+    <label>{{ "reports.label.operator" | translate }}</label>
+  </div>
+  <div class="row">
+    <div class="column3 first-column">
+      <div class="form-group">
+        <ui-select multiple ng-model="report.operators" theme="bootstrap" ng-disabled="disabled" reset-search-input="true"
+                   name="operator" show-errors ng-required="mandatory">
+          <ui-select-match placeholder="{{ 'reports.placeholder.operator' | translate }}">{{$item.name.fi}}</ui-select-match>
+          <ui-select-choices repeat="operator.id as operator in allOperators | filter: {name: {fi: $select.search}}">
+            <div ng-bind-html="operator.name.fi | highlight: $select.search"></div>
+          </ui-select-choices>
+        </ui-select>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div ng-show="reportType != 'HubsAndFacilities'">
+    <div class="row">
+        <label>{{ "reports.label.usage" | translate }}</label>
+    </div>
+    <div class="row">
+        <div class="column3 first-column">
+            <div class="form-group">
+                <ui-select multiple ng-model="report.usages" theme="bootstrap" ng-disabled="disabled" reset-search-input="true"
+                           name="usage" show-errors ng-required="mandatory">
+                    <ui-select-match placeholder="{{ 'reports.placeholder.usage' | translate }}">{{$item.label}}</ui-select-match>
+                    <ui-select-choices repeat="usage.id as usage in usages | filter: {label: $select.search}">
+                        <div ng-bind-html="usage.label | highlight: $select.search"></div>
+                    </ui-select-choices>
+                </ui-select>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div ng-show="reportType != 'HubsAndFacilities'" ng-init="report.capacityTypes=['CAR']">
+    <div class="row">
+        <label>{{ "reports.label.capacity" | translate }}</label>
+    </div>
+    <div class="row">
+        <div class="column3 first-column">
+            <div class="form-group">
+                <ui-select multiple ng-model="report.capacityTypes" theme="bootstrap" ng-disabled="disabled" reset-search-input="true"
+                           name="capacity" show-errors ng-required="mandatory">
+                    <ui-select-match placeholder="{{ 'reports.placeholder.capacity' | translate }}">{{$item.label}}</ui-select-match>
+                    <ui-select-choices repeat="capacity.id as capacity in capacityTypes | filter: {label: $select.search}">
+                        <div ng-bind-html="capacity.label | highlight: $select.search"></div>
+                    </ui-select-choices>
+                </ui-select>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div ng-show="reportType != 'HubsAndFacilities'">
+    <div class="row">
+        <label>{{ "reports.label.region" | translate }}</label>
+    </div>
+    <div class="row">
+        <div class="column3 first-column">
+            <div class="form-group">
+                <ui-select multiple ng-model="report.regions" theme="bootstrap" ng-disabled="disabled" name="region" reset-search-input="true">
+                    <ui-select-match placeholder="{{ 'reports.placeholder.region' | translate }}">{{$item.name.fi}}</ui-select-match>
+                    <ui-select-choices repeat="region.id as region in allRegions | filter: {name: {fi: $select.search}}">
+                        <div ng-bind-html="region.name.fi | highlight: $select.search"></div>
+                    </ui-select-choices>
+                </ui-select>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div ng-show="reportType != 'HubsAndFacilities'">
+    <div class="row">
+        <label>{{ "reports.label.hub" | translate }}</label>
+    </div>
+    <div class="row">
+        <div class="column3 first-column">
+            <div class="form-group">
+                <ui-select multiple ng-model="report.hubs" theme="bootstrap" ng-disabled="disabled" name="hub" reset-search-input="true">
+                    <ui-select-match placeholder="{{ 'reports.placeholder.hub' | translate }}">{{$item.name.fi}}</ui-select-match>
+                    <ui-select-choices repeat="hub.id as hub in allHubs | filter: {name: {fi: $select.search}}">
+                        <div ng-bind-html="hub.name.fi | highlight: $select.search"></div>
+                    </ui-select-choices>
+                </ui-select>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div ng-show="reportType != 'HubsAndFacilities'">
+    <div class="row">
+        <label>{{ "reports.label.facility" | translate }}</label>
+    </div>
+    <div class="row">
+        <div class="column3 first-column">
+            <div class="form-group">
+                <ui-select multiple ng-model="report.facilities" theme="bootstrap" ng-disabled="disabled" name="facility" reset-search-input="true">
+                    <ui-select-match placeholder="{{ 'reports.placeholder.facility' | translate }}">{{$item.name.fi}}</ui-select-match>
+                    <ui-select-choices repeat="facility.id as facility in allFacilities | filter: {name: {fi: $select.search}}">
+                        <div ng-bind-html="facility.name.fi | highlight: $select.search"></div>
+                    </ui-select-choices>
+                </ui-select>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row smallMargin">
+    <p>{{ "reports.action.noticeLabel" | translate }}</p>
+    <button type="submit" class="btn btn-s" ng-disabled="reportForm.$invalid" ng-click="generate(reportType, report)">{{ "reports.action.do" | translate }}</button>
+</div>
+
+</div>
+</content>
+</main-layout>
+</form>

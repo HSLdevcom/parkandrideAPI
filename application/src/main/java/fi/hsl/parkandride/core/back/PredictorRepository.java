@@ -3,8 +3,8 @@
 
 package fi.hsl.parkandride.core.back;
 
-import fi.hsl.parkandride.core.domain.PredictorState;
 import fi.hsl.parkandride.core.domain.UtilizationKey;
+import fi.hsl.parkandride.core.domain.prediction.PredictorState;
 
 import java.util.List;
 

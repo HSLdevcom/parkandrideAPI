@@ -50,7 +50,7 @@ public class Dummies {
     @TransactionalWrite
     public long createFacility() {
         Long operatorId = createDummyOperator();
-        FacilityContacts contacts = new FacilityContacts(createDummyContact(), createDummyContact());
+        FacilityContacts contacts = new FacilityContacts(createDummyContact(), createDummyContact(), createDummyContact());
         Facility facility = createFacility(operatorId, contacts);
         return facilityDao.insertFacility(facility);
     }
@@ -64,6 +64,10 @@ public class Dummies {
         Contact contact = new Contact();
         contact.name = new MultilingualString("TEST " + uniqueNumber());
         contact.email = "test@example.com";
+        contact.phone = new Phone("09 4766 4000");
+        contact.address = new Address(new MultilingualString("street"), "00100", new MultilingualString("city"));
+        contact.info = new MultilingualString("info");
+        contact.openingHours = new MultilingualString("opening hours");
         return contactDao.insertContact(contact);
     }
 
@@ -100,10 +104,14 @@ public class Dummies {
 
         facility.openingHours.info = new MultilingualString("Opening Hours");
         facility.openingHours.url = new MultilingualUrl("http://www.hsl.fi");
+
+        facility.paymentInfo.detail = new MultilingualString("Payment details");
+        facility.paymentInfo.url = new MultilingualUrl("http://www.hsl.fi");
+
         return facility;
     }
 
-    private final AtomicInteger seq = new AtomicInteger(0);
+    private static final AtomicInteger seq = new AtomicInteger(0);
 
     private int uniqueNumber() {
         return seq.incrementAndGet();

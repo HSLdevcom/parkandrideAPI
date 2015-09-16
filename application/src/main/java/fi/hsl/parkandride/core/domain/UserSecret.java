@@ -11,6 +11,8 @@ public class UserSecret {
 
     public String password;
 
+    public DateTime passwordUpdatedTimestamp = new DateTime();
+
     public DateTime minTokenTimestamp = new DateTime();
 
     @Valid

@@ -1,719 +1,775 @@
 {
-  "usages": {
-    "PARK_AND_RIDE": {
-      "label": "Liityntä"
-    },
-    "HSL_TRAVEL_CARD": {
-      "label": "Liityntä matkakortilla"
-    },
-    "COMMERCIAL": {
-      "label": "Kaupallinen"
-    }
-  },
-  "dayTypes": {
-    "BUSINESS_DAY": {
-      "label": "Arkipäivä"
-    },
-    "SATURDAY": {
-      "label": "Lauantai"
-    },
-    "SUNDAY": {
-      "label": "Sunnuntai"
-    }
-  },
-  "capacityTypes": {
-    "CAR": {"label": "Henkilöauto"},
-    "BICYCLE": {"label": "Polkupyörä"},
-    "BICYCLE_SECURE_SPACE": {"label": "Polkupyörä, lukittu tila"},
-    "DISABLED": {"label": "Invapaikka"},
-    "MOTORCYCLE": {"label": "Moottoripyörä"},
-    "ELECTRIC_CAR": {"label": "Sähköauto"}
-  },
-  "services": {
-    "ELEVATOR": {"label": "Hissi"},
-    "TOILETS": {"label": "WC"},
-    "ACCESSIBLE_TOILETS": {"label": "Esteetön WC"},
-    "LIGHTING": {"label": "Valaistus"},
-    "COVERED": {"label": "Katettu"},
-    "SURVEILLANCE_CAMERAS": {"label": "Kameravalvonta"},
-    "VENDING_MACHINE": {"label": "Lippuautomaatti"},
-    "INFORMATION_POINT": {"label": "Infopiste"},
-    "PAY_DESK": {"label": "Maksutiski"},
-    "CAR_WASH": {"label": "Autopesu"},
-    "REPAIR_SHOP": {"label": "Korjauspalvelu"},
-    "SHOE_SHINE": {"label": "Kengänkiillotus"},
-    "PAYMENT_AT_GATE": {"label": "Maksu portilla"},
-    "UMBRELLA_RENTAL": {"label": "Sateenvarjovuokraus"},
-    "PARKING_SPACE_RESERVATION": {"label": "Paikkojen varausmahdollisuus"},
-    "ENGINE_IGNITION_AID": {"label": "Käynnistysapu"},
-    "FIRST_AID": {"label": "Ensiapu"},
-    "STROLLER_RENTAL": {"label": "Lastenrattaiden vuokraus"},
-    "INFO_SCREENS": {"label": "Inforuudut"},
-    "BICYCLE_FRAME_LOCK": {"label": "Polkupyörän runkolukitus"}
-  },
-  "paymentMethods": {
-    "COINS": {"label": "Kolikko"},
-    "NOTES": {"label": "Seteli"},
-    "DEBIT_CARD": {"label": "Pankkikortti"},
-    "VISA_CREDIT": {"label": "Visa"},
-    "VISA_ELECTRON": {"label": "Visa Electron"},
-    "AMERICAN_EXPRESS": {"label": "American Express"},
-    "MASTERCARD": {"label": "MasterCard"},
-    "DINERS_CLUB": {"label": "Diners Club"},
-    "HSL_TRAVEL_CARD": {"label": "HSL matkakortti"},
-    "OTHER": {"label": "Muu"}
-  },
-  "facilityStatuses": {
-    "IN_OPERATION": {
-      "label": "Toiminnassa"
-    },
-    "INACTIVE": {
-      "label": "Pois käytöstä"
-    },
-    "TEMPORARILY_CLOSED": {
-      "label": "Tilapäisesti pois käytöstä"
-    },
-    "EXCEPTIONAL_SITUATION": {
-      "label": "Poikkeustilanne"
-    }
-  },
-  "pricingMethods": {
-    "PARK_AND_RIDE_247_FREE": {
-      "label": "24/7 ilmainen liityntäpysäköinti"
-    },
-    "CUSTOM": {
-      "label": "Muu pysäköintihinnoittelu"
-    }
-  },
-  "roles": {
-    "ADMIN": {
-      "label": "Ylläpitäjä"
-    },
-    "OPERATOR": {
-      "label": "Operaattori"
-    },
-    "OPERATOR_API": {
-      "label": "API"
-    }
-  },
-  "operators": {
-    "title": "Operaattorit",
-    "help": {
-      "summary": "Tälle sivulle on koottu järjestelmään tallennetut operaattorit",
-      "bullet1": "Operaattorit vastaavat pysäköintipaikkojen hallinnoinnista",
-      "bullet2": "Operaattorit voivat muokata omia tietojaan",
-      "bullet3": "HSL voi lisätä ja muokata kaikkia operaattoreita"
-    },
-    "label": "Operaattori",
-    "select": "Valitse operaattori...",
-    "action": {
-      "new": "Lisää uusi operaattori",
-      "edit": "Muokkaa operaattoria"
-    },
-    "name": {
-      "label": "Nimi",
-      "fi": {
-        "label": "Nimi (fi)"
-      },
-      "sv": {
-        "label": "Nimi (sv)"
-      },
-      "en": {
-        "label": "Nimi (en)"
-      }
-    }
-  },
-  "contacts": {
-    "title": "Yhteystiedot",
-    "help": {
-      "summary": "Tälle sivulle on koottu järjestelmään tallennetut yhteystiedot",
-      "bullet1": "Yhteystietoja käytetään pysäköintipaikoissa",
-      "bullet2": "Yhteystiedot ovat joko operaattorikohtaisia tai HSL:n hallinnoimia kaikille näkyviä yleisiä yhteystietoja",
-      "bullet3": "Sisäänkirjautuneet operaattorikäyttäjät voivat lisätä ja muokata omia yhteystietojaan",
-      "bullet4": "HSL voi lisätä ja muokata kaikkia yhteystietoja"
-    },
-    "label": "Yhteystieto",
-    "select": "Valitse yhteystieto...",
-    "action": {
-      "new": "Lisää uusi yhteystieto",
-      "edit": "Muokkaa yhteystietoa"
-    },
-    "name": {
-      "label": "Nimi",
-      "fi": {
-        "label": "Nimi (fi)"
-      },
-      "sv": {
-        "label": "Nimi (sv)"
-      },
-      "en": {
-        "label": "Nimi (en)"
-      }
-    },
-    "operator": {
-      "label": "Näkyvyys operaattoreille",
-      "placeholder": "Kaikki"
-    },
-    "phone": {
-      "label": "Puhelinnumero"
-    },
-    "email": {
-      "label": "Sähköposti"
-    },
-    "contactRequired": {
-      "label": "Täytä puhelinnumero tai sähköposti"
-    },
-    "address": {
-      "label": "Osoite"
-    },
-    "additionalInfo": {
-      "label": "Lisätiedot"
-    },
-    "openingHours": {
-      "label": "Asiakaspalvelun aukioloaika",
-      "fi": {
-        "label": "Asiakaspalvelun aukioloaika (fi)"
-      },
-      "sv": {
-        "label": "Asiakaspalvelun aukioloaika (sv)"
-      },
-      "en": {
-        "label": "Asiakaspalvelun aukioloaika (en)"
-      }
-    },
-    "info": {
-      "label": "Lisätiedot",
-      "fi": {
-        "label": "Lisätiedot (fi)"
-      },
-      "sv": {
-        "label": "Lisätiedot (sv)"
-      },
-      "en": {
-        "label": "Lisätiedot (en)"
-      }
-    },
-    "address": {
-      "label": "Osoite",
-      "streetAddress": {
-        "label": "Katuosoite",
-        "fi": {
-          "label": "Katuosoite (fi)"
+    "usages": {
+        "PARK_AND_RIDE": {
+            "label": "Liityntä"
         },
-        "sv": {
-          "label": "Katuosoite (sv)"
+        "HSL_TRAVEL_CARD": {
+            "label": "Liityntä matkakortilla"
         },
-        "en": {
-          "label": "Katuosoite (en)"
+        "COMMERCIAL": {
+            "label": "Kaupallinen"
         }
-      },
-      "postalCode": {
-        "label": "Postinumero"
-      },
-      "city": {
-        "label": "Kaupunki",
-        "fi": {
-          "label": "Kaupunki (fi)"
+    },
+    "dayTypes": {
+        "BUSINESS_DAY": {
+            "label": "Arkipäivä"
         },
-        "sv": {
-          "label": "Kaupunki (sv)"
+        "SATURDAY": {
+            "label": "Lauantai"
         },
-        "en": {
-          "label": "Kaupunki (en)"
+        "SUNDAY": {
+            "label": "Sunnuntai"
         }
-      }
-    }
-  },
-  "facilities": {
-    "title": "Pysäköintipaikat",
-    "label": "Pysäköintipaikka",
-    "list": {
-      "name": "Nimi",
-      "types": "Ajoneuvotyypit",
-      "usages": "Käyttötapa"
     },
-    "basic_info": "Perustiedot",
-    "action": {
-      "new": "Lisää uusi pysäköintipaikka",
-      "addLocation": "Lisää sijainti",
-      "addPorts": "Lisää sisään- ja uloskäynnit"
-    },
-    "hubs": {
-      "heading": "Kuuluu alueisiin"
-    },
-    "name": {
-      "title": "Nimitiedot",
-      "placeholder": "Pysäköintipaikka",
-      "label": "Nimi",
-      "fi": {
-        "label": "Nimi (fi)"
-      },
-      "sv": {
-        "label": "Nimi (sv)"
-      },
-      "en": {
-        "label": "Nimi (en)"
-      }
-    },
-    "status": {
-      "label": "Status",
-      "placeholder": "Valitse status..."
-    },
-    "statusDescription": {
-      "label": "Statuksen lisätiedot / poikkeustiedote",
-      "fi": {
-        "label": "Statuksen lisätiedot / poikkeustiedote (fi)"
-      },
-      "sv": {
-        "label": "Statuksen lisätiedot / poikkeustiedote (sv)"
-      },
-      "en": {
-        "label": "Statuksen lisätiedot / poikkeustiedote (en)"
-      }
-    },
-    "aliases": {
-      "label": "Aliakset",
-      "placeholder": "Lisää alias"
-    },
-    "location": {
-      "label": "Sijainti",
-      "help": "Valitse haluamasi toiminto valintapainikkeesta",
-      "facilityHelp": "Lisää uusi sijainti klikkaamalla alueen kulmapisteet kartalle",
-      "gateHelp": "Lisää tai muokkaa sisään- ja uloskäynnit tuplaklikkaamalla"
+    "capacityTypes": {
+        "CAR": {"label": "Henkilöauto"},
+        "BICYCLE": {"label": "Polkupyörä"},
+        "BICYCLE_SECURE_SPACE": {"label": "Polkupyörä, lukittu tila"},
+        "DISABLED": {"label": "Invapaikka"},
+        "MOTORCYCLE": {"label": "Moottoripyörä"},
+        "ELECTRIC_CAR": {"label": "Sähköauto"}
     },
     "services": {
-      "heading": "Palvelut"
+        "ELEVATOR": {"label": "Hissi"},
+        "TOILETS": {"label": "WC"},
+        "ACCESSIBLE_TOILETS": {"label": "Esteetön WC"},
+        "LIGHTING": {"label": "Valaistus"},
+        "COVERED": {"label": "Katettu"},
+        "SURVEILLANCE_CAMERAS": {"label": "Kameravalvonta"},
+        "VENDING_MACHINE": {"label": "Lippuautomaatti"},
+        "INFORMATION_POINT": {"label": "Infopiste"},
+        "PAY_DESK": {"label": "Maksutiski"},
+        "CAR_WASH": {"label": "Autopesu"},
+        "REPAIR_SHOP": {"label": "Korjauspalvelu"},
+        "SHOE_SHINE": {"label": "Kengänkiillotus"},
+        "PAYMENT_AT_GATE": {"label": "Maksu portilla"},
+        "UMBRELLA_RENTAL": {"label": "Sateenvarjovuokraus"},
+        "PARKING_SPACE_RESERVATION": {"label": "Paikkojen varausmahdollisuus"},
+        "ENGINE_IGNITION_AID": {"label": "Käynnistysapu"},
+        "FIRST_AID": {"label": "Ensiapu"},
+        "STROLLER_RENTAL": {"label": "Lastenrattaiden vuokraus"},
+        "INFO_SCREENS": {"label": "Inforuudut"},
+        "BICYCLE_FRAME_LOCK": {"label": "Polkupyörän runkolukitus"}
     },
-    "openingHours": {
-      "heading": "Aukioloajat",
-      "closed": "Kiinni",
-      "info": {
-        "label": "Lisätiedot",
-        "fi": {
-          "label": "Aukioloajat / Lisätiedot (fi)"
-        },
-        "sv": {
-          "label": "Aukioloajat / Lisätiedot (sv)"
-        },
-        "en": {
-          "label": "Aukioloajat / Lisätiedot (en)"
-        }
-      },
-      "url": {
-        "label": "Lisätietolinkki",
-        "fi": {
-          "label": "Aukioloajat / Lisätietolinkki (fi)"
-        },
-        "sv": {
-          "label": "Aukioloajat / Lisätietolinkki (sv)"
-        },
-        "en": {
-          "label": "Aukioloajat / Lisätietolinkki (en)"
-        }
-      },
-      "byDayType": {
-        "disclaimer": "Päivätyyppikohtaiset aukioloajat muodostetaan automaattisesti pysäköintihinnoittelusta"
-      }
+    "paymentMethods": {
+        "COINS": {"label": "Kolikko"},
+        "NOTES": {"label": "Seteli"},
+        "DEBIT_CARD": {"label": "Pankkikortti"},
+        "VISA_CREDIT": {"label": "Visa"},
+        "VISA_ELECTRON": {"label": "Visa Electron"},
+        "AMERICAN_EXPRESS": {"label": "American Express"},
+        "MASTERCARD": {"label": "MasterCard"},
+        "DINERS_CLUB": {"label": "Diners Club"},
+        "HSL_TRAVEL_CARD": {"label": "HSL matkakortti"},
+        "OTHER": {"label": "Muu"}
     },
-    "paymentAndServices": {
-      "heading": "Pysäköintihinnoittelu ja palvelut"
-    },
-    "paymentInfo": {
-      "heading": "Maksutavat",
-      "methodPlaceholder": "Valitse maksutapa...",
-      "details": {
-        "heading": "Lisätiedot"
-      },
-      "detail": {
-        "label": "Lisätiedot",
-        "fi": {
-          "label": "Lisätiedot (fi)"
+    "facilityStatuses": {
+        "IN_OPERATION": {
+            "label": "Toiminnassa"
         },
-        "sv": {
-          "label": "Lisätiedot (sv)"
+        "INACTIVE": {
+            "label": "Pois käytöstä"
         },
-        "en": {
-          "label": "Lisätiedot (en)"
+        "TEMPORARILY_CLOSED": {
+            "label": "Tilapäisesti pois käytöstä"
+        },
+        "EXCEPTIONAL_SITUATION": {
+            "label": "Poikkeustilanne"
         }
-      },
-      "url": {
-        "label": "Lisätietolinkki",
-        "fi": {
-          "label": "Lisätietolinkki (fi)"
-        },
-        "sv": {
-          "label": "Lisätietolinkki (sv)"
-        },
-        "en": {
-          "label": "Lisätietolinkki (en)"
-        }
-      }
     },
-    "ports": {
-      "create": "Sisään-/uloskäynti",
-      "edit": "Sisään-/uloskäynti",
-      "view": "Sisään-/uloskäynti",
-      "label": "Sisään-/uloskäynnit",
-      "location": {
-        "label": "Sisään-/uloskäynnin sijainti"
-      },
-      "entry": {
-        "label": "Sisäänajo"
-      },
-      "exit": {
-        "label": "Ulosajo"
-      },
-      "pedestrian": {
-        "label": "Jalankulku"
-      },
-      "bicycle": {
-        "label": "Polkupyörä"
-      },
-      "address": {
-        "label": "Osoite",
-        "streetAddress": {
-          "label": "Katuosoite",
-          "fi": {
-            "label": "Sisään-/uloskäynnin katu (fi)"
-          },
-          "sv": {
-            "label": "Sisään-/uloskäynnin katu (sv)"
-          },
-          "en": {
-            "label": "Sisään-/uloskäynnin katu (en)"
-          }
+    "pricingMethods": {
+        "PARK_AND_RIDE_247_FREE": {
+            "label": "24/7 ilmainen liityntäpysäköinti"
         },
-        "postalCode": {
-          "label": "Postinumero"
-        },
-        "city": {
-          "label": "Kaupunki",
-          "fi": {
-            "label": "Sisään-/uloskäynnin kaupunki (fi)"
-          },
-          "sv": {
-            "label": "Sisään-/uloskäynnin kaupunki (sv)"
-          },
-          "en": {
-            "label": "Sisään-/uloskäynnin kaupunki (en)"
-          }
+        "CUSTOM": {
+            "label": "Muu pysäköintihinnoittelu"
         }
-      },
-      "info": {
-        "label": "Lisätietoa",
-        "fi": {
-          "label": "Sisään-/uloskäynnin lisätiedot (fi)"
+    },
+    "roles": {
+        "ADMIN": {
+            "label": "Ylläpitäjä"
         },
-        "sv": {
-          "label": "Sisään-/uloskäynnin lisätiedot (sv)"
+        "OPERATOR": {
+            "label": "Operaattori"
         },
-        "en": {
-          "label": "Sisään-/uloskäynnin lisätiedot (en)"
+        "OPERATOR_API": {
+            "label": "API"
         }
-      }
     },
-    "capacity": {
-      "heading": "Kapasiteetti",
-      "type": "Ajoneuvotyyppi",
-      "built": "Rakennettu kapasiteetti",
-      "unavailable": "Tilapäisesti poissa käytöstä"
-    },
-    "builtCapacity": {
-      "label": "Rakennettu kapasiteetti",
-      "CAR": {"label": "Henkilöauto, rakennettu kapasiteetti"},
-      "BICYCLE": {"label": "Polkupyörä, rakennettu kapasiteetti"},
-      "BICYCLE_SECURE_SPACE": {"label": "Polkupyörä, lukittu tila, rakennettu kapasiteetti"},
-      "DISABLED": {"label": "Invapaikka, rakennettu kapasiteetti"},
-      "MOTORCYCLE": {"label": "Moottoripyörä, rakennettu kapasiteetti"},
-      "ELECTRIC_CAR": {"label": "Sähköauto, rakennettu kapasiteetti"}
-    },
-    "pricing": {
-      "noPricingRows": "Pysäköintipaikkaan ei ole lisätty pysäköintihinnoittelua",
-      "label": "Pysäköintihinnoittelu",
-      "capacityTypePlaceholder": "Valitse...",
-      "capacity": "Kapasiteetti",
-      "capacityType": {
-        "title": "Ajoneuvotyyppi",
-        "label": "Hinnoittelu / Ajoneuvotyyppi"
-      },
-      "usagePlaceholder": "Valitse...",
-      "usage": {
-        "title": "Käyttötapa",
-        "label": "Hinnoittelu / Käyttötapa"
-      },
-      "maxCapacity": {
-        "title": "Maks.",
-        "label": "Hinnoittelu / Maksimi"
-      },
-      "dayTypePlaceholder": "Valitse...",
-      "dayType": {
-        "title": "Päivätyyppi",
-        "label": "Hinnoittelu / Päivätyyppi"
-      },
-      "h24": "24h",
-      "time": {
-        "title": "Aukioloaika",
-        "label": "Hinnoittelu / Aukioloaika",
-        "from": {
-          "title": "Alku",
-          "label": "Hinnoittelu / Alku"
+    "operators": {
+        "title": "Operaattorit",
+        "help": {
+            "summary": "Tälle sivulle on koottu järjestelmään tallennetut operaattorit",
+            "bullet1": "Operaattorit vastaavat pysäköintipaikkojen hallinnoinnista",
+            "bullet2": "Operaattorit voivat muokata omia tietojaan",
+            "bullet3": "HSL voi lisätä ja muokata kaikkia operaattoreita"
         },
-        "until": {
-          "title": "Loppu",
-          "label": "Hinnoittelun / Loppu"
+        "label": "Operaattori",
+        "select": "Valitse operaattori...",
+        "action": {
+            "new": "Lisää uusi operaattori",
+            "edit": "Muokkaa operaattoria"
+        },
+        "name": {
+            "label": "Nimi",
+            "fi": {
+                "label": "Nimi (fi)"
+            },
+            "sv": {
+                "label": "Nimi (sv)"
+            },
+            "en": {
+                "label": "Nimi (en)"
+            }
         }
-      },
-      "free": "0€",
-      "price": {
-        "title": "Hinta",
-        "label": "Hinnoittelu / Hinta",
-        "fi": {
-          "title": "Hinta fi",
-          "label": "Hinnoittelu / Hinta fi"
-        },
-        "sv": {
-          "title": "Hinta sv",
-          "label": "Hinnoittelu / Hinta sv"
-        },
-        "en": {
-          "title": "Hinta en",
-          "label": "Hinnoittelu / Hinta en"
-        }
-      },
-      "action": {
-        "copy": "Kopioi",
-        "copyFirst": "Kopioi ensimmäinen",
-        "paste": "Liitä",
-        "remove": "Poista",
-        "addPricingRow": "+ Lisää rivi",
-        "additionalFeatures": "Lisätoiminnot"
-      }
-    },
-    "unavailableCapacities": {
-      "label": "Tilapäisesti pois käytöstä",
-      "disclaimer": "Pysäköintipaikkaan ei ole tallennettu pysäköintihinnoittelua",
-      "capacityType": {
-        "label": "Ajoneuvotyyppi"
-      },
-      "usage": {
-        "label": "Käyttötapa"
-      },
-      "capacity": {
-        "label": "Tilapäisesti pois käytöstä"
-      }
     },
     "contacts": {
-      "create": "Uusi yhteystieto",
-      "heading": "Yhteystiedot",
-      "emergency": {
-        "label": "Hätänumero"
-      },
-      "operator": {
-        "label": "Operaattorin yhteystieto"
-      },
-      "service": {
-        "label": "Palveluyhtiö"
-      }
-    }
-  },
-  "footer": {
-    "copyright": "Copyright HSL",
-    "contact": "Helsingin seudun liikenne, puh. 09 4766 4444, ",
-    "contactMail": "hsl@hsl.fi"
-  },
-  "header": {
-    "logodesc": "HSL Liityntäpysäköinti"
-  },
-  "about": {
-    "title": "Tietoa palvelusta",
-    "introduction": "HSL:n Liityntäpysäköintipalvelu tarjoaa tietoja pääkaupunkiseudun liityntäpystäköintipaikoista avoimena datana. <a href=\"/docs/\">Dokumentaatio sovelluskehittäjille</a>. Tämä hallintakäyttöliittymä tukee uusimpia selainversioita (IE 11+, Firefox 29+, Chrome 35+, Safari 7+).",
-    "disclaimer": "HSL:n avoin tietoaineisto on lisensoitu <a href=\"http://creativecommons.org/licenses/by/4.0/deed.fi\">Creative Commons Nimeä 4.0 Kansainvälinen</a> -lisenssillä. <a href=\"https://www.hsl.fi/kayttoehdot\">Lue käyttöehdot</a>."
-  },
-  "hubs": {
-    "title": "Pysäköintipaikat",
-    "help": {
-      "summary": "Tälle sivulle on koottu järjestelmään tallennetut pysäköintipaikat ja alueet",
-      "bullet1": "Pysäköintipaikka vastaa yksittäistä pysäköintikenttää tai -laitosta",
-      "bullet2": "Alue vastaa joukkoliikenteen solmukohtaa, kuten juna- tai linja-autoasemaa",
-      "bullet3": "Pysäköintipaikat on järjestetty alueittain",
-      "bullet4": "Yksi pysäköintipaikka voi kuulua useampaan alueeseen",
-      "bullet5": "Sisäänkirjautuneet operaattorikäyttäjät voivat lisätä ja muokata omia pysäköintipaikkoja",
-      "bullet6": "HSL voi lisätä ja muokata kaikkia pysäköintipaikkoja ja alueita"
-    },
-    "label": "Alue",
-    "list": {
-      "name": "Nimi"
-    },
-    "action": {
-      "new": "Lisää uusi alue"
-    },
-    "basic": {
-      "title": "Perustiedot"
-    },
-    "name": {
-      "placeholder": "Alue",
-      "label": "Nimi",
-      "fi": {
-        "label": "Nimi (fi)"
-      },
-      "sv": {
-        "label": "Nimi (sv)"
-      },
-      "en": {
-        "label": "Nimi (en)"
-      }
-    },
-    "location": {
-      "label": "Sijainti",
-      "help": "Lisää alueen sijainti tuplaklikkaamalla karttaa. Jos alueeseen kuuluvia pysäköintipaikkoja on jo luotu, niin voit valita ne klikkaamalla."
-    },
-    "address": {
-      "label": "Käyntiosoite",
-      "streetAddress": {
-        "label": "Katuosoite",
-        "fi": {
-          "label": "Katuosoite (fi)"
+        "title": "Yhteystiedot",
+        "help": {
+            "summary": "Tälle sivulle on koottu järjestelmään tallennetut yhteystiedot",
+            "bullet1": "Yhteystietoja käytetään pysäköintipaikoissa",
+            "bullet2": "Yhteystiedot ovat joko operaattorikohtaisia tai HSL:n hallinnoimia kaikille näkyviä yleisiä yhteystietoja",
+            "bullet3": "Sisäänkirjautuneet operaattorikäyttäjät voivat lisätä ja muokata omia yhteystietojaan",
+            "bullet4": "HSL voi lisätä ja muokata kaikkia yhteystietoja"
         },
-        "sv": {
-          "label": "Katuosoite (sv)"
+        "label": "Yhteystieto",
+        "select": "Valitse yhteystieto...",
+        "action": {
+            "new": "Lisää uusi yhteystieto",
+            "edit": "Muokkaa yhteystietoa"
         },
-        "en": {
-          "label": "Katuosoite (en)"
+        "name": {
+            "label": "Nimi",
+            "fi": {
+                "label": "Nimi (fi)"
+            },
+            "sv": {
+                "label": "Nimi (sv)"
+            },
+            "en": {
+                "label": "Nimi (en)"
+            }
+        },
+        "operator": {
+            "label": "Näkyvyys operaattoreille",
+            "placeholder": "Kaikki"
+        },
+        "phone": {
+            "label": "Puhelinnumero"
+        },
+        "email": {
+            "label": "Sähköposti"
+        },
+        "contactRequired": {
+            "label": "Täytä puhelinnumero tai sähköposti"
+        },
+        "address": {
+            "label": "Osoite"
+        },
+        "additionalInfo": {
+            "label": "Lisätiedot"
+        },
+        "openingHours": {
+            "label": "Asiakaspalvelun aukioloaika",
+            "fi": {
+                "label": "Asiakaspalvelun aukioloaika (fi)"
+            },
+            "sv": {
+                "label": "Asiakaspalvelun aukioloaika (sv)"
+            },
+            "en": {
+                "label": "Asiakaspalvelun aukioloaika (en)"
+            }
+        },
+        "info": {
+            "label": "Lisätiedot",
+            "fi": {
+                "label": "Lisätiedot (fi)"
+            },
+            "sv": {
+                "label": "Lisätiedot (sv)"
+            },
+            "en": {
+                "label": "Lisätiedot (en)"
+            }
+        },
+        "address": {
+            "label": "Osoite",
+            "streetAddress": {
+                "label": "Katuosoite",
+                "fi": {
+                    "label": "Katuosoite (fi)"
+                },
+                "sv": {
+                    "label": "Katuosoite (sv)"
+                },
+                "en": {
+                    "label": "Katuosoite (en)"
+                }
+            },
+            "postalCode": {
+                "label": "Postinumero"
+            },
+            "city": {
+                "label": "Kaupunki",
+                "fi": {
+                    "label": "Kaupunki (fi)"
+                },
+                "sv": {
+                    "label": "Kaupunki (sv)"
+                },
+                "en": {
+                    "label": "Kaupunki (en)"
+                }
+            }
         }
-      },
-      "postalCode": {
-        "label": "Postinumero"
-      },
-      "city": {
-        "label": "Kaupunki",
-        "fi": {
-          "label": "Kaupunki (fi)"
+    },
+    "facilities": {
+        "title": "Pysäköintipaikat",
+        "label": "Pysäköintipaikka",
+        "list": {
+            "name": "Nimi",
+            "types": "Ajoneuvotyypit",
+            "usages": "Käyttötapa"
         },
-        "sv": {
-          "label": "Kaupunki (sv)"
+        "basic_info": "Perustiedot",
+        "action": {
+            "new": "Lisää uusi pysäköintipaikka",
+            "addLocation": "Lisää sijainti",
+            "addPorts": "Lisää sisään- ja uloskäynnit"
         },
-        "en": {
-          "label": "Kaupunki (en)"
+        "hubs": {
+            "heading": "Kuuluu alueisiin"
+        },
+        "name": {
+            "title": "Nimitiedot",
+            "placeholder": "Pysäköintipaikka",
+            "label": "Nimi",
+            "fi": {
+                "label": "Nimi (fi)"
+            },
+            "sv": {
+                "label": "Nimi (sv)"
+            },
+            "en": {
+                "label": "Nimi (en)"
+            }
+        },
+        "status": {
+            "label": "Status",
+            "placeholder": "Valitse status..."
+        },
+        "statusDescription": {
+            "label": "Statuksen lisätiedot / poikkeustiedote",
+            "fi": {
+                "label": "Statuksen lisätiedot / poikkeustiedote (fi)"
+            },
+            "sv": {
+                "label": "Statuksen lisätiedot / poikkeustiedote (sv)"
+            },
+            "en": {
+                "label": "Statuksen lisätiedot / poikkeustiedote (en)"
+            }
+        },
+        "aliases": {
+            "label": "Aliakset",
+            "placeholder": "Lisää alias"
+        },
+        "location": {
+            "label": "Sijainti",
+            "help": "Valitse haluamasi toiminto valintapainikkeesta",
+            "facilityHelp": "Lisää uusi sijainti klikkaamalla alueen kulmapisteet kartalle",
+            "gateHelp": "Lisää tai muokkaa sisään- ja uloskäynnit tuplaklikkaamalla"
+        },
+        "services": {
+            "heading": "Palvelut"
+        },
+        "openingHours": {
+            "heading": "Aukioloajat",
+            "closed": "Kiinni",
+            "info": {
+                "label": "Lisätiedot",
+                "fi": {
+                    "label": "Aukioloajat / Lisätiedot (fi)"
+                },
+                "sv": {
+                    "label": "Aukioloajat / Lisätiedot (sv)"
+                },
+                "en": {
+                    "label": "Aukioloajat / Lisätiedot (en)"
+                }
+            },
+            "url": {
+                "label": "Lisätietolinkki",
+                "fi": {
+                    "label": "Aukioloajat / Lisätietolinkki (fi)"
+                },
+                "sv": {
+                    "label": "Aukioloajat / Lisätietolinkki (sv)"
+                },
+                "en": {
+                    "label": "Aukioloajat / Lisätietolinkki (en)"
+                }
+            },
+            "byDayType": {
+                "disclaimer": "Päivätyyppikohtaiset aukioloajat muodostetaan automaattisesti pysäköintihinnoittelusta"
+            }
+        },
+        "paymentAndServices": {
+            "heading": "Pysäköintihinnoittelu ja palvelut"
+        },
+        "paymentInfo": {
+            "heading": "Maksutavat",
+            "methodPlaceholder": "Valitse maksutapa...",
+            "details": {
+                "heading": "Lisätiedot"
+            },
+            "detail": {
+                "label": "Lisätiedot",
+                "fi": {
+                    "label": "Lisätiedot (fi)"
+                },
+                "sv": {
+                    "label": "Lisätiedot (sv)"
+                },
+                "en": {
+                    "label": "Lisätiedot (en)"
+                }
+            },
+            "url": {
+                "label": "Lisätietolinkki",
+                "fi": {
+                    "label": "Lisätietolinkki (fi)"
+                },
+                "sv": {
+                    "label": "Lisätietolinkki (sv)"
+                },
+                "en": {
+                    "label": "Lisätietolinkki (en)"
+                }
+            }
+        },
+        "ports": {
+            "create": "Sisään-/uloskäynti",
+            "edit": "Sisään-/uloskäynti",
+            "view": "Sisään-/uloskäynti",
+            "label": "Sisään-/uloskäynnit",
+            "location": {
+                "label": "Sisään-/uloskäynnin sijainti"
+            },
+            "entry": {
+                "label": "Sisäänajo"
+            },
+            "exit": {
+                "label": "Ulosajo"
+            },
+            "pedestrian": {
+                "label": "Jalankulku"
+            },
+            "bicycle": {
+                "label": "Polkupyörä"
+            },
+            "address": {
+                "label": "Osoite",
+                "streetAddress": {
+                    "label": "Katuosoite",
+                    "fi": {
+                        "label": "Sisään-/uloskäynnin katu (fi)"
+                    },
+                    "sv": {
+                        "label": "Sisään-/uloskäynnin katu (sv)"
+                    },
+                    "en": {
+                        "label": "Sisään-/uloskäynnin katu (en)"
+                    }
+                },
+                "postalCode": {
+                    "label": "Postinumero"
+                },
+                "city": {
+                    "label": "Kaupunki",
+                    "fi": {
+                        "label": "Sisään-/uloskäynnin kaupunki (fi)"
+                    },
+                    "sv": {
+                        "label": "Sisään-/uloskäynnin kaupunki (sv)"
+                    },
+                    "en": {
+                        "label": "Sisään-/uloskäynnin kaupunki (en)"
+                    }
+                }
+            },
+            "info": {
+                "label": "Lisätietoa",
+                "fi": {
+                    "label": "Sisään-/uloskäynnin lisätiedot (fi)"
+                },
+                "sv": {
+                    "label": "Sisään-/uloskäynnin lisätiedot (sv)"
+                },
+                "en": {
+                    "label": "Sisään-/uloskäynnin lisätiedot (en)"
+                }
+            }
+        },
+        "capacity": {
+            "heading": "Kapasiteetti",
+            "type": "Ajoneuvotyyppi",
+            "built": "Rakennettu kapasiteetti",
+            "unavailable": "Tilapäisesti poissa käytöstä"
+        },
+        "builtCapacity": {
+            "label": "Rakennettu kapasiteetti",
+            "CAR": {"label": "Henkilöauto, rakennettu kapasiteetti"},
+            "BICYCLE": {"label": "Polkupyörä, rakennettu kapasiteetti"},
+            "BICYCLE_SECURE_SPACE": {"label": "Polkupyörä, lukittu tila, rakennettu kapasiteetti"},
+            "DISABLED": {"label": "Invapaikka, rakennettu kapasiteetti"},
+            "MOTORCYCLE": {"label": "Moottoripyörä, rakennettu kapasiteetti"},
+            "ELECTRIC_CAR": {"label": "Sähköauto, rakennettu kapasiteetti"}
+        },
+        "pricing": {
+            "noPricingRows": "Pysäköintipaikkaan ei ole lisätty pysäköintihinnoittelua",
+            "label": "Pysäköintihinnoittelu",
+            "capacityTypePlaceholder": "Valitse...",
+            "capacity": "Kapasiteetti",
+            "capacityType": {
+                "title": "Ajoneuvotyyppi",
+                "label": "Hinnoittelu / Ajoneuvotyyppi"
+            },
+            "usagePlaceholder": "Valitse...",
+            "usage": {
+                "title": "Käyttötapa",
+                "label": "Hinnoittelu / Käyttötapa"
+            },
+            "maxCapacity": {
+                "title": "Maks.",
+                "label": "Hinnoittelu / Maksimi"
+            },
+            "dayTypePlaceholder": "Valitse...",
+            "dayType": {
+                "title": "Päivätyyppi",
+                "label": "Hinnoittelu / Päivätyyppi"
+            },
+            "h24": "24h",
+            "time": {
+                "title": "Aukioloaika",
+                "label": "Hinnoittelu / Aukioloaika",
+                "from": {
+                    "title": "Alku",
+                    "label": "Hinnoittelu / Alku"
+                },
+                "until": {
+                    "title": "Loppu",
+                    "label": "Hinnoittelun / Loppu"
+                }
+            },
+            "free": "0€",
+            "price": {
+                "title": "Hinta",
+                "label": "Hinnoittelu / Hinta",
+                "fi": {
+                    "title": "Hinta fi",
+                    "label": "Hinnoittelu / Hinta fi"
+                },
+                "sv": {
+                    "title": "Hinta sv",
+                    "label": "Hinnoittelu / Hinta sv"
+                },
+                "en": {
+                    "title": "Hinta en",
+                    "label": "Hinnoittelu / Hinta en"
+                }
+            },
+            "action": {
+                "copy": "Kopioi",
+                "copyFirst": "Kopioi ensimmäinen",
+                "paste": "Liitä",
+                "remove": "Poista",
+                "addPricingRow": "+ Lisää rivi",
+                "additionalFeatures": "Lisätoiminnot"
+            }
+        },
+        "unavailableCapacities": {
+            "label": "Tilapäisesti pois käytöstä",
+            "disclaimer": "Pysäköintipaikkaan ei ole tallennettu pysäköintihinnoittelua",
+            "capacityType": {
+                "label": "Ajoneuvotyyppi"
+            },
+            "usage": {
+                "label": "Käyttötapa"
+            },
+            "capacity": {
+                "label": "Tilapäisesti pois käytöstä"
+            }
+        },
+        "contacts": {
+            "create": "Uusi yhteystieto",
+            "heading": "Yhteystiedot",
+            "emergency": {
+                "label": "Hätänumero"
+            },
+            "operator": {
+                "label": "Operaattorin yhteystieto"
+            },
+            "service": {
+                "label": "Palveluyhtiö"
+            }
         }
-      }
     },
-    "associatedFacilities": "Alueen pysäköintipaikat",
-    "noAssociatedFacilities": "Alueeseen ei ole lisätty pysäköintipaikkoja",
-    "facilitiesTotal": "Alueen rakennettu kapasiteetti"
-  },
-  "users": {
-    "title": "Käyttäjät",
-    "help": {
-      "summary": "Tälle sivulle on koottu järjestelmään tallennetut käyttäjät",
-      "bullet1": "Operaattorit voivat lisätä ja hallinnoida omia käyttäjiään",
-      "bullet2": "HSL voi lisätä ja hallinnoida kaikkia käyttäjiä",
-      "bullet3": "Poista-toiminto poistaa valitun käyttäjän pysyvästi järjestelmästä",
-      "bullet4": "Päivitä token -toiminto vaihtaa API-käyttäjän tokenin uudeksi. Uusi token tulee lisätä heti Liipi-järjestelmää kutsuvaan viestiin tai viestit eivät tule perille."
+    "footer": {
+        "copyright": "Copyright HSL",
+        "contact": "Helsingin seudun liikenne, puh. 09 4766 4444, ",
+        "contactMail": "hsl@hsl.fi"
     },
-    "username": {
-      "label": "Käyttäjätunnus"
+    "header": {
+        "logodesc": "HSL Liityntäpysäköinti"
     },
-    "password": {
-      "label": "Salasana"
+    "about": {
+        "title": "Tietoa palvelusta",
+        "introduction": "HSL:n Liityntäpysäköintipalvelu tarjoaa tietoja pääkaupunkiseudun liityntäpystäköintipaikoista avoimena datana.",
+        "termsOfService": "<a href=\"https://www.hsl.fi/kayttoehdot\">Palvelun käyttöehdot</a>",
+        "documentation": "<a href=\"/docs/\">Dokumentaatio sovelluskehittäjille (API-kuvaus)</a>. Palvelulle on myös oma <a href=\"https://github.com/HSLdevcom/parkandrideAPI\">GitHub repository</a>",
+        "browsers": "Tämä hallintakäyttöliittymä tukee uusimpia selainversioita (IE 11+, Firefox 29+, Chrome 35+, Safari 7+)",
+        "disclaimer": "HSL:n avoin tietoaineisto on lisensoitu <a href=\"http://creativecommons.org/licenses/by/4.0/deed.fi\">Creative Commons Nimeä 4.0 Kansainvälinen</a> -lisenssillä"
     },
-    "newPassword": {
-      "title": "Päivitä salasana",
-      "label": "Uusi salasana",
-      "label2": "Vahvista uusi salasana"
+    "hubs": {
+        "title": "Pysäköintipaikat",
+        "help": {
+            "summary": "Tälle sivulle on koottu järjestelmään tallennetut pysäköintipaikat ja alueet",
+            "bullet1": "Pysäköintipaikka vastaa yksittäistä pysäköintikenttää tai -laitosta",
+            "bullet2": "Alue vastaa joukkoliikenteen solmukohtaa, kuten juna- tai linja-autoasemaa",
+            "bullet3": "Pysäköintipaikat on järjestetty alueittain",
+            "bullet4": "Yksi pysäköintipaikka voi kuulua useampaan alueeseen",
+            "bullet5": "Sisäänkirjautuneet operaattorikäyttäjät voivat lisätä ja muokata omia pysäköintipaikkoja",
+            "bullet6": "HSL voi lisätä ja muokata kaikkia pysäköintipaikkoja ja alueita"
+        },
+        "label": "Alue",
+        "list": {
+            "name": "Nimi"
+        },
+        "action": {
+            "new": "Lisää uusi alue"
+        },
+        "basic": {
+            "title": "Perustiedot"
+        },
+        "name": {
+            "placeholder": "Alue",
+            "label": "Nimi",
+            "fi": {
+                "label": "Nimi (fi)"
+            },
+            "sv": {
+                "label": "Nimi (sv)"
+            },
+            "en": {
+                "label": "Nimi (en)"
+            }
+        },
+        "location": {
+            "label": "Sijainti",
+            "help": "Lisää alueen sijainti tuplaklikkaamalla karttaa. Jos alueeseen kuuluvia pysäköintipaikkoja on jo luotu, niin voit valita ne klikkaamalla."
+        },
+        "address": {
+            "label": "Käyntiosoite",
+            "streetAddress": {
+                "label": "Katuosoite",
+                "fi": {
+                    "label": "Katuosoite (fi)"
+                },
+                "sv": {
+                    "label": "Katuosoite (sv)"
+                },
+                "en": {
+                    "label": "Katuosoite (en)"
+                }
+            },
+            "postalCode": {
+                "label": "Postinumero"
+            },
+            "city": {
+                "label": "Kaupunki",
+                "fi": {
+                    "label": "Kaupunki (fi)"
+                },
+                "sv": {
+                    "label": "Kaupunki (sv)"
+                },
+                "en": {
+                    "label": "Kaupunki (en)"
+                }
+            }
+        },
+        "associatedFacilities": "Alueen pysäköintipaikat",
+        "noAssociatedFacilities": "Alueeseen ei ole lisätty pysäköintipaikkoja",
+        "facilitiesTotal": "Alueen rakennettu kapasiteetti"
     },
-    "operator": {
-      "label": "Operaattori"
+    "users": {
+        "title": "Käyttäjät",
+        "help": {
+            "summary": "Tälle sivulle on koottu järjestelmään tallennetut käyttäjät",
+            "bullet1": "Operaattorit voivat lisätä ja hallinnoida omia käyttäjiään",
+            "bullet2": "HSL voi lisätä ja hallinnoida kaikkia käyttäjiä",
+            "bullet3": "Poista-toiminto poistaa valitun käyttäjän pysyvästi järjestelmästä",
+            "bullet4": "Päivitä token -toiminto vaihtaa API-käyttäjän tokenin uudeksi. Uusi token tulee lisätä heti Liipi-järjestelmää kutsuvaan viestiin tai viestit eivät tule perille."
+        },
+        "username": {
+            "label": "Käyttäjätunnus"
+        },
+        "password": {
+            "label": "Salasana"
+        },
+        "newPassword": {
+            "title": "Päivitä salasana",
+            "label": "Uusi salasana",
+            "label2": "Vahvista uusi salasana"
+        },
+        "expiredPassword": {
+            "title": "Päivitä salasana",
+            "text": "Salasanasi on vanhentunut ja se tulee päivittää välittömästi käytön jatkamiseksi",
+            "label": "Uusi salasana",
+            "label2": "Vahvista uusi salasana"
+        },
+        "operator": {
+            "label": "Operaattori"
+        },
+        "role": {
+            "label": "Rooli",
+            "placeholder": "Valitse rooli..."
+        },
+        "listActions": {
+            "label": "Toiminnot",
+            "updateToken": {
+                "label": "Päivitä token",
+                "successMessage": "Token on päivitetty ja vanha token on poistettu käytöstä. Päivitä uusi token järjestelmään välittömästi. Uusi token on "
+            },
+            "updatePass": {
+                "label": "Päivitä salasana"
+            },
+            "remove": {
+                "label": "Poista",
+                "confirmText": "Haluatko varmasti poistaa käyttäjän \"{{username}}\"?",
+                "confirmButtonText": "Kyllä, poista käyttäjä"
+            }
+        },
+        "action": {
+            "new": "Lisää uusi käyttäjä",
+            "edit": "Muokkaa käyttäjää"
+        }
     },
-    "role": {
-      "label": "Rooli",
-      "placeholder": "Valitse rooli..."
+    "reports": {
+        "title": "Raportit",
+        "help": {
+            "summary": "Tältä sivulta kirjautunut käyttäjä voi generoida raportteja järjestelmän tiedoista",
+            "bullet1": "Raportteja voi parametrien avulla rajata pienemmiksi",
+            "bullet2": "Valittavissa on 3 eri raporttityyppiä"
+        },
+        "action": {
+            "do": "Lataa raportti",
+            "noticeLabel": "Tässä menee hetki!"
+        },
+        "label": {
+            "range": "Päivä(t)",
+            "interval": "Raportoinnin tarkuus",
+            "operator": "Operaattori",
+            "usage": "Käyttötapa",
+            "capacity":"Ajoneuvotyyppi",
+            "region": "Kunnat",
+            "hub": "Alueet",
+            "facility": "Pysäköintipaikat"
+        },
+        "placeholder": {
+            "operator": "Kaikki operaattorit valittuna",
+            "usage": "Kaikki käyttötavat valittuna",
+            "capacity": "Henkilöauto",
+            "region": "Kaikki kunnat valittuna",
+            "hub": "Kaikki alueet valittuna",
+            "facility": "Kaikki pysäköintipaikat valittuna"
+        },
+        "FacilityUsage": {
+            "name": "Täyttöasteraportti",
+            "info": "Raportilla voi tarkastella useamman tai yksittäisen pysäköintipaikan vapaita paikkoja eri ajanhetkinä."
+        },
+        "MaxUtilization": {
+            "name": "Keskimääräinen maksimitäyttöaste",
+            "info": "Raportti kertoo maksimitäyttöasteen prosentteina arki-la-su-tarkkuudella valitulta aikaväliltä."
+        },
+        "HubsAndFacilities": {
+            "name": "Alueiden ja pysäköintilaitosten perustiedot",
+            "info": "Raporttiin haetaan kaikkien järjestelmään tallennetut alueiden ja pysäköintipaikkojen perustiedot."
+        }
     },
-    "listActions": {
-      "label": "Toiminnot",
-      "updateToken": {
-        "label": "Päivitä token",
-        "successMessage": "Token päivitetty. Uusi token on "
-      },
-      "updatePass": {
-        "label": "Päivitä salasana"
-      },
-      "remove": {
-        "label": "Poista",
-        "confirmText": "Haluatko varmasti poistaa käyttäjän \"{{username}}\"?",
-        "confirmButtonText": "Kyllä, poista käyttäjä"
-      }
+    "login": {
+        "title": "Kirjaudu sisään",
+        "error": "Virheellinen käyttäjätunnus tai salasana. Yritä uudestaan.",
+        "username": {
+            "label": "Käyttäjätunnus"
+        },
+        "password": {
+            "label": "Salasana"
+        },
+        "passwordReminder": {
+            "title": "Salasanasi on vanhentumassa",
+            "text1": "Salasanasi vanhenee",
+            "text2": "päivään kuluttua. Salasanan voi päivittää Käyttäjät-välilehdellä oman käyttäjätunnuksen kohdalta"
+        }
     },
-    "action": {
-      "new": "Lisää uusi käyttäjä",
-      "edit": "Muokkaa käyttäjää"
+    "common": {
+        "action": {
+            "back": "Takaisin listaukseen",
+            "cancel": "Peruuta",
+            "edit": "Muokkaa",
+            "logout": "Kirjaudu ulos",
+            "ok": "Valmis",
+            "remove": "Poista",
+            "save": "Tallenna muutokset",
+            "removeSymbol": "x",
+            "addSymbol": "+"
+        },
+        "lang": {
+            "fi": "fi",
+            "sv": "sv",
+            "en": "en"
+        }
+    },
+    "error": {
+        "400": {
+            "title": "Väärän muotoinen syöte. "
+        },
+        "403": {
+            "title": "Toiminto ei ole sallittu. "
+        },
+        "404": {
+            "title": "Sivua ei löytynyt. Tarkista osoite. "
+        },
+        "500": {
+            "title": "Oops, nyt tuli virhe! "
+        },
+        "buttonText": "Voi harmi!"
+    },
+    "violation": {
+        "Min": "pitää olla vähintään {{value}}",
+        "NotBlank": "ei saa olla tyhjä",
+        "NotNull": "ei saa olla tyhjä",
+        "Length": "saa olla korkeintaan {{max}} merkkiä pitkä",
+        "ElementLength": "saa olla korkeintaan {{max}} merkkiä pitkä",
+        "Pattern": "tarkista muoto",
+        "URL": "tulee olla validi http- tai https-alkuinen URL",
+        "TypeMismatch": "tarkista muoto",
+        "Unique": "on jo käytössä",
+        "PhoneOrEmailRequired": "anna vähintään puhelinnumero tai sähköposti",
+        "Email": "tarkista muoto",
+        "OperatorMismatch": "yhteystiedon operaattori on eri kuin fasiliteetilla, yhteystiedon tulee olla yleinen tai saman operaattorin omistama",
+        "BasicRequirements": "tarkista pakolliset tiedot ja syötteiden muoto",
+        "ValidTimeDuration": "aikavälin alku tulee olla ennen loppua",
+        "PricingOverlap": "aikavälit eivät saa olla päällekkäisiä",
+        "BuiltCapacityNotFound": "rakennettua kapasiteettia ei löydy",
+        "PricingCapacityOverflow": "ei voi olla enemmän kuin rakennettu kapasiteetti",
+        "UnavailableCapacityOverflow": "ei voi olla enemmän kuin pysäköintihinnoittelun maksimi",
+        "OperatorRequired": "anna operaattori",
+        "PasswordConfirmationMismatch": "tarkista, että salasanat ovat identtiset",
+        "BadPassword": "salasanan tulee sisältää 8-15 merkkiä, vähintään yksi numero (0-9), yksi pieni aakkonen (a-ö) ja yksi suuri aakkonen (A-Ö)",
+        "PricingNotFound": "pysäköintihinnoittelua ei löydy",
+        "Coordinates": "Koordinaatit ovat ulkona sallituista rajoista: 19° <= x/pituuspiiri <= 32°, 59.5° <= y/leveyspiiri <= 70.5°"
     }
-  },
-  "login": {
-    "title": "Kirjaudu sisään",
-    "error": "Virheellinen käyttäjätunnus tai salasana. Yritä uudestaan.",
-    "username": {
-      "label": "Käyttäjätunnus"
-    },
-    "password": {
-      "label": "Salasana"
-    }
-  },
-  "common": {
-    "action": {
-      "back": "Takaisin listaukseen",
-      "cancel": "Peruuta",
-      "edit": "Muokkaa",
-      "logout": "Kirjaudu ulos",
-      "ok": "Valmis",
-      "remove": "Poista",
-      "save": "Tallenna muutokset",
-      "removeSymbol": "x",
-      "addSymbol": "+"
-    },
-    "lang": {
-      "fi": "fi",
-      "sv": "sv",
-      "en": "en"
-    }
-  },
-  "error": {
-    "400": {
-      "title": "Väärän muotoinen syöte. "
-    },
-    "403": {
-      "title": "Toiminto ei ole sallittu. "
-    },
-    "404": {
-      "title": "Sivua ei löytynyt. Tarkista osoite. "
-    },
-    "500": {
-      "title": "Oops, nyt tuli virhe! "
-    },
-    "buttonText": "Voi harmi!"
-  },
-  "violation": {
-    "Min": "pitää olla vähintään {{value}}",
-    "NotBlank": "ei saa olla tyhjä",
-    "NotNull": "ei saa olla tyhjä",
-    "Length": "saa olla korkeintaan {{max}} merkkiä pitkä",
-    "ElementLength": "saa olla korkeintaan {{max}} merkkiä pitkä",
-    "Pattern": "tarkista muoto",
-    "URL": "tulee olla validi http- tai https-alkuinen URL",
-    "TypeMismatch": "tarkista muoto",
-    "Unique": "on jo käytössä",
-    "PhoneOrEmailRequired": "anna vähintään puhelinnumero tai sähköposti",
-    "Email": "tarkista muoto",
-    "OperatorMismatch": "yhteystiedon operaattori on eri kuin fasiliteetilla, yhteystiedon tulee olla yleinen tai saman operaattorin omistama",
-    "BasicRequirements": "tarkista pakolliset tiedot ja syötteiden muoto",
-    "ValidTimeDuration": "aikavälin alku tulee olla ennen loppua",
-    "PricingOverlap": "aikavälit eivät saa olla päällekkäisiä",
-    "BuiltCapacityNotFound": "rakennettua kapasiteettia ei löydy",
-    "PricingCapacityOverflow": "ei voi olla enemmän kuin rakennettu kapasiteetti",
-    "UnavailableCapacityOverflow": "ei voi olla enemmän kuin pysäköintihinnoittelun maksimi",
-    "OperatorRequired": "anna operaattori",
-    "PasswordConfirmationMismatch": "tarkista, että salasanat ovat identtiset",
-    "BadPassword": "salasanan tulee sisältää 8-15 merkkiä, vähintään yksi numero (0-9), yksi pieni aakkonen (a-ö) ja yksi suuri aakkonen (A-Ö)",
-    "PricingNotFound": "pysäköintihinnoittelua ei löydy",
-    "Coordinates": "Koordinaatit ovat ulkona sallituista rajoista: 19° <= x/pituuspiiri <= 32°, 59.5° <= y/leveyspiiri <= 70.5°"
-  }
 }

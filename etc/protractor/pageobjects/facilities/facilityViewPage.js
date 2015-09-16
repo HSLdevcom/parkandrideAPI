@@ -18,9 +18,9 @@ module.exports = function(spec) {
 
     spec.paymentInfo = $('.wdPaymentInfo');
     spec.paymentMethods = $('.wdPaymentInfo .wdPaymentMethodNames');
-    spec.paymentInfoDetails = $('.wdPaymentInfo .wdPaymentInfoDetails');
-    spec.paymentInfoDetail = $('.wdPaymentInfo .wdPaymentInfoDetail');
-    spec.paymentInfoUrl = $('.wdPaymentInfo .wdPaymentInfoUrl');
+    spec.paymentInfoDetails = $('.wdPaymentInfoDetails');
+    spec.paymentInfoDetail = $('.wdPaymentInfoDetails .wdPaymentInfoDetail');
+    spec.paymentInfoUrl = $('.wdPaymentInfoDetails .wdPaymentInfoUrl');
 
     spec.openingHourColumns = $$('#opening-hours tr td');
 

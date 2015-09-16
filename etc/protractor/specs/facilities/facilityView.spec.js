@@ -56,7 +56,7 @@ describe('facility view', function () {
             expect(viewPage.getAliases()).toEqual(f.aliases);
 
             arrayAssert.assertInOrder(viewPage.capacitiesTable.getTypes(), common.capacityTypeOrder);
-            expect(viewPage.capacitiesTable.getCapacities(_.keys(f.capacities))).toEqual(f.capacities);
+            expect(viewPage.capacitiesTable.getCapacities(_.keys(f.builtCapacity))).toEqual(f.builtCapacity);
 
             expect(viewPage.isServicesDisplayed()).toBe(true);
             expect(viewPage.getServices()).toEqual("Valaistus, Katettu");

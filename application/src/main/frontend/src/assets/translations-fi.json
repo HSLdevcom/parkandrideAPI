@@ -315,11 +315,11 @@
                 "disclaimer": "Päivätyyppikohtaiset aukioloajat muodostetaan automaattisesti pysäköintihinnoittelusta"
             }
         },
+        "paymentAndServices": {
+            "heading": "Pysäköintihinnoittelu ja palvelut"
+        },
         "paymentInfo": {
             "heading": "Maksutavat",
-            "paymentMethods": {
-                "label": "Maksutavat"
-            },
             "methodPlaceholder": "Valitse maksutapa...",
             "details": {
                 "heading": "Lisätiedot"

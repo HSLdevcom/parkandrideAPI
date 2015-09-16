@@ -104,7 +104,6 @@
 	<multilingual-edit name="openingHoursUrl" ng-model="editCtrl.facility.openingHours.url"></multilingual-edit>
 </div>
 
-
 <h3>{{"facilities.capacity.heading" | translate}}</h3>
 <h4>{{"facilities.capacity.built" | translate}}</h4>
 
@@ -132,20 +131,6 @@
 		</div>
 	</div>
 </div>
-
-<div class="row largeMargin">
-	<h4 translate="facilities.pricing.label"></h4>
-</div>
-
-<div class="row">
-	<div ng-repeat="pricingMethod in editCtrl.pricingMethods">
-		<label class="radiobutton-label">
-			<input type="radio" ng-model="editCtrl.facility.pricingMethod" ng-value="pricingMethod.id" id="pricingMethod.{{pricingMethod.id}}"/>
-			{{pricingMethod.label}}
-		</label>
-	</div>
-</div>
-<pricing-list pricings="editCtrl.facility.pricing" ng-show="editCtrl.facility.pricingMethod == 'CUSTOM'"></pricing-list>
 
 <div class="row smallMargin">
 	<h4 translate="facilities.unavailableCapacities.capacity.label"></h4>
@@ -184,6 +169,50 @@
 	</div>
 </div>
 
+<h3>{{"facilities.paymentAndServices.heading" | translate}}</h3>
+<div class="row">
+	<div ng-repeat="pricingMethod in editCtrl.pricingMethods">
+		<label class="radiobutton-label">
+			<input type="radio" ng-model="editCtrl.facility.pricingMethod" ng-value="pricingMethod.id" id="pricingMethod.{{pricingMethod.id}}"/>
+			{{pricingMethod.label}}
+		</label>
+	</div>
+</div>
+<pricing-list pricings="editCtrl.facility.pricing" ng-show="editCtrl.facility.pricingMethod == 'CUSTOM'"></pricing-list>
+
+<h4>{{"facilities.paymentInfo.heading" | translate }}</h4>
+<div class="row">
+	<div class="form-group">
+		<ui-select multiple ng-model="editCtrl.facility.paymentInfo.paymentMethods" theme="bootstrap" ng-disabled="disabled" reset-search-input="true">
+			<ui-select-match placeholder="{{'facilities.paymentInfo.methodPlaceholder' | translate }}">{{$item.label}}</ui-select-match>
+			<ui-select-choices repeat="paymentMethod.id as paymentMethod in editCtrl.paymentMethods | filter: {label: $select.search}">
+				<div ng-bind-html="paymentMethod.label | highlight: $select.search"></div>
+			</ui-select-choices>
+		</ui-select>
+	</div>
+</div>
+
+<h4>{{"facilities.services.heading" | translate}}</h4>
+<div class="row">
+	<div class="form-group">
+		<ui-select multiple ng-model="editCtrl.facility.services" theme="bootstrap" ng-disabled="disabled" reset-search-input="true">
+			<ui-select-match placeholder="Valitse palvelut...">{{$item.label}}</ui-select-match>
+			<ui-select-choices repeat="service.id as service in editCtrl.services | filter: {label: $select.search}">
+				<div ng-bind-html="service.label | highlight: $select.search"></div>
+			</ui-select-choices>
+		</ui-select>
+	</div>
+</div>
+
+<h4>{{ "facilities.paymentInfo.detail.label" | translate }}</h4>
+<div class="row">
+		<long-multilingual-edit name="paymentInfoDetail" ng-model="editCtrl.facility.paymentInfo.detail"></long-multilingual-edit>
+	</div>
+<div class="row"><label>{{ "facilities.paymentInfo.url.label" | translate }}</label></div>
+<div class="row">
+		<multilingual-edit name="paymentInfoUrl" ng-model="editCtrl.facility.paymentInfo.url"></multilingual-edit>
+</div>
+
 <h3>{{"facilities.contacts.heading" | translate}}</h3>
 <div class="row">
 	<div class="column3 first-column">
@@ -204,39 +233,6 @@
 	</div>
 </div>
 
-<h3>{{"facilities.paymentInfo.heading" | translate }}</h3>
-<div class="row">
-	<div class="form-group">
-		<label>{{ "facilities.paymentInfo.paymentMethods.label" | translate }}</label>
-		<ui-select multiple ng-model="editCtrl.facility.paymentInfo.paymentMethods" theme="bootstrap" ng-disabled="disabled" reset-search-input="true">
-			<ui-select-match placeholder="{{'facilities.paymentInfo.methodPlaceholder' | translate }}">{{$item.label}}</ui-select-match>
-			<ui-select-choices repeat="paymentMethod.id as paymentMethod in editCtrl.paymentMethods | filter: {label: $select.search}">
-				<div ng-bind-html="paymentMethod.label | highlight: $select.search"></div>
-			</ui-select-choices>
-		</ui-select>
-	</div>
-</div>
-<div class="row"><label>{{ "facilities.paymentInfo.detail.label" | translate }}</label></div>
-<div class="row">
-	<long-multilingual-edit name="paymentInfoDetail" ng-model="editCtrl.facility.paymentInfo.detail"></long-multilingual-edit>
-</div>
-<div class="row"><label>{{ "facilities.paymentInfo.url.label" | translate }}</label></div>
-<div class="row">
-	<multilingual-edit name="paymentInfoUrl" ng-model="editCtrl.facility.paymentInfo.url"></multilingual-edit>
-</div>
-
-
-<h3>{{"facilities.services.heading" | translate}}</h3>
-<div class="row">
-	<div>
-		<ui-select multiple ng-model="editCtrl.facility.services" theme="bootstrap" ng-disabled="disabled" reset-search-input="true">
-			<ui-select-match placeholder="Valitse palvelut...">{{$item.label}}</ui-select-match>
-			<ui-select-choices repeat="service.id as service in editCtrl.services | filter: {label: $select.search}">
-				<div ng-bind-html="service.label | highlight: $select.search"></div>
-			</ui-select-choices>
-		</ui-select>
-	</div>
-</div>
 </div>
 </content>
 </main-layout>

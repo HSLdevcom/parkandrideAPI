@@ -16,10 +16,6 @@ cache:
     - etc/protractor/node_modules
     - application/src/main/frontend/node_modules/
 before_install:
-#  - sudo apt-mark hold firefox-locale-fi
-#  - sudo apt-get install language-pack-fi
-#  - sudo /etc/init.d/postgresql stop
-#  - sudo /etc/init.d/postgresql start 9.3
   - sh -e /etc/init.d/xvfb start
 install:
   - bash etc/scripts/db/psql-init-db.sh -U postgres

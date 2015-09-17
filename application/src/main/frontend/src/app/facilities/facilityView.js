@@ -44,39 +44,11 @@
                         hubs: function($stateParams, HubResource) {
                             return HubResource.listHubs({facilityIds: [$stateParams.id]});
                         },
-                        predictions: function($q, $stateParams, FacilityResource, facility) {
-
+                        predictions: function($q, $stateParams, FacilityResource) {
                             var FORECAST_DISTANCES = [0,5,10,15,30,60];
-
-                            function getPredictionForMinutesAfterNow(after) {
-                                function addForecastDistance(listOfPredictions) {
-                                    return listOfPredictions.map(function(prediction) {
-                                        return _.merge(prediction, {forecastDistanceInMinutes: after});
-                                    });
-                                }
-                                return FacilityResource.getPredictions($stateParams.id, after)
-                                    .then(addForecastDistance);
-                            }
-                            // Grouping
-                            function capacityTypeAndUsage(pred) { return pred.capacityType + pred.usage; }
-
-                            return $q.all(FORECAST_DISTANCES.map(getPredictionForMinutesAfterNow))
-                                .then(function(predictions) {
-                                    return _.chain(predictions)
-                                        .flatten()
-                                        .groupBy(capacityTypeAndUsage)
-                                        .map(function(row) {
-                                            var reduce = row.reduce(function (row, newPrediction) {
-                                                row.capacityType = newPrediction.capacityType;
-                                                row.usage = newPrediction.usage;
-                                                row.capacity = facility.builtCapacity[row.capacityType];
-                                                row[newPrediction.forecastDistanceInMinutes] = newPrediction.spacesAvailable;
-                                                return row;
-                                            }, {});
-                                            return reduce;
-                                        })
-                                        .value();
-                                });
+                            return $q.all(FORECAST_DISTANCES.map(function(after) {
+                                return FacilityResource.getPredictions($stateParams.id, after);
+                            }));
                         }
                     }
                 }

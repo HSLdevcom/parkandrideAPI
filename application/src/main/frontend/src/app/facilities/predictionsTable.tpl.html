@@ -21,12 +21,12 @@
 			</td>
 			<td ng-bind="'usages.' + row.usage + '.label' | translate"></td>
 			<td ng-bind="row.capacity"></td>
-			<td ng-bind="row[0]"></td>
-			<td ng-bind="row[5]"></td>
-			<td ng-bind="row[10]"></td>
-			<td ng-bind="row[15]"></td>
-			<td ng-bind="row[30]"></td>
-			<td ng-bind="row[60]"></td>
+			<td ng-bind="row.predictions[0]"></td>
+			<td ng-bind="row.predictions[5]"></td>
+			<td ng-bind="row.predictions[10]"></td>
+			<td ng-bind="row.predictions[15]"></td>
+			<td ng-bind="row.predictions[30]"></td>
+			<td ng-bind="row.predictions[60]"></td>
 		</tr>
 		</tbody>
 	</table>

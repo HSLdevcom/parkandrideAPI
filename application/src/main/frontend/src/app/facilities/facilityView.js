@@ -97,6 +97,7 @@
 
         self.loadedDate = Date.now();
 
+
         self.isFree = function(pricing) {
             return PricingService.isFree(pricing);
         };
@@ -108,6 +109,9 @@
         };
         self.hasOpeningHoursInfo= function() {
             return !_.isEmpty(self.facility.openingHours.info) || !_.isEmpty(self.facility.openingHours.url);
+        };
+        self.hasPredictions = function() {
+            return self.predictions.length > 0;
         };
         self.hasCapacities = function() {
           return !_.isEmpty(facility.builtCapacity);

@@ -99,12 +99,10 @@
 <div id="capacities" ng-show="viewCtrl.hasCapacities()">
 	<h3 class="h3-view" translate="facilities.capacity.heading"></h3>
 
-	<div> <!--TODO ng-show="when usage data available"-->
+	<div ng-show="viewCtrl.hasPredictions()">
 		<h4 translate="facilities.capacity.builtAndAvailable"></h4>
-		<!--TODO timestamp to notification text-->
 		<div class="row">
-			<p translate="facilities.capacity.availableAndForecast"
-					translate-values="viewCtrl"></p>
+			<p translate="facilities.capacity.availableAndForecast" translate-values="viewCtrl"></p>
 		</div>
 		<div class="row">
 			<div class="column first-column">

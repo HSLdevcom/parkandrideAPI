@@ -1,0 +1,33 @@
+<div class="panel panel-default row">
+	<table id="utilization" class="table table-bordered table-striped table-condensed">
+		<thead>
+		<tr>
+			<th id="facilities-view-pricing-capacityType" translate="facilities.pricing.capacityType.title"></th>
+			<th id="facilities-view-pricing-usage" translate="facilities.pricing.usage.title"></th>
+			<th id="facilities-utilization-capacity-build" translate="facilities.capacity.built"></th>
+			<th translate="facilities.capacity.availableNow"></th>
+			<th>5 min</th>
+			<th>10 min</th>
+			<th>15 min</th>
+			<th>30 min</th>
+			<th>60 min</th>
+		</tr>
+		</thead>
+		<tbody>
+		<tr ng-repeat="row in predictions">
+			<td>
+				<span ng-bind="'capacityTypes.' + row.capacityType + '.label' | translate"
+					  ng-hide="row.capacityType === predictions[$index - 1].capacityType" ></span>
+			</td>
+			<td ng-bind="'usages.' + row.usage + '.label' | translate"></td>
+			<td ng-bind="row.capacity"></td>
+			<td ng-bind="row[0]"></td>
+			<td ng-bind="row[5]"></td>
+			<td ng-bind="row[10]"></td>
+			<td ng-bind="row[15]"></td>
+			<td ng-bind="row[30]"></td>
+			<td ng-bind="row[60]"></td>
+		</tr>
+		</tbody>
+	</table>
+</div>

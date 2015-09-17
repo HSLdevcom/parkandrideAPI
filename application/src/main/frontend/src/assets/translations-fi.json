@@ -416,7 +416,10 @@
             "heading": "Kapasiteetti",
             "type": "Ajoneuvotyyppi",
             "built": "Rakennettu kapasiteetti",
-            "unavailable": "Tilapäisesti poissa käytöstä"
+            "builtAndAvailable": "Rakennettu kapasiteetti ja paikkoja vapaana",
+            "availableAndForecast": "Vapaana nyt ja ennustetiedot vapaiden paikkojen määrälle on haettu {{loadedDate | date:'HH:mm'}}. Jos haluat viimeisimmät tiedot, päivitä sivu.",
+            "unavailable": "Tilapäisesti poissa käytöstä",
+            "availableNow": "Vapaana nyt"
         },
         "builtCapacity": {
             "label": "Rakennettu kapasiteetti",

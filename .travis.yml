@@ -4,12 +4,20 @@ jdk:
 env:
   - PTOR_DIR=$TRAVIS_BUILD_DIR/etc/protractor APP_MODULE=$TRAVIS_BUILD_DIR/application DISPLAY=:99 SPRING_PROFILES_ACTIVE=env_travis
 addons:
+  apt:
+    packages:
+      - firefox-locale-fi
+      - language-pack-fi
   postgresql: "9.3"
+sudo: false
+cache:
+  directories:
+    - $HOME/.m2
 before_install:
-  - sudo apt-mark hold firefox-locale-fi
-  - sudo apt-get install language-pack-fi
-  - sudo /etc/init.d/postgresql stop
-  - sudo /etc/init.d/postgresql start 9.3
+#  - sudo apt-mark hold firefox-locale-fi
+#  - sudo apt-get install language-pack-fi
+#  - sudo /etc/init.d/postgresql stop
+#  - sudo /etc/init.d/postgresql start 9.3
   - sh -e /etc/init.d/xvfb start
 install:
   - bash etc/scripts/db/psql-init-db.sh -U postgres

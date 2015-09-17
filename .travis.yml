@@ -6,7 +6,6 @@ env:
 addons:
   apt:
     packages:
-      - firefox-locale-fi
       - language-pack-fi
   postgresql: "9.3"
 sudo: false

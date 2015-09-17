@@ -13,6 +13,8 @@ sudo: false
 cache:
   directories:
     - $HOME/.m2
+    - etc/protractor/node_modules
+    - application/src/main/frontend/node_modules/
 before_install:
 #  - sudo apt-mark hold firefox-locale-fi
 #  - sudo apt-get install language-pack-fi

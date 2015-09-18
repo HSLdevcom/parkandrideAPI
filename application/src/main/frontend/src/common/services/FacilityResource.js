@@ -85,7 +85,9 @@
                     after: after
                 }
             }).then(function(response) {
-                return response.data;
+                return response.data.map(function(prediction) {
+                    return _.merge(prediction, {forecastDistanceInMinutes: after});
+                });
             });
         };
 

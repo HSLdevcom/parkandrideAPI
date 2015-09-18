@@ -58,7 +58,7 @@ public class PredictionDao implements PredictionRepository {
 
     @TransactionalWrite
     @Override
-    public void updatePredictions(PredictionBatch pb) {
+    public void updatePredictions(PredictionBatch pb, Long predictorId) {
         validationService.validate(pb);
         UtilizationKey utilizationKey = pb.utilizationKey;
         DateTime start = toPredictionResolution(pb.sourceTimestamp);
@@ -67,9 +67,9 @@ public class PredictionDao implements PredictionRepository {
         long updatedRows = maybeUpdatePredictionLookupTable(utilizationKey, start, predictions);
         if (updatedRows == 0) {
             initializePredictionLookupTable(utilizationKey);
-            updatePredictions(pb); // retry now that the lookup table exists
+            updatePredictions(pb, predictorId); // retry now that the lookup table exists
         } else {
-            savePredictionHistory(utilizationKey, start, predictions);
+            savePredictionHistory(predictorId, start, predictions);
         }
     }
 
@@ -153,17 +153,13 @@ public class PredictionDao implements PredictionRepository {
         return update.execute();
     }
 
-    private void savePredictionHistory(UtilizationKey utilizationKey, DateTime start, List<Prediction> predictions) {
-        predictions.forEach(p -> {
-            queryFactory.insert(qPredictionHistory)
-                    .set(qPredictionHistory.facilityId, utilizationKey.facilityId)
-                    .set(qPredictionHistory.capacityType, utilizationKey.capacityType)
-                    .set(qPredictionHistory.usage, utilizationKey.usage)
-                    .set(qPredictionHistory.forecastDistanceInMinutes, ((int) new Duration(start, p.timestamp).getStandardMinutes()))
-                    .set(qPredictionHistory.ts, p.timestamp)
-                    .set(qPredictionHistory.spacesAvailable, p.spacesAvailable)
-                    .execute();
-        });
+    private void savePredictionHistory(Long predictorId, DateTime start, List<Prediction> predictions) {
+        predictions.forEach(p -> queryFactory.insert(qPredictionHistory)
+                .set(qPredictionHistory.predictorId, predictorId)
+                .set(qPredictionHistory.forecastDistanceInMinutes, ((int) new Duration(start, p.timestamp).getStandardMinutes()))
+                .set(qPredictionHistory.ts, p.timestamp)
+                .set(qPredictionHistory.spacesAvailable, p.spacesAvailable)
+                .execute());
     }
 
     @TransactionalRead
@@ -190,11 +186,9 @@ public class PredictionDao implements PredictionRepository {
 
     @TransactionalRead
     @Override
-    public List<Prediction> getPredictionHistoryByPredictor(UtilizationKey utilizationKey, DateTime start, DateTime end, int forecastDistanceInMinutes) {
+    public List<Prediction> getPredictionHistoryByPredictor(Long predictorId, DateTime start, DateTime end, int forecastDistanceInMinutes) {
         return queryFactory.from(qPredictionHistory)
-                .where(qPredictionHistory.facilityId.eq(utilizationKey.facilityId),
-                        qPredictionHistory.capacityType.eq(utilizationKey.capacityType),
-                        qPredictionHistory.usage.eq(utilizationKey.usage),
+                .where(qPredictionHistory.predictorId.eq(predictorId),
                         qPredictionHistory.forecastDistanceInMinutes.eq(forecastDistanceInMinutes),
                         qPredictionHistory.ts.between(start, end))
                 .orderBy(qPredictionHistory.ts.asc())

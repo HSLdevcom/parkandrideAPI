@@ -9,7 +9,8 @@ module.exports = function () {
         contactsUrl = devApiUrl + '/contacts',
         operatorsUrl = devApiUrl + '/operators',
         usersUrl = devApiUrl + '/users',
-        loginUrl = devApiUrl + "/login";
+        loginUrl = devApiUrl + "/login",
+        triggerPredictionsUrl = devApiUrl + '/prediction';
     var flow = protractor.promise.controlFlow();
 
     var api = {};
@@ -112,6 +113,13 @@ module.exports = function () {
             angular.element(document.body).injector().get('Session').remove();
             callback();
         });
+    };
+
+    api.fakeUtilization = function(facilityId) {
+        return execute({ method: 'PUT', url: facilitiesUrl + '/' + facilityId + '/utilization'})
+    };
+    api.triggerPredictions = function() {
+        return execute({ method: 'PUT', url: triggerPredictionsUrl });
     };
 
     api.resetAll = function(data) {

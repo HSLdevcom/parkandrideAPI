@@ -29,9 +29,7 @@ import java.util.Optional;
 import static fi.hsl.parkandride.core.back.PredictionRepository.PREDICTION_RESOLUTION;
 import static fi.hsl.parkandride.core.back.PredictionRepository.PREDICTION_WINDOW;
 import static fi.hsl.parkandride.core.domain.CapacityType.*;
-import static fi.hsl.parkandride.core.domain.CapacityType.CAR;
 import static fi.hsl.parkandride.core.domain.Usage.*;
-import static fi.hsl.parkandride.core.domain.Usage.PARK_AND_RIDE;
 import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -49,13 +47,12 @@ public class PredictionDaoTest extends AbstractDaoTest {
 
     private final DateTime now = new DateTime();
     private long facilityId;
-
-    private long parkAndRidePredictorId;
+    private long predictorId;
 
     @Before
     public void initTestData() {
         facilityId = dummies.createFacility();
-        parkAndRidePredictorId = predictorDao.enablePredictor(DUMMY_PREDICTOR_TYPE, new UtilizationKey(facilityId, CAPACITY_TYPE, USAGE));
+        predictorId = predictorDao.enablePredictor(DUMMY_PREDICTOR_TYPE, new UtilizationKey(facilityId, CAPACITY_TYPE, USAGE));
     }
 
     // basics
@@ -63,7 +60,7 @@ public class PredictionDaoTest extends AbstractDaoTest {
     @Test
     public void predict_now() {
         PredictionBatch pb = newPredictionBatch(now, new Prediction(now, 123));
-        predictionDao.updatePredictions(pb, parkAndRidePredictorId);
+        predictionDao.updatePredictions(pb, predictorId);
 
         assertPredictionsSavedAsIs(pb);
     }
@@ -78,7 +75,7 @@ public class PredictionDaoTest extends AbstractDaoTest {
         thrown.expectMessage("sourceTimestamp (NotNull)");              // validate fields of PredictionBatch
         thrown.expectMessage("utilizationKey.capacityType (NotNull)");  // validate fields of UtilizationKey
         thrown.expectMessage("predictions[0].spacesAvailable (Min)");   // validate fields of every Prediction
-        predictionDao.updatePredictions(pb, parkAndRidePredictorId);
+        predictionDao.updatePredictions(pb, predictorId);
     }
 
 
@@ -93,7 +90,7 @@ public class PredictionDaoTest extends AbstractDaoTest {
                 new Prediction(now.plusSeconds(1), 11),
                 new Prediction(now.plusSeconds(2), 12));
         Collections.shuffle(pb.predictions); // input order does not matter
-        predictionDao.updatePredictions(pb, parkAndRidePredictorId);
+        predictionDao.updatePredictions(pb, predictorId);
 
         assertPredictionEquals(new Prediction(now, 12), pb);
     }
@@ -104,7 +101,7 @@ public class PredictionDaoTest extends AbstractDaoTest {
                 new Prediction(now, 10),
                 new Prediction(now.plus(PREDICTION_RESOLUTION.multipliedBy(3)), 40));
         Collections.shuffle(pb.predictions); // input order does not matter
-        predictionDao.updatePredictions(pb, parkAndRidePredictorId);
+        predictionDao.updatePredictions(pb, predictorId);
 
         pb.predictions = Arrays.asList(
                 new Prediction(now, 10),
@@ -125,7 +122,7 @@ public class PredictionDaoTest extends AbstractDaoTest {
                 new Prediction(now.minusHours(1), 123),
                 new Prediction(now.plus(PREDICTION_WINDOW).plusHours(1), 123));
         Collections.shuffle(pb.predictions); // input order does not matter
-        predictionDao.updatePredictions(pb, parkAndRidePredictorId);
+        predictionDao.updatePredictions(pb, predictorId);
 
         assertPredictionEquals("windowStart", new Prediction(now, 123), pb);
         assertPredictionEquals("windowEnd", new Prediction(now.plus(PREDICTION_WINDOW).minus(PREDICTION_RESOLUTION), 123), pb);
@@ -149,7 +146,7 @@ public class PredictionDaoTest extends AbstractDaoTest {
                 new Prediction(now, 5),
                 new Prediction(withinWindow, 10),
                 new Prediction(outsideWindow, 20));
-        predictionDao.updatePredictions(pb, parkAndRidePredictorId);
+        predictionDao.updatePredictions(pb, predictorId);
 
         assertPredictionEquals("inRange", new Prediction(withinWindow, 10), pb);
         assertPredictionDoesNotExist("outsideRange", outsideWindow, pb);
@@ -163,7 +160,7 @@ public class PredictionDaoTest extends AbstractDaoTest {
                 new Prediction(past, 20),
                 new Prediction(now, 10),
                 new Prediction(past.plus(PREDICTION_WINDOW), 5));
-        predictionDao.updatePredictions(pb, parkAndRidePredictorId);
+        predictionDao.updatePredictions(pb, predictorId);
 
         assertPredictionEquals("inRange", new Prediction(now, 10), pb);
         assertPredictionDoesNotExist("outsideRange", past, pb);
@@ -176,7 +173,7 @@ public class PredictionDaoTest extends AbstractDaoTest {
                 now.withZone(DateTimeZone.forOffsetHours(7)),
                 new Prediction(now.withZone(DateTimeZone.forOffsetHours(8)), 123)
         );
-        predictionDao.updatePredictions(pb, parkAndRidePredictorId);
+        predictionDao.updatePredictions(pb, predictorId);
 
         assertPredictionEquals(new Prediction(now, 123), pb);
     }
@@ -188,11 +185,11 @@ public class PredictionDaoTest extends AbstractDaoTest {
     public void predictions_are_facility_specific() {
         PredictionBatch pb1 = newPredictionBatch(now, new Prediction(now, 111));
         pb1.utilizationKey.facilityId = dummies.createFacility();
-        predictionDao.updatePredictions(pb1, predictorDao.enablePredictor(DUMMY_PREDICTOR_TYPE, pb1.utilizationKey));
+        predictionDao.updatePredictions(pb1, newPredictorId(pb1));
 
         PredictionBatch pb2 = newPredictionBatch(now, new Prediction(now, 222));
         pb2.utilizationKey.facilityId = dummies.createFacility();
-        predictionDao.updatePredictions(pb2, predictorDao.enablePredictor(DUMMY_PREDICTOR_TYPE, pb2.utilizationKey));
+        predictionDao.updatePredictions(pb2, newPredictorId(pb2));
 
         assertPredictionsSavedAsIs(pb1);
         assertPredictionsSavedAsIs(pb2);
@@ -202,11 +199,11 @@ public class PredictionDaoTest extends AbstractDaoTest {
     public void predictions_are_capacity_type_specific() {
         PredictionBatch pb1 = newPredictionBatch(now, new Prediction(now, 111));
         pb1.utilizationKey.capacityType = ELECTRIC_CAR;
-        predictionDao.updatePredictions(pb1, predictorDao.enablePredictor(DUMMY_PREDICTOR_TYPE, pb1.utilizationKey));
+        predictionDao.updatePredictions(pb1, newPredictorId(pb1));
 
         PredictionBatch pb2 = newPredictionBatch(now, new Prediction(now, 222));
         pb2.utilizationKey.capacityType = MOTORCYCLE;
-        predictionDao.updatePredictions(pb2, predictorDao.enablePredictor(DUMMY_PREDICTOR_TYPE, pb2.utilizationKey));
+        predictionDao.updatePredictions(pb2, newPredictorId(pb2));
 
         assertPredictionsSavedAsIs(pb1);
         assertPredictionsSavedAsIs(pb2);
@@ -216,11 +213,11 @@ public class PredictionDaoTest extends AbstractDaoTest {
     public void predictions_are_usage_specific() {
         PredictionBatch pb1 = newPredictionBatch(now, new Prediction(now, 111));
         pb1.utilizationKey.usage = HSL_TRAVEL_CARD;
-        predictionDao.updatePredictions(pb1, predictorDao.enablePredictor(DUMMY_PREDICTOR_TYPE, pb1.utilizationKey));
+        predictionDao.updatePredictions(pb1, newPredictorId(pb1));
 
         PredictionBatch pb2 = newPredictionBatch(now, new Prediction(now, 222));
         pb2.utilizationKey.usage = COMMERCIAL;
-        predictionDao.updatePredictions(pb2, predictorDao.enablePredictor(DUMMY_PREDICTOR_TYPE, pb2.utilizationKey));
+        predictionDao.updatePredictions(pb2, newPredictorId(pb2));
 
         assertPredictionsSavedAsIs(pb1);
         assertPredictionsSavedAsIs(pb2);
@@ -239,10 +236,10 @@ public class PredictionDaoTest extends AbstractDaoTest {
         PredictionBatch pb4 = newPredictionBatch(now, new Prediction(now, 40));
         pb4.utilizationKey.facilityId = dummies.createFacility();   // excluded: other facilities
 
-        predictionDao.updatePredictions(pb1, predictorDao.enablePredictor(DUMMY_PREDICTOR_TYPE, pb1.utilizationKey));
-        predictionDao.updatePredictions(pb2, predictorDao.enablePredictor(DUMMY_PREDICTOR_TYPE, pb2.utilizationKey));
-        predictionDao.updatePredictions(pb3, predictorDao.enablePredictor(DUMMY_PREDICTOR_TYPE, pb3.utilizationKey));
-        predictionDao.updatePredictions(pb4, predictorDao.enablePredictor(DUMMY_PREDICTOR_TYPE, pb4.utilizationKey));
+        predictionDao.updatePredictions(pb1, newPredictorId(pb1));
+        predictionDao.updatePredictions(pb2, newPredictorId(pb2));
+        predictionDao.updatePredictions(pb3, newPredictorId(pb3));
+        predictionDao.updatePredictions(pb4, newPredictorId(pb4));
 
         List<PredictionBatch> results = predictionDao.getPredictionsByFacility(pb1.utilizationKey.facilityId, now);
 
@@ -251,6 +248,7 @@ public class PredictionDaoTest extends AbstractDaoTest {
                 toPredictionResolution(pb2),
                 toPredictionResolution(pb3));
     }
+
 
     // history
 
@@ -261,19 +259,19 @@ public class PredictionDaoTest extends AbstractDaoTest {
                 new Prediction(t1, 666),
                 new Prediction(t1.plusHours(1), 666)
         );
-        predictionDao.updatePredictions(pb1, parkAndRidePredictorId);
+        predictionDao.updatePredictions(pb1, predictorId);
 
         DateTime t2 = now.plusMinutes(5);
         PredictionBatch pb2 = newPredictionBatch(t2,
                 new Prediction(t2, 777),
                 new Prediction(t2.plusHours(1), 777)
         );
-        predictionDao.updatePredictions(pb2, parkAndRidePredictorId);
+        predictionDao.updatePredictions(pb2, predictorId);
 
         int forecastDistanceInMinutes = 15;
         // TODO: this method should be parameterized by predictor instead of utilization key, because there can be multiple predictors working on the same facility
         List<Prediction> predictionHistory = predictionDao.getPredictionHistoryByPredictor(
-                parkAndRidePredictorId, now, now.plusHours(1), forecastDistanceInMinutes);
+                predictorId, now, now.plusHours(1), forecastDistanceInMinutes);
         assertThat(predictionHistory).containsOnly(
                 new Prediction(toPredictionResolution(t1.plusMinutes(forecastDistanceInMinutes)), 666),
                 new Prediction(toPredictionResolution(t2.plusMinutes(forecastDistanceInMinutes)), 777)
@@ -282,6 +280,10 @@ public class PredictionDaoTest extends AbstractDaoTest {
 
 
     // helpers
+
+    public Long newPredictorId(PredictionBatch pb) {
+        return predictorDao.enablePredictor(DUMMY_PREDICTOR_TYPE, pb.utilizationKey);
+    }
 
     private PredictionBatch newPredictionBatch(DateTime sourceTimestamp, Prediction... predictions) {
         PredictionBatch batch = new PredictionBatch();

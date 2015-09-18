@@ -14,6 +14,7 @@ cache:
     - $HOME/.m2
     - etc/protractor/node_modules
     - application/src/main/frontend/node_modules/
+    - application/src/main/frontend/node/
     - application/src/main/frontend/vendor/
 before_install:
   - sh -e /etc/init.d/xvfb start

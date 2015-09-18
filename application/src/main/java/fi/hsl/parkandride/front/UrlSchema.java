@@ -81,7 +81,8 @@ public final class UrlSchema {
     public static final String DEV_FACILITIES = DEV_API + "/facilities";
     public static final String DEV_LOGIN = DEV_API + "/login";
     public static final String DEV_HUBS = DEV_API + "/hubs";
-
+    public static final String DEV_UTILIZATION = DEV_FACILITIES + "/{" + FACILITY_ID + "}/utilization";
+    public static final String DEV_PREDICTION = DEV_API + "/prediction";
 
     public static String urlEncode(String str) {
         try {

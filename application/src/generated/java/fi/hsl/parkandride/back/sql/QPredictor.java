@@ -51,6 +51,8 @@ public class QPredictor extends RelationalPathSpatial<QPredictor> {
 
     public final com.mysema.query.sql.ForeignKey<QUsage> predictorUsageFk = createForeignKey(usage, "NAME");
 
+    public final com.mysema.query.sql.ForeignKey<QFacilityPredictionHistory> _facilityPredictionHistoryPredictorIdFk = createInvForeignKey(id, "PREDICTOR_ID");
+
     public QPredictor(String variable) {
         super(QPredictor.class, forVariable(variable), "PUBLIC", "PREDICTOR");
         addMetadata();

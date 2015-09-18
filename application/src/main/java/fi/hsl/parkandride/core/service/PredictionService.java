@@ -105,7 +105,7 @@ public class PredictionService {
             List<Prediction> predictions = predictor.predict(state, new UtilizationHistoryImpl(utilizationRepository, state.utilizationKey));
             // TODO: should we set state.latestUtilization here so that all predictors don't need to remember do it? or will some predictors use different logic for it, for example if they process only part of the updates?
             // TODO: save to prediction log
-            predictionRepository.updatePredictions(toPredictionBatch(state, predictions));
+            predictionRepository.updatePredictions(toPredictionBatch(state, predictions), predictorId);
             predictorRepository.save(state);
         });
     }

@@ -18,11 +18,11 @@ public interface PredictionRepository {
     Hours PREDICTION_WINDOW = Hours.hours(24);
     Minutes PREDICTION_RESOLUTION = Minutes.minutes(5);
 
-    void updatePredictions(PredictionBatch predictions);
+    void updatePredictions(PredictionBatch predictions, Long predictorId);
 
     Optional<PredictionBatch> getPrediction(UtilizationKey utilizationKey, DateTime time);
 
     List<PredictionBatch> getPredictionsByFacility(Long facilityId, DateTime time);
 
-    List<Prediction> getPredictionHistoryByPredictor(UtilizationKey utilizationKey, DateTime start, DateTime end, int forecastDistanceInMinutes);
+    List<Prediction> getPredictionHistoryByPredictor(Long predictorId, DateTime start, DateTime end, int forecastDistanceInMinutes);
 }

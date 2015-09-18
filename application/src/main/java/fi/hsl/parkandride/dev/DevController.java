@@ -3,38 +3,40 @@
 
 package fi.hsl.parkandride.dev;
 
-import static fi.hsl.parkandride.front.UrlSchema.*;
-import static org.springframework.http.HttpStatus.OK;
-import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
-import static org.springframework.web.bind.annotation.RequestMethod.POST;
-import static org.springframework.web.bind.annotation.RequestMethod.PUT;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.annotation.Resource;
-
-import org.springframework.context.annotation.Profile;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
 import fi.hsl.parkandride.FeatureProfile;
 import fi.hsl.parkandride.back.ContactDao;
 import fi.hsl.parkandride.back.FacilityDao;
 import fi.hsl.parkandride.back.HubDao;
 import fi.hsl.parkandride.back.OperatorDao;
-import fi.hsl.parkandride.core.back.ContactRepository;
-import fi.hsl.parkandride.core.back.FacilityRepository;
-import fi.hsl.parkandride.core.back.HubRepository;
-import fi.hsl.parkandride.core.back.OperatorRepository;
-import fi.hsl.parkandride.core.back.UserRepository;
+import fi.hsl.parkandride.core.back.*;
 import fi.hsl.parkandride.core.domain.*;
-import fi.hsl.parkandride.core.service.AuthenticationService;
-import fi.hsl.parkandride.core.service.ContactService;
-import fi.hsl.parkandride.core.service.TransactionalWrite;
-import fi.hsl.parkandride.core.service.UserService;
+import fi.hsl.parkandride.core.service.*;
+import org.joda.time.DateTime;
+import org.joda.time.Minutes;
+import org.joda.time.ReadablePeriod;
+import org.springframework.context.annotation.Profile;
+import org.springframework.http.ResponseEntity;
+import org.springframework.util.Assert;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import javax.annotation.Resource;
+import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Spliterator;
+import java.util.stream.StreamSupport;
+
+import static com.google.common.collect.Sets.newHashSet;
+import static fi.hsl.parkandride.core.domain.CapacityType.*;
+import static fi.hsl.parkandride.front.UrlSchema.*;
+import static java.util.Spliterators.spliteratorUnknownSize;
+import static java.util.stream.Collectors.toList;
+import static org.springframework.http.HttpStatus.*;
+import static org.springframework.web.bind.annotation.RequestMethod.*;
 
 @RestController
 @Profile({ FeatureProfile.DEV_API})
@@ -57,6 +59,12 @@ public class DevController {
     @Resource AuthenticationService authenticationService;
 
     @Resource UserRepository userRepository;
+
+    @Resource PredictionService predictionService;
+
+    @Resource FacilityService facilityService;
+
+    @Resource UtilizationRepository utilizationRepository;
 
     @RequestMapping(method = POST, value = DEV_LOGIN)
     public ResponseEntity<Login> login(@RequestBody NewUser newUser) {
@@ -127,6 +135,45 @@ public class DevController {
         return new ResponseEntity<>(results, OK);
     }
 
+    @RequestMapping(method = PUT, value = DEV_UTILIZATION)
+    @TransactionalWrite
+    public ResponseEntity<Void> generateUtilizationData(@NotNull @PathVariable(FACILITY_ID) Long facilityId) {
+        final Facility facility = facilityRepository.getFacility(facilityId);
+        
+        // Generate dummy usage for the last month
+        final List<Utilization> utilizations = StreamSupport.stream(
+                spliteratorUnknownSize(new DateTimeIterator(DateTime.now().minusMonths(1), DateTime.now(), Minutes.minutes(5)), Spliterator.ORDERED), false)
+                .flatMap(d -> facility.builtCapacity.entrySet().stream()
+                        .filter(entry -> newHashSet(CAR, DISABLED, ELECTRIC_CAR).contains(entry.getKey()))
+                        .map(entry -> {
+                            final Utilization u = new Utilization();
+                            u.capacityType = entry.getKey();
+                            u.facilityId = facilityId;
+                            u.timestamp = d;
+                            u.usage = Usage.PARK_AND_RIDE;
+                            u.spacesAvailable = sineWaveUtilization(d, entry.getValue());
+                            return u;
+                        }))
+                        .collect(toList());
+        utilizationRepository.insertUtilizations(utilizations);
+        predictionService.signalUpdateNeeded(utilizations);
+        return new ResponseEntity<>(CREATED);
+    }
+
+    @RequestMapping(method = PUT, value = DEV_PREDICTION)
+    public ResponseEntity<Void> triggerPrediction() {
+        predictionService.updatePredictions();
+        return new ResponseEntity<>(NO_CONTENT);
+    }
+
+    private Integer sineWaveUtilization(DateTime d, Integer maxCapacity) {
+        // Peaks at 16, so we subtract 16 hours.
+        final double x = (d.minusHours(16).getMinuteOfDay() * 2.0 * Math.PI) / (24.0 * 60.0);
+        // 1 + cos(x) is in range 0..2 so we have to divide the max capacity by 2
+        final double usedSpaces = (maxCapacity / 2.0) * (1 + Math.cos(x));
+        return (int)(maxCapacity - usedSpaces);
+    }
+
     @RequestMapping(method = PUT, value = DEV_HUBS)
     @TransactionalWrite
     public ResponseEntity<List<Hub>> pushHubs(@RequestBody List<Hub> hubs) {
@@ -176,5 +223,30 @@ public class DevController {
         }
         devHelper.resetOperatorSequence();
         return new ResponseEntity<>(results, OK);
+    }
+
+    private static class DateTimeIterator implements Iterator<DateTime> {
+        private DateTime current;
+        private final DateTime end;
+        private final ReadablePeriod interval;
+
+        public DateTimeIterator(DateTime start, DateTime end, ReadablePeriod interval) {
+            Assert.state(start.isBefore(end), "Start date must be before end date");
+            this.current = start;
+            this.end = end;
+            this.interval = interval;
+        }
+
+        @Override
+        public boolean hasNext() {
+            return current.isBefore(end);
+        }
+
+        @Override
+        public DateTime next() {
+            final DateTime returnable = this.current;
+            this.current = this.current.plus(interval);
+            return returnable;
+        }
     }
 }

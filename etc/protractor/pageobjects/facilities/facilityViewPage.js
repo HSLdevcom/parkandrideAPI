@@ -3,6 +3,7 @@
 module.exports = function(spec) {
     var that = require('../base')(spec);
     var capacitiesTable = require('../capacitiesTable')({});
+    var predictionsTable = require('../predictionsTable')({});
     var portView = require('./portViewModal')();
     var _ = require('lodash');
 
@@ -11,6 +12,7 @@ module.exports = function(spec) {
     spec.aliases = $('.wdAliases');
     spec.services = $('.wdService');
     spec.servicesBlock = $('.wdServices');
+    spec.predictionsBlock = $('.wdPredictions');
     spec.aliasesBlock = $('.wdAliasesBlock');
     spec.map = $('.facility-map .ol-viewport');
     spec.editViewButton = $$('.wdEditViewButton').first();
@@ -52,6 +54,10 @@ module.exports = function(spec) {
 
     that.isServicesDisplayed = function () {
         return spec.isDisplayed(spec.servicesBlock);
+    };
+
+    that.isPredictionsDisplayed = function() {
+        return spec.isDisplayed(spec.predictionsBlock);
     };
 
     that.openPortAt = function(x, y) {
@@ -154,6 +160,7 @@ module.exports = function(spec) {
     that.portView = portView;
 
     that.capacitiesTable = capacitiesTable;
+    that.predictionsTable = predictionsTable;
 
     return that;
 };

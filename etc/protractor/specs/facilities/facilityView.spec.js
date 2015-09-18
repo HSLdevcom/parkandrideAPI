@@ -19,8 +19,12 @@ describe('facility view', function () {
 
     var f;
 
-    function toView(f) {
+    function toView(f, addPredictions) {
         devApi.resetAll({ facilities: [f], contacts: [fixtures.facilitiesFixture.contact], operators: [fixtures.facilitiesFixture.operator]});
+        if (addPredictions) {
+            devApi.fakeUtilization(f.id);
+            devApi.triggerPredictions();
+        }
         viewPage.get(f.id);
         expect(viewPage.isDisplayed()).toBe(true);
         return f;
@@ -46,7 +50,7 @@ describe('facility view', function () {
 
     describe('with full data', function () {
         beforeEach(function () {
-            f = toView(facFull);
+            f = toView(facFull, true);
         });
 
         it('displays full data', function () {
@@ -57,6 +61,12 @@ describe('facility view', function () {
 
             arrayAssert.assertInOrder(viewPage.capacitiesTable.getTypes(), common.capacityTypeOrder);
             expect(viewPage.capacitiesTable.getCapacities(_.keys(f.builtCapacity))).toEqual(f.builtCapacity);
+
+            expect(viewPage.isPredictionsDisplayed()).toBe(true);
+            // 3 since devApi creates three rows. See fi.hsl.parkandride.dev.DevController#generateUtilizationData
+            expect(viewPage.predictionsTable.getSize()).toBe(3);
+
+            arrayAssert.assertInOrder(viewPage.predictionsTable.getTypes(), common.capacityTypeOrder);
 
             expect(viewPage.isServicesDisplayed()).toBe(true);
             expect(viewPage.getServices()).toEqual("Valaistus, Katettu");
@@ -243,6 +253,16 @@ describe('facility view', function () {
 
         it('capacities are not displayed', function () {
             expect(viewPage.capacitiesTable.isDisplayed()).toBe(false);
+        });
+    });
+
+    describe('without predictions', function() {
+        beforeEach(function() {
+            f = toView(facFull);
+        });
+
+        it('should not display predictions table', function() {
+            expect(viewPage.isPredictionsDisplayed()).toBe(false);
         });
     });
 });

@@ -1,5 +1,5 @@
 <div class="panel panel-default row">
-	<table id="utilization" class="table table-bordered table-striped table-condensed">
+	<table id="utilization" class="table table-bordered table-striped table-condensed wdPredictionsTable">
 		<thead>
 		<tr>
 			<th id="facilities-view-pricing-capacityType" translate="facilities.pricing.capacityType.title"></th>
@@ -14,10 +14,11 @@
 		</tr>
 		</thead>
 		<tbody>
-		<tr ng-repeat="row in predictions">
+		<tr ng-repeat="row in predictions" class="wdPredictionRow">
 			<td>
 				<span ng-bind="'capacityTypes.' + row.capacityType + '.label' | translate"
-					  ng-hide="row.capacityType === predictions[$index - 1].capacityType" ></span>
+					  ng-hide="row.capacityType === predictions[$index - 1].capacityType"
+					  class="wdCapacityType"></span>
 			</td>
 			<td ng-bind="'usages.' + row.usage + '.label' | translate"></td>
 			<td ng-bind="row.capacity"></td>

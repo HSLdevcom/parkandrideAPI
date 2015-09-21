@@ -4,7 +4,7 @@
 (function () {
     var m = angular.module('parkandride.predictions', []);
 
-    m.directive('predictionsTable', function (schema) {
+    m.directive('predictionsTable', function (Ordering) {
         return {
             restrict: 'E',
             scope: {
@@ -31,6 +31,8 @@
                             return row;
                         }, {predictions: {}});
                     })
+                    .sort(Ordering.byUsage(function(val) { return val.usage; }))
+                    .sort(Ordering.byCapacityType(function(val) { return val.capacityType; }))
                     .value();
             }
         };

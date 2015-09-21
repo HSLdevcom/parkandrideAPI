@@ -4,6 +4,27 @@
 (function() {
     var m = angular.module('parkandride.util', []);
 
+    m.service('Ordering', function(schema) {
+        var self = this;
+
+        function getId(v) { return v.id; }
+        function byIndexOf(array) {
+            function returnArg1(arg1) { return arg1; }
+            return function(getter) {
+                var _getter = getter || returnArg1;
+                return function(a,b) {
+                    return array.indexOf(_getter(a)) - array.indexOf(_getter(b));
+                };
+            };
+        }
+
+        var capacityOrder = schema.capacityTypes.values.map(getId);
+        var usageOrder = schema.usages.values.map(getId);
+
+        self.byCapacityType = byIndexOf(capacityOrder);
+        self.byUsage = byIndexOf(usageOrder);
+    });
+
     m.directive('emptyToNull', function () {
         return {
             restrict: 'A',

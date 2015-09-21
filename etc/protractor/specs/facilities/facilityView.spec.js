@@ -63,10 +63,12 @@ describe('facility view', function () {
             expect(viewPage.capacitiesTable.getCapacities(_.keys(f.builtCapacity))).toEqual(f.builtCapacity);
 
             expect(viewPage.isPredictionsDisplayed()).toBe(true);
-            // 3 since devApi creates three rows. See fi.hsl.parkandride.dev.DevController#generateUtilizationData
-            expect(viewPage.predictionsTable.getSize()).toBe(3);
-
-            arrayAssert.assertInOrder(viewPage.predictionsTable.getTypes(), common.capacityTypeOrder);
+            // 4 since devApi creates four rows. Two for CAR, one for DISABLED and ELECTIC_CAR
+            // See fi.hsl.parkandride.dev.DevController#generateUtilizationData
+            expect(viewPage.predictionsTable.getSize()).toBe(4);
+            // The second row is empty: we don't want repeated titles
+            expect(viewPage.predictionsTable.getTypes()).toEqual(['Henkilöauto', '', 'Invapaikka', 'Sähköauto']);
+            expect(viewPage.predictionsTable.getUsages()).toEqual(['Liityntä', 'Liityntä matkakortilla', 'Liityntä', 'Liityntä']);
 
             expect(viewPage.isServicesDisplayed()).toBe(true);
             expect(viewPage.getServices()).toEqual("Valaistus, Katettu");

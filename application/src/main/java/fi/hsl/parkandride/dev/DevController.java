@@ -28,9 +28,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Spliterator;
+import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-import static com.google.common.collect.Sets.newHashSet;
 import static fi.hsl.parkandride.core.domain.CapacityType.*;
 import static fi.hsl.parkandride.front.UrlSchema.*;
 import static java.util.Spliterators.spliteratorUnknownSize;
@@ -143,17 +143,21 @@ public class DevController {
         // Generate dummy usage for the last month
         final List<Utilization> utilizations = StreamSupport.stream(
                 spliteratorUnknownSize(new DateTimeIterator(DateTime.now().minusMonths(1), DateTime.now(), Minutes.minutes(5)), Spliterator.ORDERED), false)
-                .flatMap(d -> facility.builtCapacity.entrySet().stream()
-                        .filter(entry -> newHashSet(CAR, DISABLED, ELECTRIC_CAR).contains(entry.getKey()))
-                        .map(entry -> {
-                            final Utilization u = new Utilization();
-                            u.capacityType = entry.getKey();
-                            u.facilityId = facilityId;
-                            u.timestamp = d;
-                            u.usage = Usage.PARK_AND_RIDE;
-                            u.spacesAvailable = sineWaveUtilization(d, entry.getValue());
-                            return u;
-                        }))
+                .flatMap(ts -> Stream.of(CAR, DISABLED, ELECTRIC_CAR)
+                        .filter(facility.builtCapacity::containsKey)
+                        .flatMap(capacityType -> {
+                            final Stream.Builder<UtilizationKey> builder = Stream.builder();
+                            builder.add(new UtilizationKey(facilityId, capacityType, Usage.PARK_AND_RIDE));
+                            if (capacityType == CAR) {
+                                builder.add(new UtilizationKey(facilityId, capacityType, Usage.HSL_TRAVEL_CARD));
+                            }
+                            return builder.build();
+                        })
+                        .map(utilizationKey -> newUtilization(
+                                utilizationKey,
+                                facility.builtCapacity.get(utilizationKey.capacityType),
+                                ts
+                        )))
                         .collect(toList());
         utilizationRepository.insertUtilizations(utilizations);
         predictionService.signalUpdateNeeded(utilizations);
@@ -166,7 +170,17 @@ public class DevController {
         return new ResponseEntity<>(NO_CONTENT);
     }
 
-    private Integer sineWaveUtilization(DateTime d, Integer maxCapacity) {
+    private static Utilization newUtilization(UtilizationKey utilizationKey, Integer maxCapacity, DateTime time) {
+        final Utilization u = new Utilization();
+        u.capacityType = utilizationKey.capacityType;
+        u.facilityId = utilizationKey.facilityId;
+        u.timestamp = time;
+        u.usage = utilizationKey.usage;
+        u.spacesAvailable = sineWaveUtilization(time, maxCapacity);
+        return u;
+    }
+
+    private static Integer sineWaveUtilization(DateTime d, Integer maxCapacity) {
         // Peaks at 16, so we subtract 16 hours.
         final double x = (d.minusHours(16).getMinuteOfDay() * 2.0 * Math.PI) / (24.0 * 60.0);
         // 1 + cos(x) is in range 0..2 so we have to divide the max capacity by 2
@@ -249,4 +263,5 @@ public class DevController {
             return returnable;
         }
     }
+
 }

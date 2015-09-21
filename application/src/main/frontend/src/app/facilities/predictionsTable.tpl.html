@@ -15,12 +15,11 @@
 		</thead>
 		<tbody>
 		<tr ng-repeat="row in predictions" class="wdPredictionRow">
-			<td>
+			<td class="wdCapacityType">
 				<span ng-bind="'capacityTypes.' + row.capacityType + '.label' | translate"
-					  ng-hide="row.capacityType === predictions[$index - 1].capacityType"
-					  class="wdCapacityType"></span>
+					  ng-hide="row.capacityType === predictions[$index - 1].capacityType"></span>
 			</td>
-			<td ng-bind="'usages.' + row.usage + '.label' | translate"></td>
+			<td ng-bind="'usages.' + row.usage + '.label' | translate" class="wdUsage"></td>
 			<td ng-bind="row.capacity"></td>
 			<td ng-bind="row.predictions[0]"></td>
 			<td ng-bind="row.predictions[5]"></td>

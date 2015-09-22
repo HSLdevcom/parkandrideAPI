@@ -1,19 +1,15 @@
 package fi.hsl.parkandride.back.sql;
 
-import static com.mysema.query.types.PathMetadataFactory.*;
-
-import com.mysema.query.types.path.*;
-
-import com.mysema.query.types.PathMetadata;
-import javax.annotation.Generated;
-import com.mysema.query.types.Path;
-
 import com.mysema.query.sql.ColumnMetadata;
+import com.mysema.query.sql.spatial.RelationalPathSpatial;
+import com.mysema.query.types.Path;
+import com.mysema.query.types.PathMetadata;
+import com.mysema.query.types.path.EnumPath;
+
+import javax.annotation.Generated;
 import java.sql.Types;
 
-import com.mysema.query.sql.spatial.RelationalPathSpatial;
-
-import com.mysema.query.spatial.path.*;
+import static com.mysema.query.types.PathMetadataFactory.forVariable;
 
 
 
@@ -38,6 +34,8 @@ public class QCapacityType extends RelationalPathSpatial<QCapacityType> {
     public final com.mysema.query.sql.ForeignKey<QFacilityPrediction> _facilityPredictionCapacityTypeFk = createInvForeignKey(name, "CAPACITY_TYPE");
 
     public final com.mysema.query.sql.ForeignKey<QPricing> _pricingCapacityTypeFk = createInvForeignKey(name, "CAPACITY_TYPE");
+
+    public final com.mysema.query.sql.ForeignKey<QFacilityPredictionHistory> _facilityPredictionHistoryCapacityTypeFk = createInvForeignKey(name, "CAPACITY_TYPE");
 
     public final com.mysema.query.sql.ForeignKey<QFacilityUtilization> _facilityUtilizationCapacityTypeFk = createInvForeignKey(name, "CAPACITY_TYPE");
 

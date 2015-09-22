@@ -1,6 +1,4 @@
-ALTER TABLE facility_prediction_history RENAME TO facility_prediction_history_old;
-
-CREATE TABLE facility_prediction_history (
+CREATE TABLE facility_prediction_history_new (
   predictor_id                 BIGINT    NOT NULL,
   ts                           TIMESTAMP NOT NULL,
   forecast_distance_in_minutes INT       NOT NULL,
@@ -15,7 +13,7 @@ CREATE TABLE facility_prediction_history (
 -- NOTE: This script relies on the fact that there was only one predictor in use
 -- at the time of writing. It should not cause problems, since there are no environments
 -- with multiple predictors
-INSERT INTO facility_prediction_history (
+INSERT INTO facility_prediction_history_new (
   predictor_id,
   ts,
   forecast_distance_in_minutes,
@@ -26,9 +24,7 @@ INSERT INTO facility_prediction_history (
     old.ts,
     old.forecast_distance_in_minutes,
     old.spaces_available
-  FROM predictor p, facility_prediction_history_old old
+  FROM predictor p, facility_prediction_history old
   WHERE p.capacity_type = old.capacity_type
         AND p.facility_id = old.facility_id
         AND p.usage = old.usage;
-
-DROP TABLE facility_prediction_history_old;

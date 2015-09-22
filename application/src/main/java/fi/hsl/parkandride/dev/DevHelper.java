@@ -114,6 +114,7 @@ public class DevHelper {
         delete(
                 QFacilityPrediction.facilityPrediction,
                 QFacilityPredictionHistory.facilityPredictionHistory,
+                QFacilityPredictionHistoryNew.facilityPredictionHistoryNew,
                 QPredictor.predictor,
                 QFacilityUtilization.facilityUtilization,
                 QFacilityService.facilityService,

@@ -1,19 +1,15 @@
 package fi.hsl.parkandride.back.sql;
 
-import static com.mysema.query.types.PathMetadataFactory.*;
-
-import com.mysema.query.types.path.*;
-
-import com.mysema.query.types.PathMetadata;
-import javax.annotation.Generated;
-import com.mysema.query.types.Path;
-
 import com.mysema.query.sql.ColumnMetadata;
+import com.mysema.query.sql.spatial.RelationalPathSpatial;
+import com.mysema.query.types.Path;
+import com.mysema.query.types.PathMetadata;
+import com.mysema.query.types.path.StringPath;
+
+import javax.annotation.Generated;
 import java.sql.Types;
 
-import com.mysema.query.sql.spatial.RelationalPathSpatial;
-
-import com.mysema.query.spatial.path.*;
+import static com.mysema.query.types.PathMetadataFactory.forVariable;
 
 
 
@@ -36,6 +32,8 @@ public class QUsage extends RelationalPathSpatial<QUsage> {
     public final com.mysema.query.sql.ForeignKey<QPricing> _pricingUsageFk = createInvForeignKey(name, "USAGE");
 
     public final com.mysema.query.sql.ForeignKey<QFacilityUtilization> _facilityUtilizationUsageFk = createInvForeignKey(name, "USAGE");
+
+    public final com.mysema.query.sql.ForeignKey<QFacilityPredictionHistory> _facilityPredictionHistoryUsageFk = createInvForeignKey(name, "USAGE");
 
     public final com.mysema.query.sql.ForeignKey<QUnavailableCapacity> _unavailableCapacityUsageFk = createInvForeignKey(name, "USAGE");
 

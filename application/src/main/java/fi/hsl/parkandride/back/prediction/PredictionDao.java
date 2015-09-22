@@ -13,7 +13,7 @@ import com.mysema.query.types.Projections;
 import com.mysema.query.types.expr.BooleanExpression;
 import fi.hsl.parkandride.back.TimeUtil;
 import fi.hsl.parkandride.back.sql.QFacilityPrediction;
-import fi.hsl.parkandride.back.sql.QFacilityPredictionHistory;
+import fi.hsl.parkandride.back.sql.QFacilityPredictionHistoryNew;
 import fi.hsl.parkandride.core.back.PredictionRepository;
 import fi.hsl.parkandride.core.domain.UtilizationKey;
 import fi.hsl.parkandride.core.domain.prediction.Prediction;
@@ -39,7 +39,7 @@ import static java.util.stream.Collectors.toList;
 public class PredictionDao implements PredictionRepository {
 
     private static final QFacilityPrediction qPrediction = QFacilityPrediction.facilityPrediction;
-    private static final QFacilityPredictionHistory qPredictionHistory = QFacilityPredictionHistory.facilityPredictionHistory;
+    private static final QFacilityPredictionHistoryNew qPredictionHistory = QFacilityPredictionHistoryNew.facilityPredictionHistoryNew;
     private static final Map<String, Path<Integer>> spacesAvailableColumnsByHHmm = Collections.unmodifiableMap(
             Stream.of(qPrediction.all())
                     .filter(p -> p.getMetadata().getName().startsWith("spacesAvailableAt"))

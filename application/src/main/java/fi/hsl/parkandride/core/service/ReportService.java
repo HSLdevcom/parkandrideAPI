@@ -3,9 +3,6 @@
 
 package fi.hsl.parkandride.core.service;
 
-import static com.google.common.collect.Iterators.filter;
-import static org.joda.time.format.DateTimeFormat.forPattern;
-import static org.springframework.util.CollectionUtils.isEmpty;
 import com.mysema.commons.lang.CloseableIterator;
 import fi.hsl.parkandride.back.RegionRepository;
 import fi.hsl.parkandride.core.back.UtilizationRepository;
@@ -15,7 +12,10 @@ import fi.hsl.parkandride.front.ReportParameters;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormatter;
+
 import java.util.*;
+
+import static com.google.common.collect.Iterators.filter;
 import static fi.hsl.parkandride.core.domain.CapacityType.*;
 import static fi.hsl.parkandride.core.domain.DayType.*;
 import static fi.hsl.parkandride.core.domain.Permission.REPORT_GENERATE;
@@ -23,6 +23,7 @@ import static fi.hsl.parkandride.core.domain.Region.UNKNOWN_REGION;
 import static fi.hsl.parkandride.core.service.AuthenticationService.authorize;
 import static fi.hsl.parkandride.core.service.AuthenticationService.getLimitedOperatorId;
 import static fi.hsl.parkandride.core.service.Excel.TableColumn.col;
+import static fi.hsl.parkandride.core.util.ArgumentValidator.validate;
 import static java.lang.Math.min;
 import static java.lang.String.format;
 import static java.lang.String.join;
@@ -32,9 +33,12 @@ import static java.util.Arrays.fill;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.sort;
 import static java.util.stream.Collectors.*;
+import static org.joda.time.format.DateTimeFormat.forPattern;
+import static org.springframework.util.CollectionUtils.isEmpty;
 
 public class ReportService {
     private static final int SECONDS_IN_DAY = 60 * 60 * 24;
+    public static final String FINNISH_DATE_PATTERN = "d.M.yyyy";
 
     final FacilityService facilityService;
     final OperatorService operatorService;
@@ -123,10 +127,11 @@ public class ReportService {
                               col("Pysäköintipaikat", (Hub h) -> ctx.facilitiesByHubId.getOrDefault(h.id, emptyList()).stream().map((Facility f) -> f.name.fi).collect(toList()))));
     }
 
+
     @TransactionalRead
     public byte[] reportFacilityUsage(User currentUser, ReportParameters parameters) {
         authorize(currentUser, REPORT_GENERATE);
-        int intervalSeconds = parameters.interval * 60;
+        int intervalSeconds = validate(parameters.interval).gt(0) * 60;
 
         ReportContext ctx = new ReportContext(this, getLimitedOperatorId(currentUser));
 
@@ -196,7 +201,7 @@ public class ReportService {
 
     UtilizationSearch toUtilizationSearch(ReportParameters parameters, final ReportContext ctx) {
         UtilizationSearch search = new UtilizationSearch();
-        DateTimeFormatter finnishDateFormat = forPattern("d.M.yyyy");
+        DateTimeFormatter finnishDateFormat = forPattern(FINNISH_DATE_PATTERN);
         search.start = finnishDateFormat.parseLocalDate(parameters.startDate).toDateTimeAtStartOfDay();
         if (parameters.endDate == null) {
             search.end = new LocalDate().plusDays(1).toDateTimeAtStartOfDay();

@@ -11,7 +11,6 @@ import fi.hsl.parkandride.core.service.Excel.TableColumn;
 import fi.hsl.parkandride.front.ReportParameters;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
-import org.joda.time.format.DateTimeFormatter;
 
 import java.util.*;
 
@@ -33,30 +32,13 @@ import static java.util.Arrays.fill;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.sort;
 import static java.util.stream.Collectors.*;
-import static org.joda.time.format.DateTimeFormat.forPattern;
 import static org.springframework.util.CollectionUtils.isEmpty;
 
-public class ReportService {
-    private static final int SECONDS_IN_DAY = 60 * 60 * 24;
-    public static final String FINNISH_DATE_PATTERN = "d.M.yyyy";
-
-    final FacilityService facilityService;
-    final OperatorService operatorService;
-    private final ContactService contactService;
-    final HubService hubService;
-    private final UtilizationRepository utilizationRepository;
-    private final TranslationService translationService;
-    final RegionRepository regionRepository;
+public class ReportService extends ReportServiceSupport {
 
     public ReportService(FacilityService facilityService, OperatorService operatorService, ContactService contactService, HubService hubService,
                          UtilizationRepository utilizationRepository, RegionRepository regionRepository, TranslationService translationService) {
-        this.facilityService = facilityService;
-        this.operatorService = operatorService;
-        this.contactService = contactService;
-        this.hubService = hubService;
-        this.utilizationRepository = utilizationRepository;
-        this.regionRepository = regionRepository;
-        this.translationService = translationService;
+        super(facilityService, operatorService, contactService, hubService, utilizationRepository, translationService, regionRepository);
     }
 
     public byte[] reportHubsAndFacilities(User currentUser, ReportParameters parameters) {
@@ -201,12 +183,11 @@ public class ReportService {
 
     UtilizationSearch toUtilizationSearch(ReportParameters parameters, final ReportContext ctx) {
         UtilizationSearch search = new UtilizationSearch();
-        DateTimeFormatter finnishDateFormat = forPattern(FINNISH_DATE_PATTERN);
-        search.start = finnishDateFormat.parseLocalDate(parameters.startDate).toDateTimeAtStartOfDay();
+        search.start = FINNISH_DATE_FORMAT.parseLocalDate(parameters.startDate).toDateTimeAtStartOfDay();
         if (parameters.endDate == null) {
             search.end = new LocalDate().plusDays(1).toDateTimeAtStartOfDay();
         } else {
-            search.end = finnishDateFormat.parseLocalDate(parameters.endDate).toDateTimeAtStartOfDay();
+            search.end = FINNISH_DATE_FORMAT.parseLocalDate(parameters.endDate).toDateTimeAtStartOfDay();
         }
         if (!isEmpty(parameters.capacityTypes)) {
             search.capacityTypes = parameters.capacityTypes;

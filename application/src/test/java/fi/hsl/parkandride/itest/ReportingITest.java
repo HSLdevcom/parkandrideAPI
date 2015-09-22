@@ -10,7 +10,7 @@ import fi.hsl.parkandride.core.domain.NewUser;
 import fi.hsl.parkandride.core.domain.User;
 import fi.hsl.parkandride.core.service.FacilityService;
 import fi.hsl.parkandride.core.service.PredictionService;
-import fi.hsl.parkandride.core.service.ReportService;
+import fi.hsl.parkandride.core.service.ReportServiceSupport;
 import fi.hsl.parkandride.front.ReportController;
 import fi.hsl.parkandride.front.ReportParameters;
 import fi.hsl.parkandride.front.UrlSchema;
@@ -51,7 +51,7 @@ public class ReportingITest extends AbstractIntegrationTest {
     @Test
     public void report_FacilityUsage() {
         final ReportParameters params = new ReportParameters();
-        params.startDate = LocalDate.now().dayOfMonth().withMinimumValue().toString(ReportService.FINNISH_DATE_PATTERN);
+        params.startDate = LocalDate.now().dayOfMonth().withMinimumValue().toString(ReportServiceSupport.FINNISH_DATE_PATTERN);
         params.endDate = params.startDate;
         params.interval = 60;
         given().contentType(ContentType.JSON)
@@ -68,7 +68,7 @@ public class ReportingITest extends AbstractIntegrationTest {
     @Test
     public void report_HubsAndFacilities() {
         final ReportParameters params = new ReportParameters();
-        params.startDate = LocalDate.now().dayOfMonth().withMinimumValue().toString(ReportService.FINNISH_DATE_PATTERN);
+        params.startDate = LocalDate.now().dayOfMonth().withMinimumValue().toString(ReportServiceSupport.FINNISH_DATE_PATTERN);
         params.endDate = params.startDate;
         given().contentType(ContentType.JSON)
                 .accept(MEDIA_TYPE_EXCEL)
@@ -84,7 +84,7 @@ public class ReportingITest extends AbstractIntegrationTest {
     @Test
     public void report_MaxUtilization() {
         final ReportParameters params = new ReportParameters();
-        params.startDate = LocalDate.now().dayOfMonth().withMinimumValue().toString(ReportService.FINNISH_DATE_PATTERN);
+        params.startDate = LocalDate.now().dayOfMonth().withMinimumValue().toString(ReportServiceSupport.FINNISH_DATE_PATTERN);
         params.endDate = params.startDate;
         given().contentType(ContentType.JSON)
                 .accept(MEDIA_TYPE_EXCEL)

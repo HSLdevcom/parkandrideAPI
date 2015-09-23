@@ -43,33 +43,33 @@ public class HubsAndFacilitiesReportService extends AbstractReportService {
     private void addFacilitiesSheet(Excel excel, List<Facility> facilities, ReportContext ctx) {
 
         excel.addSheet(getMessage("reports.hf.sheets.facilities"), facilities, asList(
-                tcol("reports.hf.facility.facilityName",            (Facility f) -> f.name),
-                tcol("reports.hf.facility.aliases",                 (Facility f) -> join(", ", f.aliases)),
-                tcol("reports.hf.facility.hubs",                    (Facility f) -> ctx.hubsByFacilityId.getOrDefault(f.id, emptyList()).stream().map((Hub h) -> h.name.fi).collect(joining(", "))),
-                tcol("reports.hf.facility.operator",                (Facility f) -> ctx.operators.get(f.operatorId).name),
-                tcol("reports.hf.facility.status",                  (Facility f) -> translationService.translate(f.status)),
-                tcol("reports.hf.facility.statusDescription",       (Facility f) -> f.statusDescription),
-                tcol("reports.hf.facility.locX",                    (Facility f) -> f.location.getCentroid().getX()),
-                tcol("reports.hf.facility.locY",                    (Facility f) -> f.location.getCentroid().getY()),
+                tcol("reports.hf.facility.facilityName", (Facility f) -> f.name),
+                tcol("reports.hf.facility.aliases", (Facility f) -> join(", ", f.aliases)),
+                tcol("reports.hf.facility.hubs", (Facility f) -> ctx.hubsByFacilityId.getOrDefault(f.id, emptyList()).stream().map((Hub h) -> h.name.fi).collect(joining(", "))),
+                tcol("reports.hf.facility.operator", (Facility f) -> ctx.operators.get(f.operatorId).name),
+                tcol("reports.hf.facility.status", (Facility f) -> translationService.translate(f.status)),
+                tcol("reports.hf.facility.statusDescription", (Facility f) -> f.statusDescription),
+                tcol("reports.hf.facility.locX", (Facility f) -> f.location.getCentroid().getX()),
+                tcol("reports.hf.facility.locY", (Facility f) -> f.location.getCentroid().getY()),
                 tcol("reports.hf.facility.openingHoursbusinessDay", (Facility f) -> time(f.openingHours.byDayType.get(BUSINESS_DAY))),
-                tcol("reports.hf.facility.openingHoursSaturday",    (Facility f) -> time(f.openingHours.byDayType.get(SATURDAY))),
-                tcol("reports.hf.facility.openingHoursSunday",      (Facility f) -> time(f.openingHours.byDayType.get(SUNDAY))),
-                tcol("reports.hf.facility.openingHoursInfo",        (Facility f) -> f.openingHours.info),
-                tcol("reports.hf.facility.motorCapacity",           (Facility f) -> capacitySum(f.builtCapacity, motorCapacityList)),
-                tcol("reports.hf.facility.bicycleCapacity",         (Facility f) -> capacitySum(f.builtCapacity, bicycleCapacityList)),
-                tcol("reports.hf.facility.car",                     (Facility f) -> f.builtCapacity.get(CAR)),
-                tcol("reports.hf.facility.disabled",                (Facility f) -> f.builtCapacity.get(DISABLED)),
-                tcol("reports.hf.facility.electricCar",             (Facility f) -> f.builtCapacity.get(ELECTRIC_CAR)),
-                tcol("reports.hf.facility.motorcycle",              (Facility f) -> f.builtCapacity.get(MOTORCYCLE)),
-                tcol("reports.hf.facility.bicycle",                 (Facility f) -> f.builtCapacity.get(BICYCLE)),
-                tcol("reports.hf.facility.bicycleSecure",           (Facility f) -> f.builtCapacity.get(BICYCLE_SECURE_SPACE)),
-                tcol("reports.hf.facility.pricing",                 (Facility f) -> f.pricing.stream().map((p) -> translationService.translate(p.usage)).distinct().collect(joining(", "))),
-                tcol("reports.hf.facility.paymentMethod",           (Facility f) -> f.paymentInfo.paymentMethods.stream().map(m -> translationService.translate(m)).collect(joining(", "))),
-                tcol("reports.hf.facility.paymentMethodInfo",       (Facility f) -> f.paymentInfo.detail),
-                tcol("reports.hf.facility.services",                (Facility f) -> f.services.stream().map(s -> translationService.translate(s)).collect(joining(", "))),
-                tcol("reports.hf.facility.emergencyContact",        (Facility f) -> contactText(f.contacts.emergency)),
-                tcol("reports.hf.facility.operatorContact",         (Facility f) -> contactText(f.contacts.operator)),
-                tcol("reports.hf.facility.serviceContact",          (Facility f) -> contactText(f.contacts.service))
+                tcol("reports.hf.facility.openingHoursSaturday", (Facility f) -> time(f.openingHours.byDayType.get(SATURDAY))),
+                tcol("reports.hf.facility.openingHoursSunday", (Facility f) -> time(f.openingHours.byDayType.get(SUNDAY))),
+                tcol("reports.hf.facility.openingHoursInfo", (Facility f) -> f.openingHours.info),
+                tcol("reports.hf.facility.motorCapacity", (Facility f) -> capacitySum(f.builtCapacity, motorCapacityList)),
+                tcol("reports.hf.facility.bicycleCapacity", (Facility f) -> capacitySum(f.builtCapacity, bicycleCapacityList)),
+                tcol("reports.hf.facility.car", (Facility f) -> f.builtCapacity.get(CAR)),
+                tcol("reports.hf.facility.disabled", (Facility f) -> f.builtCapacity.get(DISABLED)),
+                tcol("reports.hf.facility.electricCar", (Facility f) -> f.builtCapacity.get(ELECTRIC_CAR)),
+                tcol("reports.hf.facility.motorcycle", (Facility f) -> f.builtCapacity.get(MOTORCYCLE)),
+                tcol("reports.hf.facility.bicycle", (Facility f) -> f.builtCapacity.get(BICYCLE)),
+                tcol("reports.hf.facility.bicycleSecure", (Facility f) -> f.builtCapacity.get(BICYCLE_SECURE_SPACE)),
+                tcol("reports.hf.facility.pricing", (Facility f) -> f.pricing.stream().map((p) -> translationService.translate(p.usage)).distinct().collect(joining(", "))),
+                tcol("reports.hf.facility.paymentMethod", (Facility f) -> f.paymentInfo.paymentMethods.stream().map(m -> translationService.translate(m)).collect(joining(", "))),
+                tcol("reports.hf.facility.paymentMethodInfo", (Facility f) -> f.paymentInfo.detail),
+                tcol("reports.hf.facility.services", (Facility f) -> f.services.stream().map(s -> translationService.translate(s)).collect(joining(", "))),
+                tcol("reports.hf.facility.emergencyContact", (Facility f) -> contactText(f.contacts.emergency)),
+                tcol("reports.hf.facility.operatorContact", (Facility f) -> contactText(f.contacts.operator)),
+                tcol("reports.hf.facility.serviceContact", (Facility f) -> contactText(f.contacts.service))
         ));
 
     }
@@ -92,11 +92,18 @@ public class HubsAndFacilitiesReportService extends AbstractReportService {
         ));
     }
 
-    private static <T> StringBuilder appendIfNotNull(StringBuilder sb, T toAppend, Function<T, Object> fn) {
+    private static <T> StringBuilder appendIfNotNull(StringBuilder sb, T toAppend, Function<T, Object> fn, boolean separator) {
         if (toAppend != null) {
-            sb.append(", ").append(fn.apply(toAppend));
+            if (separator) {
+                sb.append(", ");
+            }
+            sb.append(fn.apply(toAppend));
         }
         return sb;
+    }
+
+    private static <T> StringBuilder appendIfNotNull(StringBuilder sb, T toAppend, Function<T, Object> fn) {
+        return appendIfNotNull(sb, toAppend, fn, true);
     }
 
     private static <T> StringBuilder appendIfNotNull(StringBuilder sb, T toAppend) {
@@ -109,7 +116,7 @@ public class HubsAndFacilitiesReportService extends AbstractReportService {
         }
         StringBuilder sb = new StringBuilder();
         MultilingualString street = address.getStreetAddress();
-        appendIfNotNull(sb, street, st -> st.fi);
+        appendIfNotNull(sb, street, st -> st.fi, false);
         appendIfNotNull(sb, address.postalCode);
         appendIfNotNull(sb, address.city, city -> city.fi);
         return sb;

@@ -6,7 +6,9 @@ package fi.hsl.parkandride.front;
 import com.google.common.collect.ImmutableMap;
 import fi.hsl.parkandride.core.domain.User;
 import fi.hsl.parkandride.core.service.AccessDeniedException;
-import fi.hsl.parkandride.core.service.ReportService;
+import fi.hsl.parkandride.core.service.FacilityUsageReportService;
+import fi.hsl.parkandride.core.service.HubsAndFacilitiesReportService;
+import fi.hsl.parkandride.core.service.MaxUtilizationReportService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -47,11 +49,14 @@ public class ReportController {
     private final Map<ReportType, BiFunction<User, ReportParameters, byte[]>> reporters;
 
     @Inject
-    public ReportController(final ReportService reportService) {
+    public ReportController(
+            final HubsAndFacilitiesReportService hubsAndFacilitiesReportService,
+            final FacilityUsageReportService facilityUsageReportService,
+            final MaxUtilizationReportService maxUtilizationReportService) {
         this.reporters = ImmutableMap.<ReportType, BiFunction<User, ReportParameters, byte[]>> builder()
-                .put(HubsAndFacilities, reportService::reportHubsAndFacilities)
-                .put(FacilityUsage, reportService::reportFacilityUsage)
-                .put(MaxUtilization, reportService::reportMaxUtilization)
+                .put(HubsAndFacilities, hubsAndFacilitiesReportService::reportHubsAndFacilities)
+                .put(FacilityUsage, facilityUsageReportService::reportFacilityUsage)
+                .put(MaxUtilization, maxUtilizationReportService::reportMaxUtilization)
                 .build();
     }
 

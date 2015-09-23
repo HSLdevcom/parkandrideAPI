@@ -117,8 +117,18 @@ public class CoreConfiguration {
     }
 
     @Bean
-    public ReportService reportService() {
-        return new ReportService(facilityService(), operatorService(), contactService(), hubService(), utilizationRepository(), regionRepository(), translationService());
+    public HubsAndFacilitiesReportService hubsAndFacilitiesReportService() {
+        return new HubsAndFacilitiesReportService(facilityService(), operatorService(), contactService(), hubService(), utilizationRepository(), regionRepository(), translationService());
+    }
+
+    @Bean
+    public FacilityUsageReportService facilityUsageReportService() {
+        return new FacilityUsageReportService(facilityService(), operatorService(), contactService(), hubService(), utilizationRepository(), regionRepository(), translationService());
+    }
+
+    @Bean
+    public MaxUtilizationReportService maxUtilizationReportService() {
+        return new MaxUtilizationReportService(facilityService(), operatorService(), contactService(), hubService(), utilizationRepository(), regionRepository(), translationService());
     }
 
     @Bean

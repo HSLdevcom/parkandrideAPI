@@ -25,7 +25,7 @@ import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toSet;
 import static org.springframework.util.CollectionUtils.isEmpty;
 
-public abstract class AbstractReportService extends ReportServiceSupport {
+public abstract class AbstractReportService extends ReportServiceSupport implements ReportService {
     private static final Locale DEFAULT_LOCALE = new Locale("fi");
     private final String reportName;
 
@@ -42,6 +42,7 @@ public abstract class AbstractReportService extends ReportServiceSupport {
      * Verifies that the current user has permission to generate reports.
      * Do not override.
      */
+    @Override
     @TransactionalRead
     public byte[] generateReport(User currentUser, ReportParameters reportParameters) {
         authorize(currentUser, REPORT_GENERATE);
@@ -56,6 +57,7 @@ public abstract class AbstractReportService extends ReportServiceSupport {
     /**
      * Get the name of the report this service produces.
      */
+    @Override
     public String reportName() {
         return reportName;
     }

@@ -4,8 +4,8 @@
 package fi.hsl.parkandride.front;
 
 import fi.hsl.parkandride.core.domain.User;
-import fi.hsl.parkandride.core.service.AbstractReportService;
 import fi.hsl.parkandride.core.service.AccessDeniedException;
+import fi.hsl.parkandride.core.service.ReportService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -34,10 +34,10 @@ public class ReportController {
     private static final Logger log = LoggerFactory.getLogger(ReportController.class);
     public static final String MEDIA_TYPE_EXCEL = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
 
-    private final Map<String, AbstractReportService> reporters;
+    private final Map<String, ReportService> reporters;
 
     @Inject
-    public ReportController(Collection<AbstractReportService> reportServices) {
+    public ReportController(Collection<ReportService> reportServices) {
         this.reporters = reportServices.stream().collect(toMap(rs -> rs.reportName(), rs -> rs));
     }
 

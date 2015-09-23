@@ -7,20 +7,30 @@ import fi.hsl.parkandride.back.RegionRepository;
 import fi.hsl.parkandride.core.back.UtilizationRepository;
 import fi.hsl.parkandride.core.domain.*;
 import fi.hsl.parkandride.front.ReportParameters;
+import org.apache.poi.ss.usermodel.CellStyle;
 import org.joda.time.LocalDate;
+import org.springframework.context.MessageSource;
 
+import javax.inject.Inject;
+import java.util.Locale;
 import java.util.Set;
+import java.util.function.Function;
 
 import static fi.hsl.parkandride.core.domain.Permission.REPORT_GENERATE;
 import static fi.hsl.parkandride.core.service.AuthenticationService.authorize;
 import static fi.hsl.parkandride.core.service.AuthenticationService.getLimitedOperatorId;
+import static fi.hsl.parkandride.core.service.Excel.TableColumn.col;
 import static java.lang.String.format;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toSet;
 import static org.springframework.util.CollectionUtils.isEmpty;
 
 public abstract class AbstractReportService extends ReportServiceSupport {
+    private static final Locale DEFAULT_LOCALE = new Locale("fi");
     private final String reportName;
+
+    @Inject
+    MessageSource messageSource;
 
     protected AbstractReportService(String reportName, FacilityService facilityService, OperatorService operatorService, ContactService contactService, HubService hubService, UtilizationRepository utilizationRepository, TranslationService translationService, RegionRepository regionRepository) {
         super(facilityService, operatorService, contactService, hubService, utilizationRepository, translationService, regionRepository);
@@ -37,6 +47,10 @@ public abstract class AbstractReportService extends ReportServiceSupport {
         authorize(currentUser, REPORT_GENERATE);
         ReportContext ctx = new ReportContext(this, getLimitedOperatorId(currentUser));
         return generateReport(ctx, reportParameters).toBytes();
+    }
+
+    protected String getMessage(String code) {
+        return messageSource.getMessage(code, null, DEFAULT_LOCALE);
     }
 
     /**
@@ -91,6 +105,14 @@ public abstract class AbstractReportService extends ReportServiceSupport {
             }
         }
         return search;
+    }
+
+    /** Adds translated column */
+    protected <T> Excel.TableColumn<T> tcol(String key, Function<T, Object> valFn) {
+        return col(getMessage(key), valFn);
+    }
+    protected <T> Excel.TableColumn<T> tcol(String key, Function<T, Object> valFn, CellStyle cellStyle) {
+        return col(getMessage(key), valFn, cellStyle);
     }
 
     static class BasicUtilizationReportKey {

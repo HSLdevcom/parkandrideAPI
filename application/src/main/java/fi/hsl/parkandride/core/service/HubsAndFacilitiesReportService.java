@@ -15,7 +15,6 @@ import java.util.function.Function;
 
 import static fi.hsl.parkandride.core.domain.CapacityType.*;
 import static fi.hsl.parkandride.core.domain.DayType.*;
-import static fi.hsl.parkandride.core.service.Excel.TableColumn.col;
 import static java.lang.String.join;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
@@ -36,64 +35,61 @@ public class HubsAndFacilitiesReportService extends AbstractReportService {
         Excel excel = new Excel();
         addRegionsSheet(excel, new ArrayList<>(ctx.hubs.values()), ctx);
         addFacilitiesSheet(excel, new ArrayList<>(ctx.facilities.values()), ctx);
-        excel.addSheet("Selite", "Tämä dokumentti on vedos https://p.hsl.fi/ -sivuston tiedoista", "",
-                "Alueet-välilehdelle on koostettu kaikki järjestelmään syötetyt alueet, niihin liitetyt tiedot ja pysäköintipaikat",
-                "Pysäköintipaikat-välilehdelle on koostettu riveittäin kaikki järjestelmään syötetyt pysäköintipaikat tietoineen",
-                "", "Pysäköintipaikka vastaa yksittäistä pysäköintikenttää tai -laitosta",
-                "Alue vastaa joukkoliikenteen solmukohtaa, kuten juna- tai linja-autoasemaa",
-                "Pysäköintipaikat on järjestetty alueittain",
-                "Yksi pysäköintipaikka voi kuulua useampaan alueeseen",
-                "Kaikki koordinaatit noudattavat EPSG:4326 -järjestelmää");
+        excel.addSheet(getMessage("reports.hf.sheets.legend"),
+                getMessage("reports.hf.legend").split("\n"));
         return excel;
     }
 
     private void addFacilitiesSheet(Excel excel, List<Facility> facilities, ReportContext ctx) {
-        excel.addSheet("Pysäköintipaikat", facilities,
-                       asList(col("Pysäköintipaikan nimi", (Facility f) -> f.name),
-                              col("Aliakset", (Facility f) -> join(", ", f.aliases)),
-                              col("Kuuluu alueisiin", (Facility f) -> ctx.hubsByFacilityId.getOrDefault(f.id, emptyList()).stream().map((Hub h) -> h.name.fi).collect(joining(", "))),
-                              col("Operaattori", (Facility f) -> ctx.operators.get(f.operatorId).name),
-                              col("Status", (Facility f) -> translationService.translate(f.status)),
-                              col("Statuksen lisätiedot / poikkeustiedote", (Facility f) -> f.statusDescription),
-                              col("Sijainti, pituuspiiri", (Facility f) -> f.location.getCentroid().getX()),
-                              col("Sijainti, leveyspiiri", (Facility f) -> f.location.getCentroid().getY()),
-                              col("Aukiolo, arki", (Facility f) -> time(f.openingHours.byDayType.get(BUSINESS_DAY))),
-                              col("Aukiolo, la", (Facility f) -> time(f.openingHours.byDayType.get(SATURDAY))),
-                              col("Aukiolo, su", (Facility f) -> time(f.openingHours.byDayType.get(SUNDAY))),
-                              col("Aukiolo, lisätiedot", (Facility f) -> f.openingHours.info),
-                              col("Kaikki moottoriajoneuvot", (Facility f) -> capacitySum(f.builtCapacity, motorCapacityList)),
-                              col("Kaikki polkupyörät", (Facility f) -> capacitySum(f.builtCapacity, bicycleCapacityList)),
-                              col("Henkilöauto", (Facility f) -> f.builtCapacity.get(CAR)),
-                              col("Invapaikka", (Facility f) -> f.builtCapacity.get(DISABLED)),
-                              col("Sähköauto", (Facility f) -> f.builtCapacity.get(ELECTRIC_CAR)),
-                              col("Moottoripyörä", (Facility f) -> f.builtCapacity.get(MOTORCYCLE)),
-                              col("Polkupyörä", (Facility f) -> f.builtCapacity.get(BICYCLE)),
-                              col("Polkupyörä, lukittu tila", (Facility f) -> f.builtCapacity.get(BICYCLE_SECURE_SPACE)),
-                              col("Hinnoittelu", (Facility f) -> f.pricing.stream().map((p) -> translationService.translate(p.usage)).distinct().collect(joining(", "))),
-                              col("Maksutavat", (Facility f) -> f.paymentInfo.paymentMethods.stream().map(m -> translationService.translate(m)).collect(joining(", "))),
-                              col("Maksutapojen lisätiedot", (Facility f) -> f.paymentInfo.detail),
-                              col("Palvelut", (Facility f) -> f.services.stream().map(s -> translationService.translate(s)).collect(joining(", "))),
-                              col("Yhteystiedot, Hätänumero", (Facility f) -> contactText(f.contacts.emergency)),
-                              col("Yhteystiedot, Operaattorin yhteystieto", (Facility f) -> contactText(f.contacts.operator)),
-                              col("Yhteystiedot, Palveluyhtiö", (Facility f) -> contactText(f.contacts.service))));
+
+        excel.addSheet(getMessage("reports.hf.sheets.facilities"), facilities, asList(
+                tcol("reports.hf.facility.facilityName",            (Facility f) -> f.name),
+                tcol("reports.hf.facility.aliases",                 (Facility f) -> join(", ", f.aliases)),
+                tcol("reports.hf.facility.hubs",                    (Facility f) -> ctx.hubsByFacilityId.getOrDefault(f.id, emptyList()).stream().map((Hub h) -> h.name.fi).collect(joining(", "))),
+                tcol("reports.hf.facility.operator",                (Facility f) -> ctx.operators.get(f.operatorId).name),
+                tcol("reports.hf.facility.status",                  (Facility f) -> translationService.translate(f.status)),
+                tcol("reports.hf.facility.statusDescription",       (Facility f) -> f.statusDescription),
+                tcol("reports.hf.facility.locX",                    (Facility f) -> f.location.getCentroid().getX()),
+                tcol("reports.hf.facility.locY",                    (Facility f) -> f.location.getCentroid().getY()),
+                tcol("reports.hf.facility.openingHoursbusinessDay", (Facility f) -> time(f.openingHours.byDayType.get(BUSINESS_DAY))),
+                tcol("reports.hf.facility.openingHoursSaturday",    (Facility f) -> time(f.openingHours.byDayType.get(SATURDAY))),
+                tcol("reports.hf.facility.openingHoursSunday",      (Facility f) -> time(f.openingHours.byDayType.get(SUNDAY))),
+                tcol("reports.hf.facility.openingHoursInfo",        (Facility f) -> f.openingHours.info),
+                tcol("reports.hf.facility.motorCapacity",           (Facility f) -> capacitySum(f.builtCapacity, motorCapacityList)),
+                tcol("reports.hf.facility.bicycleCapacity",         (Facility f) -> capacitySum(f.builtCapacity, bicycleCapacityList)),
+                tcol("reports.hf.facility.car",                     (Facility f) -> f.builtCapacity.get(CAR)),
+                tcol("reports.hf.facility.disabled",                (Facility f) -> f.builtCapacity.get(DISABLED)),
+                tcol("reports.hf.facility.electricCar",             (Facility f) -> f.builtCapacity.get(ELECTRIC_CAR)),
+                tcol("reports.hf.facility.motorcycle",              (Facility f) -> f.builtCapacity.get(MOTORCYCLE)),
+                tcol("reports.hf.facility.bicycle",                 (Facility f) -> f.builtCapacity.get(BICYCLE)),
+                tcol("reports.hf.facility.bicycleSecure",           (Facility f) -> f.builtCapacity.get(BICYCLE_SECURE_SPACE)),
+                tcol("reports.hf.facility.pricing",                 (Facility f) -> f.pricing.stream().map((p) -> translationService.translate(p.usage)).distinct().collect(joining(", "))),
+                tcol("reports.hf.facility.paymentMethod",           (Facility f) -> f.paymentInfo.paymentMethods.stream().map(m -> translationService.translate(m)).collect(joining(", "))),
+                tcol("reports.hf.facility.paymentMethodInfo",       (Facility f) -> f.paymentInfo.detail),
+                tcol("reports.hf.facility.services",                (Facility f) -> f.services.stream().map(s -> translationService.translate(s)).collect(joining(", "))),
+                tcol("reports.hf.facility.emergencyContact",        (Facility f) -> contactText(f.contacts.emergency)),
+                tcol("reports.hf.facility.operatorContact",         (Facility f) -> contactText(f.contacts.operator)),
+                tcol("reports.hf.facility.serviceContact",          (Facility f) -> contactText(f.contacts.service))
+        ));
 
     }
 
     private void addRegionsSheet(Excel excel, List<Hub> hubs, ReportContext ctx) {
-        excel.addSheet("Alueet", hubs,
-                       asList(col("Alueen nimi", (Hub h) -> h.name),
-                              col("Käyntiosoite", (Hub h) -> addressText(h.address)),
-                              col("Sijainti, pituuspiiri", (Hub h) -> h.location.getX()),
-                              col("Sijainti, leveyspiiri", (Hub h) -> h.location.getY()),
-                              col("Kaikki moottoriajoneuvot", (Hub h) -> capacitySum(ctx, h.id, motorCapacities)),
-                              col("Kaikki polkupyörät", (Hub h) -> capacitySum(ctx, h.id, bicycleCapacities)),
-                              col("Henkilöauto", (Hub h) -> capacitySum(ctx, h.id, CAR)),
-                              col("Invapaikka", (Hub h) -> capacitySum(ctx, h.id, DISABLED)),
-                              col("Sähköauto", (Hub h) -> capacitySum(ctx, h.id, ELECTRIC_CAR)),
-                              col("Moottoripyörä", (Hub h) -> capacitySum(ctx, h.id, MOTORCYCLE)),
-                              col("Polkupyörä", (Hub h) -> capacitySum(ctx, h.id, BICYCLE)),
-                              col("Polkupyörä, lukittu tila", (Hub h) -> capacitySum(ctx, h.id, BICYCLE_SECURE_SPACE)),
-                              col("Pysäköintipaikat", (Hub h) -> ctx.facilitiesByHubId.getOrDefault(h.id, emptyList()).stream().map((Facility f) -> f.name.fi).collect(toList()))));
+        excel.addSheet(getMessage("reports.hf.sheets.hubs"), hubs, asList(
+                tcol("reports.hf.hub.name", (Hub h) -> h.name),
+                tcol("reports.hf.hub.address", (Hub h) -> addressText(h.address)),
+                tcol("reports.hf.hub.locX", (Hub h) -> h.location.getX()),
+                tcol("reports.hf.hub.locY", (Hub h) -> h.location.getY()),
+                tcol("reports.hf.hub.motorCapacity", (Hub h) -> capacitySum(ctx, h.id, motorCapacities)),
+                tcol("reports.hf.hub.bicycleCapacity", (Hub h) -> capacitySum(ctx, h.id, bicycleCapacities)),
+                tcol("reports.hf.hub.car", (Hub h) -> capacitySum(ctx, h.id, CAR)),
+                tcol("reports.hf.hub.disabled", (Hub h) -> capacitySum(ctx, h.id, DISABLED)),
+                tcol("reports.hf.hub.electicCar", (Hub h) -> capacitySum(ctx, h.id, ELECTRIC_CAR)),
+                tcol("reports.hf.hub.motorcycle", (Hub h) -> capacitySum(ctx, h.id, MOTORCYCLE)),
+                tcol("reports.hf.hub.bicycle", (Hub h) -> capacitySum(ctx, h.id, BICYCLE)),
+                tcol("reports.hf.hub.bicycleSecure", (Hub h) -> capacitySum(ctx, h.id, BICYCLE_SECURE_SPACE)),
+                tcol("reports.hf.hub.facilities", (Hub h) -> ctx.facilitiesByHubId.getOrDefault(h.id, emptyList()).stream().map((Facility f) -> f.name.fi).collect(toList()))
+        ));
     }
 
     private static <T> StringBuilder appendIfNotNull(StringBuilder sb, T toAppend, Function<T, Object> fn) {

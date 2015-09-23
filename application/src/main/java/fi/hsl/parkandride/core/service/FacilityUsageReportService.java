@@ -64,28 +64,28 @@ public class FacilityUsageReportService extends AbstractReportService {
 
         Excel excel = new Excel();
         List<UtilizationReportRow> rows = new ArrayList<>(reportRows.values());
-        List<TableColumn<UtilizationReportRow>> columns =
-                asList(col("Pysäköintipaikan nimi", (UtilizationReportRow r) -> r.key.facility.name),
-                        col("Alue", (UtilizationReportRow r) -> ctx.hubsByFacilityId.getOrDefault(r.key.targetId, emptyList()).stream().map((Hub h) -> h.name.fi).collect(joining(", "))),
-                        col("Kunta", (UtilizationReportRow r) -> ctx.regionByFacilityId.get(r.key.targetId).name),
-                        col("Operaattori", (UtilizationReportRow r) -> operatorService.getOperator(r.key.facility.operatorId).name),
-                        col("Käyttötapa", (UtilizationReportRow r) -> translationService.translate(r.key.usage)),
-                        col("Ajoneuvotyyppi", (UtilizationReportRow r) -> translationService.translate(r.key.capacityType)),
-                        col("Status", (UtilizationReportRow r) -> translationService.translate(r.key.facility.status)),
-                        col("Aukiolo, arki", (UtilizationReportRow r) -> time(r.key.facility.openingHours.byDayType.get(BUSINESS_DAY))),
-                        col("Aukiolo, la", (UtilizationReportRow r) -> time(r.key.facility.openingHours.byDayType.get(SATURDAY))),
-                        col("Aukiolo, su", (UtilizationReportRow r) -> time(r.key.facility.openingHours.byDayType.get(SUNDAY))),
-                        col("Pysäköintipaikkojen määrä", (UtilizationReportRow r) -> r.key.facility.builtCapacity.get(r.key.capacityType)),
-                        col("Päivämäärä", (UtilizationReportRow r) -> r.key.date));
+        List<TableColumn<UtilizationReportRow>> columns = asList(
+                tcol("reports.usage.col.facility", (UtilizationReportRow r) -> r.key.facility.name),
+                tcol("reports.usage.col.hub", (UtilizationReportRow r) -> ctx.hubsByFacilityId.getOrDefault(r.key.targetId, emptyList()).stream().map((Hub h) -> h.name.fi).collect(joining(", "))),
+                tcol("reports.usage.col.region", (UtilizationReportRow r) -> ctx.regionByFacilityId.get(r.key.targetId).name),
+                tcol("reports.usage.col.operator", (UtilizationReportRow r) -> operatorService.getOperator(r.key.facility.operatorId).name),
+                tcol("reports.usage.col.usage", (UtilizationReportRow r) -> translationService.translate(r.key.usage)),
+                tcol("reports.usage.col.capacityType", (UtilizationReportRow r) -> translationService.translate(r.key.capacityType)),
+                tcol("reports.usage.col.status", (UtilizationReportRow r) -> translationService.translate(r.key.facility.status)),
+                tcol("reports.usage.col.openingHoursBusinessDay", (UtilizationReportRow r) -> time(r.key.facility.openingHours.byDayType.get(BUSINESS_DAY))),
+                tcol("reports.usage.col.openingHoursSaturday", (UtilizationReportRow r) -> time(r.key.facility.openingHours.byDayType.get(SATURDAY))),
+                tcol("reports.usage.col.openingHoursSunday", (UtilizationReportRow r) -> time(r.key.facility.openingHours.byDayType.get(SUNDAY))),
+                tcol("reports.usage.col.spacesAvailable", (UtilizationReportRow r) -> r.key.facility.builtCapacity.get(r.key.capacityType)),
+                tcol("reports.usage.col.date", (UtilizationReportRow r) -> r.key.date)
+        );
         columns = new ArrayList<>(columns);
         for (int s = 0, i = 0; s < SECONDS_IN_DAY; s += intervalSeconds, i++) {
             final int idx = i;
             columns.add(col(ofSecondOfDay(s).toString(), (UtilizationReportRow r) -> r.values[idx]));
         }
-        excel.addSheet("Käyttöasteraportti", rows, columns);
-        excel.addSheet("Selite",
-                "Tämä dokumentti kertoo yksittäisten liityntäpysäköintilaitosten vapaiden paikkojen määrän eri ajanhetkinä eroteltuna ajoneuvotyypeittäin",
-                "Kaikista pysäköintilaitoksista tai -kentistä ei ole saatavilla päivittyvää tietoa");
+        excel.addSheet(getMessage("reports.usage.sheets.usage"), rows, columns);
+        excel.addSheet(getMessage("reports.usage.sheets.legend"),
+                getMessage("reports.usage.legend").split("\n"));
         return excel;
     }
 

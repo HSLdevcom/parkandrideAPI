@@ -14,7 +14,6 @@ import java.util.*;
 
 import static com.google.common.collect.Iterators.filter;
 import static fi.hsl.parkandride.core.domain.Region.UNKNOWN_REGION;
-import static fi.hsl.parkandride.core.service.Excel.TableColumn.col;
 import static java.lang.Math.min;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
@@ -79,24 +78,24 @@ public class MaxUtilizationReportService extends AbstractReportService {
         sort(rows);
 
         Excel excel = new Excel();
-        List<TableColumn<MaxUtilizationReportRow>> columns =
-                asList(col("Alueen nimi", (MaxUtilizationReportRow r) -> r.hub.name),
-                        col("Kunta", (MaxUtilizationReportRow r) -> ctx.regionByHubId.getOrDefault(r.key.targetId, UNKNOWN_REGION).name),
-                        col("Operaattori", (MaxUtilizationReportRow r) -> operatorService.getOperator(r.key.facility.operatorId).name),
-                        col("Käyttötapa", (MaxUtilizationReportRow r) -> translationService.translate(r.key.usage)),
-                        col("Ajoneuvotyyppi", (MaxUtilizationReportRow r) -> translationService.translate(r.key.capacityType)),
-                        col("Status", (MaxUtilizationReportRow r) -> translationService.translate(r.key.facility.status)),
-                        col("Pysäköintipaikkojen määrä", (MaxUtilizationReportRow r) -> r.totalCapacity),
-                        col("Päivätyyppi", (MaxUtilizationReportRow r) -> translationService.translate(r.key.dayType)),
-                        col("Keskimääräinen maksimikäyttöaste", (MaxUtilizationReportRow r) -> r.average, excel.percent));
-        excel.addSheet("Tiivistelmäraportti", rows, columns);
-        excel.addSheet("Selite", "Tiivistelmäraportti kertoo maksimitäyttöasteen valitulla aikavälillä arki-la-su-tarkkuudella.", "",
-                "Jos raportiin on valittu alue, johon kuuluu useampi parkkipaikka, niin maksimitäyttöaste on keskiarvo näiden parkkipaikkojen maksimitäyttöasteesta.",
-                "Maksimitäyttöaste on päivän ruuhkahuippu kyseisellä parkkipaikalla. Se ilmaisee kuinka täynnä parkkipaikka on ollut, kun se on ollut täysimmillään päivän aikana",
-                "Kaikista pysäköintilaitoksista tai -kentistä ei ole saatavilla päivittyvää tietoa, jolloin maksimitäyttöaste on jätetty tyhjäksi tai laskettu vain saatujen tietojen perusteella");
+        List<TableColumn<MaxUtilizationReportRow>> columns = asList(
+                tcol("reports.utilization.col.hub", (MaxUtilizationReportRow r) -> r.hub.name),
+                tcol("reports.utilization.col.region", (MaxUtilizationReportRow r) -> ctx.regionByHubId.getOrDefault(r.key.targetId, UNKNOWN_REGION).name),
+                tcol("reports.utilization.col.operator", (MaxUtilizationReportRow r) -> operatorService.getOperator(r.key.facility.operatorId).name),
+                tcol("reports.utilization.col.usage", (MaxUtilizationReportRow r) -> translationService.translate(r.key.usage)),
+                tcol("reports.utilization.col.capacityType", (MaxUtilizationReportRow r) -> translationService.translate(r.key.capacityType)),
+                tcol("reports.utilization.col.status", (MaxUtilizationReportRow r) -> translationService.translate(r.key.facility.status)),
+                tcol("reports.utilization.col.totalCapacity", (MaxUtilizationReportRow r) -> r.totalCapacity),
+                tcol("reports.utilization.col.dayType", (MaxUtilizationReportRow r) -> translationService.translate(r.key.dayType)),
+                tcol("reports.utilization.col.averageMaxUsage", (MaxUtilizationReportRow r) -> r.average, excel.percent)
+        );
+        excel.addSheet(getMessage("reports.utilization.sheets.summary"), rows, columns);
+        excel.addSheet(getMessage("reports.utilization.sheets.legend"),
+                getMessage("reports.utilization.legend").split("\n"));
 
         return excel;
     }
+
 
     private Iterator<Utilization> addFilters(Iterator<Utilization> iter, ReportContext ctx, ReportParameters parameters) {
         if (ctx.allowedOperatorId != null) {

@@ -65,32 +65,6 @@ public class AbstractReportService extends ReportServiceSupport {
         return search;
     }
 
-    protected final CharSequence contactText(Long contactId) {
-        if (contactId == null) {
-            return null;
-        }
-        Contact contact = contactService.getContact(contactId);
-
-        StringBuilder sb = new StringBuilder();
-        sb.append(contact.name.fi);
-        if (contact.phone != null) {
-            sb.append(", ").append(contact.phone);
-        }
-        if (contact.email != null) {
-            sb.append(", ").append(contact.email);
-        }
-        if (contact.address != null) {
-            sb.append(", ").append(HubsAndFacilitiesReportService.addressText(contact.address));
-        }
-        if (contact.openingHours != null) {
-            sb.append(", ").append(contact.openingHours.fi);
-        }
-        if (contact.info != null) {
-            sb.append(", ").append(contact.info.fi);
-        }
-        return sb;
-    }
-
     static class BasicUtilizationReportKey {
         CapacityType capacityType;
         Usage usage;

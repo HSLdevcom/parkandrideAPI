@@ -11,6 +11,7 @@ import fi.hsl.parkandride.front.ReportParameters;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 
 import static fi.hsl.parkandride.core.domain.CapacityType.*;
 import static fi.hsl.parkandride.core.domain.DayType.*;
@@ -29,24 +30,6 @@ public class HubsAndFacilitiesReportService extends AbstractReportService {
     public HubsAndFacilitiesReportService(FacilityService facilityService, OperatorService operatorService, ContactService contactService, HubService hubService,
                                           UtilizationRepository utilizationRepository, RegionRepository regionRepository, TranslationService translationService) {
         super(facilityService, operatorService, contactService, hubService, utilizationRepository, translationService, regionRepository);
-    }
-
-    protected static CharSequence addressText(Address address) {
-        if (address == null) {
-            return null;
-        }
-        StringBuilder sb = new StringBuilder();
-        MultilingualString street = address.getStreetAddress();
-        if (street != null) {
-            sb.append(street.fi);
-        }
-        if (address.postalCode != null) {
-            sb.append(", ").append(address.postalCode);
-        }
-        if (address.city != null) {
-            sb.append(", ").append(address.city.fi);
-        }
-        return sb;
     }
 
     public byte[] reportHubsAndFacilities(User currentUser, ReportParameters parameters) {
@@ -117,13 +100,50 @@ public class HubsAndFacilitiesReportService extends AbstractReportService {
                               col("Pysäköintipaikat", (Hub h) -> ctx.facilitiesByHubId.getOrDefault(h.id, emptyList()).stream().map((Facility f) -> f.name.fi).collect(toList()))));
     }
 
+    private static <T> StringBuilder appendIfNotNull(StringBuilder sb, T toAppend, Function<T, Object> fn) {
+        if (toAppend != null) {
+            sb.append(", ").append(fn.apply(toAppend));
+        }
+        return sb;
+    }
+
+    private static <T> StringBuilder appendIfNotNull(StringBuilder sb, T toAppend) {
+        return appendIfNotNull(sb, toAppend, a -> a);
+    }
+
+    private static CharSequence addressText(Address address) {
+        if (address == null) {
+            return null;
+        }
+        StringBuilder sb = new StringBuilder();
+        MultilingualString street = address.getStreetAddress();
+        appendIfNotNull(sb, street, st -> st.fi);
+        appendIfNotNull(sb, address.postalCode);
+        appendIfNotNull(sb, address.city, city -> city.fi);
+        return sb;
+    }
+
+    private CharSequence contactText(Long contactId) {
+        if (contactId == null) {
+            return null;
+        }
+        Contact contact = contactService.getContact(contactId);
+
+        StringBuilder sb = new StringBuilder();
+        sb.append(contact.name.fi);
+        appendIfNotNull(sb, contact.phone);
+        appendIfNotNull(sb, contact.email);
+        appendIfNotNull(sb, contact.address, addr -> addressText(addr));
+        appendIfNotNull(sb, contact.openingHours, oh -> oh.fi);
+        appendIfNotNull(sb, contact.info, info -> info.fi);
+        return sb;
+    }
+
     private int capacitySum(ReportContext ctx, long hubId, CapacityType... types) {
         List<Facility> facilities = ctx.facilitiesByHubId.getOrDefault(hubId, emptyList());
-        int sum = 0;
-        for (CapacityType type : types) {
-            sum += facilities.stream().mapToInt((Facility f) -> f.builtCapacity.getOrDefault(type, 0)).sum();
-        }
-        return sum;
+        return facilities.stream()
+                .mapToInt(f -> capacitySum(f.builtCapacity, asList(types)))
+                .sum();
     }
 
     private static int capacitySum(Map<CapacityType, Integer> capacityValues, List<CapacityType> capacityTypes) {

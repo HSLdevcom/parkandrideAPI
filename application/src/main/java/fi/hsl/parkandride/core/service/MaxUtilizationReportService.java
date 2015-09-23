@@ -13,10 +13,7 @@ import fi.hsl.parkandride.front.ReportParameters;
 import java.util.*;
 
 import static com.google.common.collect.Iterators.filter;
-import static fi.hsl.parkandride.core.domain.Permission.REPORT_GENERATE;
 import static fi.hsl.parkandride.core.domain.Region.UNKNOWN_REGION;
-import static fi.hsl.parkandride.core.service.AuthenticationService.authorize;
-import static fi.hsl.parkandride.core.service.AuthenticationService.getLimitedOperatorId;
 import static fi.hsl.parkandride.core.service.Excel.TableColumn.col;
 import static java.lang.Math.min;
 import static java.util.Arrays.asList;
@@ -32,28 +29,8 @@ public class MaxUtilizationReportService extends AbstractReportService {
     }
 
 
-    private Iterator<Utilization> addFilters(Iterator<Utilization> iter, ReportContext ctx, ReportParameters parameters) {
-        if (ctx.allowedOperatorId != null) {
-            iter = filter(iter, u -> ctx.facilities.containsKey(u.facilityId));
-        }
-        if (!isEmpty(parameters.operators)) {
-            iter = filter(iter, u -> parameters.operators.contains(ctx.facilities.get(u.facilityId).operatorId));
-        }
-        if (!isEmpty(parameters.hubs)) {
-            iter = filter(iter, u -> ctx.hubsByFacilityId.getOrDefault(u.facilityId, emptyList()).stream().filter(h -> parameters.hubs.contains(h.id)).findFirst().isPresent());
-        }
-        if (!isEmpty(parameters.regions)) {
-            iter = filter(iter, u -> parameters.regions.contains(ctx.regionByFacilityId.get(u.facilityId).id));
-        }
-        return iter;
-    }
-
-    @TransactionalRead
-    public byte[] reportMaxUtilization(User currentUser, ReportParameters parameters) {
-        authorize(currentUser, REPORT_GENERATE);
-
-        ReportContext ctx = new ReportContext(this, getLimitedOperatorId(currentUser));
-
+    @Override
+    protected Excel generateReport(ReportContext ctx, ReportParameters parameters) {
         UtilizationSearch search = toUtilizationSearch(parameters, ctx);
 
         // min available space per [facility, dayType, usage, capacity]
@@ -92,8 +69,8 @@ public class MaxUtilizationReportService extends AbstractReportService {
         List<MaxUtilizationReportRow> rows = new ArrayList<>();
         hubStats.forEach((hubKey, facilityKeys) -> {
             double avgPercent = facilityKeys.stream()
-                                            .mapToDouble(key -> 1.0 - facilityStats.get(key) / (double) key.facility.builtCapacity.get(key.capacityType))
-                                            .average().orElse(0);
+                    .mapToDouble(key -> 1.0 - facilityStats.get(key) / (double) key.facility.builtCapacity.get(key.capacityType))
+                    .average().orElse(0);
             int totalCapacity = facilityKeys.stream().mapToInt(key -> key.facility.builtCapacity.get(key.capacityType)).sum();
             rows.add(new MaxUtilizationReportRow(hubKey.hub, facilityKeys.get(0), avgPercent, totalCapacity));
         });
@@ -101,22 +78,38 @@ public class MaxUtilizationReportService extends AbstractReportService {
 
         Excel excel = new Excel();
         List<TableColumn<MaxUtilizationReportRow>> columns =
-            asList(col("Alueen nimi", (MaxUtilizationReportRow r) -> r.hub.name),
-                   col("Kunta", (MaxUtilizationReportRow r) -> ctx.regionByHubId.getOrDefault(r.key.targetId, UNKNOWN_REGION).name),
-                   col("Operaattori", (MaxUtilizationReportRow r) -> operatorService.getOperator(r.key.facility.operatorId).name),
-                   col("Käyttötapa", (MaxUtilizationReportRow r) -> translationService.translate(r.key.usage)),
-                   col("Ajoneuvotyyppi", (MaxUtilizationReportRow r) -> translationService.translate(r.key.capacityType)),
-                   col("Status", (MaxUtilizationReportRow r) -> translationService.translate(r.key.facility.status)),
-                   col("Pysäköintipaikkojen määrä", (MaxUtilizationReportRow r) -> r.totalCapacity),
-                   col("Päivätyyppi", (MaxUtilizationReportRow r) -> translationService.translate(r.key.dayType)),
-                   col("Keskimääräinen maksimikäyttöaste", (MaxUtilizationReportRow r) -> r.average, excel.percent));
+                asList(col("Alueen nimi", (MaxUtilizationReportRow r) -> r.hub.name),
+                        col("Kunta", (MaxUtilizationReportRow r) -> ctx.regionByHubId.getOrDefault(r.key.targetId, UNKNOWN_REGION).name),
+                        col("Operaattori", (MaxUtilizationReportRow r) -> operatorService.getOperator(r.key.facility.operatorId).name),
+                        col("Käyttötapa", (MaxUtilizationReportRow r) -> translationService.translate(r.key.usage)),
+                        col("Ajoneuvotyyppi", (MaxUtilizationReportRow r) -> translationService.translate(r.key.capacityType)),
+                        col("Status", (MaxUtilizationReportRow r) -> translationService.translate(r.key.facility.status)),
+                        col("Pysäköintipaikkojen määrä", (MaxUtilizationReportRow r) -> r.totalCapacity),
+                        col("Päivätyyppi", (MaxUtilizationReportRow r) -> translationService.translate(r.key.dayType)),
+                        col("Keskimääräinen maksimikäyttöaste", (MaxUtilizationReportRow r) -> r.average, excel.percent));
         excel.addSheet("Tiivistelmäraportti", rows, columns);
         excel.addSheet("Selite", "Tiivistelmäraportti kertoo maksimitäyttöasteen valitulla aikavälillä arki-la-su-tarkkuudella.", "",
-                       "Jos raportiin on valittu alue, johon kuuluu useampi parkkipaikka, niin maksimitäyttöaste on keskiarvo näiden parkkipaikkojen maksimitäyttöasteesta.",
-                       "Maksimitäyttöaste on päivän ruuhkahuippu kyseisellä parkkipaikalla. Se ilmaisee kuinka täynnä parkkipaikka on ollut, kun se on ollut täysimmillään päivän aikana",
-                       "Kaikista pysäköintilaitoksista tai -kentistä ei ole saatavilla päivittyvää tietoa, jolloin maksimitäyttöaste on jätetty tyhjäksi tai laskettu vain saatujen tietojen perusteella");
+                "Jos raportiin on valittu alue, johon kuuluu useampi parkkipaikka, niin maksimitäyttöaste on keskiarvo näiden parkkipaikkojen maksimitäyttöasteesta.",
+                "Maksimitäyttöaste on päivän ruuhkahuippu kyseisellä parkkipaikalla. Se ilmaisee kuinka täynnä parkkipaikka on ollut, kun se on ollut täysimmillään päivän aikana",
+                "Kaikista pysäköintilaitoksista tai -kentistä ei ole saatavilla päivittyvää tietoa, jolloin maksimitäyttöaste on jätetty tyhjäksi tai laskettu vain saatujen tietojen perusteella");
 
-        return excel.toBytes();
+        return excel;
+    }
+
+    private Iterator<Utilization> addFilters(Iterator<Utilization> iter, ReportContext ctx, ReportParameters parameters) {
+        if (ctx.allowedOperatorId != null) {
+            iter = filter(iter, u -> ctx.facilities.containsKey(u.facilityId));
+        }
+        if (!isEmpty(parameters.operators)) {
+            iter = filter(iter, u -> parameters.operators.contains(ctx.facilities.get(u.facilityId).operatorId));
+        }
+        if (!isEmpty(parameters.hubs)) {
+            iter = filter(iter, u -> ctx.hubsByFacilityId.getOrDefault(u.facilityId, emptyList()).stream().filter(h -> parameters.hubs.contains(h.id)).findFirst().isPresent());
+        }
+        if (!isEmpty(parameters.regions)) {
+            iter = filter(iter, u -> parameters.regions.contains(ctx.regionByFacilityId.get(u.facilityId).id));
+        }
+        return iter;
     }
 
     static class MaxUtilizationReportRow implements Comparable<MaxUtilizationReportRow> {

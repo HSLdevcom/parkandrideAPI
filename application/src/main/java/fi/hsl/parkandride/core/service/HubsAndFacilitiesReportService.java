@@ -15,9 +15,6 @@ import java.util.function.Function;
 
 import static fi.hsl.parkandride.core.domain.CapacityType.*;
 import static fi.hsl.parkandride.core.domain.DayType.*;
-import static fi.hsl.parkandride.core.domain.Permission.REPORT_GENERATE;
-import static fi.hsl.parkandride.core.service.AuthenticationService.authorize;
-import static fi.hsl.parkandride.core.service.AuthenticationService.getLimitedOperatorId;
 import static fi.hsl.parkandride.core.service.Excel.TableColumn.col;
 import static java.lang.String.join;
 import static java.util.Arrays.asList;
@@ -32,23 +29,20 @@ public class HubsAndFacilitiesReportService extends AbstractReportService {
         super(facilityService, operatorService, contactService, hubService, utilizationRepository, translationService, regionRepository);
     }
 
-    public byte[] reportHubsAndFacilities(User currentUser, ReportParameters parameters) {
-        authorize(currentUser, REPORT_GENERATE);
-
-        ReportContext ctx = new ReportContext(this, getLimitedOperatorId(currentUser));
-
+    @Override
+    protected Excel generateReport(ReportContext ctx, ReportParameters params) {
         Excel excel = new Excel();
         addRegionsSheet(excel, new ArrayList<>(ctx.hubs.values()), ctx);
         addFacilitiesSheet(excel, new ArrayList<>(ctx.facilities.values()), ctx);
         excel.addSheet("Selite", "Tämä dokumentti on vedos https://p.hsl.fi/ -sivuston tiedoista", "",
-                       "Alueet-välilehdelle on koostettu kaikki järjestelmään syötetyt alueet, niihin liitetyt tiedot ja pysäköintipaikat",
-                       "Pysäköintipaikat-välilehdelle on koostettu riveittäin kaikki järjestelmään syötetyt pysäköintipaikat tietoineen",
-                       "", "Pysäköintipaikka vastaa yksittäistä pysäköintikenttää tai -laitosta",
-                       "Alue vastaa joukkoliikenteen solmukohtaa, kuten juna- tai linja-autoasemaa",
-                       "Pysäköintipaikat on järjestetty alueittain",
-                       "Yksi pysäköintipaikka voi kuulua useampaan alueeseen",
-                       "Kaikki koordinaatit noudattavat EPSG:4326 -järjestelmää");
-        return excel.toBytes();
+                "Alueet-välilehdelle on koostettu kaikki järjestelmään syötetyt alueet, niihin liitetyt tiedot ja pysäköintipaikat",
+                "Pysäköintipaikat-välilehdelle on koostettu riveittäin kaikki järjestelmään syötetyt pysäköintipaikat tietoineen",
+                "", "Pysäköintipaikka vastaa yksittäistä pysäköintikenttää tai -laitosta",
+                "Alue vastaa joukkoliikenteen solmukohtaa, kuten juna- tai linja-autoasemaa",
+                "Pysäköintipaikat on järjestetty alueittain",
+                "Yksi pysäköintipaikka voi kuulua useampaan alueeseen",
+                "Kaikki koordinaatit noudattavat EPSG:4326 -järjestelmää");
+        return excel;
     }
 
     private void addFacilitiesSheet(Excel excel, List<Facility> facilities, ReportContext ctx) {
@@ -149,5 +143,4 @@ public class HubsAndFacilitiesReportService extends AbstractReportService {
     private static int capacitySum(Map<CapacityType, Integer> capacityValues, List<CapacityType> capacityTypes) {
         return capacityTypes.stream().mapToInt(type -> capacityValues.getOrDefault(type, 0)).sum();
     }
-
 }

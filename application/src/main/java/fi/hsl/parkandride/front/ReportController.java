@@ -54,9 +54,9 @@ public class ReportController {
             final FacilityUsageReportService facilityUsageReportService,
             final MaxUtilizationReportService maxUtilizationReportService) {
         this.reporters = ImmutableMap.<ReportType, BiFunction<User, ReportParameters, byte[]>> builder()
-                .put(HubsAndFacilities, hubsAndFacilitiesReportService::reportHubsAndFacilities)
-                .put(FacilityUsage, facilityUsageReportService::reportFacilityUsage)
-                .put(MaxUtilization, maxUtilizationReportService::reportMaxUtilization)
+                .put(HubsAndFacilities, hubsAndFacilitiesReportService::generateReport)
+                .put(FacilityUsage, facilityUsageReportService::generateReport)
+                .put(MaxUtilization, maxUtilizationReportService::generateReport)
                 .build();
     }
 

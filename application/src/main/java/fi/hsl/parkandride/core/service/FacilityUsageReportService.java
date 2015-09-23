@@ -6,7 +6,10 @@ package fi.hsl.parkandride.core.service;
 import com.mysema.commons.lang.CloseableIterator;
 import fi.hsl.parkandride.back.RegionRepository;
 import fi.hsl.parkandride.core.back.UtilizationRepository;
-import fi.hsl.parkandride.core.domain.*;
+import fi.hsl.parkandride.core.domain.Facility;
+import fi.hsl.parkandride.core.domain.Hub;
+import fi.hsl.parkandride.core.domain.Utilization;
+import fi.hsl.parkandride.core.domain.UtilizationSearch;
 import fi.hsl.parkandride.core.service.Excel.TableColumn;
 import fi.hsl.parkandride.front.ReportParameters;
 import org.joda.time.DateTime;
@@ -16,9 +19,6 @@ import java.util.*;
 
 import static com.google.common.collect.Iterators.filter;
 import static fi.hsl.parkandride.core.domain.DayType.*;
-import static fi.hsl.parkandride.core.domain.Permission.REPORT_GENERATE;
-import static fi.hsl.parkandride.core.service.AuthenticationService.authorize;
-import static fi.hsl.parkandride.core.service.AuthenticationService.getLimitedOperatorId;
 import static fi.hsl.parkandride.core.service.Excel.TableColumn.col;
 import static fi.hsl.parkandride.core.util.ArgumentValidator.validate;
 import static java.time.LocalTime.ofSecondOfDay;
@@ -35,12 +35,9 @@ public class FacilityUsageReportService extends AbstractReportService {
         super(facilityService, operatorService, contactService, hubService, utilizationRepository, translationService, regionRepository);
     }
 
-    @TransactionalRead
-    public byte[] reportFacilityUsage(User currentUser, ReportParameters parameters) {
-        authorize(currentUser, REPORT_GENERATE);
+    @Override
+    protected Excel generateReport(ReportContext ctx, ReportParameters parameters) {
         int intervalSeconds = validate(parameters.interval).gt(0) * 60;
-
-        ReportContext ctx = new ReportContext(this, getLimitedOperatorId(currentUser));
 
         UtilizationSearch search = toUtilizationSearch(parameters, ctx);
         Map<UtilizationReportKey, UtilizationReportRow> reportRows = new LinkedHashMap<>();
@@ -66,18 +63,18 @@ public class FacilityUsageReportService extends AbstractReportService {
         Excel excel = new Excel();
         List<UtilizationReportRow> rows = new ArrayList<>(reportRows.values());
         List<TableColumn<UtilizationReportRow>> columns =
-            asList(col("Pysäköintipaikan nimi", (UtilizationReportRow r) -> r.key.facility.name),
-                   col("Alue", (UtilizationReportRow r) -> ctx.hubsByFacilityId.getOrDefault(r.key.targetId, emptyList()).stream().map((Hub h) -> h.name.fi).collect(joining(", "))),
-                   col("Kunta", (UtilizationReportRow r) -> ctx.regionByFacilityId.get(r.key.targetId).name),
-                   col("Operaattori", (UtilizationReportRow r) -> operatorService.getOperator(r.key.facility.operatorId).name),
-                   col("Käyttötapa", (UtilizationReportRow r) -> translationService.translate(r.key.usage)),
-                   col("Ajoneuvotyyppi", (UtilizationReportRow r) -> translationService.translate(r.key.capacityType)),
-                   col("Status", (UtilizationReportRow r) -> translationService.translate(r.key.facility.status)),
-                   col("Aukiolo, arki", (UtilizationReportRow r) -> time(r.key.facility.openingHours.byDayType.get(BUSINESS_DAY))),
-                   col("Aukiolo, la", (UtilizationReportRow r) -> time(r.key.facility.openingHours.byDayType.get(SATURDAY))),
-                   col("Aukiolo, su", (UtilizationReportRow r) -> time(r.key.facility.openingHours.byDayType.get(SUNDAY))),
-                   col("Pysäköintipaikkojen määrä", (UtilizationReportRow r) -> r.key.facility.builtCapacity.get(r.key.capacityType)),
-                   col("Päivämäärä", (UtilizationReportRow r) -> r.key.date));
+                asList(col("Pysäköintipaikan nimi", (UtilizationReportRow r) -> r.key.facility.name),
+                        col("Alue", (UtilizationReportRow r) -> ctx.hubsByFacilityId.getOrDefault(r.key.targetId, emptyList()).stream().map((Hub h) -> h.name.fi).collect(joining(", "))),
+                        col("Kunta", (UtilizationReportRow r) -> ctx.regionByFacilityId.get(r.key.targetId).name),
+                        col("Operaattori", (UtilizationReportRow r) -> operatorService.getOperator(r.key.facility.operatorId).name),
+                        col("Käyttötapa", (UtilizationReportRow r) -> translationService.translate(r.key.usage)),
+                        col("Ajoneuvotyyppi", (UtilizationReportRow r) -> translationService.translate(r.key.capacityType)),
+                        col("Status", (UtilizationReportRow r) -> translationService.translate(r.key.facility.status)),
+                        col("Aukiolo, arki", (UtilizationReportRow r) -> time(r.key.facility.openingHours.byDayType.get(BUSINESS_DAY))),
+                        col("Aukiolo, la", (UtilizationReportRow r) -> time(r.key.facility.openingHours.byDayType.get(SATURDAY))),
+                        col("Aukiolo, su", (UtilizationReportRow r) -> time(r.key.facility.openingHours.byDayType.get(SUNDAY))),
+                        col("Pysäköintipaikkojen määrä", (UtilizationReportRow r) -> r.key.facility.builtCapacity.get(r.key.capacityType)),
+                        col("Päivämäärä", (UtilizationReportRow r) -> r.key.date));
         columns = new ArrayList<>(columns);
         for (int s = 0, i = 0; s < SECONDS_IN_DAY; s += intervalSeconds, i++) {
             final int idx = i;
@@ -85,10 +82,11 @@ public class FacilityUsageReportService extends AbstractReportService {
         }
         excel.addSheet("Käyttöasteraportti", rows, columns);
         excel.addSheet("Selite",
-                       "Tämä dokumentti kertoo yksittäisten liityntäpysäköintilaitosten vapaiden paikkojen määrän eri ajanhetkinä eroteltuna ajoneuvotyypeittäin",
-                       "Kaikista pysäköintilaitoksista tai -kentistä ei ole saatavilla päivittyvää tietoa");
-        return excel.toBytes();
+                "Tämä dokumentti kertoo yksittäisten liityntäpysäköintilaitosten vapaiden paikkojen määrän eri ajanhetkinä eroteltuna ajoneuvotyypeittäin",
+                "Kaikista pysäköintilaitoksista tai -kentistä ei ole saatavilla päivittyvää tietoa");
+        return excel;
     }
+
 
     private Iterator<Utilization> addFilters(Iterator<Utilization> iter, ReportContext ctx, ReportParameters parameters) {
         if (ctx.allowedOperatorId != null) {

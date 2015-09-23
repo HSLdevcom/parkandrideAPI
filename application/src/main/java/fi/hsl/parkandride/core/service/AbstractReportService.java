@@ -11,21 +11,40 @@ import org.joda.time.LocalDate;
 
 import java.util.Set;
 
+import static fi.hsl.parkandride.core.domain.Permission.REPORT_GENERATE;
+import static fi.hsl.parkandride.core.service.AuthenticationService.authorize;
+import static fi.hsl.parkandride.core.service.AuthenticationService.getLimitedOperatorId;
 import static java.lang.String.format;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toSet;
 import static org.springframework.util.CollectionUtils.isEmpty;
 
-public class AbstractReportService extends ReportServiceSupport {
-    public AbstractReportService(FacilityService facilityService, OperatorService operatorService, ContactService contactService, HubService hubService, UtilizationRepository utilizationRepository, TranslationService translationService, RegionRepository regionRepository) {
+public abstract class AbstractReportService extends ReportServiceSupport {
+    protected AbstractReportService(FacilityService facilityService, OperatorService operatorService, ContactService contactService, HubService hubService, UtilizationRepository utilizationRepository, TranslationService translationService, RegionRepository regionRepository) {
         super(facilityService, operatorService, contactService, hubService, utilizationRepository, translationService, regionRepository);
     }
+
+    /**
+     * Generates the Excel report and converts it to bytes.
+     * Verifies that the current user has permission to generate reports.
+     * Do not override.
+     */
+    @TransactionalRead
+    public byte[] generateReport(User currentUser, ReportParameters reportParameters) {
+        authorize(currentUser, REPORT_GENERATE);
+        ReportContext ctx = new ReportContext(this, getLimitedOperatorId(currentUser));
+        return generateReport(ctx, reportParameters).toBytes();
+    }
+
+
+    protected abstract Excel generateReport(ReportContext reportContext, ReportParameters params);
+
 
     protected static String time(TimeDuration time) {
         return time == null ? null : format("%02d:%02d - %02d:%02d", time.from.getHour(), time.from.getMinute(), time.until.getHour(), time.until.getMinute());
     }
 
-    final UtilizationSearch toUtilizationSearch(ReportParameters parameters, final ReportContext ctx) {
+    protected final UtilizationSearch toUtilizationSearch(ReportParameters parameters, final ReportContext ctx) {
         UtilizationSearch search = new UtilizationSearch();
         search.start = FINNISH_DATE_FORMAT.parseLocalDate(parameters.startDate).toDateTimeAtStartOfDay();
         if (parameters.endDate == null) {

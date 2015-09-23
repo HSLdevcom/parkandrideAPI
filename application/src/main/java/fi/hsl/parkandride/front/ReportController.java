@@ -3,12 +3,9 @@
 
 package fi.hsl.parkandride.front;
 
-import com.google.common.collect.ImmutableMap;
 import fi.hsl.parkandride.core.domain.User;
+import fi.hsl.parkandride.core.service.AbstractReportService;
 import fi.hsl.parkandride.core.service.AccessDeniedException;
-import fi.hsl.parkandride.core.service.FacilityUsageReportService;
-import fi.hsl.parkandride.core.service.HubsAndFacilitiesReportService;
-import fi.hsl.parkandride.core.service.MaxUtilizationReportService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -20,19 +17,16 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
+import java.util.Collection;
 import java.util.Map;
-import java.util.function.BiFunction;
+import java.util.Optional;
 
-import static fi.hsl.parkandride.front.ReportController.ReportType.FacilityUsage;
-import static fi.hsl.parkandride.front.ReportController.ReportType.HubsAndFacilities;
-import static fi.hsl.parkandride.front.ReportController.ReportType.MaxUtilization;
 import static fi.hsl.parkandride.front.UrlSchema.REPORT;
 import static fi.hsl.parkandride.front.UrlSchema.REPORT_ID;
+import static java.util.stream.Collectors.toMap;
 import static org.springframework.http.HttpHeaders.CONTENT_DISPOSITION;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
-import static org.springframework.http.ResponseEntity.badRequest;
-import static org.springframework.http.ResponseEntity.ok;
-import static org.springframework.http.ResponseEntity.status;
+import static org.springframework.http.ResponseEntity.*;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 @RestController
@@ -40,32 +34,19 @@ public class ReportController {
     private static final Logger log = LoggerFactory.getLogger(ReportController.class);
     public static final String MEDIA_TYPE_EXCEL = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
 
-    public enum ReportType {
-        HubsAndFacilities,
-        FacilityUsage,
-        MaxUtilization
-    }
-
-    private final Map<ReportType, BiFunction<User, ReportParameters, byte[]>> reporters;
+    private final Map<String, AbstractReportService> reporters;
 
     @Inject
-    public ReportController(
-            final HubsAndFacilitiesReportService hubsAndFacilitiesReportService,
-            final FacilityUsageReportService facilityUsageReportService,
-            final MaxUtilizationReportService maxUtilizationReportService) {
-        this.reporters = ImmutableMap.<ReportType, BiFunction<User, ReportParameters, byte[]>> builder()
-                .put(HubsAndFacilities, hubsAndFacilitiesReportService::generateReport)
-                .put(FacilityUsage, facilityUsageReportService::generateReport)
-                .put(MaxUtilization, maxUtilizationReportService::generateReport)
-                .build();
+    public ReportController(Collection<AbstractReportService> reportServices) {
+        this.reporters = reportServices.stream().collect(toMap(rs -> rs.reportName(), rs -> rs));
     }
 
     @RequestMapping(method = POST, value = REPORT, consumes = APPLICATION_JSON_VALUE,  produces = MEDIA_TYPE_EXCEL)
-    public ResponseEntity<?> report(@NotNull @PathVariable(REPORT_ID) ReportType reportId, @RequestBody ReportParameters parameters, User currentUser) {
+    public ResponseEntity<?> report(@NotNull @PathVariable(REPORT_ID) String reportId, @RequestBody ReportParameters parameters, User currentUser) {
         log.info("report({})", reportId);
         byte[] report;
         try {
-            report = reporters.get(reportId).apply(currentUser, parameters);
+            report = Optional.ofNullable(reporters.get(reportId)).get().generateReport(currentUser, parameters);
         } catch (AccessDeniedException ade) {
             log.error("Access denied", ade);
             return status(HttpStatus.FORBIDDEN).body(new byte[0]);

@@ -11,7 +11,6 @@ import fi.hsl.parkandride.core.domain.User;
 import fi.hsl.parkandride.core.service.FacilityService;
 import fi.hsl.parkandride.core.service.PredictionService;
 import fi.hsl.parkandride.core.service.ReportServiceSupport;
-import fi.hsl.parkandride.front.ReportController;
 import fi.hsl.parkandride.front.ReportParameters;
 import fi.hsl.parkandride.front.UrlSchema;
 import org.joda.time.LocalDate;
@@ -59,7 +58,7 @@ public class ReportingITest extends AbstractIntegrationTest {
                 .header(authorization(authToken))
                 .body(params)
                 .when()
-                .post(UrlSchema.REPORT, ReportController.ReportType.FacilityUsage)
+                .post(UrlSchema.REPORT, "FacilityUsage")
                 .then()
                 .assertThat().statusCode(HttpStatus.OK.value())
                 .assertThat().contentType(MEDIA_TYPE_EXCEL);
@@ -75,7 +74,7 @@ public class ReportingITest extends AbstractIntegrationTest {
                 .header(authorization(authToken))
                 .body(params)
                 .when()
-                .post(UrlSchema.REPORT, ReportController.ReportType.HubsAndFacilities)
+                .post(UrlSchema.REPORT, "HubsAndFacilities")
                 .then()
                 .assertThat().statusCode(HttpStatus.OK.value())
                 .assertThat().contentType(MEDIA_TYPE_EXCEL);
@@ -91,7 +90,7 @@ public class ReportingITest extends AbstractIntegrationTest {
                 .header(authorization(authToken))
                 .body(params)
                 .when()
-                .post(UrlSchema.REPORT, ReportController.ReportType.MaxUtilization)
+                .post(UrlSchema.REPORT, "MaxUtilization")
                 .then()
                 .assertThat().statusCode(HttpStatus.OK.value())
                 .assertThat().contentType(MEDIA_TYPE_EXCEL);
@@ -104,7 +103,7 @@ public class ReportingITest extends AbstractIntegrationTest {
                 .header(authorization(devHelper.login(apiUser.username).token))
                 .body(new ReportParameters())
                 .when()
-                .post(UrlSchema.REPORT, ReportController.ReportType.FacilityUsage)
+                .post(UrlSchema.REPORT, "FacilityUsage")
                 .then()
                 .assertThat().statusCode(HttpStatus.FORBIDDEN.value())
                 .assertThat().contentType(MEDIA_TYPE_EXCEL);
@@ -115,7 +114,7 @@ public class ReportingITest extends AbstractIntegrationTest {
         given().contentType(ContentType.JSON)
                 .accept(MEDIA_TYPE_EXCEL)
                 .when()
-                .post(UrlSchema.REPORT, ReportController.ReportType.FacilityUsage)
+                .post(UrlSchema.REPORT, "FacilityUsage")
                 .then()
                 .assertThat().statusCode(HttpStatus.BAD_REQUEST.value());
     }

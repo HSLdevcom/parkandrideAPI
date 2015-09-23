@@ -23,9 +23,11 @@ import static org.springframework.util.CollectionUtils.isEmpty;
 
 public class MaxUtilizationReportService extends AbstractReportService {
 
+    private static final String REPORT_NAME = "MaxUtilization";
+
     public MaxUtilizationReportService(FacilityService facilityService, OperatorService operatorService, ContactService contactService, HubService hubService,
                                        UtilizationRepository utilizationRepository, RegionRepository regionRepository, TranslationService translationService) {
-        super(facilityService, operatorService, contactService, hubService, utilizationRepository, translationService, regionRepository);
+        super(REPORT_NAME, facilityService, operatorService, contactService, hubService, utilizationRepository, translationService, regionRepository);
     }
 
 

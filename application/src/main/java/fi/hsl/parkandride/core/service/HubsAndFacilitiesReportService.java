@@ -24,9 +24,11 @@ import static java.util.stream.Collectors.toList;
 
 public class HubsAndFacilitiesReportService extends AbstractReportService {
 
+    private static final String REPORT_NAME = "HubsAndFacilities";
+
     public HubsAndFacilitiesReportService(FacilityService facilityService, OperatorService operatorService, ContactService contactService, HubService hubService,
                                           UtilizationRepository utilizationRepository, RegionRepository regionRepository, TranslationService translationService) {
-        super(facilityService, operatorService, contactService, hubService, utilizationRepository, translationService, regionRepository);
+        super(REPORT_NAME, facilityService, operatorService, contactService, hubService, utilizationRepository, translationService, regionRepository);
     }
 
     @Override

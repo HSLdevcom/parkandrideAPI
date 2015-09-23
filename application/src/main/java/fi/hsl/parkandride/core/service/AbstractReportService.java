@@ -20,8 +20,11 @@ import static java.util.stream.Collectors.toSet;
 import static org.springframework.util.CollectionUtils.isEmpty;
 
 public abstract class AbstractReportService extends ReportServiceSupport {
-    protected AbstractReportService(FacilityService facilityService, OperatorService operatorService, ContactService contactService, HubService hubService, UtilizationRepository utilizationRepository, TranslationService translationService, RegionRepository regionRepository) {
+    private final String reportName;
+
+    protected AbstractReportService(String reportName, FacilityService facilityService, OperatorService operatorService, ContactService contactService, HubService hubService, UtilizationRepository utilizationRepository, TranslationService translationService, RegionRepository regionRepository) {
         super(facilityService, operatorService, contactService, hubService, utilizationRepository, translationService, regionRepository);
+        this.reportName = reportName;
     }
 
     /**
@@ -36,6 +39,12 @@ public abstract class AbstractReportService extends ReportServiceSupport {
         return generateReport(ctx, reportParameters).toBytes();
     }
 
+    /**
+     * Get the name of the report this service produces.
+     */
+    public String reportName() {
+        return reportName;
+    }
 
     protected abstract Excel generateReport(ReportContext reportContext, ReportParameters params);
 

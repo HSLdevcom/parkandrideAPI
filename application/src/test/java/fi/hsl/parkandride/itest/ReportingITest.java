@@ -17,6 +17,7 @@ import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.junit.Before;
 import org.junit.Test;
@@ -42,6 +43,9 @@ import static java.util.stream.Collectors.toList;
 import static java.util.stream.StreamSupport.stream;
 import static org.apache.commons.lang3.ArrayUtils.toArray;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.joda.time.DateTimeConstants.MONDAY;
+import static org.joda.time.DateTimeConstants.SATURDAY;
+import static org.joda.time.DateTimeConstants.SUNDAY;
 
 public class ReportingITest extends AbstractIntegrationTest {
 
@@ -83,8 +87,9 @@ public class ReportingITest extends AbstractIntegrationTest {
     public void report_FacilityUsage() {
         final ReportParameters params = new ReportParameters();
         params.startDate = LocalDate.now().dayOfMonth().withMinimumValue().toString(ReportServiceSupport.FINNISH_DATE_PATTERN);
-        params.endDate = params.startDate;
+        params.endDate = LocalDate.now().dayOfMonth().withMaximumValue().toString(ReportServiceSupport.FINNISH_DATE_PATTERN);
         params.interval = 60;
+
         final Response whenPostingToReportUrl = postToReportUrl(params, "FacilityUsage");
 
         // If this succeeds, the response was a valid excel file
@@ -92,7 +97,7 @@ public class ReportingITest extends AbstractIntegrationTest {
         assertThat(getSheetNames(workbook))
                 .containsExactly("Käyttöasteraportti", "Selite");
 
-        final Sheet sheet = workbook.getSheetAt(0);
+
     }
 
     @Test
@@ -112,6 +117,7 @@ public class ReportingITest extends AbstractIntegrationTest {
         // Check that hub info is displayed correctly
         final Sheet hubs = workbook.getSheetAt(0);
         assertThat(hubs.getPhysicalNumberOfRows()).isEqualTo(2);
+
         final List<String> hubInfo = getDataFromRow(hubs, 1);
         assertThat(hubInfo).containsExactly(
                 hub.name.fi,
@@ -169,53 +175,78 @@ public class ReportingITest extends AbstractIntegrationTest {
         );
     }
 
-    private List<String> getDataFromRow(Sheet sheet, int rownum) {
-        final DataFormatter dataFormatter = new DataFormatter();
-        return stream(spliteratorUnknownSize(sheet.getRow(rownum).cellIterator(), ORDERED), false)
-                .map(cell -> dataFormatter.formatCellValue(cell))
-                .collect(toList());
-    }
-
     @Test
     public void report_MaxUtilization() {
         final ReportParameters params = new ReportParameters();
         params.startDate = LocalDate.now().dayOfMonth().withMinimumValue().toString(ReportServiceSupport.FINNISH_DATE_PATTERN);
-        params.endDate = params.startDate;
+        params.endDate = LocalDate.now().dayOfMonth().withMaximumValue().toString(ReportServiceSupport.FINNISH_DATE_PATTERN);
+
+
+        final Integer capacity = facility.builtCapacity.get(CAR);
+        // Record mock usage data
+        facilityService.registerUtilization(facilityId, asList(
+                // 50/50 = 100%
+                utilize(CAR, 0, DateTime.now().withDayOfMonth(15).withDayOfWeek(MONDAY)),
+                // 25/50 =  50%
+                utilize(CAR, capacity - (capacity / 2), DateTime.now().withDayOfMonth(15).withDayOfWeek(SATURDAY)),
+                // 10/50 =  20%
+                utilize(CAR, capacity - (capacity / 5), DateTime.now().withDayOfMonth(15).withDayOfWeek(SUNDAY))
+        ), apiUser);
+
         final Response whenPostingToReportUrl = postToReportUrl(params, "MaxUtilization");
 
         // If this succeeds, the response was a valid excel file
         final Workbook workbook = readWorkbookFrom(whenPostingToReportUrl);
         assertThat(getSheetNames(workbook))
                 .containsExactly("Tiivistelmäraportti", "Selite");
-    }
 
-    private List<String> getSheetNames(Workbook workbook) {
-        return IntStream.range(0, workbook.getNumberOfSheets())
-                .mapToObj(i -> workbook.getSheetName(i))
-                .collect(toList());
-    }
+        /*
+        EXAMPLE:
+        Hubi	Helsinki	X-Park	Liityntä	Henkilöauto	Toiminnassa	50	Arkipäivä	100 %
+        Hubi	Helsinki	X-Park	Liityntä	Henkilöauto	Toiminnassa	50	Lauantai	100 %
+        Hubi	Helsinki	X-Park	Liityntä	Henkilöauto	Toiminnassa	50	Sunnuntai	100 %
+         */
 
-    private Response postToReportUrl(ReportParameters params, String reportType) {
-        final Response whenPostingToReportUrl = given().contentType(ContentType.JSON)
-                .accept(MEDIA_TYPE_EXCEL)
-                .header(authorization(authToken))
-                .body(params)
-                .when()
-                .post(UrlSchema.REPORT, reportType);
-        whenPostingToReportUrl
-                .then()
-                .assertThat().statusCode(HttpStatus.OK.value())
-                .assertThat().contentType(MEDIA_TYPE_EXCEL);
-        return whenPostingToReportUrl;
-    }
+        final Sheet utilization = workbook.getSheetAt(0);
+        assertThat(utilization.getPhysicalNumberOfRows()).isEqualTo(4);
+        final List<String> businessDay = getDataFromRow(utilization, 1);
+        assertThat(businessDay).containsExactly(
+                hub.name.fi,
+                "Helsinki", // The region name
+                operator.name.fi,
+                translationService.translate(facility.usages.first()),
+                translationService.translate(CAR),
+                translationService.translate(facility.status),
+                ""+facility.builtCapacity.get(CAR),
+                translationService.translate(DayType.BUSINESS_DAY),
+                "100%"
+        );
 
-    private Workbook readWorkbookFrom(Response whenPostingToReportUrl) {
-        try {
-            return WorkbookFactory.create(new ByteArrayInputStream(whenPostingToReportUrl.asByteArray()));
-        } catch (IOException|InvalidFormatException e) {
-            e.printStackTrace();
-            throw new AssertionFailedError(e.getMessage());
-        }
+        final List<String> saturday = getDataFromRow(utilization, 2);
+        assertThat(saturday).containsExactly(
+                hub.name.fi,
+                "Helsinki", // The region name
+                operator.name.fi,
+                translationService.translate(facility.usages.first()),
+                translationService.translate(CAR),
+                translationService.translate(facility.status),
+                ""+facility.builtCapacity.get(CAR),
+                translationService.translate(DayType.SATURDAY),
+                "50%"
+        );
+
+        final List<String> sunday = getDataFromRow(utilization, 3);
+        assertThat(sunday).containsExactly(
+                hub.name.fi,
+                "Helsinki", // The region name
+                operator.name.fi,
+                translationService.translate(facility.usages.first()),
+                translationService.translate(CAR),
+                translationService.translate(facility.status),
+                "" + facility.builtCapacity.get(CAR),
+                translationService.translate(DayType.SUNDAY),
+                "20%"
+        );
     }
 
     @Test
@@ -253,5 +284,51 @@ public class ReportingITest extends AbstractIntegrationTest {
 
     private static Header authorization(String authToken) {
         return new Header(HttpHeaders.AUTHORIZATION, "Bearer " + authToken);
+    }
+
+    private Utilization utilize(CapacityType capacityType, Integer spacesAvailable, DateTime ts) {
+        final Utilization utilization = new Utilization();
+        utilization.facilityId = facilityId;
+        utilization.capacityType = capacityType;
+        utilization.spacesAvailable = spacesAvailable;
+        utilization.usage = facility.usages.first();
+        utilization.timestamp = ts;
+        return utilization;
+    }
+
+    private List<String> getSheetNames(Workbook workbook) {
+        return IntStream.range(0, workbook.getNumberOfSheets())
+                .mapToObj(i -> workbook.getSheetName(i))
+                .collect(toList());
+    }
+
+    private Response postToReportUrl(ReportParameters params, String reportType) {
+        final Response whenPostingToReportUrl = given().contentType(ContentType.JSON)
+                .accept(MEDIA_TYPE_EXCEL)
+                .header(authorization(authToken))
+                .body(params)
+                .when()
+                .post(UrlSchema.REPORT, reportType);
+        whenPostingToReportUrl
+                .then()
+                .assertThat().statusCode(HttpStatus.OK.value())
+                .assertThat().contentType(MEDIA_TYPE_EXCEL);
+        return whenPostingToReportUrl;
+    }
+
+    private Workbook readWorkbookFrom(Response whenPostingToReportUrl) {
+        try {
+            return WorkbookFactory.create(new ByteArrayInputStream(whenPostingToReportUrl.asByteArray()));
+        } catch (IOException|InvalidFormatException e) {
+            e.printStackTrace();
+            throw new AssertionFailedError(e.getMessage());
+        }
+    }
+
+    private List<String> getDataFromRow(Sheet sheet, int rownum) {
+        final DataFormatter dataFormatter = new DataFormatter();
+        return stream(spliteratorUnknownSize(sheet.getRow(rownum).cellIterator(), ORDERED), false)
+                .map(cell -> dataFormatter.formatCellValue(cell))
+                .collect(toList());
     }
 }

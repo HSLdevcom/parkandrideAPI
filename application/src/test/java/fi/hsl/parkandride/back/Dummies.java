@@ -3,10 +3,7 @@
 
 package fi.hsl.parkandride.back;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.ImmutableSortedSet;
+import com.google.common.collect.*;
 import fi.hsl.parkandride.core.back.ContactRepository;
 import fi.hsl.parkandride.core.back.FacilityRepository;
 import fi.hsl.parkandride.core.back.HubRepository;
@@ -38,12 +35,13 @@ public class Dummies {
     @Inject HubRepository hubDao;
 
     @TransactionalWrite
-    public long createHub() {
+    public long createHub(Long... facilityIds) {
         final Hub hub = new Hub();
         hub.name = new MultilingualString("Malmi");
         hub.location = (Point) fromWkt("POINT(25.010563 60.251022)");
         hub.facilityIds = ImmutableSet.of(1L, 2L, 3L);
         hub.address = new Address(new MultilingualString("street"), "00100", new MultilingualString("city"));
+        hub.facilityIds = Sets.newHashSet(facilityIds);
         return hubDao.insertHub(hub);
     }
 

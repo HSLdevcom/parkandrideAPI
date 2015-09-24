@@ -50,6 +50,7 @@ import static org.joda.time.DateTimeConstants.*;
 public class ReportingITest extends AbstractIntegrationTest {
 
     private static final LocalDate BASE_DATE = LocalDate.now().minusMonths(1);
+    private static final int FACILITYUSAGE_FIRST_TIME_COLUMN = 12;
 
     @Inject Dummies dummies;
     @Inject FacilityService facilityService;
@@ -124,16 +125,14 @@ public class ReportingITest extends AbstractIntegrationTest {
             .containsOnly("Operaattori", operator2.name.fi)
             .doesNotContain(operator1.name.fi);
 
-        // 12 is a static number of heading columns before the hours
         final List<String> headers = getDataFromRow(usages, 0);
-        assertThat(headers.subList(12, headers.size())).containsExactly(
-                "00:00", "03:00", "06:00", "09:00", "12:00", "15:00", "18:00", "21:00"
-        );
+        assertThat(headers.subList(FACILITYUSAGE_FIRST_TIME_COLUMN, headers.size()))
+                .containsExactly("00:00", "03:00", "06:00", "09:00", "12:00", "15:00", "18:00", "21:00");
 
         // Get the hourly utilizations for CAR
         // Results are not interpolated.
         final List<String> row = getDataFromRow(usages, 1);
-        assertThat(row.subList(12, row.size()))
+        assertThat(row.subList(FACILITYUSAGE_FIRST_TIME_COLUMN, row.size()))
                 .containsExactly("24", "24", "24", "24", "0", "0", "0", "24");
     }
 

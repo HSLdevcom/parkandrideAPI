@@ -27,14 +27,15 @@ import org.springframework.http.HttpStatus;
 import javax.inject.Inject;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.stream.IntStream;
 
+import static com.google.common.collect.Lists.newArrayList;
 import static com.jayway.restassured.RestAssured.given;
 import static fi.hsl.parkandride.core.domain.CapacityType.*;
-import static fi.hsl.parkandride.core.domain.Role.OPERATOR;
-import static fi.hsl.parkandride.core.domain.Role.OPERATOR_API;
+import static fi.hsl.parkandride.core.domain.Role.*;
 import static fi.hsl.parkandride.front.ReportController.MEDIA_TYPE_EXCEL;
 import static java.util.Arrays.asList;
 import static java.util.Spliterator.ORDERED;
@@ -43,9 +44,7 @@ import static java.util.stream.Collectors.toList;
 import static java.util.stream.StreamSupport.stream;
 import static org.apache.commons.lang3.ArrayUtils.toArray;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.joda.time.DateTimeConstants.MONDAY;
-import static org.joda.time.DateTimeConstants.SATURDAY;
-import static org.joda.time.DateTimeConstants.SUNDAY;
+import static org.joda.time.DateTimeConstants.*;
 
 public class ReportingITest extends AbstractIntegrationTest {
 
@@ -57,64 +56,178 @@ public class ReportingITest extends AbstractIntegrationTest {
     @Inject TranslationService translationService;
 
     private long hubId;
-    private long facilityId;
+    private long facilityId1;
+    private long facilityId2;
 
     private Hub hub;
-    private Facility facility;
-    private Operator operator;
+    private Facility facility1;
+    private Facility facility2;
 
-    private User user;
+    private Operator operator1;
+    private Operator operator2;
+
+    private User operator1User;
+    private User operator2User;
     private User apiUser;
-    private String authToken;
+    private User apiUser2;
+    private User adminUser;
+
+    private static Header authorization(String authToken) {
+        return new Header(HttpHeaders.AUTHORIZATION, "Bearer " + authToken);
+    }
 
     @Before
     public void initFixture() {
         devHelper.deleteAll();
-        facilityId = dummies.createFacility();
-        hubId = dummies.createHub(facilityId);
+        facilityId1 = dummies.createFacility();
+        facilityId2 = dummies.createFacility();
+        hubId = dummies.createHub(facilityId1, facilityId2);
 
         hub = hubService.getHub(hubId);
-        facility = facilityService.getFacility(facilityId);
-        Long operatorId = facility.operatorId;
-        operator = operatorService.getOperator(operatorId);
+        facility1 = facilityService.getFacility(facilityId1);
+        facility2 = facilityService.getFacility(facilityId2);
 
-        user = devHelper.createOrUpdateUser(new NewUser(1L, "operator", OPERATOR, operatorId, "operator"));
-        apiUser = devHelper.createOrUpdateUser(new NewUser(2L, "operator_api", OPERATOR_API, operatorId, "operator"));
-        authToken = devHelper.login(user.username).token;
+        operator1 = operatorService.getOperator(facility1.operatorId);
+        operator2 = operatorService.getOperator(facility2.operatorId);
+
+        operator1User = devHelper.createOrUpdateUser(new NewUser(1L, "operator", OPERATOR, facility1.operatorId, "operator"));
+        operator2User = devHelper.createOrUpdateUser(new NewUser(2L, "Ooppera", OPERATOR, facility2.operatorId, "Ooppera"));
+
+        apiUser = devHelper.createOrUpdateUser(new NewUser(100L, "operator_api", OPERATOR_API, facility1.operatorId, "operator"));
+        apiUser2 = devHelper.createOrUpdateUser(new NewUser(101L, "Ooppera_api", OPERATOR_API, facility2.operatorId, "Ooppera"));
+
+        adminUser = devHelper.createOrUpdateUser(new NewUser(10L, "admin", ADMIN, null, "admin"));
     }
 
     @Test
-    public void report_FacilityUsage() {
-        final ReportParameters params = new ReportParameters();
-        params.startDate = LocalDate.now().dayOfMonth().withMinimumValue().toString(ReportServiceSupport.FINNISH_DATE_PATTERN);
-        params.endDate = LocalDate.now().dayOfMonth().withMaximumValue().toString(ReportServiceSupport.FINNISH_DATE_PATTERN);
+    public void report_FacilityUsage_asOperator() {
+        final ReportParameters params = baseParams();
         params.interval = 60;
 
-        final Response whenPostingToReportUrl = postToReportUrl(params, "FacilityUsage");
+        final Response whenPostingToReportUrl = postToReportUrl(params, "FacilityUsage", operator1User);
 
         // If this succeeds, the response was a valid excel file
         final Workbook workbook = readWorkbookFrom(whenPostingToReportUrl);
-        assertThat(getSheetNames(workbook))
-                .containsExactly("Käyttöasteraportti", "Selite");
-
-
+        assertThat(getSheetNames(workbook)).containsExactly("Käyttöasteraportti", "Selite");
     }
 
     @Test
-    public void report_HubsAndFacilities() {
-        final ReportParameters params = new ReportParameters();
-        params.startDate = LocalDate.now().dayOfMonth().withMinimumValue().toString(ReportServiceSupport.FINNISH_DATE_PATTERN);
-        params.endDate = params.startDate;
-        final Response whenPostingToReportUrl = postToReportUrl(params, "HubsAndFacilities");
+    public void report_HubsAndFacilities_asOperator() {
+        final Response whenPostingToReportUrl = postToReportUrl(baseParams(), "HubsAndFacilities", operator1User);
 
         // If this succeeds, the response was a valid excel file
         final Workbook workbook = readWorkbookFrom(whenPostingToReportUrl);
         assertThat(workbook.getNumberOfSheets()).isEqualTo(3);
-        assertThat(getSheetNames(workbook))
-                .containsExactly("Alueet", "Pysäköintipaikat", "Selite");
+        assertThat(getSheetNames(workbook)).containsExactly("Alueet", "Pysäköintipaikat", "Selite");
 
+        // Check that only operator1 is displayed
+        checkHubsAndFacilities_operatorsAre(workbook, operator1);
 
         // Check that hub info is displayed correctly
+        checkHubsAndFacilities_hubInfo(workbook);
+        // Check that facility info is displayed correctly
+        checkHubsAndFacilities_facilityInfo(workbook);
+    }
+
+    @Test
+    public void report_HubsAndFacilities_asAdmin() {
+        final Response whenPostingToReportUrl = postToReportUrl(baseParams(), "HubsAndFacilities", adminUser);
+
+        // If this succeeds, the response was a valid excel file
+        final Workbook workbook = readWorkbookFrom(whenPostingToReportUrl);
+        // For admin, both operators should be visible
+        checkHubsAndFacilities_operatorsAre(workbook, operator1, operator2);
+    }
+
+    @Test
+    public void report_MaxUtilization_asOperator() {
+        // Record mock usage data
+        addMockUtilizations(facility1, apiUser);
+        addMockUtilizations(facility2, apiUser2);
+
+        final Response whenPostingToReportUrl = postToReportUrl(baseParams(), "MaxUtilization", operator1User);
+
+        // If this succeeds, the response was a valid excel file
+        final Workbook workbook = readWorkbookFrom(whenPostingToReportUrl);
+        assertThat(getSheetNames(workbook)).containsExactly("Tiivistelmäraportti", "Selite");
+        checkMaxUtilization_rows(workbook);
+
+        // Only operator1 is displayed
+        assertThat(getDataFromColumn(workbook.getSheetAt(0), 2))
+                .contains("Operaattori", operator1.name.fi)
+                .doesNotContain(operator2.name.fi);
+    }
+
+    @Test
+    public void report_MaxUtilization_asAdmin() {
+        // Record mock usage data
+        addMockUtilizations(facility1, apiUser);
+        addMockUtilizations(facility2, apiUser2);
+
+        final Response whenPostingToReportUrl = postToReportUrl(baseParams(), "MaxUtilization", adminUser);
+
+        // If this succeeds, the response was a valid excel file
+        final Workbook workbook = readWorkbookFrom(whenPostingToReportUrl);
+
+        // Both operators are displayed
+        assertThat(getDataFromColumn(workbook.getSheetAt(0), 2))
+                .contains("Operaattori", operator1.name.fi, operator2.name.fi);
+    }
+
+    private void addMockUtilizations(Facility f, User apiUser) {
+        final Integer capacity = f.builtCapacity.get(CAR);
+        facilityService.registerUtilization(f.id, asList(
+                // 50/50 = 100%
+                utilize(CAR, 0, DateTime.now().withDayOfMonth(15).withDayOfWeek(MONDAY), f),
+                // 25/50 =  50%
+                utilize(CAR, capacity - (capacity / 2), DateTime.now().withDayOfMonth(15).withDayOfWeek(SATURDAY), f),
+                // 10/50 =  20%
+                utilize(CAR, capacity - (capacity / 5), DateTime.now().withDayOfMonth(15).withDayOfWeek(SUNDAY), f)
+        ), apiUser);
+    }
+
+    private void checkHubsAndFacilities_operatorsAre(Workbook workbook, Operator... operators) {
+        final Sheet facilities = workbook.getSheetAt(1);
+        final List<String> expectedColumns = newArrayList("Operaattori");
+        expectedColumns.addAll(Arrays.stream(operators).map(o -> o.name.fi).collect(toList()));
+        assertThat(getDataFromColumn(facilities, 3)).containsExactlyElementsOf(expectedColumns);
+    }
+
+    private void checkHubsAndFacilities_facilityInfo(Workbook workbook) {
+        final Sheet facilities = workbook.getSheetAt(1);
+        assertThat(facilities.getPhysicalNumberOfRows()).isEqualTo(2);
+        final List<String> facilityInfo = getDataFromRow(facilities, 1);
+        assertThat(facilityInfo).containsSequence(
+                facility1.name.fi,
+                String.join(", ", facility1.aliases),
+                hub.name.fi,
+                operator1.name.fi,
+                translationService.translate(facility1.status),
+                facility1.statusDescription.fi,
+                String.format(Locale.ENGLISH, "%.4f", facility1.location.getCentroid().getX()),
+                String.format(Locale.ENGLISH, "%.4f", facility1.location.getCentroid().getY()),
+                "",
+                "08:00 - 18:00",
+                "08:00 - 18:00",
+                facility1.openingHours.info.fi,
+                "" + facility1.builtCapacity.entrySet().stream()
+                        .filter(entry -> asList(motorCapacities).contains(entry.getKey()))
+                        .mapToInt(entry -> entry.getValue())
+                        .sum(),
+                "" + facility1.builtCapacity.entrySet().stream()
+                        .filter(entry -> asList(bicycleCapacities).contains(entry.getKey()))
+                        .mapToInt(entry -> entry.getValue())
+                        .sum(),
+                "" + facility1.builtCapacity.getOrDefault(CAR, 0),
+                "" + facility1.builtCapacity.getOrDefault(DISABLED, 0),
+                "" + facility1.builtCapacity.getOrDefault(ELECTRIC_CAR, 0),
+                "" + facility1.builtCapacity.getOrDefault(MOTORCYCLE, 0),
+                "" + facility1.builtCapacity.getOrDefault(BICYCLE, 0),
+                "" + facility1.builtCapacity.getOrDefault(BICYCLE_SECURE_SPACE, 0)
+        );
+    }
+
+    private void checkHubsAndFacilities_hubInfo(Workbook workbook) {
         final Sheet hubs = workbook.getSheetAt(0);
         assertThat(hubs.getPhysicalNumberOfRows()).isEqualTo(2);
 
@@ -124,82 +237,25 @@ public class ReportingITest extends AbstractIntegrationTest {
                 String.join(", ", toArray(hub.address.streetAddress.fi, hub.address.postalCode, hub.address.city.fi)),
                 String.format(Locale.ENGLISH, "%.4f", hub.location.getX()),
                 String.format(Locale.ENGLISH, "%.4f", hub.location.getY()),
-                "" + facility.builtCapacity.entrySet().stream()
+                "" + facility1.builtCapacity.entrySet().stream()
                         .filter(entry -> asList(motorCapacities).contains(entry.getKey()))
                         .mapToInt(entry -> entry.getValue())
                         .sum(),
-                "" + facility.builtCapacity.entrySet().stream()
+                "" + facility1.builtCapacity.entrySet().stream()
                         .filter(entry -> asList(bicycleCapacities).contains(entry.getKey()))
                         .mapToInt(entry -> entry.getValue())
                         .sum(),
-                "" + facility.builtCapacity.getOrDefault(CAR, 0),
-                "" + facility.builtCapacity.getOrDefault(DISABLED, 0),
-                "" + facility.builtCapacity.getOrDefault(ELECTRIC_CAR, 0),
-                "" + facility.builtCapacity.getOrDefault(MOTORCYCLE, 0),
-                "" + facility.builtCapacity.getOrDefault(BICYCLE, 0),
-                "" + facility.builtCapacity.getOrDefault(BICYCLE_SECURE_SPACE, 0),
-                facility.name.fi
-        );
-
-        // Check that facility info is displayed correctly
-        final Sheet facilities = workbook.getSheetAt(1);
-        assertThat(facilities.getPhysicalNumberOfRows()).isEqualTo(2);
-        final List<String> facilityInfo = getDataFromRow(facilities, 1);
-        assertThat(facilityInfo).containsSequence(
-                facility.name.fi,
-                String.join(", ", facility.aliases),
-                hub.name.fi,
-                operator.name.fi,
-                translationService.translate(facility.status),
-                facility.statusDescription.fi,
-                String.format(Locale.ENGLISH, "%.4f", facility.location.getCentroid().getX()),
-                String.format(Locale.ENGLISH, "%.4f", facility.location.getCentroid().getY()),
-                "",
-                "08:00 - 18:00",
-                "08:00 - 18:00",
-                facility.openingHours.info.fi,
-                "" + facility.builtCapacity.entrySet().stream()
-                        .filter(entry -> asList(motorCapacities).contains(entry.getKey()))
-                        .mapToInt(entry -> entry.getValue())
-                        .sum(),
-                "" + facility.builtCapacity.entrySet().stream()
-                        .filter(entry -> asList(bicycleCapacities).contains(entry.getKey()))
-                        .mapToInt(entry -> entry.getValue())
-                        .sum(),
-                "" + facility.builtCapacity.getOrDefault(CAR, 0),
-                "" + facility.builtCapacity.getOrDefault(DISABLED, 0),
-                "" + facility.builtCapacity.getOrDefault(ELECTRIC_CAR, 0),
-                "" + facility.builtCapacity.getOrDefault(MOTORCYCLE, 0),
-                "" + facility.builtCapacity.getOrDefault(BICYCLE, 0),
-                "" + facility.builtCapacity.getOrDefault(BICYCLE_SECURE_SPACE, 0)
+                "" + facility1.builtCapacity.getOrDefault(CAR, 0),
+                "" + facility1.builtCapacity.getOrDefault(DISABLED, 0),
+                "" + facility1.builtCapacity.getOrDefault(ELECTRIC_CAR, 0),
+                "" + facility1.builtCapacity.getOrDefault(MOTORCYCLE, 0),
+                "" + facility1.builtCapacity.getOrDefault(BICYCLE, 0),
+                "" + facility1.builtCapacity.getOrDefault(BICYCLE_SECURE_SPACE, 0),
+                facility1.name.fi
         );
     }
 
-    @Test
-    public void report_MaxUtilization() {
-        final ReportParameters params = new ReportParameters();
-        params.startDate = LocalDate.now().dayOfMonth().withMinimumValue().toString(ReportServiceSupport.FINNISH_DATE_PATTERN);
-        params.endDate = LocalDate.now().dayOfMonth().withMaximumValue().toString(ReportServiceSupport.FINNISH_DATE_PATTERN);
-
-
-        final Integer capacity = facility.builtCapacity.get(CAR);
-        // Record mock usage data
-        facilityService.registerUtilization(facilityId, asList(
-                // 50/50 = 100%
-                utilize(CAR, 0, DateTime.now().withDayOfMonth(15).withDayOfWeek(MONDAY)),
-                // 25/50 =  50%
-                utilize(CAR, capacity - (capacity / 2), DateTime.now().withDayOfMonth(15).withDayOfWeek(SATURDAY)),
-                // 10/50 =  20%
-                utilize(CAR, capacity - (capacity / 5), DateTime.now().withDayOfMonth(15).withDayOfWeek(SUNDAY))
-        ), apiUser);
-
-        final Response whenPostingToReportUrl = postToReportUrl(params, "MaxUtilization");
-
-        // If this succeeds, the response was a valid excel file
-        final Workbook workbook = readWorkbookFrom(whenPostingToReportUrl);
-        assertThat(getSheetNames(workbook))
-                .containsExactly("Tiivistelmäraportti", "Selite");
-
+    private void checkMaxUtilization_rows(Workbook workbook) {
         /*
         EXAMPLE:
         Hubi	Helsinki	X-Park	Liityntä	Henkilöauto	Toiminnassa	50	Arkipäivä	100 %
@@ -213,11 +269,11 @@ public class ReportingITest extends AbstractIntegrationTest {
         assertThat(businessDay).containsExactly(
                 hub.name.fi,
                 "Helsinki", // The region name
-                operator.name.fi,
-                translationService.translate(facility.usages.first()),
+                operator1.name.fi,
+                translationService.translate(facility1.usages.first()),
                 translationService.translate(CAR),
-                translationService.translate(facility.status),
-                ""+facility.builtCapacity.get(CAR),
+                translationService.translate(facility1.status),
+                "" + facility1.builtCapacity.get(CAR),
                 translationService.translate(DayType.BUSINESS_DAY),
                 "100%"
         );
@@ -226,11 +282,11 @@ public class ReportingITest extends AbstractIntegrationTest {
         assertThat(saturday).containsExactly(
                 hub.name.fi,
                 "Helsinki", // The region name
-                operator.name.fi,
-                translationService.translate(facility.usages.first()),
+                operator1.name.fi,
+                translationService.translate(facility1.usages.first()),
                 translationService.translate(CAR),
-                translationService.translate(facility.status),
-                ""+facility.builtCapacity.get(CAR),
+                translationService.translate(facility1.status),
+                "" + facility1.builtCapacity.get(CAR),
                 translationService.translate(DayType.SATURDAY),
                 "50%"
         );
@@ -239,11 +295,11 @@ public class ReportingITest extends AbstractIntegrationTest {
         assertThat(sunday).containsExactly(
                 hub.name.fi,
                 "Helsinki", // The region name
-                operator.name.fi,
-                translationService.translate(facility.usages.first()),
+                operator1.name.fi,
+                translationService.translate(facility1.usages.first()),
                 translationService.translate(CAR),
-                translationService.translate(facility.status),
-                "" + facility.builtCapacity.get(CAR),
+                translationService.translate(facility1.status),
+                "" + facility1.builtCapacity.get(CAR),
                 translationService.translate(DayType.SUNDAY),
                 "20%"
         );
@@ -264,6 +320,7 @@ public class ReportingITest extends AbstractIntegrationTest {
 
     @Test
     public void report_withException_resultsInBadRequest() {
+        // No params given -> IllegalArgumentException from fi.hsl.parkandride.core.service.FacilityUsageReportService
         given().contentType(ContentType.JSON)
                 .accept(MEDIA_TYPE_EXCEL)
                 .when()
@@ -282,16 +339,12 @@ public class ReportingITest extends AbstractIntegrationTest {
                 .assertThat().statusCode(HttpStatus.BAD_REQUEST.value());
     }
 
-    private static Header authorization(String authToken) {
-        return new Header(HttpHeaders.AUTHORIZATION, "Bearer " + authToken);
-    }
-
-    private Utilization utilize(CapacityType capacityType, Integer spacesAvailable, DateTime ts) {
+    private Utilization utilize(CapacityType capacityType, Integer spacesAvailable, DateTime ts, Facility f) {
         final Utilization utilization = new Utilization();
-        utilization.facilityId = facilityId;
+        utilization.facilityId = f.id;
         utilization.capacityType = capacityType;
         utilization.spacesAvailable = spacesAvailable;
-        utilization.usage = facility.usages.first();
+        utilization.usage = f.usages.first();
         utilization.timestamp = ts;
         return utilization;
     }
@@ -302,7 +355,8 @@ public class ReportingITest extends AbstractIntegrationTest {
                 .collect(toList());
     }
 
-    private Response postToReportUrl(ReportParameters params, String reportType) {
+    private Response postToReportUrl(ReportParameters params, String reportType, User user) {
+        final String authToken = devHelper.login(user.username).token;
         final Response whenPostingToReportUrl = given().contentType(ContentType.JSON)
                 .accept(MEDIA_TYPE_EXCEL)
                 .header(authorization(authToken))
@@ -319,7 +373,7 @@ public class ReportingITest extends AbstractIntegrationTest {
     private Workbook readWorkbookFrom(Response whenPostingToReportUrl) {
         try {
             return WorkbookFactory.create(new ByteArrayInputStream(whenPostingToReportUrl.asByteArray()));
-        } catch (IOException|InvalidFormatException e) {
+        } catch (IOException | InvalidFormatException e) {
             e.printStackTrace();
             throw new AssertionFailedError(e.getMessage());
         }
@@ -330,5 +384,20 @@ public class ReportingITest extends AbstractIntegrationTest {
         return stream(spliteratorUnknownSize(sheet.getRow(rownum).cellIterator(), ORDERED), false)
                 .map(cell -> dataFormatter.formatCellValue(cell))
                 .collect(toList());
+    }
+
+    private List<String> getDataFromColumn(Sheet sheet, int colnum) {
+        final DataFormatter dataFormatter = new DataFormatter();
+        return stream(spliteratorUnknownSize(sheet.rowIterator(), ORDERED), false)
+                .map(row -> row.getCell(colnum))
+                .map(cell -> dataFormatter.formatCellValue(cell))
+                .collect(toList());
+    }
+
+    private static ReportParameters baseParams() {
+        final ReportParameters params = new ReportParameters();
+        params.startDate = LocalDate.now().dayOfMonth().withMinimumValue().toString(ReportServiceSupport.FINNISH_DATE_PATTERN);
+        params.endDate = LocalDate.now().dayOfMonth().withMaximumValue().toString(ReportServiceSupport.FINNISH_DATE_PATTERN);
+        return params;
     }
 }

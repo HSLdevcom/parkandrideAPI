@@ -396,9 +396,30 @@ public class ReportingITest extends AbstractIntegrationTest {
 
     @Test
     public void report_withException_resultsInBadRequest() {
-        // No params given -> IllegalArgumentException from fi.hsl.parkandride.core.service.FacilityUsageReportService
+        // Negative interval should throw exception
+        final ReportParameters params = baseParams();
+        params.interval = -1;
         given().contentType(ContentType.JSON)
                 .accept(MEDIA_TYPE_EXCEL)
+                .header(authorization(devHelper.login(adminUser.username).token))
+                .body(params)
+                .when()
+                .post(UrlSchema.REPORT, "FacilityUsage")
+                .then()
+                .assertThat().statusCode(HttpStatus.BAD_REQUEST.value());
+    }
+
+    @Test
+    public void report_withConflictingDates_resultsInBadRequest() {
+        // No params given -> IllegalArgumentException from fi.hsl.parkandride.core.service.FacilityUsageReportService
+        final ReportParameters params = baseParams();
+        params.interval = 100;
+        params.startDate = BASE_DATE.toString(ReportServiceSupport.FINNISH_DATE_PATTERN);
+        params.endDate = BASE_DATE.minusDays(1).toString(ReportServiceSupport.FINNISH_DATE_PATTERN);
+        given().contentType(ContentType.JSON)
+                .accept(MEDIA_TYPE_EXCEL)
+                .header(authorization(devHelper.login(adminUser.username).token))
+                .body(params)
                 .when()
                 .post(UrlSchema.REPORT, "FacilityUsage")
                 .then()
@@ -409,6 +430,8 @@ public class ReportingITest extends AbstractIntegrationTest {
     public void report_incorrectType_resultsInBadRequest() {
         given().contentType(ContentType.JSON)
                 .accept(MEDIA_TYPE_EXCEL)
+                .header(authorization(devHelper.login(adminUser.username).token))
+                .body(baseParams())
                 .when()
                 .post(UrlSchema.REPORT, "foobar")
                 .then()

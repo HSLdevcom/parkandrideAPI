@@ -10,30 +10,30 @@ public class Predicates {
 
 
     // GREATER THAN
-    public static <T> Predicate<T> gt(Comparable<T> other) {
+    public static <T> Predicate<T> gt(Comparable<? super T> other) {
         return greaterThan(other);
     }
-    public static <T> Predicate<T> gte(Comparable<T> other) {
+    public static <T> Predicate<T> gte(Comparable<? super T> other) {
         return greaterThanOrEqualTo(other);
     }
-    public static <T> Predicate<T> greaterThan(Comparable<T> other) {
+    public static <T> Predicate<T> greaterThan(Comparable<? super T> other) {
         return o -> other.compareTo(o) < 0;
     }
-    public static <T> Predicate<T> greaterThanOrEqualTo(Comparable<T> other) {
+    public static <T> Predicate<T> greaterThanOrEqualTo(Comparable<? super T> other) {
         return o -> other.compareTo(o) <= 0;
     }
 
     // LESSER THAN
-    public static <T> Predicate<T> lt(Comparable<T> other) {
+    public static <T> Predicate<T> lt(Comparable<? super T> other) {
         return lessThan(other);
     }
-    public static <T> Predicate<T> lte(Comparable<T> other) {
+    public static <T> Predicate<T> lte(Comparable<? super T> other) {
         return lessThanOrEqualTo(other);
     }
-    public static <T> Predicate<T> lessThan(Comparable<T> other) {
+    public static <T> Predicate<T> lessThan(Comparable<? super T> other) {
         return o -> other.compareTo(o) > 0;
     }
-    public static <T> Predicate<T> lessThanOrEqualTo(Comparable<T> other) {
+    public static <T> Predicate<T> lessThanOrEqualTo(Comparable<? super T> other) {
         return o -> other.compareTo(o) >= 0;
     }
 }

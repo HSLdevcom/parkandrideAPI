@@ -25,19 +25,19 @@ public class ArgumentValidator<T> {
         throw new IllegalArgumentException("The argument did not satisfy: " + expr);
     }
 
-    public T gt(Comparable<T> other) {
+    public T gt(Comparable<? super T> other) {
         return matches(greaterThan(other));
     }
 
-    public T gte(Comparable<T> other) {
+    public T gte(Comparable<? super T> other) {
         return matches(greaterThanOrEqualTo(other));
     }
 
-    public T lt(Comparable<T> other) {
+    public T lt(Comparable<? super T> other) {
         return matches(lessThan(other));
     }
 
-    public T lte(Comparable<T> other) {
+    public T lte(Comparable<? super T> other) {
         return matches(lessThanOrEqualTo(other));
     }
 }

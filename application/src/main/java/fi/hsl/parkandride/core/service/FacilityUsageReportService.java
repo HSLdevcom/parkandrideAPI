@@ -42,6 +42,8 @@ public class FacilityUsageReportService extends AbstractReportService {
         int intervalSeconds = validate(parameters.interval).gt(0) * 60;
 
         UtilizationSearch search = toUtilizationSearch(parameters, ctx);
+        validate(search.start).lte(search.end);
+
         Map<UtilizationReportKey, UtilizationReportRow> reportRows = new LinkedHashMap<>();
 
         try (CloseableIterator<Utilization> utilizations = utilizationRepository.findUtilizations(search)) {

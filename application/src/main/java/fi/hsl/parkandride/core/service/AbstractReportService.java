@@ -12,10 +12,12 @@ import org.joda.time.LocalDate;
 import org.springframework.context.MessageSource;
 
 import javax.inject.Inject;
+import java.util.Iterator;
 import java.util.Locale;
 import java.util.Set;
 import java.util.function.Function;
 
+import static com.google.common.collect.Iterators.filter;
 import static fi.hsl.parkandride.core.domain.Permission.REPORT_GENERATE;
 import static fi.hsl.parkandride.core.service.AuthenticationService.authorize;
 import static fi.hsl.parkandride.core.service.AuthenticationService.getLimitedOperatorId;
@@ -115,6 +117,22 @@ public abstract class AbstractReportService extends ReportServiceSupport impleme
     }
     protected <T> Excel.TableColumn<T> tcol(String key, Function<T, Object> valFn, CellStyle cellStyle) {
         return col(getMessage(key), valFn, cellStyle);
+    }
+
+    protected Iterator<Utilization> addFilters(Iterator<Utilization> iter, ReportContext ctx, ReportParameters parameters) {
+        if (ctx.allowedOperatorId != null) {
+            iter = filter(iter, u -> ctx.facilities.containsKey(u.facilityId));
+        }
+        if (!isEmpty(parameters.operators)) {
+            iter = filter(iter, u -> parameters.operators.contains(ctx.facilities.get(u.facilityId).operatorId));
+        }
+        if (!isEmpty(parameters.hubs)) {
+            iter = filter(iter, u -> ctx.hubsByFacilityId.getOrDefault(u.facilityId, emptyList()).stream().filter(h -> parameters.hubs.contains(h.id)).findFirst().isPresent());
+        }
+        if (!isEmpty(parameters.regions)) {
+            iter = filter(iter, u -> parameters.regions.contains(ctx.regionByFacilityId.get(u.facilityId).id));
+        }
+        return iter;
     }
 
     static class BasicUtilizationReportKey {

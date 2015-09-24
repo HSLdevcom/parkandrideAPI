@@ -15,9 +15,11 @@ import fi.hsl.parkandride.front.ReportParameters;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
-import static com.google.common.collect.Iterators.filter;
 import static fi.hsl.parkandride.core.domain.DayType.*;
 import static fi.hsl.parkandride.core.service.Excel.TableColumn.col;
 import static fi.hsl.parkandride.core.util.ArgumentValidator.validate;
@@ -26,7 +28,6 @@ import static java.util.Arrays.asList;
 import static java.util.Arrays.fill;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.joining;
-import static org.springframework.util.CollectionUtils.isEmpty;
 
 public class FacilityUsageReportService extends AbstractReportService {
 
@@ -89,22 +90,6 @@ public class FacilityUsageReportService extends AbstractReportService {
         return excel;
     }
 
-
-    private Iterator<Utilization> addFilters(Iterator<Utilization> iter, ReportContext ctx, ReportParameters parameters) {
-        if (ctx.allowedOperatorId != null) {
-            iter = filter(iter, u -> ctx.facilities.containsKey(u.facilityId));
-        }
-        if (!isEmpty(parameters.operators)) {
-            iter = filter(iter, u -> parameters.operators.contains(ctx.facilities.get(u.facilityId).operatorId));
-        }
-        if (!isEmpty(parameters.hubs)) {
-            iter = filter(iter, u -> ctx.hubsByFacilityId.getOrDefault(u.facilityId, emptyList()).stream().filter(h -> parameters.hubs.contains(h.id)).findFirst().isPresent());
-        }
-        if (!isEmpty(parameters.regions)) {
-            iter = filter(iter, u -> parameters.regions.contains(ctx.regionByFacilityId.get(u.facilityId).id));
-        }
-        return iter;
-    }
 
     static class UtilizationReportKey extends BasicUtilizationReportKey {
         LocalDate date;

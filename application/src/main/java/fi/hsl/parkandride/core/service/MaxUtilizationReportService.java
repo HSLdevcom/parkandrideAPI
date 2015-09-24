@@ -10,15 +10,16 @@ import fi.hsl.parkandride.core.domain.*;
 import fi.hsl.parkandride.core.service.Excel.TableColumn;
 import fi.hsl.parkandride.front.ReportParameters;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
-import static com.google.common.collect.Iterators.filter;
 import static fi.hsl.parkandride.core.domain.Region.UNKNOWN_REGION;
 import static java.lang.Math.min;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.sort;
-import static org.springframework.util.CollectionUtils.isEmpty;
 
 public class MaxUtilizationReportService extends AbstractReportService {
 
@@ -96,22 +97,6 @@ public class MaxUtilizationReportService extends AbstractReportService {
         return excel;
     }
 
-
-    private Iterator<Utilization> addFilters(Iterator<Utilization> iter, ReportContext ctx, ReportParameters parameters) {
-        if (ctx.allowedOperatorId != null) {
-            iter = filter(iter, u -> ctx.facilities.containsKey(u.facilityId));
-        }
-        if (!isEmpty(parameters.operators)) {
-            iter = filter(iter, u -> parameters.operators.contains(ctx.facilities.get(u.facilityId).operatorId));
-        }
-        if (!isEmpty(parameters.hubs)) {
-            iter = filter(iter, u -> ctx.hubsByFacilityId.getOrDefault(u.facilityId, emptyList()).stream().filter(h -> parameters.hubs.contains(h.id)).findFirst().isPresent());
-        }
-        if (!isEmpty(parameters.regions)) {
-            iter = filter(iter, u -> parameters.regions.contains(ctx.regionByFacilityId.get(u.facilityId).id));
-        }
-        return iter;
-    }
 
     static class MaxUtilizationReportRow implements Comparable<MaxUtilizationReportRow> {
         final Hub hub;

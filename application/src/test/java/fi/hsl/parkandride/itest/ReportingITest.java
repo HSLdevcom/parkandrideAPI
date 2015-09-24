@@ -20,6 +20,7 @@ import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -158,6 +159,8 @@ public class ReportingITest extends AbstractIntegrationTest {
                 .doesNotContain(operator2.name.fi);
     }
 
+    // TODO: Unsure: should a hub display a grand total or per-operator rows
+    @Ignore("Unsure: should a hub display a grand total or per-operator rows")
     @Test
     public void report_MaxUtilization_asAdmin() {
         // Record mock usage data

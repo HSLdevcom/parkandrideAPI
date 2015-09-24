@@ -15,10 +15,7 @@ import fi.hsl.parkandride.front.ReportParameters;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static fi.hsl.parkandride.core.domain.DayType.*;
 import static fi.hsl.parkandride.core.service.Excel.TableColumn.col;
@@ -27,7 +24,9 @@ import static java.time.LocalTime.ofSecondOfDay;
 import static java.util.Arrays.asList;
 import static java.util.Arrays.fill;
 import static java.util.Collections.emptyList;
+import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.joining;
+import static java.util.stream.Collectors.toList;
 
 public class FacilityUsageReportService extends AbstractReportService {
 
@@ -64,7 +63,16 @@ public class FacilityUsageReportService extends AbstractReportService {
         }
 
         Excel excel = new Excel();
-        List<UtilizationReportRow> rows = new ArrayList<>(reportRows.values());
+
+        List<UtilizationReportRow> rows = reportRows.values()
+                .stream()
+                .sorted(comparing((UtilizationReportRow row) -> row.key.date)
+                        .thenComparing(row -> row.key.facility.name.fi)
+                        .thenComparing(row -> row.key.capacityType)
+                        .thenComparing(row -> row.key.usage)
+                )
+                .collect(toList());
+
         List<TableColumn<UtilizationReportRow>> columns = asList(
                 tcol("reports.usage.col.facility", (UtilizationReportRow r) -> r.key.facility.name),
                 tcol("reports.usage.col.hub", (UtilizationReportRow r) -> ctx.hubsByFacilityId.getOrDefault(r.key.targetId, emptyList()).stream().map((Hub h) -> h.name.fi).collect(joining(", "))),
@@ -116,7 +124,6 @@ public class FacilityUsageReportService extends AbstractReportService {
         public int hashCode() {
             return super.hashCode() ^ date.hashCode();
         }
-
         @Override
         public boolean equals(Object obj) {
             return super.equals(obj) && date.equals(((UtilizationReportKey) obj).date);

@@ -49,24 +49,22 @@ import static org.joda.time.DateTimeConstants.*;
 
 public class ReportingITest extends AbstractIntegrationTest {
 
+    private static final LocalDate BASE_DATE = LocalDate.now().minusMonths(1);
+
     @Inject Dummies dummies;
     @Inject FacilityService facilityService;
     @Inject PredictionService predictionService;
     @Inject HubService hubService;
     @Inject OperatorService operatorService;
+
     @Inject TranslationService translationService;
-
-    private long hubId;
-    private long facilityId1;
-    private long facilityId2;
-
     private Hub hub;
     private Facility facility1;
+
     private Facility facility2;
-
     private Operator operator1;
-    private Operator operator2;
 
+    private Operator operator2;
     private User operator1User;
     private User operator2User;
     private User apiUser;
@@ -80,9 +78,9 @@ public class ReportingITest extends AbstractIntegrationTest {
     @Before
     public void initFixture() {
         devHelper.deleteAll();
-        facilityId1 = dummies.createFacility();
-        facilityId2 = dummies.createFacility();
-        hubId = dummies.createHub(facilityId1, facilityId2);
+        long facilityId1 = dummies.createFacility();
+        long facilityId2 = dummies.createFacility();
+        long hubId = dummies.createHub(facilityId1, facilityId2);
 
         hub = hubService.getHub(hubId);
         facility1 = facilityService.getFacility(facilityId1);
@@ -100,17 +98,81 @@ public class ReportingITest extends AbstractIntegrationTest {
         adminUser = devHelper.createOrUpdateUser(new NewUser(10L, "admin", ADMIN, null, "admin"));
     }
 
-    @Test
-    public void report_FacilityUsage_asOperator() {
-        final ReportParameters params = baseParams();
-        params.interval = 60;
+    // ---------------------
+    // FACILITY USAGE REPORT
+    // ---------------------
 
-        final Response whenPostingToReportUrl = postToReportUrl(params, "FacilityUsage", operator1User);
+    @Test
+    public void report_FacilityUsage_asOperator2() {
+        final ReportParameters params = baseParams();
+        params.interval = 3*60;
+        registerMockFacilityUsages(facility1, apiUser);
+        registerMockFacilityUsages(facility2, apiUser2);
+
+        final Response whenPostingToReportUrl = postToReportUrl(params, "FacilityUsage", operator2User);
 
         // If this succeeds, the response was a valid excel file
         final Workbook workbook = readWorkbookFrom(whenPostingToReportUrl);
         assertThat(getSheetNames(workbook)).containsExactly("Käyttöasteraportti", "Selite");
+
+        final Sheet usages = workbook.getSheetAt(0);
+        // Header and one for each usage type
+        assertThat(usages.getPhysicalNumberOfRows()).isEqualTo(3);
+
+        // Only operator2 visible
+        assertThat(getDataFromColumn(usages, 3))
+            .containsOnly("Operaattori", operator2.name.fi)
+            .doesNotContain(operator1.name.fi);
+
+        // 12 is a static number of heading columns before the hours
+        final List<String> headers = getDataFromRow(usages, 0);
+        assertThat(headers.subList(12, headers.size())).containsExactly(
+                "00:00", "03:00", "06:00", "09:00", "12:00", "15:00", "18:00", "21:00"
+        );
+
+        // Get the hourly utilizations for CAR
+        // Results are not interpolated.
+        final List<String> row = getDataFromRow(usages, 1);
+        assertThat(row.subList(12, row.size()))
+                .containsExactly("24", "24", "24", "24", "0", "0", "0", "24");
     }
+
+    @Test
+    public void report_FacilityUsage_asAdmin() {
+        final ReportParameters params = baseParams();
+        params.interval = 180;
+        registerMockFacilityUsages(facility1, apiUser);
+        registerMockFacilityUsages(facility2, apiUser2);
+
+        final Response whenPostingToReportUrl = postToReportUrl(params, "FacilityUsage", adminUser);
+
+        // If this succeeds, the response was a valid excel file
+        final Workbook workbook = readWorkbookFrom(whenPostingToReportUrl);
+
+        final Sheet usages = workbook.getSheetAt(0);
+        // Header and one for each usage type for both facilities
+        assertThat(usages.getPhysicalNumberOfRows()).isEqualTo(5);
+
+        assertThat(getDataFromColumn(usages, 3))
+                .containsExactly("Operaattori", operator1.name.fi, operator1.name.fi, operator2.name.fi, operator2.name.fi);
+    }
+
+    private void registerMockFacilityUsages(Facility facility, User user) {
+        DateTime startOfDay = BASE_DATE.toDateTimeAtStartOfDay();
+        facilityService.registerUtilization(facility.id, asList(
+                utilize(CAR, 24, startOfDay, facility),
+                utilize(CAR,  0, startOfDay.plusHours(12), facility),
+                utilize(CAR, 24, startOfDay.secondOfDay().withMaximumValue(), facility),
+
+                utilize(ELECTRIC_CAR, 2, startOfDay, facility),
+                utilize(ELECTRIC_CAR, 0, startOfDay.plusHours(12), facility),
+                utilize(ELECTRIC_CAR, 2, startOfDay.secondOfDay().withMaximumValue(), facility)
+        ), user);
+    }
+
+    // ---------------------
+    // HUBS AND FACILITIES REPORT
+    // ---------------------
 
     @Test
     public void report_HubsAndFacilities_asOperator() {
@@ -140,54 +202,6 @@ public class ReportingITest extends AbstractIntegrationTest {
         checkHubsAndFacilities_operatorsAre(workbook, operator1, operator2);
     }
 
-    @Test
-    public void report_MaxUtilization_asOperator() {
-        // Record mock usage data
-        addMockUtilizations(facility1, apiUser);
-        addMockUtilizations(facility2, apiUser2);
-
-        final Response whenPostingToReportUrl = postToReportUrl(baseParams(), "MaxUtilization", operator1User);
-
-        // If this succeeds, the response was a valid excel file
-        final Workbook workbook = readWorkbookFrom(whenPostingToReportUrl);
-        assertThat(getSheetNames(workbook)).containsExactly("Tiivistelmäraportti", "Selite");
-        checkMaxUtilization_rows(workbook);
-
-        // Only operator1 is displayed
-        assertThat(getDataFromColumn(workbook.getSheetAt(0), 2))
-                .contains("Operaattori", operator1.name.fi)
-                .doesNotContain(operator2.name.fi);
-    }
-
-    // TODO: Unsure: should a hub display a grand total or per-operator rows
-    @Ignore("Unsure: should a hub display a grand total or per-operator rows")
-    @Test
-    public void report_MaxUtilization_asAdmin() {
-        // Record mock usage data
-        addMockUtilizations(facility1, apiUser);
-        addMockUtilizations(facility2, apiUser2);
-
-        final Response whenPostingToReportUrl = postToReportUrl(baseParams(), "MaxUtilization", adminUser);
-
-        // If this succeeds, the response was a valid excel file
-        final Workbook workbook = readWorkbookFrom(whenPostingToReportUrl);
-
-        // Both operators are displayed
-        assertThat(getDataFromColumn(workbook.getSheetAt(0), 2))
-                .contains("Operaattori", operator1.name.fi, operator2.name.fi);
-    }
-
-    private void addMockUtilizations(Facility f, User apiUser) {
-        final Integer capacity = f.builtCapacity.get(CAR);
-        facilityService.registerUtilization(f.id, asList(
-                // 50/50 = 100%
-                utilize(CAR, 0, DateTime.now().withDayOfMonth(15).withDayOfWeek(MONDAY), f),
-                // 25/50 =  50%
-                utilize(CAR, capacity - (capacity / 2), DateTime.now().withDayOfMonth(15).withDayOfWeek(SATURDAY), f),
-                // 10/50 =  20%
-                utilize(CAR, capacity - (capacity / 5), DateTime.now().withDayOfMonth(15).withDayOfWeek(SUNDAY), f)
-        ), apiUser);
-    }
 
     private void checkHubsAndFacilities_operatorsAre(Workbook workbook, Operator... operators) {
         final Sheet facilities = workbook.getSheetAt(1);
@@ -258,6 +272,62 @@ public class ReportingITest extends AbstractIntegrationTest {
         );
     }
 
+
+    // ---------------------
+    // MAX UTILIZATION REPORT
+    // ---------------------
+
+    @Test
+    public void report_MaxUtilization_asOperator() {
+        // Record mock usage data
+        addMockMaxUtilizations(facility1, apiUser);
+        addMockMaxUtilizations(facility2, apiUser2);
+
+        final Response whenPostingToReportUrl = postToReportUrl(baseParams(), "MaxUtilization", operator1User);
+
+        // If this succeeds, the response was a valid excel file
+        final Workbook workbook = readWorkbookFrom(whenPostingToReportUrl);
+        assertThat(getSheetNames(workbook)).containsExactly("Tiivistelmäraportti", "Selite");
+        checkMaxUtilization_rows(workbook);
+
+        // Only operator1 is displayed
+        assertThat(getDataFromColumn(workbook.getSheetAt(0), 2))
+                .contains("Operaattori", operator1.name.fi)
+                .doesNotContain(operator2.name.fi);
+    }
+
+    // TODO: Unsure: should a hub display a grand total or per-operator rows
+    @Ignore("Unsure: should a hub display a grand total or per-operator rows")
+    @Test
+    public void report_MaxUtilization_asAdmin() {
+        // Record mock usage data
+        addMockMaxUtilizations(facility1, apiUser);
+        addMockMaxUtilizations(facility2, apiUser2);
+
+        final Response whenPostingToReportUrl = postToReportUrl(baseParams(), "MaxUtilization", adminUser);
+
+        // If this succeeds, the response was a valid excel file
+        final Workbook workbook = readWorkbookFrom(whenPostingToReportUrl);
+
+        // Both operators are displayed
+        assertThat(getDataFromColumn(workbook.getSheetAt(0), 2))
+                .contains("Operaattori", operator1.name.fi, operator2.name.fi);
+    }
+
+    private void addMockMaxUtilizations(Facility f, User apiUser) {
+        final Integer capacity = f.builtCapacity.get(CAR);
+        // Day 15 to ensure that weekdays stay in the same month
+        final DateTime baseDate = BASE_DATE.toDateTimeAtCurrentTime().withDayOfMonth(15);
+        facilityService.registerUtilization(f.id, asList(
+                // 50/50 = 100%
+                utilize(CAR, 0, baseDate.withDayOfWeek(MONDAY), f),
+                // 25/50 =  50%
+                utilize(CAR, capacity - (capacity / 2), baseDate.withDayOfWeek(SATURDAY), f),
+                // 10/50 =  20%
+                utilize(CAR, capacity - (capacity / 5), baseDate.withDayOfWeek(SUNDAY), f)
+        ), apiUser);
+    }
+
     private void checkMaxUtilization_rows(Workbook workbook) {
         /*
         EXAMPLE:
@@ -308,6 +378,10 @@ public class ReportingITest extends AbstractIntegrationTest {
         );
     }
 
+    // ---------------------
+    // MISC. REPORT TESTS
+    // ---------------------
+
     @Test
     public void report_accessDenied() {
         given().contentType(ContentType.JSON)
@@ -341,6 +415,10 @@ public class ReportingITest extends AbstractIntegrationTest {
                 .then()
                 .assertThat().statusCode(HttpStatus.BAD_REQUEST.value());
     }
+
+    // ---------------------
+    // HELPER METHODS
+    // ---------------------
 
     private Utilization utilize(CapacityType capacityType, Integer spacesAvailable, DateTime ts, Facility f) {
         final Utilization utilization = new Utilization();
@@ -399,8 +477,8 @@ public class ReportingITest extends AbstractIntegrationTest {
 
     private static ReportParameters baseParams() {
         final ReportParameters params = new ReportParameters();
-        params.startDate = LocalDate.now().dayOfMonth().withMinimumValue().toString(ReportServiceSupport.FINNISH_DATE_PATTERN);
-        params.endDate = LocalDate.now().dayOfMonth().withMaximumValue().toString(ReportServiceSupport.FINNISH_DATE_PATTERN);
+        params.startDate = BASE_DATE.dayOfMonth().withMinimumValue().toString(ReportServiceSupport.FINNISH_DATE_PATTERN);
+        params.endDate = BASE_DATE.dayOfMonth().withMaximumValue().toString(ReportServiceSupport.FINNISH_DATE_PATTERN);
         return params;
     }
 }

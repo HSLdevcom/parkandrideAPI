@@ -6,7 +6,7 @@
 </actions>
 
 <content>
-<div class="wdReportsView" ng-init="reportType='FacilityUsage'">
+<div class="wdReportsView">
 
 <div class="row smallMarginBottom">
     <p>{{ "reports.help.summary" | translate }}</p>
@@ -18,17 +18,17 @@
 
 <div class="row">
     <label class="radiobutton-label" title="{{ 'reports.FacilityUsage.info' | translate }}">
-        <input type="radio" ng-model="reportType" value="FacilityUsage"/>
+        <input type="radio" name="reportType" ng-model="reportType" ng-value="'FacilityUsage'"/>
         {{ "reports.FacilityUsage.name" | translate }}
     </label>
     <br>
     <label class="radiobutton-label" title="{{ 'reports.MaxUtilization.info' | translate }}">
-        <input type="radio" ng-model="reportType" value="MaxUtilization"/>
+        <input type="radio" name="reportType" ng-model="reportType" ng-value="'MaxUtilization'"/>
         {{ "reports.MaxUtilization.name" | translate }}
     </label>
     <br>
     <label class="radiobutton-label" title="{{ 'reports.HubsAndFacilities.info' | translate }}">
-        <input type="radio" ng-model="reportType" value="HubsAndFacilities"/>
+        <input type="radio" name="reportType" ng-model="reportType" ng-value="'HubsAndFacilities'"/>
         {{ "reports.HubsAndFacilities.name" | translate }}
     </label>
 </div>
@@ -40,8 +40,7 @@
     </p></div>
 </div>
 
-<div ng-show="reportType != 'HubsAndFacilities'" ng-init="report.startDate=1 +'.'+ (date.getMonth()+1) +'.'+ date.getFullYear();
-        report.endDate=date.getDate() +'.'+ (date.getMonth()+1) +'.'+ date.getFullYear()">
+<div ng-show="reportType != 'HubsAndFacilities'">
     <div class="row">
         <label>{{ "reports.label.range" | translate }} *</label>
     </div>
@@ -58,7 +57,7 @@
 
 <div ng-show="reportType == 'FacilityUsage'">
   <div class="row">
-    <label ng-init="report.interval=60">{{ "reports.label.interval" | translate }}</label>
+    <label>{{ "reports.label.interval" | translate }}</label>
   </div>
   <div class="row">
     <div class="column3 first-column">
@@ -75,7 +74,7 @@
   </div>
 </div>
 
-<div ng-show="reportType != 'HubsAndFacilities'" ng-init="report.operators=['CAR']">
+<div ng-show="reportType != 'HubsAndFacilities'">
   <div class="row">
     <label>{{ "reports.label.operator" | translate }}</label>
   </div>
@@ -113,7 +112,7 @@
     </div>
 </div>
 
-<div ng-show="reportType != 'HubsAndFacilities'" ng-init="report.capacityTypes=['CAR']">
+<div ng-show="reportType != 'HubsAndFacilities'">
     <div class="row">
         <label>{{ "reports.label.capacity" | translate }}</label>
     </div>

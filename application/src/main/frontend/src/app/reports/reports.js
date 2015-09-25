@@ -22,31 +22,51 @@
                   templateUrl: 'reports/reports.tpl.html'
               }
           },
+          resolve: {
+              OperatorResource: 'OperatorResource',
+              HubResource: 'HubResource',
+              FacilityResource: 'FacilityResource',
+              RegionResource: 'RegionResource',
+              allOperators: function(OperatorResource) {
+                  return OperatorResource.listOperators().then(function(response) {
+                      return response.results;
+                  });
+              },
+              allHubs: function(HubResource) {
+                  return HubResource.listHubs();
+              },
+              allFacilities: function(FacilityResource) {
+                  return FacilityResource.listFacilities();
+              },
+              allRegions: function(RegionResource) {
+                  return RegionResource.listRegions();
+              }
+
+          },
           data: {pageTitle: 'Reports'}
       });
     });
 
-    m.controller('ReportsCtrl', function($scope, $translate, $http, OperatorResource, HubResource, FacilityResource, RegionResource, schema) {
-      $scope.allOperators = [];
-      OperatorResource.listOperators().then(function(response) {
-        $scope.allOperators = response.results;
-      });
-      $scope.allHubs = [];
-      HubResource.listHubs().then(function(response) {
-        $scope.allHubs = response;
-      });
-      $scope.allFacilities = [];
-      FacilityResource.listFacilities().then(function(response) {
-        $scope.allFacilities = response;
-      });
-      $scope.allRegions = [];
-      RegionResource.listRegions().then(function(response) {
-        $scope.allRegions = response;
-      });
+    m.controller('ReportsCtrl', function($scope, $translate, $http, allOperators, allHubs, allFacilities, allRegions, schema) {
+      $scope.allOperators = allOperators;
+      $scope.allHubs = allHubs;
+      $scope.allFacilities = allFacilities;
+      $scope.allRegions = allRegions;
       $scope.capacityTypes = schema.capacityTypes.values;
       $scope.usages = schema.usages.values;
       var contentType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
-      $scope.date = new Date();
+      var date = new Date();
+
+      function to_date(daynumber) {
+          return daynumber + '.' + (date.getMonth()+1) + '.' + date.getFullYear();
+      }
+      $scope.reportType = 'FacilityUsage';
+      $scope.report = {
+          startDate: to_date(1),
+          endDate: to_date(date.getDate()),
+          interval: 60,
+          capacityTypes: ['CAR']
+      };
       $scope.generate = function(type, parameters) {
         if (!parameters) {
           parameters = {};

@@ -7,19 +7,19 @@ import static java.util.Collections.singletonMap;
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.*;
 
-class ReportContext {
-    Map<Long, Facility> facilities;
-    Map<Long, Hub> hubs;
-    Map<Long, Operator> operators;
-    Map<Long, List<Facility>> facilitiesByHubId;
-    Map<Long, List<Long>> facilityIdsByOperatorId;
-    Map<Long, List<Hub>> hubsByFacilityId;
-    Map<Long, Region> regionByFacilityId;
-    Map<Long, Region> regionByHubId;
-    Long allowedOperatorId;
-    Collection<Region> regions;
+final class ReportContext {
+    final Map<Long, Facility> facilities;
+    final Map<Long, Hub> hubs;
+    final Map<Long, Operator> operators;
+    final Map<Long, List<Facility>> facilitiesByHubId;
+    final Map<Long, List<Long>> facilityIdsByOperatorId;
+    final Map<Long, List<Hub>> hubsByFacilityId;
+    final Map<Long, Region> regionByFacilityId;
+    final Map<Long, Region> regionByHubId;
+    final Long allowedOperatorId;
+    final Collection<Region> regions;
 
-    public ReportContext(ReportService reportService, Long allowedOperatorId) {
+    public ReportContext(ReportServiceSupport reportService, Long allowedOperatorId) {
         this.allowedOperatorId = allowedOperatorId;
         facilities = getFacilities(reportService, allowedOperatorId);
         hubs = getHubs(reportService);
@@ -50,14 +50,14 @@ class ReportContext {
         return Region.UNKNOWN_REGION;
     }
 
-    private Map<Long, Hub> getHubs(ReportService reportService) {
+    private Map<Long, Hub> getHubs(ReportServiceSupport reportService) {
         HubSearch search = new HubSearch();
         search.setLimit(10000);
         List<Hub> hubs = reportService.hubService.search(search).results;
         return hubs.stream().collect(toMap((Hub h) -> h.id, identity(), (u, v) -> u, LinkedHashMap::new));
     }
 
-    private Map<Long, Facility> getFacilities(ReportService reportService, Long allowedOperatorId) {
+    private Map<Long, Facility> getFacilities(ReportServiceSupport reportService, Long allowedOperatorId) {
         PageableFacilitySearch search = new PageableFacilitySearch();
         search.setLimit(10000);
         search.setOperatorId(allowedOperatorId);
@@ -65,7 +65,7 @@ class ReportContext {
         return facilityInfos.stream().map((FacilityInfo f) -> reportService.facilityService.getFacility(f.id)).collect(toMap((Facility f) -> f.id, identity(), (u, v) -> u, LinkedHashMap::new));
     }
 
-    private Map<Long, Operator> getOperators(ReportService reportService, Long allowedOperatorId) {
+    private Map<Long, Operator> getOperators(ReportServiceSupport reportService, Long allowedOperatorId) {
         if (allowedOperatorId != null) {
             return singletonMap(allowedOperatorId, reportService.operatorService.getOperator(allowedOperatorId));
         }

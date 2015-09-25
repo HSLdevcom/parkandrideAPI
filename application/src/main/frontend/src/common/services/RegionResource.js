@@ -13,6 +13,12 @@
             });
         };
 
+        api.listRegionsWithHubs = function() {
+            return $http.get('api/v1/regions/withHubs').then(function(response) {
+                return response.data;
+            });
+        };
+
         return api;
     });
 

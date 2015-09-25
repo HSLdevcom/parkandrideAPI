@@ -39,7 +39,7 @@
                   return FacilityResource.listFacilities();
               },
               allRegions: function(RegionResource) {
-                  return RegionResource.listRegions();
+                  return RegionResource.listRegionsWithHubs();
               }
 
           },

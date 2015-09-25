@@ -44,7 +44,7 @@ public class RegionDao implements RegionRepository {
         PostgresQuery qry = queryFactory.from(qRegion);
 
         ComparableExpression<String> sortField = qRegion.nameFi.lower();
-        qry.orderBy(sortField.asc(), sortField.asc());
+        qry.orderBy(sortField.asc());
 
         return qry.list(regionMapping);
     }

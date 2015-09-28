@@ -88,16 +88,17 @@ module.exports = function () {
         }
     };
 
-    api.createLogin = function(role, username, password) {
+    api.createLogin = function(role, username, password, operatorId) {
         var newUser = {
             username: username || "testuser",
             password: password || "password",
-            role: role
+            role: role,
+            operatorId: operatorId
         };
         return execute({method: 'POST', url: loginUrl, json: true, body: newUser});
     };
 
-    api.loginAs = function(role, username, password) {
+    api.loginAs = function(role, username, password, operatorId) {
         function storeAuthToSessionStorage(response) {
             browser.get('/');
             var login = response.body;
@@ -105,7 +106,7 @@ module.exports = function () {
             //console.log(script);
             return browser.executeScript(script);
         }
-        api.createLogin(role, username, password).then(storeAuthToSessionStorage);
+        api.createLogin(role, username, password, operatorId).then(storeAuthToSessionStorage);
     };
 
     api.logout = function() {

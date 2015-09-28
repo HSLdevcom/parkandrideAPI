@@ -9,6 +9,7 @@ module.exports.authModal = require('./auth/authModal');
 module.exports.operatorPage = require('./operators/operatorPage');
 module.exports.contactPage = require('./contacts/contactPage');
 module.exports.usersPage = require('./users/usersPage');
+module.exports.reportsPage = require('./users/reportsPage');
 
 module.exports.facilityEditPage = require('./facilities/facilityEditPage');
 module.exports.facilityViewPage = require('./facilities/facilityViewPage');

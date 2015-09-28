@@ -165,6 +165,13 @@ div.ui-select-bootstrap > .btn-default:focus {
   color: $k80;
 }
 
+// Filters on report page
+.ui-select--not-available {
+  color: grey;
+  text-decoration: line-through;
+}
+
+
 .btn-default-focus {
   outline: none;
   box-shadow: none;

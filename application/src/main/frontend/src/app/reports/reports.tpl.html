@@ -157,8 +157,10 @@
         <div class="column3 first-column">
             <div class="form-group">
                 <ui-select multiple ng-model="report.hubs" theme="bootstrap" ng-disabled="disabled" name="hub" reset-search-input="true">
-                    <ui-select-match placeholder="{{ 'reports.placeholder.hub' | translate }}">{{$item.name.fi}}</ui-select-match>
-                    <ui-select-choices repeat="hub.id as hub in allHubs | filter: {name: {fi: $select.search}}">
+                    <ui-select-match placeholder="{{ 'reports.placeholder.hub' | translate }}">
+                        <span ng-class="{'ui-select--not-available': !isPermittedHub($item)}">{{$item.name.fi}}</span>
+                    </ui-select-match>
+                    <ui-select-choices repeat="hub.id as hub in allHubs | filter: isPermittedHub | filter: {name: {fi: $select.search}}">
                         <div ng-bind-html="hub.name.fi | highlight: $select.search"></div>
                     </ui-select-choices>
                 </ui-select>
@@ -175,8 +177,10 @@
         <div class="column3 first-column">
             <div class="form-group">
                 <ui-select multiple ng-model="report.facilities" theme="bootstrap" ng-disabled="disabled" name="facility" reset-search-input="true">
-                    <ui-select-match placeholder="{{ 'reports.placeholder.facility' | translate }}">{{$item.name.fi}}</ui-select-match>
-                    <ui-select-choices repeat="facility.id as facility in allFacilities | filter: {name: {fi: $select.search}}">
+                    <ui-select-match placeholder="{{ 'reports.placeholder.facility' | translate }}">
+                        <span ng-class="{'ui-select--not-available': !isPermittedFacility($item)}">{{$item.name.fi}}</span>
+                    </ui-select-match>
+                    <ui-select-choices repeat="facility.id as facility in allFacilities | filter: isPermittedFacility |filter: {name: {fi: $select.search}}">
                         <div ng-bind-html="facility.name.fi | highlight: $select.search"></div>
                     </ui-select-choices>
                 </ui-select>

@@ -47,7 +47,7 @@
         });
     });
 
-    m.controller('ReportsCtrl', function ($scope, $translate, $http, allOperators, allHubs, allFacilities, allRegions, schema) {
+    m.controller('ReportsCtrl', function ($scope, $translate, $http, allOperators, allHubs, allFacilities, allRegions, schema, Session) {
         $scope.allOperators     = allOperators;
         $scope.allRegions       = allRegions;
         $scope.allHubs          = allHubs;
@@ -77,6 +77,15 @@
             hubs: [],
             operators: []
         };
+
+        // Limit to the logged in operator, if applicable
+        $scope.$watch(function() { return Session.get(); }, function(user) {
+            if (user && user.operatorId) {
+                var userOperatorId = user.operatorId;
+                $scope.report.operators = [userOperatorId];
+                $scope.fixedOperator = _.find($scope.allOperators, 'id', userOperatorId);
+            }
+        });
 
         //
         // UI FILTERS

@@ -47,9 +47,11 @@
     <div class="row">
         <div class="column3 first-column">
             <div class="form-group">
-                <input class="form-control dateInput wdStartDate" type="text" ng-model="report.startDate" ng-required="reportType != 'HubsAndFacilities'">
+                <input class="form-control dateInput wdStartDate" type="text" ng-model="report.startDate" ng-required="reportType != 'HubsAndFacilities'"
+                       name="startDate" show-errors ng-pattern="datePattern" />
                 -
-                <input class="form-control dateInput wdEndDate" type="text" ng-model="report.endDate">
+                <input class="form-control dateInput wdEndDate" type="text" ng-model="report.endDate"
+                       name="endDate" show-errors ng-pattern="datePattern" />
             </div>
         </div>
     </div>

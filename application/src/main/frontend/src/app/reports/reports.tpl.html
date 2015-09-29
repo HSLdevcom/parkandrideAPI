@@ -34,7 +34,7 @@
 </div>
 
 <div class="row smallMarginBottom">
-    <h3>{{ "reports."+reportType+".name" | translate }}</h3>
+    <h3 class="wdReportHeading">{{ "reports."+reportType+".name" | translate }}</h3>
     <div class="row"><p>
         {{ "reports."+reportType+".info" | translate }}
     </p></div>
@@ -47,9 +47,9 @@
     <div class="row">
         <div class="column3 first-column">
             <div class="form-group">
-                <input class="form-control dateInput" type="text" ng-model="report.startDate" ng-required="reportType != 'HubsAndFacilities'">
+                <input class="form-control dateInput wdStartDate" type="text" ng-model="report.startDate" ng-required="reportType != 'HubsAndFacilities'">
                 -
-                <input class="form-control dateInput" type="text" ng-model="report.endDate">
+                <input class="form-control dateInput wdEndDate" type="text" ng-model="report.endDate">
             </div>
         </div>
     </div>
@@ -61,8 +61,8 @@
   </div>
   <div class="row">
     <div class="column3 first-column">
-      <div class="form-group">
-        <select class="form-control dateInput" ng-model="report.interval" convert-to-number>
+      <div class="form-group wdInterval">
+        <select class="form-control dateInput wdInterval" ng-model="report.interval" convert-to-number>
           <option value="5">5 min</option>
           <option value="10">10 min</option>
           <option value="15">15 min</option>
@@ -80,14 +80,17 @@
   </div>
   <div class="row">
     <div class="column3 first-column">
-      <div class="form-group">
-        <ui-select multiple ng-model="report.operators" theme="bootstrap" ng-disabled="disabled" reset-search-input="true"
-                   name="operator" show-errors ng-required="mandatory">
-          <ui-select-match placeholder="{{ 'reports.placeholder.operator' | translate }}">{{$item.name.fi}}</ui-select-match>
-          <ui-select-choices repeat="operator.id as operator in allOperators | filter: {name: {fi: $select.search}}">
-            <div ng-bind-html="operator.name.fi | highlight: $select.search"></div>
-          </ui-select-choices>
-        </ui-select>
+      <div class="form-group wdOperators">
+        <span ng-hide="fixedOperator">
+          <ui-select multiple ng-model="report.operators" theme="bootstrap" ng-disabled="disabled" reset-search-input="true"
+                     name="operator" show-errors ng-required="mandatory">
+              <ui-select-match placeholder="{{ 'reports.placeholder.operator' | translate }}">{{$item.name.fi}}</ui-select-match>
+              <ui-select-choices repeat="operator.id as operator in allOperators | filter: {name: {fi: $select.search}}">
+                  <div ng-bind-html="operator.name.fi | highlight: $select.search"></div>
+              </ui-select-choices>
+          </ui-select>
+        </span>
+        <span ng-show="fixedOperator" class="wdFixedOperator" ng-bind="fixedOperator.name.fi"></span>
       </div>
     </div>
   </div>
@@ -99,7 +102,7 @@
     </div>
     <div class="row">
         <div class="column3 first-column">
-            <div class="form-group">
+            <div class="form-group wdUsages">
                 <ui-select multiple ng-model="report.usages" theme="bootstrap" ng-disabled="disabled" reset-search-input="true"
                            name="usage" show-errors ng-required="mandatory">
                     <ui-select-match placeholder="{{ 'reports.placeholder.usage' | translate }}">{{$item.label}}</ui-select-match>
@@ -118,7 +121,7 @@
     </div>
     <div class="row">
         <div class="column3 first-column">
-            <div class="form-group">
+            <div class="form-group wdCapacityTypes">
                 <ui-select multiple ng-model="report.capacityTypes" theme="bootstrap" ng-disabled="disabled" reset-search-input="true"
                            name="capacity" show-errors ng-required="mandatory">
                     <ui-select-match placeholder="{{ 'reports.placeholder.capacity' | translate }}">{{$item.label}}</ui-select-match>
@@ -137,7 +140,7 @@
     </div>
     <div class="row">
         <div class="column3 first-column">
-            <div class="form-group">
+            <div class="form-group wdRegions">
                 <ui-select multiple ng-model="report.regions" theme="bootstrap" ng-disabled="disabled" name="region" reset-search-input="true">
                     <ui-select-match placeholder="{{ 'reports.placeholder.region' | translate }}">{{$item.name.fi}}</ui-select-match>
                     <ui-select-choices repeat="region.id as region in allRegions | filter: {name: {fi: $select.search}}">
@@ -155,10 +158,12 @@
     </div>
     <div class="row">
         <div class="column3 first-column">
-            <div class="form-group">
+            <div class="form-group wdHubs">
                 <ui-select multiple ng-model="report.hubs" theme="bootstrap" ng-disabled="disabled" name="hub" reset-search-input="true">
-                    <ui-select-match placeholder="{{ 'reports.placeholder.hub' | translate }}">{{$item.name.fi}}</ui-select-match>
-                    <ui-select-choices repeat="hub.id as hub in allHubs | filter: {name: {fi: $select.search}}">
+                    <ui-select-match placeholder="{{ 'reports.placeholder.hub' | translate }}">
+                        <span ng-class="{'ui-select--not-available': !isPermittedHub($item)}">{{$item.name.fi}}</span>
+                    </ui-select-match>
+                    <ui-select-choices repeat="hub.id as hub in allHubs | filter: isPermittedHub | filter: {name: {fi: $select.search}}">
                         <div ng-bind-html="hub.name.fi | highlight: $select.search"></div>
                     </ui-select-choices>
                 </ui-select>
@@ -173,10 +178,12 @@
     </div>
     <div class="row">
         <div class="column3 first-column">
-            <div class="form-group">
+            <div class="form-group wdFacilities">
                 <ui-select multiple ng-model="report.facilities" theme="bootstrap" ng-disabled="disabled" name="facility" reset-search-input="true">
-                    <ui-select-match placeholder="{{ 'reports.placeholder.facility' | translate }}">{{$item.name.fi}}</ui-select-match>
-                    <ui-select-choices repeat="facility.id as facility in allFacilities | filter: {name: {fi: $select.search}}">
+                    <ui-select-match placeholder="{{ 'reports.placeholder.facility' | translate }}">
+                        <span ng-class="{'ui-select--not-available': !isPermittedFacility($item)}">{{$item.name.fi}}</span>
+                    </ui-select-match>
+                    <ui-select-choices repeat="facility.id as facility in allFacilities | filter: isPermittedFacility |filter: {name: {fi: $select.search}}">
                         <div ng-bind-html="facility.name.fi | highlight: $select.search"></div>
                     </ui-select-choices>
                 </ui-select>

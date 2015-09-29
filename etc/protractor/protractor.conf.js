@@ -32,6 +32,14 @@ exports.config = {
 
         browser.driver.manage().window().setSize(1280, 1024);
 
+        global.beforeAll = function(fn) {
+            var firstTime = true;
+            beforeEach(function() {
+                if (firstTime) { fn(); }
+                firstTime = false;
+            });
+        };
+
         require('./specs/waitAbsent');
     }
 };

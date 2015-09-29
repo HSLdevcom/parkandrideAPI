@@ -50,6 +50,7 @@ public final class UrlSchema {
     public static final String OPERATOR = OPERATORS + "/{" + OPERATOR_ID + "}";
 
     public static final String REGIONS = API + "/regions";
+    public static final String REGIONS_WITH_HUBS = API + "/regions/withHubs";
 
     public static final String REPORTS = API + "/reports";
     public static final String REPORT_ID = "reportId";

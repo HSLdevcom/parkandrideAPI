@@ -39,6 +39,7 @@ import static fi.hsl.parkandride.core.domain.CapacityType.*;
 import static fi.hsl.parkandride.core.domain.Role.*;
 import static fi.hsl.parkandride.front.ReportController.MEDIA_TYPE_EXCEL;
 import static java.util.Arrays.asList;
+import static java.util.Collections.singleton;
 import static java.util.Spliterator.ORDERED;
 import static java.util.Spliterators.spliteratorUnknownSize;
 import static java.util.stream.Collectors.toList;
@@ -154,6 +155,30 @@ public class ReportingITest extends AbstractIntegrationTest {
 
         assertThat(getDataFromColumn(usages, 3))
                 .containsExactly("Operaattori", operator1.name.fi, operator1.name.fi, operator2.name.fi, operator2.name.fi);
+    }
+
+    @Test
+    public void report_FacilityUsage_asAdmin_oneFacility() {
+        final ReportParameters params = baseParams();
+        params.interval = 180;
+        params.facilities = singleton(facility1.id);
+        params.capacityTypes = singleton(CAR);
+        params.usages = singleton(Usage.PARK_AND_RIDE);
+        params.operators = singleton(facility1.operatorId);
+        registerMockFacilityUsages(facility1, apiUser);
+        registerMockFacilityUsages(facility2, apiUser2);
+
+        final Response whenPostingToReportUrl = postToReportUrl(params, "FacilityUsage", adminUser);
+
+        // If this succeeds, the response was a valid excel file
+        final Workbook workbook = readWorkbookFrom(whenPostingToReportUrl);
+        final Sheet usages = workbook.getSheetAt(0);
+        // Header + one row
+        assertThat(getDataFromColumn(usages, 0))
+                .containsExactly("Pysäköintipaikan nimi", facility1.name.fi);
+        assertThat(getDataFromColumn(usages, 4))
+                .containsExactly("Käyttötapa", "Liityntä");
+        assertThat(usages.getPhysicalNumberOfRows()).isEqualTo(2);
     }
 
     private void registerMockFacilityUsages(Facility facility, User user) {

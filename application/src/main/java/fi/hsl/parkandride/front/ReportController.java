@@ -51,7 +51,6 @@ public class ReportController {
             log.error("Access denied", ade);
             return status(HttpStatus.FORBIDDEN).body(new byte[0]);
         } catch (Exception e) {
-            e.printStackTrace();
             log.error("Failed to generate report", e);
             return badRequest().body(new byte[0]);
         }

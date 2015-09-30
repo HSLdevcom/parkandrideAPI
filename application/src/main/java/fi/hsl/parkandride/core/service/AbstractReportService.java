@@ -132,6 +132,9 @@ public abstract class AbstractReportService extends ReportServiceSupport impleme
         if (!isEmpty(parameters.regions)) {
             iter = filter(iter, u -> parameters.regions.contains(ctx.regionByFacilityId.get(u.facilityId).id));
         }
+        if (!isEmpty(parameters.facilities)) {
+            iter = filter(iter, u -> parameters.facilities.contains(u.facilityId));
+        }
         return iter;
     }
 

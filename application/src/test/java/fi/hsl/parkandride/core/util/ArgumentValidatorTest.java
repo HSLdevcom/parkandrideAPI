@@ -3,6 +3,7 @@
 
 package fi.hsl.parkandride.core.util;
 
+import fi.hsl.parkandride.core.service.ValidationException;
 import org.assertj.core.api.AbstractAssert;
 import org.junit.Test;
 
@@ -11,27 +12,28 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class ArgumentValidatorTest {
 
+
     @Test
     public void valid_values_pass() {
-        assertThat(validate(5).gt(4)).isEqualTo(5);
-        assertThat(validate(5).gte(5)).isEqualTo(5);
-        assertThat(validate(4).lt(5)).isEqualTo(4);
-        assertThat(validate(3).lte(3)).isEqualTo(3);
+        RunnableAssert.assertThat(() -> assertThat(validate(5).gt(4)).isEqualTo(5)).passesWithoutFailure();
+        RunnableAssert.assertThat(() -> assertThat(validate(5).gte(5)).isEqualTo(5)).passesWithoutFailure();
+        RunnableAssert.assertThat(() -> assertThat(validate(4).lt(5)).isEqualTo(4)).passesWithoutFailure();
+        RunnableAssert.assertThat(() -> assertThat(validate(3).lte(3)).isEqualTo(3)).passesWithoutFailure();
     }
 
     @Test
     public void invalid_values_throw() {
         RunnableAssert.assertThat(() -> validate(5).gt(5))
-                .failsWith(IllegalArgumentException.class);
+                .failsWith(ValidationException.class);
 
         RunnableAssert.assertThat(() -> validate(5).gte(6))
-                .failsWith(IllegalArgumentException.class);
+                .failsWith(ValidationException.class);
 
         RunnableAssert.assertThat(() -> validate(5).lte(4))
-                .failsWith(IllegalArgumentException.class);
+                .failsWith(ValidationException.class);
 
         RunnableAssert.assertThat(() -> validate(5).lt(5))
-                .failsWith(IllegalArgumentException.class);
+                .failsWith(ValidationException.class);
     }
 
     public static class RunnableAssert extends AbstractAssert<RunnableAssert, Runnable> {

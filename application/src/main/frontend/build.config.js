@@ -74,12 +74,16 @@ module.exports = {
       'vendor/file-saver-saveas-js/FileSaver.js'
     ],
     css: [
-        'vendor/font-awesome/css/font-awesome.min.css',
         'vendor/angular-ui-select/dist/select.min.css',
         'vendor/openlayers3/css/ol.css',
         'vendor/sweetalert2/dist/sweetalert2.css'
     ],
     assets: [
+      'vendor/font-awesome/fonts/FontAwesome.otf',
+      'vendor/font-awesome/fonts/fontawesome-webfont.eot',
+      'vendor/font-awesome/fonts/fontawesome-webfont.svg',
+      'vendor/font-awesome/fonts/fontawesome-webfont.ttf',
+      'vendor/font-awesome/fonts/fontawesome-webfont.woff'
     ]
   }
 };

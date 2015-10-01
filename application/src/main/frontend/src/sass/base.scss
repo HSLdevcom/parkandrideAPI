@@ -1,5 +1,8 @@
 @import '../../vendor/bootstrap-sass-official/assets/stylesheets/bootstrap.scss';
 
+$fa-font-path: '../assets';
+@import '../../vendor/font-awesome/scss/font-awesome.scss';
+
 @import 'variables';
 @import 'mixins';
 @import 'layouts';

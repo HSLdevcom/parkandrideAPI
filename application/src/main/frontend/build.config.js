@@ -60,6 +60,7 @@ module.exports = {
   vendor_files: {
     js: [
       'vendor/angular/angular.js',
+      'vendor/angular-i18n/angular-locale_fi.js',
       'vendor/angular-bootstrap/ui-bootstrap-tpls.min.js',
       'vendor/angular-ui-router/release/angular-ui-router.js',
       'vendor/angular-ui-utils/modules/route/route.js',

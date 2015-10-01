@@ -1,6 +1,7 @@
 @import '../../vendor/bootstrap-sass-official/assets/stylesheets/bootstrap.scss';
 
 $fa-font-path: '../assets';
+$fa-css-prefix: 'glyphicon';
 @import '../../vendor/font-awesome/scss/font-awesome.scss';
 
 @import 'variables';
@@ -321,8 +322,12 @@ th {
 
 //Form elements
 .dateInput {
-  width: 100px;
+  max-width: 150px;
   display: inline;
+}
+.dateInput[readonly] {
+  background-color: $input-bg;
+  cursor: text;
 }
 
 //Number input spinner removal

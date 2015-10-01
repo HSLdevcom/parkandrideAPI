@@ -9,7 +9,8 @@
         'parkandride.HubResource',
         'parkandride.RegionResource',
         'parkandride.FacilityResource',
-        'parkandride.layout'
+        'parkandride.layout',
+        'parkandride.date'
     ]);
 
     m.config(function ($stateProvider) {
@@ -61,7 +62,10 @@
         //
         var date = new Date();
         function to_date(daynumber) {
-            return daynumber + '.' + (date.getMonth() + 1) + '.' + date.getFullYear();
+            return new Date(date.getFullYear(), date.getMonth(), daynumber,0,0,0);
+        }
+        function date_toArray(date) {
+            return [date.getDate(), date.getMonth()+1, date.getFullYear()];
         }
 
         //
@@ -165,10 +169,10 @@
             //report name generation
             var name = $translate.instant('reports.' + type + '.name');
             if (type == 'FacilityUsage' || type == 'MaxUtilization') {
-                var date = parameters.startDate.split(".");
+                var date = date_toArray(parameters.startDate);
                 name += '_' + date[2] + ("0" + date[1]).slice(-2) + ("0" + date[0]).slice(-2);
                 if (!/^\s*$/.test(parameters.endDate)) {
-                    date = parameters.endDate.split(".");
+                    date = date_toArray(parameters.endDate);
                     name += '-' + date[2] + ("0" + date[1]).slice(-2) + ("0" + date[0]).slice(-2);
                 }
             }
@@ -182,7 +186,9 @@
             function removeWait() {
                 document.documentElement.classList.remove('wait');
             }
-            $http({
+            parameters.startDate = date_toArray(parameters.startDate).join(".");
+            parameters.endDate   = date_toArray(parameters.endDate).join(".");
+            return $http({
                 url: 'api/v1/reports/' + type,
                 method: "POST",
                 data: parameters,

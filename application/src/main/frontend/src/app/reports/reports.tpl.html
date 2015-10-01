@@ -45,13 +45,23 @@
         <label>{{ "reports.label.range" | translate }} *</label>
     </div>
     <div class="row">
-        <div class="column3 first-column">
+        <div class="column2 first-column">
             <div class="form-group">
-                <input class="form-control dateInput wdStartDate" type="text" ng-model="report.startDate" ng-required="reportType != 'HubsAndFacilities'"
-                       name="startDate" show-errors ng-pattern="datePattern" />
+                <input date-input datepicker-popup show-errors readonly
+                       is-open="startDateOpen" ng-click="startDateOpen = true"
+                       name="startDate"
+                       class="form-control dateInput wdStartDate"
+                       ng-model="report.startDate"
+                       max-date="report.endDate"
+                       ng-required="reportType != 'HubsAndFacilities'"/>
                 -
-                <input class="form-control dateInput wdEndDate" type="text" ng-model="report.endDate"
-                       name="endDate" show-errors ng-pattern="datePattern" />
+                <input date-input datepicker-popup show-errors readonly
+                       is-open="endDateOpen" ng-click="endDateOpen = true"
+                       name="endDate"
+                       class="form-control dateInput wdEndDate"
+                       ng-model="report.endDate"
+                       min-date="report.startDate"
+                       ng-required="reportType != 'HubsAndFacilities'"/>
             </div>
         </div>
     </div>

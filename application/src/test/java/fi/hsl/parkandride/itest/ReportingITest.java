@@ -415,8 +415,7 @@ public class ReportingITest extends AbstractIntegrationTest {
                 .when()
                 .post(UrlSchema.REPORT, "FacilityUsage")
                 .then()
-                .assertThat().statusCode(HttpStatus.FORBIDDEN.value())
-                .assertThat().contentType(MEDIA_TYPE_EXCEL);
+                .assertThat().statusCode(HttpStatus.FORBIDDEN.value());
     }
 
     @Test

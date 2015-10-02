@@ -15,9 +15,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import java.util.*;
+
+import static org.springframework.transaction.annotation.Isolation.READ_COMMITTED;
+import static org.springframework.transaction.annotation.Propagation.REQUIRES_NEW;
 
 public class PredictionService {
 
@@ -107,6 +111,25 @@ public class PredictionService {
             // TODO: save to prediction log
             predictionRepository.updatePredictions(toPredictionBatch(state, predictions), predictorId);
             predictorRepository.save(state);
+        });
+    }
+
+    @Transactional(readOnly = false, isolation = READ_COMMITTED, propagation = REQUIRES_NEW)
+    public void updatePredictionsHistoryForFacility(List<Utilization> utilizationList) {
+        utilizationList.stream()
+                .map(utilization -> utilization.getUtilizationKey())
+                .distinct()
+                .flatMap(utilizationKey ->
+                        predictorsByType.keySet().stream()
+                                .map(predictorType -> predictorRepository.enablePredictor(predictorType, utilizationKey)))
+                .forEach(predictorId -> updatePredictionHistoryForPredictor(predictorId, utilizationList));
+    }
+
+    private void updatePredictionHistoryForPredictor(Long predictorId, List<Utilization> utilizationList) {
+        PredictorState state = predictorRepository.getById(predictorId);
+        getPredictor(state.predictorType).ifPresent(predictor -> {
+            List<Prediction> predictions = predictor.predict(state, new UtilizationHistoryList(utilizationList));
+            predictionRepository.updateOnlyPredictionHistory(toPredictionBatch(state, predictions), predictorId);
         });
     }
 

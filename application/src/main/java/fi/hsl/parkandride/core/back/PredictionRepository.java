@@ -6,6 +6,7 @@ package fi.hsl.parkandride.core.back;
 import fi.hsl.parkandride.core.domain.UtilizationKey;
 import fi.hsl.parkandride.core.domain.prediction.Prediction;
 import fi.hsl.parkandride.core.domain.prediction.PredictionBatch;
+import fi.hsl.parkandride.core.service.TransactionalWrite;
 import org.joda.time.DateTime;
 import org.joda.time.Hours;
 import org.joda.time.Minutes;
@@ -19,6 +20,8 @@ public interface PredictionRepository {
     Minutes PREDICTION_RESOLUTION = Minutes.minutes(5);
 
     void updatePredictions(PredictionBatch predictions, Long predictorId);
+
+    void updateOnlyPredictionHistory(PredictionBatch pb, Long predictorId);
 
     Optional<PredictionBatch> getPrediction(UtilizationKey utilizationKey, DateTime time);
 

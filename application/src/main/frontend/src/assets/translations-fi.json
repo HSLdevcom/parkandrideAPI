@@ -684,7 +684,7 @@
         "placeholder": {
             "operator": "Kaikki operaattorit valittuna",
             "usage": "Kaikki käyttötavat valittuna",
-            "capacity": "Henkilöauto",
+            "capacity": "Kaikki ajoneuvotyypit valittuna",
             "region": "Kaikki kunnat valittuna",
             "hub": "Kaikki alueet valittuna",
             "facility": "Kaikki pysäköintipaikat valittuna"

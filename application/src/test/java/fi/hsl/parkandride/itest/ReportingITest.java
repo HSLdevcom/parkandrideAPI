@@ -20,7 +20,6 @@ import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -320,8 +319,6 @@ public class ReportingITest extends AbstractIntegrationTest {
                 .doesNotContain(operator2.name.fi);
     }
 
-    // TODO: Unsure: should a hub display a grand total or per-operator rows
-    @Ignore("Unsure: should a hub display a grand total or per-operator rows")
     @Test
     public void report_MaxUtilization_asAdmin() {
         // Record mock usage data
@@ -333,9 +330,11 @@ public class ReportingITest extends AbstractIntegrationTest {
         // If this succeeds, the response was a valid excel file
         final Workbook workbook = readWorkbookFrom(whenPostingToReportUrl);
 
-        // Both operators are displayed
+
+        // Both operators are displayed with joined name
         assertThat(getDataFromColumn(workbook.getSheetAt(0), 2))
-                .contains("Operaattori", operator1.name.fi, operator2.name.fi);
+                .hasSize(4) // header + rows for working days, Sat, and Sun
+                .containsOnly("Operaattori", String.join(", ", operator1.name.fi, operator2.name.fi));
     }
 
     private void addMockMaxUtilizations(Facility f, User apiUser) {

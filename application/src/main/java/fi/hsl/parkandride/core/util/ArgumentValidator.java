@@ -18,6 +18,7 @@ import static fi.hsl.parkandride.core.util.Predicates.*;
 import static java.util.stream.Collectors.toList;
 
 public class ArgumentValidator<T> {
+    private static final String UNKNOWN_TYPE = "Unknown";
     private final T obj;
     private final Set<PredicateWithMessage<T>> predicates;
 
@@ -27,7 +28,7 @@ public class ArgumentValidator<T> {
     }
 
     public static <T> Builder<T> validate(T arg) {
-        return new Builder(arg);
+        return validate(arg, UNKNOWN_TYPE);
     }
 
     public static <T> Builder<T> validate(T arg, String type) {
@@ -71,14 +72,10 @@ public class ArgumentValidator<T> {
 
         private final T obj;
         private final Set<PredicateWithMessage<T>> predicates = new HashSet<>();
-        private String type = "Unknown";
-
-        public Builder(T obj) {
-            this.obj = obj;
-        }
+        private final String type;
 
         public Builder(T obj, String type) {
-            this(obj);
+            this.obj = obj;
             this.type = type;
         }
 

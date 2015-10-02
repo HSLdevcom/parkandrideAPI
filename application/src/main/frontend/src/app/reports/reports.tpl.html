@@ -51,16 +51,16 @@
                        is-open="startDateOpen" ng-click="startDateOpen = true"
                        name="startDate"
                        class="form-control dateInput wdStartDate"
+                       max-date="currentDate"
                        ng-model="report.startDate"
-                       max-date="report.endDate"
                        ng-required="reportType != 'HubsAndFacilities'"/>
                 -
                 <input date-input datepicker-popup show-errors readonly
                        is-open="endDateOpen" ng-click="endDateOpen = true"
                        name="endDate"
                        class="form-control dateInput wdEndDate"
+                       max-date="currentDate"
                        ng-model="report.endDate"
-                       min-date="report.startDate"
                        ng-required="reportType != 'HubsAndFacilities'"/>
             </div>
         </div>

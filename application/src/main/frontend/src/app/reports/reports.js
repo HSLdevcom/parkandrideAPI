@@ -60,9 +60,9 @@
         //
         // UTILS
         //
-        var date = new Date();
+        $scope.currentDate = new Date();
         function to_date(daynumber) {
-            return new Date(date.getFullYear(), date.getMonth(), daynumber,0,0,0);
+            return new Date($scope.currentDate.getFullYear(), $scope.currentDate.getMonth(), daynumber,0,0,0);
         }
         function date_toArray(date) {
             return [date.getDate(), date.getMonth()+1, date.getFullYear()];
@@ -75,7 +75,7 @@
         $scope.reportType = 'FacilityUsage';
         $scope.report = {
             startDate: to_date(1),
-            endDate: to_date(date.getDate()),
+            endDate: to_date($scope.currentDate.getDate()),
             interval: 60,
             capacityTypes: ['CAR'],
             regions: [],
@@ -89,6 +89,20 @@
                 var userOperatorId = user.operatorId;
                 $scope.report.operators = [userOperatorId];
                 $scope.fixedOperator = _.find($scope.allOperators, 'id', userOperatorId);
+            }
+        });
+
+        //
+        // DATES
+        //
+        $scope.$watch('report.startDate', function(newStartDate) {
+            if (newStartDate > $scope.report.endDate) {
+                $scope.report.endDate = newStartDate;
+            }
+        });
+        $scope.$watch('report.endDate', function(newEndDate) {
+            if (newEndDate < $scope.report.startDate) {
+                $scope.report.startDate = newEndDate;
             }
         });
 

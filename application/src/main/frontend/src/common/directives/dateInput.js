@@ -12,10 +12,9 @@
 
     m.config(function(datepickerConfig, datepickerPopupConfig, dateInputConfig) {
         _.extend(datepickerConfig, {
-            //focusOnOpen: true,
-            startingDay: 1, // Monday
-            minMode: 'day',
-            maxMode: 'day'
+            startingDay: 1,
+            yearRange: 5,
+            minDate: new Date(2010, 0, 1, 0, 0, 0)
         });
 
         _.extend(datepickerPopupConfig, {

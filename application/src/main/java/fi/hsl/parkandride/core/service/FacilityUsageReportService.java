@@ -15,7 +15,10 @@ import fi.hsl.parkandride.front.ReportParameters;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 import static fi.hsl.parkandride.core.domain.DayType.*;
 import static fi.hsl.parkandride.core.service.Excel.TableColumn.col;

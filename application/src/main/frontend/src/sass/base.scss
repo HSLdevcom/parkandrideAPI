@@ -1,5 +1,9 @@
 @import '../../vendor/bootstrap-sass-official/assets/stylesheets/bootstrap.scss';
 
+$fa-font-path: '../assets';
+$fa-css-prefix: 'glyphicon';
+@import '../../vendor/font-awesome/scss/font-awesome.scss';
+
 @import 'variables';
 @import 'mixins';
 @import 'layouts';
@@ -99,6 +103,11 @@
 .link-btn:hover {
   color: $primarycolor-light;
   text-decoration: underline;
+}
+
+//button action
+html.wait, html.wait * {
+  cursor:wait;
 }
 
 //dropdowns, styles for angular-ui-select
@@ -313,8 +322,12 @@ th {
 
 //Form elements
 .dateInput {
-  width: 100px;
+  max-width: 150px;
   display: inline;
+}
+.dateInput[readonly] {
+  background-color: $input-bg;
+  cursor: text;
 }
 
 //Number input spinner removal

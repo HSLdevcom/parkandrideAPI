@@ -60,6 +60,7 @@ module.exports = {
   vendor_files: {
     js: [
       'vendor/angular/angular.js',
+      'vendor/angular-i18n/angular-locale_fi.js',
       'vendor/angular-bootstrap/ui-bootstrap-tpls.min.js',
       'vendor/angular-ui-router/release/angular-ui-router.js',
       'vendor/angular-ui-utils/modules/route/route.js',
@@ -74,12 +75,16 @@ module.exports = {
       'vendor/file-saver-saveas-js/FileSaver.js'
     ],
     css: [
-        'vendor/font-awesome/css/font-awesome.min.css',
         'vendor/angular-ui-select/dist/select.min.css',
         'vendor/openlayers3/css/ol.css',
         'vendor/sweetalert2/dist/sweetalert2.css'
     ],
     assets: [
+      'vendor/font-awesome/fonts/FontAwesome.otf',
+      'vendor/font-awesome/fonts/fontawesome-webfont.eot',
+      'vendor/font-awesome/fonts/fontawesome-webfont.svg',
+      'vendor/font-awesome/fonts/fontawesome-webfont.ttf',
+      'vendor/font-awesome/fonts/fontawesome-webfont.woff'
     ]
   }
 };

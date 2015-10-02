@@ -9,7 +9,8 @@
         'parkandride.HubResource',
         'parkandride.RegionResource',
         'parkandride.FacilityResource',
-        'parkandride.layout'
+        'parkandride.layout',
+        'parkandride.date'
     ]);
 
     m.config(function ($stateProvider) {
@@ -61,12 +62,16 @@
         //
         var date = new Date();
         function to_date(daynumber) {
-            return daynumber + '.' + (date.getMonth() + 1) + '.' + date.getFullYear();
+            return new Date(date.getFullYear(), date.getMonth(), daynumber,0,0,0);
+        }
+        function date_toArray(date) {
+            return [date.getDate(), date.getMonth()+1, date.getFullYear()];
         }
 
         //
         // REPORT DEFAULTS
         //
+        $scope.datePattern = /^(((0?[1-9]|[12]\d|3[01])[\.\-\/](0?[13578]|1[02])[\.\-\/]((1[6-9]|[2-9]\d)?\d{2}))|((0?[1-9]|[12]\d|30)[\.\-\/](0?[13456789]|1[012])[\.\-\/]((1[6-9]|[2-9]\d)?\d{2}))|((0?[1-9]|1\d|2[0-8])[\.\-\/]0?2[\.\-\/]((1[6-9]|[2-9]\d)?\d{2}))|(29[\.\-\/]0?2[\.\-\/]((1[6-9]|[2-9]\d)?(0[48]|[2468][048]|[13579][26])|((16|[2468][048]|[3579][26])00)|00)))$/;
         $scope.reportType = 'FacilityUsage';
         $scope.report = {
             startDate: to_date(1),
@@ -160,13 +165,14 @@
             if (!parameters) {
                 parameters = {};
             }
+            document.documentElement.classList.add('wait');
             //report name generation
             var name = $translate.instant('reports.' + type + '.name');
             if (type == 'FacilityUsage' || type == 'MaxUtilization') {
-                var date = parameters.startDate.split(".");
+                var date = date_toArray(parameters.startDate);
                 name += '_' + date[2] + ("0" + date[1]).slice(-2) + ("0" + date[0]).slice(-2);
                 if (!/^\s*$/.test(parameters.endDate)) {
-                    date = parameters.endDate.split(".");
+                    date = date_toArray(parameters.endDate);
                     name += '-' + date[2] + ("0" + date[1]).slice(-2) + ("0" + date[0]).slice(-2);
                 }
             }
@@ -177,7 +183,12 @@
             name += ".xlsx";
             name = name.replace(/ /g, "_");
 
-            $http({
+            function removeWait() {
+                document.documentElement.classList.remove('wait');
+            }
+            parameters.startDate = date_toArray(parameters.startDate).join(".");
+            parameters.endDate   = date_toArray(parameters.endDate).join(".");
+            return $http({
                 url: 'api/v1/reports/' + type,
                 method: "POST",
                 data: parameters,
@@ -190,7 +201,7 @@
                 var blob = new Blob([response], {type: contentType});
                 var objectUrl = URL.createObjectURL(blob);
                 saveAs(blob, name);
-            });
+            }).then(removeWait, removeWait);
         };
     });
 

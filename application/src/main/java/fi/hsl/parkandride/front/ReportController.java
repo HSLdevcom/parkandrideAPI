@@ -4,11 +4,9 @@
 package fi.hsl.parkandride.front;
 
 import fi.hsl.parkandride.core.domain.User;
-import fi.hsl.parkandride.core.service.AccessDeniedException;
 import fi.hsl.parkandride.core.service.ReportService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -26,7 +24,7 @@ import static fi.hsl.parkandride.front.UrlSchema.REPORT_ID;
 import static java.util.stream.Collectors.toMap;
 import static org.springframework.http.HttpHeaders.CONTENT_DISPOSITION;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
-import static org.springframework.http.ResponseEntity.*;
+import static org.springframework.http.ResponseEntity.ok;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 @RestController
@@ -44,17 +42,7 @@ public class ReportController {
     @RequestMapping(method = POST, value = REPORT, consumes = APPLICATION_JSON_VALUE,  produces = MEDIA_TYPE_EXCEL)
     public ResponseEntity<?> report(@NotNull @PathVariable(REPORT_ID) String reportId, @RequestBody ReportParameters parameters, User currentUser) {
         log.info("report({})", reportId);
-        byte[] report;
-        try {
-            report = Optional.ofNullable(reporters.get(reportId)).get().generateReport(currentUser, parameters);
-        } catch (AccessDeniedException ade) {
-            log.error("Access denied", ade);
-            return status(HttpStatus.FORBIDDEN).body(new byte[0]);
-        } catch (Exception e) {
-            e.printStackTrace();
-            log.error("Failed to generate report", e);
-            return badRequest().body(new byte[0]);
-        }
+        byte[] report = Optional.ofNullable(reporters.get(reportId)).get().generateReport(currentUser, parameters);
         return ok().header(CONTENT_DISPOSITION, "attachment; filename=\"" + reportId + "\"").body(report);
     }
 }

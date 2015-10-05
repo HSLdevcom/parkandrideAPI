@@ -40,6 +40,8 @@ public final class UrlSchema {
     public static final String HUB_ID = "hubId";
     public static final String HUB = HUBS + "/{" + HUB_ID + "}";
     public static final String HUB_PREDICTION = HUB + "/prediction";
+    public static final String HUB_PREDICTION_ABSOLUTE = HUB_PREDICTION + "?" + ABSOLUTE_TIME + "={timestamp}";;
+    public static final String HUB_PREDICTION_RELATIVE = HUB_PREDICTION + "?" + RELATIVE_TIME + "={hhmm}";
 
     public static final String CONTACTS = API + "/contacts";
     public static final String CONTACT_ID = "contactId";

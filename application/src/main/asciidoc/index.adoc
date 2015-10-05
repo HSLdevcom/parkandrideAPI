@@ -465,6 +465,21 @@ include::{generated}/geojson-header-example/http-response.adoc[]
 
 include::{generated}/hub-details-example/response-fields.adoc[]
 
+[[hub-prediction]]
+=== Prediction
+
+Utilization predictions are available for all hubs which have facilities with enough utilization data history. The hubs'
+predictions are simply sums of the related facilities' predictions.
+
+include::{generated}/hub-prediction-relative-example-hhmm/http-request.adoc[]
+include::{generated}/hub-prediction-relative-example-hhmm/http-response.adoc[]
+
+include::{generated}/hub-prediction-relative-example-minutes/http-request.adoc[]
+include::{generated}/hub-prediction-relative-example-minutes/http-response.adoc[]
+
+include::{generated}/hub-prediction-absolute-example/http-request.adoc[]
+include::{generated}/hub-prediction-absolute-example/http-response.adoc[]
+
 
 [[use-cases]]
 == Use-Case Examples

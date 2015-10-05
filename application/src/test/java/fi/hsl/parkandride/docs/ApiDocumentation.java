@@ -394,6 +394,7 @@ public class ApiDocumentation extends AbstractIntegrationTest {
 
     @Test
     public void predictionExample() throws Exception {
+        final long hubId = dummies.createHub(facilityId);
         facilityService.registerUtilization(facilityId, Collections.singletonList(newUtilization()), currentUser);
         predictionService.updatePredictions();
 
@@ -406,6 +407,16 @@ public class ApiDocumentation extends AbstractIntegrationTest {
         mockMvc.perform(get(UrlSchema.FACILITY_PREDICTION_RELATIVE, facilityId, "90"))
                 .andExpect(status().isOk())
                 .andDo(document("prediction-relative-example-minutes"));
+
+        mockMvc.perform(get(UrlSchema.HUB_PREDICTION_ABSOLUTE, hubId, new DateTime().plusHours(1).plusMinutes(30)))
+                .andExpect(status().isOk())
+                .andDo(document("hub-prediction-absolute-example"));
+        mockMvc.perform(get(UrlSchema.HUB_PREDICTION_RELATIVE, hubId, "01:30"))
+                .andExpect(status().isOk())
+                .andDo(document("hub-prediction-relative-example-hhmm"));
+        mockMvc.perform(get(UrlSchema.HUB_PREDICTION_RELATIVE, hubId, "90"))
+                .andExpect(status().isOk())
+                .andDo(document("hub-prediction-relative-example-minutes"));
     }
 
     @Test

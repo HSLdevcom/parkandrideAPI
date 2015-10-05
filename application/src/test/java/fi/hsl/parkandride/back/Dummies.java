@@ -111,7 +111,7 @@ public class Dummies {
 
     private static final AtomicInteger seq = new AtomicInteger(0);
 
-    private int uniqueNumber() {
-        return seq.incrementAndGet();
+    private String uniqueNumber() {
+        return String.format("%04d", seq.incrementAndGet());
     }
 }

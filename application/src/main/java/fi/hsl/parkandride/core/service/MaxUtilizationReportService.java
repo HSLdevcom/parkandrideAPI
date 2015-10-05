@@ -20,6 +20,7 @@ import static java.lang.Math.min;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.sort;
+import static java.util.stream.Collectors.joining;
 
 public class MaxUtilizationReportService extends AbstractReportService {
 
@@ -74,7 +75,12 @@ public class MaxUtilizationReportService extends AbstractReportService {
                     .mapToDouble(key -> 1.0 - facilityStats.get(key) / (double) key.facility.builtCapacity.get(key.capacityType))
                     .average().orElse(0);
             int totalCapacity = facilityKeys.stream().mapToInt(key -> key.facility.builtCapacity.get(key.capacityType)).sum();
-            rows.add(new MaxUtilizationReportRow(hubKey.hub, facilityKeys.get(0), avgPercent, totalCapacity));
+            final String operatorNames = facilityKeys.stream()
+                    .map(f -> operatorService.getOperator(f.targetId))
+                    .map(o -> o.name.fi)
+                    .sorted()
+                    .collect(joining(", "));
+            rows.add(new MaxUtilizationReportRow(hubKey.hub, facilityKeys.get(0), operatorNames, avgPercent, totalCapacity));
         });
         sort(rows);
 
@@ -82,7 +88,7 @@ public class MaxUtilizationReportService extends AbstractReportService {
         List<TableColumn<MaxUtilizationReportRow>> columns = asList(
                 tcol("reports.utilization.col.hub", (MaxUtilizationReportRow r) -> r.hub.name),
                 tcol("reports.utilization.col.region", (MaxUtilizationReportRow r) -> ctx.regionByHubId.getOrDefault(r.key.targetId, UNKNOWN_REGION).name),
-                tcol("reports.utilization.col.operator", (MaxUtilizationReportRow r) -> operatorService.getOperator(r.key.facility.operatorId).name),
+                tcol("reports.utilization.col.operator", (MaxUtilizationReportRow r) -> r.operatorNames),
                 tcol("reports.utilization.col.usage", (MaxUtilizationReportRow r) -> translationService.translate(r.key.usage)),
                 tcol("reports.utilization.col.capacityType", (MaxUtilizationReportRow r) -> translationService.translate(r.key.capacityType)),
                 tcol("reports.utilization.col.status", (MaxUtilizationReportRow r) -> translationService.translate(r.key.facility.status)),
@@ -101,19 +107,20 @@ public class MaxUtilizationReportService extends AbstractReportService {
     static class MaxUtilizationReportRow implements Comparable<MaxUtilizationReportRow> {
         final Hub hub;
         final MaxUtilizationReportKey key;
+        final String operatorNames;
         final double average;
         final int totalCapacity;
 
-        MaxUtilizationReportRow(Hub hub, MaxUtilizationReportKey key, double average, int totalCapacity) {
+        MaxUtilizationReportRow(Hub hub, MaxUtilizationReportKey key, String operatorNames, double average, int totalCapacity) {
             this.hub = hub;
             this.key = key;
+            this.operatorNames = operatorNames;
             this.average = average;
             this.totalCapacity = totalCapacity;
         }
 
         @Override
         public int compareTo(MaxUtilizationReportRow o) {
-
             int c = hub.name.fi.compareTo(o.hub.name.fi);
             if (c != 0) {
                 return c;

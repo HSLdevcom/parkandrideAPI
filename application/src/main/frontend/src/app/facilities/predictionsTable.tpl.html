@@ -5,12 +5,8 @@
 			<th id="facilities-view-pricing-capacityType" translate="facilities.pricing.capacityType.title"></th>
 			<th id="facilities-view-pricing-usage" translate="facilities.pricing.usage.title"></th>
 			<th id="facilities-utilization-capacity-build" translate="facilities.capacity.built"></th>
-			<th translate="facilities.capacity.availableNow"></th>
-			<th>5 min</th>
-			<th>10 min</th>
-			<th>15 min</th>
-			<th>30 min</th>
-			<th>60 min</th>
+			<th translate="facilities.capacity.current"></th>
+			<th ng-repeat="tm in predictionTimes" ng-bind="tm | date:'HH:mm'"></th>
 		</tr>
 		</thead>
 		<tbody>
@@ -21,12 +17,8 @@
 			</td>
 			<td ng-bind="'usages.' + row.usage + '.label' | translate" class="wdUsage"></td>
 			<td ng-bind="row.capacity"></td>
-			<td ng-bind="row.predictions[0]"></td>
-			<td ng-bind="row.predictions[5]"></td>
-			<td ng-bind="row.predictions[10]"></td>
-			<td ng-bind="row.predictions[15]"></td>
-			<td ng-bind="row.predictions[30]"></td>
-			<td ng-bind="row.predictions[60]"></td>
+			<td ng-bind="row.utilization.spacesAvailable" title="{{row.utilization.timestamp | date: 'HH:mm'}}"></td>
+			<td ng-repeat="tm in predictionTimes" ng-bind="row.predictions[tm]"></td>
 		</tr>
 		</tbody>
 	</table>

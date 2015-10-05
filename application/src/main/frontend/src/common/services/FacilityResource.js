@@ -79,8 +79,13 @@
             });
         };
 
+        api.getUtilization = function(id) {
+            return $http.get('api/v1/facilities/' + id + '/utilization')
+                .then(function(response) { return response.data; });
+        };
+
         api.getPredictions = function(id, after) {
-            return $http.get("api/v1/facilities/" + id + "/prediction", {
+            return $http.get('api/v1/facilities/' + id + '/prediction', {
                 params: {
                     after: after
                 }

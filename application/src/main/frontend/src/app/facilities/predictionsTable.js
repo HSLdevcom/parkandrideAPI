@@ -9,6 +9,7 @@
             restrict: 'E',
             scope: {
                 facility: '=',
+                utilization: '=',
                 predictionsData: '=predictions'
             },
             templateUrl: 'facilities/predictionsTable.tpl.html',
@@ -19,17 +20,33 @@
                     return pred.capacityType + pred.usage;
                 }
 
+                function getUtilization(capacityType, usage) {
+                    return _.find(scope.utilization, { capacityType: capacityType, usage: usage });
+                }
+
+                scope.predictionTimes = _.chain(scope.predictionsData)
+                    .flatten()
+                    .map(function(row) {
+                        return row.timestamp;
+                    })
+                    .sort()
+                    .uniq(true)
+                    .value();
+
                 scope.predictions = _.chain(scope.predictionsData)
                     .flatten()
                     .groupBy(capacityTypeAndUsage)
-                    .map(function (row) {
-                        return row.reduce(function (row, newPrediction) {
+                    .map(function (groupedPredictions) {
+                        var singleItem = groupedPredictions.reduce(function (row, newPrediction) {
                             row.capacityType = newPrediction.capacityType;
                             row.usage = newPrediction.usage;
                             row.capacity = scope.facility.builtCapacity[row.capacityType];
                             row.predictions[newPrediction.forecastDistanceInMinutes] = newPrediction.spacesAvailable;
+                            row.predictions[newPrediction.timestamp] = newPrediction.spacesAvailable;
                             return row;
                         }, {predictions: {}});
+                        singleItem.utilization = getUtilization(singleItem.capacityType, singleItem.usage);
+                        return singleItem;
                     })
                     .sort(Ordering.byUsage(function(val) { return val.usage; }))
                     .sort(Ordering.byCapacityType(function(val) { return val.capacityType; }))

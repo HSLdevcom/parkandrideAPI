@@ -7,23 +7,29 @@ import fi.hsl.parkandride.core.domain.Hub;
 import fi.hsl.parkandride.core.domain.HubSearch;
 import fi.hsl.parkandride.core.domain.SearchResults;
 import fi.hsl.parkandride.core.domain.User;
+import fi.hsl.parkandride.core.domain.prediction.HubPredictionResult;
+import fi.hsl.parkandride.core.domain.prediction.PredictionRequest;
+import fi.hsl.parkandride.core.domain.prediction.PredictionResult;
 import fi.hsl.parkandride.core.service.HubService;
+import fi.hsl.parkandride.core.service.PredictionService;
 import fi.hsl.parkandride.front.geojson.Feature;
 import fi.hsl.parkandride.front.geojson.FeatureCollection;
+import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.inject.Inject;
+import javax.validation.Valid;
+import java.util.List;
 
 import static fi.hsl.parkandride.front.UrlSchema.*;
 import static fi.hsl.parkandride.front.geojson.FeatureCollection.HUB_TO_FEATURE;
+import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.toList;
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
@@ -36,6 +42,9 @@ public class HubController {
 
     @Inject
     HubService hubService;
+
+    @Inject
+    PredictionService predictionService;
 
     @RequestMapping(method = POST, value = HUBS, produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<Hub> createHub(@RequestBody Hub hub, User currentUser, UriComponentsBuilder builder) {
@@ -83,5 +92,21 @@ public class HubController {
         log.info("findHubsAsFeatureCollection");
         SearchResults<Hub> results = hubService.search(search);
         return new ResponseEntity<>(FeatureCollection.ofHubs(results), OK);
+    }
+
+    @RequestMapping(method = GET, value = HUB_PREDICTION, produces = APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<HubPredictionResult>> getPrediction(@PathVariable(HUB_ID) long hubId,
+                                                                   @ModelAttribute @Valid PredictionRequest request) {
+        DateTime time = request.requestedTime();
+        log.info("getPrediction({}, {})", hubId, time);
+        final List<HubPredictionResult> results = hubService.getHub(hubId).facilityIds
+                .stream()
+                .flatMap(facilityId -> predictionService.getPredictionsByFacility(facilityId, time).stream())
+                .flatMap(pb -> PredictionResult.from(pb).stream())
+                .collect(groupingBy(result -> result.capacityType.name() + result.usage.name()))
+                .values().stream()
+                .map(list -> HubPredictionResult.sumFrom(hubId, list))
+                .collect(toList());
+        return new ResponseEntity<>(results, OK);
     }
 }

@@ -8,6 +8,7 @@ import com.jayway.restassured.response.Response;
 import fi.hsl.parkandride.back.Dummies;
 import fi.hsl.parkandride.core.back.PredictionRepository;
 import fi.hsl.parkandride.core.domain.*;
+import fi.hsl.parkandride.core.domain.prediction.HubPredictionResult;
 import fi.hsl.parkandride.core.domain.prediction.PredictionResult;
 import fi.hsl.parkandride.core.service.FacilityService;
 import fi.hsl.parkandride.core.service.PredictionService;
@@ -28,11 +29,13 @@ import java.util.Map;
 
 import static com.jayway.restassured.RestAssured.when;
 import static fi.hsl.parkandride.core.domain.Role.OPERATOR_API;
+import static java.util.Arrays.stream;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.containsString;
 
 public class PredictionITest extends AbstractIntegrationTest {
 
+    private static final int SPACES_AVAILABLE = 42;
     @Inject Dummies dummies;
     @Inject FacilityService facilityService;
     @Inject PredictionService predictionService;
@@ -147,6 +150,51 @@ public class PredictionITest extends AbstractIntegrationTest {
         assertIsNear(requestedTime, predictions[0].timestamp);
     }
 
+    // predictions for hubs
+
+    @Test
+    public void hub_sums_predictions_for_facilities() {
+        final long facility2Id = dummies.createFacility();
+        final Long operator2Id = facilityService.getFacility(facility2Id).operatorId;
+        final User user2 = devHelper.createOrUpdateUser(new NewUser(2L, "operator2", OPERATOR_API, operator2Id, "operator"));
+        final long hubId = dummies.createHub(facilityId, facility2Id);
+
+        makeDummyPredictions(Usage.PARK_AND_RIDE, facilityId, user);
+        makeDummyPredictions(Usage.PARK_AND_RIDE, facility2Id, user2);
+        makeDummyPredictions(Usage.COMMERCIAL, facility2Id, user2);
+
+        final HubPredictionResult[] predictionsForHub = getPredictionsForHub(hubId);
+
+
+        assertThat(predictionsForHub[0].hubId).isEqualTo(hubId);
+        assertThat(predictionsForHub[0].capacityType).isEqualTo(CapacityType.CAR);
+        assertIsNear(DateTime.now(), predictionsForHub[0].timestamp);
+
+        // The predictions should be sums of facilities' predictions
+        final HubPredictionResult parkAndRide = stream(predictionsForHub)
+                .filter(pred -> pred.usage == Usage.PARK_AND_RIDE)
+                .findFirst().get();
+        assertThat(parkAndRide.spacesAvailable).isEqualTo(SPACES_AVAILABLE * 2);
+
+        final HubPredictionResult commercial = stream(predictionsForHub)
+                .filter(pred -> pred.usage == Usage.COMMERCIAL)
+                .findFirst().get();
+        assertThat(commercial.spacesAvailable).isEqualTo(SPACES_AVAILABLE);
+    }
+
+    @Test
+    public void hub_with_no_facilities_returns_empty_prediction() {
+        final long hubId = dummies.createHub();
+        assertThat(getPredictionsForHub(hubId)).isEmpty();
+    }
+
+    @Test
+    public void hub_with_no_predictions_returns_empty_prediction() {
+        final long facility2Id = dummies.createFacility();
+        final long hubId = dummies.createHub(facilityId, facility2Id);
+
+        assertThat(getPredictionsForHub(hubId)).isEmpty();
+    }
 
     // helpers
 
@@ -162,6 +210,10 @@ public class PredictionITest extends AbstractIntegrationTest {
         return toPredictions(when().get(UrlSchema.FACILITY_PREDICTION, facilityId));
     }
 
+    private static HubPredictionResult[] getPredictionsForHub(long hubId) {
+        return toHubPredictions(when().get(UrlSchema.HUB_PREDICTION, hubId));
+    }
+
     private static PredictionResult[] getPredictionsAtAbsoluteTime(long facilityId, DateTime time) {
         return toPredictions(when().get(UrlSchema.FACILITY_PREDICTION_ABSOLUTE, facilityId, time));
     }
@@ -175,17 +227,26 @@ public class PredictionITest extends AbstractIntegrationTest {
                 .extract().as(PredictionResult[].class);
     }
 
+    private static HubPredictionResult[] toHubPredictions(Response response) {
+        return response.then().assertThat().statusCode(HttpStatus.OK.value())
+                .extract().as(HubPredictionResult[].class);
+    }
+
     private Utilization makeDummyPredictions() {
         return makeDummyPredictions(Usage.PARK_AND_RIDE);
     }
 
     private Utilization makeDummyPredictions(Usage usage) {
+        return makeDummyPredictions(usage, facilityId, user);
+    }
+
+    private Utilization makeDummyPredictions(Usage usage, long facilityId, User user) {
         Utilization u = new Utilization();
         u.facilityId = facilityId;
         u.capacityType = CapacityType.CAR;
         u.usage = usage;
         u.timestamp = now;
-        u.spacesAvailable = 42;
+        u.spacesAvailable = SPACES_AVAILABLE;
         facilityService.registerUtilization(facilityId, Collections.singletonList(u), user);
         predictionService.updatePredictions();
         return u;

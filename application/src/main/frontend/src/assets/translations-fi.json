@@ -419,7 +419,7 @@
             "available": "Paikkoja vapaana",
             "availableAndForecast": "Vapaana nyt ja ennustetiedot vapaiden paikkojen määrälle on haettu {{loadedDate | date:'HH:mm'}}. Jos haluat viimeisimmät tiedot, päivitä sivu.",
             "unavailable": "Tilapäisesti poissa käytöstä",
-            "availableNow": "Vapaana nyt"
+            "current": "Viimeisin tieto"
         },
         "builtCapacity": {
             "label": "Rakennettu kapasiteetti",

@@ -24,10 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
 import javax.validation.constraints.NotNull;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Spliterator;
+import java.util.*;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -139,8 +136,9 @@ public class DevController {
     @TransactionalWrite
     public ResponseEntity<Void> generateUtilizationData(@NotNull @PathVariable(FACILITY_ID) Long facilityId) {
         final Facility facility = facilityRepository.getFacility(facilityId);
-        
+
         // Generate dummy usage for the last month
+        final Random random = new Random();
         final List<Utilization> utilizations = StreamSupport.stream(
                 spliteratorUnknownSize(new DateTimeIterator(DateTime.now().minusMonths(1), DateTime.now(), Minutes.minutes(5)), Spliterator.ORDERED), false)
                 .flatMap(ts -> Stream.of(CAR, DISABLED, ELECTRIC_CAR)
@@ -156,7 +154,7 @@ public class DevController {
                         .map(utilizationKey -> newUtilization(
                                 utilizationKey,
                                 facility.builtCapacity.get(utilizationKey.capacityType),
-                                ts
+                                ts.minusSeconds(random.nextInt(180)) // Randomness to prevent timestamps for different capacity types being equal
                         )))
                         .collect(toList());
         utilizationRepository.insertUtilizations(utilizations);

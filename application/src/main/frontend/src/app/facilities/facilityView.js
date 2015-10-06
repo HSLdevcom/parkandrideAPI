@@ -16,6 +16,10 @@
         'parkandride.layout'
     ]);
 
+    m.constant('FacilityViewConstants', {
+       forecastDistances: [0, 10, 20, 30, 60]
+    });
+
     m.config(function config($stateProvider) {
         $stateProvider.state('facility-view', { // dot notation in ui-router indicates nested ui-view
             parent: 'hubstab',
@@ -25,8 +29,11 @@
                     controller: 'FacilityViewCtrl as viewCtrl',
                     templateUrl: 'facilities/facilityView.tpl.html',
                     resolve: {
-                        facility: function($stateParams, FacilityResource) {
-                            return FacilityResource.getFacility($stateParams.id);
+                        facilityId: function($stateParams) {
+                            return $stateParams.id;
+                        },
+                        facility: function(facilityId, FacilityResource) {
+                            return FacilityResource.getFacility(facilityId);
                         },
                         contacts: function(ContactResource, facility)  {
                             var contactIds = _.filter(_.values(facility.contacts));
@@ -41,13 +48,15 @@
                         operator: function(OperatorResource, facility) {
                             return OperatorResource.getOperator(facility.operatorId);
                         },
-                        hubs: function($stateParams, HubResource) {
-                            return HubResource.listHubs({facilityIds: [$stateParams.id]});
+                        hubs: function(facilityId, HubResource) {
+                            return HubResource.listHubs({facilityIds: [facilityId]});
                         },
-                        predictions: function($q, $stateParams, FacilityResource) {
-                            var FORECAST_DISTANCES = [0,5,10,15,30,60];
-                            return $q.all(FORECAST_DISTANCES.map(function(after) {
-                                return FacilityResource.getPredictions($stateParams.id, after);
+                        utilization: function(facilityId, FacilityResource) {
+                           return FacilityResource.getUtilization(facilityId);
+                        },
+                        predictions: function($q, facilityId, FacilityResource, FacilityViewConstants) {
+                            return $q.all(FacilityViewConstants.forecastDistances.map(function(after) {
+                                return FacilityResource.getPredictions(facilityId, after);
                             }));
                         }
                     }
@@ -57,13 +66,14 @@
         });
     });
 
-    m.controller('FacilityViewCtrl', function(PricingService, schema, facility, contacts, operator, hubs, predictions) {
+    m.controller('FacilityViewCtrl', function(PricingService, schema, facility, contacts, operator, hubs, predictions, utilization) {
         var self = this;
         self.services = schema.services.values;
         self.dayTypes = schema.dayTypes.values;
         self.facility = facility;
         self.contacts = contacts;
         self.operator = operator;
+        self.utilization = utilization;
         self.predictions = predictions;
         self.hubs = hubs;
 

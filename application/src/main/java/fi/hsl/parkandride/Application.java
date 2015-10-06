@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import com.nitorcreations.willow.logging.tomcat8.WillowAccessValve;
 import fi.hsl.parkandride.core.domain.Phone;
 import fi.hsl.parkandride.core.domain.Time;
+import fi.hsl.parkandride.core.service.BatchingRequestLogService;
 import fi.hsl.parkandride.front.*;
 import fi.hsl.parkandride.front.geojson.GeojsonDeserializer;
 import fi.hsl.parkandride.front.geojson.GeojsonSerializer;
@@ -65,6 +66,8 @@ public class Application extends WebMvcConfigurerAdapter {
 
         @Autowired
         private HttpMessageConverters messageConverters;
+        @Autowired
+        private BatchingRequestLogService batchingRequestLogService;
 
         @Bean
         public Module facilityModule() {
@@ -85,6 +88,12 @@ public class Application extends WebMvcConfigurerAdapter {
 
                 addSerializer(Time.class, new ToStringSerializer());
             }};
+        }
+
+
+        @Override
+        public void addInterceptors(InterceptorRegistry registry) {
+            registry.addInterceptor(new RequestLoggingInterceptorAdapter(batchingRequestLogService));
         }
 
         @Bean

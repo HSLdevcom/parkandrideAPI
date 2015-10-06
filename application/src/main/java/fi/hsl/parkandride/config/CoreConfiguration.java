@@ -185,4 +185,14 @@ public class CoreConfiguration {
     public PredictorRepository predictorRepository() {
         return new PredictorDao(queryFactory, validationService());
     }
+
+    @Bean
+    public RequestLogRepository requestLogRepository() {
+      return new RequestLogDao(queryFactory);
+    }
+
+    @Bean
+    public BatchingRequestLogService batchingRequestLogService(RequestLogRepository requestLogRepository) {
+      return new BatchingRequestLogService(requestLogRepository);
+    }
 }

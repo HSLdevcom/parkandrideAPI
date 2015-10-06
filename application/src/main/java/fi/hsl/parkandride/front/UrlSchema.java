@@ -15,13 +15,14 @@ public final class UrlSchema {
     }
 
     public static final String GEOJSON = "application/vnd.geo+json";
-    public static final String API_KEY = "apiKey";
 
+    public static final String API_KEY = "apiKey";
     public static final String DOCS = "/docs";
 
     public static final String API = "/api/v1";
 
     public static final String FACILITIES = API + "/facilities";
+
     public static final String FACILITY_ID = "facilityId";
     public static final String FACILITY = FACILITIES + "/{" + FACILITY_ID + "}";
     public static final String FACILITY_UTILIZATION = FACILITY + "/utilization";
@@ -30,14 +31,17 @@ public final class UrlSchema {
     public static final String FACILITY_PREDICTION_ABSOLUTE = FACILITY_PREDICTION + "?" + ABSOLUTE_TIME + "={timestamp}";
     public static final String RELATIVE_TIME = "after";
     public static final String FACILITY_PREDICTION_RELATIVE = FACILITY_PREDICTION + "?" + RELATIVE_TIME + "={hhmm}";
-
     public static final String CAPACITY_TYPES = API + "/capacity-types";
+
     public static final String USAGES = API + "/usages";
     public static final String DAY_TYPES = API + "/day-types";
-
     public static final String HUBS = API + "/hubs";
+
     public static final String HUB_ID = "hubId";
     public static final String HUB = HUBS + "/{" + HUB_ID + "}";
+    public static final String HUB_PREDICTION = HUB + "/prediction";
+    public static final String HUB_PREDICTION_ABSOLUTE = HUB_PREDICTION + "?" + ABSOLUTE_TIME + "={timestamp}";;
+    public static final String HUB_PREDICTION_RELATIVE = HUB_PREDICTION + "?" + RELATIVE_TIME + "={hhmm}";
 
     public static final String CONTACTS = API + "/contacts";
     public static final String CONTACT_ID = "contactId";

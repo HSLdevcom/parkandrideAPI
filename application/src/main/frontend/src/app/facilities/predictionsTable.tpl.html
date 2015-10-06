@@ -17,7 +17,10 @@
 			</td>
 			<td ng-bind="'usages.' + row.usage + '.label' | translate" class="wdUsage"></td>
 			<td ng-bind="row.capacity"></td>
-			<td ng-bind="row.utilization.spacesAvailable" title="{{row.utilization.timestamp | date: 'HH:mm'}}"></td>
+			<td>
+				<span ng-bind="row.utilization.spacesAvailable"></span>
+				<small ng-bind="'(' + (row.utilization.timestamp | date: 'HH:mm') + ')'"></small>
+			</td>
 			<td ng-repeat="tm in predictionTimes" ng-bind="row.predictions[tm]"></td>
 		</tr>
 		</tbody>

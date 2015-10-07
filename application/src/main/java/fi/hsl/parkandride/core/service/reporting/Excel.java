@@ -3,10 +3,14 @@
 
 package fi.hsl.parkandride.core.service.reporting;
 
-import static com.google.common.base.Throwables.getStackTraceAsString;
-import static org.apache.poi.ss.usermodel.Cell.*;
-
 import fi.hsl.parkandride.core.domain.MultilingualString;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -14,17 +18,12 @@ import java.util.Collection;
 import java.util.List;
 import java.util.function.Function;
 
-import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.ss.util.CellRangeAddress;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.joda.time.LocalDate;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import static com.google.common.base.Throwables.getStackTraceAsString;
 import static java.lang.Math.max;
 import static java.util.Arrays.asList;
 import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.joining;
+import static org.apache.poi.ss.usermodel.Cell.*;
 
 class Excel {
     private static final Logger log = LoggerFactory.getLogger(Excel.class);
@@ -39,6 +38,7 @@ class Excel {
     final CellStyle decimal = wb.createCellStyle();
     final CellStyle percent = wb.createCellStyle();
     final CellStyle date = wb.createCellStyle();
+    final CellStyle datetime = wb.createCellStyle();
     private final DataFormat df = wb.createDataFormat();
     private Sheet sheet;
 
@@ -60,6 +60,8 @@ class Excel {
         percent.setFont(font12pt);
         date.setDataFormat(df.getFormat("d.M.yyyy"));
         date.setFont(font12pt);
+        datetime.setDataFormat(df.getFormat("d.M.yyyy HH:mm"));
+        datetime.setFont(font12pt);
     }
 
     static class TableColumn<T> {
@@ -124,6 +126,10 @@ class Excel {
                     Cell cell = row.createCell(column, CELL_TYPE_NUMERIC);
                     cell.setCellStyle(ofNullable(colType.style).orElse(date));
                     cell.setCellValue(((LocalDate) value).toDate());
+                } else if (value instanceof DateTime) {
+                    Cell cell = row.createCell(column, CELL_TYPE_NUMERIC);
+                    cell.setCellStyle(ofNullable(colType.style).orElse(datetime));
+                    cell.setCellValue(((DateTime) value).toDate());
                 } else if (value instanceof Collection) {
                     // currently must be last item in list
                     for (Object o : (Collection<?>) value) {

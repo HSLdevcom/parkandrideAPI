@@ -14,7 +14,9 @@ public abstract class ReportServiceSupport {
 
     public static final int SECONDS_IN_DAY = 60 * 60 * 24;
     public static final String FINNISH_DATE_PATTERN = "d.M.yyyy";
+    public static final String FINNISH_DATETIME_PATTERN = "d.M.yyyy HH:mm";
     public static final DateTimeFormatter FINNISH_DATE_FORMAT = forPattern(FINNISH_DATE_PATTERN);
+    public static final DateTimeFormatter FINNISH_DATETIME_FORMAT = forPattern(FINNISH_DATETIME_PATTERN);
 
     final FacilityService facilityService;
     final OperatorService operatorService;

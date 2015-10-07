@@ -133,5 +133,12 @@ public class ArgumentValidator<T> {
             return new ArgumentValidator<>(obj, predicates);
         }
 
+        public T notNull() {
+            addPredicate(
+                    Objects::nonNull,
+                    "Must not be null"
+            );
+            return match();
+        }
     }
 }

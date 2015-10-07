@@ -14,10 +14,7 @@ import fi.hsl.parkandride.front.ReportParameters;
 import fi.hsl.parkandride.front.UrlSchema;
 import junit.framework.AssertionFailedError;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
-import org.apache.poi.ss.usermodel.DataFormatter;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.apache.poi.ss.usermodel.*;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.junit.Before;
@@ -31,13 +28,18 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+import java.util.NoSuchElementException;
 import java.util.stream.IntStream;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static com.jayway.restassured.RestAssured.given;
+import static com.jayway.restassured.RestAssured.when;
 import static fi.hsl.parkandride.core.domain.CapacityType.*;
 import static fi.hsl.parkandride.core.domain.Role.*;
+import static fi.hsl.parkandride.core.service.reporting.ReportServiceSupport.FINNISH_DATETIME_FORMAT;
 import static fi.hsl.parkandride.front.ReportController.MEDIA_TYPE_EXCEL;
+import static fi.hsl.parkandride.front.RequestLoggingInterceptorAdapter.UNKNOWN_SOURCE;
+import static fi.hsl.parkandride.front.RequestLoggingInterceptorAdapter.X_HSL_SOURCE;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singleton;
 import static java.util.Spliterator.ORDERED;
@@ -60,6 +62,7 @@ public class ReportingITest extends AbstractIntegrationTest {
     @Inject OperatorService operatorService;
 
     @Inject TranslationService translationService;
+    @Inject BatchingRequestLogService batchingRequestLogService;
     private Hub hub;
     private Facility facility1;
 
@@ -403,6 +406,94 @@ public class ReportingITest extends AbstractIntegrationTest {
     }
 
     // ---------------------
+    // REQUEST LOG REPORT
+    // ---------------------
+    @Test
+    public void report_RequestLog_emptyReport() {
+        generateDummyRequestLog();
+
+        final ReportParameters params = baseParams(LocalDate.now().minusMonths(2));
+        final Response whenPostingToReportUrl = postToReportUrl(params, "RequestLog", adminUser);
+        // If this succeeds, the response was a valid excel file
+        final Workbook workbook = readWorkbookFrom(whenPostingToReportUrl);
+
+        assertThat(workbook.getSheetName(0)).isEqualTo("Rajapintakutsut");
+        assertThat(workbook.getSheetName(1)).isEqualTo("Selite");
+
+        final Sheet usages = workbook.getSheetAt(0);
+        assertThat(getDataFromRow(usages, 0))
+                .containsExactly("Aika", "Lähde", "Polku", "Kutsujen määrä");
+        assertThat(usages.getPhysicalNumberOfRows()).isEqualTo(1);
+    }
+
+    @Test
+    public void report_RequestLog_multipleRows() {
+        final DateTime testDate = DateTime.now().withSecondOfMinute(0).withMinuteOfHour(0);
+        generateDummyRequestLog();
+
+        final ReportParameters params = baseParams(LocalDate.now());
+        final Response whenPostingToReportUrl = postToReportUrl(params, "RequestLog", adminUser);
+        final Workbook workbook = readWorkbookFrom(whenPostingToReportUrl);
+        final Sheet usages = workbook.getSheetAt(0);
+        // Check rows
+        assertThat(usages.getPhysicalNumberOfRows()).isEqualTo(3);
+        assertThat(findRowWithColumn(usages, 2, UrlSchema.FACILITY)).containsExactly(
+                testDate.toString(FINNISH_DATETIME_FORMAT),
+                UNKNOWN_SOURCE,
+                UrlSchema.FACILITY,
+                "12"
+        );
+        assertThat(findRowWithColumn(usages, 2, UrlSchema.HUB)).containsExactly(
+                testDate.toString(FINNISH_DATETIME_FORMAT),
+                "#webkäli",
+                UrlSchema.HUB,
+                "8"
+        );
+    }
+
+    @Test
+    public void report_RequestLog_emptyParams() {
+        final Response requestLog = whenPostingToReportUrl(new ReportParameters(), "RequestLog", adminUser);
+        requestLog.then().assertThat().statusCode(HttpStatus.BAD_REQUEST.value());
+    }
+
+    @Test
+    public void report_RequestLog_unauthorized() {
+        given().contentType(ContentType.JSON)
+                .accept(MEDIA_TYPE_EXCEL)
+                .header(authorization(devHelper.login(apiUser.username).token))
+                .body(new ReportParameters())
+                .when()
+                .post(UrlSchema.REPORT, "RequestLog")
+                .then()
+                .assertThat().statusCode(HttpStatus.FORBIDDEN.value());
+    }
+
+
+    private List<String> findRowWithColumn(Sheet usages, int columnNumber, String content) {
+        for (int i = 0; i < usages.getPhysicalNumberOfRows(); i++) {
+            final Row row = usages.getRow(i);
+            final List<String> dataFromRow = getDataFromRow(row);
+            if (dataFromRow.contains(content)) {
+                return dataFromRow;
+            }
+        }
+        throw new NoSuchElementException(String.format("Row with column at %d: <%s> not found", columnNumber, content));
+    }
+
+    private void generateDummyRequestLog() {
+        // To ensure that the request interception works
+        IntStream.range(0, 12)
+                .forEach(i -> when().get(UrlSchema.FACILITY, i));
+
+        IntStream.range(0, 8)
+                .forEach(i -> given().header(X_HSL_SOURCE, "#webkäli")
+                        .when().get(UrlSchema.HUB, i));
+
+        batchingRequestLogService.updateRequestLogs();
+    }
+
+    // ---------------------
     // MISC. REPORT TESTS
     // ---------------------
 
@@ -483,13 +574,7 @@ public class ReportingITest extends AbstractIntegrationTest {
     }
 
     private Response postToReportUrl(ReportParameters params, String reportType, User user) {
-        final String authToken = devHelper.login(user.username).token;
-        final Response whenPostingToReportUrl = given().contentType(ContentType.JSON)
-                .accept(MEDIA_TYPE_EXCEL)
-                .header(authorization(authToken))
-                .body(params)
-                .when()
-                .post(UrlSchema.REPORT, reportType);
+        final Response whenPostingToReportUrl = whenPostingToReportUrl(params, reportType, user);
         whenPostingToReportUrl
                 .then()
                 .assertThat().statusCode(HttpStatus.OK.value())
@@ -497,9 +582,19 @@ public class ReportingITest extends AbstractIntegrationTest {
         return whenPostingToReportUrl;
     }
 
+    private Response whenPostingToReportUrl(ReportParameters params, String reportType, User user) {
+        final String authToken = devHelper.login(user.username).token;
+        return given().contentType(ContentType.JSON)
+                .accept(MEDIA_TYPE_EXCEL)
+                .header(authorization(authToken))
+                .body(params)
+                .when()
+                .post(UrlSchema.REPORT, reportType);
+    }
+
     private Workbook readWorkbookFrom(Response whenPostingToReportUrl) {
-        try {
-            return WorkbookFactory.create(new ByteArrayInputStream(whenPostingToReportUrl.asByteArray()));
+        try (ByteArrayInputStream bais = new ByteArrayInputStream(whenPostingToReportUrl.asByteArray())){
+            return WorkbookFactory.create(bais);
         } catch (IOException | InvalidFormatException e) {
             e.printStackTrace();
             throw new AssertionFailedError(e.getMessage());
@@ -507,8 +602,12 @@ public class ReportingITest extends AbstractIntegrationTest {
     }
 
     private List<String> getDataFromRow(Sheet sheet, int rownum) {
+        return getDataFromRow(sheet.getRow(rownum));
+    }
+
+    private List<String> getDataFromRow(Row row) {
         final DataFormatter dataFormatter = new DataFormatter();
-        return stream(spliteratorUnknownSize(sheet.getRow(rownum).cellIterator(), ORDERED), false)
+        return stream(spliteratorUnknownSize(row.cellIterator(), ORDERED), false)
                 .map(cell -> dataFormatter.formatCellValue(cell))
                 .collect(toList());
     }
@@ -522,9 +621,24 @@ public class ReportingITest extends AbstractIntegrationTest {
     }
 
     private static ReportParameters baseParams() {
+        return baseParams(BASE_DATE);
+    }
+
+    private static ReportParameters baseParams(LocalDate referenceDate) {
         final ReportParameters params = new ReportParameters();
-        params.startDate = BASE_DATE.dayOfMonth().withMinimumValue().toString(ReportServiceSupport.FINNISH_DATE_PATTERN);
-        params.endDate = BASE_DATE.dayOfMonth().withMaximumValue().toString(ReportServiceSupport.FINNISH_DATE_PATTERN);
+        params.startDate = referenceDate.dayOfMonth().withMinimumValue().toString(ReportServiceSupport.FINNISH_DATE_PATTERN);
+        params.endDate = referenceDate.dayOfMonth().withMaximumValue().toString(ReportServiceSupport.FINNISH_DATE_PATTERN);
         return params;
+    }
+
+
+    private void printSheet(Sheet sheet) {
+        final DataFormatter dataFormatter = new DataFormatter();
+        for (Row row : sheet) {
+            for (Cell cell : row) {
+                System.out.printf("%-30s", dataFormatter.formatCellValue(cell));
+            }
+            System.out.printf("%n");
+        }
     }
 }

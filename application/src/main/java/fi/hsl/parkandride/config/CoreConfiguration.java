@@ -11,10 +11,7 @@ import fi.hsl.parkandride.core.back.*;
 import fi.hsl.parkandride.core.domain.prediction.AverageOfPreviousWeeksPredictor;
 import fi.hsl.parkandride.core.domain.prediction.Predictor;
 import fi.hsl.parkandride.core.service.*;
-import fi.hsl.parkandride.core.service.reporting.ExcelUtil;
-import fi.hsl.parkandride.core.service.reporting.FacilityUsageReportService;
-import fi.hsl.parkandride.core.service.reporting.HubsAndFacilitiesReportService;
-import fi.hsl.parkandride.core.service.reporting.MaxUtilizationReportService;
+import fi.hsl.parkandride.core.service.reporting.*;
 import org.jasypt.util.password.PasswordEncryptor;
 import org.jasypt.util.password.StrongPasswordEncryptor;
 import org.joda.time.format.ISOPeriodFormat;
@@ -129,6 +126,11 @@ public class CoreConfiguration {
     @Bean
     public HubsAndFacilitiesReportService hubsAndFacilitiesReportService() {
         return new HubsAndFacilitiesReportService(facilityService(), operatorService(), contactService(), hubService(), utilizationRepository(), regionRepository(), translationService());
+    }
+
+    @Bean
+    public RequestLogReportService requestLogReportService() {
+        return new RequestLogReportService();
     }
 
     @Bean

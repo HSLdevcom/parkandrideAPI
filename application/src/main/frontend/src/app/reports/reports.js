@@ -186,7 +186,8 @@
         //
         // REPORT GENERATION
         //
-        $scope.generate = function (type, parameters) {
+        $scope.generate = function (type, paramsIn) {
+            var parameters = _.assign({}, paramsIn);
             if (!parameters) {
                 parameters = {};
             }

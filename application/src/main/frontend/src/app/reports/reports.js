@@ -57,6 +57,16 @@
         $scope.usages           = schema.usages.values;
         var contentType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
 
+        var controls = {
+            FacilityUsage: ['dates', 'interval', 'operator', 'usages', 'capacityTypes', 'regions', 'hubs', 'facilities'],
+            HubsAndFacilities: [],
+            MaxUtilization: ['dates', 'operator', 'usages', 'capacityTypes', 'regions', 'hubs', 'facilities']
+        };
+
+        this.showControl = function(controlName) {
+            return controls[$scope.reportType].indexOf(controlName) !== -1;
+        };
+
         //
         // UTILS
         //

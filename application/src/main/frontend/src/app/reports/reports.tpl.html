@@ -40,7 +40,7 @@
     </p></div>
 </div>
 
-<div ng-show="reportType != 'HubsAndFacilities'">
+<div ng-show="ctrl.showControl('dates')">
     <div class="row">
         <label>{{ "reports.label.range" | translate }} *</label>
     </div>
@@ -67,7 +67,7 @@
     </div>
 </div>
 
-<div ng-show="reportType == 'FacilityUsage'">
+<div ng-show="ctrl.showControl('interval')">
   <div class="row">
     <label>{{ "reports.label.interval" | translate }}</label>
   </div>
@@ -86,7 +86,7 @@
   </div>
 </div>
 
-<div ng-show="reportType != 'HubsAndFacilities'">
+<div ng-show="ctrl.showControl('operator')">
   <div class="row">
     <label>{{ "reports.label.operator" | translate }}</label>
   </div>
@@ -108,7 +108,7 @@
   </div>
 </div>
 
-<div ng-show="reportType != 'HubsAndFacilities'">
+<div ng-show="ctrl.showControl('usages')">
     <div class="row">
         <label>{{ "reports.label.usage" | translate }}</label>
     </div>
@@ -127,7 +127,7 @@
     </div>
 </div>
 
-<div ng-show="reportType != 'HubsAndFacilities'">
+<div ng-show="ctrl.showControl('capacityTypes')">
     <div class="row">
         <label>{{ "reports.label.capacity" | translate }}</label>
     </div>
@@ -146,7 +146,7 @@
     </div>
 </div>
 
-<div ng-show="reportType != 'HubsAndFacilities'">
+<div ng-show="ctrl.showControl('regions')">
     <div class="row">
         <label>{{ "reports.label.region" | translate }}</label>
     </div>
@@ -164,7 +164,7 @@
     </div>
 </div>
 
-<div ng-show="reportType != 'HubsAndFacilities'">
+<div ng-show="ctrl.showControl('hubs')">
     <div class="row">
         <label>{{ "reports.label.hub" | translate }}</label>
     </div>
@@ -184,7 +184,7 @@
     </div>
 </div>
 
-<div ng-show="reportType != 'HubsAndFacilities'">
+<div ng-show="ctrl.showControl('facilities')">
     <div class="row">
         <label>{{ "reports.label.facility" | translate }}</label>
     </div>

@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.Map;
 
 import static fi.hsl.parkandride.core.domain.DayType.*;
-import static fi.hsl.parkandride.core.service.reporting.Excel.TableColumn.col;
 import static fi.hsl.parkandride.core.util.ArgumentValidator.validate;
 import static java.time.LocalTime.ofSecondOfDay;
 import static java.util.Arrays.asList;
@@ -79,27 +78,27 @@ public class FacilityUsageReportService extends AbstractReportService {
                 .collect(toList());
 
         List<Excel.TableColumn<UtilizationReportRow>> columns = asList(
-                tcol("reports.usage.col.facility", (UtilizationReportRow r) -> r.key.facility.name),
-                tcol("reports.usage.col.hub", (UtilizationReportRow r) -> ctx.hubsByFacilityId.getOrDefault(r.key.targetId, emptyList()).stream().map((Hub h) -> h.name.fi).collect(joining(", "))),
-                tcol("reports.usage.col.region", (UtilizationReportRow r) -> ctx.regionByFacilityId.get(r.key.targetId).name),
-                tcol("reports.usage.col.operator", (UtilizationReportRow r) -> operatorService.getOperator(r.key.facility.operatorId).name),
-                tcol("reports.usage.col.usage", (UtilizationReportRow r) -> translationService.translate(r.key.usage)),
-                tcol("reports.usage.col.capacityType", (UtilizationReportRow r) -> translationService.translate(r.key.capacityType)),
-                tcol("reports.usage.col.status", (UtilizationReportRow r) -> translationService.translate(r.key.facility.status)),
-                tcol("reports.usage.col.openingHoursBusinessDay", (UtilizationReportRow r) -> time(r.key.facility.openingHours.byDayType.get(BUSINESS_DAY))),
-                tcol("reports.usage.col.openingHoursSaturday", (UtilizationReportRow r) -> time(r.key.facility.openingHours.byDayType.get(SATURDAY))),
-                tcol("reports.usage.col.openingHoursSunday", (UtilizationReportRow r) -> time(r.key.facility.openingHours.byDayType.get(SUNDAY))),
-                tcol("reports.usage.col.spacesAvailable", (UtilizationReportRow r) -> r.key.facility.builtCapacity.get(r.key.capacityType)),
-                tcol("reports.usage.col.date", (UtilizationReportRow r) -> r.key.date)
+                excelUtil.tcol("reports.usage.col.facility", (UtilizationReportRow r) -> r.key.facility.name),
+                excelUtil.tcol("reports.usage.col.hub", (UtilizationReportRow r) -> ctx.hubsByFacilityId.getOrDefault(r.key.targetId, emptyList()).stream().map((Hub h) -> h.name.fi).collect(joining(", "))),
+                excelUtil.tcol("reports.usage.col.region", (UtilizationReportRow r) -> ctx.regionByFacilityId.get(r.key.targetId).name),
+                excelUtil.tcol("reports.usage.col.operator", (UtilizationReportRow r) -> operatorService.getOperator(r.key.facility.operatorId).name),
+                excelUtil.tcol("reports.usage.col.usage", (UtilizationReportRow r) -> translationService.translate(r.key.usage)),
+                excelUtil.tcol("reports.usage.col.capacityType", (UtilizationReportRow r) -> translationService.translate(r.key.capacityType)),
+                excelUtil.tcol("reports.usage.col.status", (UtilizationReportRow r) -> translationService.translate(r.key.facility.status)),
+                excelUtil.tcol("reports.usage.col.openingHoursBusinessDay", (UtilizationReportRow r) -> ExcelUtil.time(r.key.facility.openingHours.byDayType.get(BUSINESS_DAY))),
+                excelUtil.tcol("reports.usage.col.openingHoursSaturday", (UtilizationReportRow r) -> ExcelUtil.time(r.key.facility.openingHours.byDayType.get(SATURDAY))),
+                excelUtil.tcol("reports.usage.col.openingHoursSunday", (UtilizationReportRow r) -> ExcelUtil.time(r.key.facility.openingHours.byDayType.get(SUNDAY))),
+                excelUtil.tcol("reports.usage.col.spacesAvailable", (UtilizationReportRow r) -> r.key.facility.builtCapacity.get(r.key.capacityType)),
+                excelUtil.tcol("reports.usage.col.date", (UtilizationReportRow r) -> r.key.date)
         );
         columns = new ArrayList<>(columns);
         for (int s = 0, i = 0; s < SECONDS_IN_DAY; s += intervalSeconds, i++) {
             final int idx = i;
             columns.add(Excel.TableColumn.col(ofSecondOfDay(s).toString(), (UtilizationReportRow r) -> r.values[idx]));
         }
-        excel.addSheet(getMessage("reports.usage.sheets.usage"), rows, columns);
-        excel.addSheet(getMessage("reports.usage.sheets.legend"),
-                getMessage("reports.usage.legend").split("\n"));
+        excel.addSheet(excelUtil.getMessage("reports.usage.sheets.usage"), rows, columns);
+        excel.addSheet(excelUtil.getMessage("reports.usage.sheets.legend"),
+                excelUtil.getMessage("reports.usage.legend").split("\n"));
         return excel;
     }
 

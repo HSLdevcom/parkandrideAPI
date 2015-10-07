@@ -8,32 +8,25 @@ import fi.hsl.parkandride.core.back.UtilizationRepository;
 import fi.hsl.parkandride.core.domain.*;
 import fi.hsl.parkandride.core.service.*;
 import fi.hsl.parkandride.front.ReportParameters;
-import org.apache.poi.ss.usermodel.CellStyle;
 import org.joda.time.LocalDate;
-import org.springframework.context.MessageSource;
 
 import javax.inject.Inject;
 import java.util.Iterator;
-import java.util.Locale;
 import java.util.Set;
-import java.util.function.Function;
 
 import static com.google.common.collect.Iterators.filter;
 import static fi.hsl.parkandride.core.domain.Permission.REPORT_GENERATE;
 import static fi.hsl.parkandride.core.service.AuthenticationService.authorize;
 import static fi.hsl.parkandride.core.service.AuthenticationService.getLimitedOperatorId;
-import static fi.hsl.parkandride.core.service.reporting.Excel.TableColumn.col;
-import static java.lang.String.format;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toSet;
 import static org.springframework.util.CollectionUtils.isEmpty;
 
 public abstract class AbstractReportService extends ReportServiceSupport implements ReportService {
-    private static final Locale DEFAULT_LOCALE = new Locale("fi");
     private final String reportName;
 
     @Inject
-    MessageSource messageSource;
+    ExcelUtil excelUtil;
 
     protected AbstractReportService(String reportName, FacilityService facilityService, OperatorService operatorService, ContactService contactService, HubService hubService, UtilizationRepository utilizationRepository, TranslationService translationService, RegionRepository regionRepository) {
         super(facilityService, operatorService, contactService, hubService, utilizationRepository, translationService, regionRepository);
@@ -53,10 +46,6 @@ public abstract class AbstractReportService extends ReportServiceSupport impleme
         return generateReport(ctx, reportParameters).toBytes();
     }
 
-    protected String getMessage(String code) {
-        return messageSource.getMessage(code, null, DEFAULT_LOCALE);
-    }
-
     /**
      * Get the name of the report this service produces.
      */
@@ -67,10 +56,6 @@ public abstract class AbstractReportService extends ReportServiceSupport impleme
 
     protected abstract Excel generateReport(ReportContext reportContext, ReportParameters params);
 
-
-    protected static String time(TimeDuration time) {
-        return time == null ? null : format("%02d:%02d - %02d:%02d", time.from.getHour(), time.from.getMinute(), time.until.getHour(), time.until.getMinute());
-    }
 
     protected final UtilizationSearch toUtilizationSearch(ReportParameters parameters, final ReportContext ctx) {
         UtilizationSearch search = new UtilizationSearch();
@@ -110,14 +95,6 @@ public abstract class AbstractReportService extends ReportServiceSupport impleme
             }
         }
         return search;
-    }
-
-    /** Adds translated column */
-    protected <T> Excel.TableColumn<T> tcol(String key, Function<T, Object> valFn) {
-        return Excel.TableColumn.col(getMessage(key), valFn);
-    }
-    protected <T> Excel.TableColumn<T> tcol(String key, Function<T, Object> valFn, CellStyle cellStyle) {
-        return Excel.TableColumn.col(getMessage(key), valFn, cellStyle);
     }
 
     protected Iterator<Utilization> addFilters(Iterator<Utilization> iter, ReportContext ctx, ReportParameters parameters) {

@@ -11,6 +11,7 @@ import fi.hsl.parkandride.core.back.*;
 import fi.hsl.parkandride.core.domain.prediction.AverageOfPreviousWeeksPredictor;
 import fi.hsl.parkandride.core.domain.prediction.Predictor;
 import fi.hsl.parkandride.core.service.*;
+import fi.hsl.parkandride.core.service.reporting.ExcelUtil;
 import fi.hsl.parkandride.core.service.reporting.FacilityUsageReportService;
 import fi.hsl.parkandride.core.service.reporting.HubsAndFacilitiesReportService;
 import fi.hsl.parkandride.core.service.reporting.MaxUtilizationReportService;
@@ -21,6 +22,7 @@ import org.joda.time.format.PeriodFormatter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
@@ -117,6 +119,11 @@ public class CoreConfiguration {
     @Bean
     public TranslationService translationService() {
         return new TranslationService();
+    }
+
+    @Bean
+    public ExcelUtil excelUtil(MessageSource messageSource) {
+        return new ExcelUtil(messageSource);
     }
 
     @Bean

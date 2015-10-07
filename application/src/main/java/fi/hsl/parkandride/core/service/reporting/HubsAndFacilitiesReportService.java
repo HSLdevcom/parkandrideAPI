@@ -36,60 +36,60 @@ public class HubsAndFacilitiesReportService extends AbstractReportService {
         Excel excel = new Excel();
         addRegionsSheet(excel, new ArrayList<>(ctx.hubs.values()), ctx);
         addFacilitiesSheet(excel, new ArrayList<>(ctx.facilities.values()), ctx);
-        excel.addSheet(getMessage("reports.hf.sheets.legend"),
-                getMessage("reports.hf.legend").split("\n"));
+        excel.addSheet(excelUtil.getMessage("reports.hf.sheets.legend"),
+                excelUtil.getMessage("reports.hf.legend").split("\n"));
         return excel;
     }
 
     private void addFacilitiesSheet(Excel excel, List<Facility> facilities, ReportContext ctx) {
 
-        excel.addSheet(getMessage("reports.hf.sheets.facilities"), facilities, asList(
-                tcol("reports.hf.facility.facilityName", (Facility f) -> f.name),
-                tcol("reports.hf.facility.aliases", (Facility f) -> join(", ", f.aliases)),
-                tcol("reports.hf.facility.hubs", (Facility f) -> ctx.hubsByFacilityId.getOrDefault(f.id, emptyList()).stream().map((Hub h) -> h.name.fi).collect(joining(", "))),
-                tcol("reports.hf.facility.operator", (Facility f) -> ctx.operators.get(f.operatorId).name),
-                tcol("reports.hf.facility.status", (Facility f) -> translationService.translate(f.status)),
-                tcol("reports.hf.facility.statusDescription", (Facility f) -> f.statusDescription),
-                tcol("reports.hf.facility.locX", (Facility f) -> f.location.getCentroid().getX()),
-                tcol("reports.hf.facility.locY", (Facility f) -> f.location.getCentroid().getY()),
-                tcol("reports.hf.facility.openingHoursbusinessDay", (Facility f) -> time(f.openingHours.byDayType.get(BUSINESS_DAY))),
-                tcol("reports.hf.facility.openingHoursSaturday", (Facility f) -> time(f.openingHours.byDayType.get(SATURDAY))),
-                tcol("reports.hf.facility.openingHoursSunday", (Facility f) -> time(f.openingHours.byDayType.get(SUNDAY))),
-                tcol("reports.hf.facility.openingHoursInfo", (Facility f) -> f.openingHours.info),
-                tcol("reports.hf.facility.motorCapacity", (Facility f) -> capacitySum(f.builtCapacity, motorCapacityList)),
-                tcol("reports.hf.facility.bicycleCapacity", (Facility f) -> capacitySum(f.builtCapacity, bicycleCapacityList)),
-                tcol("reports.hf.facility.car", (Facility f) -> f.builtCapacity.getOrDefault(CAR, 0)),
-                tcol("reports.hf.facility.disabled", (Facility f) -> f.builtCapacity.getOrDefault(DISABLED, 0)),
-                tcol("reports.hf.facility.electricCar", (Facility f) -> f.builtCapacity.getOrDefault(ELECTRIC_CAR, 0)),
-                tcol("reports.hf.facility.motorcycle", (Facility f) -> f.builtCapacity.getOrDefault(MOTORCYCLE, 0)),
-                tcol("reports.hf.facility.bicycle", (Facility f) -> f.builtCapacity.getOrDefault(BICYCLE, 0)),
-                tcol("reports.hf.facility.bicycleSecure", (Facility f) -> f.builtCapacity.getOrDefault(BICYCLE_SECURE_SPACE, 0)),
-                tcol("reports.hf.facility.pricing", (Facility f) -> f.pricing.stream().map((p) -> translationService.translate(p.usage)).distinct().collect(joining(", "))),
-                tcol("reports.hf.facility.paymentMethod", (Facility f) -> f.paymentInfo.paymentMethods.stream().map(m -> translationService.translate(m)).collect(joining(", "))),
-                tcol("reports.hf.facility.paymentMethodInfo", (Facility f) -> f.paymentInfo.detail),
-                tcol("reports.hf.facility.services", (Facility f) -> f.services.stream().map(s -> translationService.translate(s)).collect(joining(", "))),
-                tcol("reports.hf.facility.emergencyContact", (Facility f) -> contactText(f.contacts.emergency)),
-                tcol("reports.hf.facility.operatorContact", (Facility f) -> contactText(f.contacts.operator)),
-                tcol("reports.hf.facility.serviceContact", (Facility f) -> contactText(f.contacts.service))
+        excel.addSheet(excelUtil.getMessage("reports.hf.sheets.facilities"), facilities, asList(
+                excelUtil.tcol("reports.hf.facility.facilityName", (Facility f) -> f.name),
+                excelUtil.tcol("reports.hf.facility.aliases", (Facility f) -> join(", ", f.aliases)),
+                excelUtil.tcol("reports.hf.facility.hubs", (Facility f) -> ctx.hubsByFacilityId.getOrDefault(f.id, emptyList()).stream().map((Hub h) -> h.name.fi).collect(joining(", "))),
+                excelUtil.tcol("reports.hf.facility.operator", (Facility f) -> ctx.operators.get(f.operatorId).name),
+                excelUtil.tcol("reports.hf.facility.status", (Facility f) -> translationService.translate(f.status)),
+                excelUtil.tcol("reports.hf.facility.statusDescription", (Facility f) -> f.statusDescription),
+                excelUtil.tcol("reports.hf.facility.locX", (Facility f) -> f.location.getCentroid().getX()),
+                excelUtil.tcol("reports.hf.facility.locY", (Facility f) -> f.location.getCentroid().getY()),
+                excelUtil.tcol("reports.hf.facility.openingHoursbusinessDay", (Facility f) -> ExcelUtil.time(f.openingHours.byDayType.get(BUSINESS_DAY))),
+                excelUtil.tcol("reports.hf.facility.openingHoursSaturday", (Facility f) -> ExcelUtil.time(f.openingHours.byDayType.get(SATURDAY))),
+                excelUtil.tcol("reports.hf.facility.openingHoursSunday", (Facility f) -> ExcelUtil.time(f.openingHours.byDayType.get(SUNDAY))),
+                excelUtil.tcol("reports.hf.facility.openingHoursInfo", (Facility f) -> f.openingHours.info),
+                excelUtil.tcol("reports.hf.facility.motorCapacity", (Facility f) -> capacitySum(f.builtCapacity, motorCapacityList)),
+                excelUtil.tcol("reports.hf.facility.bicycleCapacity", (Facility f) -> capacitySum(f.builtCapacity, bicycleCapacityList)),
+                excelUtil.tcol("reports.hf.facility.car", (Facility f) -> f.builtCapacity.getOrDefault(CAR, 0)),
+                excelUtil.tcol("reports.hf.facility.disabled", (Facility f) -> f.builtCapacity.getOrDefault(DISABLED, 0)),
+                excelUtil.tcol("reports.hf.facility.electricCar", (Facility f) -> f.builtCapacity.getOrDefault(ELECTRIC_CAR, 0)),
+                excelUtil.tcol("reports.hf.facility.motorcycle", (Facility f) -> f.builtCapacity.getOrDefault(MOTORCYCLE, 0)),
+                excelUtil.tcol("reports.hf.facility.bicycle", (Facility f) -> f.builtCapacity.getOrDefault(BICYCLE, 0)),
+                excelUtil.tcol("reports.hf.facility.bicycleSecure", (Facility f) -> f.builtCapacity.getOrDefault(BICYCLE_SECURE_SPACE, 0)),
+                excelUtil.tcol("reports.hf.facility.pricing", (Facility f) -> f.pricing.stream().map((p) -> translationService.translate(p.usage)).distinct().collect(joining(", "))),
+                excelUtil.tcol("reports.hf.facility.paymentMethod", (Facility f) -> f.paymentInfo.paymentMethods.stream().map(m -> translationService.translate(m)).collect(joining(", "))),
+                excelUtil.tcol("reports.hf.facility.paymentMethodInfo", (Facility f) -> f.paymentInfo.detail),
+                excelUtil.tcol("reports.hf.facility.services", (Facility f) -> f.services.stream().map(s -> translationService.translate(s)).collect(joining(", "))),
+                excelUtil.tcol("reports.hf.facility.emergencyContact", (Facility f) -> contactText(f.contacts.emergency)),
+                excelUtil.tcol("reports.hf.facility.operatorContact", (Facility f) -> contactText(f.contacts.operator)),
+                excelUtil.tcol("reports.hf.facility.serviceContact", (Facility f) -> contactText(f.contacts.service))
         ));
 
     }
 
     private void addRegionsSheet(Excel excel, List<Hub> hubs, ReportContext ctx) {
-        excel.addSheet(getMessage("reports.hf.sheets.hubs"), hubs, asList(
-                tcol("reports.hf.hub.name", (Hub h) -> h.name),
-                tcol("reports.hf.hub.address", (Hub h) -> addressText(h.address)),
-                tcol("reports.hf.hub.locX", (Hub h) -> h.location.getX()),
-                tcol("reports.hf.hub.locY", (Hub h) -> h.location.getY()),
-                tcol("reports.hf.hub.motorCapacity", (Hub h) -> capacitySum(ctx, h.id, motorCapacities)),
-                tcol("reports.hf.hub.bicycleCapacity", (Hub h) -> capacitySum(ctx, h.id, bicycleCapacities)),
-                tcol("reports.hf.hub.car", (Hub h) -> capacitySum(ctx, h.id, CAR)),
-                tcol("reports.hf.hub.disabled", (Hub h) -> capacitySum(ctx, h.id, DISABLED)),
-                tcol("reports.hf.hub.electicCar", (Hub h) -> capacitySum(ctx, h.id, ELECTRIC_CAR)),
-                tcol("reports.hf.hub.motorcycle", (Hub h) -> capacitySum(ctx, h.id, MOTORCYCLE)),
-                tcol("reports.hf.hub.bicycle", (Hub h) -> capacitySum(ctx, h.id, BICYCLE)),
-                tcol("reports.hf.hub.bicycleSecure", (Hub h) -> capacitySum(ctx, h.id, BICYCLE_SECURE_SPACE)),
-                tcol("reports.hf.hub.facilities", (Hub h) -> ctx.facilitiesByHubId.getOrDefault(h.id, emptyList()).stream().map((Facility f) -> f.name.fi).collect(toList()))
+        excel.addSheet(excelUtil.getMessage("reports.hf.sheets.hubs"), hubs, asList(
+                excelUtil.tcol("reports.hf.hub.name", (Hub h) -> h.name),
+                excelUtil.tcol("reports.hf.hub.address", (Hub h) -> addressText(h.address)),
+                excelUtil.tcol("reports.hf.hub.locX", (Hub h) -> h.location.getX()),
+                excelUtil.tcol("reports.hf.hub.locY", (Hub h) -> h.location.getY()),
+                excelUtil.tcol("reports.hf.hub.motorCapacity", (Hub h) -> capacitySum(ctx, h.id, motorCapacities)),
+                excelUtil.tcol("reports.hf.hub.bicycleCapacity", (Hub h) -> capacitySum(ctx, h.id, bicycleCapacities)),
+                excelUtil.tcol("reports.hf.hub.car", (Hub h) -> capacitySum(ctx, h.id, CAR)),
+                excelUtil.tcol("reports.hf.hub.disabled", (Hub h) -> capacitySum(ctx, h.id, DISABLED)),
+                excelUtil.tcol("reports.hf.hub.electicCar", (Hub h) -> capacitySum(ctx, h.id, ELECTRIC_CAR)),
+                excelUtil.tcol("reports.hf.hub.motorcycle", (Hub h) -> capacitySum(ctx, h.id, MOTORCYCLE)),
+                excelUtil.tcol("reports.hf.hub.bicycle", (Hub h) -> capacitySum(ctx, h.id, BICYCLE)),
+                excelUtil.tcol("reports.hf.hub.bicycleSecure", (Hub h) -> capacitySum(ctx, h.id, BICYCLE_SECURE_SPACE)),
+                excelUtil.tcol("reports.hf.hub.facilities", (Hub h) -> ctx.facilitiesByHubId.getOrDefault(h.id, emptyList()).stream().map((Facility f) -> f.name.fi).collect(toList()))
         ));
     }
 

@@ -1,11 +1,12 @@
 // Copyright © 2015 HSL <https://www.hsl.fi>
 // This program is dual-licensed under the EUPL v1.2 and AGPLv3 licenses.
 
-package fi.hsl.parkandride.core.service;
+package fi.hsl.parkandride.core.service.reporting;
 
 import fi.hsl.parkandride.back.RegionRepository;
 import fi.hsl.parkandride.core.back.UtilizationRepository;
 import fi.hsl.parkandride.core.domain.*;
+import fi.hsl.parkandride.core.service.*;
 import fi.hsl.parkandride.front.ReportParameters;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.joda.time.LocalDate;
@@ -21,7 +22,7 @@ import static com.google.common.collect.Iterators.filter;
 import static fi.hsl.parkandride.core.domain.Permission.REPORT_GENERATE;
 import static fi.hsl.parkandride.core.service.AuthenticationService.authorize;
 import static fi.hsl.parkandride.core.service.AuthenticationService.getLimitedOperatorId;
-import static fi.hsl.parkandride.core.service.Excel.TableColumn.col;
+import static fi.hsl.parkandride.core.service.reporting.Excel.TableColumn.col;
 import static java.lang.String.format;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toSet;
@@ -113,10 +114,10 @@ public abstract class AbstractReportService extends ReportServiceSupport impleme
 
     /** Adds translated column */
     protected <T> Excel.TableColumn<T> tcol(String key, Function<T, Object> valFn) {
-        return col(getMessage(key), valFn);
+        return Excel.TableColumn.col(getMessage(key), valFn);
     }
     protected <T> Excel.TableColumn<T> tcol(String key, Function<T, Object> valFn, CellStyle cellStyle) {
-        return col(getMessage(key), valFn, cellStyle);
+        return Excel.TableColumn.col(getMessage(key), valFn, cellStyle);
     }
 
     protected Iterator<Utilization> addFilters(Iterator<Utilization> iter, ReportContext ctx, ReportParameters parameters) {

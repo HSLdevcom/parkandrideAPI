@@ -1,7 +1,7 @@
 // Copyright © 2015 HSL <https://www.hsl.fi>
 // This program is dual-licensed under the EUPL v1.2 and AGPLv3 licenses.
 
-package fi.hsl.parkandride.core.service;
+package fi.hsl.parkandride.core.service.reporting;
 
 import static com.google.common.base.Throwables.getStackTraceAsString;
 import static org.apache.poi.ss.usermodel.Cell.*;
@@ -12,12 +12,10 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
-import java.util.Locale;
 import java.util.function.Function;
 
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
-import org.apache.poi.ss.util.DateFormatConverter;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.joda.time.LocalDate;
 import org.slf4j.Logger;

@@ -1,7 +1,7 @@
 // Copyright © 2015 HSL <https://www.hsl.fi>
 // This program is dual-licensed under the EUPL v1.2 and AGPLv3 licenses.
 
-package fi.hsl.parkandride.core.service;
+package fi.hsl.parkandride.core.service.reporting;
 
 import com.mysema.commons.lang.CloseableIterator;
 import fi.hsl.parkandride.back.RegionRepository;
@@ -10,7 +10,7 @@ import fi.hsl.parkandride.core.domain.Facility;
 import fi.hsl.parkandride.core.domain.Hub;
 import fi.hsl.parkandride.core.domain.Utilization;
 import fi.hsl.parkandride.core.domain.UtilizationSearch;
-import fi.hsl.parkandride.core.service.Excel.TableColumn;
+import fi.hsl.parkandride.core.service.*;
 import fi.hsl.parkandride.front.ReportParameters;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.Map;
 
 import static fi.hsl.parkandride.core.domain.DayType.*;
-import static fi.hsl.parkandride.core.service.Excel.TableColumn.col;
+import static fi.hsl.parkandride.core.service.reporting.Excel.TableColumn.col;
 import static fi.hsl.parkandride.core.util.ArgumentValidator.validate;
 import static java.time.LocalTime.ofSecondOfDay;
 import static java.util.Arrays.asList;
@@ -78,7 +78,7 @@ public class FacilityUsageReportService extends AbstractReportService {
                 )
                 .collect(toList());
 
-        List<TableColumn<UtilizationReportRow>> columns = asList(
+        List<Excel.TableColumn<UtilizationReportRow>> columns = asList(
                 tcol("reports.usage.col.facility", (UtilizationReportRow r) -> r.key.facility.name),
                 tcol("reports.usage.col.hub", (UtilizationReportRow r) -> ctx.hubsByFacilityId.getOrDefault(r.key.targetId, emptyList()).stream().map((Hub h) -> h.name.fi).collect(joining(", "))),
                 tcol("reports.usage.col.region", (UtilizationReportRow r) -> ctx.regionByFacilityId.get(r.key.targetId).name),
@@ -95,7 +95,7 @@ public class FacilityUsageReportService extends AbstractReportService {
         columns = new ArrayList<>(columns);
         for (int s = 0, i = 0; s < SECONDS_IN_DAY; s += intervalSeconds, i++) {
             final int idx = i;
-            columns.add(col(ofSecondOfDay(s).toString(), (UtilizationReportRow r) -> r.values[idx]));
+            columns.add(Excel.TableColumn.col(ofSecondOfDay(s).toString(), (UtilizationReportRow r) -> r.values[idx]));
         }
         excel.addSheet(getMessage("reports.usage.sheets.usage"), rows, columns);
         excel.addSheet(getMessage("reports.usage.sheets.legend"),

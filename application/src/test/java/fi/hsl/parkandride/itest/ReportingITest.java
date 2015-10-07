@@ -9,6 +9,7 @@ import com.jayway.restassured.response.Response;
 import fi.hsl.parkandride.back.Dummies;
 import fi.hsl.parkandride.core.domain.*;
 import fi.hsl.parkandride.core.service.*;
+import fi.hsl.parkandride.core.service.reporting.ReportServiceSupport;
 import fi.hsl.parkandride.front.ReportParameters;
 import fi.hsl.parkandride.front.UrlSchema;
 import junit.framework.AssertionFailedError;
@@ -434,7 +435,7 @@ public class ReportingITest extends AbstractIntegrationTest {
 
     @Test
     public void report_withConflictingDates_resultsInBadRequest() {
-        // No params given -> IllegalArgumentException from fi.hsl.parkandride.core.service.FacilityUsageReportService
+        // No params given -> IllegalArgumentException from fi.hsl.parkandride.core.service.reporting.FacilityUsageReportService
         final ReportParameters params = baseParams();
         params.interval = 100;
         params.startDate = BASE_DATE.toString(ReportServiceSupport.FINNISH_DATE_PATTERN);

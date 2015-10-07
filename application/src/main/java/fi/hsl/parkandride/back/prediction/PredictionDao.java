@@ -4,6 +4,7 @@
 package fi.hsl.parkandride.back.prediction;
 
 import com.mysema.query.Tuple;
+import com.mysema.query.sql.dml.SQLInsertClause;
 import com.mysema.query.sql.dml.SQLUpdateClause;
 import com.mysema.query.sql.postgres.PostgresQueryFactory;
 import com.mysema.query.types.Expression;
@@ -154,12 +155,16 @@ public class PredictionDao implements PredictionRepository {
     }
 
     private void savePredictionHistory(Long predictorId, DateTime start, List<Prediction> predictions) {
-        predictions.forEach(p -> queryFactory.insert(qPredictionHistory)
-                .set(qPredictionHistory.predictorId, predictorId)
-                .set(qPredictionHistory.forecastDistanceInMinutes, ((int) new Duration(start, p.timestamp).getStandardMinutes()))
-                .set(qPredictionHistory.ts, p.timestamp)
-                .set(qPredictionHistory.spacesAvailable, p.spacesAvailable)
-                .execute());
+        if (!predictions.isEmpty()) {
+            final SQLInsertClause insert = queryFactory.insert(qPredictionHistory);
+            predictions.forEach(p -> insert
+                    .set(qPredictionHistory.predictorId, predictorId)
+                    .set(qPredictionHistory.forecastDistanceInMinutes, ((int) new Duration(start, p.timestamp).getStandardMinutes()))
+                    .set(qPredictionHistory.ts, p.timestamp)
+                    .set(qPredictionHistory.spacesAvailable, p.spacesAvailable)
+                    .addBatch());
+            insert.execute();
+        }
     }
 
     @TransactionalRead

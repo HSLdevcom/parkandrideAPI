@@ -60,7 +60,8 @@
         var controls = {
             FacilityUsage: ['dates', 'interval', 'operator', 'usages', 'capacityTypes', 'regions', 'hubs', 'facilities'],
             HubsAndFacilities: [],
-            MaxUtilization: ['dates', 'operator', 'usages', 'capacityTypes', 'regions', 'hubs', 'facilities']
+            MaxUtilization: ['dates', 'operator', 'usages', 'capacityTypes', 'regions', 'hubs', 'facilities'],
+            RequestLog: ['dates']
         };
 
         this.showControl = function(controlName) {

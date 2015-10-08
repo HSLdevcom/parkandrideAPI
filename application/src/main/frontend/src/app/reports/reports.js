@@ -194,7 +194,7 @@
             document.documentElement.classList.add('wait');
             //report name generation
             var name = $translate.instant('reports.' + type + '.name');
-            if (type == 'FacilityUsage' || type == 'MaxUtilization') {
+            if (type === 'FacilityUsage' || type === 'MaxUtilization' || type === 'RequestLog') {
                 var date = date_toArray(parameters.startDate);
                 name += '_' + date[2] + ("0" + date[1]).slice(-2) + ("0" + date[0]).slice(-2);
                 if (!/^\s*$/.test(parameters.endDate)) {
@@ -202,7 +202,7 @@
                     name += '-' + date[2] + ("0" + date[1]).slice(-2) + ("0" + date[0]).slice(-2);
                 }
             }
-            else if (type == 'HubsAndFacilities') {
+            else if (type === 'HubsAndFacilities') {
                 var d = new Date();
                 name += '_' + d.getFullYear() + ("0" + (d.getMonth() + 1)).slice(-2) + ("0" + d.getDate()).slice(-2);
             }

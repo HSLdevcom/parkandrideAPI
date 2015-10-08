@@ -21,7 +21,6 @@ public class RequestLoggingInterceptorAdapter extends HandlerInterceptorAdapter 
 
     // The source header for API requests
     public static final String X_HSL_SOURCE = "X-HSL-Source";
-    public static final String UNKNOWN_SOURCE = "<Unknown>";
 
     private final BatchingRequestLogService batchingRequestLogService;
 
@@ -34,7 +33,7 @@ public class RequestLoggingInterceptorAdapter extends HandlerInterceptorAdapter 
         Optional.ofNullable((String) request.getAttribute(HandlerMapping.BEST_MATCHING_PATTERN_ATTRIBUTE))
                 .filter(s -> s.startsWith(UrlSchema.API))
                 .ifPresent(urlPattern -> {
-                    final String source = Optional.ofNullable(request.getHeader(X_HSL_SOURCE)).orElse(UNKNOWN_SOURCE);
+                    final String source = request.getHeader(X_HSL_SOURCE);
                     logger.trace("Intercepted API call: <{}> for source <{}>", urlPattern, source);
                     batchingRequestLogService.increment(new RequestLogKey(urlPattern, source, DateTime.now()));
                 });

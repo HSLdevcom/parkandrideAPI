@@ -4,7 +4,7 @@
 package fi.hsl.parkandride.back;
 
 import com.google.common.collect.BiMap;
-import com.google.common.collect.ImmutableBiMap;
+import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Maps;
 import com.mysema.query.Tuple;
 import com.mysema.query.sql.RelationalPath;
@@ -27,7 +27,10 @@ import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.Supplier;
 import java.util.stream.Collector;
@@ -208,11 +211,11 @@ public class RequestLogDao implements RequestLogRepository {
     }
 
     private BiMap<Long, String> getAllUrlPatterns() {
-        return ImmutableBiMap.copyOf(queryFactory.from(qRequestLogUrl).map(qRequestLogUrl.id, qRequestLogUrl.url));
+        return HashBiMap.create(queryFactory.from(qRequestLogUrl).map(qRequestLogUrl.id, qRequestLogUrl.url));
     }
 
     private BiMap<Long, String> getAllSources() {
-        return ImmutableBiMap.copyOf(queryFactory.from(qRequestLogSource).map(qRequestLogSource.id, qRequestLogSource.source));
+        return HashBiMap.create(queryFactory.from(qRequestLogSource).map(qRequestLogSource.id, qRequestLogSource.source));
     }
 
     private static Set<String> difference(Set<String> toPersist, BiMap<Long, String> alreadyPersisted) {

@@ -12,6 +12,7 @@ import org.joda.time.DateTime;
 
 import javax.inject.Inject;
 import java.util.List;
+import java.util.Optional;
 
 import static fi.hsl.parkandride.core.service.AuthenticationService.authorize;
 import static fi.hsl.parkandride.core.service.reporting.ReportServiceSupport.FINNISH_DATE_FORMAT;
@@ -57,9 +58,10 @@ public class RequestLogReportService implements ReportService {
     }
 
     private void addRequestLogSheet(Excel excel, List<RequestLogEntry> logRows) {
+        final String unknownSource = excelUtil.getMessage("reports.requestlog.unknownSource");
         excel.addSheet(excelUtil.getMessage("reports.requestlog.sheets.log"), logRows, asList(
                 excelUtil.tcol("reports.requestlog.col.timestamp",  (RequestLogEntry entry) -> entry.key.timestamp),
-                excelUtil.tcol("reports.requestlog.col.source",     (RequestLogEntry entry) -> entry.key.source),
+                excelUtil.tcol("reports.requestlog.col.source",     (RequestLogEntry entry) -> Optional.ofNullable(entry.key.source).orElse(unknownSource)),
                 excelUtil.tcol("reports.requestlog.col.url",        (RequestLogEntry entry) -> entry.key.urlPattern),
                 excelUtil.tcol("reports.requestlog.col.count",      (RequestLogEntry entry) -> entry.count.intValue())
         ));

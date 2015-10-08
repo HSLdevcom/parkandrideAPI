@@ -6,23 +6,27 @@ package fi.hsl.parkandride.core.domain;
 import org.joda.time.DateTime;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Comparator;
 import java.util.Objects;
 
 import static com.google.common.base.MoreObjects.toStringHelper;
+import static java.util.Comparator.comparing;
+import static java.util.Comparator.naturalOrder;
+import static java.util.Comparator.nullsFirst;
 
 public class RequestLogKey implements Comparable<RequestLogKey> {
 
-    private static final Comparator<RequestLogKey> KEY_COMPARATOR = Comparator.comparing((RequestLogKey rlk) -> rlk.timestamp)
-            .thenComparing(rlk -> rlk.source)
-            .thenComparing(rlk -> rlk.urlPattern);
+    private static final Comparator<RequestLogKey> KEY_COMPARATOR = comparing((RequestLogKey rlk) -> rlk.timestamp)
+                    .thenComparing(comparing(rlk -> rlk.source, nullsFirst(naturalOrder())))
+                    .thenComparing(comparing(rlk -> rlk.urlPattern));
     public final String urlPattern;
     public final String source;
     public final DateTime timestamp;
 
-    public RequestLogKey(@Nonnull String urlPattern, @Nonnull String source, @Nonnull DateTime timestamp) {
+    public RequestLogKey(@Nonnull String urlPattern, @Nullable String source, @Nonnull DateTime timestamp) {
         this.urlPattern = Objects.requireNonNull(urlPattern);
-        this.source = Objects.requireNonNull(source);
+        this.source = source;
         this.timestamp = Objects.requireNonNull(timestamp);
     }
 

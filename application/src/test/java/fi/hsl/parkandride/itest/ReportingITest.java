@@ -19,6 +19,7 @@ import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.context.MessageSource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 
@@ -38,7 +39,6 @@ import static fi.hsl.parkandride.core.domain.CapacityType.*;
 import static fi.hsl.parkandride.core.domain.Role.*;
 import static fi.hsl.parkandride.core.service.reporting.ReportServiceSupport.FINNISH_DATETIME_FORMAT;
 import static fi.hsl.parkandride.front.ReportController.MEDIA_TYPE_EXCEL;
-import static fi.hsl.parkandride.front.RequestLoggingInterceptorAdapter.UNKNOWN_SOURCE;
 import static fi.hsl.parkandride.front.RequestLoggingInterceptorAdapter.X_HSL_SOURCE;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singleton;
@@ -63,6 +63,7 @@ public class ReportingITest extends AbstractIntegrationTest {
 
     @Inject TranslationService translationService;
     @Inject BatchingRequestLogService batchingRequestLogService;
+    @Inject MessageSource messageSource;
     private Hub hub;
     private Facility facility1;
 
@@ -439,7 +440,7 @@ public class ReportingITest extends AbstractIntegrationTest {
         assertThat(usages.getPhysicalNumberOfRows()).isEqualTo(3);
         assertThat(findRowWithColumn(usages, 2, UrlSchema.FACILITY)).containsExactly(
                 testDate.toString(FINNISH_DATETIME_FORMAT),
-                UNKNOWN_SOURCE,
+                messageSource.getMessage("reports.requestlog.unknownSource", null, new Locale("fi")),
                 UrlSchema.FACILITY,
                 "12"
         );

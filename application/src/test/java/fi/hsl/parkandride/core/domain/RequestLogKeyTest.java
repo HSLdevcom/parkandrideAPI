@@ -6,6 +6,10 @@ package fi.hsl.parkandride.core.domain;
 import org.joda.time.DateTime;
 import org.junit.Test;
 
+import java.util.Collections;
+import java.util.List;
+
+import static com.google.common.collect.Lists.newArrayList;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class RequestLogKeyTest {
@@ -42,6 +46,24 @@ public class RequestLogKeyTest {
                 .withSecondOfMinute(0)
                 .withMinuteOfHour(0);
         assertThat(key.roundTimestampDown().timestamp).isEqualTo(rounded);
+    }
+
+
+    @Test
+    public void testOrderingOfList() {
+        final DateTime now = DateTime.now();
+
+        // Nulls first
+        RequestLogKey first  = new RequestLogKey("url", null, now);
+        RequestLogKey second = new RequestLogKey("url", "aaa", now);
+        RequestLogKey third  = new RequestLogKey("xrl", "aaa", now);
+        RequestLogKey fourth = new RequestLogKey("url", "bbb", now);
+        RequestLogKey last   = new RequestLogKey("url", "aaa", now.plusSeconds(1));
+
+        final List<RequestLogKey> list = newArrayList(first, second, third, fourth, last);
+        Collections.shuffle(list);
+        Collections.sort(list);
+        assertThat(list).containsExactly(first, second, third, fourth, last);
     }
 
 }

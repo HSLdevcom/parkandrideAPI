@@ -63,7 +63,7 @@ public class RequestLogReportService implements ReportService {
                     final Long totalCount = groupedEntry.getValue().stream().collect(summingLong(entry -> entry.count));
                     return new RequestLogEntry(key, totalCount);
                 })
-                .sorted(comparing(entry -> entry.key.timestamp))
+                .sorted(comparing(entry -> entry.key))
                 .collect(toList());
     }
 

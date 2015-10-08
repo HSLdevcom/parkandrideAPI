@@ -17,7 +17,7 @@ import static java.util.Comparator.nullsFirst;
 
 public class RequestLogKey implements Comparable<RequestLogKey> {
 
-    private static final Comparator<RequestLogKey> KEY_COMPARATOR = comparing((RequestLogKey rlk) -> rlk.timestamp)
+    public static final Comparator<RequestLogKey> KEY_COMPARATOR = comparing((RequestLogKey rlk) -> rlk.timestamp)
                     .thenComparing(comparing(rlk -> rlk.source, nullsFirst(naturalOrder())))
                     .thenComparing(comparing(rlk -> rlk.urlPattern));
     public final String urlPattern;

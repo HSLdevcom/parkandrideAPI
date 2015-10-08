@@ -101,10 +101,10 @@ public class RequestLogITest extends AbstractIntegrationTest {
         assertThat(workbook.getSheetName(0)).isEqualTo("Rajapintakutsut");
         assertThat(workbook.getSheetName(1)).isEqualTo("Selite");
 
-        final Sheet usages = workbook.getSheetAt(0);
-        assertThat(getDataFromRow(usages, 0))
+        final Sheet sheet = workbook.getSheetAt(0);
+        assertThat(getDataFromRow(sheet, 0))
                 .containsExactly("Päivämäärä", "Lähde", "Polku", "Kutsujen määrä");
-        assertThat(usages.getPhysicalNumberOfRows()).isEqualTo(1);
+        assertThat(sheet.getPhysicalNumberOfRows()).isEqualTo(1);
     }
 
     @Test
@@ -116,14 +116,14 @@ public class RequestLogITest extends AbstractIntegrationTest {
 
         final Response whenPostingToReportUrl = postToReportUrl(params, "RequestLog", adminUser);
         final Workbook workbook = readWorkbookFrom(whenPostingToReportUrl);
-        final Sheet usages = workbook.getSheetAt(0);
+        final Sheet sheet = workbook.getSheetAt(0);
 
         // Headings
-        assertThat(getDataFromRow(usages, 0))
+        assertThat(getDataFromRow(sheet, 0))
                 .containsExactly("Aika", "Lähde", "Polku", "Kutsujen määrä");
 
         // Check rows
-        assertThat(getDataFromColumn(usages, 0)).containsExactly(
+        assertThat(getDataFromColumn(sheet, 0)).containsExactly(
                 "Aika",
                 ROUNDED_BASE_DATETIME.toString(DATETIME_FORMAT),
                 ROUNDED_BASE_DATETIME.toString(DATETIME_FORMAT),
@@ -132,13 +132,13 @@ public class RequestLogITest extends AbstractIntegrationTest {
                 ROUNDED_BASE_DATETIME.plusHours(1).toString(DATETIME_FORMAT),
                 ROUNDED_BASE_DATETIME.plusDays(1).toString(DATETIME_FORMAT)
         );
-        assertThat(getDataFromColumn(usages, 1)).containsExactly(
+        assertThat(getDataFromColumn(sheet, 1)).containsExactly(
                 "Lähde", unknownSource, unknownSource, WEB_UI_SOURCE, WEB_UI_SOURCE, WEB_UI_SOURCE, WEB_UI_SOURCE
         );
-        assertThat(getDataFromColumn(usages, 2)).containsExactly(
+        assertThat(getDataFromColumn(sheet, 2)).containsExactly(
                 "Polku", FACILITY, HUB, FACILITY, HUB, FACILITY, FACILITY
         );
-        assertThat(getDataFromColumn(usages, 3)).containsExactly(
+        assertThat(getDataFromColumn(sheet, 3)).containsExactly(
                 "Kutsujen määrä", "12", "8", "12", "8", "12", "12"
         );
     }
@@ -152,14 +152,14 @@ public class RequestLogITest extends AbstractIntegrationTest {
 
         final Response whenPostingToReportUrl = postToReportUrl(params, "RequestLog", adminUser);
         final Workbook workbook = readWorkbookFrom(whenPostingToReportUrl);
-        final Sheet usages = workbook.getSheetAt(0);
+        final Sheet sheet = workbook.getSheetAt(0);
 
         // Headings
-        assertThat(getDataFromRow(usages, 0))
+        assertThat(getDataFromRow(sheet, 0))
                 .containsExactly("Päivämäärä", "Lähde", "Polku", "Kutsujen määrä");
 
         // Check rows, one less that in hourly report since the current+1 hour has been summed up with the current
-        assertThat(getDataFromColumn(usages, 0)).containsExactly(
+        assertThat(getDataFromColumn(sheet, 0)).containsExactly(
                 "Päivämäärä",
                 ROUNDED_BASE_DATETIME.toString(DATE_FORMAT),
                 ROUNDED_BASE_DATETIME.toString(DATE_FORMAT),
@@ -167,13 +167,13 @@ public class RequestLogITest extends AbstractIntegrationTest {
                 ROUNDED_BASE_DATETIME.toString(DATE_FORMAT),
                 ROUNDED_BASE_DATETIME.plusDays(1).toString(DATE_FORMAT)
         );
-        assertThat(getDataFromColumn(usages, 1)).containsExactly(
+        assertThat(getDataFromColumn(sheet, 1)).containsExactly(
                 "Lähde", unknownSource, unknownSource, WEB_UI_SOURCE, WEB_UI_SOURCE, WEB_UI_SOURCE
         );
-        assertThat(getDataFromColumn(usages, 2)).containsExactly(
+        assertThat(getDataFromColumn(sheet, 2)).containsExactly(
                 "Polku", FACILITY, HUB, FACILITY, HUB, FACILITY
         );
-        assertThat(getDataFromColumn(usages, 3)).containsExactly(
+        assertThat(getDataFromColumn(sheet, 3)).containsExactly(
                 "Kutsujen määrä", "12", "8", "24", "8", "12"
         );
     }
@@ -188,14 +188,14 @@ public class RequestLogITest extends AbstractIntegrationTest {
 
         final Response whenPostingToReportUrl = postToReportUrl(params, "RequestLog", adminUser);
         final Workbook workbook = readWorkbookFrom(whenPostingToReportUrl);
-        final Sheet usages = workbook.getSheetAt(0);
+        final Sheet sheet = workbook.getSheetAt(0);
 
         // Headings
-        assertThat(getDataFromRow(usages, 0))
+        assertThat(getDataFromRow(sheet, 0))
                 .containsExactly("Kuukausi", "Lähde", "Polku", "Kutsujen määrä");
 
         // Check rows
-        assertThat(getDataFromColumn(usages, 0)).containsExactly(
+        assertThat(getDataFromColumn(sheet, 0)).containsExactly(
                 "Kuukausi",
                 ROUNDED_BASE_DATETIME.minusMonths(1).toString(MONTH_FORMAT),
                 ROUNDED_BASE_DATETIME.toString(MONTH_FORMAT),
@@ -203,13 +203,13 @@ public class RequestLogITest extends AbstractIntegrationTest {
                 ROUNDED_BASE_DATETIME.toString(MONTH_FORMAT),
                 ROUNDED_BASE_DATETIME.toString(MONTH_FORMAT)
         );
-        assertThat(getDataFromColumn(usages, 1)).containsExactly(
+        assertThat(getDataFromColumn(sheet, 1)).containsExactly(
                 "Lähde", WEB_UI_SOURCE, unknownSource, unknownSource, WEB_UI_SOURCE, WEB_UI_SOURCE
         );
-        assertThat(getDataFromColumn(usages, 2)).containsExactly(
+        assertThat(getDataFromColumn(sheet, 2)).containsExactly(
                 "Polku", FACILITY, FACILITY, HUB, FACILITY, HUB
         );
-        assertThat(getDataFromColumn(usages, 3)).containsExactly(
+        assertThat(getDataFromColumn(sheet, 3)).containsExactly(
                 "Kutsujen määrä", "12", "12", "8", "36", "8"
         );
     }
@@ -218,6 +218,24 @@ public class RequestLogITest extends AbstractIntegrationTest {
     public void report_RequestLog_emptyParams() {
         final Response requestLog = whenPostingToReportUrl(new ReportParameters(), "RequestLog", adminUser);
         requestLog.then().assertThat().statusCode(HttpStatus.BAD_REQUEST.value());
+    }
+
+    @Test
+    public void report_RequestLog_nonExistentUrl_andUrlOutsideApi() {
+        DateTimeUtils.setCurrentMillisFixed(BASE_DATE_TIME.getMillis());
+        when().get(UrlSchema.API + "/foobarbazqux");
+        when().get(UrlSchema.DOCS);
+        DateTimeUtils.setCurrentMillisSystem();
+        batchingRequestLogService.updateRequestLogs();
+
+        // Defaults to DAY interval, the month is empty so report should be empty
+        final ReportParameters params = baseParams(BASE_DATE_TIME.toLocalDate());
+        final Response whenPostingToReportUrl = postToReportUrl(params, "RequestLog", adminUser);
+        // If this succeeds, the response was a valid excel file
+        final Workbook workbook = readWorkbookFrom(whenPostingToReportUrl);
+        // No requests logged
+        final Sheet sheet = workbook.getSheetAt(0);
+        assertThat(sheet.getPhysicalNumberOfRows()).isEqualTo(1);
     }
 
     @Test
@@ -233,9 +251,9 @@ public class RequestLogITest extends AbstractIntegrationTest {
     }
 
 
-    private List<String> findRowWithColumn(Sheet usages, int columnNumber, String content) {
-        for (int i = 0; i < usages.getPhysicalNumberOfRows(); i++) {
-            final Row row = usages.getRow(i);
+    private List<String> findRowWithColumn(Sheet sheet, int columnNumber, String content) {
+        for (int i = 0; i < sheet.getPhysicalNumberOfRows(); i++) {
+            final Row row = sheet.getRow(i);
             final List<String> dataFromRow = getDataFromRow(row);
             if (dataFromRow.contains(content)) {
                 return dataFromRow;

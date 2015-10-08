@@ -15,7 +15,7 @@ import java.util.List;
 
 import static fi.hsl.parkandride.core.service.AuthenticationService.authorize;
 import static fi.hsl.parkandride.core.service.reporting.ReportServiceSupport.FINNISH_DATE_FORMAT;
-import static fi.hsl.parkandride.core.util.ArgumentValidator.validate;
+import static fi.hsl.parkandride.util.ArgumentValidator.validate;
 import static java.util.Arrays.asList;
 
 public class RequestLogReportService implements ReportService {

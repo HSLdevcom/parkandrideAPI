@@ -1,7 +1,7 @@
 // Copyright © 2015 HSL <https://www.hsl.fi>
 // This program is dual-licensed under the EUPL v1.2 and AGPLv3 licenses.
 
-package fi.hsl.parkandride.core.util;
+package fi.hsl.parkandride.util;
 
 import com.google.common.collect.ImmutableMap;
 import fi.hsl.parkandride.core.domain.Violation;
@@ -14,7 +14,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
-import static fi.hsl.parkandride.core.util.Predicates.*;
+import static fi.hsl.parkandride.util.Predicates.*;
 import static java.util.stream.Collectors.toList;
 
 public class ArgumentValidator<T> {

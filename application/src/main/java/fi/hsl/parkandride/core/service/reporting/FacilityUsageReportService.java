@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.Map;
 
 import static fi.hsl.parkandride.core.domain.DayType.*;
-import static fi.hsl.parkandride.core.util.ArgumentValidator.validate;
+import static fi.hsl.parkandride.util.ArgumentValidator.validate;
 import static java.time.LocalTime.ofSecondOfDay;
 import static java.util.Arrays.asList;
 import static java.util.Arrays.fill;

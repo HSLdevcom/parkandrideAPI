@@ -1,7 +1,7 @@
 // Copyright © 2015 HSL <https://www.hsl.fi>
 // This program is dual-licensed under the EUPL v1.2 and AGPLv3 licenses.
 
-package fi.hsl.parkandride.core.util;
+package fi.hsl.parkandride.util;
 
 import org.assertj.core.api.AbstractAssert;
 import org.junit.Test;
@@ -9,8 +9,8 @@ import org.junit.Test;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
-import static fi.hsl.parkandride.core.util.Predicates.*;
-import static fi.hsl.parkandride.core.util.PredicatesTest.PredicatesAssert.assertThat;
+import static fi.hsl.parkandride.util.Predicates.*;
+import static fi.hsl.parkandride.util.PredicatesTest.PredicatesAssert.assertThat;
 
 public class PredicatesTest {
 

@@ -91,6 +91,23 @@
   </div>
 </div>
 
+<div ng-show="ctrl.showControl('requestLogInterval')">
+    <div class="row">
+        <label>{{ "reports.label.interval" | translate }}</label>
+    </div>
+    <div class="row">
+        <div class="column3 first-column">
+            <div class="form-group wdRequestLogInterval">
+                <select class="form-control dateInput wdInterval" ng-model="report.requestLogInterval">
+                    <option value="HOUR"  translate="reports.RequestLog.intervals.hour"></option>
+                    <option value="DAY"   translate="reports.RequestLog.intervals.day"></option>
+                    <option value="MONTH" translate="reports.RequestLog.intervals.month"></option>
+                </select>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div ng-show="ctrl.showControl('operator')">
   <div class="row">
     <label>{{ "reports.label.operator" | translate }}</label>

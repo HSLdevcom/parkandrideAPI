@@ -39,6 +39,7 @@ class Excel {
     final CellStyle percent = wb.createCellStyle();
     final CellStyle date = wb.createCellStyle();
     final CellStyle datetime = wb.createCellStyle();
+    final CellStyle month = wb.createCellStyle();
     private final DataFormat df = wb.createDataFormat();
     private Sheet sheet;
 
@@ -62,6 +63,8 @@ class Excel {
         date.setFont(font12pt);
         datetime.setDataFormat(df.getFormat("d.M.yyyy HH:mm"));
         datetime.setFont(font12pt);
+        month.setDataFormat(df.getFormat("M\\/yyyy"));
+        month.setFont(font12pt);
     }
 
     static class TableColumn<T> {

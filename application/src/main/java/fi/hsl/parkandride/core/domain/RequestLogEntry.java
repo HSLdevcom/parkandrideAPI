@@ -6,6 +6,7 @@ package fi.hsl.parkandride.core.domain;
 import org.joda.time.DateTime;
 
 import static com.google.common.base.MoreObjects.toStringHelper;
+import static java.util.Objects.requireNonNull;
 
 public class RequestLogEntry {
 
@@ -29,5 +30,12 @@ public class RequestLogEntry {
                 .add("key", key)
                 .add("count", count)
                 .toString();
+    }
+
+    public RequestLogEntry sum(RequestLogEntry other) {
+        if (!this.key.equals(requireNonNull(other.key))) {
+            throw new IllegalArgumentException(String.format("Can't sum request log entries with different keys: %s %s", this.key, other.key));
+        }
+        return new RequestLogEntry(key, this.count + other.count);
     }
 }

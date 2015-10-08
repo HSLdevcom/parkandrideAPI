@@ -9,8 +9,9 @@ import com.jayway.restassured.response.Response;
 import fi.hsl.parkandride.back.Dummies;
 import fi.hsl.parkandride.core.domain.*;
 import fi.hsl.parkandride.core.service.*;
+import fi.hsl.parkandride.core.service.reporting.ReportParameters;
 import fi.hsl.parkandride.core.service.reporting.ReportServiceSupport;
-import fi.hsl.parkandride.front.ReportParameters;
+import fi.hsl.parkandride.core.service.reporting.RequestLogInterval;
 import fi.hsl.parkandride.front.UrlSchema;
 import junit.framework.AssertionFailedError;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
@@ -37,7 +38,6 @@ import static com.jayway.restassured.RestAssured.given;
 import static com.jayway.restassured.RestAssured.when;
 import static fi.hsl.parkandride.core.domain.CapacityType.*;
 import static fi.hsl.parkandride.core.domain.Role.*;
-import static fi.hsl.parkandride.core.service.reporting.ReportServiceSupport.FINNISH_DATETIME_FORMAT;
 import static fi.hsl.parkandride.front.ReportController.MEDIA_TYPE_EXCEL;
 import static fi.hsl.parkandride.front.RequestLoggingInterceptorAdapter.X_HSL_SOURCE;
 import static java.util.Arrays.asList;
@@ -54,6 +54,9 @@ public class ReportingITest extends AbstractIntegrationTest {
 
     private static final LocalDate BASE_DATE = LocalDate.now().minusMonths(1);
     private static final int FACILITYUSAGE_FIRST_TIME_COLUMN = 12;
+    private static final String MONTH_FORMAT = "M/yyyy";
+    private static final String DATE_FORMAT = "d.M.yyyy";
+    private static final String DATETIME_FORMAT = "d.M.yyyy HH:mm";
 
     @Inject Dummies dummies;
     @Inject FacilityService facilityService;
@@ -413,6 +416,7 @@ public class ReportingITest extends AbstractIntegrationTest {
     public void report_RequestLog_emptyReport() {
         generateDummyRequestLog();
 
+        // Defaults to DAY interval
         final ReportParameters params = baseParams(LocalDate.now().minusMonths(2));
         final Response whenPostingToReportUrl = postToReportUrl(params, "RequestLog", adminUser);
         // If this succeeds, the response was a valid excel file
@@ -423,29 +427,100 @@ public class ReportingITest extends AbstractIntegrationTest {
 
         final Sheet usages = workbook.getSheetAt(0);
         assertThat(getDataFromRow(usages, 0))
-                .containsExactly("Aika", "Lähde", "Polku", "Kutsujen määrä");
+                .containsExactly("Päivämäärä", "Lähde", "Polku", "Kutsujen määrä");
         assertThat(usages.getPhysicalNumberOfRows()).isEqualTo(1);
     }
 
     @Test
-    public void report_RequestLog_multipleRows() {
+    public void report_RequestLog_byHour() {
         final DateTime testDate = DateTime.now().withSecondOfMinute(0).withMinuteOfHour(0);
         generateDummyRequestLog();
 
         final ReportParameters params = baseParams(LocalDate.now());
+        params.requestLogInterval = RequestLogInterval.HOUR;
+
         final Response whenPostingToReportUrl = postToReportUrl(params, "RequestLog", adminUser);
         final Workbook workbook = readWorkbookFrom(whenPostingToReportUrl);
         final Sheet usages = workbook.getSheetAt(0);
+
+        // Headings
+        assertThat(getDataFromRow(usages, 0))
+                .containsExactly("Aika", "Lähde", "Polku", "Kutsujen määrä");
+
         // Check rows
         assertThat(usages.getPhysicalNumberOfRows()).isEqualTo(3);
         assertThat(findRowWithColumn(usages, 2, UrlSchema.FACILITY)).containsExactly(
-                testDate.toString(FINNISH_DATETIME_FORMAT),
+                testDate.toString(DATETIME_FORMAT),
                 messageSource.getMessage("reports.requestlog.unknownSource", null, new Locale("fi")),
                 UrlSchema.FACILITY,
                 "12"
         );
         assertThat(findRowWithColumn(usages, 2, UrlSchema.HUB)).containsExactly(
-                testDate.toString(FINNISH_DATETIME_FORMAT),
+                testDate.toString(DATETIME_FORMAT),
+                "#webkäli",
+                UrlSchema.HUB,
+                "8"
+        );
+    }
+
+    @Test
+    public void report_RequestLog_byDay() {
+        final DateTime testDate = DateTime.now().withSecondOfMinute(0).withMinuteOfHour(0);
+        generateDummyRequestLog();
+
+        final ReportParameters params = baseParams(LocalDate.now());
+        params.requestLogInterval = RequestLogInterval.DAY;
+
+        final Response whenPostingToReportUrl = postToReportUrl(params, "RequestLog", adminUser);
+        final Workbook workbook = readWorkbookFrom(whenPostingToReportUrl);
+        final Sheet usages = workbook.getSheetAt(0);
+
+        // Headings
+        assertThat(getDataFromRow(usages, 0))
+                .containsExactly("Päivämäärä", "Lähde", "Polku", "Kutsujen määrä");
+
+        // Check rows
+        assertThat(usages.getPhysicalNumberOfRows()).isEqualTo(3);
+        assertThat(findRowWithColumn(usages, 2, UrlSchema.FACILITY)).containsExactly(
+                testDate.toString(DATE_FORMAT),
+                messageSource.getMessage("reports.requestlog.unknownSource", null, new Locale("fi")),
+                UrlSchema.FACILITY,
+                "12"
+        );
+        assertThat(findRowWithColumn(usages, 2, UrlSchema.HUB)).containsExactly(
+                testDate.toString(DATE_FORMAT),
+                "#webkäli",
+                UrlSchema.HUB,
+                "8"
+        );
+    }
+
+    @Test
+    public void report_RequestLog_byMonth() {
+        final DateTime testDate = DateTime.now().withSecondOfMinute(0).withMinuteOfHour(0);
+        generateDummyRequestLog();
+
+        final ReportParameters params = baseParams(LocalDate.now());
+        params.requestLogInterval = RequestLogInterval.MONTH;
+
+        final Response whenPostingToReportUrl = postToReportUrl(params, "RequestLog", adminUser);
+        final Workbook workbook = readWorkbookFrom(whenPostingToReportUrl);
+        final Sheet usages = workbook.getSheetAt(0);
+
+        // Headings
+        assertThat(getDataFromRow(usages, 0))
+                .containsExactly("Kuukausi", "Lähde", "Polku", "Kutsujen määrä");
+
+        // Check rows
+        assertThat(usages.getPhysicalNumberOfRows()).isEqualTo(3);
+        assertThat(findRowWithColumn(usages, 2, UrlSchema.FACILITY)).containsExactly(
+                testDate.toString(MONTH_FORMAT),
+                messageSource.getMessage("reports.requestlog.unknownSource", null, new Locale("fi")),
+                UrlSchema.FACILITY,
+                "12"
+        );
+        assertThat(findRowWithColumn(usages, 2, UrlSchema.HUB)).containsExactly(
+                testDate.toString(MONTH_FORMAT),
                 "#webkäli",
                 UrlSchema.HUB,
                 "8"

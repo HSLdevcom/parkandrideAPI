@@ -4,7 +4,6 @@
 package fi.hsl.parkandride.core.service.reporting;
 
 import fi.hsl.parkandride.core.domain.User;
-import fi.hsl.parkandride.front.ReportParameters;
 
 public interface ReportService {
 

@@ -703,7 +703,12 @@
         },
         "RequestLog": {
             "name": "Rajapintakutsut",
-            "info": "Raportti kertoo summatietona REST-rajapintakutsujen määrän eri liikennelähteistä"
+            "info": "Raportti kertoo summatietona REST-rajapintakutsujen määrän eri liikennelähteistä",
+            "intervals": {
+                "hour": "tunneittain",
+                "day":  "päivittäin",
+                "month": "kuukausittain"
+            }
         }
     },
     "login": {

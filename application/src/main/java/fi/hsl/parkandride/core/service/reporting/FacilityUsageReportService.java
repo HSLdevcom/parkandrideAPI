@@ -11,7 +11,6 @@ import fi.hsl.parkandride.core.domain.Hub;
 import fi.hsl.parkandride.core.domain.Utilization;
 import fi.hsl.parkandride.core.domain.UtilizationSearch;
 import fi.hsl.parkandride.core.service.*;
-import fi.hsl.parkandride.front.ReportParameters;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 

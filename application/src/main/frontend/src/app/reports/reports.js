@@ -61,7 +61,7 @@
             FacilityUsage: ['dates', 'interval', 'operator', 'usages', 'capacityTypes', 'regions', 'hubs', 'facilities'],
             HubsAndFacilities: [],
             MaxUtilization: ['dates', 'operator', 'usages', 'capacityTypes', 'regions', 'hubs', 'facilities'],
-            RequestLog: ['dates']
+            RequestLog: ['dates', 'requestLogInterval']
         };
 
         this.showControl = function(controlName) {
@@ -88,6 +88,7 @@
             startDate: to_date(1),
             endDate: to_date($scope.currentDate.getDate()),
             interval: 60,
+            requestLogInterval: 'DAY',
             capacityTypes: ['CAR'],
             regions: [],
             hubs: [],

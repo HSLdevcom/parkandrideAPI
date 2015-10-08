@@ -137,6 +137,8 @@ public class DevHelper {
     private void deleteRequestLog() {
         batchingRequestLogService.clearLogStash();
         delete(QRequestLog.requestLog);
+        delete(QRequestLogSource.requestLogSource);
+        delete(QRequestLogUrl.requestLogUrl);
     }
 
     @TransactionalWrite

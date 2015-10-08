@@ -6,10 +6,16 @@ package fi.hsl.parkandride.core.domain;
 import org.joda.time.DateTime;
 
 import javax.annotation.Nonnull;
+import java.util.Comparator;
 import java.util.Objects;
 
-public class RequestLogKey {
+import static com.google.common.base.MoreObjects.toStringHelper;
 
+public class RequestLogKey implements Comparable<RequestLogKey> {
+
+    private static final Comparator<RequestLogKey> KEY_COMPARATOR = Comparator.comparing((RequestLogKey rlk) -> rlk.timestamp)
+            .thenComparing(rlk -> rlk.source)
+            .thenComparing(rlk -> rlk.urlPattern);
     public final String urlPattern;
     public final String source;
     public final DateTime timestamp;
@@ -52,5 +58,19 @@ public class RequestLogKey {
         result = 31 * result + (source != null ? source.hashCode() : 0);
         result = 31 * result + (timestamp != null ? timestamp.hashCode() : 0);
         return result;
+    }
+
+    @Override
+    public String toString() {
+        return toStringHelper(this)
+                .add("source", source)
+                .add("url", urlPattern)
+                .add("ts", timestamp)
+                .toString();
+    }
+
+    @Override
+    public int compareTo(RequestLogKey o) {
+        return KEY_COMPARATOR.compare(this, o);
     }
 }

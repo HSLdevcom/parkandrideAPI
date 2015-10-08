@@ -55,18 +55,19 @@ public class RequestLogDaoTest extends AbstractDaoTest {
 
     @Test
     public void testDao_increment() {
-        requestLogDao.batchIncrement(singletonMap(
-                new RequestLogKey(URL, SOURCE, TEST_DATE), 777l
-        ));
+        final DateTime otherDate = TEST_DATE.millisOfSecond().withMaximumValue();
 
-        requestLogDao.batchIncrement(singletonMap(
-                new RequestLogKey(URL, SOURCE, TEST_DATE.millisOfSecond().withMaximumValue()),
-                123l
-        ));
+        // These should be summed
+        requestLogDao.batchIncrement(singletonMap(new RequestLogKey(URL, SOURCE, TEST_DATE), 777l));
+        requestLogDao.batchIncrement(singletonMap(new RequestLogKey(URL, SOURCE, otherDate), 123l));
+
+        // These should not be summed to the same entry
+        requestLogDao.batchIncrement(singletonMap(new RequestLogKey(URL, SOURCE + "foo", TEST_DATE), 123l));
+        requestLogDao.batchIncrement(singletonMap(new RequestLogKey(URL + "foo", SOURCE, TEST_DATE), 123l));
 
         final List<RequestLogEntry> logEntries = getRelevantLogEntries();
 
-        assertThat(logEntries).hasSize(1);
+        assertThat(logEntries).hasSize(3);
         final RequestLogEntry entry = logEntries.get(0);
         assertThat(entry.key).isEqualTo(new RequestLogKey(URL, SOURCE, TEST_DATE_ROUNDED));
         assertThat(entry.count).isEqualTo(900l);

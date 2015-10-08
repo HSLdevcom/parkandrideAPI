@@ -29,13 +29,17 @@ public class QRequestLog extends RelationalPathSpatial<QRequestLog> {
 
     public final NumberPath<Long> count = createNumber("count", Long.class);
 
-    public final StringPath source = createString("source");
+    public final NumberPath<Long> sourceId = createNumber("sourceId", Long.class);
 
     public final DateTimePath<org.joda.time.DateTime> ts = createDateTime("ts", org.joda.time.DateTime.class);
 
-    public final StringPath url = createString("url");
+    public final NumberPath<Long> urlId = createNumber("urlId", Long.class);
 
-    public final com.mysema.query.sql.PrimaryKey<QRequestLog> constraintC = createPrimaryKey(source, ts, url);
+    public final com.mysema.query.sql.PrimaryKey<QRequestLog> constraintC = createPrimaryKey(sourceId, ts, urlId);
+
+    public final com.mysema.query.sql.ForeignKey<QRequestLogUrl> requestLogUrlId = createForeignKey(urlId, "ID");
+
+    public final com.mysema.query.sql.ForeignKey<QRequestLogSource> requestLogSourceId = createForeignKey(sourceId, "ID");
 
     public QRequestLog(String variable) {
         super(QRequestLog.class, forVariable(variable), "PUBLIC", "REQUEST_LOG");
@@ -59,9 +63,9 @@ public class QRequestLog extends RelationalPathSpatial<QRequestLog> {
 
     public void addMetadata() {
         addMetadata(count, ColumnMetadata.named("COUNT").withIndex(4).ofType(Types.BIGINT).withSize(19).notNull());
-        addMetadata(source, ColumnMetadata.named("SOURCE").withIndex(1).ofType(Types.VARCHAR).withSize(128).notNull());
+        addMetadata(sourceId, ColumnMetadata.named("SOURCE_ID").withIndex(1).ofType(Types.BIGINT).withSize(19).notNull());
         addMetadata(ts, ColumnMetadata.named("TS").withIndex(3).ofType(Types.TIMESTAMP).withSize(23).withDigits(10).notNull());
-        addMetadata(url, ColumnMetadata.named("URL").withIndex(2).ofType(Types.VARCHAR).withSize(128).notNull());
+        addMetadata(urlId, ColumnMetadata.named("URL_ID").withIndex(2).ofType(Types.BIGINT).withSize(19).notNull());
     }
 
 }

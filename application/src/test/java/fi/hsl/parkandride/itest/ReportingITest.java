@@ -11,18 +11,15 @@ import fi.hsl.parkandride.core.domain.*;
 import fi.hsl.parkandride.core.service.*;
 import fi.hsl.parkandride.core.service.reporting.ReportParameters;
 import fi.hsl.parkandride.core.service.reporting.ReportServiceSupport;
-import fi.hsl.parkandride.core.service.reporting.RequestLogInterval;
 import fi.hsl.parkandride.front.UrlSchema;
 import junit.framework.AssertionFailedError;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.*;
 import org.joda.time.DateTime;
-import org.joda.time.DateTimeUtils;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalTime;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.context.MessageSource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 
@@ -32,18 +29,13 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
-import java.util.NoSuchElementException;
 import java.util.stream.IntStream;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static com.jayway.restassured.RestAssured.given;
-import static com.jayway.restassured.RestAssured.when;
 import static fi.hsl.parkandride.core.domain.CapacityType.*;
 import static fi.hsl.parkandride.core.domain.Role.*;
 import static fi.hsl.parkandride.front.ReportController.MEDIA_TYPE_EXCEL;
-import static fi.hsl.parkandride.front.RequestLoggingInterceptorAdapter.X_HSL_SOURCE;
-import static fi.hsl.parkandride.front.UrlSchema.FACILITY;
-import static fi.hsl.parkandride.front.UrlSchema.HUB;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singleton;
 import static java.util.Spliterator.ORDERED;
@@ -57,14 +49,9 @@ import static org.joda.time.DateTimeConstants.*;
 public class ReportingITest extends AbstractIntegrationTest {
 
     private static final DateTime BASE_DATE_TIME = LocalDate.now().minusMonths(1).withDayOfMonth(15).toDateTime(LocalTime.parse("12:37"));
-    private static final DateTime ROUNDED_BASE_DATETIME = BASE_DATE_TIME.withMinuteOfHour(0);
     private static final LocalDate BASE_DATE = BASE_DATE_TIME.toLocalDate();
 
     private static final int FACILITYUSAGE_FIRST_TIME_COLUMN = 12;
-    private static final String MONTH_FORMAT = "M/yyyy";
-    private static final String DATE_FORMAT = "d.M.yyyy";
-    private static final String DATETIME_FORMAT = "d.M.yyyy HH:mm";
-    private static final String WEB_UI_SOURCE = "#webkäli";
 
     @Inject Dummies dummies;
     @Inject FacilityService facilityService;
@@ -73,8 +60,7 @@ public class ReportingITest extends AbstractIntegrationTest {
     @Inject OperatorService operatorService;
 
     @Inject TranslationService translationService;
-    @Inject BatchingRequestLogService batchingRequestLogService;
-    @Inject MessageSource messageSource;
+
     private Hub hub;
     private Facility facility1;
 
@@ -87,7 +73,6 @@ public class ReportingITest extends AbstractIntegrationTest {
     private User apiUser;
     private User apiUser2;
     private User adminUser;
-    private String unknownSource;
 
     private static Header authorization(String authToken) {
         return new Header(HttpHeaders.AUTHORIZATION, "Bearer " + authToken);
@@ -114,8 +99,6 @@ public class ReportingITest extends AbstractIntegrationTest {
         apiUser2 = devHelper.createOrUpdateUser(new NewUser(101L, "Ooppera_api", OPERATOR_API, facility2.operatorId, "Ooppera"));
 
         adminUser = devHelper.createOrUpdateUser(new NewUser(10L, "admin", ADMIN, null, "admin"));
-
-        unknownSource = messageSource.getMessage("reports.requestlog.unknownSource", null, new Locale("fi"));
     }
 
     // ---------------------
@@ -421,196 +404,6 @@ public class ReportingITest extends AbstractIntegrationTest {
     }
 
     // ---------------------
-    // REQUEST LOG REPORT
-    // ---------------------
-    @Test
-    public void report_RequestLog_emptyReport() {
-        generateDummyRequestLog();
-
-        // Defaults to DAY interval, the month is empty so report should be empty
-        final ReportParameters params = baseParams(BASE_DATE_TIME.minusMonths(2).toLocalDate());
-        final Response whenPostingToReportUrl = postToReportUrl(params, "RequestLog", adminUser);
-        // If this succeeds, the response was a valid excel file
-        final Workbook workbook = readWorkbookFrom(whenPostingToReportUrl);
-
-        assertThat(workbook.getSheetName(0)).isEqualTo("Rajapintakutsut");
-        assertThat(workbook.getSheetName(1)).isEqualTo("Selite");
-
-        final Sheet usages = workbook.getSheetAt(0);
-        assertThat(getDataFromRow(usages, 0))
-                .containsExactly("Päivämäärä", "Lähde", "Polku", "Kutsujen määrä");
-        assertThat(usages.getPhysicalNumberOfRows()).isEqualTo(1);
-    }
-
-    @Test
-    public void report_RequestLog_byHour() {
-        generateDummyRequestLog();
-
-        final ReportParameters params = baseParams(BASE_DATE_TIME.toLocalDate());
-        params.requestLogInterval = RequestLogInterval.HOUR;
-
-        final Response whenPostingToReportUrl = postToReportUrl(params, "RequestLog", adminUser);
-        final Workbook workbook = readWorkbookFrom(whenPostingToReportUrl);
-        final Sheet usages = workbook.getSheetAt(0);
-
-        // Headings
-        assertThat(getDataFromRow(usages, 0))
-                .containsExactly("Aika", "Lähde", "Polku", "Kutsujen määrä");
-
-        // Check rows
-        assertThat(getDataFromColumn(usages, 0)).containsExactly(
-                "Aika",
-                ROUNDED_BASE_DATETIME.toString(DATETIME_FORMAT),
-                ROUNDED_BASE_DATETIME.toString(DATETIME_FORMAT),
-                ROUNDED_BASE_DATETIME.toString(DATETIME_FORMAT),
-                ROUNDED_BASE_DATETIME.toString(DATETIME_FORMAT),
-                ROUNDED_BASE_DATETIME.plusHours(1).toString(DATETIME_FORMAT),
-                ROUNDED_BASE_DATETIME.plusDays(1).toString(DATETIME_FORMAT)
-        );
-        assertThat(getDataFromColumn(usages, 1)).containsExactly(
-                "Lähde", unknownSource, unknownSource, WEB_UI_SOURCE, WEB_UI_SOURCE, WEB_UI_SOURCE, WEB_UI_SOURCE
-        );
-        assertThat(getDataFromColumn(usages, 2)).containsExactly(
-                "Polku", FACILITY, HUB, FACILITY, HUB, FACILITY, FACILITY
-        );
-        assertThat(getDataFromColumn(usages, 3)).containsExactly(
-                "Kutsujen määrä", "12", "8", "12", "8", "12", "12"
-        );
-    }
-
-    @Test
-    public void report_RequestLog_byDay() {
-        generateDummyRequestLog();
-
-        final ReportParameters params = baseParams(BASE_DATE_TIME.toLocalDate());
-        params.requestLogInterval = RequestLogInterval.DAY;
-
-        final Response whenPostingToReportUrl = postToReportUrl(params, "RequestLog", adminUser);
-        final Workbook workbook = readWorkbookFrom(whenPostingToReportUrl);
-        final Sheet usages = workbook.getSheetAt(0);
-
-        // Headings
-        assertThat(getDataFromRow(usages, 0))
-                .containsExactly("Päivämäärä", "Lähde", "Polku", "Kutsujen määrä");
-
-        // Check rows, one less that in hourly report since the current+1 hour has been summed up with the current
-        printSheet(usages);
-        assertThat(getDataFromColumn(usages, 0)).containsExactly(
-                "Päivämäärä",
-                ROUNDED_BASE_DATETIME.toString(DATE_FORMAT),
-                ROUNDED_BASE_DATETIME.toString(DATE_FORMAT),
-                ROUNDED_BASE_DATETIME.toString(DATE_FORMAT),
-                ROUNDED_BASE_DATETIME.toString(DATE_FORMAT),
-                ROUNDED_BASE_DATETIME.plusDays(1).toString(DATE_FORMAT)
-        );
-        assertThat(getDataFromColumn(usages, 1)).containsExactly(
-                "Lähde", unknownSource, unknownSource, WEB_UI_SOURCE, WEB_UI_SOURCE, WEB_UI_SOURCE
-        );
-        assertThat(getDataFromColumn(usages, 2)).containsExactly(
-                "Polku", FACILITY, HUB, FACILITY, HUB, FACILITY
-        );
-        assertThat(getDataFromColumn(usages, 3)).containsExactly(
-                "Kutsujen määrä", "12", "8", "24", "8", "12"
-        );
-    }
-
-    @Test
-    public void report_RequestLog_byMonth() {
-        generateDummyRequestLog();
-
-        final ReportParameters params = baseParams(BASE_DATE_TIME.toLocalDate());
-        params.requestLogInterval = RequestLogInterval.MONTH;
-        params.startDate = BASE_DATE_TIME.minusMonths(1).withDayOfMonth(1).toString(ReportServiceSupport.FINNISH_DATE_FORMAT);
-
-        final Response whenPostingToReportUrl = postToReportUrl(params, "RequestLog", adminUser);
-        final Workbook workbook = readWorkbookFrom(whenPostingToReportUrl);
-        final Sheet usages = workbook.getSheetAt(0);
-
-        // Headings
-        assertThat(getDataFromRow(usages, 0))
-                .containsExactly("Kuukausi", "Lähde", "Polku", "Kutsujen määrä");
-
-        // Check rows
-        printSheet(usages);
-        assertThat(getDataFromColumn(usages, 0)).containsExactly(
-                "Kuukausi",
-                ROUNDED_BASE_DATETIME.minusMonths(1).toString(MONTH_FORMAT),
-                ROUNDED_BASE_DATETIME.toString(MONTH_FORMAT),
-                ROUNDED_BASE_DATETIME.toString(MONTH_FORMAT),
-                ROUNDED_BASE_DATETIME.toString(MONTH_FORMAT),
-                ROUNDED_BASE_DATETIME.toString(MONTH_FORMAT)
-        );
-        assertThat(getDataFromColumn(usages, 1)).containsExactly(
-                "Lähde", WEB_UI_SOURCE, unknownSource, unknownSource, WEB_UI_SOURCE, WEB_UI_SOURCE
-        );
-        assertThat(getDataFromColumn(usages, 2)).containsExactly(
-                "Polku", FACILITY, FACILITY, HUB, FACILITY, HUB
-        );
-        assertThat(getDataFromColumn(usages, 3)).containsExactly(
-                "Kutsujen määrä", "12", "12", "8", "36", "8"
-        );
-    }
-
-    @Test
-    public void report_RequestLog_emptyParams() {
-        final Response requestLog = whenPostingToReportUrl(new ReportParameters(), "RequestLog", adminUser);
-        requestLog.then().assertThat().statusCode(HttpStatus.BAD_REQUEST.value());
-    }
-
-    @Test
-    public void report_RequestLog_unauthorized() {
-        given().contentType(ContentType.JSON)
-                .accept(MEDIA_TYPE_EXCEL)
-                .header(authorization(devHelper.login(apiUser.username).token))
-                .body(new ReportParameters())
-                .when()
-                .post(UrlSchema.REPORT, "RequestLog")
-                .then()
-                .assertThat().statusCode(HttpStatus.FORBIDDEN.value());
-    }
-
-
-    private List<String> findRowWithColumn(Sheet usages, int columnNumber, String content) {
-        for (int i = 0; i < usages.getPhysicalNumberOfRows(); i++) {
-            final Row row = usages.getRow(i);
-            final List<String> dataFromRow = getDataFromRow(row);
-            if (dataFromRow.contains(content)) {
-                return dataFromRow;
-            }
-        }
-        throw new NoSuchElementException(String.format("Row with column at %d: <%s> not found", columnNumber, content));
-    }
-
-    private void generateDummyRequestLog() {
-        // Today
-        DateTimeUtils.setCurrentMillisFixed(BASE_DATE_TIME.getMillis());
-        IntStream.range(0, 12).forEach(i -> given().header(X_HSL_SOURCE, WEB_UI_SOURCE).when().get(UrlSchema.FACILITY, i));
-        IntStream.range(0, 8).forEach(i -> given().header(X_HSL_SOURCE, WEB_UI_SOURCE).when().get(UrlSchema.HUB, i));
-
-        // Without Source header
-        IntStream.range(0, 12).forEach(i -> when().get(UrlSchema.FACILITY, i));
-        IntStream.range(0, 8).forEach(i -> when().get(UrlSchema.HUB, i));
-
-        // An hour after now
-        DateTimeUtils.setCurrentMillisFixed(BASE_DATE_TIME.plusHours(1).getMillis());
-        IntStream.range(0, 12).forEach(i -> given().header(X_HSL_SOURCE, WEB_UI_SOURCE).when().get(UrlSchema.FACILITY, i));
-
-        // A day after now
-        DateTimeUtils.setCurrentMillisFixed(BASE_DATE_TIME.plusDays(1).getMillis());
-        IntStream.range(0, 12).forEach(i -> given().header(X_HSL_SOURCE, WEB_UI_SOURCE).when().get(UrlSchema.FACILITY, i));
-
-        // A month before now
-        DateTimeUtils.setCurrentMillisFixed(BASE_DATE_TIME.minusMonths(1).getMillis());
-        IntStream.range(0, 12).forEach(i -> given().header(X_HSL_SOURCE, WEB_UI_SOURCE).when().get(UrlSchema.FACILITY, i));
-
-        DateTimeUtils.setCurrentMillisSystem();
-
-        // Store the batch to database
-        batchingRequestLogService.updateRequestLogs();
-
-    }
-
-    // ---------------------
     // MISC. REPORT TESTS
     // ---------------------
 
@@ -748,14 +541,4 @@ public class ReportingITest extends AbstractIntegrationTest {
         return params;
     }
 
-
-    private void printSheet(Sheet sheet) {
-        final DataFormatter dataFormatter = new DataFormatter();
-        for (Row row : sheet) {
-            for (Cell cell : row) {
-                System.out.printf("%-30s", dataFormatter.formatCellValue(cell));
-            }
-            System.out.printf("%n");
-        }
-    }
 }

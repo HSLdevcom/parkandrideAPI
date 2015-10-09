@@ -17,6 +17,7 @@ import fi.hsl.parkandride.front.UrlSchema;
 import junit.framework.AssertionFailedError;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.*;
+import org.assertj.core.api.AutoCloseableSoftAssertions;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeUtils;
 import org.joda.time.LocalDate;
@@ -118,29 +119,32 @@ public class RequestLogITest extends AbstractIntegrationTest {
         final Workbook workbook = readWorkbookFrom(whenPostingToReportUrl);
         final Sheet sheet = workbook.getSheetAt(0);
 
-        // Headings
-        assertThat(getDataFromRow(sheet, 0))
-                .containsExactly("Aika", "Lähde", "Polku", "Kutsujen määrä");
+        try (AutoCloseableSoftAssertions softly = new AutoCloseableSoftAssertions()) {
+            // Headings
+            softly.assertThat(getDataFromRow(sheet, 0))
+                    .containsExactly("Aika", "Lähde", "Polku", "Kutsujen määrä");
 
-        // Check rows
-        assertThat(getDataFromColumn(sheet, 0)).containsExactly(
-                "Aika",
-                ROUNDED_BASE_DATETIME.toString(DATETIME_FORMAT),
-                ROUNDED_BASE_DATETIME.toString(DATETIME_FORMAT),
-                ROUNDED_BASE_DATETIME.toString(DATETIME_FORMAT),
-                ROUNDED_BASE_DATETIME.toString(DATETIME_FORMAT),
-                ROUNDED_BASE_DATETIME.plusHours(1).toString(DATETIME_FORMAT),
-                ROUNDED_BASE_DATETIME.plusDays(1).toString(DATETIME_FORMAT)
-        );
-        assertThat(getDataFromColumn(sheet, 1)).containsExactly(
-                "Lähde", unknownSource, unknownSource, WEB_UI_SOURCE, WEB_UI_SOURCE, WEB_UI_SOURCE, WEB_UI_SOURCE
-        );
-        assertThat(getDataFromColumn(sheet, 2)).containsExactly(
-                "Polku", FACILITY, HUB, FACILITY, HUB, FACILITY, FACILITY
-        );
-        assertThat(getDataFromColumn(sheet, 3)).containsExactly(
-                "Kutsujen määrä", "12", "8", "12", "8", "12", "12"
-        );
+            // Check rows
+            softly.assertThat(getDataFromColumn(sheet, 0)).containsExactly(
+                    "Aika",
+                    ROUNDED_BASE_DATETIME.toString(DATETIME_FORMAT),
+                    ROUNDED_BASE_DATETIME.toString(DATETIME_FORMAT),
+                    ROUNDED_BASE_DATETIME.toString(DATETIME_FORMAT),
+                    ROUNDED_BASE_DATETIME.toString(DATETIME_FORMAT),
+                    ROUNDED_BASE_DATETIME.plusHours(1).toString(DATETIME_FORMAT),
+                    ROUNDED_BASE_DATETIME.plusDays(1).toString(DATETIME_FORMAT)
+            );
+            softly.assertThat(getDataFromColumn(sheet, 1)).containsExactly(
+                    "Lähde", unknownSource, unknownSource, WEB_UI_SOURCE, WEB_UI_SOURCE, WEB_UI_SOURCE, WEB_UI_SOURCE
+            );
+            softly.assertThat(getDataFromColumn(sheet, 2)).containsExactly(
+                    "Polku", FACILITY, HUB, FACILITY, HUB, FACILITY, FACILITY
+            );
+            softly.assertThat(getDataFromColumn(sheet, 3)).containsExactly(
+                    "Kutsujen määrä", "12", "8", "12", "8", "12", "12"
+            );
+        }
+
     }
 
     @Test
@@ -154,28 +158,30 @@ public class RequestLogITest extends AbstractIntegrationTest {
         final Workbook workbook = readWorkbookFrom(whenPostingToReportUrl);
         final Sheet sheet = workbook.getSheetAt(0);
 
-        // Headings
-        assertThat(getDataFromRow(sheet, 0))
-                .containsExactly("Päivämäärä", "Lähde", "Polku", "Kutsujen määrä");
+        try (AutoCloseableSoftAssertions softly = new AutoCloseableSoftAssertions()) {
+            // Headings
+            softly.assertThat(getDataFromRow(sheet, 0))
+                    .containsExactly("Päivämäärä", "Lähde", "Polku", "Kutsujen määrä");
 
-        // Check rows, one less that in hourly report since the current+1 hour has been summed up with the current
-        assertThat(getDataFromColumn(sheet, 0)).containsExactly(
-                "Päivämäärä",
-                ROUNDED_BASE_DATETIME.toString(DATE_FORMAT),
-                ROUNDED_BASE_DATETIME.toString(DATE_FORMAT),
-                ROUNDED_BASE_DATETIME.toString(DATE_FORMAT),
-                ROUNDED_BASE_DATETIME.toString(DATE_FORMAT),
-                ROUNDED_BASE_DATETIME.plusDays(1).toString(DATE_FORMAT)
-        );
-        assertThat(getDataFromColumn(sheet, 1)).containsExactly(
-                "Lähde", unknownSource, unknownSource, WEB_UI_SOURCE, WEB_UI_SOURCE, WEB_UI_SOURCE
-        );
-        assertThat(getDataFromColumn(sheet, 2)).containsExactly(
-                "Polku", FACILITY, HUB, FACILITY, HUB, FACILITY
-        );
-        assertThat(getDataFromColumn(sheet, 3)).containsExactly(
-                "Kutsujen määrä", "12", "8", "24", "8", "12"
-        );
+            // Check rows, one less that in hourly report since the current+1 hour has been summed up with the current
+            softly.assertThat(getDataFromColumn(sheet, 0)).containsExactly(
+                    "Päivämäärä",
+                    ROUNDED_BASE_DATETIME.toString(DATE_FORMAT),
+                    ROUNDED_BASE_DATETIME.toString(DATE_FORMAT),
+                    ROUNDED_BASE_DATETIME.toString(DATE_FORMAT),
+                    ROUNDED_BASE_DATETIME.toString(DATE_FORMAT),
+                    ROUNDED_BASE_DATETIME.plusDays(1).toString(DATE_FORMAT)
+            );
+            softly.assertThat(getDataFromColumn(sheet, 1)).containsExactly(
+                    "Lähde", unknownSource, unknownSource, WEB_UI_SOURCE, WEB_UI_SOURCE, WEB_UI_SOURCE
+            );
+            softly.assertThat(getDataFromColumn(sheet, 2)).containsExactly(
+                    "Polku", FACILITY, HUB, FACILITY, HUB, FACILITY
+            );
+            softly.assertThat(getDataFromColumn(sheet, 3)).containsExactly(
+                    "Kutsujen määrä", "12", "8", "24", "8", "12"
+            );
+        }
     }
 
     @Test
@@ -190,28 +196,30 @@ public class RequestLogITest extends AbstractIntegrationTest {
         final Workbook workbook = readWorkbookFrom(whenPostingToReportUrl);
         final Sheet sheet = workbook.getSheetAt(0);
 
-        // Headings
-        assertThat(getDataFromRow(sheet, 0))
-                .containsExactly("Kuukausi", "Lähde", "Polku", "Kutsujen määrä");
+        try (AutoCloseableSoftAssertions softly = new AutoCloseableSoftAssertions()) {
+            // Headings
+            softly.assertThat(getDataFromRow(sheet, 0))
+                    .containsExactly("Kuukausi", "Lähde", "Polku", "Kutsujen määrä");
 
-        // Check rows
-        assertThat(getDataFromColumn(sheet, 0)).containsExactly(
-                "Kuukausi",
-                ROUNDED_BASE_DATETIME.minusMonths(1).toString(MONTH_FORMAT),
-                ROUNDED_BASE_DATETIME.toString(MONTH_FORMAT),
-                ROUNDED_BASE_DATETIME.toString(MONTH_FORMAT),
-                ROUNDED_BASE_DATETIME.toString(MONTH_FORMAT),
-                ROUNDED_BASE_DATETIME.toString(MONTH_FORMAT)
-        );
-        assertThat(getDataFromColumn(sheet, 1)).containsExactly(
-                "Lähde", WEB_UI_SOURCE, unknownSource, unknownSource, WEB_UI_SOURCE, WEB_UI_SOURCE
-        );
-        assertThat(getDataFromColumn(sheet, 2)).containsExactly(
-                "Polku", FACILITY, FACILITY, HUB, FACILITY, HUB
-        );
-        assertThat(getDataFromColumn(sheet, 3)).containsExactly(
-                "Kutsujen määrä", "12", "12", "8", "36", "8"
-        );
+            // Check rows
+            softly.assertThat(getDataFromColumn(sheet, 0)).containsExactly(
+                    "Kuukausi",
+                    ROUNDED_BASE_DATETIME.minusMonths(1).toString(MONTH_FORMAT),
+                    ROUNDED_BASE_DATETIME.toString(MONTH_FORMAT),
+                    ROUNDED_BASE_DATETIME.toString(MONTH_FORMAT),
+                    ROUNDED_BASE_DATETIME.toString(MONTH_FORMAT),
+                    ROUNDED_BASE_DATETIME.toString(MONTH_FORMAT)
+            );
+            softly.assertThat(getDataFromColumn(sheet, 1)).containsExactly(
+                    "Lähde", WEB_UI_SOURCE, unknownSource, unknownSource, WEB_UI_SOURCE, WEB_UI_SOURCE
+            );
+            softly.assertThat(getDataFromColumn(sheet, 2)).containsExactly(
+                    "Polku", FACILITY, FACILITY, HUB, FACILITY, HUB
+            );
+            softly.assertThat(getDataFromColumn(sheet, 3)).containsExactly(
+                    "Kutsujen määrä", "12", "12", "8", "36", "8"
+            );
+        }
     }
 
     @Test

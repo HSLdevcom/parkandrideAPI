@@ -15,10 +15,10 @@
         'showErrors'
     ]);
 
-    m.factory('userModal', function($modal, OperatorResource) {
+    m.factory('userModal', function($uibModal, OperatorResource) {
         return {
             open: function(user) {
-                return $modal.open({
+                return $uibModal.open({
                     templateUrl: 'users/userModal.tpl.html',
                     controller: 'UserModalCtrl as ctrl',
                     resolve: {

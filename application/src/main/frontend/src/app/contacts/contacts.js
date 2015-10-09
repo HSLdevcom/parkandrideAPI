@@ -34,9 +34,9 @@
         };
     });
 
-    m.factory("editContact", function($modal, ContactResource, Session) {
+    m.factory("editContact", function($uibModal, ContactResource, Session) {
         return function(contact, create) {
-            var modalInstance = $modal.open({
+            var modalInstance = $uibModal.open({
                 templateUrl: 'contacts/contactEdit.tpl.html',
                 controller: 'ContactEditCtrl as contactEditCtrl',
                 resolve: {

@@ -13,10 +13,10 @@
         'parkandride.i18n'
     ]);
 
-    m.factory('userPasswordModal', function($modal) {
+    m.factory('userPasswordModal', function($uibModal) {
         return {
             open: function(user) {
-                return $modal.open({
+                return $uibModal.open({
                     templateUrl: 'users/userPasswordModal.tpl.html',
                     controller: 'UserPasswordModalCtrl as ctrl',
                     resolve: {

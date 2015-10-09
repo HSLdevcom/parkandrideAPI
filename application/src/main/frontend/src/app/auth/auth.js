@@ -126,9 +126,9 @@
         };
     });
 
-    m.factory("loginPrompt", function ($modal) {
+    m.factory("loginPrompt", function ($uibModal) {
         return function() {
-            var modalInstance = $modal.open({
+            var modalInstance = $uibModal.open({
                 templateUrl: 'auth/login.tpl.html',
                 controller: 'LoginController',
                 backdrop: 'static'

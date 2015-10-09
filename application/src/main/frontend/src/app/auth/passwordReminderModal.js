@@ -9,10 +9,10 @@
         'parkandride.i18n'
     ]);
 
-    m.factory('passwordReminderModal', function($modal) {
+    m.factory('passwordReminderModal', function($uibModal) {
         return {
             open: function(passwordRemainingDays) {
-                return $modal.open({
+                return $uibModal.open({
                     templateUrl: 'auth/passwordReminderModal.tpl.html',
                     controller: 'PasswordReminderModalCtrl as ctrl',
                     resolve: {

@@ -6,7 +6,7 @@
     "angular-mocks": "~1.4",
     "angular-i18n": "~1.4",
     "angular-sanitize": "~1.4",
-    "angular-bootstrap": "~0.11.0",
+    "angular-bootstrap": "~0.14.0",
     "angular-ui-router": "~0.2",
     "angular-ui-utils": "src0.1.1",
     "angular-ui-select": "0.10.0",

@@ -9,10 +9,7 @@ import fi.hsl.parkandride.FeatureProfile;
 import fi.hsl.parkandride.back.sql.*;
 import fi.hsl.parkandride.core.back.UserRepository;
 import fi.hsl.parkandride.core.domain.*;
-import fi.hsl.parkandride.core.service.AuthenticationService;
-import fi.hsl.parkandride.core.service.TransactionalRead;
-import fi.hsl.parkandride.core.service.TransactionalWrite;
-import fi.hsl.parkandride.core.service.UserService;
+import fi.hsl.parkandride.core.service.*;
 import org.springframework.context.annotation.Profile;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
@@ -41,6 +38,8 @@ public class DevHelper {
 
     @Resource AuthenticationService authenticationService;
 
+    @Resource BatchingRequestLogService batchingRequestLogService;
+
     @Inject
     public DevHelper(PostgresQueryFactory queryFactory, JdbcTemplate jdbcTemplate) {
         this.queryFactory = queryFactory;
@@ -54,6 +53,7 @@ public class DevHelper {
         deleteContacts();
         deleteUsers();
         deleteOperators();
+        deleteRequestLog();
     }
 
     @TransactionalWrite
@@ -131,6 +131,14 @@ public class DevHelper {
     public void deleteHubs() {
         delete(QHubFacility.hubFacility, QHub.hub);
         resetHubSequence();
+    }
+
+    @TransactionalWrite
+    private void deleteRequestLog() {
+        batchingRequestLogService.clearLogStash();
+        delete(QRequestLog.requestLog);
+        delete(QRequestLogSource.requestLogSource);
+        delete(QRequestLogUrl.requestLogUrl);
     }
 
     @TransactionalWrite

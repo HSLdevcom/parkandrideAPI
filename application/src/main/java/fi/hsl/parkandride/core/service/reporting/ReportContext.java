@@ -1,4 +1,4 @@
-package fi.hsl.parkandride.core.service;
+package fi.hsl.parkandride.core.service.reporting;
 
 import fi.hsl.parkandride.core.domain.*;
 import org.geolatte.geom.Geometry;

@@ -1,19 +1,19 @@
 // Copyright © 2015 HSL <https://www.hsl.fi>
 // This program is dual-licensed under the EUPL v1.2 and AGPLv3 licenses.
 
-package fi.hsl.parkandride.core.service;
+package fi.hsl.parkandride.core.service.reporting;
 
 import com.mysema.commons.lang.CloseableIterator;
 import fi.hsl.parkandride.back.RegionRepository;
 import fi.hsl.parkandride.core.back.UtilizationRepository;
 import fi.hsl.parkandride.core.domain.*;
-import fi.hsl.parkandride.core.service.Excel.TableColumn;
-import fi.hsl.parkandride.front.ReportParameters;
+import fi.hsl.parkandride.core.service.*;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 
 import static fi.hsl.parkandride.core.domain.Region.UNKNOWN_REGION;
 import static java.lang.Math.min;
@@ -85,20 +85,21 @@ public class MaxUtilizationReportService extends AbstractReportService {
         sort(rows);
 
         Excel excel = new Excel();
-        List<TableColumn<MaxUtilizationReportRow>> columns = asList(
-                tcol("reports.utilization.col.hub", (MaxUtilizationReportRow r) -> r.hub.name),
-                tcol("reports.utilization.col.region", (MaxUtilizationReportRow r) -> ctx.regionByHubId.getOrDefault(r.key.targetId, UNKNOWN_REGION).name),
-                tcol("reports.utilization.col.operator", (MaxUtilizationReportRow r) -> r.operatorNames),
-                tcol("reports.utilization.col.usage", (MaxUtilizationReportRow r) -> translationService.translate(r.key.usage)),
-                tcol("reports.utilization.col.capacityType", (MaxUtilizationReportRow r) -> translationService.translate(r.key.capacityType)),
-                tcol("reports.utilization.col.status", (MaxUtilizationReportRow r) -> translationService.translate(r.key.facility.status)),
-                tcol("reports.utilization.col.totalCapacity", (MaxUtilizationReportRow r) -> r.totalCapacity),
-                tcol("reports.utilization.col.dayType", (MaxUtilizationReportRow r) -> translationService.translate(r.key.dayType)),
-                tcol("reports.utilization.col.averageMaxUsage", (MaxUtilizationReportRow r) -> r.average, excel.percent)
+        Function<MaxUtilizationReportRow,Object> valFn = (MaxUtilizationReportRow r) -> r.average;
+        List<Excel.TableColumn<MaxUtilizationReportRow>> columns = asList(
+                excelUtil.tcol("reports.utilization.col.hub", (MaxUtilizationReportRow r) -> r.hub.name),
+                excelUtil.tcol("reports.utilization.col.region", (MaxUtilizationReportRow r) -> ctx.regionByHubId.getOrDefault(r.key.targetId, UNKNOWN_REGION).name),
+                excelUtil.tcol("reports.utilization.col.operator", (MaxUtilizationReportRow r) -> r.operatorNames),
+                excelUtil.tcol("reports.utilization.col.usage", (MaxUtilizationReportRow r) -> translationService.translate(r.key.usage)),
+                excelUtil.tcol("reports.utilization.col.capacityType", (MaxUtilizationReportRow r) -> translationService.translate(r.key.capacityType)),
+                excelUtil.tcol("reports.utilization.col.status", (MaxUtilizationReportRow r) -> translationService.translate(r.key.facility.status)),
+                excelUtil.tcol("reports.utilization.col.totalCapacity", (MaxUtilizationReportRow r) -> r.totalCapacity),
+                excelUtil.tcol("reports.utilization.col.dayType", (MaxUtilizationReportRow r) -> translationService.translate(r.key.dayType)),
+                excelUtil.tcol("reports.utilization.col.averageMaxUsage", valFn, excel.percent)
         );
-        excel.addSheet(getMessage("reports.utilization.sheets.summary"), rows, columns);
-        excel.addSheet(getMessage("reports.utilization.sheets.legend"),
-                getMessage("reports.utilization.legend").split("\n"));
+        excel.addSheet(excelUtil.getMessage("reports.utilization.sheets.summary"), rows, columns);
+        excel.addSheet(excelUtil.getMessage("reports.utilization.sheets.legend"),
+                excelUtil.getMessage("reports.utilization.legend").split("\n"));
 
         return excel;
     }

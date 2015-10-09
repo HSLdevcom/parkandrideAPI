@@ -700,6 +700,15 @@
         "HubsAndFacilities": {
             "name": "Alueiden ja pysäköintilaitosten perustiedot",
             "info": "Raporttiin haetaan kaikkien järjestelmään tallennetut alueiden ja pysäköintipaikkojen perustiedot."
+        },
+        "RequestLog": {
+            "name": "Rajapintakutsut",
+            "info": "Raportti kertoo summatietona REST-rajapintakutsujen määrän eri liikennelähteistä",
+            "intervals": {
+                "hour": "tunneittain",
+                "day":  "päivittäin",
+                "month": "kuukausittain"
+            }
         }
     },
     "login": {

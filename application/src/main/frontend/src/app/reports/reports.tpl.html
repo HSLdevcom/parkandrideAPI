@@ -31,6 +31,11 @@
         <input type="radio" name="reportType" ng-model="reportType" ng-value="'HubsAndFacilities'"/>
         {{ "reports.HubsAndFacilities.name" | translate }}
     </label>
+    <br>
+    <label class="radiobutton-label" title="{{ 'reports.RequestLog.info' | translate }}">
+        <input type="radio" name="reportType" ng-model="reportType" ng-value="'RequestLog'"/>
+        {{ "reports.RequestLog.name" | translate }}
+    </label>
 </div>
 
 <div class="row smallMarginBottom">
@@ -40,7 +45,7 @@
     </p></div>
 </div>
 
-<div ng-show="reportType != 'HubsAndFacilities'">
+<div ng-show="ctrl.showControl('dates')">
     <div class="row">
         <label>{{ "reports.label.range" | translate }} *</label>
     </div>
@@ -67,7 +72,7 @@
     </div>
 </div>
 
-<div ng-show="reportType == 'FacilityUsage'">
+<div ng-show="ctrl.showControl('interval')">
   <div class="row">
     <label>{{ "reports.label.interval" | translate }}</label>
   </div>
@@ -86,7 +91,24 @@
   </div>
 </div>
 
-<div ng-show="reportType != 'HubsAndFacilities'">
+<div ng-show="ctrl.showControl('requestLogInterval')">
+    <div class="row">
+        <label>{{ "reports.label.interval" | translate }}</label>
+    </div>
+    <div class="row">
+        <div class="column3 first-column">
+            <div class="form-group wdRequestLogInterval">
+                <select class="form-control dateInput wdInterval" ng-model="report.requestLogInterval">
+                    <option value="HOUR"  translate="reports.RequestLog.intervals.hour"></option>
+                    <option value="DAY"   translate="reports.RequestLog.intervals.day"></option>
+                    <option value="MONTH" translate="reports.RequestLog.intervals.month"></option>
+                </select>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div ng-show="ctrl.showControl('operator')">
   <div class="row">
     <label>{{ "reports.label.operator" | translate }}</label>
   </div>
@@ -108,7 +130,7 @@
   </div>
 </div>
 
-<div ng-show="reportType != 'HubsAndFacilities'">
+<div ng-show="ctrl.showControl('usages')">
     <div class="row">
         <label>{{ "reports.label.usage" | translate }}</label>
     </div>
@@ -127,7 +149,7 @@
     </div>
 </div>
 
-<div ng-show="reportType != 'HubsAndFacilities'">
+<div ng-show="ctrl.showControl('capacityTypes')">
     <div class="row">
         <label>{{ "reports.label.capacity" | translate }}</label>
     </div>
@@ -146,7 +168,7 @@
     </div>
 </div>
 
-<div ng-show="reportType != 'HubsAndFacilities'">
+<div ng-show="ctrl.showControl('regions')">
     <div class="row">
         <label>{{ "reports.label.region" | translate }}</label>
     </div>
@@ -164,7 +186,7 @@
     </div>
 </div>
 
-<div ng-show="reportType != 'HubsAndFacilities'">
+<div ng-show="ctrl.showControl('hubs')">
     <div class="row">
         <label>{{ "reports.label.hub" | translate }}</label>
     </div>
@@ -184,7 +206,7 @@
     </div>
 </div>
 
-<div ng-show="reportType != 'HubsAndFacilities'">
+<div ng-show="ctrl.showControl('facilities')">
     <div class="row">
         <label>{{ "reports.label.facility" | translate }}</label>
     </div>

@@ -4,7 +4,8 @@
 package fi.hsl.parkandride.front;
 
 import fi.hsl.parkandride.core.domain.User;
-import fi.hsl.parkandride.core.service.ReportService;
+import fi.hsl.parkandride.core.service.reporting.ReportParameters;
+import fi.hsl.parkandride.core.service.reporting.ReportService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;

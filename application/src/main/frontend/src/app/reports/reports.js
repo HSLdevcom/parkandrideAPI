@@ -57,6 +57,17 @@
         $scope.usages           = schema.usages.values;
         var contentType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
 
+        var controls = {
+            FacilityUsage: ['dates', 'interval', 'operator', 'usages', 'capacityTypes', 'regions', 'hubs', 'facilities'],
+            HubsAndFacilities: [],
+            MaxUtilization: ['dates', 'operator', 'usages', 'capacityTypes', 'regions', 'hubs', 'facilities'],
+            RequestLog: ['dates', 'requestLogInterval']
+        };
+
+        this.showControl = function(controlName) {
+            return controls[$scope.reportType].indexOf(controlName) !== -1;
+        };
+
         //
         // UTILS
         //
@@ -77,6 +88,7 @@
             startDate: to_date(1),
             endDate: to_date($scope.currentDate.getDate()),
             interval: 60,
+            requestLogInterval: 'DAY',
             capacityTypes: ['CAR'],
             regions: [],
             hubs: [],
@@ -175,14 +187,15 @@
         //
         // REPORT GENERATION
         //
-        $scope.generate = function (type, parameters) {
+        $scope.generate = function (type, paramsIn) {
+            var parameters = _.assign({}, paramsIn);
             if (!parameters) {
                 parameters = {};
             }
             document.documentElement.classList.add('wait');
             //report name generation
             var name = $translate.instant('reports.' + type + '.name');
-            if (type == 'FacilityUsage' || type == 'MaxUtilization') {
+            if (type === 'FacilityUsage' || type === 'MaxUtilization' || type === 'RequestLog') {
                 var date = date_toArray(parameters.startDate);
                 name += '_' + date[2] + ("0" + date[1]).slice(-2) + ("0" + date[0]).slice(-2);
                 if (!/^\s*$/.test(parameters.endDate)) {
@@ -190,7 +203,7 @@
                     name += '-' + date[2] + ("0" + date[1]).slice(-2) + ("0" + date[0]).slice(-2);
                 }
             }
-            else if (type == 'HubsAndFacilities') {
+            else if (type === 'HubsAndFacilities') {
                 var d = new Date();
                 name += '_' + d.getFullYear() + ("0" + (d.getMonth() + 1)).slice(-2) + ("0" + d.getDate()).slice(-2);
             }

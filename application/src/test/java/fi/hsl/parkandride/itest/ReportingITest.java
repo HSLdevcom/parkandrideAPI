@@ -9,16 +9,15 @@ import com.jayway.restassured.response.Response;
 import fi.hsl.parkandride.back.Dummies;
 import fi.hsl.parkandride.core.domain.*;
 import fi.hsl.parkandride.core.service.*;
-import fi.hsl.parkandride.front.ReportParameters;
+import fi.hsl.parkandride.core.service.reporting.ReportParameters;
+import fi.hsl.parkandride.core.service.reporting.ReportServiceSupport;
 import fi.hsl.parkandride.front.UrlSchema;
 import junit.framework.AssertionFailedError;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
-import org.apache.poi.ss.usermodel.DataFormatter;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.apache.poi.ss.usermodel.*;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
+import org.joda.time.LocalTime;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.http.HttpHeaders;
@@ -49,7 +48,9 @@ import static org.joda.time.DateTimeConstants.*;
 
 public class ReportingITest extends AbstractIntegrationTest {
 
-    private static final LocalDate BASE_DATE = LocalDate.now().minusMonths(1);
+    private static final DateTime BASE_DATE_TIME = LocalDate.now().minusMonths(1).withDayOfMonth(15).toDateTime(LocalTime.parse("12:37"));
+    private static final LocalDate BASE_DATE = BASE_DATE_TIME.toLocalDate();
+
     private static final int FACILITYUSAGE_FIRST_TIME_COLUMN = 12;
 
     @Inject Dummies dummies;
@@ -59,6 +60,7 @@ public class ReportingITest extends AbstractIntegrationTest {
     @Inject OperatorService operatorService;
 
     @Inject TranslationService translationService;
+
     private Hub hub;
     private Facility facility1;
 
@@ -434,7 +436,7 @@ public class ReportingITest extends AbstractIntegrationTest {
 
     @Test
     public void report_withConflictingDates_resultsInBadRequest() {
-        // No params given -> IllegalArgumentException from fi.hsl.parkandride.core.service.FacilityUsageReportService
+        // No params given -> IllegalArgumentException from fi.hsl.parkandride.core.service.reporting.FacilityUsageReportService
         final ReportParameters params = baseParams();
         params.interval = 100;
         params.startDate = BASE_DATE.toString(ReportServiceSupport.FINNISH_DATE_PATTERN);
@@ -482,13 +484,7 @@ public class ReportingITest extends AbstractIntegrationTest {
     }
 
     private Response postToReportUrl(ReportParameters params, String reportType, User user) {
-        final String authToken = devHelper.login(user.username).token;
-        final Response whenPostingToReportUrl = given().contentType(ContentType.JSON)
-                .accept(MEDIA_TYPE_EXCEL)
-                .header(authorization(authToken))
-                .body(params)
-                .when()
-                .post(UrlSchema.REPORT, reportType);
+        final Response whenPostingToReportUrl = whenPostingToReportUrl(params, reportType, user);
         whenPostingToReportUrl
                 .then()
                 .assertThat().statusCode(HttpStatus.OK.value())
@@ -496,9 +492,19 @@ public class ReportingITest extends AbstractIntegrationTest {
         return whenPostingToReportUrl;
     }
 
+    private Response whenPostingToReportUrl(ReportParameters params, String reportType, User user) {
+        final String authToken = devHelper.login(user.username).token;
+        return given().contentType(ContentType.JSON)
+                .accept(MEDIA_TYPE_EXCEL)
+                .header(authorization(authToken))
+                .body(params)
+                .when()
+                .post(UrlSchema.REPORT, reportType);
+    }
+
     private Workbook readWorkbookFrom(Response whenPostingToReportUrl) {
-        try {
-            return WorkbookFactory.create(new ByteArrayInputStream(whenPostingToReportUrl.asByteArray()));
+        try (ByteArrayInputStream bais = new ByteArrayInputStream(whenPostingToReportUrl.asByteArray())){
+            return WorkbookFactory.create(bais);
         } catch (IOException | InvalidFormatException e) {
             e.printStackTrace();
             throw new AssertionFailedError(e.getMessage());
@@ -506,8 +512,12 @@ public class ReportingITest extends AbstractIntegrationTest {
     }
 
     private List<String> getDataFromRow(Sheet sheet, int rownum) {
+        return getDataFromRow(sheet.getRow(rownum));
+    }
+
+    private List<String> getDataFromRow(Row row) {
         final DataFormatter dataFormatter = new DataFormatter();
-        return stream(spliteratorUnknownSize(sheet.getRow(rownum).cellIterator(), ORDERED), false)
+        return stream(spliteratorUnknownSize(row.cellIterator(), ORDERED), false)
                 .map(cell -> dataFormatter.formatCellValue(cell))
                 .collect(toList());
     }
@@ -521,9 +531,14 @@ public class ReportingITest extends AbstractIntegrationTest {
     }
 
     private static ReportParameters baseParams() {
+        return baseParams(BASE_DATE);
+    }
+
+    private static ReportParameters baseParams(LocalDate referenceDate) {
         final ReportParameters params = new ReportParameters();
-        params.startDate = BASE_DATE.dayOfMonth().withMinimumValue().toString(ReportServiceSupport.FINNISH_DATE_PATTERN);
-        params.endDate = BASE_DATE.dayOfMonth().withMaximumValue().toString(ReportServiceSupport.FINNISH_DATE_PATTERN);
+        params.startDate = referenceDate.dayOfMonth().withMinimumValue().toString(ReportServiceSupport.FINNISH_DATE_PATTERN);
+        params.endDate = referenceDate.dayOfMonth().withMaximumValue().toString(ReportServiceSupport.FINNISH_DATE_PATTERN);
         return params;
     }
+
 }

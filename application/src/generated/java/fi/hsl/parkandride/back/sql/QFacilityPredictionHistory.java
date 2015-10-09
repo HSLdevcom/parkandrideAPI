@@ -1,16 +1,19 @@
 package fi.hsl.parkandride.back.sql;
 
-import com.mysema.query.sql.ColumnMetadata;
-import com.mysema.query.sql.spatial.RelationalPathSpatial;
-import com.mysema.query.types.Path;
-import com.mysema.query.types.PathMetadata;
-import com.mysema.query.types.path.DateTimePath;
-import com.mysema.query.types.path.NumberPath;
+import static com.mysema.query.types.PathMetadataFactory.*;
 
+import com.mysema.query.types.path.*;
+
+import com.mysema.query.types.PathMetadata;
 import javax.annotation.Generated;
+import com.mysema.query.types.Path;
+
+import com.mysema.query.sql.ColumnMetadata;
 import java.sql.Types;
 
-import static com.mysema.query.types.PathMetadataFactory.forVariable;
+import com.mysema.query.sql.spatial.RelationalPathSpatial;
+
+import com.mysema.query.spatial.path.*;
 
 
 

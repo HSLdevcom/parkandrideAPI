@@ -1,13 +1,13 @@
 // Copyright © 2015 HSL <https://www.hsl.fi>
 // This program is dual-licensed under the EUPL v1.2 and AGPLv3 licenses.
 
-package fi.hsl.parkandride.core.util;
+package fi.hsl.parkandride.util;
 
 import fi.hsl.parkandride.core.service.ValidationException;
 import org.assertj.core.api.AbstractAssert;
 import org.junit.Test;
 
-import static fi.hsl.parkandride.core.util.ArgumentValidator.validate;
+import static fi.hsl.parkandride.util.ArgumentValidator.validate;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class ArgumentValidatorTest {

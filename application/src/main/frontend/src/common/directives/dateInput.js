@@ -10,29 +10,27 @@
         format: 'd.M.yyyy'
     });
 
-    m.config(function(datepickerConfig, datepickerPopupConfig, dateInputConfig) {
-        _.extend(datepickerConfig, {
-            startingDay: 1,
-            yearRange: 5,
-            minDate: new Date(2010, 0, 1, 0, 0, 0)
-        });
+    m.constant('datepickerConfig', {
+        startingDay: 1,
+        yearRange: 5,
+        minDate: new Date(2010, 0, 1, 0, 0, 0)
+    });
 
-        _.extend(datepickerPopupConfig, {
-            showButtonBar: false,
-            datepickerPopup: dateInputConfig.format
-        });
+    m.constant('datepickerPopupConfig', {
+        showButtonBar: false,
+        datepickerPopup: 'd.M.yyyy'
     });
 
     /**
      * Formats and parses dates
      */
-    m.directive('dateInput', function(dateFilter, dateInputConfig, dateParser) {
+    m.directive('dateInput', function(dateFilter, dateInputConfig, uibDateParser) {
         return {
             require: 'ngModel',
             priority: 2,
             link: function(scope, elem, attr, ngModel) {
                 function parseDate(val) {
-                    return dateParser.parse(val, dateInputConfig.format);
+                    return uibDateParser.parse(val, dateInputConfig.format);
                 }
                 // Replace the formatters and parsers of datepicker-popup for good
                 ngModel.$formatters = [function(val) {

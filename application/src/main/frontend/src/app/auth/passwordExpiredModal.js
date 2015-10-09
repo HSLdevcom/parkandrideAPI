@@ -13,10 +13,10 @@
         'parkandride.i18n'
     ]);
 
-    m.factory('passwordExpiredModal', function($modal) {
+    m.factory('passwordExpiredModal', function($uibModal) {
         return {
             open: function(login) {
-                return $modal.open({
+                return $uibModal.open({
                     templateUrl: 'auth/passwordExpiredModal.tpl.html',
                     controller: 'PasswordExpiredModalCtrl as ctrl',
                     resolve: {

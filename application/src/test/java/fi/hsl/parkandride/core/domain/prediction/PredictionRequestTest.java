@@ -3,7 +3,7 @@
 
 package fi.hsl.parkandride.core.domain.prediction;
 
-import org.assertj.core.api.ObjectAssert;
+import org.assertj.core.api.AbstractComparableAssert;
 import org.joda.time.Duration;
 import org.junit.Test;
 
@@ -44,7 +44,7 @@ public class PredictionRequestTest {
         assertRelativeTime("0100").isEqualTo(standardMinutes(100));
     }
 
-    public static ObjectAssert<Duration> assertRelativeTime(String relativeTime) {
+    public static AbstractComparableAssert<?, Duration> assertRelativeTime(String relativeTime) {
         return assertThat(PredictionRequest.parseRelativeTime(relativeTime)).as(relativeTime);
     }
 }

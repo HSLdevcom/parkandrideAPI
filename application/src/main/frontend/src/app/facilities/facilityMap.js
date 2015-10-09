@@ -65,7 +65,7 @@
     ol.inherits(CancelControl, ol.control.Control);
 
 
-    m.directive('facilityMap', function(MapService, $modal, Sequence, FacilityResource) {
+    m.directive('facilityMap', function(MapService, $uibModal, Sequence, FacilityResource) {
         return {
             restrict: 'E',
             require: 'ngModel',
@@ -140,7 +140,7 @@
                     return null;
                 };
                 var openPort = function(port, mode) {
-                    var modalInstance = $modal.open({
+                    var modalInstance = $uibModal.open({
                         templateUrl: (mode === 'view' ? 'facilities/portView.tpl.html' : 'facilities/portEdit.tpl.html'),
                         controller: 'PortModalCtrl',
                         resolve: {

@@ -52,7 +52,7 @@
     <div class="row">
         <div class="column2 first-column">
             <div class="form-group">
-                <input date-input datepicker-popup show-errors readonly
+                <input date-input uib-datepicker-popup show-errors readonly
                        is-open="startDateOpen" ng-click="startDateOpen = true"
                        name="startDate"
                        class="form-control dateInput wdStartDate"
@@ -60,7 +60,7 @@
                        ng-model="report.startDate"
                        ng-required="reportType != 'HubsAndFacilities'"/>
                 -
-                <input date-input datepicker-popup show-errors readonly
+                <input date-input uib-datepicker-popup show-errors readonly
                        is-open="endDateOpen" ng-click="endDateOpen = true"
                        name="endDate"
                        class="form-control dateInput wdEndDate"
@@ -79,12 +79,7 @@
   <div class="row">
     <div class="column3 first-column">
       <div class="form-group wdInterval">
-        <select class="form-control dateInput wdInterval" ng-model="report.interval" convert-to-number>
-          <option value="5">5 min</option>
-          <option value="10">10 min</option>
-          <option value="15">15 min</option>
-          <option value="30">30 min</option>
-          <option value="60">60 min</option>
+        <select class="form-control dateInput wdInterval" ng-model="report.interval" name="interval" ng-options="val + ' min' for val in [5,10,15,30,60]">
         </select>
       </div>
     </div>

@@ -14,6 +14,7 @@
         $translateProvider.preferredLanguage('fi');
         $translateProvider.useMissingTranslationHandler("missingTranslation");
         $translateProvider.usePostCompiling(true);
+        $translateProvider.useSanitizeValueStrategy('sanitizeParameters');
     });
 
     m.factory('missingTranslation', function($log) {

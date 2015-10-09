@@ -30,9 +30,9 @@
         };
     });
 
-    m.factory("editOperator", function($modal, OperatorResource) {
+    m.factory("editOperator", function($uibModal, OperatorResource) {
         return function(operator, create) {
-            var modalInstance = $modal.open({
+            var modalInstance = $uibModal.open({
                 templateUrl: 'operators/operatorEdit.tpl.html',
                 controller: 'OperatorEditCtrl as operatorEditCtrl',
                 resolve: {

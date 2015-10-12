@@ -1,18 +1,19 @@
 package fi.hsl.parkandride.back.sql;
 
-import com.querydsl.core.types.Path;
-import com.querydsl.core.types.PathMetadata;
-import com.querydsl.core.types.dsl.NumberPath;
-import com.querydsl.core.types.dsl.StringPath;
-import com.querydsl.spatial.PointPath;
-import com.querydsl.sql.ColumnMetadata;
-import com.querydsl.sql.spatial.RelationalPathSpatial;
-import org.geolatte.geom.Point;
+import static com.querydsl.core.types.PathMetadataFactory.*;
 
+import com.querydsl.core.types.dsl.*;
+
+import com.querydsl.core.types.PathMetadata;
 import javax.annotation.Generated;
+import com.querydsl.core.types.Path;
+
+import com.querydsl.sql.ColumnMetadata;
 import java.sql.Types;
 
-import static com.querydsl.core.types.PathMetadataFactory.forVariable;
+import com.querydsl.sql.spatial.RelationalPathSpatial;
+
+import com.querydsl.spatial.*;
 
 
 
@@ -34,7 +35,7 @@ public class QHub extends RelationalPathSpatial<QHub> {
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
-    public final PointPath<Point> location = createPoint("location", org.geolatte.geom.Point.class);
+    public final PointPath<org.geolatte.geom.Point> location = createPoint("location", org.geolatte.geom.Point.class);
 
     public final StringPath nameEn = createString("nameEn");
 

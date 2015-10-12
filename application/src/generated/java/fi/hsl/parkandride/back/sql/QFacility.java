@@ -1,20 +1,20 @@
 package fi.hsl.parkandride.back.sql;
 
-import com.querydsl.core.types.Path;
-import com.querydsl.core.types.PathMetadata;
-import com.querydsl.core.types.dsl.BooleanPath;
-import com.querydsl.core.types.dsl.EnumPath;
-import com.querydsl.core.types.dsl.NumberPath;
-import com.querydsl.core.types.dsl.StringPath;
-import com.querydsl.spatial.PolygonPath;
-import com.querydsl.sql.ColumnMetadata;
-import com.querydsl.sql.spatial.RelationalPathSpatial;
-import org.geolatte.geom.Polygon;
+import static com.querydsl.core.types.PathMetadataFactory.*;
 
+import com.querydsl.core.types.dsl.*;
+
+import com.querydsl.core.types.PathMetadata;
 import javax.annotation.Generated;
+import com.querydsl.core.types.Path;
+
+import com.querydsl.sql.ColumnMetadata;
 import java.sql.Types;
 
-import static com.querydsl.core.types.PathMetadataFactory.forVariable;
+import com.querydsl.sql.spatial.RelationalPathSpatial;
+
+import com.querydsl.spatial.*;
+
 
 
 /**
@@ -43,7 +43,7 @@ public class QFacility extends RelationalPathSpatial<QFacility> {
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
-    public final PolygonPath<Polygon> location = createPolygon("location", org.geolatte.geom.Polygon.class);
+    public final PolygonPath<org.geolatte.geom.Polygon> location = createPolygon("location", org.geolatte.geom.Polygon.class);
 
     public final StringPath nameEn = createString("nameEn");
 

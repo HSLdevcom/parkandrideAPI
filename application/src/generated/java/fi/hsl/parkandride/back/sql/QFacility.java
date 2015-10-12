@@ -123,6 +123,8 @@ public class QFacility extends RelationalPathSpatial<QFacility> {
 
     public final com.querydsl.sql.ForeignKey<QUnavailableCapacity> _unavailableCapacityFacilityIdFk = createInvForeignKey(id, "FACILITY_ID");
 
+    public final com.querydsl.sql.ForeignKey<QFacilityStatusHistory> _statusHistoryFacilityIdFk = createInvForeignKey(id, "FACILITY_ID");
+
     public final com.querydsl.sql.ForeignKey<QFacilityPrediction> _facilityPredictionFacilityIdFk = createInvForeignKey(id, "FACILITY_ID");
 
     public final com.querydsl.sql.ForeignKey<QFacilityPaymentMethod> _facilityPaymentMethodFacilityIdFk = createInvForeignKey(id, "FACILITY_ID");

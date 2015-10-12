@@ -14,6 +14,8 @@ import fi.hsl.parkandride.core.domain.*;
 import fi.hsl.parkandride.core.service.ValidationException;
 import org.geolatte.geom.Point;
 import org.geolatte.geom.Polygon;
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeUtils;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -24,6 +26,7 @@ import static fi.hsl.parkandride.core.domain.CapacityType.CAR;
 import static fi.hsl.parkandride.core.domain.CapacityType.ELECTRIC_CAR;
 import static fi.hsl.parkandride.core.domain.DayType.*;
 import static fi.hsl.parkandride.core.domain.FacilityStatus.EXCEPTIONAL_SITUATION;
+import static fi.hsl.parkandride.core.domain.FacilityStatus.INACTIVE;
 import static fi.hsl.parkandride.core.domain.FacilityStatus.IN_OPERATION;
 import static fi.hsl.parkandride.core.domain.PricingMethod.CUSTOM;
 import static fi.hsl.parkandride.core.domain.PricingMethod.PARK_AND_RIDE_247_FREE;
@@ -220,6 +223,50 @@ public class FacilityDaoTest extends AbstractDaoTest {
 
         // Not found by geometry
         assertThat(findByGeometry(NON_OVERLAPPING_AREA)).isEmpty();
+    }
+
+    @Test
+    public void facility_status_history_is_saved() {
+        final DateTime firstDate  = new DateTime().minusDays(10);
+        final DateTime secondDate = firstDate.plusDays(1);
+        final DateTime thirdDate  = firstDate.plusDays(2);
+        final DateTime fourthDate = firstDate.plusDays(3);
+
+        // First date
+        DateTimeUtils.setCurrentMillisFixed(firstDate.getMillis());
+        final long facilityId = facilityDao.insertFacility(createFacility());
+        assertThat(facilityDao.getStatusHistory(facilityId)).hasSize(1);
+
+        // Second date
+        DateTimeUtils.setCurrentMillisFixed(secondDate.getMillis());
+        Facility fac = facilityDao.getFacility(facilityId);
+        fac.status = FacilityStatus.INACTIVE;
+        facilityDao.updateFacility(facilityId, fac);
+        assertThat(facilityDao.getStatusHistory(facilityId)).hasSize(2);
+
+        // Third date
+        // This shouldn't create more entries since state did not change
+        DateTimeUtils.setCurrentMillisFixed(thirdDate.getMillis());
+        facilityDao.updateFacility(facilityId, fac);
+        assertThat(facilityDao.getStatusHistory(facilityId)).hasSize(2);
+
+        // Fourth date
+        // But this should since the description changed
+        DateTimeUtils.setCurrentMillisFixed(fourthDate.getMillis());
+        final MultilingualString newStatus = new MultilingualString(STATUS_DESCRIPTION.fi);
+        newStatus.sv = "Inte i bruk";
+        fac.statusDescription = newStatus;
+        facilityDao.updateFacility(facilityId, fac);
+
+        // Restore the date
+        DateTimeUtils.setCurrentMillisSystem();
+
+        final List<FacilityStatusHistory> history = facilityDao.getStatusHistory(facilityId);
+        assertThat(history).containsExactly(
+                new FacilityStatusHistory(facilityId, firstDate, secondDate, EXCEPTIONAL_SITUATION, STATUS_DESCRIPTION),
+                new FacilityStatusHistory(facilityId, secondDate, fourthDate, INACTIVE, STATUS_DESCRIPTION),
+                new FacilityStatusHistory(facilityId, fourthDate, null, INACTIVE, newStatus)
+        );
     }
 
     private Pricing free24h(CapacityType type, Usage usage, int maxCapacity, DayType dayType) {

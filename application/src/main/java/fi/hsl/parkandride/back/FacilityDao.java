@@ -26,6 +26,7 @@ import fi.hsl.parkandride.core.service.TransactionalRead;
 import fi.hsl.parkandride.core.service.TransactionalWrite;
 import fi.hsl.parkandride.core.service.ValidationException;
 import org.geolatte.geom.Point;
+import org.joda.time.DateTime;
 
 import java.util.*;
 import java.util.Map.Entry;
@@ -33,7 +34,9 @@ import java.util.Map.Entry;
 import static com.google.common.base.MoreObjects.firstNonNull;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.querydsl.core.group.GroupBy.*;
+import static com.querydsl.core.types.Projections.constructor;
 import static com.querydsl.spatial.GeometryExpressions.dwithin;
+import static com.querydsl.sql.SQLExpressions.select;
 import static fi.hsl.parkandride.back.GSortedSet.sortedSet;
 import static fi.hsl.parkandride.core.domain.CapacityType.*;
 import static fi.hsl.parkandride.core.domain.Sort.Dir.ASC;
@@ -150,6 +153,12 @@ public class FacilityDao implements FacilityRepository {
             return mapFacility(row, new FacilityInfo());
         }
     };
+    private static final QFacilityStatusHistory qFacilityStatusHistory = QFacilityStatusHistory.facilityStatusHistory;
+    private static final MultilingualStringMapping statusHistoryDescriptionMapping = new MultilingualStringMapping(
+            qFacilityStatusHistory.statusDescriptionFi,
+            qFacilityStatusHistory.statusDescriptionSv,
+            qFacilityStatusHistory.statusDescriptionEn
+    );
 
     private static <T extends FacilityInfo> T mapFacility(Tuple row, T facility) {
         Long id = row.get(qFacility.id);
@@ -210,8 +219,10 @@ public class FacilityDao implements FacilityRepository {
     }
 
     public static final String FACILITY_ID_SEQ = "facility_id_seq";
-
     private static final SimpleExpression<Long> nextFacilityId = SQLExpressions.nextval(FACILITY_ID_SEQ);
+
+    public static final String STATUS_HISTORY_ID_SEQ = "facility_status_history_seq";
+    private static final SimpleExpression<Long> nextStatusHistoryId = SQLExpressions.nextval(STATUS_HISTORY_ID_SEQ);
 
     private final PostgreSQLQueryFactory queryFactory;
 
@@ -242,7 +253,61 @@ public class FacilityDao implements FacilityRepository {
         insertPricing(facilityId, facility.pricingMethod.getPricing(facility));
         insertUnavailableCapacity(facilityId, facility.unavailableCapacities);
 
+        // History updated
+        updateStatusHistory(facilityId, facility.status, facility.statusDescription);
+
         return facilityId;
+    }
+
+    /** This method always inserts new entry, regardless of previous state. */
+    private void updateStatusHistory(long facilityId, FacilityStatus newStatus, MultilingualString statusDescription) {
+        final DateTime currentDate = DateTime.now();
+        setEndDateForPreviousStateHistoryEntry(facilityId, currentDate);
+        insertNewStatusHistoryEntry(facilityId, currentDate, newStatus, statusDescription);
+    }
+
+    private long insertNewStatusHistoryEntry(long facilityId, DateTime currentDate, FacilityStatus newStatus, MultilingualString statusDescription) {
+        final SQLInsertClause insert = queryFactory.insert(qFacilityStatusHistory);
+        statusHistoryDescriptionMapping.populate(statusDescription, insert);
+        return insert
+                .set(qFacilityStatusHistory.id, select(nextStatusHistoryId))
+                .set(qFacilityStatusHistory.facilityId, facilityId)
+                .set(qFacilityStatusHistory.status, newStatus)
+                .set(qFacilityStatusHistory.startTs, currentDate)
+                .execute();
+    }
+
+    private void setEndDateForPreviousStateHistoryEntry(long facilityId, DateTime currentDate) {
+        final Long lastHistoryEntryId = queryFactory.query().select(qFacilityStatusHistory.id)
+                .from(qFacilityStatusHistory)
+                .where(qFacilityStatusHistory.facilityId.eq(facilityId))
+                .orderBy(qFacilityStatusHistory.startTs.desc())
+                .fetchFirst();
+
+        if (lastHistoryEntryId != null) {
+            queryFactory.update(qFacilityStatusHistory)
+                    .set(qFacilityStatusHistory.endTs, currentDate)
+                    .where(qFacilityStatusHistory.id.eq(lastHistoryEntryId))
+                    .execute();
+        }
+    }
+
+    @Override
+    @TransactionalRead
+    public List<FacilityStatusHistory> getStatusHistory(long facilityId) {
+        return queryFactory.query()
+                .select(constructor(
+                        FacilityStatusHistory.class,
+                        qFacilityStatusHistory.facilityId,
+                        qFacilityStatusHistory.startTs,
+                        qFacilityStatusHistory.endTs,
+                        qFacilityStatusHistory.status,
+                        statusHistoryDescriptionMapping
+                ))
+                .from(qFacilityStatusHistory)
+                .where(qFacilityStatusHistory.facilityId.eq(facilityId))
+                .orderBy(qFacilityStatusHistory.startTs.asc())
+                .fetch();
     }
 
     @TransactionalWrite
@@ -282,6 +347,10 @@ public class FacilityDao implements FacilityRepository {
         if (!Objects.equals(newFacility.unavailableCapacities, oldFacility.unavailableCapacities)) {
             deleteUnavailableCapacity(facilityId);
             insertUnavailableCapacity(facilityId, newFacility.unavailableCapacities);
+        }
+
+        if (!(Objects.equals(newFacility.status, oldFacility.status) && Objects.equals(newFacility.statusDescription, oldFacility.statusDescription))) {
+            updateStatusHistory(facilityId, newFacility.status, newFacility.statusDescription);
         }
     }
 

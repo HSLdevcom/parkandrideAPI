@@ -6,19 +6,19 @@ package fi.hsl.parkandride.back;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import com.mysema.query.ResultTransformer;
+import com.querydsl.core.ResultTransformer;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.dml.StoreClause;
+import com.querydsl.core.types.ConstantImpl;
+import com.querydsl.core.types.MappingProjection;
+import com.querydsl.core.types.dsl.ComparableExpression;
+import com.querydsl.core.types.dsl.NumberPath;
+import com.querydsl.core.types.dsl.SimpleExpression;
 import com.querydsl.sql.SQLExpressions;
 import com.querydsl.sql.dml.SQLInsertClause;
 import com.querydsl.sql.dml.SQLUpdateClause;
 import com.querydsl.sql.postgresql.PostgreSQLQuery;
 import com.querydsl.sql.postgresql.PostgreSQLQueryFactory;
-import com.querydsl.core.types.ConstantImpl;
-import com.querydsl.core.types.MappingProjection;
-import com.querydsl.core.types.dsl.ComparableExpression;
-import com.querydsl.core.types.dsl.SimpleExpression;
-import com.querydsl.core.types.dsl.NumberPath;
 import fi.hsl.parkandride.back.sql.*;
 import fi.hsl.parkandride.core.back.FacilityRepository;
 import fi.hsl.parkandride.core.domain.*;
@@ -26,20 +26,20 @@ import fi.hsl.parkandride.core.service.TransactionalRead;
 import fi.hsl.parkandride.core.service.TransactionalWrite;
 import fi.hsl.parkandride.core.service.ValidationException;
 import org.geolatte.geom.Point;
-import org.springframework.util.CollectionUtils;
+
 import java.util.*;
 import java.util.Map.Entry;
 
 import static com.google.common.base.MoreObjects.firstNonNull;
 import static com.google.common.base.Preconditions.checkNotNull;
-import static com.mysema.query.group.GroupBy.*;
+import static com.querydsl.core.group.GroupBy.*;
 import static com.querydsl.spatial.GeometryExpressions.dwithin;
-import static org.springframework.util.CollectionUtils.isEmpty;
 import static fi.hsl.parkandride.back.GSortedSet.sortedSet;
 import static fi.hsl.parkandride.core.domain.CapacityType.*;
 import static fi.hsl.parkandride.core.domain.Sort.Dir.ASC;
 import static fi.hsl.parkandride.core.domain.Sort.Dir.DESC;
 import static fi.hsl.parkandride.core.domain.Usage.*;
+import static org.springframework.util.CollectionUtils.isEmpty;
 
 public class FacilityDao implements FacilityRepository {
 
@@ -222,7 +222,7 @@ public class FacilityDao implements FacilityRepository {
     @TransactionalWrite
     @Override
     public long insertFacility(Facility facility) {
-        return insertFacility(facility, queryFactory.query().singleResult(nextFacilityId));
+        return insertFacility(facility, queryFactory.query().select(nextFacilityId).fetchOne());
     }
 
     @TransactionalWrite
@@ -294,7 +294,7 @@ public class FacilityDao implements FacilityRepository {
     @TransactionalRead
     @Override
     public FacilityInfo getFacilityInfo(long facilityId) {
-        FacilityInfo facility = fromFacility().where(qFacility.id.eq(facilityId)).singleResult(facilityInfoMapping);
+        FacilityInfo facility = fromFacility().select(facilityInfoMapping).where(qFacility.id.eq(facilityId)).fetchOne();
         if (facility == null) {
             throw new FacilityNotFoundException(facilityId);
         }
@@ -308,11 +308,11 @@ public class FacilityDao implements FacilityRepository {
     }
 
     private Facility getFacility(long facilityId, boolean forUpdate) {
-        PostgreSQLQuery qry = fromFacility().where(qFacility.id.eq(facilityId));
+        PostgreSQLQuery<Facility> qry = fromFacility().select(facilityMapping).where(qFacility.id.eq(facilityId));
         if (forUpdate) {
             qry.forUpdate();
         }
-        Facility facility = qry.singleResult(facilityMapping);
+        Facility facility = qry.fetchOne();
         if (facility == null) {
             throw new FacilityNotFoundException(facilityId);
         }
@@ -331,32 +331,32 @@ public class FacilityDao implements FacilityRepository {
     @TransactionalRead
     @Override
     public SearchResults<FacilityInfo> findFacilities(PageableFacilitySearch search) {
-        PostgreSQLQuery qry = fromFacility();
+        final PostgreSQLQuery<FacilityInfo> qry = fromFacility().select(facilityInfoMapping);
         qry.limit(search.limit + 1);
         qry.offset(search.offset);
 
         buildWhere(search, qry);
         orderBy(search.sort, qry);
 
-        Map<Long, FacilityInfo> facilities = qry.map(qFacility.id, facilityInfoMapping);
+        Map<Long, FacilityInfo> facilities = qry.transform(groupBy(qFacility.id).as(facilityInfoMapping));
         return SearchResults.of(facilities.values(), search.limit);
     }
 
     @TransactionalRead
     @Override
     public FacilitySummary summarizeFacilities(FacilitySearch search) {
-        PostgreSQLQuery qry = fromFacility();
+        PostgreSQLQuery<?> qry = fromFacility();
 
         buildWhere(search, qry);
 
-        Tuple result = qry.singleResult(
+        Tuple result = qry.select(
                 qFacility.id.count(),
                 qFacility.capacityCar.sum(),
                 qFacility.capacityDisabled.sum(),
                 qFacility.capacityElectricCar.sum(),
                 qFacility.capacityMotorcycle.sum(),
                 qFacility.capacityBicycle.sum(),
-                qFacility.capacityBicycleSecureSpace.sum());
+                qFacility.capacityBicycleSecureSpace.sum()).fetchOne();
 
         // FIXME: what if (result == null) ?!?
         assert result != null;
@@ -746,7 +746,7 @@ public class FacilityDao implements FacilityRepository {
         return queryFactory.update(qFacility);
     }
 
-    private PostgreSQLQuery fromFacility() {
+    private PostgreSQLQuery<?> fromFacility() {
         return queryFactory.from(qFacility);
     }
 

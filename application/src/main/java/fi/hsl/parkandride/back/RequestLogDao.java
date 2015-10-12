@@ -7,13 +7,13 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Maps;
 import com.querydsl.core.Tuple;
+import com.querydsl.core.types.MappingProjection;
+import com.querydsl.core.types.dsl.SimpleExpression;
 import com.querydsl.sql.RelationalPath;
 import com.querydsl.sql.SQLExpressions;
 import com.querydsl.sql.dml.SQLInsertClause;
 import com.querydsl.sql.dml.SQLUpdateClause;
 import com.querydsl.sql.postgresql.PostgreSQLQueryFactory;
-import com.querydsl.core.types.MappingProjection;
-import com.querydsl.core.types.dsl.SimpleExpression;
 import fi.hsl.parkandride.back.sql.QRequestLog;
 import fi.hsl.parkandride.back.sql.QRequestLogSource;
 import fi.hsl.parkandride.back.sql.QRequestLogUrl;
@@ -35,7 +35,8 @@ import java.util.function.BiConsumer;
 import java.util.function.Supplier;
 import java.util.stream.Collector;
 
-import static com.querydsl.core.types.ConstructorExpression.create;
+import static com.querydsl.core.group.GroupBy.groupBy;
+import static com.querydsl.core.types.Projections.constructor;
 import static fi.hsl.parkandride.util.MapUtils.extractFromKeys;
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.*;
@@ -65,8 +66,9 @@ public class RequestLogDao implements RequestLogRepository {
         final BiMap<Long, String> urls = getAllUrlPatterns();
         final BiMap<Long, String> sources = getAllSources();
         final List<RequestLogEntry> list = queryFactory.from(qRequestLog)
+                .select(constructor(RequestLogEntry.class, new RequestLogKeyProjection(sources, urls), qRequestLog.count))
                 .where(qRequestLog.ts.between(startInclusive, endInclusive))
-                .list(create(RequestLogEntry.class, new RequestLogKeyProjection(sources, urls), qRequestLog.count));
+                .fetch();
         list.sort(comparing(entry -> entry.key));
         return list;
     }
@@ -204,18 +206,19 @@ public class RequestLogDao implements RequestLogRepository {
         final Map<Long, String> sources = getAllSources();
         final Map<Long, String> urls = getAllUrlPatterns();
 
-        return queryFactory.from(qRequestLog)
-                .forUpdate()
+        return queryFactory
+                .from(qRequestLog)
                 .where(qRequestLog.ts.in(timestamps))
-                .map(new RequestLogKeyProjection(sources, urls), qRequestLog.count);
+                .forUpdate()
+                .transform(groupBy(new RequestLogKeyProjection(sources, urls)).as(qRequestLog.count));
     }
 
     private BiMap<Long, String> getAllUrlPatterns() {
-        return HashBiMap.create(queryFactory.from(qRequestLogUrl).map(qRequestLogUrl.id, qRequestLogUrl.url));
+        return HashBiMap.create(queryFactory.from(qRequestLogUrl).transform(groupBy(qRequestLogUrl.id).as(qRequestLogUrl.url)));
     }
 
     private BiMap<Long, String> getAllSources() {
-        return HashBiMap.create(queryFactory.from(qRequestLogSource).map(qRequestLogSource.id, qRequestLogSource.source));
+        return HashBiMap.create(queryFactory.from(qRequestLogSource).transform(groupBy(qRequestLogSource.id).as(qRequestLogSource.source)));
     }
 
     private static Set<String> difference(Set<String> toPersist, BiMap<Long, String> alreadyPersisted) {

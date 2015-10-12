@@ -3,26 +3,25 @@
 
 package fi.hsl.parkandride.back;
 
-import static com.google.common.base.MoreObjects.firstNonNull;
-import static fi.hsl.parkandride.core.domain.Sort.Dir.ASC;
-import static fi.hsl.parkandride.core.domain.Sort.Dir.DESC;
-
 import com.querydsl.core.Tuple;
+import com.querydsl.core.types.MappingProjection;
+import com.querydsl.core.types.dsl.ComparableExpression;
+import com.querydsl.core.types.dsl.SimpleExpression;
 import com.querydsl.sql.SQLExpressions;
 import com.querydsl.sql.dml.SQLInsertClause;
 import com.querydsl.sql.dml.SQLUpdateClause;
 import com.querydsl.sql.postgresql.PostgreSQLQuery;
 import com.querydsl.sql.postgresql.PostgreSQLQueryFactory;
-import com.querydsl.core.types.MappingProjection;
-import com.querydsl.core.types.dsl.ComparableExpression;
-import com.querydsl.core.types.dsl.SimpleExpression;
-
 import fi.hsl.parkandride.back.sql.QOperator;
 import fi.hsl.parkandride.core.back.OperatorRepository;
 import fi.hsl.parkandride.core.domain.*;
 import fi.hsl.parkandride.core.service.TransactionalRead;
 import fi.hsl.parkandride.core.service.TransactionalWrite;
 import fi.hsl.parkandride.core.service.ValidationException;
+
+import static com.google.common.base.MoreObjects.firstNonNull;
+import static fi.hsl.parkandride.core.domain.Sort.Dir.ASC;
+import static fi.hsl.parkandride.core.domain.Sort.Dir.DESC;
 
 public class OperatorDao implements OperatorRepository {
 
@@ -59,7 +58,7 @@ public class OperatorDao implements OperatorRepository {
     @TransactionalWrite
     @Override
     public long insertOperator(Operator operator) {
-        return insertOperator(operator, queryFactory.query().singleResult(nextOperatorId));
+        return insertOperator(operator, queryFactory.query().select(nextOperatorId).fetchOne());
     }
 
     @TransactionalWrite
@@ -89,17 +88,17 @@ public class OperatorDao implements OperatorRepository {
     @Override
     @TransactionalRead
     public Operator getOperator(long operatorId) {
-        return queryFactory.from(qOperator).where(qOperator.id.eq(operatorId)).singleResult(operatorMapping);
+        return queryFactory.from(qOperator).select(operatorMapping).where(qOperator.id.eq(operatorId)).fetchOne();
     }
 
     @Override
     @TransactionalRead
     public SearchResults<Operator> findOperators(OperatorSearch search) {
-        PostgreSQLQuery qry = queryFactory.from(qOperator);
+        final PostgreSQLQuery<Operator> qry = queryFactory.from(qOperator).select(operatorMapping);
         qry.limit(search.getLimit() + 1);
         qry.offset(search.getOffset());
         orderBy(search.getSort(), qry);
-        return SearchResults.of(qry.list(operatorMapping), search.getLimit());
+        return SearchResults.of(qry.fetch(), search.getLimit());
     }
 
     private void orderBy(Sort sort, PostgreSQLQuery qry) {

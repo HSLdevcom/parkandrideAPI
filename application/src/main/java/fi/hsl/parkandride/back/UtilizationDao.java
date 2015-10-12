@@ -74,15 +74,17 @@ public class UtilizationDao implements UtilizationRepository {
         // TODO: do with a single query
         List<Tuple> utilizationKeyCombinations = queryFactory.from(qUtilization)
                 .where(qUtilization.facilityId.eq(facilityId))
+                .select(qUtilization.capacityType, qUtilization.usage)
                 .distinct()
-                .list(qUtilization.capacityType, qUtilization.usage);
+                .fetch();
         return utilizationKeyCombinations.stream()
                 .map(utilizationKey -> queryFactory.from(qUtilization)
+                        .select(utilizationMapping)
                         .where(qUtilization.facilityId.eq(facilityId),
                                 qUtilization.capacityType.eq(utilizationKey.get(qUtilization.capacityType)),
                                 qUtilization.usage.eq(utilizationKey.get(qUtilization.usage)))
                         .orderBy(qUtilization.ts.desc())
-                        .singleResult(utilizationMapping))
+                        .fetchFirst())
                 .collect(Collectors.toSet());
     }
 
@@ -90,12 +92,13 @@ public class UtilizationDao implements UtilizationRepository {
     @Override
     public Optional<Utilization> findUtilizationAtInstant(UtilizationKey utilizationKey, DateTime instant) {
         return Optional.ofNullable(queryFactory.from(qUtilization)
+                .select(utilizationMapping)
                 .where(qUtilization.facilityId.eq(utilizationKey.facilityId),
                         qUtilization.capacityType.eq(utilizationKey.capacityType),
                         qUtilization.usage.eq(utilizationKey.usage),
                         qUtilization.ts.eq(instant).or(qUtilization.ts.before(instant)))
                 .orderBy(qUtilization.ts.desc())
-                .singleResult(utilizationMapping))
+                .fetchFirst())
                 .map(u -> {
                     u.timestamp = instant;
                     return u;
@@ -143,14 +146,15 @@ public class UtilizationDao implements UtilizationRepository {
     @Override
     public CloseableIterator<Utilization> findUtilizations(UtilizationSearch search) {
         // TODO: add support for JDBC setFetchSize to QueryDSL, without it PostgreSQL will not stream results, but instead reads all results to memory
-        PostgreSQLQuery q = queryFactory.from(qUtilization).where(qUtilization.ts.between(search.start, search.end));
-        q = addCriteria(q, search.facilityIds, qUtilization.facilityId);
-        q = addCriteria(q, search.capacityTypes, qUtilization.capacityType);
-        q = addCriteria(q, search.usages, qUtilization.usage);
-        return q.orderBy(qUtilization.ts.asc()).iterate(utilizationMapping);
+        final PostgreSQLQuery<Utilization> q = queryFactory.from(qUtilization).select(utilizationMapping);
+        q.where(qUtilization.ts.between(search.start, search.end));
+        addCriteria(q, search.facilityIds, qUtilization.facilityId);
+        addCriteria(q, search.capacityTypes, qUtilization.capacityType);
+        addCriteria(q, search.usages, qUtilization.usage);
+        return q.orderBy(qUtilization.ts.asc()).iterate();
     }
 
-    private static <T extends Comparable<T>> PostgreSQLQuery addCriteria(PostgreSQLQuery q, Collection<T> collection, ComparableExpressionBase<T> path) {
+    private static <S, T extends Comparable<T>> PostgreSQLQuery<S> addCriteria(PostgreSQLQuery<S> q, Collection<T> collection, ComparableExpressionBase<T> path) {
         switch (collection.size()) {
             case 0:
                 return q;

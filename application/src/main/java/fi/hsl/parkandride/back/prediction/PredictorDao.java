@@ -63,12 +63,13 @@ public class PredictorDao implements PredictorRepository {
         Long existing = queryFactory.from(qPredictor)
                 .where(qPredictor.type.eq(predictorType))
                 .where(utilizationKeyEquals(utilizationKey))
-                .singleResult(qPredictor.id);
+                .select(qPredictor.id)
+                .fetchOne();
         if (existing != null) {
             return existing;
         }
         queryFactory.insert(qPredictor)
-                .set(qPredictor.id, queryFactory.query().singleResult(nextPredictorId))
+                .set(qPredictor.id, queryFactory.query().select(nextPredictorId).fetchOne())
                 .set(qPredictor.type, predictorType)
                 .set(qPredictor.facilityId, utilizationKey.facilityId)
                 .set(qPredictor.capacityType, utilizationKey.capacityType)
@@ -95,7 +96,7 @@ public class PredictorDao implements PredictorRepository {
         return Objects.requireNonNull(
                 queryFactory.from(qPredictor)
                         .where(qPredictor.id.eq(predictorId))
-                        .singleResult(predictorMapping),
+                        .select(predictorMapping).fetchOne(),
                 "No predictors with id " + predictorId);
     }
 
@@ -106,7 +107,7 @@ public class PredictorDao implements PredictorRepository {
                 queryFactory.from(qPredictor)
                         .where(qPredictor.id.eq(predictorId))
                         .forUpdate()
-                        .singleResult(predictorMapping),
+                        .select(predictorMapping).fetchOne(),
                 "No predictors with id " + predictorId);
     }
 
@@ -114,7 +115,7 @@ public class PredictorDao implements PredictorRepository {
     @Override
     public List<PredictorState> findAllPredictors() {
         return queryFactory.from(qPredictor)
-                .list(predictorMapping);
+                .select(predictorMapping).fetch();
     }
 
     @TransactionalRead
@@ -122,7 +123,7 @@ public class PredictorDao implements PredictorRepository {
     public List<Long> findPredictorsNeedingUpdate() {
         return queryFactory.from(qPredictor)
                 .where(qPredictor.moreUtilizations.eq(true))
-                .list(qPredictor.id);
+                .select(qPredictor.id).fetch();
     }
 
     @TransactionalWrite

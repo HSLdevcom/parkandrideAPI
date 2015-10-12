@@ -4,10 +4,10 @@
 package fi.hsl.parkandride.back;
 
 import com.querydsl.core.Tuple;
-import com.querydsl.sql.postgresql.PostgreSQLQuery;
-import com.querydsl.sql.postgresql.PostgreSQLQueryFactory;
 import com.querydsl.core.types.MappingProjection;
 import com.querydsl.core.types.dsl.ComparableExpression;
+import com.querydsl.sql.postgresql.PostgreSQLQuery;
+import com.querydsl.sql.postgresql.PostgreSQLQueryFactory;
 import fi.hsl.parkandride.back.sql.QHub;
 import fi.hsl.parkandride.back.sql.QRegion;
 import fi.hsl.parkandride.core.domain.Region;
@@ -19,8 +19,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import static com.mysema.query.group.GroupBy.groupBy;
-import static com.mysema.query.group.GroupBy.set;
+import static com.querydsl.core.group.GroupBy.groupBy;
+import static com.querydsl.core.group.GroupBy.set;
 import static com.querydsl.spatial.GeometryExpressions.dwithin;
 import static java.util.stream.Collectors.toList;
 
@@ -52,12 +52,12 @@ public class RegionDao implements RegionRepository {
     @Override
     @TransactionalRead
     public Collection<Region> getRegions() {
-        PostgreSQLQuery qry = queryFactory.from(qRegion);
+        final PostgreSQLQuery<Region> qry = queryFactory.from(qRegion).select(regionMapping);
 
         ComparableExpression<String> sortField = qRegion.nameFi.lower();
         qry.orderBy(sortField.asc());
 
-        return qry.list(regionMapping);
+        return qry.fetch();
     }
 
     @Override

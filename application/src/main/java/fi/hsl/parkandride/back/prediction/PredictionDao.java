@@ -172,11 +172,12 @@ public class PredictionDao implements PredictionRepository {
     public Optional<PredictionBatch> getPrediction(UtilizationKey utilizationKey, DateTime time) {
         return asOptional(queryFactory
                 .from(qPrediction)
+                .select(predictionMapping(time))
                 .where(qPrediction.facilityId.eq(utilizationKey.facilityId),
                         qPrediction.capacityType.eq(utilizationKey.capacityType),
                         qPrediction.usage.eq(utilizationKey.usage))
                 .where(isWithinPredictionWindow(time))
-                .singleResult(predictionMapping(time)));
+                .fetchOne());
     }
 
     @TransactionalRead
@@ -184,20 +185,22 @@ public class PredictionDao implements PredictionRepository {
     public List<PredictionBatch> getPredictionsByFacility(Long facilityId, DateTime time) {
         return queryFactory
                 .from(qPrediction)
+                .select(predictionMapping(time))
                 .where(qPrediction.facilityId.eq(facilityId))
                 .where(isWithinPredictionWindow(time))
-                .list(predictionMapping(time));
+                .fetch();
     }
 
     @TransactionalRead
     @Override
     public List<Prediction> getPredictionHistoryByPredictor(Long predictorId, DateTime start, DateTime end, int forecastDistanceInMinutes) {
         return queryFactory.from(qPredictionHistory)
+                .select(historyToPredictionMapping())
                 .where(qPredictionHistory.predictorId.eq(predictorId),
                         qPredictionHistory.forecastDistanceInMinutes.eq(forecastDistanceInMinutes),
                         qPredictionHistory.ts.between(start, end))
                 .orderBy(qPredictionHistory.ts.asc())
-                .list(historyToPredictionMapping());
+                .fetch();
     }
 
     private Expression<Prediction> historyToPredictionMapping() {

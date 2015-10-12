@@ -3,30 +3,21 @@
 
 package fi.hsl.parkandride.back;
 
-import static com.google.common.base.MoreObjects.firstNonNull;
-import static com.querydsl.spatial.GeometryExpressions.dwithin;
-import static fi.hsl.parkandride.core.domain.Sort.Dir.ASC;
-import static fi.hsl.parkandride.core.domain.Sort.Dir.DESC;
-
-import java.util.Map;
-import java.util.Set;
-
 import com.google.common.collect.ImmutableMap;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.dml.StoreClause;
-import com.mysema.query.group.GroupBy;
-import com.querydsl.sql.SQLExpressions;
-import com.querydsl.sql.SQLSubQuery;
-import com.querydsl.sql.dml.SQLInsertClause;
-import com.querydsl.sql.dml.SQLUpdateClause;
-import com.querydsl.sql.postgresql.PostgreSQLQuery;
-import com.querydsl.sql.postgresql.PostgreSQLQueryFactory;
+import com.querydsl.core.group.GroupBy;
 import com.querydsl.core.types.ConstantImpl;
 import com.querydsl.core.types.Expression;
 import com.querydsl.core.types.MappingProjection;
 import com.querydsl.core.types.dsl.ComparableExpression;
 import com.querydsl.core.types.dsl.SimpleExpression;
-
+import com.querydsl.sql.SQLExpressions;
+import com.querydsl.sql.SQLQuery;
+import com.querydsl.sql.dml.SQLInsertClause;
+import com.querydsl.sql.dml.SQLUpdateClause;
+import com.querydsl.sql.postgresql.PostgreSQLQuery;
+import com.querydsl.sql.postgresql.PostgreSQLQueryFactory;
 import fi.hsl.parkandride.back.sql.QHub;
 import fi.hsl.parkandride.back.sql.QHubFacility;
 import fi.hsl.parkandride.core.back.HubRepository;
@@ -34,6 +25,15 @@ import fi.hsl.parkandride.core.domain.*;
 import fi.hsl.parkandride.core.service.TransactionalRead;
 import fi.hsl.parkandride.core.service.TransactionalWrite;
 import fi.hsl.parkandride.core.service.ValidationException;
+
+import java.util.Map;
+import java.util.Set;
+
+import static com.google.common.base.MoreObjects.firstNonNull;
+import static com.querydsl.core.group.GroupBy.groupBy;
+import static com.querydsl.spatial.GeometryExpressions.dwithin;
+import static fi.hsl.parkandride.core.domain.Sort.Dir.ASC;
+import static fi.hsl.parkandride.core.domain.Sort.Dir.DESC;
 
 public class HubDao implements HubRepository {
 
@@ -80,7 +80,7 @@ public class HubDao implements HubRepository {
     @Override
     @TransactionalWrite
     public long insertHub(Hub hub) {
-        return insertHub(hub, queryFactory.query().singleResult(nextHubId));
+        return insertHub(hub, queryFactory.query().select(nextHubId).fetchOne());
     }
 
     @TransactionalWrite
@@ -115,7 +115,7 @@ public class HubDao implements HubRepository {
     @Override
     @TransactionalRead
     public Hub getHub(long hubId) {
-        Hub hub = queryFactory.from(qHub).where(qHub.id.eq(hubId)).singleResult(hubMapping);
+        Hub hub = queryFactory.from(qHub).select(hubMapping).where(qHub.id.eq(hubId)).fetchOne();
         if (hub == null) {
             throw new HubNotFoundException(hubId);
         }
@@ -126,7 +126,7 @@ public class HubDao implements HubRepository {
     @Override
     @TransactionalRead
     public SearchResults<Hub> findHubs(HubSearch search) {
-        PostgreSQLQuery qry = queryFactory.from(qHub);
+        final PostgreSQLQuery<Hub> qry = queryFactory.from(qHub).select(hubMapping);
         qry.limit(search.getLimit() + 1);
         qry.offset(search.getOffset());
 
@@ -134,7 +134,7 @@ public class HubDao implements HubRepository {
 
         orderBy(search.getSort(), qry);
 
-        Map<Long, Hub> hubs = qry.map(qHub.id, hubMapping);
+        Map<Long, Hub> hubs = qry.transform(groupBy(qHub.id).as(hubMapping));
 
         fetchFacilityIds(hubs);
 
@@ -153,8 +153,8 @@ public class HubDao implements HubRepository {
             qry.where(qHub.id.in(search.getIds()));
         }
         if (search.getFacilityIds() != null && !search.getFacilityIds().isEmpty()) {
-            SQLSubQuery hasFacilityId = queryFactory
-                    .subQuery(qHubFacility)
+            final SQLQuery<Long> hasFacilityId = SQLExpressions.select(qHubFacility.facilityId)
+                    .from(qHubFacility)
                     .where(qHubFacility.hubId.eq(qHub.id), qHubFacility.facilityId.in(search.getFacilityIds()));
             qry.where(hasFacilityId.exists());
         }
@@ -162,9 +162,10 @@ public class HubDao implements HubRepository {
 
     private void fetchFacilityIds(Map<Long, Hub> hubs) {
         if (!hubs.isEmpty()) {
-            PostgreSQLQuery qry = queryFactory.from(qHubFacility);
-            qry.where(qHubFacility.hubId.in(hubs.keySet()));
-            Map<Long, Set<Long>> hubFacilityIds = qry.transform(GroupBy.groupBy(qHubFacility.hubId).as(facilityIdsMapping));
+            final PostgreSQLQuery<Long> qry = queryFactory.from(qHubFacility)
+                    .select(qHubFacility.hubId)
+                    .where(qHubFacility.hubId.in(hubs.keySet()));
+            Map<Long, Set<Long>> hubFacilityIds = qry.transform(groupBy(qHubFacility.hubId).as(facilityIdsMapping));
             for (Map.Entry<Long, Set<Long>> entry : hubFacilityIds.entrySet()) {
                 hubs.get(entry.getKey()).facilityIds = entry.getValue();
             }

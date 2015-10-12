@@ -13,7 +13,7 @@ import com.querydsl.sql.types.EnumByNameType;
 import fi.hsl.parkandride.FeatureProfile;
 import fi.hsl.parkandride.back.H2GeometryType;
 import fi.hsl.parkandride.back.LiipiSQLExceptionTranslator;
-//import fi.hsl.parkandride.back.PGGeometryType;
+import com.querydsl.sql.spatial.PGGeometryType;
 import fi.hsl.parkandride.back.TimeType;
 import fi.hsl.parkandride.core.back.PhoneType;
 import fi.hsl.parkandride.core.domain.*;
@@ -98,10 +98,10 @@ public class JdbcConfiguration {
     @Profile(FeatureProfile.PSQL)
     public com.querydsl.sql.Configuration querydslConfigurationPsql() {
         com.querydsl.sql.Configuration conf = querydslConfiguration();
-//        conf.register("FACILITY", "LOCATION", new PGGeometryType<>(Polygon.class));
-//        conf.register("PORT", "LOCATION", new PGGeometryType<>(Point.class));
-//        conf.register("HUB", "LOCATION", new PGGeometryType<>(Point.class));
-//        conf.register("REGION", "AREA", new PGGeometryType<>(Polygon.class));
+        conf.register("FACILITY", "LOCATION", new PGGeometryType<>(Polygon.class));
+        conf.register("PORT", "LOCATION", new PGGeometryType<>(Point.class));
+        conf.register("HUB", "LOCATION", new PGGeometryType<>(Point.class));
+        conf.register("REGION", "AREA", new PGGeometryType<>(Polygon.class));
         return conf;
     }
 

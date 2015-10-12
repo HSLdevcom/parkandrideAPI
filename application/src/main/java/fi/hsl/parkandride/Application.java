@@ -24,6 +24,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
+import org.springframework.boot.actuate.system.ApplicationPidFileWriter;
 import org.springframework.boot.actuate.system.ApplicationPidListener;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.web.HttpMessageConverters;
@@ -56,7 +57,7 @@ public class Application extends WebMvcConfigurerAdapter {
 
     public static void main(String[] args) {
         SpringApplication app = new SpringApplication(Application.class);
-        app.addListeners(new ApplicationPidListener());
+        app.addListeners(new ApplicationPidFileWriter());
         app.run(args);
     }
 

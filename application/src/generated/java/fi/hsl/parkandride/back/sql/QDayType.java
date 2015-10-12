@@ -1,26 +1,22 @@
 package fi.hsl.parkandride.back.sql;
 
-import static com.mysema.query.types.PathMetadataFactory.*;
+import com.querydsl.core.types.Path;
+import com.querydsl.core.types.PathMetadata;
+import com.querydsl.core.types.dsl.StringPath;
+import com.querydsl.sql.ColumnMetadata;
+import com.querydsl.sql.spatial.RelationalPathSpatial;
 
-import com.mysema.query.types.path.*;
-
-import com.mysema.query.types.PathMetadata;
 import javax.annotation.Generated;
-import com.mysema.query.types.Path;
-
-import com.mysema.query.sql.ColumnMetadata;
 import java.sql.Types;
 
-import com.mysema.query.sql.spatial.RelationalPathSpatial;
-
-import com.mysema.query.spatial.path.*;
+import static com.querydsl.core.types.PathMetadataFactory.forVariable;
 
 
 
 /**
  * QDayType is a Querydsl query type for QDayType
  */
-@Generated("com.mysema.query.sql.codegen.MetaDataSerializer")
+@Generated("com.querydsl.sql.codegen.MetaDataSerializer")
 public class QDayType extends RelationalPathSpatial<QDayType> {
 
     private static final long serialVersionUID = -1948027701;
@@ -29,9 +25,9 @@ public class QDayType extends RelationalPathSpatial<QDayType> {
 
     public final StringPath name = createString("name");
 
-    public final com.mysema.query.sql.PrimaryKey<QDayType> constraintA = createPrimaryKey(name);
+    public final com.querydsl.sql.PrimaryKey<QDayType> constraintA = createPrimaryKey(name);
 
-    public final com.mysema.query.sql.ForeignKey<QPricing> _pricingDayTypeFk = createInvForeignKey(name, "DAY_TYPE");
+    public final com.querydsl.sql.ForeignKey<QPricing> _pricingDayTypeFk = createInvForeignKey(name, "DAY_TYPE");
 
     public QDayType(String variable) {
         super(QDayType.class, forVariable(variable), "PUBLIC", "DAY_TYPE");
@@ -48,7 +44,7 @@ public class QDayType extends RelationalPathSpatial<QDayType> {
         addMetadata();
     }
 
-    public QDayType(PathMetadata<?> metadata) {
+    public QDayType(PathMetadata metadata) {
         super(QDayType.class, metadata, "PUBLIC", "DAY_TYPE");
         addMetadata();
     }

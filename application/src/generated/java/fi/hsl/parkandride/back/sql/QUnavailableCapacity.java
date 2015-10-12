@@ -1,26 +1,23 @@
 package fi.hsl.parkandride.back.sql;
 
-import static com.mysema.query.types.PathMetadataFactory.*;
+import com.querydsl.core.types.Path;
+import com.querydsl.core.types.PathMetadata;
+import com.querydsl.core.types.dsl.EnumPath;
+import com.querydsl.core.types.dsl.NumberPath;
+import com.querydsl.sql.ColumnMetadata;
+import com.querydsl.sql.spatial.RelationalPathSpatial;
 
-import com.mysema.query.types.path.*;
-
-import com.mysema.query.types.PathMetadata;
 import javax.annotation.Generated;
-import com.mysema.query.types.Path;
-
-import com.mysema.query.sql.ColumnMetadata;
 import java.sql.Types;
 
-import com.mysema.query.sql.spatial.RelationalPathSpatial;
-
-import com.mysema.query.spatial.path.*;
+import static com.querydsl.core.types.PathMetadataFactory.forVariable;
 
 
 
 /**
  * QUnavailableCapacity is a Querydsl query type for QUnavailableCapacity
  */
-@Generated("com.mysema.query.sql.codegen.MetaDataSerializer")
+@Generated("com.querydsl.sql.codegen.MetaDataSerializer")
 public class QUnavailableCapacity extends RelationalPathSpatial<QUnavailableCapacity> {
 
     private static final long serialVersionUID = -1124006529;
@@ -35,13 +32,13 @@ public class QUnavailableCapacity extends RelationalPathSpatial<QUnavailableCapa
 
     public final EnumPath<fi.hsl.parkandride.core.domain.Usage> usage = createEnum("usage", fi.hsl.parkandride.core.domain.Usage.class);
 
-    public final com.mysema.query.sql.PrimaryKey<QUnavailableCapacity> constraint4e = createPrimaryKey(capacityType, facilityId, usage);
+    public final com.querydsl.sql.PrimaryKey<QUnavailableCapacity> constraint4e = createPrimaryKey(capacityType, facilityId, usage);
 
-    public final com.mysema.query.sql.ForeignKey<QCapacityType> unavailableCapacityCapacityTypeFk = createForeignKey(capacityType, "NAME");
+    public final com.querydsl.sql.ForeignKey<QCapacityType> unavailableCapacityCapacityTypeFk = createForeignKey(capacityType, "NAME");
 
-    public final com.mysema.query.sql.ForeignKey<QFacility> unavailableCapacityFacilityIdFk = createForeignKey(facilityId, "ID");
+    public final com.querydsl.sql.ForeignKey<QFacility> unavailableCapacityFacilityIdFk = createForeignKey(facilityId, "ID");
 
-    public final com.mysema.query.sql.ForeignKey<QUsage> unavailableCapacityUsageFk = createForeignKey(usage, "NAME");
+    public final com.querydsl.sql.ForeignKey<QUsage> unavailableCapacityUsageFk = createForeignKey(usage, "NAME");
 
     public QUnavailableCapacity(String variable) {
         super(QUnavailableCapacity.class, forVariable(variable), "PUBLIC", "UNAVAILABLE_CAPACITY");
@@ -58,7 +55,7 @@ public class QUnavailableCapacity extends RelationalPathSpatial<QUnavailableCapa
         addMetadata();
     }
 
-    public QUnavailableCapacity(PathMetadata<?> metadata) {
+    public QUnavailableCapacity(PathMetadata metadata) {
         super(QUnavailableCapacity.class, metadata, "PUBLIC", "UNAVAILABLE_CAPACITY");
         addMetadata();
     }

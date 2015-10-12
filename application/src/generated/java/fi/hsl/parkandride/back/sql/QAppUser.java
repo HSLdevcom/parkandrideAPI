@@ -1,26 +1,24 @@
 package fi.hsl.parkandride.back.sql;
 
-import static com.mysema.query.types.PathMetadataFactory.*;
+import com.querydsl.core.types.Path;
+import com.querydsl.core.types.PathMetadata;
+import com.querydsl.core.types.dsl.DateTimePath;
+import com.querydsl.core.types.dsl.EnumPath;
+import com.querydsl.core.types.dsl.NumberPath;
+import com.querydsl.core.types.dsl.StringPath;
+import com.querydsl.sql.ColumnMetadata;
+import com.querydsl.sql.spatial.RelationalPathSpatial;
 
-import com.mysema.query.types.path.*;
-
-import com.mysema.query.types.PathMetadata;
 import javax.annotation.Generated;
-import com.mysema.query.types.Path;
-
-import com.mysema.query.sql.ColumnMetadata;
 import java.sql.Types;
 
-import com.mysema.query.sql.spatial.RelationalPathSpatial;
-
-import com.mysema.query.spatial.path.*;
-
+import static com.querydsl.core.types.PathMetadataFactory.forVariable;
 
 
 /**
  * QAppUser is a Querydsl query type for QAppUser
  */
-@Generated("com.mysema.query.sql.codegen.MetaDataSerializer")
+@Generated("com.querydsl.sql.codegen.MetaDataSerializer")
 public class QAppUser extends RelationalPathSpatial<QAppUser> {
 
     private static final long serialVersionUID = 105577825;
@@ -41,9 +39,9 @@ public class QAppUser extends RelationalPathSpatial<QAppUser> {
 
     public final StringPath username = createString("username");
 
-    public final com.mysema.query.sql.PrimaryKey<QAppUser> constraint7 = createPrimaryKey(id);
+    public final com.querydsl.sql.PrimaryKey<QAppUser> constraint7 = createPrimaryKey(id);
 
-    public final com.mysema.query.sql.ForeignKey<QOperator> userOperatorIdFk = createForeignKey(operatorId, "ID");
+    public final com.querydsl.sql.ForeignKey<QOperator> userOperatorIdFk = createForeignKey(operatorId, "ID");
 
     public QAppUser(String variable) {
         super(QAppUser.class, forVariable(variable), "PUBLIC", "APP_USER");
@@ -60,7 +58,7 @@ public class QAppUser extends RelationalPathSpatial<QAppUser> {
         addMetadata();
     }
 
-    public QAppUser(PathMetadata<?> metadata) {
+    public QAppUser(PathMetadata metadata) {
         super(QAppUser.class, metadata, "PUBLIC", "APP_USER");
         addMetadata();
     }

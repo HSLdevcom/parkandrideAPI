@@ -3,8 +3,8 @@
 
 package fi.hsl.parkandride.dev;
 
-import com.mysema.query.sql.RelationalPath;
-import com.mysema.query.sql.postgres.PostgresQueryFactory;
+import com.querydsl.sql.RelationalPath;
+import com.querydsl.sql.postgresql.PostgreSQLQueryFactory;
 import fi.hsl.parkandride.FeatureProfile;
 import fi.hsl.parkandride.back.sql.*;
 import fi.hsl.parkandride.core.back.UserRepository;
@@ -29,7 +29,7 @@ import static java.lang.String.format;
 @Component
 @Profile({FeatureProfile.DEV_API})
 public class DevHelper {
-    private final PostgresQueryFactory queryFactory;
+    private final PostgreSQLQueryFactory queryFactory;
     private final JdbcTemplate jdbcTemplate;
 
     @Resource UserRepository userRepository;
@@ -41,7 +41,7 @@ public class DevHelper {
     @Resource BatchingRequestLogService batchingRequestLogService;
 
     @Inject
-    public DevHelper(PostgresQueryFactory queryFactory, JdbcTemplate jdbcTemplate) {
+    public DevHelper(PostgreSQLQueryFactory queryFactory, JdbcTemplate jdbcTemplate) {
         this.queryFactory = queryFactory;
         this.jdbcTemplate = jdbcTemplate;
     }

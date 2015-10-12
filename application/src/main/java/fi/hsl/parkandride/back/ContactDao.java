@@ -8,16 +8,16 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 import static fi.hsl.parkandride.core.domain.Sort.Dir.ASC;
 import static fi.hsl.parkandride.core.domain.Sort.Dir.DESC;
 
-import com.mysema.query.Tuple;
-import com.mysema.query.dml.StoreClause;
-import com.mysema.query.sql.SQLExpressions;
-import com.mysema.query.sql.dml.SQLInsertClause;
-import com.mysema.query.sql.dml.SQLUpdateClause;
-import com.mysema.query.sql.postgres.PostgresQuery;
-import com.mysema.query.sql.postgres.PostgresQueryFactory;
-import com.mysema.query.types.MappingProjection;
-import com.mysema.query.types.expr.ComparableExpression;
-import com.mysema.query.types.expr.SimpleExpression;
+import com.querydsl.core.Tuple;
+import com.querydsl.core.dml.StoreClause;
+import com.querydsl.sql.SQLExpressions;
+import com.querydsl.sql.dml.SQLInsertClause;
+import com.querydsl.sql.dml.SQLUpdateClause;
+import com.querydsl.sql.postgresql.PostgreSQLQuery;
+import com.querydsl.sql.postgresql.PostgreSQLQueryFactory;
+import com.querydsl.core.types.MappingProjection;
+import com.querydsl.core.types.dsl.ComparableExpression;
+import com.querydsl.core.types.dsl.SimpleExpression;
 
 import fi.hsl.parkandride.back.sql.QContact;
 import fi.hsl.parkandride.core.back.ContactRepository;
@@ -65,16 +65,16 @@ public class ContactDao implements ContactRepository {
         }
     };
 
-    private final PostgresQueryFactory queryFactory;
+    private final PostgreSQLQueryFactory queryFactory;
 
-    public ContactDao(PostgresQueryFactory queryFactory) {
+    public ContactDao(PostgreSQLQueryFactory queryFactory) {
         this.queryFactory = queryFactory;
     }
 
     @Override
     @TransactionalWrite
     public long insertContact(Contact contact) {
-        return insertContact(contact, queryFactory.query().singleResult(contactIdNextval));
+        return insertContact(contact, queryFactory.query().select(contactIdNextval).singleResult(contactIdNextval));
     }
 
     @TransactionalWrite
@@ -99,7 +99,7 @@ public class ContactDao implements ContactRepository {
     }
 
     private Contact getContact(long contactId, boolean forUpdate) {
-        PostgresQuery qry = queryFactory.from(qContact).where(qContact.id.eq(contactId));
+        PostgreSQLQuery qry = queryFactory.from(qContact).where(qContact.id.eq(contactId));
         if (forUpdate) {
             qry.forUpdate();
         }
@@ -123,7 +123,7 @@ public class ContactDao implements ContactRepository {
     @Override
     @TransactionalRead
     public SearchResults<Contact> findContacts(ContactSearch search) {
-        PostgresQuery qry = queryFactory.from(qContact);
+        PostgreSQLQuery qry = queryFactory.from(qContact);
         qry.limit(search.getLimit() + 1);
         qry.offset(search.getOffset());
 
@@ -150,7 +150,7 @@ public class ContactDao implements ContactRepository {
         infoMapping.populate(contact.info, store);
     }
 
-    private void orderBy(Sort sort, PostgresQuery qry) {
+    private void orderBy(Sort sort, PostgreSQLQuery qry) {
         sort = firstNonNull(sort, DEFAULT_SORT);
         ComparableExpression<String> sortField;
         switch (firstNonNull(sort.getBy(), DEFAULT_SORT.getBy())) {

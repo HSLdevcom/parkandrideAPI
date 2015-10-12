@@ -4,7 +4,7 @@
 package fi.hsl.parkandride.back;
 
 import static com.google.common.base.MoreObjects.firstNonNull;
-import static com.mysema.query.spatial.GeometryExpressions.dwithin;
+import static com.querydsl.spatial.GeometryExpressions.dwithin;
 import static fi.hsl.parkandride.core.domain.Sort.Dir.ASC;
 import static fi.hsl.parkandride.core.domain.Sort.Dir.DESC;
 
@@ -12,20 +12,20 @@ import java.util.Map;
 import java.util.Set;
 
 import com.google.common.collect.ImmutableMap;
-import com.mysema.query.Tuple;
-import com.mysema.query.dml.StoreClause;
+import com.querydsl.core.Tuple;
+import com.querydsl.core.dml.StoreClause;
 import com.mysema.query.group.GroupBy;
-import com.mysema.query.sql.SQLExpressions;
-import com.mysema.query.sql.SQLSubQuery;
-import com.mysema.query.sql.dml.SQLInsertClause;
-import com.mysema.query.sql.dml.SQLUpdateClause;
-import com.mysema.query.sql.postgres.PostgresQuery;
-import com.mysema.query.sql.postgres.PostgresQueryFactory;
-import com.mysema.query.types.ConstantImpl;
-import com.mysema.query.types.Expression;
-import com.mysema.query.types.MappingProjection;
-import com.mysema.query.types.expr.ComparableExpression;
-import com.mysema.query.types.expr.SimpleExpression;
+import com.querydsl.sql.SQLExpressions;
+import com.querydsl.sql.SQLSubQuery;
+import com.querydsl.sql.dml.SQLInsertClause;
+import com.querydsl.sql.dml.SQLUpdateClause;
+import com.querydsl.sql.postgresql.PostgreSQLQuery;
+import com.querydsl.sql.postgresql.PostgreSQLQueryFactory;
+import com.querydsl.core.types.ConstantImpl;
+import com.querydsl.core.types.Expression;
+import com.querydsl.core.types.MappingProjection;
+import com.querydsl.core.types.dsl.ComparableExpression;
+import com.querydsl.core.types.dsl.SimpleExpression;
 
 import fi.hsl.parkandride.back.sql.QHub;
 import fi.hsl.parkandride.back.sql.QHubFacility;
@@ -71,9 +71,9 @@ public class HubDao implements HubRepository {
     };
 
 
-    private final PostgresQueryFactory queryFactory;
+    private final PostgreSQLQueryFactory queryFactory;
 
-    public HubDao(PostgresQueryFactory queryFactory) {
+    public HubDao(PostgreSQLQueryFactory queryFactory) {
         this.queryFactory = queryFactory;
     }
 
@@ -126,7 +126,7 @@ public class HubDao implements HubRepository {
     @Override
     @TransactionalRead
     public SearchResults<Hub> findHubs(HubSearch search) {
-        PostgresQuery qry = queryFactory.from(qHub);
+        PostgreSQLQuery qry = queryFactory.from(qHub);
         qry.limit(search.getLimit() + 1);
         qry.offset(search.getOffset());
 
@@ -141,7 +141,7 @@ public class HubDao implements HubRepository {
         return SearchResults.of(hubs.values(), search.getLimit());
     }
 
-    private void buildWhere(HubSearch search, PostgresQuery qry) {
+    private void buildWhere(HubSearch search, PostgreSQLQuery qry) {
         if (search.getGeometry() != null) {
             if (search.getMaxDistance() != null && search.getMaxDistance() > 0) {
                 qry.where(dwithin(qHub.location, ConstantImpl.create(search.getGeometry()), search.getMaxDistance()));
@@ -162,7 +162,7 @@ public class HubDao implements HubRepository {
 
     private void fetchFacilityIds(Map<Long, Hub> hubs) {
         if (!hubs.isEmpty()) {
-            PostgresQuery qry = queryFactory.from(qHubFacility);
+            PostgreSQLQuery qry = queryFactory.from(qHubFacility);
             qry.where(qHubFacility.hubId.in(hubs.keySet()));
             Map<Long, Set<Long>> hubFacilityIds = qry.transform(GroupBy.groupBy(qHubFacility.hubId).as(facilityIdsMapping));
             for (Map.Entry<Long, Set<Long>> entry : hubFacilityIds.entrySet()) {
@@ -189,7 +189,7 @@ public class HubDao implements HubRepository {
         }
     }
 
-    private void orderBy(Sort sort, PostgresQuery qry) {
+    private void orderBy(Sort sort, PostgreSQLQuery qry) {
         sort = firstNonNull(sort, DEFAULT_SORT);
         ComparableExpression<String> sortField;
         switch (firstNonNull(sort.getBy(), DEFAULT_SORT.getBy())) {

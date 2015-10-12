@@ -3,7 +3,7 @@
 
 package fi.hsl.parkandride.config;
 
-import com.mysema.query.sql.postgres.PostgresQueryFactory;
+import com.querydsl.sql.postgresql.PostgreSQLQueryFactory;
 import fi.hsl.parkandride.back.*;
 import fi.hsl.parkandride.back.prediction.PredictionDao;
 import fi.hsl.parkandride.back.prediction.PredictorDao;
@@ -40,7 +40,7 @@ public class CoreConfiguration {
 
     private static final String SECURITY_TOKEN_SECRET = "security.token.secret";
 
-    @Inject PostgresQueryFactory queryFactory;
+    @Inject PostgreSQLQueryFactory queryFactory;
     @Inject PlatformTransactionManager transactionManager;
     @Value("${" + SECURITY_TOKEN_SECRET + "}") String tokenSecret;
     @Value("${security.token.expires}") String tokenExpires;

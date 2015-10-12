@@ -1,26 +1,24 @@
 package fi.hsl.parkandride.back.sql;
 
-import static com.mysema.query.types.PathMetadataFactory.*;
+import com.querydsl.core.types.Path;
+import com.querydsl.core.types.PathMetadata;
+import com.querydsl.core.types.dsl.DateTimePath;
+import com.querydsl.core.types.dsl.EnumPath;
+import com.querydsl.core.types.dsl.NumberPath;
+import com.querydsl.sql.ColumnMetadata;
+import com.querydsl.sql.spatial.RelationalPathSpatial;
 
-import com.mysema.query.types.path.*;
-
-import com.mysema.query.types.PathMetadata;
 import javax.annotation.Generated;
-import com.mysema.query.types.Path;
-
-import com.mysema.query.sql.ColumnMetadata;
 import java.sql.Types;
 
-import com.mysema.query.sql.spatial.RelationalPathSpatial;
-
-import com.mysema.query.spatial.path.*;
+import static com.querydsl.core.types.PathMetadataFactory.forVariable;
 
 
 
 /**
  * QFacilityUtilization is a Querydsl query type for QFacilityUtilization
  */
-@Generated("com.mysema.query.sql.codegen.MetaDataSerializer")
+@Generated("com.querydsl.sql.codegen.MetaDataSerializer")
 public class QFacilityUtilization extends RelationalPathSpatial<QFacilityUtilization> {
 
     private static final long serialVersionUID = -1445988396;
@@ -37,11 +35,11 @@ public class QFacilityUtilization extends RelationalPathSpatial<QFacilityUtiliza
 
     public final EnumPath<fi.hsl.parkandride.core.domain.Usage> usage = createEnum("usage", fi.hsl.parkandride.core.domain.Usage.class);
 
-    public final com.mysema.query.sql.ForeignKey<QFacility> facilityUtilizationFacilityIdFk = createForeignKey(facilityId, "ID");
+    public final com.querydsl.sql.ForeignKey<QFacility> facilityUtilizationFacilityIdFk = createForeignKey(facilityId, "ID");
 
-    public final com.mysema.query.sql.ForeignKey<QUsage> facilityUtilizationUsageFk = createForeignKey(usage, "NAME");
+    public final com.querydsl.sql.ForeignKey<QUsage> facilityUtilizationUsageFk = createForeignKey(usage, "NAME");
 
-    public final com.mysema.query.sql.ForeignKey<QCapacityType> facilityUtilizationCapacityTypeFk = createForeignKey(capacityType, "NAME");
+    public final com.querydsl.sql.ForeignKey<QCapacityType> facilityUtilizationCapacityTypeFk = createForeignKey(capacityType, "NAME");
 
     public QFacilityUtilization(String variable) {
         super(QFacilityUtilization.class, forVariable(variable), "PUBLIC", "FACILITY_UTILIZATION");
@@ -58,7 +56,7 @@ public class QFacilityUtilization extends RelationalPathSpatial<QFacilityUtiliza
         addMetadata();
     }
 
-    public QFacilityUtilization(PathMetadata<?> metadata) {
+    public QFacilityUtilization(PathMetadata metadata) {
         super(QFacilityUtilization.class, metadata, "PUBLIC", "FACILITY_UTILIZATION");
         addMetadata();
     }

@@ -3,12 +3,12 @@
 
 package fi.hsl.parkandride.back.prediction;
 
-import com.mysema.query.Tuple;
-import com.mysema.query.sql.SQLExpressions;
-import com.mysema.query.sql.postgres.PostgresQueryFactory;
-import com.mysema.query.types.MappingProjection;
-import com.mysema.query.types.Predicate;
-import com.mysema.query.types.expr.SimpleExpression;
+import com.querydsl.core.Tuple;
+import com.querydsl.sql.SQLExpressions;
+import com.querydsl.sql.postgresql.PostgreSQLQueryFactory;
+import com.querydsl.core.types.MappingProjection;
+import com.querydsl.core.types.Predicate;
+import com.querydsl.core.types.dsl.SimpleExpression;
 import fi.hsl.parkandride.back.sql.QPredictor;
 import fi.hsl.parkandride.core.back.PredictorRepository;
 import fi.hsl.parkandride.core.domain.UtilizationKey;
@@ -48,10 +48,10 @@ public class PredictorDao implements PredictorRepository {
     }
 
 
-    private final PostgresQueryFactory queryFactory;
+    private final PostgreSQLQueryFactory queryFactory;
     private final ValidationService validationService;
 
-    public PredictorDao(PostgresQueryFactory queryFactory, ValidationService validationService) {
+    public PredictorDao(PostgreSQLQueryFactory queryFactory, ValidationService validationService) {
         this.queryFactory = queryFactory;
         this.validationService = validationService;
     }

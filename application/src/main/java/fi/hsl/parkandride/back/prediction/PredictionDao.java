@@ -3,15 +3,15 @@
 
 package fi.hsl.parkandride.back.prediction;
 
-import com.mysema.query.Tuple;
-import com.mysema.query.sql.dml.SQLInsertClause;
-import com.mysema.query.sql.dml.SQLUpdateClause;
-import com.mysema.query.sql.postgres.PostgresQueryFactory;
-import com.mysema.query.types.Expression;
-import com.mysema.query.types.MappingProjection;
-import com.mysema.query.types.Path;
-import com.mysema.query.types.Projections;
-import com.mysema.query.types.expr.BooleanExpression;
+import com.querydsl.core.Tuple;
+import com.querydsl.sql.dml.SQLInsertClause;
+import com.querydsl.sql.dml.SQLUpdateClause;
+import com.querydsl.sql.postgresql.PostgreSQLQueryFactory;
+import com.querydsl.core.types.Expression;
+import com.querydsl.core.types.MappingProjection;
+import com.querydsl.core.types.Path;
+import com.querydsl.core.types.Projections;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import fi.hsl.parkandride.back.TimeUtil;
 import fi.hsl.parkandride.back.sql.QFacilityPrediction;
 import fi.hsl.parkandride.back.sql.QFacilityPredictionHistory;
@@ -49,10 +49,10 @@ public class PredictionDao implements PredictionRepository {
                             p -> p.getMetadata().getName().substring("spacesAvailableAt".length()),
                             Function.identity())));
 
-    private final PostgresQueryFactory queryFactory;
+    private final PostgreSQLQueryFactory queryFactory;
     private final ValidationService validationService;
 
-    public PredictionDao(PostgresQueryFactory queryFactory, ValidationService validationService) {
+    public PredictionDao(PostgreSQLQueryFactory queryFactory, ValidationService validationService) {
         this.queryFactory = queryFactory;
         this.validationService = validationService;
     }

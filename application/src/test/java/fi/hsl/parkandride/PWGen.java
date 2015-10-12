@@ -26,9 +26,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Profile;
 
-import com.mysema.query.sql.Configuration;
-import com.mysema.query.sql.codegen.DefaultNamingStrategy;
-import com.mysema.query.sql.codegen.MetaDataExporter;
+import com.querydsl.sql.Configuration;
+import com.querydsl.sql.codegen.DefaultNamingStrategy;
+import com.querydsl.sql.codegen.MetaDataExporter;
 
 import fi.hsl.parkandride.config.CoreConfiguration;
 import fi.hsl.parkandride.config.JdbcConfiguration;

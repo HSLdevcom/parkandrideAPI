@@ -1,26 +1,23 @@
 package fi.hsl.parkandride.back.sql;
 
-import static com.mysema.query.types.PathMetadataFactory.*;
+import com.querydsl.core.types.Path;
+import com.querydsl.core.types.PathMetadata;
+import com.querydsl.core.types.dsl.EnumPath;
+import com.querydsl.core.types.dsl.NumberPath;
+import com.querydsl.sql.ColumnMetadata;
+import com.querydsl.sql.spatial.RelationalPathSpatial;
 
-import com.mysema.query.types.path.*;
-
-import com.mysema.query.types.PathMetadata;
 import javax.annotation.Generated;
-import com.mysema.query.types.Path;
-
-import com.mysema.query.sql.ColumnMetadata;
 import java.sql.Types;
 
-import com.mysema.query.sql.spatial.RelationalPathSpatial;
-
-import com.mysema.query.spatial.path.*;
+import static com.querydsl.core.types.PathMetadataFactory.forVariable;
 
 
 
 /**
  * QFacilityService is a Querydsl query type for QFacilityService
  */
-@Generated("com.mysema.query.sql.codegen.MetaDataSerializer")
+@Generated("com.querydsl.sql.codegen.MetaDataSerializer")
 public class QFacilityService extends RelationalPathSpatial<QFacilityService> {
 
     private static final long serialVersionUID = -926402201;
@@ -31,11 +28,11 @@ public class QFacilityService extends RelationalPathSpatial<QFacilityService> {
 
     public final EnumPath<fi.hsl.parkandride.core.domain.Service> service = createEnum("service", fi.hsl.parkandride.core.domain.Service.class);
 
-    public final com.mysema.query.sql.PrimaryKey<QFacilityService> constraint3 = createPrimaryKey(facilityId, service);
+    public final com.querydsl.sql.PrimaryKey<QFacilityService> constraint3 = createPrimaryKey(facilityId, service);
 
-    public final com.mysema.query.sql.ForeignKey<QService> facilityServiceServiceFk = createForeignKey(service, "NAME");
+    public final com.querydsl.sql.ForeignKey<QService> facilityServiceServiceFk = createForeignKey(service, "NAME");
 
-    public final com.mysema.query.sql.ForeignKey<QFacility> facilityServiceFacilityIdFk = createForeignKey(facilityId, "ID");
+    public final com.querydsl.sql.ForeignKey<QFacility> facilityServiceFacilityIdFk = createForeignKey(facilityId, "ID");
 
     public QFacilityService(String variable) {
         super(QFacilityService.class, forVariable(variable), "PUBLIC", "FACILITY_SERVICE");
@@ -52,7 +49,7 @@ public class QFacilityService extends RelationalPathSpatial<QFacilityService> {
         addMetadata();
     }
 
-    public QFacilityService(PathMetadata<?> metadata) {
+    public QFacilityService(PathMetadata metadata) {
         super(QFacilityService.class, metadata, "PUBLIC", "FACILITY_SERVICE");
         addMetadata();
     }

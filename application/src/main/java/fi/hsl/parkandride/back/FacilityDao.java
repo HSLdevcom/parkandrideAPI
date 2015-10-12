@@ -7,18 +7,18 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.mysema.query.ResultTransformer;
-import com.mysema.query.Tuple;
-import com.mysema.query.dml.StoreClause;
-import com.mysema.query.sql.SQLExpressions;
-import com.mysema.query.sql.dml.SQLInsertClause;
-import com.mysema.query.sql.dml.SQLUpdateClause;
-import com.mysema.query.sql.postgres.PostgresQuery;
-import com.mysema.query.sql.postgres.PostgresQueryFactory;
-import com.mysema.query.types.ConstantImpl;
-import com.mysema.query.types.MappingProjection;
-import com.mysema.query.types.expr.ComparableExpression;
-import com.mysema.query.types.expr.SimpleExpression;
-import com.mysema.query.types.path.NumberPath;
+import com.querydsl.core.Tuple;
+import com.querydsl.core.dml.StoreClause;
+import com.querydsl.sql.SQLExpressions;
+import com.querydsl.sql.dml.SQLInsertClause;
+import com.querydsl.sql.dml.SQLUpdateClause;
+import com.querydsl.sql.postgresql.PostgreSQLQuery;
+import com.querydsl.sql.postgresql.PostgreSQLQueryFactory;
+import com.querydsl.core.types.ConstantImpl;
+import com.querydsl.core.types.MappingProjection;
+import com.querydsl.core.types.dsl.ComparableExpression;
+import com.querydsl.core.types.dsl.SimpleExpression;
+import com.querydsl.core.types.dsl.NumberPath;
 import fi.hsl.parkandride.back.sql.*;
 import fi.hsl.parkandride.core.back.FacilityRepository;
 import fi.hsl.parkandride.core.domain.*;
@@ -33,7 +33,7 @@ import java.util.Map.Entry;
 import static com.google.common.base.MoreObjects.firstNonNull;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.mysema.query.group.GroupBy.*;
-import static com.mysema.query.spatial.GeometryExpressions.dwithin;
+import static com.querydsl.spatial.GeometryExpressions.dwithin;
 import static org.springframework.util.CollectionUtils.isEmpty;
 import static fi.hsl.parkandride.back.GSortedSet.sortedSet;
 import static fi.hsl.parkandride.core.domain.CapacityType.*;
@@ -213,9 +213,9 @@ public class FacilityDao implements FacilityRepository {
 
     private static final SimpleExpression<Long> nextFacilityId = SQLExpressions.nextval(FACILITY_ID_SEQ);
 
-    private final PostgresQueryFactory queryFactory;
+    private final PostgreSQLQueryFactory queryFactory;
 
-    public FacilityDao(PostgresQueryFactory queryFactory) {
+    public FacilityDao(PostgreSQLQueryFactory queryFactory) {
         this.queryFactory = queryFactory;
     }
 
@@ -308,7 +308,7 @@ public class FacilityDao implements FacilityRepository {
     }
 
     private Facility getFacility(long facilityId, boolean forUpdate) {
-        PostgresQuery qry = fromFacility().where(qFacility.id.eq(facilityId));
+        PostgreSQLQuery qry = fromFacility().where(qFacility.id.eq(facilityId));
         if (forUpdate) {
             qry.forUpdate();
         }
@@ -331,7 +331,7 @@ public class FacilityDao implements FacilityRepository {
     @TransactionalRead
     @Override
     public SearchResults<FacilityInfo> findFacilities(PageableFacilitySearch search) {
-        PostgresQuery qry = fromFacility();
+        PostgreSQLQuery qry = fromFacility();
         qry.limit(search.limit + 1);
         qry.offset(search.offset);
 
@@ -345,7 +345,7 @@ public class FacilityDao implements FacilityRepository {
     @TransactionalRead
     @Override
     public FacilitySummary summarizeFacilities(FacilitySearch search) {
-        PostgresQuery qry = fromFacility();
+        PostgreSQLQuery qry = fromFacility();
 
         buildWhere(search, qry);
 
@@ -508,7 +508,7 @@ public class FacilityDao implements FacilityRepository {
         queryFactory.delete(qUnavailableCapacity).where(qUnavailableCapacity.facilityId.eq(facilityId)).execute();
     }
 
-    private void orderBy(Sort sort, PostgresQuery qry) {
+    private void orderBy(Sort sort, PostgreSQLQuery qry) {
         sort = firstNonNull(sort, DEFAULT_SORT);
         ComparableExpression<String> sortField;
         switch (firstNonNull(sort.getBy(), DEFAULT_SORT.getBy())) {
@@ -535,7 +535,7 @@ public class FacilityDao implements FacilityRepository {
         return new ValidationException(new Violation("SortBy", "sort.by", "Expected one of 'name.fi', 'name.sv' or 'name.en'"));
     }
 
-    private void buildWhere(FacilitySearch search, PostgresQuery qry) {
+    private void buildWhere(FacilitySearch search, PostgreSQLQuery qry) {
         if (!isEmpty(search.getStatuses())) {
             qry.where(qFacility.status.in(search.getStatuses()));
         }
@@ -746,7 +746,7 @@ public class FacilityDao implements FacilityRepository {
         return queryFactory.update(qFacility);
     }
 
-    private PostgresQuery fromFacility() {
+    private PostgreSQLQuery fromFacility() {
         return queryFactory.from(qFacility);
     }
 

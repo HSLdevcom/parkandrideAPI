@@ -3,10 +3,10 @@
 
 package fi.hsl.parkandride.back;
 
-import com.mysema.query.Tuple;
-import com.mysema.query.dml.StoreClause;
-import com.mysema.query.types.MappingProjection;
-import com.mysema.query.types.path.StringPath;
+import com.querydsl.core.Tuple;
+import com.querydsl.core.dml.StoreClause;
+import com.querydsl.core.types.MappingProjection;
+import com.querydsl.core.types.dsl.StringPath;
 
 import fi.hsl.parkandride.core.domain.MultilingualString;
 

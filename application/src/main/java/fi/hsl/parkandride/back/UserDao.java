@@ -5,15 +5,15 @@ package fi.hsl.parkandride.back;
 
 import org.joda.time.DateTime;
 
-import com.mysema.query.Tuple;
-import com.mysema.query.sql.SQLExpressions;
-import com.mysema.query.sql.dml.SQLDeleteClause;
-import com.mysema.query.sql.dml.SQLInsertClause;
-import com.mysema.query.sql.postgres.PostgresQuery;
-import com.mysema.query.sql.postgres.PostgresQueryFactory;
-import com.mysema.query.types.MappingProjection;
-import com.mysema.query.types.expr.DateTimeExpression;
-import com.mysema.query.types.expr.SimpleExpression;
+import com.querydsl.core.Tuple;
+import com.querydsl.sql.SQLExpressions;
+import com.querydsl.sql.dml.SQLDeleteClause;
+import com.querydsl.sql.dml.SQLInsertClause;
+import com.querydsl.sql.postgresql.PostgreSQLQuery;
+import com.querydsl.sql.postgresql.PostgreSQLQueryFactory;
+import com.querydsl.core.types.MappingProjection;
+import com.querydsl.core.types.dsl.DateTimeExpression;
+import com.querydsl.core.types.dsl.SimpleExpression;
 
 import fi.hsl.parkandride.back.sql.QAppUser;
 import fi.hsl.parkandride.core.back.UserRepository;
@@ -65,9 +65,9 @@ public class UserDao implements UserRepository {
     };
 
 
-    private final PostgresQueryFactory queryFactory;
+    private final PostgreSQLQueryFactory queryFactory;
 
-    public UserDao(PostgresQueryFactory queryFactory) {
+    public UserDao(PostgreSQLQueryFactory queryFactory) {
         this.queryFactory = queryFactory;
     }
 
@@ -177,7 +177,7 @@ public class UserDao implements UserRepository {
     @Override
     @TransactionalRead
     public SearchResults<User> findUsers(UserSearch search) {
-        PostgresQuery qry = queryFactory.from(qUser);
+        PostgreSQLQuery qry = queryFactory.from(qUser);
         qry.limit(search.getLimit() + 1);
         qry.offset(search.getOffset());
 

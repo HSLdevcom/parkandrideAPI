@@ -1,26 +1,25 @@
 package fi.hsl.parkandride.back.sql;
 
-import static com.mysema.query.types.PathMetadataFactory.*;
+import com.querydsl.core.types.Path;
+import com.querydsl.core.types.PathMetadata;
+import com.querydsl.core.types.dsl.NumberPath;
+import com.querydsl.core.types.dsl.StringPath;
+import com.querydsl.spatial.PointPath;
+import com.querydsl.sql.ColumnMetadata;
+import com.querydsl.sql.spatial.RelationalPathSpatial;
+import org.geolatte.geom.Point;
 
-import com.mysema.query.types.path.*;
-
-import com.mysema.query.types.PathMetadata;
 import javax.annotation.Generated;
-import com.mysema.query.types.Path;
-
-import com.mysema.query.sql.ColumnMetadata;
 import java.sql.Types;
 
-import com.mysema.query.sql.spatial.RelationalPathSpatial;
-
-import com.mysema.query.spatial.path.*;
+import static com.querydsl.core.types.PathMetadataFactory.forVariable;
 
 
 
 /**
  * QHub is a Querydsl query type for QHub
  */
-@Generated("com.mysema.query.sql.codegen.MetaDataSerializer")
+@Generated("com.querydsl.sql.codegen.MetaDataSerializer")
 public class QHub extends RelationalPathSpatial<QHub> {
 
     private static final long serialVersionUID = -1194859702;
@@ -35,7 +34,7 @@ public class QHub extends RelationalPathSpatial<QHub> {
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
-    public final PointPath<org.geolatte.geom.Point> location = createPoint("location", org.geolatte.geom.Point.class);
+    public final PointPath<Point> location = createPoint("location", org.geolatte.geom.Point.class);
 
     public final StringPath nameEn = createString("nameEn");
 
@@ -51,9 +50,9 @@ public class QHub extends RelationalPathSpatial<QHub> {
 
     public final StringPath streetAddressSv = createString("streetAddressSv");
 
-    public final com.mysema.query.sql.PrimaryKey<QHub> constraint11 = createPrimaryKey(id);
+    public final com.querydsl.sql.PrimaryKey<QHub> constraint11 = createPrimaryKey(id);
 
-    public final com.mysema.query.sql.ForeignKey<QHubFacility> _hubFacilityHubIdFk = createInvForeignKey(id, "HUB_ID");
+    public final com.querydsl.sql.ForeignKey<QHubFacility> _hubFacilityHubIdFk = createInvForeignKey(id, "HUB_ID");
 
     public QHub(String variable) {
         super(QHub.class, forVariable(variable), "PUBLIC", "HUB");
@@ -70,7 +69,7 @@ public class QHub extends RelationalPathSpatial<QHub> {
         addMetadata();
     }
 
-    public QHub(PathMetadata<?> metadata) {
+    public QHub(PathMetadata metadata) {
         super(QHub.class, metadata, "PUBLIC", "HUB");
         addMetadata();
     }

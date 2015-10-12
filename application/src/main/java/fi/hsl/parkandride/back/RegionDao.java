@@ -3,11 +3,11 @@
 
 package fi.hsl.parkandride.back;
 
-import com.mysema.query.Tuple;
-import com.mysema.query.sql.postgres.PostgresQuery;
-import com.mysema.query.sql.postgres.PostgresQueryFactory;
-import com.mysema.query.types.MappingProjection;
-import com.mysema.query.types.expr.ComparableExpression;
+import com.querydsl.core.Tuple;
+import com.querydsl.sql.postgresql.PostgreSQLQuery;
+import com.querydsl.sql.postgresql.PostgreSQLQueryFactory;
+import com.querydsl.core.types.MappingProjection;
+import com.querydsl.core.types.dsl.ComparableExpression;
 import fi.hsl.parkandride.back.sql.QHub;
 import fi.hsl.parkandride.back.sql.QRegion;
 import fi.hsl.parkandride.core.domain.Region;
@@ -21,7 +21,7 @@ import java.util.Set;
 
 import static com.mysema.query.group.GroupBy.groupBy;
 import static com.mysema.query.group.GroupBy.set;
-import static com.mysema.query.spatial.GeometryExpressions.dwithin;
+import static com.querydsl.spatial.GeometryExpressions.dwithin;
 import static java.util.stream.Collectors.toList;
 
 public class RegionDao implements RegionRepository {
@@ -43,16 +43,16 @@ public class RegionDao implements RegionRepository {
     };
 
 
-    private final PostgresQueryFactory queryFactory;
+    private final PostgreSQLQueryFactory queryFactory;
 
-    public RegionDao(PostgresQueryFactory queryFactory) {
+    public RegionDao(PostgreSQLQueryFactory queryFactory) {
         this.queryFactory = queryFactory;
     }
 
     @Override
     @TransactionalRead
     public Collection<Region> getRegions() {
-        PostgresQuery qry = queryFactory.from(qRegion);
+        PostgreSQLQuery qry = queryFactory.from(qRegion);
 
         ComparableExpression<String> sortField = qRegion.nameFi.lower();
         qry.orderBy(sortField.asc());

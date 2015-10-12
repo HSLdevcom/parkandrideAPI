@@ -1,26 +1,22 @@
 package fi.hsl.parkandride.back.sql;
 
-import static com.mysema.query.types.PathMetadataFactory.*;
+import com.querydsl.core.types.Path;
+import com.querydsl.core.types.PathMetadata;
+import com.querydsl.core.types.dsl.StringPath;
+import com.querydsl.sql.ColumnMetadata;
+import com.querydsl.sql.spatial.RelationalPathSpatial;
 
-import com.mysema.query.types.path.*;
-
-import com.mysema.query.types.PathMetadata;
 import javax.annotation.Generated;
-import com.mysema.query.types.Path;
-
-import com.mysema.query.sql.ColumnMetadata;
 import java.sql.Types;
 
-import com.mysema.query.sql.spatial.RelationalPathSpatial;
-
-import com.mysema.query.spatial.path.*;
+import static com.querydsl.core.types.PathMetadataFactory.forVariable;
 
 
 
 /**
  * QPaymentMethod is a Querydsl query type for QPaymentMethod
  */
-@Generated("com.mysema.query.sql.codegen.MetaDataSerializer")
+@Generated("com.querydsl.sql.codegen.MetaDataSerializer")
 public class QPaymentMethod extends RelationalPathSpatial<QPaymentMethod> {
 
     private static final long serialVersionUID = 1642789532;
@@ -29,9 +25,9 @@ public class QPaymentMethod extends RelationalPathSpatial<QPaymentMethod> {
 
     public final StringPath name = createString("name");
 
-    public final com.mysema.query.sql.PrimaryKey<QPaymentMethod> constraintD = createPrimaryKey(name);
+    public final com.querydsl.sql.PrimaryKey<QPaymentMethod> constraintD = createPrimaryKey(name);
 
-    public final com.mysema.query.sql.ForeignKey<QFacilityPaymentMethod> _facilityPaymentMethodPaymentMethodFk = createInvForeignKey(name, "PAYMENT_METHOD");
+    public final com.querydsl.sql.ForeignKey<QFacilityPaymentMethod> _facilityPaymentMethodPaymentMethodFk = createInvForeignKey(name, "PAYMENT_METHOD");
 
     public QPaymentMethod(String variable) {
         super(QPaymentMethod.class, forVariable(variable), "PUBLIC", "PAYMENT_METHOD");
@@ -48,7 +44,7 @@ public class QPaymentMethod extends RelationalPathSpatial<QPaymentMethod> {
         addMetadata();
     }
 
-    public QPaymentMethod(PathMetadata<?> metadata) {
+    public QPaymentMethod(PathMetadata metadata) {
         super(QPaymentMethod.class, metadata, "PUBLIC", "PAYMENT_METHOD");
         addMetadata();
     }

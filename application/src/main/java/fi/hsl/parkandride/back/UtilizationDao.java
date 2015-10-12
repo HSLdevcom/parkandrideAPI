@@ -4,12 +4,12 @@
 package fi.hsl.parkandride.back;
 
 import com.mysema.commons.lang.CloseableIterator;
-import com.mysema.query.Tuple;
-import com.mysema.query.sql.dml.SQLInsertClause;
-import com.mysema.query.sql.postgres.PostgresQuery;
-import com.mysema.query.sql.postgres.PostgresQueryFactory;
-import com.mysema.query.types.MappingProjection;
-import com.mysema.query.types.expr.ComparableExpressionBase;
+import com.querydsl.core.Tuple;
+import com.querydsl.sql.dml.SQLInsertClause;
+import com.querydsl.sql.postgresql.PostgreSQLQuery;
+import com.querydsl.sql.postgresql.PostgreSQLQueryFactory;
+import com.querydsl.core.types.MappingProjection;
+import com.querydsl.core.types.dsl.ComparableExpressionBase;
 import fi.hsl.parkandride.back.sql.QFacilityUtilization;
 import fi.hsl.parkandride.core.back.UtilizationRepository;
 import fi.hsl.parkandride.core.domain.Utilization;
@@ -44,9 +44,9 @@ public class UtilizationDao implements UtilizationRepository {
         }
     };
 
-    private final PostgresQueryFactory queryFactory;
+    private final PostgreSQLQueryFactory queryFactory;
 
-    public UtilizationDao(PostgresQueryFactory queryFactory) {
+    public UtilizationDao(PostgreSQLQueryFactory queryFactory) {
         this.queryFactory = queryFactory;
     }
 
@@ -143,14 +143,14 @@ public class UtilizationDao implements UtilizationRepository {
     @Override
     public CloseableIterator<Utilization> findUtilizations(UtilizationSearch search) {
         // TODO: add support for JDBC setFetchSize to QueryDSL, without it PostgreSQL will not stream results, but instead reads all results to memory
-        PostgresQuery q = queryFactory.from(qUtilization).where(qUtilization.ts.between(search.start, search.end));
+        PostgreSQLQuery q = queryFactory.from(qUtilization).where(qUtilization.ts.between(search.start, search.end));
         q = addCriteria(q, search.facilityIds, qUtilization.facilityId);
         q = addCriteria(q, search.capacityTypes, qUtilization.capacityType);
         q = addCriteria(q, search.usages, qUtilization.usage);
         return q.orderBy(qUtilization.ts.asc()).iterate(utilizationMapping);
     }
 
-    private static <T extends Comparable<T>> PostgresQuery addCriteria(PostgresQuery q, Collection<T> collection, ComparableExpressionBase<T> path) {
+    private static <T extends Comparable<T>> PostgreSQLQuery addCriteria(PostgreSQLQuery q, Collection<T> collection, ComparableExpressionBase<T> path) {
         switch (collection.size()) {
             case 0:
                 return q;

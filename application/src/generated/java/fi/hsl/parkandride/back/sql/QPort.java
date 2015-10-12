@@ -1,26 +1,26 @@
 package fi.hsl.parkandride.back.sql;
 
-import static com.mysema.query.types.PathMetadataFactory.*;
+import com.querydsl.core.types.Path;
+import com.querydsl.core.types.PathMetadata;
+import com.querydsl.core.types.dsl.BooleanPath;
+import com.querydsl.core.types.dsl.NumberPath;
+import com.querydsl.core.types.dsl.StringPath;
+import com.querydsl.spatial.PointPath;
+import com.querydsl.sql.ColumnMetadata;
+import com.querydsl.sql.spatial.RelationalPathSpatial;
+import org.geolatte.geom.Point;
 
-import com.mysema.query.types.path.*;
-
-import com.mysema.query.types.PathMetadata;
 import javax.annotation.Generated;
-import com.mysema.query.types.Path;
-
-import com.mysema.query.sql.ColumnMetadata;
 import java.sql.Types;
 
-import com.mysema.query.sql.spatial.RelationalPathSpatial;
-
-import com.mysema.query.spatial.path.*;
+import static com.querydsl.core.types.PathMetadataFactory.forVariable;
 
 
 
 /**
  * QPort is a Querydsl query type for QPort
  */
-@Generated("com.mysema.query.sql.codegen.MetaDataSerializer")
+@Generated("com.querydsl.sql.codegen.MetaDataSerializer")
 public class QPort extends RelationalPathSpatial<QPort> {
 
     private static final long serialVersionUID = 1614288076;
@@ -47,7 +47,7 @@ public class QPort extends RelationalPathSpatial<QPort> {
 
     public final StringPath infoSv = createString("infoSv");
 
-    public final PointPath<org.geolatte.geom.Point> location = createPoint("location", org.geolatte.geom.Point.class);
+    public final PointPath<Point> location = createPoint("location", org.geolatte.geom.Point.class);
 
     public final BooleanPath pedestrian = createBoolean("pedestrian");
 
@@ -61,9 +61,9 @@ public class QPort extends RelationalPathSpatial<QPort> {
 
     public final StringPath streetAddressSv = createString("streetAddressSv");
 
-    public final com.mysema.query.sql.PrimaryKey<QPort> constraint2 = createPrimaryKey(facilityId, portIndex);
+    public final com.querydsl.sql.PrimaryKey<QPort> constraint2 = createPrimaryKey(facilityId, portIndex);
 
-    public final com.mysema.query.sql.ForeignKey<QFacility> portFacilityIdFk = createForeignKey(facilityId, "ID");
+    public final com.querydsl.sql.ForeignKey<QFacility> portFacilityIdFk = createForeignKey(facilityId, "ID");
 
     public QPort(String variable) {
         super(QPort.class, forVariable(variable), "PUBLIC", "PORT");
@@ -80,7 +80,7 @@ public class QPort extends RelationalPathSpatial<QPort> {
         addMetadata();
     }
 
-    public QPort(PathMetadata<?> metadata) {
+    public QPort(PathMetadata metadata) {
         super(QPort.class, metadata, "PUBLIC", "PORT");
         addMetadata();
     }

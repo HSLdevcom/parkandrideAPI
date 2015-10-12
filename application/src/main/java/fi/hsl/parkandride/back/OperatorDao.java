@@ -7,15 +7,15 @@ import static com.google.common.base.MoreObjects.firstNonNull;
 import static fi.hsl.parkandride.core.domain.Sort.Dir.ASC;
 import static fi.hsl.parkandride.core.domain.Sort.Dir.DESC;
 
-import com.mysema.query.Tuple;
-import com.mysema.query.sql.SQLExpressions;
-import com.mysema.query.sql.dml.SQLInsertClause;
-import com.mysema.query.sql.dml.SQLUpdateClause;
-import com.mysema.query.sql.postgres.PostgresQuery;
-import com.mysema.query.sql.postgres.PostgresQueryFactory;
-import com.mysema.query.types.MappingProjection;
-import com.mysema.query.types.expr.ComparableExpression;
-import com.mysema.query.types.expr.SimpleExpression;
+import com.querydsl.core.Tuple;
+import com.querydsl.sql.SQLExpressions;
+import com.querydsl.sql.dml.SQLInsertClause;
+import com.querydsl.sql.dml.SQLUpdateClause;
+import com.querydsl.sql.postgresql.PostgreSQLQuery;
+import com.querydsl.sql.postgresql.PostgreSQLQueryFactory;
+import com.querydsl.core.types.MappingProjection;
+import com.querydsl.core.types.dsl.ComparableExpression;
+import com.querydsl.core.types.dsl.SimpleExpression;
 
 import fi.hsl.parkandride.back.sql.QOperator;
 import fi.hsl.parkandride.core.back.OperatorRepository;
@@ -50,9 +50,9 @@ public class OperatorDao implements OperatorRepository {
         }
     };
 
-    private final PostgresQueryFactory queryFactory;
+    private final PostgreSQLQueryFactory queryFactory;
 
-    public OperatorDao(PostgresQueryFactory queryFactory) {
+    public OperatorDao(PostgreSQLQueryFactory queryFactory) {
         this.queryFactory = queryFactory;
     }
 
@@ -95,14 +95,14 @@ public class OperatorDao implements OperatorRepository {
     @Override
     @TransactionalRead
     public SearchResults<Operator> findOperators(OperatorSearch search) {
-        PostgresQuery qry = queryFactory.from(qOperator);
+        PostgreSQLQuery qry = queryFactory.from(qOperator);
         qry.limit(search.getLimit() + 1);
         qry.offset(search.getOffset());
         orderBy(search.getSort(), qry);
         return SearchResults.of(qry.list(operatorMapping), search.getLimit());
     }
 
-    private void orderBy(Sort sort, PostgresQuery qry) {
+    private void orderBy(Sort sort, PostgreSQLQuery qry) {
         sort = firstNonNull(sort, DEFAULT_SORT);
         ComparableExpression<String> sortField;
         switch (firstNonNull(sort.getBy(), DEFAULT_SORT.getBy())) {

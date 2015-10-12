@@ -7,7 +7,7 @@ import java.util.SortedSet;
 
 import com.mysema.query.group.AbstractGroupExpression;
 import com.mysema.query.group.GroupCollector;
-import com.mysema.query.types.Expression;
+import com.querydsl.core.types.Expression;
 
 import fi.hsl.parkandride.core.domain.NullSafeSortedSet;
 

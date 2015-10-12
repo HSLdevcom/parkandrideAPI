@@ -1,26 +1,23 @@
 package fi.hsl.parkandride.back.sql;
 
-import static com.mysema.query.types.PathMetadataFactory.*;
+import com.querydsl.core.types.Path;
+import com.querydsl.core.types.PathMetadata;
+import com.querydsl.core.types.dsl.NumberPath;
+import com.querydsl.core.types.dsl.StringPath;
+import com.querydsl.sql.ColumnMetadata;
+import com.querydsl.sql.spatial.RelationalPathSpatial;
 
-import com.mysema.query.types.path.*;
-
-import com.mysema.query.types.PathMetadata;
 import javax.annotation.Generated;
-import com.mysema.query.types.Path;
-
-import com.mysema.query.sql.ColumnMetadata;
 import java.sql.Types;
 
-import com.mysema.query.sql.spatial.RelationalPathSpatial;
-
-import com.mysema.query.spatial.path.*;
+import static com.querydsl.core.types.PathMetadataFactory.forVariable;
 
 
 
 /**
  * QOperator is a Querydsl query type for QOperator
  */
-@Generated("com.mysema.query.sql.codegen.MetaDataSerializer")
+@Generated("com.querydsl.sql.codegen.MetaDataSerializer")
 public class QOperator extends RelationalPathSpatial<QOperator> {
 
     private static final long serialVersionUID = 1613793135;
@@ -35,13 +32,13 @@ public class QOperator extends RelationalPathSpatial<QOperator> {
 
     public final StringPath nameSv = createString("nameSv");
 
-    public final com.mysema.query.sql.PrimaryKey<QOperator> constraint1 = createPrimaryKey(id);
+    public final com.querydsl.sql.PrimaryKey<QOperator> constraint1 = createPrimaryKey(id);
 
-    public final com.mysema.query.sql.ForeignKey<QFacility> _facilityOperatorIdFk = createInvForeignKey(id, "OPERATOR_ID");
+    public final com.querydsl.sql.ForeignKey<QFacility> _facilityOperatorIdFk = createInvForeignKey(id, "OPERATOR_ID");
 
-    public final com.mysema.query.sql.ForeignKey<QAppUser> _userOperatorIdFk = createInvForeignKey(id, "OPERATOR_ID");
+    public final com.querydsl.sql.ForeignKey<QAppUser> _userOperatorIdFk = createInvForeignKey(id, "OPERATOR_ID");
 
-    public final com.mysema.query.sql.ForeignKey<QContact> _contactOperatorIdFk = createInvForeignKey(id, "OPERATOR_ID");
+    public final com.querydsl.sql.ForeignKey<QContact> _contactOperatorIdFk = createInvForeignKey(id, "OPERATOR_ID");
 
     public QOperator(String variable) {
         super(QOperator.class, forVariable(variable), "PUBLIC", "OPERATOR");
@@ -58,7 +55,7 @@ public class QOperator extends RelationalPathSpatial<QOperator> {
         addMetadata();
     }
 
-    public QOperator(PathMetadata<?> metadata) {
+    public QOperator(PathMetadata metadata) {
         super(QOperator.class, metadata, "PUBLIC", "OPERATOR");
         addMetadata();
     }

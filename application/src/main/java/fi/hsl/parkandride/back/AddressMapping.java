@@ -5,13 +5,13 @@ package fi.hsl.parkandride.back;
 
 import java.util.List;
 
-import com.mysema.query.Tuple;
-import com.mysema.query.dml.StoreClause;
-import com.mysema.query.sql.RelationalPathBase;
-import com.mysema.query.types.Expression;
-import com.mysema.query.types.MappingProjection;
-import com.mysema.query.types.Path;
-import com.mysema.query.types.path.StringPath;
+import com.querydsl.core.Tuple;
+import com.querydsl.core.dml.StoreClause;
+import com.querydsl.sql.RelationalPathBase;
+import com.querydsl.core.types.Expression;
+import com.querydsl.core.types.MappingProjection;
+import com.querydsl.core.types.Path;
+import com.querydsl.core.types.dsl.StringPath;
 
 import fi.hsl.parkandride.core.domain.Address;
 

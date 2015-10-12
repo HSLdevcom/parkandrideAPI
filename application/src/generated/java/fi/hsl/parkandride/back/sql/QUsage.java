@@ -1,26 +1,22 @@
 package fi.hsl.parkandride.back.sql;
 
-import static com.mysema.query.types.PathMetadataFactory.*;
+import com.querydsl.core.types.Path;
+import com.querydsl.core.types.PathMetadata;
+import com.querydsl.core.types.dsl.StringPath;
+import com.querydsl.sql.ColumnMetadata;
+import com.querydsl.sql.spatial.RelationalPathSpatial;
 
-import com.mysema.query.types.path.*;
-
-import com.mysema.query.types.PathMetadata;
 import javax.annotation.Generated;
-import com.mysema.query.types.Path;
-
-import com.mysema.query.sql.ColumnMetadata;
 import java.sql.Types;
 
-import com.mysema.query.sql.spatial.RelationalPathSpatial;
-
-import com.mysema.query.spatial.path.*;
+import static com.querydsl.core.types.PathMetadataFactory.forVariable;
 
 
 
 /**
  * QUsage is a Querydsl query type for QUsage
  */
-@Generated("com.mysema.query.sql.codegen.MetaDataSerializer")
+@Generated("com.querydsl.sql.codegen.MetaDataSerializer")
 public class QUsage extends RelationalPathSpatial<QUsage> {
 
     private static final long serialVersionUID = -1491957066;
@@ -29,17 +25,17 @@ public class QUsage extends RelationalPathSpatial<QUsage> {
 
     public final StringPath name = createString("name");
 
-    public final com.mysema.query.sql.PrimaryKey<QUsage> constraint4 = createPrimaryKey(name);
+    public final com.querydsl.sql.PrimaryKey<QUsage> constraint4 = createPrimaryKey(name);
 
-    public final com.mysema.query.sql.ForeignKey<QFacilityPrediction> _facilityPredictionUsageFk = createInvForeignKey(name, "USAGE");
+    public final com.querydsl.sql.ForeignKey<QFacilityPrediction> _facilityPredictionUsageFk = createInvForeignKey(name, "USAGE");
 
-    public final com.mysema.query.sql.ForeignKey<QPricing> _pricingUsageFk = createInvForeignKey(name, "USAGE");
+    public final com.querydsl.sql.ForeignKey<QPricing> _pricingUsageFk = createInvForeignKey(name, "USAGE");
 
-    public final com.mysema.query.sql.ForeignKey<QFacilityUtilization> _facilityUtilizationUsageFk = createInvForeignKey(name, "USAGE");
+    public final com.querydsl.sql.ForeignKey<QFacilityUtilization> _facilityUtilizationUsageFk = createInvForeignKey(name, "USAGE");
 
-    public final com.mysema.query.sql.ForeignKey<QUnavailableCapacity> _unavailableCapacityUsageFk = createInvForeignKey(name, "USAGE");
+    public final com.querydsl.sql.ForeignKey<QUnavailableCapacity> _unavailableCapacityUsageFk = createInvForeignKey(name, "USAGE");
 
-    public final com.mysema.query.sql.ForeignKey<QPredictor> _predictorUsageFk = createInvForeignKey(name, "USAGE");
+    public final com.querydsl.sql.ForeignKey<QPredictor> _predictorUsageFk = createInvForeignKey(name, "USAGE");
 
     public QUsage(String variable) {
         super(QUsage.class, forVariable(variable), "PUBLIC", "USAGE");
@@ -56,7 +52,7 @@ public class QUsage extends RelationalPathSpatial<QUsage> {
         addMetadata();
     }
 
-    public QUsage(PathMetadata<?> metadata) {
+    public QUsage(PathMetadata metadata) {
         super(QUsage.class, metadata, "PUBLIC", "USAGE");
         addMetadata();
     }

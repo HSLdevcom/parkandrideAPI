@@ -1,26 +1,22 @@
 package fi.hsl.parkandride.back.sql;
 
-import static com.mysema.query.types.PathMetadataFactory.*;
+import com.querydsl.core.types.Path;
+import com.querydsl.core.types.PathMetadata;
+import com.querydsl.core.types.dsl.StringPath;
+import com.querydsl.sql.ColumnMetadata;
+import com.querydsl.sql.spatial.RelationalPathSpatial;
 
-import com.mysema.query.types.path.*;
-
-import com.mysema.query.types.PathMetadata;
 import javax.annotation.Generated;
-import com.mysema.query.types.Path;
-
-import com.mysema.query.sql.ColumnMetadata;
 import java.sql.Types;
 
-import com.mysema.query.sql.spatial.RelationalPathSpatial;
-
-import com.mysema.query.spatial.path.*;
+import static com.querydsl.core.types.PathMetadataFactory.forVariable;
 
 
 
 /**
  * QService is a Querydsl query type for QService
  */
-@Generated("com.mysema.query.sql.codegen.MetaDataSerializer")
+@Generated("com.querydsl.sql.codegen.MetaDataSerializer")
 public class QService extends RelationalPathSpatial<QService> {
 
     private static final long serialVersionUID = -1411325302;
@@ -29,9 +25,9 @@ public class QService extends RelationalPathSpatial<QService> {
 
     public final StringPath name = createString("name");
 
-    public final com.mysema.query.sql.PrimaryKey<QService> constraintA1 = createPrimaryKey(name);
+    public final com.querydsl.sql.PrimaryKey<QService> constraintA1 = createPrimaryKey(name);
 
-    public final com.mysema.query.sql.ForeignKey<QFacilityService> _facilityServiceServiceFk = createInvForeignKey(name, "SERVICE");
+    public final com.querydsl.sql.ForeignKey<QFacilityService> _facilityServiceServiceFk = createInvForeignKey(name, "SERVICE");
 
     public QService(String variable) {
         super(QService.class, forVariable(variable), "PUBLIC", "SERVICE");
@@ -48,7 +44,7 @@ public class QService extends RelationalPathSpatial<QService> {
         addMetadata();
     }
 
-    public QService(PathMetadata<?> metadata) {
+    public QService(PathMetadata metadata) {
         super(QService.class, metadata, "PUBLIC", "SERVICE");
         addMetadata();
     }

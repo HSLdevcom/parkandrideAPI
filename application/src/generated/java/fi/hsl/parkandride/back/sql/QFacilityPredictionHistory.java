@@ -1,26 +1,23 @@
 package fi.hsl.parkandride.back.sql;
 
-import static com.mysema.query.types.PathMetadataFactory.*;
+import com.querydsl.core.types.Path;
+import com.querydsl.core.types.PathMetadata;
+import com.querydsl.core.types.dsl.DateTimePath;
+import com.querydsl.core.types.dsl.NumberPath;
+import com.querydsl.sql.ColumnMetadata;
+import com.querydsl.sql.spatial.RelationalPathSpatial;
 
-import com.mysema.query.types.path.*;
-
-import com.mysema.query.types.PathMetadata;
 import javax.annotation.Generated;
-import com.mysema.query.types.Path;
-
-import com.mysema.query.sql.ColumnMetadata;
 import java.sql.Types;
 
-import com.mysema.query.sql.spatial.RelationalPathSpatial;
-
-import com.mysema.query.spatial.path.*;
+import static com.querydsl.core.types.PathMetadataFactory.forVariable;
 
 
 
 /**
  * QFacilityPredictionHistory is a Querydsl query type for QFacilityPredictionHistory
  */
-@Generated("com.mysema.query.sql.codegen.MetaDataSerializer")
+@Generated("com.querydsl.sql.codegen.MetaDataSerializer")
 public class QFacilityPredictionHistory extends RelationalPathSpatial<QFacilityPredictionHistory> {
 
     private static final long serialVersionUID = -978140873;
@@ -35,9 +32,9 @@ public class QFacilityPredictionHistory extends RelationalPathSpatial<QFacilityP
 
     public final DateTimePath<org.joda.time.DateTime> ts = createDateTime("ts", org.joda.time.DateTime.class);
 
-    public final com.mysema.query.sql.PrimaryKey<QFacilityPredictionHistory> constraint34b = createPrimaryKey(forecastDistanceInMinutes, predictorId, ts);
+    public final com.querydsl.sql.PrimaryKey<QFacilityPredictionHistory> constraint34b = createPrimaryKey(forecastDistanceInMinutes, predictorId, ts);
 
-    public final com.mysema.query.sql.ForeignKey<QPredictor> facilityPredictionHistoryPredictorIdFk = createForeignKey(predictorId, "ID");
+    public final com.querydsl.sql.ForeignKey<QPredictor> facilityPredictionHistoryPredictorIdFk = createForeignKey(predictorId, "ID");
 
     public QFacilityPredictionHistory(String variable) {
         super(QFacilityPredictionHistory.class, forVariable(variable), "PUBLIC", "FACILITY_PREDICTION_HISTORY");
@@ -54,7 +51,7 @@ public class QFacilityPredictionHistory extends RelationalPathSpatial<QFacilityP
         addMetadata();
     }
 
-    public QFacilityPredictionHistory(PathMetadata<?> metadata) {
+    public QFacilityPredictionHistory(PathMetadata metadata) {
         super(QFacilityPredictionHistory.class, metadata, "PUBLIC", "FACILITY_PREDICTION_HISTORY");
         addMetadata();
     }

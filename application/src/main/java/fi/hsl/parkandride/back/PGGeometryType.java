@@ -15,8 +15,8 @@ import org.geolatte.geom.codec.Wkt;
 import org.postgis.PGgeometry;
 import org.postgresql.util.PGobject;
 
-import com.mysema.query.sql.spatial.PGgeometryConverter;
-import com.mysema.query.sql.types.AbstractType;
+import com.querydsl.sql.spatial.PGgeometryConverter;
+import com.querydsl.sql.types.AbstractType;
 
 public class PGGeometryType<T extends Geometry> extends AbstractType<T> {
 

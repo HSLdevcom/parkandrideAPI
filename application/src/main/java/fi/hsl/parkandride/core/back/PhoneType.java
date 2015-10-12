@@ -10,7 +10,7 @@ import java.sql.Types;
 
 import javax.annotation.Nullable;
 
-import com.mysema.query.sql.types.AbstractType;
+import com.querydsl.sql.types.AbstractType;
 
 import fi.hsl.parkandride.core.domain.Phone;
 

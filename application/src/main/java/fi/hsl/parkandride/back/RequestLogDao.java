@@ -6,14 +6,14 @@ package fi.hsl.parkandride.back;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Maps;
-import com.mysema.query.Tuple;
-import com.mysema.query.sql.RelationalPath;
-import com.mysema.query.sql.SQLExpressions;
-import com.mysema.query.sql.dml.SQLInsertClause;
-import com.mysema.query.sql.dml.SQLUpdateClause;
-import com.mysema.query.sql.postgres.PostgresQueryFactory;
-import com.mysema.query.types.MappingProjection;
-import com.mysema.query.types.expr.SimpleExpression;
+import com.querydsl.core.Tuple;
+import com.querydsl.sql.RelationalPath;
+import com.querydsl.sql.SQLExpressions;
+import com.querydsl.sql.dml.SQLInsertClause;
+import com.querydsl.sql.dml.SQLUpdateClause;
+import com.querydsl.sql.postgresql.PostgreSQLQueryFactory;
+import com.querydsl.core.types.MappingProjection;
+import com.querydsl.core.types.dsl.SimpleExpression;
 import fi.hsl.parkandride.back.sql.QRequestLog;
 import fi.hsl.parkandride.back.sql.QRequestLogSource;
 import fi.hsl.parkandride.back.sql.QRequestLogUrl;
@@ -35,7 +35,7 @@ import java.util.function.BiConsumer;
 import java.util.function.Supplier;
 import java.util.stream.Collector;
 
-import static com.mysema.query.types.ConstructorExpression.create;
+import static com.querydsl.core.types.ConstructorExpression.create;
 import static fi.hsl.parkandride.util.MapUtils.extractFromKeys;
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.*;
@@ -53,9 +53,9 @@ public class RequestLogDao implements RequestLogRepository {
     private static final QRequestLogSource qRequestLogSource = QRequestLogSource.requestLogSource;
     private static final QRequestLogUrl qRequestLogUrl = QRequestLogUrl.requestLogUrl;
 
-    private final PostgresQueryFactory queryFactory;
+    private final PostgreSQLQueryFactory queryFactory;
 
-    public RequestLogDao(PostgresQueryFactory queryFactory) {
+    public RequestLogDao(PostgreSQLQueryFactory queryFactory) {
         this.queryFactory = queryFactory;
     }
 

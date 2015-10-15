@@ -1,22 +1,19 @@
 // Copyright © 2015 HSL <https://www.hsl.fi>
 // This program is dual-licensed under the EUPL v1.2 and AGPLv3 licenses.
 
-package fi.hsl.parkandride.back;
+package com.querydsl.sql.spatial;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Types;
-
-import javax.annotation.Nullable;
-
+import com.querydsl.sql.types.AbstractType;
 import org.geolatte.geom.Geometry;
 import org.geolatte.geom.codec.Wkt;
 import org.postgis.PGgeometry;
 import org.postgresql.util.PGobject;
 
-import com.mysema.query.sql.spatial.PGgeometryConverter;
-import com.mysema.query.sql.types.AbstractType;
+import javax.annotation.Nullable;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Types;
 
 public class PGGeometryType<T extends Geometry> extends AbstractType<T> {
 

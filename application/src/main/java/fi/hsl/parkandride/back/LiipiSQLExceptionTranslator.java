@@ -3,8 +3,8 @@
 
 package fi.hsl.parkandride.back;
 
-import com.mysema.query.QueryException;
-import com.mysema.query.sql.SQLExceptionTranslator;
+import com.querydsl.core.QueryException;
+import com.querydsl.sql.SQLExceptionTranslator;
 import fi.hsl.parkandride.core.domain.Violation;
 import fi.hsl.parkandride.core.service.ValidationException;
 

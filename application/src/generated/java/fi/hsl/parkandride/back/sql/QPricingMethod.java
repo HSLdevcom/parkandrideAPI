@@ -1,26 +1,26 @@
 package fi.hsl.parkandride.back.sql;
 
-import static com.mysema.query.types.PathMetadataFactory.*;
+import static com.querydsl.core.types.PathMetadataFactory.*;
 
-import com.mysema.query.types.path.*;
+import com.querydsl.core.types.dsl.*;
 
-import com.mysema.query.types.PathMetadata;
+import com.querydsl.core.types.PathMetadata;
 import javax.annotation.Generated;
-import com.mysema.query.types.Path;
+import com.querydsl.core.types.Path;
 
-import com.mysema.query.sql.ColumnMetadata;
+import com.querydsl.sql.ColumnMetadata;
 import java.sql.Types;
 
-import com.mysema.query.sql.spatial.RelationalPathSpatial;
+import com.querydsl.sql.spatial.RelationalPathSpatial;
 
-import com.mysema.query.spatial.path.*;
+import com.querydsl.spatial.*;
 
 
 
 /**
  * QPricingMethod is a Querydsl query type for QPricingMethod
  */
-@Generated("com.mysema.query.sql.codegen.MetaDataSerializer")
+@Generated("com.querydsl.sql.codegen.MetaDataSerializer")
 public class QPricingMethod extends RelationalPathSpatial<QPricingMethod> {
 
     private static final long serialVersionUID = -1393682340;
@@ -29,9 +29,9 @@ public class QPricingMethod extends RelationalPathSpatial<QPricingMethod> {
 
     public final StringPath name = createString("name");
 
-    public final com.mysema.query.sql.PrimaryKey<QPricingMethod> constraintF = createPrimaryKey(name);
+    public final com.querydsl.sql.PrimaryKey<QPricingMethod> constraintF = createPrimaryKey(name);
 
-    public final com.mysema.query.sql.ForeignKey<QFacility> _facilityPricingMethodFk = createInvForeignKey(name, "PRICING_METHOD");
+    public final com.querydsl.sql.ForeignKey<QFacility> _facilityPricingMethodFk = createInvForeignKey(name, "PRICING_METHOD");
 
     public QPricingMethod(String variable) {
         super(QPricingMethod.class, forVariable(variable), "PUBLIC", "PRICING_METHOD");
@@ -48,7 +48,7 @@ public class QPricingMethod extends RelationalPathSpatial<QPricingMethod> {
         addMetadata();
     }
 
-    public QPricingMethod(PathMetadata<?> metadata) {
+    public QPricingMethod(PathMetadata metadata) {
         super(QPricingMethod.class, metadata, "PUBLIC", "PRICING_METHOD");
         addMetadata();
     }

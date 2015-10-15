@@ -3,8 +3,8 @@
 
 package fi.hsl.parkandride.dev;
 
-import com.mysema.query.sql.RelationalPath;
-import com.mysema.query.sql.postgres.PostgresQueryFactory;
+import com.querydsl.sql.RelationalPath;
+import com.querydsl.sql.postgresql.PostgreSQLQueryFactory;
 import fi.hsl.parkandride.FeatureProfile;
 import fi.hsl.parkandride.back.sql.*;
 import fi.hsl.parkandride.core.back.UserRepository;
@@ -29,7 +29,7 @@ import static java.lang.String.format;
 @Component
 @Profile({FeatureProfile.DEV_API})
 public class DevHelper {
-    private final PostgresQueryFactory queryFactory;
+    private final PostgreSQLQueryFactory queryFactory;
     private final JdbcTemplate jdbcTemplate;
 
     @Resource UserRepository userRepository;
@@ -41,7 +41,7 @@ public class DevHelper {
     @Resource BatchingRequestLogService batchingRequestLogService;
 
     @Inject
-    public DevHelper(PostgresQueryFactory queryFactory, JdbcTemplate jdbcTemplate) {
+    public DevHelper(PostgreSQLQueryFactory queryFactory, JdbcTemplate jdbcTemplate) {
         this.queryFactory = queryFactory;
         this.jdbcTemplate = jdbcTemplate;
     }
@@ -143,32 +143,32 @@ public class DevHelper {
 
     @TransactionalWrite
     public void resetHubSequence() {
-        resetSequence(HUB_ID_SEQ, queryFactory.from(QHub.hub).singleResult(QHub.hub.id.max()));
+        resetSequence(HUB_ID_SEQ, queryFactory.from(QHub.hub).select(QHub.hub.id.max()).fetchOne());
     }
 
     @TransactionalWrite
     public void resetFacilitySequence() {
-        resetSequence(FACILITY_ID_SEQ, queryFactory.from(QFacility.facility).singleResult(QFacility.facility.id.max()));
+        resetSequence(FACILITY_ID_SEQ, queryFactory.from(QFacility.facility).select(QFacility.facility.id.max()).fetchOne());
     }
 
     @TransactionalWrite
     public void resetPredictorSequence() {
-        resetSequence(PREDICTOR_ID_SEQ, queryFactory.from(QPredictor.predictor).singleResult(QPredictor.predictor.id.max()));
+        resetSequence(PREDICTOR_ID_SEQ, queryFactory.from(QPredictor.predictor).select(QPredictor.predictor.id.max()).fetchOne());
     }
 
     @TransactionalWrite
     public void resetContactSequence() {
-        resetSequence(CONTACT_ID_SEQ, queryFactory.from(QContact.contact).singleResult(QContact.contact.id.max()));
+        resetSequence(CONTACT_ID_SEQ, queryFactory.from(QContact.contact).select(QContact.contact.id.max()).fetchOne());
     }
 
     @TransactionalWrite
     public void resetUserSequence() {
-        resetSequence(USER_ID_SEQ, queryFactory.from(QAppUser.appUser).singleResult(QAppUser.appUser.id.max()));
+        resetSequence(USER_ID_SEQ, queryFactory.from(QAppUser.appUser).select(QAppUser.appUser.id.max()).fetchOne());
     }
 
     @TransactionalWrite
     public void resetOperatorSequence() {
-        resetSequence(OPERATOR_ID_SEQ, queryFactory.from(QOperator.operator).singleResult(QOperator.operator.id.max()));
+        resetSequence(OPERATOR_ID_SEQ, queryFactory.from(QOperator.operator).select(QOperator.operator.id.max()).fetchOne());
     }
 
     private void delete(RelationalPath... tables) {

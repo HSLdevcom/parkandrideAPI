@@ -18,7 +18,7 @@ import org.geolatte.geom.codec.WkbDecoder;
 import org.geolatte.geom.codec.WkbEncoder;
 import org.geolatte.geom.codec.Wkt;
 
-import com.mysema.query.sql.types.AbstractType;
+import com.querydsl.sql.types.AbstractType;
 
 public class H2GeometryType<T extends Geometry> extends AbstractType<T> {
 

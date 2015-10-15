@@ -3,7 +3,7 @@
 
 package fi.hsl.parkandride.back;
 
-import com.mysema.query.types.path.StringPath;
+import com.querydsl.core.types.dsl.StringPath;
 
 import fi.hsl.parkandride.core.domain.MultilingualString;
 

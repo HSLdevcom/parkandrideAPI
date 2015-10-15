@@ -1,26 +1,26 @@
 package fi.hsl.parkandride.back.sql;
 
-import static com.mysema.query.types.PathMetadataFactory.*;
+import static com.querydsl.core.types.PathMetadataFactory.*;
 
-import com.mysema.query.types.path.*;
+import com.querydsl.core.types.dsl.*;
 
-import com.mysema.query.types.PathMetadata;
+import com.querydsl.core.types.PathMetadata;
 import javax.annotation.Generated;
-import com.mysema.query.types.Path;
+import com.querydsl.core.types.Path;
 
-import com.mysema.query.sql.ColumnMetadata;
+import com.querydsl.sql.ColumnMetadata;
 import java.sql.Types;
 
-import com.mysema.query.sql.spatial.RelationalPathSpatial;
+import com.querydsl.sql.spatial.RelationalPathSpatial;
 
-import com.mysema.query.spatial.path.*;
+import com.querydsl.spatial.*;
 
 
 
 /**
  * QFacilityStatus is a Querydsl query type for QFacilityStatus
  */
-@Generated("com.mysema.query.sql.codegen.MetaDataSerializer")
+@Generated("com.querydsl.sql.codegen.MetaDataSerializer")
 public class QFacilityStatus extends RelationalPathSpatial<QFacilityStatus> {
 
     private static final long serialVersionUID = -847823104;
@@ -29,9 +29,9 @@ public class QFacilityStatus extends RelationalPathSpatial<QFacilityStatus> {
 
     public final StringPath name = createString("name");
 
-    public final com.mysema.query.sql.PrimaryKey<QFacilityStatus> constraint5 = createPrimaryKey(name);
+    public final com.querydsl.sql.PrimaryKey<QFacilityStatus> constraint5 = createPrimaryKey(name);
 
-    public final com.mysema.query.sql.ForeignKey<QFacility> _facilityStatusFk = createInvForeignKey(name, "STATUS");
+    public final com.querydsl.sql.ForeignKey<QFacility> _facilityStatusFk = createInvForeignKey(name, "STATUS");
 
     public QFacilityStatus(String variable) {
         super(QFacilityStatus.class, forVariable(variable), "PUBLIC", "FACILITY_STATUS");
@@ -48,7 +48,7 @@ public class QFacilityStatus extends RelationalPathSpatial<QFacilityStatus> {
         addMetadata();
     }
 
-    public QFacilityStatus(PathMetadata<?> metadata) {
+    public QFacilityStatus(PathMetadata metadata) {
         super(QFacilityStatus.class, metadata, "PUBLIC", "FACILITY_STATUS");
         addMetadata();
     }

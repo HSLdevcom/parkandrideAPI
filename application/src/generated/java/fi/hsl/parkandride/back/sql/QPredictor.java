@@ -1,26 +1,26 @@
 package fi.hsl.parkandride.back.sql;
 
-import static com.mysema.query.types.PathMetadataFactory.*;
+import static com.querydsl.core.types.PathMetadataFactory.*;
 
-import com.mysema.query.types.path.*;
+import com.querydsl.core.types.dsl.*;
 
-import com.mysema.query.types.PathMetadata;
+import com.querydsl.core.types.PathMetadata;
 import javax.annotation.Generated;
-import com.mysema.query.types.Path;
+import com.querydsl.core.types.Path;
 
-import com.mysema.query.sql.ColumnMetadata;
+import com.querydsl.sql.ColumnMetadata;
 import java.sql.Types;
 
-import com.mysema.query.sql.spatial.RelationalPathSpatial;
+import com.querydsl.sql.spatial.RelationalPathSpatial;
 
-import com.mysema.query.spatial.path.*;
+import com.querydsl.spatial.*;
 
 
 
 /**
  * QPredictor is a Querydsl query type for QPredictor
  */
-@Generated("com.mysema.query.sql.codegen.MetaDataSerializer")
+@Generated("com.querydsl.sql.codegen.MetaDataSerializer")
 public class QPredictor extends RelationalPathSpatial<QPredictor> {
 
     private static final long serialVersionUID = -227775727;
@@ -43,15 +43,15 @@ public class QPredictor extends RelationalPathSpatial<QPredictor> {
 
     public final EnumPath<fi.hsl.parkandride.core.domain.Usage> usage = createEnum("usage", fi.hsl.parkandride.core.domain.Usage.class);
 
-    public final com.mysema.query.sql.PrimaryKey<QPredictor> constraint55 = createPrimaryKey(id);
+    public final com.querydsl.sql.PrimaryKey<QPredictor> constraint55 = createPrimaryKey(id);
 
-    public final com.mysema.query.sql.ForeignKey<QCapacityType> predictorCapacityTypeFk = createForeignKey(capacityType, "NAME");
+    public final com.querydsl.sql.ForeignKey<QCapacityType> predictorCapacityTypeFk = createForeignKey(capacityType, "NAME");
 
-    public final com.mysema.query.sql.ForeignKey<QFacility> predictorFacilityIdFk = createForeignKey(facilityId, "ID");
+    public final com.querydsl.sql.ForeignKey<QFacility> predictorFacilityIdFk = createForeignKey(facilityId, "ID");
 
-    public final com.mysema.query.sql.ForeignKey<QUsage> predictorUsageFk = createForeignKey(usage, "NAME");
+    public final com.querydsl.sql.ForeignKey<QUsage> predictorUsageFk = createForeignKey(usage, "NAME");
 
-    public final com.mysema.query.sql.ForeignKey<QFacilityPredictionHistory> _facilityPredictionHistoryPredictorIdFk = createInvForeignKey(id, "PREDICTOR_ID");
+    public final com.querydsl.sql.ForeignKey<QFacilityPredictionHistory> _facilityPredictionHistoryPredictorIdFk = createInvForeignKey(id, "PREDICTOR_ID");
 
     public QPredictor(String variable) {
         super(QPredictor.class, forVariable(variable), "PUBLIC", "PREDICTOR");
@@ -68,7 +68,7 @@ public class QPredictor extends RelationalPathSpatial<QPredictor> {
         addMetadata();
     }
 
-    public QPredictor(PathMetadata<?> metadata) {
+    public QPredictor(PathMetadata metadata) {
         super(QPredictor.class, metadata, "PUBLIC", "PREDICTOR");
         addMetadata();
     }

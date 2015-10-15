@@ -1,26 +1,26 @@
 package fi.hsl.parkandride.back.sql;
 
-import static com.mysema.query.types.PathMetadataFactory.*;
+import static com.querydsl.core.types.PathMetadataFactory.*;
 
-import com.mysema.query.types.path.*;
+import com.querydsl.core.types.dsl.*;
 
-import com.mysema.query.types.PathMetadata;
+import com.querydsl.core.types.PathMetadata;
 import javax.annotation.Generated;
-import com.mysema.query.types.Path;
+import com.querydsl.core.types.Path;
 
-import com.mysema.query.sql.ColumnMetadata;
+import com.querydsl.sql.ColumnMetadata;
 import java.sql.Types;
 
-import com.mysema.query.sql.spatial.RelationalPathSpatial;
+import com.querydsl.sql.spatial.RelationalPathSpatial;
 
-import com.mysema.query.spatial.path.*;
+import com.querydsl.spatial.*;
 
 
 
 /**
  * QPricing is a Querydsl query type for QPricing
  */
-@Generated("com.mysema.query.sql.codegen.MetaDataSerializer")
+@Generated("com.querydsl.sql.codegen.MetaDataSerializer")
 public class QPricing extends RelationalPathSpatial<QPricing> {
 
     private static final long serialVersionUID = 584432539;
@@ -47,15 +47,15 @@ public class QPricing extends RelationalPathSpatial<QPricing> {
 
     public final EnumPath<fi.hsl.parkandride.core.domain.Usage> usage = createEnum("usage", fi.hsl.parkandride.core.domain.Usage.class);
 
-    public final com.mysema.query.sql.PrimaryKey<QPricing> constraint18 = createPrimaryKey(capacityType, dayType, facilityId, fromTime, usage);
+    public final com.querydsl.sql.PrimaryKey<QPricing> constraint18 = createPrimaryKey(capacityType, dayType, facilityId, fromTime, usage);
 
-    public final com.mysema.query.sql.ForeignKey<QUsage> pricingUsageFk = createForeignKey(usage, "NAME");
+    public final com.querydsl.sql.ForeignKey<QUsage> pricingUsageFk = createForeignKey(usage, "NAME");
 
-    public final com.mysema.query.sql.ForeignKey<QCapacityType> pricingCapacityTypeFk = createForeignKey(capacityType, "NAME");
+    public final com.querydsl.sql.ForeignKey<QCapacityType> pricingCapacityTypeFk = createForeignKey(capacityType, "NAME");
 
-    public final com.mysema.query.sql.ForeignKey<QFacility> pricingFacilityIdFk = createForeignKey(facilityId, "ID");
+    public final com.querydsl.sql.ForeignKey<QFacility> pricingFacilityIdFk = createForeignKey(facilityId, "ID");
 
-    public final com.mysema.query.sql.ForeignKey<QDayType> pricingDayTypeFk = createForeignKey(dayType, "NAME");
+    public final com.querydsl.sql.ForeignKey<QDayType> pricingDayTypeFk = createForeignKey(dayType, "NAME");
 
     public QPricing(String variable) {
         super(QPricing.class, forVariable(variable), "PUBLIC", "PRICING");
@@ -72,7 +72,7 @@ public class QPricing extends RelationalPathSpatial<QPricing> {
         addMetadata();
     }
 
-    public QPricing(PathMetadata<?> metadata) {
+    public QPricing(PathMetadata metadata) {
         super(QPricing.class, metadata, "PUBLIC", "PRICING");
         addMetadata();
     }

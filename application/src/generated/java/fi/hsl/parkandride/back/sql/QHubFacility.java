@@ -1,26 +1,26 @@
 package fi.hsl.parkandride.back.sql;
 
-import static com.mysema.query.types.PathMetadataFactory.*;
+import static com.querydsl.core.types.PathMetadataFactory.*;
 
-import com.mysema.query.types.path.*;
+import com.querydsl.core.types.dsl.*;
 
-import com.mysema.query.types.PathMetadata;
+import com.querydsl.core.types.PathMetadata;
 import javax.annotation.Generated;
-import com.mysema.query.types.Path;
+import com.querydsl.core.types.Path;
 
-import com.mysema.query.sql.ColumnMetadata;
+import com.querydsl.sql.ColumnMetadata;
 import java.sql.Types;
 
-import com.mysema.query.sql.spatial.RelationalPathSpatial;
+import com.querydsl.sql.spatial.RelationalPathSpatial;
 
-import com.mysema.query.spatial.path.*;
+import com.querydsl.spatial.*;
 
 
 
 /**
  * QHubFacility is a Querydsl query type for QHubFacility
  */
-@Generated("com.mysema.query.sql.codegen.MetaDataSerializer")
+@Generated("com.querydsl.sql.codegen.MetaDataSerializer")
 public class QHubFacility extends RelationalPathSpatial<QHubFacility> {
 
     private static final long serialVersionUID = -1380594675;
@@ -31,9 +31,9 @@ public class QHubFacility extends RelationalPathSpatial<QHubFacility> {
 
     public final NumberPath<Long> hubId = createNumber("hubId", Long.class);
 
-    public final com.mysema.query.sql.PrimaryKey<QHubFacility> constraintE = createPrimaryKey(facilityId, hubId);
+    public final com.querydsl.sql.PrimaryKey<QHubFacility> constraintE = createPrimaryKey(facilityId, hubId);
 
-    public final com.mysema.query.sql.ForeignKey<QHub> hubFacilityHubIdFk = createForeignKey(hubId, "ID");
+    public final com.querydsl.sql.ForeignKey<QHub> hubFacilityHubIdFk = createForeignKey(hubId, "ID");
 
     public QHubFacility(String variable) {
         super(QHubFacility.class, forVariable(variable), "PUBLIC", "HUB_FACILITY");
@@ -50,7 +50,7 @@ public class QHubFacility extends RelationalPathSpatial<QHubFacility> {
         addMetadata();
     }
 
-    public QHubFacility(PathMetadata<?> metadata) {
+    public QHubFacility(PathMetadata metadata) {
         super(QHubFacility.class, metadata, "PUBLIC", "HUB_FACILITY");
         addMetadata();
     }

@@ -1,26 +1,26 @@
 package fi.hsl.parkandride.back.sql;
 
-import static com.mysema.query.types.PathMetadataFactory.*;
+import static com.querydsl.core.types.PathMetadataFactory.*;
 
-import com.mysema.query.types.path.*;
+import com.querydsl.core.types.dsl.*;
 
-import com.mysema.query.types.PathMetadata;
+import com.querydsl.core.types.PathMetadata;
 import javax.annotation.Generated;
-import com.mysema.query.types.Path;
+import com.querydsl.core.types.Path;
 
-import com.mysema.query.sql.ColumnMetadata;
+import com.querydsl.sql.ColumnMetadata;
 import java.sql.Types;
 
-import com.mysema.query.sql.spatial.RelationalPathSpatial;
+import com.querydsl.sql.spatial.RelationalPathSpatial;
 
-import com.mysema.query.spatial.path.*;
+import com.querydsl.spatial.*;
 
 
 
 /**
  * QRequestLog is a Querydsl query type for QRequestLog
  */
-@Generated("com.mysema.query.sql.codegen.MetaDataSerializer")
+@Generated("com.querydsl.sql.codegen.MetaDataSerializer")
 public class QRequestLog extends RelationalPathSpatial<QRequestLog> {
 
     private static final long serialVersionUID = 404738624;
@@ -35,11 +35,11 @@ public class QRequestLog extends RelationalPathSpatial<QRequestLog> {
 
     public final NumberPath<Long> urlId = createNumber("urlId", Long.class);
 
-    public final com.mysema.query.sql.PrimaryKey<QRequestLog> constraintC = createPrimaryKey(sourceId, ts, urlId);
+    public final com.querydsl.sql.PrimaryKey<QRequestLog> constraintC = createPrimaryKey(sourceId, ts, urlId);
 
-    public final com.mysema.query.sql.ForeignKey<QRequestLogUrl> requestLogUrlId = createForeignKey(urlId, "ID");
+    public final com.querydsl.sql.ForeignKey<QRequestLogUrl> requestLogUrlId = createForeignKey(urlId, "ID");
 
-    public final com.mysema.query.sql.ForeignKey<QRequestLogSource> requestLogSourceId = createForeignKey(sourceId, "ID");
+    public final com.querydsl.sql.ForeignKey<QRequestLogSource> requestLogSourceId = createForeignKey(sourceId, "ID");
 
     public QRequestLog(String variable) {
         super(QRequestLog.class, forVariable(variable), "PUBLIC", "REQUEST_LOG");
@@ -56,7 +56,7 @@ public class QRequestLog extends RelationalPathSpatial<QRequestLog> {
         addMetadata();
     }
 
-    public QRequestLog(PathMetadata<?> metadata) {
+    public QRequestLog(PathMetadata metadata) {
         super(QRequestLog.class, metadata, "PUBLIC", "REQUEST_LOG");
         addMetadata();
     }

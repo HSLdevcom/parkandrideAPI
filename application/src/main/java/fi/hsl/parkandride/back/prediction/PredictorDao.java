@@ -3,12 +3,12 @@
 
 package fi.hsl.parkandride.back.prediction;
 
-import com.mysema.query.Tuple;
-import com.mysema.query.sql.SQLExpressions;
-import com.mysema.query.sql.postgres.PostgresQueryFactory;
-import com.mysema.query.types.MappingProjection;
-import com.mysema.query.types.Predicate;
-import com.mysema.query.types.expr.SimpleExpression;
+import com.querydsl.core.Tuple;
+import com.querydsl.sql.SQLExpressions;
+import com.querydsl.sql.postgresql.PostgreSQLQueryFactory;
+import com.querydsl.core.types.MappingProjection;
+import com.querydsl.core.types.Predicate;
+import com.querydsl.core.types.dsl.SimpleExpression;
 import fi.hsl.parkandride.back.sql.QPredictor;
 import fi.hsl.parkandride.core.back.PredictorRepository;
 import fi.hsl.parkandride.core.domain.UtilizationKey;
@@ -48,10 +48,10 @@ public class PredictorDao implements PredictorRepository {
     }
 
 
-    private final PostgresQueryFactory queryFactory;
+    private final PostgreSQLQueryFactory queryFactory;
     private final ValidationService validationService;
 
-    public PredictorDao(PostgresQueryFactory queryFactory, ValidationService validationService) {
+    public PredictorDao(PostgreSQLQueryFactory queryFactory, ValidationService validationService) {
         this.queryFactory = queryFactory;
         this.validationService = validationService;
     }
@@ -63,12 +63,13 @@ public class PredictorDao implements PredictorRepository {
         Long existing = queryFactory.from(qPredictor)
                 .where(qPredictor.type.eq(predictorType))
                 .where(utilizationKeyEquals(utilizationKey))
-                .singleResult(qPredictor.id);
+                .select(qPredictor.id)
+                .fetchOne();
         if (existing != null) {
             return existing;
         }
         queryFactory.insert(qPredictor)
-                .set(qPredictor.id, queryFactory.query().singleResult(nextPredictorId))
+                .set(qPredictor.id, queryFactory.query().select(nextPredictorId).fetchOne())
                 .set(qPredictor.type, predictorType)
                 .set(qPredictor.facilityId, utilizationKey.facilityId)
                 .set(qPredictor.capacityType, utilizationKey.capacityType)
@@ -95,7 +96,7 @@ public class PredictorDao implements PredictorRepository {
         return Objects.requireNonNull(
                 queryFactory.from(qPredictor)
                         .where(qPredictor.id.eq(predictorId))
-                        .singleResult(predictorMapping),
+                        .select(predictorMapping).fetchOne(),
                 "No predictors with id " + predictorId);
     }
 
@@ -106,7 +107,7 @@ public class PredictorDao implements PredictorRepository {
                 queryFactory.from(qPredictor)
                         .where(qPredictor.id.eq(predictorId))
                         .forUpdate()
-                        .singleResult(predictorMapping),
+                        .select(predictorMapping).fetchOne(),
                 "No predictors with id " + predictorId);
     }
 
@@ -114,7 +115,7 @@ public class PredictorDao implements PredictorRepository {
     @Override
     public List<PredictorState> findAllPredictors() {
         return queryFactory.from(qPredictor)
-                .list(predictorMapping);
+                .select(predictorMapping).fetch();
     }
 
     @TransactionalRead
@@ -122,7 +123,7 @@ public class PredictorDao implements PredictorRepository {
     public List<Long> findPredictorsNeedingUpdate() {
         return queryFactory.from(qPredictor)
                 .where(qPredictor.moreUtilizations.eq(true))
-                .list(qPredictor.id);
+                .select(qPredictor.id).fetch();
     }
 
     @TransactionalWrite

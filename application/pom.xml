@@ -18,7 +18,7 @@
     <maven-plugin.frontend.node.version>v0.10.38</maven-plugin.frontend.node.version>
     <maven-plugin.frontend.npm.version>2.1.18</maven-plugin.frontend.npm.version>
     <hikaricp.version>2.0.1</hikaricp.version>
-    <querydsl.version>3.5.0</querydsl.version>
+    <querydsl.version>4.0.4</querydsl.version>
     <flyway.version>3.0</flyway.version>
     <h2.version>1.4.181</h2.version>
     <h2gis.version>1.2.0</h2gis.version>
@@ -85,12 +85,12 @@
       <version>${hikaricp.version}</version>
     </dependency>
     <dependency>
-      <groupId>com.mysema.querydsl</groupId>
+      <groupId>com.querydsl</groupId>
       <artifactId>querydsl-sql</artifactId>
       <version>${querydsl.version}</version>
     </dependency>
     <dependency>
-      <groupId>com.mysema.querydsl</groupId>
+      <groupId>com.querydsl</groupId>
       <artifactId>querydsl-sql-codegen</artifactId>
       <version>${querydsl.version}</version>
       <exclusions>
@@ -101,7 +101,7 @@
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>com.mysema.querydsl</groupId>
+      <groupId>com.querydsl</groupId>
       <artifactId>querydsl-spatial</artifactId>
       <version>${querydsl.version}</version>
     </dependency>

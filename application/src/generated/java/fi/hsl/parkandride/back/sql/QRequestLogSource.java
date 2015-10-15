@@ -1,26 +1,26 @@
 package fi.hsl.parkandride.back.sql;
 
-import static com.mysema.query.types.PathMetadataFactory.*;
+import static com.querydsl.core.types.PathMetadataFactory.*;
 
-import com.mysema.query.types.path.*;
+import com.querydsl.core.types.dsl.*;
 
-import com.mysema.query.types.PathMetadata;
+import com.querydsl.core.types.PathMetadata;
 import javax.annotation.Generated;
-import com.mysema.query.types.Path;
+import com.querydsl.core.types.Path;
 
-import com.mysema.query.sql.ColumnMetadata;
+import com.querydsl.sql.ColumnMetadata;
 import java.sql.Types;
 
-import com.mysema.query.sql.spatial.RelationalPathSpatial;
+import com.querydsl.sql.spatial.RelationalPathSpatial;
 
-import com.mysema.query.spatial.path.*;
+import com.querydsl.spatial.*;
 
 
 
 /**
  * QRequestLogSource is a Querydsl query type for QRequestLogSource
  */
-@Generated("com.mysema.query.sql.codegen.MetaDataSerializer")
+@Generated("com.querydsl.sql.codegen.MetaDataSerializer")
 public class QRequestLogSource extends RelationalPathSpatial<QRequestLogSource> {
 
     private static final long serialVersionUID = -285313413;
@@ -31,9 +31,9 @@ public class QRequestLogSource extends RelationalPathSpatial<QRequestLogSource> 
 
     public final StringPath source = createString("source");
 
-    public final com.mysema.query.sql.PrimaryKey<QRequestLogSource> constraint2fe = createPrimaryKey(id);
+    public final com.querydsl.sql.PrimaryKey<QRequestLogSource> constraint2fe = createPrimaryKey(id);
 
-    public final com.mysema.query.sql.ForeignKey<QRequestLog> _requestLogSourceId = createInvForeignKey(id, "SOURCE_ID");
+    public final com.querydsl.sql.ForeignKey<QRequestLog> _requestLogSourceId = createInvForeignKey(id, "SOURCE_ID");
 
     public QRequestLogSource(String variable) {
         super(QRequestLogSource.class, forVariable(variable), "PUBLIC", "REQUEST_LOG_SOURCE");
@@ -50,7 +50,7 @@ public class QRequestLogSource extends RelationalPathSpatial<QRequestLogSource> 
         addMetadata();
     }
 
-    public QRequestLogSource(PathMetadata<?> metadata) {
+    public QRequestLogSource(PathMetadata metadata) {
         super(QRequestLogSource.class, metadata, "PUBLIC", "REQUEST_LOG_SOURCE");
         addMetadata();
     }

@@ -1,26 +1,26 @@
 package fi.hsl.parkandride.back.sql;
 
-import static com.mysema.query.types.PathMetadataFactory.*;
+import static com.querydsl.core.types.PathMetadataFactory.*;
 
-import com.mysema.query.types.path.*;
+import com.querydsl.core.types.dsl.*;
 
-import com.mysema.query.types.PathMetadata;
+import com.querydsl.core.types.PathMetadata;
 import javax.annotation.Generated;
-import com.mysema.query.types.Path;
+import com.querydsl.core.types.Path;
 
-import com.mysema.query.sql.ColumnMetadata;
+import com.querydsl.sql.ColumnMetadata;
 import java.sql.Types;
 
-import com.mysema.query.sql.spatial.RelationalPathSpatial;
+import com.querydsl.sql.spatial.RelationalPathSpatial;
 
-import com.mysema.query.spatial.path.*;
+import com.querydsl.spatial.*;
 
 
 
 /**
  * QFacilityPaymentMethod is a Querydsl query type for QFacilityPaymentMethod
  */
-@Generated("com.mysema.query.sql.codegen.MetaDataSerializer")
+@Generated("com.querydsl.sql.codegen.MetaDataSerializer")
 public class QFacilityPaymentMethod extends RelationalPathSpatial<QFacilityPaymentMethod> {
 
     private static final long serialVersionUID = -130353223;
@@ -31,11 +31,11 @@ public class QFacilityPaymentMethod extends RelationalPathSpatial<QFacilityPayme
 
     public final EnumPath<fi.hsl.parkandride.core.domain.PaymentMethod> paymentMethod = createEnum("paymentMethod", fi.hsl.parkandride.core.domain.PaymentMethod.class);
 
-    public final com.mysema.query.sql.PrimaryKey<QFacilityPaymentMethod> constraint31 = createPrimaryKey(facilityId, paymentMethod);
+    public final com.querydsl.sql.PrimaryKey<QFacilityPaymentMethod> constraint31 = createPrimaryKey(facilityId, paymentMethod);
 
-    public final com.mysema.query.sql.ForeignKey<QPaymentMethod> facilityPaymentMethodPaymentMethodFk = createForeignKey(paymentMethod, "NAME");
+    public final com.querydsl.sql.ForeignKey<QPaymentMethod> facilityPaymentMethodPaymentMethodFk = createForeignKey(paymentMethod, "NAME");
 
-    public final com.mysema.query.sql.ForeignKey<QFacility> facilityPaymentMethodFacilityIdFk = createForeignKey(facilityId, "ID");
+    public final com.querydsl.sql.ForeignKey<QFacility> facilityPaymentMethodFacilityIdFk = createForeignKey(facilityId, "ID");
 
     public QFacilityPaymentMethod(String variable) {
         super(QFacilityPaymentMethod.class, forVariable(variable), "PUBLIC", "FACILITY_PAYMENT_METHOD");
@@ -52,7 +52,7 @@ public class QFacilityPaymentMethod extends RelationalPathSpatial<QFacilityPayme
         addMetadata();
     }
 
-    public QFacilityPaymentMethod(PathMetadata<?> metadata) {
+    public QFacilityPaymentMethod(PathMetadata metadata) {
         super(QFacilityPaymentMethod.class, metadata, "PUBLIC", "FACILITY_PAYMENT_METHOD");
         addMetadata();
     }

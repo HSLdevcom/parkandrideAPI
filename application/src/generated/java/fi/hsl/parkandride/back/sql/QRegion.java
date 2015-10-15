@@ -1,26 +1,26 @@
 package fi.hsl.parkandride.back.sql;
 
-import static com.mysema.query.types.PathMetadataFactory.*;
+import static com.querydsl.core.types.PathMetadataFactory.*;
 
-import com.mysema.query.types.path.*;
+import com.querydsl.core.types.dsl.*;
 
-import com.mysema.query.types.PathMetadata;
+import com.querydsl.core.types.PathMetadata;
 import javax.annotation.Generated;
-import com.mysema.query.types.Path;
+import com.querydsl.core.types.Path;
 
-import com.mysema.query.sql.ColumnMetadata;
+import com.querydsl.sql.ColumnMetadata;
 import java.sql.Types;
 
-import com.mysema.query.sql.spatial.RelationalPathSpatial;
+import com.querydsl.sql.spatial.RelationalPathSpatial;
 
-import com.mysema.query.spatial.path.*;
+import com.querydsl.spatial.*;
 
 
 
 /**
  * QRegion is a Querydsl query type for QRegion
  */
-@Generated("com.mysema.query.sql.codegen.MetaDataSerializer")
+@Generated("com.querydsl.sql.codegen.MetaDataSerializer")
 public class QRegion extends RelationalPathSpatial<QRegion> {
 
     private static final long serialVersionUID = 895335551;
@@ -37,7 +37,7 @@ public class QRegion extends RelationalPathSpatial<QRegion> {
 
     public final StringPath nameSv = createString("nameSv");
 
-    public final com.mysema.query.sql.PrimaryKey<QRegion> constraint8 = createPrimaryKey(id);
+    public final com.querydsl.sql.PrimaryKey<QRegion> constraint8 = createPrimaryKey(id);
 
     public QRegion(String variable) {
         super(QRegion.class, forVariable(variable), "PUBLIC", "REGION");
@@ -54,7 +54,7 @@ public class QRegion extends RelationalPathSpatial<QRegion> {
         addMetadata();
     }
 
-    public QRegion(PathMetadata<?> metadata) {
+    public QRegion(PathMetadata metadata) {
         super(QRegion.class, metadata, "PUBLIC", "REGION");
         addMetadata();
     }

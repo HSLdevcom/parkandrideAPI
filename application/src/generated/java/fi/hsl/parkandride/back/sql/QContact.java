@@ -1,26 +1,26 @@
 package fi.hsl.parkandride.back.sql;
 
-import static com.mysema.query.types.PathMetadataFactory.*;
+import static com.querydsl.core.types.PathMetadataFactory.*;
 
-import com.mysema.query.types.path.*;
+import com.querydsl.core.types.dsl.*;
 
-import com.mysema.query.types.PathMetadata;
+import com.querydsl.core.types.PathMetadata;
 import javax.annotation.Generated;
-import com.mysema.query.types.Path;
+import com.querydsl.core.types.Path;
 
-import com.mysema.query.sql.ColumnMetadata;
+import com.querydsl.sql.ColumnMetadata;
 import java.sql.Types;
 
-import com.mysema.query.sql.spatial.RelationalPathSpatial;
+import com.querydsl.sql.spatial.RelationalPathSpatial;
 
-import com.mysema.query.spatial.path.*;
+import com.querydsl.spatial.*;
 
 
 
 /**
  * QContact is a Querydsl query type for QContact
  */
-@Generated("com.mysema.query.sql.codegen.MetaDataSerializer")
+@Generated("com.querydsl.sql.codegen.MetaDataSerializer")
 public class QContact extends RelationalPathSpatial<QContact> {
 
     private static final long serialVersionUID = 1851015157;
@@ -67,15 +67,15 @@ public class QContact extends RelationalPathSpatial<QContact> {
 
     public final StringPath streetAddressSv = createString("streetAddressSv");
 
-    public final com.mysema.query.sql.PrimaryKey<QContact> constraint6 = createPrimaryKey(id);
+    public final com.querydsl.sql.PrimaryKey<QContact> constraint6 = createPrimaryKey(id);
 
-    public final com.mysema.query.sql.ForeignKey<QOperator> contactOperatorIdFk = createForeignKey(operatorId, "ID");
+    public final com.querydsl.sql.ForeignKey<QOperator> contactOperatorIdFk = createForeignKey(operatorId, "ID");
 
-    public final com.mysema.query.sql.ForeignKey<QFacility> _facilityOperatorContactIdFk = createInvForeignKey(id, "OPERATOR_CONTACT_ID");
+    public final com.querydsl.sql.ForeignKey<QFacility> _facilityOperatorContactIdFk = createInvForeignKey(id, "OPERATOR_CONTACT_ID");
 
-    public final com.mysema.query.sql.ForeignKey<QFacility> _facilityServiceContactIdFk = createInvForeignKey(id, "SERVICE_CONTACT_ID");
+    public final com.querydsl.sql.ForeignKey<QFacility> _facilityServiceContactIdFk = createInvForeignKey(id, "SERVICE_CONTACT_ID");
 
-    public final com.mysema.query.sql.ForeignKey<QFacility> _facilityEmergencyContactIdFk = createInvForeignKey(id, "EMERGENCY_CONTACT_ID");
+    public final com.querydsl.sql.ForeignKey<QFacility> _facilityEmergencyContactIdFk = createInvForeignKey(id, "EMERGENCY_CONTACT_ID");
 
     public QContact(String variable) {
         super(QContact.class, forVariable(variable), "PUBLIC", "CONTACT");
@@ -92,7 +92,7 @@ public class QContact extends RelationalPathSpatial<QContact> {
         addMetadata();
     }
 
-    public QContact(PathMetadata<?> metadata) {
+    public QContact(PathMetadata metadata) {
         super(QContact.class, metadata, "PUBLIC", "CONTACT");
         addMetadata();
     }

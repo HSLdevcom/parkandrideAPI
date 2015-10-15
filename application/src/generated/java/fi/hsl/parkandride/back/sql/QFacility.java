@@ -1,26 +1,26 @@
 package fi.hsl.parkandride.back.sql;
 
-import static com.mysema.query.types.PathMetadataFactory.*;
+import static com.querydsl.core.types.PathMetadataFactory.*;
 
-import com.mysema.query.types.path.*;
+import com.querydsl.core.types.dsl.*;
 
-import com.mysema.query.types.PathMetadata;
+import com.querydsl.core.types.PathMetadata;
 import javax.annotation.Generated;
-import com.mysema.query.types.Path;
+import com.querydsl.core.types.Path;
 
-import com.mysema.query.sql.ColumnMetadata;
+import com.querydsl.sql.ColumnMetadata;
 import java.sql.Types;
 
-import com.mysema.query.sql.spatial.RelationalPathSpatial;
+import com.querydsl.sql.spatial.RelationalPathSpatial;
 
-import com.mysema.query.spatial.path.*;
+import com.querydsl.spatial.*;
 
 
 
 /**
  * QFacility is a Querydsl query type for QFacility
  */
-@Generated("com.mysema.query.sql.codegen.MetaDataSerializer")
+@Generated("com.querydsl.sql.codegen.MetaDataSerializer")
 public class QFacility extends RelationalPathSpatial<QFacility> {
 
     private static final long serialVersionUID = -1679504018;
@@ -97,37 +97,37 @@ public class QFacility extends RelationalPathSpatial<QFacility> {
 
     public final BooleanPath usageParkAndRide = createBoolean("usageParkAndRide");
 
-    public final com.mysema.query.sql.PrimaryKey<QFacility> constraint4c = createPrimaryKey(id);
+    public final com.querydsl.sql.PrimaryKey<QFacility> constraint4c = createPrimaryKey(id);
 
-    public final com.mysema.query.sql.ForeignKey<QContact> facilityOperatorContactIdFk = createForeignKey(operatorContactId, "ID");
+    public final com.querydsl.sql.ForeignKey<QContact> facilityOperatorContactIdFk = createForeignKey(operatorContactId, "ID");
 
-    public final com.mysema.query.sql.ForeignKey<QOperator> facilityOperatorIdFk = createForeignKey(operatorId, "ID");
+    public final com.querydsl.sql.ForeignKey<QOperator> facilityOperatorIdFk = createForeignKey(operatorId, "ID");
 
-    public final com.mysema.query.sql.ForeignKey<QPricingMethod> facilityPricingMethodFk = createForeignKey(pricingMethod, "NAME");
+    public final com.querydsl.sql.ForeignKey<QPricingMethod> facilityPricingMethodFk = createForeignKey(pricingMethod, "NAME");
 
-    public final com.mysema.query.sql.ForeignKey<QContact> facilityServiceContactIdFk = createForeignKey(serviceContactId, "ID");
+    public final com.querydsl.sql.ForeignKey<QContact> facilityServiceContactIdFk = createForeignKey(serviceContactId, "ID");
 
-    public final com.mysema.query.sql.ForeignKey<QContact> facilityEmergencyContactIdFk = createForeignKey(emergencyContactId, "ID");
+    public final com.querydsl.sql.ForeignKey<QContact> facilityEmergencyContactIdFk = createForeignKey(emergencyContactId, "ID");
 
-    public final com.mysema.query.sql.ForeignKey<QFacilityStatus> facilityStatusFk = createForeignKey(status, "NAME");
+    public final com.querydsl.sql.ForeignKey<QFacilityStatus> facilityStatusFk = createForeignKey(status, "NAME");
 
-    public final com.mysema.query.sql.ForeignKey<QFacilityAlias> _facilityAliasFk = createInvForeignKey(id, "FACILITY_ID");
+    public final com.querydsl.sql.ForeignKey<QFacilityAlias> _facilityAliasFk = createInvForeignKey(id, "FACILITY_ID");
 
-    public final com.mysema.query.sql.ForeignKey<QFacilityUtilization> _facilityUtilizationFacilityIdFk = createInvForeignKey(id, "FACILITY_ID");
+    public final com.querydsl.sql.ForeignKey<QFacilityUtilization> _facilityUtilizationFacilityIdFk = createInvForeignKey(id, "FACILITY_ID");
 
-    public final com.mysema.query.sql.ForeignKey<QPricing> _pricingFacilityIdFk = createInvForeignKey(id, "FACILITY_ID");
+    public final com.querydsl.sql.ForeignKey<QPricing> _pricingFacilityIdFk = createInvForeignKey(id, "FACILITY_ID");
 
-    public final com.mysema.query.sql.ForeignKey<QFacilityService> _facilityServiceFacilityIdFk = createInvForeignKey(id, "FACILITY_ID");
+    public final com.querydsl.sql.ForeignKey<QFacilityService> _facilityServiceFacilityIdFk = createInvForeignKey(id, "FACILITY_ID");
 
-    public final com.mysema.query.sql.ForeignKey<QPredictor> _predictorFacilityIdFk = createInvForeignKey(id, "FACILITY_ID");
+    public final com.querydsl.sql.ForeignKey<QPredictor> _predictorFacilityIdFk = createInvForeignKey(id, "FACILITY_ID");
 
-    public final com.mysema.query.sql.ForeignKey<QUnavailableCapacity> _unavailableCapacityFacilityIdFk = createInvForeignKey(id, "FACILITY_ID");
+    public final com.querydsl.sql.ForeignKey<QUnavailableCapacity> _unavailableCapacityFacilityIdFk = createInvForeignKey(id, "FACILITY_ID");
 
-    public final com.mysema.query.sql.ForeignKey<QFacilityPrediction> _facilityPredictionFacilityIdFk = createInvForeignKey(id, "FACILITY_ID");
+    public final com.querydsl.sql.ForeignKey<QFacilityPrediction> _facilityPredictionFacilityIdFk = createInvForeignKey(id, "FACILITY_ID");
 
-    public final com.mysema.query.sql.ForeignKey<QFacilityPaymentMethod> _facilityPaymentMethodFacilityIdFk = createInvForeignKey(id, "FACILITY_ID");
+    public final com.querydsl.sql.ForeignKey<QFacilityPaymentMethod> _facilityPaymentMethodFacilityIdFk = createInvForeignKey(id, "FACILITY_ID");
 
-    public final com.mysema.query.sql.ForeignKey<QPort> _portFacilityIdFk = createInvForeignKey(id, "FACILITY_ID");
+    public final com.querydsl.sql.ForeignKey<QPort> _portFacilityIdFk = createInvForeignKey(id, "FACILITY_ID");
 
     public QFacility(String variable) {
         super(QFacility.class, forVariable(variable), "PUBLIC", "FACILITY");
@@ -144,7 +144,7 @@ public class QFacility extends RelationalPathSpatial<QFacility> {
         addMetadata();
     }
 
-    public QFacility(PathMetadata<?> metadata) {
+    public QFacility(PathMetadata metadata) {
         super(QFacility.class, metadata, "PUBLIC", "FACILITY");
         addMetadata();
     }

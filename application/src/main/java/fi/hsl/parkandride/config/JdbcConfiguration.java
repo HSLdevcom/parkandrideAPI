@@ -3,17 +3,17 @@
 
 package fi.hsl.parkandride.config;
 
-import com.mysema.query.sql.SQLExceptionTranslator;
-import com.mysema.query.sql.SQLTemplates;
-import com.mysema.query.sql.postgres.PostgresQueryFactory;
-import com.mysema.query.sql.spatial.GeoDBTemplates;
-import com.mysema.query.sql.spatial.PostGISTemplates;
-import com.mysema.query.sql.types.DateTimeType;
-import com.mysema.query.sql.types.EnumByNameType;
+import com.querydsl.sql.SQLExceptionTranslator;
+import com.querydsl.sql.SQLTemplates;
+import com.querydsl.sql.postgresql.PostgreSQLQueryFactory;
+import com.querydsl.sql.spatial.GeoDBTemplates;
+import com.querydsl.sql.spatial.PostGISTemplates;
+import com.querydsl.sql.types.DateTimeType;
+import com.querydsl.sql.types.EnumByNameType;
 import fi.hsl.parkandride.FeatureProfile;
 import fi.hsl.parkandride.back.H2GeometryType;
 import fi.hsl.parkandride.back.LiipiSQLExceptionTranslator;
-import fi.hsl.parkandride.back.PGGeometryType;
+import com.querydsl.sql.spatial.PGGeometryType;
 import fi.hsl.parkandride.back.TimeType;
 import fi.hsl.parkandride.core.back.PhoneType;
 import fi.hsl.parkandride.core.domain.*;
@@ -74,8 +74,8 @@ public class JdbcConfiguration {
     DataSource dataSource;
 
     @Bean
-    public PostgresQueryFactory queryFactory(com.mysema.query.sql.Configuration configuration) {
-        return new PostgresQueryFactory(configuration, connectionProvider());
+    public PostgreSQLQueryFactory queryFactory(com.querydsl.sql.Configuration configuration) {
+        return new PostgreSQLQueryFactory(configuration, connectionProvider());
     }
 
     @Bean
@@ -96,8 +96,8 @@ public class JdbcConfiguration {
 
     @Bean
     @Profile(FeatureProfile.PSQL)
-    public com.mysema.query.sql.Configuration querydslConfigurationPsql() {
-        com.mysema.query.sql.Configuration conf = querydslConfiguration();
+    public com.querydsl.sql.Configuration querydslConfigurationPsql() {
+        com.querydsl.sql.Configuration conf = querydslConfiguration();
         conf.register("FACILITY", "LOCATION", new PGGeometryType<>(Polygon.class));
         conf.register("PORT", "LOCATION", new PGGeometryType<>(Point.class));
         conf.register("HUB", "LOCATION", new PGGeometryType<>(Point.class));
@@ -107,8 +107,8 @@ public class JdbcConfiguration {
 
     @Bean
     @Profile({FeatureProfile.H2})
-    public com.mysema.query.sql.Configuration querydslConfigurationH2() {
-        com.mysema.query.sql.Configuration conf = querydslConfiguration();
+    public com.querydsl.sql.Configuration querydslConfigurationH2() {
+        com.querydsl.sql.Configuration conf = querydslConfiguration();
         conf.register("FACILITY", "LOCATION", new H2GeometryType<>(Polygon.class));
         conf.register("PORT", "LOCATION", new H2GeometryType<>(Point.class));
         conf.register("HUB", "LOCATION", new H2GeometryType<>(Point.class));
@@ -116,8 +116,8 @@ public class JdbcConfiguration {
         return conf;
     }
 
-    private com.mysema.query.sql.Configuration querydslConfiguration() {
-        com.mysema.query.sql.Configuration conf = new com.mysema.query.sql.Configuration(sqlTemplates);
+    private com.querydsl.sql.Configuration querydslConfiguration() {
+        com.querydsl.sql.Configuration conf = new com.querydsl.sql.Configuration(sqlTemplates);
         conf.setExceptionTranslator(sqlExceptionTranslator());
 
         conf.register(new TimeType());

@@ -3,26 +3,25 @@
 
 package fi.hsl.parkandride.back;
 
-import static com.google.common.base.MoreObjects.firstNonNull;
-import static fi.hsl.parkandride.core.domain.Sort.Dir.ASC;
-import static fi.hsl.parkandride.core.domain.Sort.Dir.DESC;
-
-import com.mysema.query.Tuple;
-import com.mysema.query.sql.SQLExpressions;
-import com.mysema.query.sql.dml.SQLInsertClause;
-import com.mysema.query.sql.dml.SQLUpdateClause;
-import com.mysema.query.sql.postgres.PostgresQuery;
-import com.mysema.query.sql.postgres.PostgresQueryFactory;
-import com.mysema.query.types.MappingProjection;
-import com.mysema.query.types.expr.ComparableExpression;
-import com.mysema.query.types.expr.SimpleExpression;
-
+import com.querydsl.core.Tuple;
+import com.querydsl.core.types.MappingProjection;
+import com.querydsl.core.types.dsl.ComparableExpression;
+import com.querydsl.core.types.dsl.SimpleExpression;
+import com.querydsl.sql.SQLExpressions;
+import com.querydsl.sql.dml.SQLInsertClause;
+import com.querydsl.sql.dml.SQLUpdateClause;
+import com.querydsl.sql.postgresql.PostgreSQLQuery;
+import com.querydsl.sql.postgresql.PostgreSQLQueryFactory;
 import fi.hsl.parkandride.back.sql.QOperator;
 import fi.hsl.parkandride.core.back.OperatorRepository;
 import fi.hsl.parkandride.core.domain.*;
 import fi.hsl.parkandride.core.service.TransactionalRead;
 import fi.hsl.parkandride.core.service.TransactionalWrite;
 import fi.hsl.parkandride.core.service.ValidationException;
+
+import static com.google.common.base.MoreObjects.firstNonNull;
+import static fi.hsl.parkandride.core.domain.Sort.Dir.ASC;
+import static fi.hsl.parkandride.core.domain.Sort.Dir.DESC;
 
 public class OperatorDao implements OperatorRepository {
 
@@ -50,16 +49,16 @@ public class OperatorDao implements OperatorRepository {
         }
     };
 
-    private final PostgresQueryFactory queryFactory;
+    private final PostgreSQLQueryFactory queryFactory;
 
-    public OperatorDao(PostgresQueryFactory queryFactory) {
+    public OperatorDao(PostgreSQLQueryFactory queryFactory) {
         this.queryFactory = queryFactory;
     }
 
     @TransactionalWrite
     @Override
     public long insertOperator(Operator operator) {
-        return insertOperator(operator, queryFactory.query().singleResult(nextOperatorId));
+        return insertOperator(operator, queryFactory.query().select(nextOperatorId).fetchOne());
     }
 
     @TransactionalWrite
@@ -89,20 +88,20 @@ public class OperatorDao implements OperatorRepository {
     @Override
     @TransactionalRead
     public Operator getOperator(long operatorId) {
-        return queryFactory.from(qOperator).where(qOperator.id.eq(operatorId)).singleResult(operatorMapping);
+        return queryFactory.from(qOperator).select(operatorMapping).where(qOperator.id.eq(operatorId)).fetchOne();
     }
 
     @Override
     @TransactionalRead
     public SearchResults<Operator> findOperators(OperatorSearch search) {
-        PostgresQuery qry = queryFactory.from(qOperator);
+        final PostgreSQLQuery<Operator> qry = queryFactory.from(qOperator).select(operatorMapping);
         qry.limit(search.getLimit() + 1);
         qry.offset(search.getOffset());
         orderBy(search.getSort(), qry);
-        return SearchResults.of(qry.list(operatorMapping), search.getLimit());
+        return SearchResults.of(qry.fetch(), search.getLimit());
     }
 
-    private void orderBy(Sort sort, PostgresQuery qry) {
+    private void orderBy(Sort sort, PostgreSQLQuery qry) {
         sort = firstNonNull(sort, DEFAULT_SORT);
         ComparableExpression<String> sortField;
         switch (firstNonNull(sort.getBy(), DEFAULT_SORT.getBy())) {

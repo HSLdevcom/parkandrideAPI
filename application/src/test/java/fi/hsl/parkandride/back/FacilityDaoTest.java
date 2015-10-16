@@ -21,6 +21,7 @@ import org.junit.Test;
 import javax.inject.Inject;
 import java.util.*;
 
+import static com.google.common.collect.Lists.newArrayList;
 import static fi.hsl.parkandride.core.domain.CapacityType.*;
 import static fi.hsl.parkandride.core.domain.DayType.*;
 import static fi.hsl.parkandride.core.domain.FacilityStatus.*;
@@ -278,12 +279,17 @@ public class FacilityDaoTest extends AbstractDaoTest {
 
         // First date
         final long facilityId = withDate(firstDate, () -> {
-            long facId = facilityDao.insertFacility(createFacility());
+            final Facility facility = createFacility();
+            facility.unavailableCapacities = newArrayList(new UnavailableCapacity(
+                    CAR, PARK_AND_RIDE, 1
+            ));
+            long facId = facilityDao.insertFacility(facility);
             assertThat(facilityDao.getCapacityHistory(facId)).hasSize(1);
             return facId;
         });
         final Facility fac = facilityDao.getFacility(facilityId);
         final Map<CapacityType, Integer> original = ImmutableMap.copyOf(fac.builtCapacity);
+        final List<UnavailableCapacity> unavailable = ImmutableList.copyOf(fac.unavailableCapacities);
 
         // Second date
         // We change a value
@@ -303,18 +309,20 @@ public class FacilityDaoTest extends AbstractDaoTest {
         });
 
         // Fourth date
-        // We add an entry
-        final Map<CapacityType, Integer> fourth = withDate(fourthDate, () -> {
-            fac.builtCapacity.put(BICYCLE, 10);
+        // We add an entry to unavailable capacities
+        final List<UnavailableCapacity> modified = withDate(fourthDate, () -> {
+            fac.unavailableCapacities.add(new UnavailableCapacity(
+                    ELECTRIC_CAR, PARK_AND_RIDE, 5
+            ));
             facilityDao.updateFacility(facilityId, fac);
-            return ImmutableMap.copyOf(fac.builtCapacity);
+            return ImmutableList.copyOf(fac.unavailableCapacities);
         });
 
         final List<FacilityCapacityHistory> history = facilityDao.getCapacityHistory(facilityId);
         assertThat(history).containsExactly(
-                new FacilityCapacityHistory(facilityId, firstDate, secondDate, original),
-                new FacilityCapacityHistory(facilityId, secondDate, fourthDate, second),
-                new FacilityCapacityHistory(facilityId, fourthDate, null, fourth)
+                new FacilityCapacityHistory(facilityId, firstDate, secondDate, original, unavailable),
+                new FacilityCapacityHistory(facilityId, secondDate, fourthDate, second, unavailable),
+                new FacilityCapacityHistory(facilityId, fourthDate, null, second, modified)
         );
     }
 

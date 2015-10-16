@@ -51,6 +51,8 @@ public class QFacilityCapacityHistory extends RelationalPathSpatial<QFacilityCap
 
     public final com.querydsl.sql.ForeignKey<QFacility> capacityHistoryFacilityIdFk = createForeignKey(facilityId, "ID");
 
+    public final com.querydsl.sql.ForeignKey<QUnavailableCapacityHistory> _unavailableCapacityHistoryIdFk = createInvForeignKey(id, "CAPACITY_HISTORY_ID");
+
     public QFacilityCapacityHistory(String variable) {
         super(QFacilityCapacityHistory.class, forVariable(variable), "PUBLIC", "FACILITY_CAPACITY_HISTORY");
         addMetadata();

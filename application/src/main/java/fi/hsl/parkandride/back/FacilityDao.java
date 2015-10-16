@@ -42,6 +42,8 @@ import static fi.hsl.parkandride.core.domain.CapacityType.*;
 import static fi.hsl.parkandride.core.domain.Sort.Dir.ASC;
 import static fi.hsl.parkandride.core.domain.Sort.Dir.DESC;
 import static fi.hsl.parkandride.core.domain.Usage.*;
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toSet;
 import static org.springframework.util.CollectionUtils.isEmpty;
 
 public class FacilityDao implements FacilityRepository {
@@ -57,6 +59,7 @@ public class FacilityDao implements FacilityRepository {
     private static final QPricing qPricing = QPricing.pricing;
     private static final QFacilityStatusHistory qFacilityStatusHistory = QFacilityStatusHistory.facilityStatusHistory;
     private static final QFacilityCapacityHistory qFacilityCapacityHistory = QFacilityCapacityHistory.facilityCapacityHistory;
+    private static final QUnavailableCapacityHistory qUnavailableCapacityHistory = QUnavailableCapacityHistory.unavailableCapacityHistory;
 
     private static final MultilingualStringMapping statusDescriptionMapping =
             new MultilingualStringMapping(qFacility.statusDescriptionFi, qFacility.statusDescriptionSv, qFacility.statusDescriptionEn);
@@ -249,14 +252,30 @@ public class FacilityDao implements FacilityRepository {
         // History updated
         final DateTime currentDate = DateTime.now();
         updateStatusHistory(currentDate, facilityId, facility.status, facility.statusDescription);
-        updateCapacityHistory(currentDate, facilityId, facility.builtCapacity);
+        updateCapacityHistory(currentDate, facilityId, facility.builtCapacity, facility.unavailableCapacities);
 
         return facilityId;
     }
 
-    private void updateCapacityHistory(DateTime currentDate, long facilityId, Map<CapacityType, Integer> builtCapacity) {
+    private void updateCapacityHistory(DateTime currentDate, long facilityId, Map<CapacityType, Integer> builtCapacity, List<UnavailableCapacity> unavailableCapacities) {
         setEndDateForPreviousCapacityHistoryEntry(facilityId, currentDate);
-        insertNewCapacityHistoryEntry(facilityId, currentDate, builtCapacity);
+        final long historyEntryId = insertNewCapacityHistoryEntry(facilityId, currentDate, builtCapacity);
+        insertUnavailableCapacitiesHistory(historyEntryId, unavailableCapacities);
+    }
+
+    private void insertUnavailableCapacitiesHistory(long historyEntryId, List<UnavailableCapacity> unavailableCapacities) {
+        if (unavailableCapacities.isEmpty()) {
+            return;
+        }
+        final SQLInsertClause insert = queryFactory.insert(qUnavailableCapacityHistory);
+        unavailableCapacities.forEach(uc -> {
+            insert.set(qUnavailableCapacityHistory.capacityHistoryId, historyEntryId)
+                    .set(qUnavailableCapacityHistory.capacityType, uc.capacityType)
+                    .set(qUnavailableCapacityHistory.usage, uc.usage)
+                    .set(qUnavailableCapacityHistory.capacity, uc.capacity);
+            insert.addBatch();
+        });
+        insert.execute();
     }
 
     /** This method always inserts new entry, regardless of previous state. */
@@ -277,6 +296,7 @@ public class FacilityDao implements FacilityRepository {
     }
 
     private long insertNewCapacityHistoryEntry(long facilityId, DateTime currentDate, Map<CapacityType, Integer> builtCapacity) {
+        final Long historyEntryId = queryFactory.query().select(nextCapacityHistoryId).fetchOne();
         final SQLInsertClause insert = queryFactory.insert(qFacilityCapacityHistory);
         populateCapacity(qFacilityCapacityHistory.capacityCar, builtCapacity.get(CAR), insert);
         populateCapacity(qFacilityCapacityHistory.capacityDisabled, builtCapacity.get(DISABLED), insert);
@@ -284,11 +304,11 @@ public class FacilityDao implements FacilityRepository {
         populateCapacity(qFacilityCapacityHistory.capacityMotorcycle, builtCapacity.get(MOTORCYCLE), insert);
         populateCapacity(qFacilityCapacityHistory.capacityBicycle, builtCapacity.get(BICYCLE), insert);
         populateCapacity(qFacilityCapacityHistory.capacityBicycleSecureSpace, builtCapacity.get(BICYCLE_SECURE_SPACE), insert);
-        return insert
-                .set(qFacilityCapacityHistory.id, select(nextCapacityHistoryId))
+        insert.set(qFacilityCapacityHistory.id, historyEntryId)
                 .set(qFacilityCapacityHistory.facilityId, facilityId)
                 .set(qFacilityCapacityHistory.startTs, currentDate)
                 .execute();
+        return historyEntryId;
     }
 
     private void setEndDateForPreviousStateHistoryEntry(long facilityId, DateTime currentDate) {
@@ -342,9 +362,58 @@ public class FacilityDao implements FacilityRepository {
     @Override
     @TransactionalRead
     public List<FacilityCapacityHistory> getCapacityHistory(long facilityId) {
+        final List<ExtendedCapacityHistory> capacityHistory = getCapacityHistoryWithoutUnavailableCapacities(facilityId);
+
+        final Set<Long> historyEntryIds = capacityHistory.stream().map(c -> c.id).collect(toSet());
+        final Map<Long, List<UnavailableCapacity>> unavailableCapacities = queryFactory
+                .from(qUnavailableCapacityHistory)
+                .where(qUnavailableCapacityHistory.capacityHistoryId.in(historyEntryIds))
+                .transform(
+                        groupBy(qUnavailableCapacityHistory.capacityHistoryId)
+                                .as(list(new MappingProjection<UnavailableCapacity>(UnavailableCapacity.class, qUnavailableCapacityHistory.all()) {
+                                    @Override
+                                    protected UnavailableCapacity map(Tuple row) {
+                                        final UnavailableCapacity uc = new UnavailableCapacity();
+                                        uc.capacityType = row.get(qUnavailableCapacityHistory.capacityType);
+                                        uc.usage = row.get(qUnavailableCapacityHistory.usage);
+                                        uc.capacity = row.get(qUnavailableCapacityHistory.capacity);
+                                        return uc;
+                                    }
+                                }))
+                );
+
+        return capacityHistory.stream()
+                .map(entry -> {
+                    entry.unavailableCapacities = unavailableCapacities.get(entry.id);
+                    return entry.strip();
+                })
+                .collect(toList());
+    }
+
+    public static class ExtendedCapacityHistory extends FacilityCapacityHistory {
+        public Long id;
+
+        public ExtendedCapacityHistory(Long id, Long facilityId, DateTime startDate, DateTime endDate, Map<CapacityType, Integer> builtCapacity) {
+            super(facilityId, startDate, endDate, builtCapacity);
+            this.id = id;
+        }
+
+        public FacilityCapacityHistory strip() {
+            return new FacilityCapacityHistory(
+                    facilityId,
+                    startDate,
+                    endDate,
+                    builtCapacity,
+                    unavailableCapacities
+            );
+        }
+    }
+
+    private List<ExtendedCapacityHistory> getCapacityHistoryWithoutUnavailableCapacities(long facilityId) {
         return queryFactory.query()
                 .select(constructor(
-                        FacilityCapacityHistory.class,
+                        ExtendedCapacityHistory.class,
+                        qFacilityCapacityHistory.id,
                         qFacilityCapacityHistory.facilityId,
                         qFacilityCapacityHistory.startTs,
                         qFacilityCapacityHistory.endTs,
@@ -412,8 +481,8 @@ public class FacilityDao implements FacilityRepository {
             updateStatusHistory(now, facilityId, newFacility.status, newFacility.statusDescription);
         }
 
-        if (!(Objects.equals(newFacility.builtCapacity, oldFacility.builtCapacity))) {
-            updateCapacityHistory(now, facilityId, newFacility.builtCapacity);
+        if (!(Objects.equals(newFacility.builtCapacity, oldFacility.builtCapacity)) || !(Objects.equals(newFacility.unavailableCapacities, oldFacility.unavailableCapacities))) {
+            updateCapacityHistory(now, facilityId, newFacility.builtCapacity, newFacility.unavailableCapacities);
         }
     }
 

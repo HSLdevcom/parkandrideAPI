@@ -20,6 +20,7 @@ import com.querydsl.sql.dml.SQLUpdateClause;
 import com.querydsl.sql.postgresql.PostgreSQLQuery;
 import com.querydsl.sql.postgresql.PostgreSQLQueryFactory;
 import fi.hsl.parkandride.back.sql.*;
+import fi.hsl.parkandride.core.back.FacilityHistoryRepository;
 import fi.hsl.parkandride.core.back.FacilityRepository;
 import fi.hsl.parkandride.core.domain.*;
 import fi.hsl.parkandride.core.service.TransactionalRead;
@@ -34,16 +35,12 @@ import java.util.Map.Entry;
 import static com.google.common.base.MoreObjects.firstNonNull;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.querydsl.core.group.GroupBy.*;
-import static com.querydsl.core.types.Projections.constructor;
 import static com.querydsl.spatial.GeometryExpressions.dwithin;
-import static com.querydsl.sql.SQLExpressions.select;
 import static fi.hsl.parkandride.back.GSortedSet.sortedSet;
 import static fi.hsl.parkandride.core.domain.CapacityType.*;
 import static fi.hsl.parkandride.core.domain.Sort.Dir.ASC;
 import static fi.hsl.parkandride.core.domain.Sort.Dir.DESC;
 import static fi.hsl.parkandride.core.domain.Usage.*;
-import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toSet;
 import static org.springframework.util.CollectionUtils.isEmpty;
 
 public class FacilityDao implements FacilityRepository {
@@ -57,9 +54,6 @@ public class FacilityDao implements FacilityRepository {
     private static final QFacilityPaymentMethod qPaymentMethod = QFacilityPaymentMethod.facilityPaymentMethod;
     private static final QUnavailableCapacity qUnavailableCapacity = QUnavailableCapacity.unavailableCapacity;
     private static final QPricing qPricing = QPricing.pricing;
-    private static final QFacilityStatusHistory qFacilityStatusHistory = QFacilityStatusHistory.facilityStatusHistory;
-    private static final QFacilityCapacityHistory qFacilityCapacityHistory = QFacilityCapacityHistory.facilityCapacityHistory;
-    private static final QUnavailableCapacityHistory qUnavailableCapacityHistory = QUnavailableCapacityHistory.unavailableCapacityHistory;
 
     private static final MultilingualStringMapping statusDescriptionMapping =
             new MultilingualStringMapping(qFacility.statusDescriptionFi, qFacility.statusDescriptionSv, qFacility.statusDescriptionEn);
@@ -126,10 +120,10 @@ public class FacilityDao implements FacilityRepository {
                 }
             };
 
-    public static final ResultTransformer<Map<Long, Set<String>>> aliasesByFacilityIdMapping =
+    private static final ResultTransformer<Map<Long, Set<String>>> aliasesByFacilityIdMapping =
             groupBy(qAlias.facilityId).as(set(qAlias.alias));
 
-    public static final ResultTransformer<Map<Long, List<Port>>> portsByFacilityIdMapping =
+    private static final ResultTransformer<Map<Long, List<Port>>> portsByFacilityIdMapping =
             groupBy(qPort.facilityId).as(list(portMapping));
 
 
@@ -147,11 +141,6 @@ public class FacilityDao implements FacilityRepository {
             return mapFacility(row, new FacilityInfo());
         }
     };
-    private static final MultilingualStringMapping statusHistoryDescriptionMapping = new MultilingualStringMapping(
-            qFacilityStatusHistory.statusDescriptionFi,
-            qFacilityStatusHistory.statusDescriptionSv,
-            qFacilityStatusHistory.statusDescriptionEn
-    );
 
     private static <T extends FacilityInfo> T mapFacility(Tuple row, T facility) {
         Long id = row.get(qFacility.id);
@@ -214,16 +203,12 @@ public class FacilityDao implements FacilityRepository {
     public static final String FACILITY_ID_SEQ = "facility_id_seq";
     private static final SimpleExpression<Long> nextFacilityId = SQLExpressions.nextval(FACILITY_ID_SEQ);
 
-    public static final String STATUS_HISTORY_ID_SEQ = "facility_status_history_seq";
-    private static final SimpleExpression<Long> nextStatusHistoryId = SQLExpressions.nextval(STATUS_HISTORY_ID_SEQ);
-
-    public static final String CAPACITY_HISTORY_ID_SEQ = "facility_capacity_history_seq";
-    private static final SimpleExpression<Long> nextCapacityHistoryId = SQLExpressions.nextval(CAPACITY_HISTORY_ID_SEQ);
-
     private final PostgreSQLQueryFactory queryFactory;
+    private final FacilityHistoryRepository facilityHistoryRepository;
 
-    public FacilityDao(PostgreSQLQueryFactory queryFactory) {
+    public FacilityDao(PostgreSQLQueryFactory queryFactory, FacilityHistoryRepository facilityHistoryRepository) {
         this.queryFactory = queryFactory;
+        this.facilityHistoryRepository = facilityHistoryRepository;
     }
 
     @TransactionalWrite
@@ -251,191 +236,12 @@ public class FacilityDao implements FacilityRepository {
 
         // History updated
         final DateTime currentDate = DateTime.now();
-        updateStatusHistory(currentDate, facilityId, facility.status, facility.statusDescription);
-        updateCapacityHistory(currentDate, facilityId, facility.builtCapacity, facility.unavailableCapacities);
+        facilityHistoryRepository.updateStatusHistory(currentDate, facilityId, facility.status, facility.statusDescription);
+        facilityHistoryRepository.updateCapacityHistory(currentDate, facilityId, facility.builtCapacity, facility.unavailableCapacities);
 
         return facilityId;
     }
 
-    private void updateCapacityHistory(DateTime currentDate, long facilityId, Map<CapacityType, Integer> builtCapacity, List<UnavailableCapacity> unavailableCapacities) {
-        setEndDateForPreviousCapacityHistoryEntry(facilityId, currentDate);
-        final long historyEntryId = insertNewCapacityHistoryEntry(facilityId, currentDate, builtCapacity);
-        insertUnavailableCapacitiesHistory(historyEntryId, unavailableCapacities);
-    }
-
-    private void insertUnavailableCapacitiesHistory(long historyEntryId, List<UnavailableCapacity> unavailableCapacities) {
-        if (unavailableCapacities.isEmpty()) {
-            return;
-        }
-        final SQLInsertClause insert = queryFactory.insert(qUnavailableCapacityHistory);
-        unavailableCapacities.forEach(uc -> {
-            insert.set(qUnavailableCapacityHistory.capacityHistoryId, historyEntryId)
-                    .set(qUnavailableCapacityHistory.capacityType, uc.capacityType)
-                    .set(qUnavailableCapacityHistory.usage, uc.usage)
-                    .set(qUnavailableCapacityHistory.capacity, uc.capacity);
-            insert.addBatch();
-        });
-        insert.execute();
-    }
-
-    /** This method always inserts new entry, regardless of previous state. */
-    private void updateStatusHistory(DateTime currentDate, long facilityId, FacilityStatus newStatus, MultilingualString statusDescription) {
-        setEndDateForPreviousStateHistoryEntry(facilityId, currentDate);
-        insertNewStatusHistoryEntry(facilityId, currentDate, newStatus, statusDescription);
-    }
-
-    private long insertNewStatusHistoryEntry(long facilityId, DateTime currentDate, FacilityStatus newStatus, MultilingualString statusDescription) {
-        final SQLInsertClause insert = queryFactory.insert(qFacilityStatusHistory);
-        statusHistoryDescriptionMapping.populate(statusDescription, insert);
-        return insert
-                .set(qFacilityStatusHistory.id, select(nextStatusHistoryId))
-                .set(qFacilityStatusHistory.facilityId, facilityId)
-                .set(qFacilityStatusHistory.status, newStatus)
-                .set(qFacilityStatusHistory.startTs, currentDate)
-                .execute();
-    }
-
-    private long insertNewCapacityHistoryEntry(long facilityId, DateTime currentDate, Map<CapacityType, Integer> builtCapacity) {
-        final Long historyEntryId = queryFactory.query().select(nextCapacityHistoryId).fetchOne();
-        final SQLInsertClause insert = queryFactory.insert(qFacilityCapacityHistory);
-        populateCapacity(qFacilityCapacityHistory.capacityCar, builtCapacity.get(CAR), insert);
-        populateCapacity(qFacilityCapacityHistory.capacityDisabled, builtCapacity.get(DISABLED), insert);
-        populateCapacity(qFacilityCapacityHistory.capacityElectricCar, builtCapacity.get(ELECTRIC_CAR), insert);
-        populateCapacity(qFacilityCapacityHistory.capacityMotorcycle, builtCapacity.get(MOTORCYCLE), insert);
-        populateCapacity(qFacilityCapacityHistory.capacityBicycle, builtCapacity.get(BICYCLE), insert);
-        populateCapacity(qFacilityCapacityHistory.capacityBicycleSecureSpace, builtCapacity.get(BICYCLE_SECURE_SPACE), insert);
-        insert.set(qFacilityCapacityHistory.id, historyEntryId)
-                .set(qFacilityCapacityHistory.facilityId, facilityId)
-                .set(qFacilityCapacityHistory.startTs, currentDate)
-                .execute();
-        return historyEntryId;
-    }
-
-    private void setEndDateForPreviousStateHistoryEntry(long facilityId, DateTime currentDate) {
-        final Long lastHistoryEntryId = queryFactory.query().select(qFacilityStatusHistory.id)
-                .from(qFacilityStatusHistory)
-                .where(qFacilityStatusHistory.facilityId.eq(facilityId))
-                .orderBy(qFacilityStatusHistory.startTs.desc())
-                .fetchFirst();
-
-        if (lastHistoryEntryId != null) {
-            queryFactory.update(qFacilityStatusHistory)
-                    .set(qFacilityStatusHistory.endTs, currentDate)
-                    .where(qFacilityStatusHistory.id.eq(lastHistoryEntryId))
-                    .execute();
-        }
-    }
-
-    private void setEndDateForPreviousCapacityHistoryEntry(long facilityId, DateTime currentDate) {
-        final Long lastHistoryEntryId = queryFactory.query().select(qFacilityCapacityHistory.id)
-                .from(qFacilityCapacityHistory)
-                .where(qFacilityCapacityHistory.facilityId.eq(facilityId))
-                .orderBy(qFacilityCapacityHistory.startTs.desc())
-                .fetchFirst();
-
-        if (lastHistoryEntryId != null) {
-            queryFactory.update(qFacilityCapacityHistory)
-                    .set(qFacilityCapacityHistory.endTs, currentDate)
-                    .where(qFacilityCapacityHistory.id.eq(lastHistoryEntryId))
-                    .execute();
-        }
-    }
-
-    @Override
-    @TransactionalRead
-    public List<FacilityStatusHistory> getStatusHistory(long facilityId) {
-        return queryFactory.query()
-                .select(constructor(
-                        FacilityStatusHistory.class,
-                        qFacilityStatusHistory.facilityId,
-                        qFacilityStatusHistory.startTs,
-                        qFacilityStatusHistory.endTs,
-                        qFacilityStatusHistory.status,
-                        statusHistoryDescriptionMapping
-                ))
-                .from(qFacilityStatusHistory)
-                .where(qFacilityStatusHistory.facilityId.eq(facilityId))
-                .orderBy(qFacilityStatusHistory.startTs.asc())
-                .fetch();
-    }
-
-    @Override
-    @TransactionalRead
-    public List<FacilityCapacityHistory> getCapacityHistory(long facilityId) {
-        final List<ExtendedCapacityHistory> capacityHistory = getCapacityHistoryWithoutUnavailableCapacities(facilityId);
-
-        final Set<Long> historyEntryIds = capacityHistory.stream().map(c -> c.id).collect(toSet());
-        final Map<Long, List<UnavailableCapacity>> unavailableCapacities = queryFactory
-                .from(qUnavailableCapacityHistory)
-                .where(qUnavailableCapacityHistory.capacityHistoryId.in(historyEntryIds))
-                .transform(
-                        groupBy(qUnavailableCapacityHistory.capacityHistoryId)
-                                .as(list(new MappingProjection<UnavailableCapacity>(UnavailableCapacity.class, qUnavailableCapacityHistory.all()) {
-                                    @Override
-                                    protected UnavailableCapacity map(Tuple row) {
-                                        final UnavailableCapacity uc = new UnavailableCapacity();
-                                        uc.capacityType = row.get(qUnavailableCapacityHistory.capacityType);
-                                        uc.usage = row.get(qUnavailableCapacityHistory.usage);
-                                        uc.capacity = row.get(qUnavailableCapacityHistory.capacity);
-                                        return uc;
-                                    }
-                                }))
-                );
-
-        return capacityHistory.stream()
-                .map(entry -> {
-                    entry.unavailableCapacities = unavailableCapacities.get(entry.id);
-                    return entry.strip();
-                })
-                .collect(toList());
-    }
-
-    public static class ExtendedCapacityHistory extends FacilityCapacityHistory {
-        public Long id;
-
-        public ExtendedCapacityHistory(Long id, Long facilityId, DateTime startDate, DateTime endDate, Map<CapacityType, Integer> builtCapacity) {
-            super(facilityId, startDate, endDate, builtCapacity);
-            this.id = id;
-        }
-
-        public FacilityCapacityHistory strip() {
-            return new FacilityCapacityHistory(
-                    facilityId,
-                    startDate,
-                    endDate,
-                    builtCapacity,
-                    unavailableCapacities
-            );
-        }
-    }
-
-    private List<ExtendedCapacityHistory> getCapacityHistoryWithoutUnavailableCapacities(long facilityId) {
-        return queryFactory.query()
-                .select(constructor(
-                        ExtendedCapacityHistory.class,
-                        qFacilityCapacityHistory.id,
-                        qFacilityCapacityHistory.facilityId,
-                        qFacilityCapacityHistory.startTs,
-                        qFacilityCapacityHistory.endTs,
-                        new MappingProjection<Map<CapacityType, Integer>>(Map.class, qFacilityCapacityHistory.all()) {
-                            @Override
-                            protected Map<CapacityType, Integer> map(Tuple row) {
-                                final Map<CapacityType, Integer> map = new HashMap<>();
-                                mapCapacity(map, CAR, row.get(qFacilityCapacityHistory.capacityCar));
-                                mapCapacity(map, DISABLED, row.get(qFacilityCapacityHistory.capacityDisabled));
-                                mapCapacity(map, ELECTRIC_CAR, row.get(qFacilityCapacityHistory.capacityElectricCar));
-                                mapCapacity(map, MOTORCYCLE, row.get(qFacilityCapacityHistory.capacityMotorcycle));
-                                mapCapacity(map, BICYCLE, row.get(qFacilityCapacityHistory.capacityBicycle));
-                                mapCapacity(map, BICYCLE_SECURE_SPACE, row.get(qFacilityCapacityHistory.capacityBicycleSecureSpace));
-                                return map;
-                            }
-                        }
-                ))
-                .from(qFacilityCapacityHistory)
-                .where(qFacilityCapacityHistory.facilityId.eq(facilityId))
-                .orderBy(qFacilityCapacityHistory.startTs.asc())
-                .fetch();
-    }
 
     @TransactionalWrite
     @Override
@@ -478,11 +284,11 @@ public class FacilityDao implements FacilityRepository {
 
         final DateTime now = DateTime.now();
         if (!(Objects.equals(newFacility.status, oldFacility.status) && Objects.equals(newFacility.statusDescription, oldFacility.statusDescription))) {
-            updateStatusHistory(now, facilityId, newFacility.status, newFacility.statusDescription);
+            facilityHistoryRepository.updateStatusHistory(now, facilityId, newFacility.status, newFacility.statusDescription);
         }
 
         if (!(Objects.equals(newFacility.builtCapacity, oldFacility.builtCapacity)) || !(Objects.equals(newFacility.unavailableCapacities, oldFacility.unavailableCapacities))) {
-            updateCapacityHistory(now, facilityId, newFacility.builtCapacity, newFacility.unavailableCapacities);
+            facilityHistoryRepository.updateCapacityHistory(now, facilityId, newFacility.builtCapacity, newFacility.unavailableCapacities);
         }
     }
 
@@ -596,8 +402,8 @@ public class FacilityDao implements FacilityRepository {
     }
 
     private void updatePorts(long facilityId, List<Port> newPorts, List<Port> oldPorts) {
-        newPorts = firstNonNull(newPorts, new ArrayList<Port>());
-        oldPorts = firstNonNull(oldPorts, new ArrayList<Port>());
+        newPorts = Optional.ofNullable(newPorts).orElse(new ArrayList<>());
+        oldPorts = Optional.ofNullable(oldPorts).orElse(new ArrayList<>());
 
         Map<Integer, Port> addedPorts = new HashMap<>();
         Map<Integer, Port> updatedPorts = new HashMap<>();

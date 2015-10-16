@@ -53,12 +53,14 @@ public class Dummies {
         return facilityDao.insertFacility(facility);
     }
 
-    private Long createDummyOperator() {
+    @TransactionalWrite
+    public Long createDummyOperator() {
         Operator operator = new Operator("SMOOTH" + uniqueNumber());
         return operatorDao.insertOperator(operator);
     }
 
-    private Long createDummyContact() {
+    @TransactionalWrite
+    public Long createDummyContact() {
         Contact contact = new Contact();
         contact.name = new MultilingualString("TEST " + uniqueNumber());
         contact.email = "test@example.com";

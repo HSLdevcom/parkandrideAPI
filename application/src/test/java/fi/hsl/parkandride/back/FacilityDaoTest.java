@@ -14,24 +14,23 @@ import fi.hsl.parkandride.core.domain.*;
 import fi.hsl.parkandride.core.service.ValidationException;
 import org.geolatte.geom.Point;
 import org.geolatte.geom.Polygon;
-import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 
 import javax.inject.Inject;
 import java.util.*;
 
-import static com.google.common.collect.Lists.newArrayList;
-import static fi.hsl.parkandride.core.domain.CapacityType.*;
+import static fi.hsl.parkandride.core.domain.CapacityType.CAR;
+import static fi.hsl.parkandride.core.domain.CapacityType.ELECTRIC_CAR;
 import static fi.hsl.parkandride.core.domain.DayType.*;
-import static fi.hsl.parkandride.core.domain.FacilityStatus.*;
+import static fi.hsl.parkandride.core.domain.FacilityStatus.EXCEPTIONAL_SITUATION;
+import static fi.hsl.parkandride.core.domain.FacilityStatus.IN_OPERATION;
 import static fi.hsl.parkandride.core.domain.PricingMethod.CUSTOM;
 import static fi.hsl.parkandride.core.domain.PricingMethod.PARK_AND_RIDE_247_FREE;
 import static fi.hsl.parkandride.core.domain.Service.*;
 import static fi.hsl.parkandride.core.domain.Sort.Dir.ASC;
 import static fi.hsl.parkandride.core.domain.Sort.Dir.DESC;
 import static fi.hsl.parkandride.core.domain.Usage.PARK_AND_RIDE;
-import static fi.hsl.parkandride.test.DateTimeTestUtils.withDate;
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.fail;
@@ -221,109 +220,6 @@ public class FacilityDaoTest extends AbstractDaoTest {
 
         // Not found by geometry
         assertThat(findByGeometry(NON_OVERLAPPING_AREA)).isEmpty();
-    }
-
-    @Test
-    public void facility_status_history_is_saved() {
-        final DateTime firstDate  = new DateTime().minusDays(10);
-        final DateTime secondDate = firstDate.plusDays(1);
-        final DateTime thirdDate  = firstDate.plusDays(2);
-        final DateTime fourthDate = firstDate.plusDays(3);
-
-        // First date
-        final long facilityId = withDate(firstDate, () -> {
-            long facId = facilityDao.insertFacility(createFacility());
-            assertThat(facilityDao.getStatusHistory(facId)).hasSize(1);
-            return facId;
-        });
-        final Facility fac = facilityDao.getFacility(facilityId);
-
-        // Second date
-        withDate(secondDate, () -> {
-            fac.status = FacilityStatus.INACTIVE;
-            facilityDao.updateFacility(facilityId, fac);
-            assertThat(facilityDao.getStatusHistory(facilityId)).hasSize(2);
-        });
-
-        // Third date
-        // This shouldn't create more entries since state did not change
-        withDate(thirdDate, () -> {
-            facilityDao.updateFacility(facilityId, fac);
-            assertThat(facilityDao.getStatusHistory(facilityId)).hasSize(2);
-        });
-
-        // Fourth date
-        // But this should since the description changed
-        final MultilingualString newStatus = new MultilingualString(STATUS_DESCRIPTION.fi);
-        newStatus.sv = "Inte i bruk";
-        withDate(fourthDate, () -> {
-            fac.statusDescription = newStatus;
-            facilityDao.updateFacility(facilityId, fac);
-        });
-
-        final List<FacilityStatusHistory> history = facilityDao.getStatusHistory(facilityId);
-        assertThat(history).containsExactly(
-                new FacilityStatusHistory(facilityId, firstDate, secondDate, EXCEPTIONAL_SITUATION, STATUS_DESCRIPTION),
-                new FacilityStatusHistory(facilityId, secondDate, fourthDate, INACTIVE, STATUS_DESCRIPTION),
-                new FacilityStatusHistory(facilityId, fourthDate, null, INACTIVE, newStatus)
-        );
-    }
-
-
-    @Test
-    public void facility_capacity_history_is_saved() {
-        final DateTime firstDate  = new DateTime().minusDays(10);
-        final DateTime secondDate = firstDate.plusDays(1);
-        final DateTime thirdDate  = firstDate.plusDays(2);
-        final DateTime fourthDate = firstDate.plusDays(3);
-
-        // First date
-        final long facilityId = withDate(firstDate, () -> {
-            final Facility facility = createFacility();
-            facility.unavailableCapacities = newArrayList(new UnavailableCapacity(
-                    CAR, PARK_AND_RIDE, 1
-            ));
-            long facId = facilityDao.insertFacility(facility);
-            assertThat(facilityDao.getCapacityHistory(facId)).hasSize(1);
-            return facId;
-        });
-        final Facility fac = facilityDao.getFacility(facilityId);
-        final Map<CapacityType, Integer> original = ImmutableMap.copyOf(fac.builtCapacity);
-        final List<UnavailableCapacity> unavailable = ImmutableList.copyOf(fac.unavailableCapacities);
-
-        // Second date
-        // We change a value
-        final Map<CapacityType, Integer> second = withDate(secondDate, () -> {
-            fac.builtCapacity.put(CAR, 49);
-            facilityDao.updateFacility(facilityId, fac);
-            assertThat(facilityDao.getCapacityHistory(facilityId)).hasSize(2);
-            return ImmutableMap.copyOf(fac.builtCapacity);
-        });
-
-        // Third date
-        // Nothing saved, since nothing changes
-        withDate(thirdDate, () -> {
-            fac.status = INACTIVE;
-            facilityDao.updateFacility(facilityId, fac);
-            assertThat(facilityDao.getCapacityHistory(facilityId)).hasSize(2);
-        });
-
-        // Fourth date
-        // We add an entry to unavailable capacities
-        final List<UnavailableCapacity> modified = withDate(fourthDate, () -> {
-            fac.unavailableCapacities.add(new UnavailableCapacity(
-                    ELECTRIC_CAR, PARK_AND_RIDE, 5
-            ));
-            facilityDao.updateFacility(facilityId, fac);
-            return ImmutableList.copyOf(fac.unavailableCapacities);
-        });
-
-        final List<FacilityCapacityHistory> history = facilityDao.getCapacityHistory(facilityId);
-        assertThat(history).containsExactly(
-                new FacilityCapacityHistory(facilityId, firstDate, secondDate, original, unavailable),
-                new FacilityCapacityHistory(facilityId, secondDate, fourthDate, second, unavailable),
-                new FacilityCapacityHistory(facilityId, fourthDate, null, second, modified)
-        );
     }
 
     private Pricing free24h(CapacityType type, Usage usage, int maxCapacity, DayType dayType) {

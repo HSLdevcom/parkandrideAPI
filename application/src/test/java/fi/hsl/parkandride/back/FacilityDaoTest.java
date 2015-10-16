@@ -15,25 +15,22 @@ import fi.hsl.parkandride.core.service.ValidationException;
 import org.geolatte.geom.Point;
 import org.geolatte.geom.Polygon;
 import org.joda.time.DateTime;
-import org.joda.time.DateTimeUtils;
 import org.junit.Before;
 import org.junit.Test;
 
 import javax.inject.Inject;
 import java.util.*;
 
-import static fi.hsl.parkandride.core.domain.CapacityType.CAR;
-import static fi.hsl.parkandride.core.domain.CapacityType.ELECTRIC_CAR;
+import static fi.hsl.parkandride.core.domain.CapacityType.*;
 import static fi.hsl.parkandride.core.domain.DayType.*;
-import static fi.hsl.parkandride.core.domain.FacilityStatus.EXCEPTIONAL_SITUATION;
-import static fi.hsl.parkandride.core.domain.FacilityStatus.INACTIVE;
-import static fi.hsl.parkandride.core.domain.FacilityStatus.IN_OPERATION;
+import static fi.hsl.parkandride.core.domain.FacilityStatus.*;
 import static fi.hsl.parkandride.core.domain.PricingMethod.CUSTOM;
 import static fi.hsl.parkandride.core.domain.PricingMethod.PARK_AND_RIDE_247_FREE;
 import static fi.hsl.parkandride.core.domain.Service.*;
 import static fi.hsl.parkandride.core.domain.Sort.Dir.ASC;
 import static fi.hsl.parkandride.core.domain.Sort.Dir.DESC;
 import static fi.hsl.parkandride.core.domain.Usage.PARK_AND_RIDE;
+import static fi.hsl.parkandride.test.DateTimeTestUtils.withDate;
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.fail;
@@ -233,39 +230,91 @@ public class FacilityDaoTest extends AbstractDaoTest {
         final DateTime fourthDate = firstDate.plusDays(3);
 
         // First date
-        DateTimeUtils.setCurrentMillisFixed(firstDate.getMillis());
-        final long facilityId = facilityDao.insertFacility(createFacility());
-        assertThat(facilityDao.getStatusHistory(facilityId)).hasSize(1);
+        final long facilityId = withDate(firstDate, () -> {
+            long facId = facilityDao.insertFacility(createFacility());
+            assertThat(facilityDao.getStatusHistory(facId)).hasSize(1);
+            return facId;
+        });
+        final Facility fac = facilityDao.getFacility(facilityId);
 
         // Second date
-        DateTimeUtils.setCurrentMillisFixed(secondDate.getMillis());
-        Facility fac = facilityDao.getFacility(facilityId);
-        fac.status = FacilityStatus.INACTIVE;
-        facilityDao.updateFacility(facilityId, fac);
-        assertThat(facilityDao.getStatusHistory(facilityId)).hasSize(2);
+        withDate(secondDate, () -> {
+            fac.status = FacilityStatus.INACTIVE;
+            facilityDao.updateFacility(facilityId, fac);
+            assertThat(facilityDao.getStatusHistory(facilityId)).hasSize(2);
+        });
 
         // Third date
         // This shouldn't create more entries since state did not change
-        DateTimeUtils.setCurrentMillisFixed(thirdDate.getMillis());
-        facilityDao.updateFacility(facilityId, fac);
-        assertThat(facilityDao.getStatusHistory(facilityId)).hasSize(2);
+        withDate(thirdDate, () -> {
+            facilityDao.updateFacility(facilityId, fac);
+            assertThat(facilityDao.getStatusHistory(facilityId)).hasSize(2);
+        });
 
         // Fourth date
         // But this should since the description changed
-        DateTimeUtils.setCurrentMillisFixed(fourthDate.getMillis());
         final MultilingualString newStatus = new MultilingualString(STATUS_DESCRIPTION.fi);
         newStatus.sv = "Inte i bruk";
-        fac.statusDescription = newStatus;
-        facilityDao.updateFacility(facilityId, fac);
-
-        // Restore the date
-        DateTimeUtils.setCurrentMillisSystem();
+        withDate(fourthDate, () -> {
+            fac.statusDescription = newStatus;
+            facilityDao.updateFacility(facilityId, fac);
+        });
 
         final List<FacilityStatusHistory> history = facilityDao.getStatusHistory(facilityId);
         assertThat(history).containsExactly(
                 new FacilityStatusHistory(facilityId, firstDate, secondDate, EXCEPTIONAL_SITUATION, STATUS_DESCRIPTION),
                 new FacilityStatusHistory(facilityId, secondDate, fourthDate, INACTIVE, STATUS_DESCRIPTION),
                 new FacilityStatusHistory(facilityId, fourthDate, null, INACTIVE, newStatus)
+        );
+    }
+
+
+    @Test
+    public void facility_capacity_history_is_saved() {
+        final DateTime firstDate  = new DateTime().minusDays(10);
+        final DateTime secondDate = firstDate.plusDays(1);
+        final DateTime thirdDate  = firstDate.plusDays(2);
+        final DateTime fourthDate = firstDate.plusDays(3);
+
+        // First date
+        final long facilityId = withDate(firstDate, () -> {
+            long facId = facilityDao.insertFacility(createFacility());
+            assertThat(facilityDao.getCapacityHistory(facId)).hasSize(1);
+            return facId;
+        });
+        final Facility fac = facilityDao.getFacility(facilityId);
+        final Map<CapacityType, Integer> original = ImmutableMap.copyOf(fac.builtCapacity);
+
+        // Second date
+        // We change a value
+        final Map<CapacityType, Integer> second = withDate(secondDate, () -> {
+            fac.builtCapacity.put(CAR, 49);
+            facilityDao.updateFacility(facilityId, fac);
+            assertThat(facilityDao.getCapacityHistory(facilityId)).hasSize(2);
+            return ImmutableMap.copyOf(fac.builtCapacity);
+        });
+
+        // Third date
+        // Nothing saved, since nothing changes
+        withDate(thirdDate, () -> {
+            fac.status = INACTIVE;
+            facilityDao.updateFacility(facilityId, fac);
+            assertThat(facilityDao.getCapacityHistory(facilityId)).hasSize(2);
+        });
+
+        // Fourth date
+        // We add an entry
+        final Map<CapacityType, Integer> fourth = withDate(fourthDate, () -> {
+            fac.builtCapacity.put(BICYCLE, 10);
+            facilityDao.updateFacility(facilityId, fac);
+            return ImmutableMap.copyOf(fac.builtCapacity);
+        });
+
+        final List<FacilityCapacityHistory> history = facilityDao.getCapacityHistory(facilityId);
+        assertThat(history).containsExactly(
+                new FacilityCapacityHistory(facilityId, firstDate, secondDate, original),
+                new FacilityCapacityHistory(facilityId, secondDate, fourthDate, second),
+                new FacilityCapacityHistory(facilityId, fourthDate, null, fourth)
         );
     }
 

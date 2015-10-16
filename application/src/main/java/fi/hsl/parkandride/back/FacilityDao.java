@@ -49,33 +49,24 @@ public class FacilityDao implements FacilityRepository {
     private static final Sort DEFAULT_SORT = new Sort("name.fi", ASC);
 
     private static final QFacility qFacility = QFacility.facility;
-
     private static final QFacilityAlias qAlias = QFacilityAlias.facilityAlias;
-
     private static final QPort qPort = QPort.port;
-
     private static final QFacilityService qService = QFacilityService.facilityService;
-
     private static final QFacilityPaymentMethod qPaymentMethod = QFacilityPaymentMethod.facilityPaymentMethod;
-
     private static final QUnavailableCapacity qUnavailableCapacity = QUnavailableCapacity.unavailableCapacity;
+    private static final QPricing qPricing = QPricing.pricing;
+    private static final QFacilityStatusHistory qFacilityStatusHistory = QFacilityStatusHistory.facilityStatusHistory;
+    private static final QFacilityCapacityHistory qFacilityCapacityHistory = QFacilityCapacityHistory.facilityCapacityHistory;
 
     private static final MultilingualStringMapping statusDescriptionMapping =
             new MultilingualStringMapping(qFacility.statusDescriptionFi, qFacility.statusDescriptionSv, qFacility.statusDescriptionEn);
-
     private static final MultilingualStringMapping openingHoursInfoMapping =
             new MultilingualStringMapping(qFacility.openingHoursInfoFi, qFacility.openingHoursInfoSv, qFacility.openingHoursInfoEn);
-
     private static final MultilingualUrlMapping openingHoursUrlMapping =
             new MultilingualUrlMapping(qFacility.openingHoursUrlFi, qFacility.openingHoursUrlSv, qFacility.openingHoursUrlEn);
-
-    private static final QPricing qPricing = QPricing.pricing;
-
     private static final MultilingualStringMapping pricingPriceMapping =
             new MultilingualStringMapping(qPricing.priceFi, qPricing.priceSv, qPricing.priceEn);
-
     private static final AddressMapping addressMapping = new AddressMapping(qPort);
-
     private static final MultilingualStringMapping portInfoMapping =
             new MultilingualStringMapping(qPort.infoFi, qPort.infoSv, qPort.infoEn);
 
@@ -153,7 +144,6 @@ public class FacilityDao implements FacilityRepository {
             return mapFacility(row, new FacilityInfo());
         }
     };
-    private static final QFacilityStatusHistory qFacilityStatusHistory = QFacilityStatusHistory.facilityStatusHistory;
     private static final MultilingualStringMapping statusHistoryDescriptionMapping = new MultilingualStringMapping(
             qFacilityStatusHistory.statusDescriptionFi,
             qFacilityStatusHistory.statusDescriptionSv,
@@ -224,6 +214,9 @@ public class FacilityDao implements FacilityRepository {
     public static final String STATUS_HISTORY_ID_SEQ = "facility_status_history_seq";
     private static final SimpleExpression<Long> nextStatusHistoryId = SQLExpressions.nextval(STATUS_HISTORY_ID_SEQ);
 
+    public static final String CAPACITY_HISTORY_ID_SEQ = "facility_capacity_history_seq";
+    private static final SimpleExpression<Long> nextCapacityHistoryId = SQLExpressions.nextval(CAPACITY_HISTORY_ID_SEQ);
+
     private final PostgreSQLQueryFactory queryFactory;
 
     public FacilityDao(PostgreSQLQueryFactory queryFactory) {
@@ -254,14 +247,20 @@ public class FacilityDao implements FacilityRepository {
         insertUnavailableCapacity(facilityId, facility.unavailableCapacities);
 
         // History updated
-        updateStatusHistory(facilityId, facility.status, facility.statusDescription);
+        final DateTime currentDate = DateTime.now();
+        updateStatusHistory(currentDate, facilityId, facility.status, facility.statusDescription);
+        updateCapacityHistory(currentDate, facilityId, facility.builtCapacity);
 
         return facilityId;
     }
 
+    private void updateCapacityHistory(DateTime currentDate, long facilityId, Map<CapacityType, Integer> builtCapacity) {
+        setEndDateForPreviousCapacityHistoryEntry(facilityId, currentDate);
+        insertNewCapacityHistoryEntry(facilityId, currentDate, builtCapacity);
+    }
+
     /** This method always inserts new entry, regardless of previous state. */
-    private void updateStatusHistory(long facilityId, FacilityStatus newStatus, MultilingualString statusDescription) {
-        final DateTime currentDate = DateTime.now();
+    private void updateStatusHistory(DateTime currentDate, long facilityId, FacilityStatus newStatus, MultilingualString statusDescription) {
         setEndDateForPreviousStateHistoryEntry(facilityId, currentDate);
         insertNewStatusHistoryEntry(facilityId, currentDate, newStatus, statusDescription);
     }
@@ -277,6 +276,21 @@ public class FacilityDao implements FacilityRepository {
                 .execute();
     }
 
+    private long insertNewCapacityHistoryEntry(long facilityId, DateTime currentDate, Map<CapacityType, Integer> builtCapacity) {
+        final SQLInsertClause insert = queryFactory.insert(qFacilityCapacityHistory);
+        populateCapacity(qFacilityCapacityHistory.capacityCar, builtCapacity.get(CAR), insert);
+        populateCapacity(qFacilityCapacityHistory.capacityDisabled, builtCapacity.get(DISABLED), insert);
+        populateCapacity(qFacilityCapacityHistory.capacityElectricCar, builtCapacity.get(ELECTRIC_CAR), insert);
+        populateCapacity(qFacilityCapacityHistory.capacityMotorcycle, builtCapacity.get(MOTORCYCLE), insert);
+        populateCapacity(qFacilityCapacityHistory.capacityBicycle, builtCapacity.get(BICYCLE), insert);
+        populateCapacity(qFacilityCapacityHistory.capacityBicycleSecureSpace, builtCapacity.get(BICYCLE_SECURE_SPACE), insert);
+        return insert
+                .set(qFacilityCapacityHistory.id, select(nextCapacityHistoryId))
+                .set(qFacilityCapacityHistory.facilityId, facilityId)
+                .set(qFacilityCapacityHistory.startTs, currentDate)
+                .execute();
+    }
+
     private void setEndDateForPreviousStateHistoryEntry(long facilityId, DateTime currentDate) {
         final Long lastHistoryEntryId = queryFactory.query().select(qFacilityStatusHistory.id)
                 .from(qFacilityStatusHistory)
@@ -288,6 +302,21 @@ public class FacilityDao implements FacilityRepository {
             queryFactory.update(qFacilityStatusHistory)
                     .set(qFacilityStatusHistory.endTs, currentDate)
                     .where(qFacilityStatusHistory.id.eq(lastHistoryEntryId))
+                    .execute();
+        }
+    }
+
+    private void setEndDateForPreviousCapacityHistoryEntry(long facilityId, DateTime currentDate) {
+        final Long lastHistoryEntryId = queryFactory.query().select(qFacilityCapacityHistory.id)
+                .from(qFacilityCapacityHistory)
+                .where(qFacilityCapacityHistory.facilityId.eq(facilityId))
+                .orderBy(qFacilityCapacityHistory.startTs.desc())
+                .fetchFirst();
+
+        if (lastHistoryEntryId != null) {
+            queryFactory.update(qFacilityCapacityHistory)
+                    .set(qFacilityCapacityHistory.endTs, currentDate)
+                    .where(qFacilityCapacityHistory.id.eq(lastHistoryEntryId))
                     .execute();
         }
     }
@@ -307,6 +336,35 @@ public class FacilityDao implements FacilityRepository {
                 .from(qFacilityStatusHistory)
                 .where(qFacilityStatusHistory.facilityId.eq(facilityId))
                 .orderBy(qFacilityStatusHistory.startTs.asc())
+                .fetch();
+    }
+
+    @Override
+    @TransactionalRead
+    public List<FacilityCapacityHistory> getCapacityHistory(long facilityId) {
+        return queryFactory.query()
+                .select(constructor(
+                        FacilityCapacityHistory.class,
+                        qFacilityCapacityHistory.facilityId,
+                        qFacilityCapacityHistory.startTs,
+                        qFacilityCapacityHistory.endTs,
+                        new MappingProjection<Map<CapacityType, Integer>>(Map.class, qFacilityCapacityHistory.all()) {
+                            @Override
+                            protected Map<CapacityType, Integer> map(Tuple row) {
+                                final Map<CapacityType, Integer> map = new HashMap<>();
+                                mapCapacity(map, CAR, row.get(qFacilityCapacityHistory.capacityCar));
+                                mapCapacity(map, DISABLED, row.get(qFacilityCapacityHistory.capacityDisabled));
+                                mapCapacity(map, ELECTRIC_CAR, row.get(qFacilityCapacityHistory.capacityElectricCar));
+                                mapCapacity(map, MOTORCYCLE, row.get(qFacilityCapacityHistory.capacityMotorcycle));
+                                mapCapacity(map, BICYCLE, row.get(qFacilityCapacityHistory.capacityBicycle));
+                                mapCapacity(map, BICYCLE_SECURE_SPACE, row.get(qFacilityCapacityHistory.capacityBicycleSecureSpace));
+                                return map;
+                            }
+                        }
+                ))
+                .from(qFacilityCapacityHistory)
+                .where(qFacilityCapacityHistory.facilityId.eq(facilityId))
+                .orderBy(qFacilityCapacityHistory.startTs.asc())
                 .fetch();
     }
 
@@ -349,8 +407,13 @@ public class FacilityDao implements FacilityRepository {
             insertUnavailableCapacity(facilityId, newFacility.unavailableCapacities);
         }
 
+        final DateTime now = DateTime.now();
         if (!(Objects.equals(newFacility.status, oldFacility.status) && Objects.equals(newFacility.statusDescription, oldFacility.statusDescription))) {
-            updateStatusHistory(facilityId, newFacility.status, newFacility.statusDescription);
+            updateStatusHistory(now, facilityId, newFacility.status, newFacility.statusDescription);
+        }
+
+        if (!(Objects.equals(newFacility.builtCapacity, oldFacility.builtCapacity))) {
+            updateCapacityHistory(now, facilityId, newFacility.builtCapacity);
         }
     }
 

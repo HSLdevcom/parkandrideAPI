@@ -123,6 +123,7 @@ public class DevHelper {
                 QPort.port,
                 QUnavailableCapacity.unavailableCapacity,
                 QFacilityStatusHistory.facilityStatusHistory,
+                QFacilityCapacityHistory.facilityCapacityHistory,
                 QFacility.facility);
         resetPredictorSequence();
         resetFacilitySequence();

@@ -12,6 +12,7 @@ public interface FacilityRepository {
     long insertFacility(Facility facility);
 
     List<FacilityStatusHistory> getStatusHistory(long facilityId);
+    List<FacilityCapacityHistory> getCapacityHistory(long facilityId);
 
     void updateFacility(long facilityId, Facility facility);
 

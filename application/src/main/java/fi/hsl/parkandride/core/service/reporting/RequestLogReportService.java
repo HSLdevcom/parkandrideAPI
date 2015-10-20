@@ -10,6 +10,7 @@ import fi.hsl.parkandride.core.domain.RequestLogKey;
 import fi.hsl.parkandride.core.domain.User;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 
 import javax.inject.Inject;
 import java.util.List;
@@ -50,9 +51,9 @@ public class RequestLogReportService implements ReportService {
         return excel.toBytes();
     }
 
-    private List<RequestLogEntry> getRowsForDates(String startDate, String endDate, RequestLogInterval interval) {
-        final DateTime start = FINNISH_DATE_FORMAT.parseLocalDate(startDate).toDateTimeAtStartOfDay();
-        final DateTime end = FINNISH_DATE_FORMAT.parseLocalDate(endDate).toDateTimeAtStartOfDay().millisOfDay().withMaximumValue();
+    private List<RequestLogEntry> getRowsForDates(LocalDate startDate, LocalDate endDate, RequestLogInterval interval) {
+        final DateTime start = startDate.toDateTimeAtStartOfDay();
+        final DateTime end = endDate.toDateTimeAtStartOfDay().millisOfDay().withMaximumValue();
         validate(start).lte(end);
         final List<RequestLogEntry> logEntriesBetween = requestLogRepository.getLogEntriesBetween(start, end);
         return logEntriesBetween.stream()

@@ -17,7 +17,6 @@ import java.util.List;
 import java.util.Optional;
 
 import static fi.hsl.parkandride.core.service.AuthenticationService.authorize;
-import static fi.hsl.parkandride.core.service.reporting.ReportServiceSupport.FINNISH_DATE_FORMAT;
 import static fi.hsl.parkandride.util.ArgumentValidator.validate;
 import static java.util.Arrays.asList;
 import static java.util.Comparator.comparing;

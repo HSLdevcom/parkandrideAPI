@@ -15,7 +15,6 @@
 
         'filters',
         'featureToggle',
-        'httpInterceptor',
 
         'parkandride.about',
         'parkandride.contacts',

@@ -158,6 +158,17 @@ public class ApiDocumentation extends AbstractIntegrationTest {
     }
 
     @Test
+    public void usageTrackingExample() throws Exception {
+        MockHttpServletRequestBuilder request = get(UrlSchema.FACILITIES)
+                .header("Liipi-Application-Id", "liipi-ui")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("[]");
+        mockMvc.perform(request)
+                .andExpect(status().isOk())
+                .andDo(document("usage-tracking"));
+    }
+
+    @Test
     public void facilityGeojsonExample() throws Exception {
         MockHttpServletRequestBuilder request = get(UrlSchema.FACILITY + ".geojson", facilityId);
         this.mockMvc.perform(withBaseUrl(request))

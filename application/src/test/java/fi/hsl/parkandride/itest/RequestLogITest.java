@@ -41,7 +41,7 @@ import static com.jayway.restassured.RestAssured.when;
 import static fi.hsl.parkandride.core.domain.Role.ADMIN;
 import static fi.hsl.parkandride.core.domain.Role.OPERATOR_API;
 import static fi.hsl.parkandride.front.ReportController.MEDIA_TYPE_EXCEL;
-import static fi.hsl.parkandride.front.RequestLoggingInterceptorAdapter.X_HSL_SOURCE;
+import static fi.hsl.parkandride.front.RequestLoggingInterceptor.SOURCE_HEADER;
 import static fi.hsl.parkandride.front.UrlSchema.FACILITY;
 import static fi.hsl.parkandride.front.UrlSchema.HUB;
 import static java.util.Spliterator.ORDERED;
@@ -59,7 +59,7 @@ public class RequestLogITest extends AbstractIntegrationTest {
     private static final String MONTH_FORMAT = "M/yyyy";
     private static final String DATE_FORMAT = "d.M.yyyy";
     private static final String DATETIME_FORMAT = "d.M.yyyy HH:mm";
-    private static final String WEB_UI_SOURCE = "#webkäli";
+    private static final String WEB_UI_SOURCE = "liipi-ui";
 
     @Inject Dummies dummies;
     @Inject FacilityService facilityService;
@@ -273,8 +273,8 @@ public class RequestLogITest extends AbstractIntegrationTest {
     private void generateDummyRequestLog() {
         // Today
         DateTimeUtils.setCurrentMillisFixed(BASE_DATE_TIME.getMillis());
-        IntStream.range(0, 12).forEach(i -> given().header(X_HSL_SOURCE, WEB_UI_SOURCE).when().get(UrlSchema.FACILITY, i));
-        IntStream.range(0, 8).forEach(i -> given().header(X_HSL_SOURCE, WEB_UI_SOURCE).when().get(UrlSchema.HUB, i));
+        IntStream.range(0, 12).forEach(i -> given().header(SOURCE_HEADER, WEB_UI_SOURCE).when().get(UrlSchema.FACILITY, i));
+        IntStream.range(0, 8).forEach(i -> given().header(SOURCE_HEADER, WEB_UI_SOURCE).when().get(UrlSchema.HUB, i));
 
         // Without Source header
         IntStream.range(0, 12).forEach(i -> when().get(UrlSchema.FACILITY, i));
@@ -282,15 +282,15 @@ public class RequestLogITest extends AbstractIntegrationTest {
 
         // An hour after now
         DateTimeUtils.setCurrentMillisFixed(BASE_DATE_TIME.plusHours(1).getMillis());
-        IntStream.range(0, 12).forEach(i -> given().header(X_HSL_SOURCE, WEB_UI_SOURCE).when().get(UrlSchema.FACILITY, i));
+        IntStream.range(0, 12).forEach(i -> given().header(SOURCE_HEADER, WEB_UI_SOURCE).when().get(UrlSchema.FACILITY, i));
 
         // A day after now
         DateTimeUtils.setCurrentMillisFixed(BASE_DATE_TIME.plusDays(1).getMillis());
-        IntStream.range(0, 12).forEach(i -> given().header(X_HSL_SOURCE, WEB_UI_SOURCE).when().get(UrlSchema.FACILITY, i));
+        IntStream.range(0, 12).forEach(i -> given().header(SOURCE_HEADER, WEB_UI_SOURCE).when().get(UrlSchema.FACILITY, i));
 
         // A month before now
         DateTimeUtils.setCurrentMillisFixed(BASE_DATE_TIME.minusMonths(1).getMillis());
-        IntStream.range(0, 12).forEach(i -> given().header(X_HSL_SOURCE, WEB_UI_SOURCE).when().get(UrlSchema.FACILITY, i));
+        IntStream.range(0, 12).forEach(i -> given().header(SOURCE_HEADER, WEB_UI_SOURCE).when().get(UrlSchema.FACILITY, i));
 
         DateTimeUtils.setCurrentMillisSystem();
 

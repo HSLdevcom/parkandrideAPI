@@ -59,7 +59,7 @@ link:../assets/datamodel.png[UML diagram of the HSL Park and Ride data model]
 === Examples
 
 Most API-features are used by the link:https://p.hsl.fi/[Park and Ride maintenance UI] and
-link:https://github.com/HSLdevcom/parkandrideAPI/tree/master/application/src/main/frontend/src[it's source code]
+link:https://github.com/HSLdevcom/parkandrideAPI/tree/master/application/src/main/frontend/src[its source code]
 contains real life example.
 
 Upcoming features can be tested in https://test.p.hsl.fi
@@ -80,6 +80,16 @@ The value is the string `Bearer` followed by the API user's token. Operators can
 include::{generated}/authentication-example/http-request.adoc[]
 
 NOTE: Authentication is *not* needed for read-only (GET) methods.
+
+
+[[usage-tracking]]
+=== Usage tracking
+API usage is tracked by logging all incoming requests per application. To enable tracking for your specific application's
+needs, please include the `Liipi-Application-Id` header in your requests. The header values must match the following
+pattern: `[a-zA-Z0-9_\-\./]{3,20}`. If no header is specified, the request will still be logged with `null` apllication id.
+The web user interface uses `liipi-ui` as its identifier.
+
+include::{generated}/usage-tracking/http-request.adoc[]
 
 [[formats]]
 === Supported Formats

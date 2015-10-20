@@ -665,7 +665,7 @@
         "help": {
             "summary": "Tältä sivulta kirjautunut käyttäjä voi generoida raportteja järjestelmän tiedoista",
             "bullet1": "Raportteja voi parametrien avulla rajata pienemmiksi",
-            "bullet2": "Valittavissa on 3 eri raporttityyppiä"
+            "bullet2": "Valittavissa on 4 eri raporttityyppiä"
         },
         "action": {
             "do": "Lataa raportti",

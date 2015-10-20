@@ -102,7 +102,25 @@ describe('reports', function () {
                 .toEqual(moment().format('D.M.YYYY'));
         });
 
+        it('should change start date to be at most end date', function() {
+            reportPage.endDate.open().verifyOpen().clickPreviousMonth().clickPreviousMonth()
+                .selectDate('28');
 
+            expect(reportPage.startDate.getValue())
+                .toEqual(moment().subtract(2, 'months').date(28).format('D.M.YYYY'));
+            expect(reportPage.endDate.getValue())
+                .toEqual(moment().subtract(2, 'months').date(28).format('D.M.YYYY'));
+        });
+
+        it('should change end date to be at least start date', function() {
+
+            reportPage.startDate.open().verifyOpen().clickNextMonth().selectDate('15');
+
+            expect(reportPage.startDate.getValue())
+                .toEqual(moment().subtract(1, 'months').date(15).format('D.M.YYYY'));
+            expect(reportPage.endDate.getValue())
+                .toEqual(moment().subtract(1, 'months').date(15).format('D.M.YYYY'));
+        });
     });
 
     describe('filtering', function() {

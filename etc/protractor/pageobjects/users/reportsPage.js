@@ -9,6 +9,7 @@ var _ = require('lodash');
 module.exports = function (spec) {
     var that = require('../base')(spec);
     var uiSelect = components.uiSelect({});
+    var datepicker = components.datepicker({});
 
     spec.view           = $('.wdReportsView');
 
@@ -73,10 +74,34 @@ module.exports = function (spec) {
             }
         });
     }
-    function createInputField(elem, extend) {
+    function createDateField(elem, extend) {
         return _.assign(extend || {}, {
             getValue: function() {
                 return elem.getAttribute('value');
+            },
+            open: function() {
+                elem.click();
+                return this;
+            },
+            clickPreviousMonth: function() {
+                datepicker.clickPreviousMonth(elem);
+                return this;
+            },
+            clickNextMonth: function() {
+                datepicker.clickNextMonth(elem);
+                return this;
+            },
+            selectDate: function(date) {
+                datepicker.clickDate(elem, date);
+                return this;
+            },
+            verifyOpen: function() {
+                datepicker.verifyOpen(elem);
+                return this;
+            },
+            verifyClosed: function() {
+                datepicker.verifyClosed(elem);
+                return this;
             }
         });
     }
@@ -86,8 +111,8 @@ module.exports = function (spec) {
             return spec.interval.$(':checked').getText();
         }
     };
-    that.startDate  = createInputField(spec.startDate);
-    that.endDate    = createInputField(spec.endDate);
+    that.startDate  = createDateField(spec.startDate);
+    that.endDate    = createDateField(spec.endDate);
 
     that.operators  = createUiSelect(spec.operators);
     that.capacities = createUiSelect(spec.capacities);

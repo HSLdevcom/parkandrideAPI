@@ -3,6 +3,7 @@
 
 package fi.hsl.parkandride.front;
 
+import fi.hsl.parkandride.MDCFilter;
 import fi.hsl.parkandride.core.domain.RequestLogKey;
 import fi.hsl.parkandride.core.service.BatchingRequestLogService;
 import org.joda.time.DateTime;
@@ -15,16 +16,16 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Optional;
 
-public class RequestLoggingInterceptorAdapter extends HandlerInterceptorAdapter {
+public class RequestLoggingInterceptor extends HandlerInterceptorAdapter {
 
-    private static final Logger logger = LoggerFactory.getLogger(RequestLoggingInterceptorAdapter.class);
+    private static final Logger logger = LoggerFactory.getLogger(RequestLoggingInterceptor.class);
 
     // The source header for API requests
-    public static final String X_HSL_SOURCE = "X-HSL-Source";
+    public static final String SOURCE_HEADER = MDCFilter.LIIPI_APPLICATION_ID;
 
     private final BatchingRequestLogService batchingRequestLogService;
 
-    public RequestLoggingInterceptorAdapter(BatchingRequestLogService batchingRequestLogService) {
+    public RequestLoggingInterceptor(BatchingRequestLogService batchingRequestLogService) {
         this.batchingRequestLogService = batchingRequestLogService;
     }
 
@@ -33,7 +34,7 @@ public class RequestLoggingInterceptorAdapter extends HandlerInterceptorAdapter 
         Optional.ofNullable((String) request.getAttribute(HandlerMapping.BEST_MATCHING_PATTERN_ATTRIBUTE))
                 .filter(s -> s.startsWith(UrlSchema.API))
                 .ifPresent(urlPattern -> {
-                    final String source = request.getHeader(X_HSL_SOURCE);
+                    final String source = request.getHeader(SOURCE_HEADER);
                     logger.trace("Intercepted API call: <{}> for source <{}>", urlPattern, source);
                     batchingRequestLogService.increment(new RequestLogKey(urlPattern, source, DateTime.now()));
                 });

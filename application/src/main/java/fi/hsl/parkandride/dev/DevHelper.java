@@ -122,6 +122,9 @@ public class DevHelper {
                 QPricing.pricing,
                 QPort.port,
                 QUnavailableCapacity.unavailableCapacity,
+                QFacilityStatusHistory.facilityStatusHistory,
+                QUnavailableCapacityHistory.unavailableCapacityHistory,
+                QFacilityCapacityHistory.facilityCapacityHistory,
                 QFacility.facility);
         resetPredictorSequence();
         resetFacilitySequence();

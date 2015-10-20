@@ -20,12 +20,14 @@ import com.querydsl.sql.dml.SQLUpdateClause;
 import com.querydsl.sql.postgresql.PostgreSQLQuery;
 import com.querydsl.sql.postgresql.PostgreSQLQueryFactory;
 import fi.hsl.parkandride.back.sql.*;
+import fi.hsl.parkandride.core.back.FacilityHistoryRepository;
 import fi.hsl.parkandride.core.back.FacilityRepository;
 import fi.hsl.parkandride.core.domain.*;
 import fi.hsl.parkandride.core.service.TransactionalRead;
 import fi.hsl.parkandride.core.service.TransactionalWrite;
 import fi.hsl.parkandride.core.service.ValidationException;
 import org.geolatte.geom.Point;
+import org.joda.time.DateTime;
 
 import java.util.*;
 import java.util.Map.Entry;
@@ -46,33 +48,22 @@ public class FacilityDao implements FacilityRepository {
     private static final Sort DEFAULT_SORT = new Sort("name.fi", ASC);
 
     private static final QFacility qFacility = QFacility.facility;
-
     private static final QFacilityAlias qAlias = QFacilityAlias.facilityAlias;
-
     private static final QPort qPort = QPort.port;
-
     private static final QFacilityService qService = QFacilityService.facilityService;
-
     private static final QFacilityPaymentMethod qPaymentMethod = QFacilityPaymentMethod.facilityPaymentMethod;
-
     private static final QUnavailableCapacity qUnavailableCapacity = QUnavailableCapacity.unavailableCapacity;
+    private static final QPricing qPricing = QPricing.pricing;
 
     private static final MultilingualStringMapping statusDescriptionMapping =
             new MultilingualStringMapping(qFacility.statusDescriptionFi, qFacility.statusDescriptionSv, qFacility.statusDescriptionEn);
-
     private static final MultilingualStringMapping openingHoursInfoMapping =
             new MultilingualStringMapping(qFacility.openingHoursInfoFi, qFacility.openingHoursInfoSv, qFacility.openingHoursInfoEn);
-
     private static final MultilingualUrlMapping openingHoursUrlMapping =
             new MultilingualUrlMapping(qFacility.openingHoursUrlFi, qFacility.openingHoursUrlSv, qFacility.openingHoursUrlEn);
-
-    private static final QPricing qPricing = QPricing.pricing;
-
     private static final MultilingualStringMapping pricingPriceMapping =
             new MultilingualStringMapping(qPricing.priceFi, qPricing.priceSv, qPricing.priceEn);
-
     private static final AddressMapping addressMapping = new AddressMapping(qPort);
-
     private static final MultilingualStringMapping portInfoMapping =
             new MultilingualStringMapping(qPort.infoFi, qPort.infoSv, qPort.infoEn);
 
@@ -129,10 +120,10 @@ public class FacilityDao implements FacilityRepository {
                 }
             };
 
-    public static final ResultTransformer<Map<Long, Set<String>>> aliasesByFacilityIdMapping =
+    private static final ResultTransformer<Map<Long, Set<String>>> aliasesByFacilityIdMapping =
             groupBy(qAlias.facilityId).as(set(qAlias.alias));
 
-    public static final ResultTransformer<Map<Long, List<Port>>> portsByFacilityIdMapping =
+    private static final ResultTransformer<Map<Long, List<Port>>> portsByFacilityIdMapping =
             groupBy(qPort.facilityId).as(list(portMapping));
 
 
@@ -210,13 +201,14 @@ public class FacilityDao implements FacilityRepository {
     }
 
     public static final String FACILITY_ID_SEQ = "facility_id_seq";
-
     private static final SimpleExpression<Long> nextFacilityId = SQLExpressions.nextval(FACILITY_ID_SEQ);
 
     private final PostgreSQLQueryFactory queryFactory;
+    private final FacilityHistoryRepository facilityHistoryRepository;
 
-    public FacilityDao(PostgreSQLQueryFactory queryFactory) {
+    public FacilityDao(PostgreSQLQueryFactory queryFactory, FacilityHistoryRepository facilityHistoryRepository) {
         this.queryFactory = queryFactory;
+        this.facilityHistoryRepository = facilityHistoryRepository;
     }
 
     @TransactionalWrite
@@ -242,8 +234,14 @@ public class FacilityDao implements FacilityRepository {
         insertPricing(facilityId, facility.pricingMethod.getPricing(facility));
         insertUnavailableCapacity(facilityId, facility.unavailableCapacities);
 
+        // History updated
+        final DateTime currentDate = DateTime.now();
+        facilityHistoryRepository.updateStatusHistory(currentDate, facilityId, facility.status, facility.statusDescription);
+        facilityHistoryRepository.updateCapacityHistory(currentDate, facilityId, facility.builtCapacity, facility.unavailableCapacities);
+
         return facilityId;
     }
+
 
     @TransactionalWrite
     @Override
@@ -282,6 +280,15 @@ public class FacilityDao implements FacilityRepository {
         if (!Objects.equals(newFacility.unavailableCapacities, oldFacility.unavailableCapacities)) {
             deleteUnavailableCapacity(facilityId);
             insertUnavailableCapacity(facilityId, newFacility.unavailableCapacities);
+        }
+
+        final DateTime now = DateTime.now();
+        if (!(Objects.equals(newFacility.status, oldFacility.status) && Objects.equals(newFacility.statusDescription, oldFacility.statusDescription))) {
+            facilityHistoryRepository.updateStatusHistory(now, facilityId, newFacility.status, newFacility.statusDescription);
+        }
+
+        if (!(Objects.equals(newFacility.builtCapacity, oldFacility.builtCapacity)) || !(Objects.equals(newFacility.unavailableCapacities, oldFacility.unavailableCapacities))) {
+            facilityHistoryRepository.updateCapacityHistory(now, facilityId, newFacility.builtCapacity, newFacility.unavailableCapacities);
         }
     }
 
@@ -395,8 +402,8 @@ public class FacilityDao implements FacilityRepository {
     }
 
     private void updatePorts(long facilityId, List<Port> newPorts, List<Port> oldPorts) {
-        newPorts = firstNonNull(newPorts, new ArrayList<Port>());
-        oldPorts = firstNonNull(oldPorts, new ArrayList<Port>());
+        newPorts = Optional.ofNullable(newPorts).orElse(new ArrayList<>());
+        oldPorts = Optional.ofNullable(oldPorts).orElse(new ArrayList<>());
 
         Map<Integer, Port> addedPorts = new HashMap<>();
         Map<Integer, Port> updatedPorts = new HashMap<>();

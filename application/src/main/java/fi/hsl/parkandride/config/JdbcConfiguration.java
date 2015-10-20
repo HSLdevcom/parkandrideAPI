@@ -131,6 +131,9 @@ public class JdbcConfiguration {
         conf.register("UNAVAILABLE_CAPACITY", "CAPACITY_TYPE", new EnumByNameType<>(CapacityType.class));
         conf.register("UNAVAILABLE_CAPACITY", "USAGE", new EnumByNameType<>(Usage.class));
 
+        conf.register("UNAVAILABLE_CAPACITY_HISTORY", "CAPACITY_TYPE", new EnumByNameType<>(CapacityType.class));
+        conf.register("UNAVAILABLE_CAPACITY_HISTORY", "USAGE", new EnumByNameType<>(Usage.class));
+
         conf.register("CAPACITY_TYPE", "NAME", new EnumByNameType<>(CapacityType.class));
 
         conf.register("CONTACT", "PHONE", new PhoneType());
@@ -148,6 +151,8 @@ public class JdbcConfiguration {
         conf.register("FACILITY_PREDICTION", "USAGE", new EnumByNameType<>(Usage.class));
 
         conf.register("FACILITY_SERVICE", "SERVICE", new EnumByNameType<>(Service.class));
+
+        conf.register("FACILITY_STATUS_HISTORY", "STATUS", new EnumByNameType<>(FacilityStatus.class));
 
         conf.register("FACILITY_PAYMENT_METHOD", "PAYMENT_METHOD", new EnumByNameType<>(PaymentMethod.class));
 

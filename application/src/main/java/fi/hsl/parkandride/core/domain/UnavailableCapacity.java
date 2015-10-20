@@ -3,15 +3,14 @@
 
 package fi.hsl.parkandride.core.domain;
 
-import static java.util.Comparator.comparing;
-import static java.util.Comparator.naturalOrder;
-import static java.util.Comparator.nullsLast;
-
-import java.util.Comparator;
-import java.util.Objects;
+import com.google.common.base.MoreObjects;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import java.util.Comparator;
+import java.util.Objects;
+
+import static java.util.Comparator.*;
 
 public class UnavailableCapacity {
 
@@ -57,6 +56,16 @@ public class UnavailableCapacity {
             return false;
         }
     }
+
+    @Override
+    public String toString() {
+        return MoreObjects.toStringHelper(this)
+                .add("capacityType", capacityType)
+                .add("usage", usage)
+                .add("capacity", capacity)
+                .toString();
+    }
+
 
     public CapacityType getCapacityType() {
         return capacityType;

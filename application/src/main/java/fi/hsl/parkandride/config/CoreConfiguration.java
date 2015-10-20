@@ -145,7 +145,12 @@ public class CoreConfiguration {
 
     @Bean
     public FacilityRepository facilityRepository() {
-        return new FacilityDao(queryFactory);
+        return new FacilityDao(queryFactory, facilityHistoryRepository());
+    }
+
+    @Bean
+    public FacilityHistoryRepository facilityHistoryRepository() {
+        return new FacilityHistoryDao(queryFactory);
     }
 
     @Bean

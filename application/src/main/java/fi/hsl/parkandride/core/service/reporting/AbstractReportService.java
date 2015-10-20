@@ -58,11 +58,11 @@ public abstract class AbstractReportService extends ReportServiceSupport impleme
 
     protected final UtilizationSearch toUtilizationSearch(ReportParameters parameters, final ReportContext ctx) {
         UtilizationSearch search = new UtilizationSearch();
-        search.start = FINNISH_DATE_FORMAT.parseLocalDate(parameters.startDate).toDateTimeAtStartOfDay();
+        search.start = parameters.startDate.toDateTimeAtStartOfDay();
         if (parameters.endDate == null) {
             search.end = new LocalDate().plusDays(1).toDateTimeAtStartOfDay();
         } else {
-            search.end = FINNISH_DATE_FORMAT.parseLocalDate(parameters.endDate).toDateTimeAtStartOfDay();
+            search.end = parameters.endDate.toDateTimeAtStartOfDay();
         }
         if (!isEmpty(parameters.capacityTypes)) {
             search.capacityTypes = parameters.capacityTypes;

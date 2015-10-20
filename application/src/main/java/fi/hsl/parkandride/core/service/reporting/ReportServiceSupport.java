@@ -6,15 +6,10 @@ package fi.hsl.parkandride.core.service.reporting;
 import fi.hsl.parkandride.back.RegionRepository;
 import fi.hsl.parkandride.core.back.UtilizationRepository;
 import fi.hsl.parkandride.core.service.*;
-import org.joda.time.format.DateTimeFormatter;
-
-import static org.joda.time.format.DateTimeFormat.forPattern;
 
 public abstract class ReportServiceSupport {
 
     public static final int SECONDS_IN_DAY = 60 * 60 * 24;
-    public static final String FINNISH_DATE_PATTERN = "d.M.yyyy";
-    public static final DateTimeFormatter FINNISH_DATE_FORMAT = forPattern(FINNISH_DATE_PATTERN);
 
     final FacilityService facilityService;
     final OperatorService operatorService;

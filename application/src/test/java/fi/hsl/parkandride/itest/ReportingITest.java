@@ -10,7 +10,6 @@ import fi.hsl.parkandride.back.Dummies;
 import fi.hsl.parkandride.core.domain.*;
 import fi.hsl.parkandride.core.service.*;
 import fi.hsl.parkandride.core.service.reporting.ReportParameters;
-import fi.hsl.parkandride.core.service.reporting.ReportServiceSupport;
 import fi.hsl.parkandride.front.UrlSchema;
 import junit.framework.AssertionFailedError;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
@@ -439,8 +438,8 @@ public class ReportingITest extends AbstractIntegrationTest {
         // No params given -> IllegalArgumentException from fi.hsl.parkandride.core.service.reporting.FacilityUsageReportService
         final ReportParameters params = baseParams();
         params.interval = 100;
-        params.startDate = BASE_DATE.toString(ReportServiceSupport.FINNISH_DATE_PATTERN);
-        params.endDate = BASE_DATE.minusDays(1).toString(ReportServiceSupport.FINNISH_DATE_PATTERN);
+        params.startDate = BASE_DATE;
+        params.endDate = BASE_DATE.minusDays(1);
         given().contentType(ContentType.JSON)
                 .accept(MEDIA_TYPE_EXCEL)
                 .header(authorization(devHelper.login(adminUser.username).token))
@@ -536,8 +535,8 @@ public class ReportingITest extends AbstractIntegrationTest {
 
     private static ReportParameters baseParams(LocalDate referenceDate) {
         final ReportParameters params = new ReportParameters();
-        params.startDate = referenceDate.dayOfMonth().withMinimumValue().toString(ReportServiceSupport.FINNISH_DATE_PATTERN);
-        params.endDate = referenceDate.dayOfMonth().withMaximumValue().toString(ReportServiceSupport.FINNISH_DATE_PATTERN);
+        params.startDate = referenceDate.dayOfMonth().withMinimumValue();
+        params.endDate = referenceDate.dayOfMonth().withMaximumValue();
         return params;
     }
 

@@ -7,11 +7,12 @@ import com.jayway.restassured.http.ContentType;
 import com.jayway.restassured.response.Header;
 import com.jayway.restassured.response.Response;
 import fi.hsl.parkandride.back.Dummies;
-import fi.hsl.parkandride.core.domain.*;
+import fi.hsl.parkandride.core.domain.Facility;
+import fi.hsl.parkandride.core.domain.NewUser;
+import fi.hsl.parkandride.core.domain.User;
 import fi.hsl.parkandride.core.service.BatchingRequestLogService;
 import fi.hsl.parkandride.core.service.FacilityService;
 import fi.hsl.parkandride.core.service.reporting.ReportParameters;
-import fi.hsl.parkandride.core.service.reporting.ReportServiceSupport;
 import fi.hsl.parkandride.core.service.reporting.RequestLogInterval;
 import fi.hsl.parkandride.front.UrlSchema;
 import junit.framework.AssertionFailedError;
@@ -190,7 +191,7 @@ public class RequestLogITest extends AbstractIntegrationTest {
 
         final ReportParameters params = baseParams(BASE_DATE_TIME.toLocalDate());
         params.requestLogInterval = RequestLogInterval.MONTH;
-        params.startDate = BASE_DATE_TIME.minusMonths(1).withDayOfMonth(1).toString(ReportServiceSupport.FINNISH_DATE_FORMAT);
+        params.startDate = BASE_DATE_TIME.minusMonths(1).withDayOfMonth(1).toLocalDate();
 
         final Response whenPostingToReportUrl = postToReportUrl(params, "RequestLog", adminUser);
         final Workbook workbook = readWorkbookFrom(whenPostingToReportUrl);
@@ -320,8 +321,8 @@ public class RequestLogITest extends AbstractIntegrationTest {
         // No params given -> IllegalArgumentException from fi.hsl.parkandride.core.service.reporting.FacilityUsageReportService
         final ReportParameters params = baseParams();
         params.interval = 100;
-        params.startDate = BASE_DATE.toString(ReportServiceSupport.FINNISH_DATE_PATTERN);
-        params.endDate = BASE_DATE.minusDays(1).toString(ReportServiceSupport.FINNISH_DATE_PATTERN);
+        params.startDate = BASE_DATE;
+        params.endDate = BASE_DATE.minusDays(1);
         given().contentType(ContentType.JSON)
                 .accept(MEDIA_TYPE_EXCEL)
                 .header(authorization(devHelper.login(adminUser.username).token))
@@ -389,8 +390,8 @@ public class RequestLogITest extends AbstractIntegrationTest {
 
     private static ReportParameters baseParams(LocalDate referenceDate) {
         final ReportParameters params = new ReportParameters();
-        params.startDate = referenceDate.dayOfMonth().withMinimumValue().toString(ReportServiceSupport.FINNISH_DATE_PATTERN);
-        params.endDate = referenceDate.dayOfMonth().withMaximumValue().toString(ReportServiceSupport.FINNISH_DATE_PATTERN);
+        params.startDate = referenceDate.dayOfMonth().withMinimumValue();
+        params.endDate = referenceDate.dayOfMonth().withMaximumValue();
         return params;
     }
 

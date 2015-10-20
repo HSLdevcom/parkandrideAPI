@@ -5,12 +5,13 @@ package fi.hsl.parkandride.core.service.reporting;
 
 import fi.hsl.parkandride.core.domain.CapacityType;
 import fi.hsl.parkandride.core.domain.Usage;
+import org.joda.time.LocalDate;
 
 import java.util.Set;
 
 public class ReportParameters {
-  public String startDate;
-  public String endDate;
+  public LocalDate startDate;
+  public LocalDate endDate;
   public int interval;
   public RequestLogInterval requestLogInterval;
   public Set<Long> operators;

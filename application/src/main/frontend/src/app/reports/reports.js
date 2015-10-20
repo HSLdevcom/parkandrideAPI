@@ -213,8 +213,8 @@
             function removeWait() {
                 document.documentElement.classList.remove('wait');
             }
-            parameters.startDate = date_toArray(parameters.startDate).join(".");
-            parameters.endDate   = date_toArray(parameters.endDate).join(".");
+            parameters.startDate = date_toArray(parameters.startDate).reverse();
+            parameters.endDate   = date_toArray(parameters.endDate).reverse();
             return $http({
                 url: 'api/v1/reports/' + type,
                 method: "POST",

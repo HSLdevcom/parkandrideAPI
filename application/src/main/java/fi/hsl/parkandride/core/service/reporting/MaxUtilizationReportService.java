@@ -14,13 +14,13 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import static fi.hsl.parkandride.core.domain.Region.UNKNOWN_REGION;
 import static java.lang.Math.min;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.sort;
-import static java.util.stream.Collectors.joining;
 
 public class MaxUtilizationReportService extends AbstractReportService {
 
@@ -75,11 +75,7 @@ public class MaxUtilizationReportService extends AbstractReportService {
                     .mapToDouble(key -> 1.0 - facilityStats.get(key) / (double) key.facility.builtCapacity.get(key.capacityType))
                     .average().orElse(0);
             int totalCapacity = facilityKeys.stream().mapToInt(key -> key.facility.builtCapacity.get(key.capacityType)).sum();
-            final String operatorNames = facilityKeys.stream()
-                    .map(f -> operatorService.getOperator(f.targetId))
-                    .map(o -> o.name.fi)
-                    .sorted()
-                    .collect(joining(", "));
+            final String operatorNames = ctx.operatorsByHubId.get(hubKey.targetId).stream().map(op -> op.name.fi).sorted().collect(Collectors.joining(", "));
             rows.add(new MaxUtilizationReportRow(hubKey.hub, facilityKeys.get(0), operatorNames, avgPercent, totalCapacity));
         });
         sort(rows);

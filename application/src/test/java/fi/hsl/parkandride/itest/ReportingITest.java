@@ -28,6 +28,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+import java.util.function.Consumer;
 import java.util.stream.IntStream;
 
 import static com.google.common.collect.Lists.newArrayList;
@@ -114,27 +115,28 @@ public class ReportingITest extends AbstractIntegrationTest {
         final Response whenPostingToReportUrl = postToReportUrl(params, "FacilityUsage", operator2User);
 
         // If this succeeds, the response was a valid excel file
-        final Workbook workbook = readWorkbookFrom(whenPostingToReportUrl);
-        assertThat(getSheetNames(workbook)).containsExactly("Käyttöasteraportti", "Selite");
+        withWorkbook(whenPostingToReportUrl, workbook -> {
+            assertThat(getSheetNames(workbook)).containsExactly("Käyttöasteraportti", "Selite");
 
-        final Sheet usages = workbook.getSheetAt(0);
-        // Header and one for each usage type
-        assertThat(usages.getPhysicalNumberOfRows()).isEqualTo(3);
+            final Sheet usages = workbook.getSheetAt(0);
+            // Header and one for each usage type
+            assertThat(usages.getPhysicalNumberOfRows()).isEqualTo(3);
 
-        // Only operator2 visible
-        assertThat(getDataFromColumn(usages, 3))
-            .containsOnly("Operaattori", operator2.name.fi)
-            .doesNotContain(operator1.name.fi);
+            // Only operator2 visible
+            assertThat(getDataFromColumn(usages, 3))
+                .containsOnly("Operaattori", operator2.name.fi)
+                .doesNotContain(operator1.name.fi);
 
-        final List<String> headers = getDataFromRow(usages, 0);
-        assertThat(headers.subList(FACILITYUSAGE_FIRST_TIME_COLUMN, headers.size()))
-                .containsExactly("00:00", "03:00", "06:00", "09:00", "12:00", "15:00", "18:00", "21:00");
+            final List<String> headers = getDataFromRow(usages, 0);
+            assertThat(headers.subList(FACILITYUSAGE_FIRST_TIME_COLUMN, headers.size()))
+                    .containsExactly("00:00", "03:00", "06:00", "09:00", "12:00", "15:00", "18:00", "21:00");
 
-        // Get the hourly utilizations for CAR
-        // Results are not interpolated.
-        final List<String> row = getDataFromRow(usages, 1);
-        assertThat(row.subList(FACILITYUSAGE_FIRST_TIME_COLUMN, row.size()))
-                .containsExactly("24", "24", "24", "24", "0", "0", "0", "24");
+            // Get the hourly utilizations for CAR
+            // Results are not interpolated.
+            final List<String> row = getDataFromRow(usages, 1);
+            assertThat(row.subList(FACILITYUSAGE_FIRST_TIME_COLUMN, row.size()))
+                    .containsExactly("24", "24", "24", "24", "0", "0", "0", "24");
+        });
     }
 
     @Test
@@ -147,14 +149,14 @@ public class ReportingITest extends AbstractIntegrationTest {
         final Response whenPostingToReportUrl = postToReportUrl(params, "FacilityUsage", adminUser);
 
         // If this succeeds, the response was a valid excel file
-        final Workbook workbook = readWorkbookFrom(whenPostingToReportUrl);
+        withWorkbook(whenPostingToReportUrl, workbook -> {
+            final Sheet usages = workbook.getSheetAt(0);
+            // Header and one for each usage type for both facilities
+            assertThat(usages.getPhysicalNumberOfRows()).isEqualTo(5);
 
-        final Sheet usages = workbook.getSheetAt(0);
-        // Header and one for each usage type for both facilities
-        assertThat(usages.getPhysicalNumberOfRows()).isEqualTo(5);
-
-        assertThat(getDataFromColumn(usages, 3))
-                .containsExactly("Operaattori", operator1.name.fi, operator1.name.fi, operator2.name.fi, operator2.name.fi);
+            assertThat(getDataFromColumn(usages, 3))
+                    .containsExactly("Operaattori", operator1.name.fi, operator1.name.fi, operator2.name.fi, operator2.name.fi);
+        });
     }
 
     @Test
@@ -171,14 +173,24 @@ public class ReportingITest extends AbstractIntegrationTest {
         final Response whenPostingToReportUrl = postToReportUrl(params, "FacilityUsage", adminUser);
 
         // If this succeeds, the response was a valid excel file
-        final Workbook workbook = readWorkbookFrom(whenPostingToReportUrl);
-        final Sheet usages = workbook.getSheetAt(0);
-        // Header + one row
-        assertThat(getDataFromColumn(usages, 0))
-                .containsExactly("Pysäköintipaikan nimi", facility1.name.fi);
-        assertThat(getDataFromColumn(usages, 4))
-                .containsExactly("Käyttötapa", "Liityntä");
-        assertThat(usages.getPhysicalNumberOfRows()).isEqualTo(2);
+        withWorkbook(whenPostingToReportUrl, workbook -> {
+            final Sheet usages = workbook.getSheetAt(0);
+            // Header + one row
+            assertThat(getDataFromColumn(usages, 0))
+                    .containsExactly("Pysäköintipaikan nimi", facility1.name.fi);
+            assertThat(getDataFromColumn(usages, 4))
+                    .containsExactly("Käyttötapa", "Liityntä");
+            assertThat(usages.getPhysicalNumberOfRows()).isEqualTo(2);
+        });
+    }
+
+    private void withWorkbook(Response response, Consumer<Workbook> workbookConsumer) {
+        try (Workbook workbook = readWorkbookFrom(response)) {
+            workbookConsumer.accept(workbook);
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new AssertionFailedError(e.getMessage());
+        }
     }
 
     private void registerMockFacilityUsages(Facility facility, User user) {
@@ -203,17 +215,19 @@ public class ReportingITest extends AbstractIntegrationTest {
         final Response whenPostingToReportUrl = postToReportUrl(baseParams(), "HubsAndFacilities", operator1User);
 
         // If this succeeds, the response was a valid excel file
-        final Workbook workbook = readWorkbookFrom(whenPostingToReportUrl);
-        assertThat(workbook.getNumberOfSheets()).isEqualTo(3);
-        assertThat(getSheetNames(workbook)).containsExactly("Alueet", "Pysäköintipaikat", "Selite");
+        withWorkbook(whenPostingToReportUrl, workbook -> {
 
-        // Check that only operator1 is displayed
-        checkHubsAndFacilities_operatorsAre(workbook, operator1);
+            assertThat(workbook.getNumberOfSheets()).isEqualTo(3);
+            assertThat(getSheetNames(workbook)).containsExactly("Alueet", "Pysäköintipaikat", "Selite");
 
-        // Check that hub info is displayed correctly
-        checkHubsAndFacilities_hubInfo(workbook);
-        // Check that facility info is displayed correctly
-        checkHubsAndFacilities_facilityInfo(workbook);
+            // Check that only operator1 is displayed
+            checkHubsAndFacilities_operatorsAre(workbook, operator1);
+
+            // Check that hub info is displayed correctly
+            checkHubsAndFacilities_hubInfo(workbook);
+            // Check that facility info is displayed correctly
+            checkHubsAndFacilities_facilityInfo(workbook);
+        });
     }
 
     @Test
@@ -221,9 +235,10 @@ public class ReportingITest extends AbstractIntegrationTest {
         final Response whenPostingToReportUrl = postToReportUrl(baseParams(), "HubsAndFacilities", adminUser);
 
         // If this succeeds, the response was a valid excel file
-        final Workbook workbook = readWorkbookFrom(whenPostingToReportUrl);
-        // For admin, both operators should be visible
-        checkHubsAndFacilities_operatorsAre(workbook, operator1, operator2);
+        withWorkbook(whenPostingToReportUrl, workbook -> {
+            checkHubsAndFacilities_operatorsAre(workbook, operator1, operator2);
+        });
+
     }
 
 
@@ -310,14 +325,15 @@ public class ReportingITest extends AbstractIntegrationTest {
         final Response whenPostingToReportUrl = postToReportUrl(baseParams(), "MaxUtilization", operator1User);
 
         // If this succeeds, the response was a valid excel file
-        final Workbook workbook = readWorkbookFrom(whenPostingToReportUrl);
-        assertThat(getSheetNames(workbook)).containsExactly("Tiivistelmäraportti", "Selite");
-        checkMaxUtilization_rows(workbook);
+        withWorkbook(whenPostingToReportUrl, workbook -> {
+            assertThat(getSheetNames(workbook)).containsExactly("Tiivistelmäraportti", "Selite");
+            checkMaxUtilization_rows(workbook);
 
-        // Only operator1 is displayed
-        assertThat(getDataFromColumn(workbook.getSheetAt(0), 2))
-                .contains("Operaattori", operator1.name.fi)
-                .doesNotContain(operator2.name.fi);
+            // Only operator1 is displayed
+            assertThat(getDataFromColumn(workbook.getSheetAt(0), 2))
+                    .contains("Operaattori", operator1.name.fi)
+                    .doesNotContain(operator2.name.fi);
+        });
     }
 
     @Test
@@ -329,13 +345,12 @@ public class ReportingITest extends AbstractIntegrationTest {
         final Response whenPostingToReportUrl = postToReportUrl(baseParams(), "MaxUtilization", adminUser);
 
         // If this succeeds, the response was a valid excel file
-        final Workbook workbook = readWorkbookFrom(whenPostingToReportUrl);
-
-
         // Both operators are displayed with joined name
-        assertThat(getDataFromColumn(workbook.getSheetAt(0), 2))
-                .hasSize(4) // header + rows for working days, Sat, and Sun
-                .containsOnly("Operaattori", String.join(", ", operator1.name.fi, operator2.name.fi));
+        withWorkbook(whenPostingToReportUrl, workbook -> {
+            assertThat(getDataFromColumn(workbook.getSheetAt(0), 2))
+                    .hasSize(4) // header + rows for working days, Sat, and Sun
+                    .containsOnly("Operaattori", String.join(", ", operator1.name.fi, operator2.name.fi));
+        });
     }
 
     private void addMockMaxUtilizations(Facility f, User apiUser) {

@@ -35,6 +35,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
 import java.util.NoSuchElementException;
+import java.util.function.Consumer;
 import java.util.stream.IntStream;
 
 import static com.jayway.restassured.RestAssured.given;
@@ -98,15 +99,15 @@ public class RequestLogITest extends AbstractIntegrationTest {
         final ReportParameters params = baseParams(BASE_DATE_TIME.minusMonths(2).toLocalDate());
         final Response whenPostingToReportUrl = postToReportUrl(params, "RequestLog", adminUser);
         // If this succeeds, the response was a valid excel file
-        final Workbook workbook = readWorkbookFrom(whenPostingToReportUrl);
+        withWorkbook(whenPostingToReportUrl, workbook -> {
+            assertThat(workbook.getSheetName(0)).isEqualTo("Rajapintakutsut");
+            assertThat(workbook.getSheetName(1)).isEqualTo("Selite");
 
-        assertThat(workbook.getSheetName(0)).isEqualTo("Rajapintakutsut");
-        assertThat(workbook.getSheetName(1)).isEqualTo("Selite");
-
-        final Sheet sheet = workbook.getSheetAt(0);
-        assertThat(getDataFromRow(sheet, 0))
-                .containsExactly("Päivämäärä", "Lähde", "Polku", "Kutsujen määrä");
-        assertThat(sheet.getPhysicalNumberOfRows()).isEqualTo(1);
+            final Sheet sheet = workbook.getSheetAt(0);
+            assertThat(getDataFromRow(sheet, 0))
+                    .containsExactly("Päivämäärä", "Lähde", "Polku", "Kutsujen määrä");
+            assertThat(sheet.getPhysicalNumberOfRows()).isEqualTo(1);
+        });
     }
 
     @Test
@@ -117,34 +118,35 @@ public class RequestLogITest extends AbstractIntegrationTest {
         params.requestLogInterval = RequestLogInterval.HOUR;
 
         final Response whenPostingToReportUrl = postToReportUrl(params, "RequestLog", adminUser);
-        final Workbook workbook = readWorkbookFrom(whenPostingToReportUrl);
-        final Sheet sheet = workbook.getSheetAt(0);
+        withWorkbook(whenPostingToReportUrl, workbook -> {
+            final Sheet sheet = workbook.getSheetAt(0);
 
-        try (AutoCloseableSoftAssertions softly = new AutoCloseableSoftAssertions()) {
-            // Headings
-            softly.assertThat(getDataFromRow(sheet, 0))
-                    .containsExactly("Aika", "Lähde", "Polku", "Kutsujen määrä");
+            try (AutoCloseableSoftAssertions softly = new AutoCloseableSoftAssertions()) {
+                // Headings
+                softly.assertThat(getDataFromRow(sheet, 0))
+                        .containsExactly("Aika", "Lähde", "Polku", "Kutsujen määrä");
 
-            // Check rows
-            softly.assertThat(getDataFromColumn(sheet, 0)).containsExactly(
-                    "Aika",
-                    ROUNDED_BASE_DATETIME.toString(DATETIME_FORMAT),
-                    ROUNDED_BASE_DATETIME.toString(DATETIME_FORMAT),
-                    ROUNDED_BASE_DATETIME.toString(DATETIME_FORMAT),
-                    ROUNDED_BASE_DATETIME.toString(DATETIME_FORMAT),
-                    ROUNDED_BASE_DATETIME.plusHours(1).toString(DATETIME_FORMAT),
-                    ROUNDED_BASE_DATETIME.plusDays(1).toString(DATETIME_FORMAT)
-            );
-            softly.assertThat(getDataFromColumn(sheet, 1)).containsExactly(
-                    "Lähde", unknownSource, unknownSource, WEB_UI_SOURCE, WEB_UI_SOURCE, WEB_UI_SOURCE, WEB_UI_SOURCE
-            );
-            softly.assertThat(getDataFromColumn(sheet, 2)).containsExactly(
-                    "Polku", FACILITY, HUB, FACILITY, HUB, FACILITY, FACILITY
-            );
-            softly.assertThat(getDataFromColumn(sheet, 3)).containsExactly(
-                    "Kutsujen määrä", "12", "8", "12", "8", "12", "12"
-            );
-        }
+                // Check rows
+                softly.assertThat(getDataFromColumn(sheet, 0)).containsExactly(
+                        "Aika",
+                        ROUNDED_BASE_DATETIME.toString(DATETIME_FORMAT),
+                        ROUNDED_BASE_DATETIME.toString(DATETIME_FORMAT),
+                        ROUNDED_BASE_DATETIME.toString(DATETIME_FORMAT),
+                        ROUNDED_BASE_DATETIME.toString(DATETIME_FORMAT),
+                        ROUNDED_BASE_DATETIME.plusHours(1).toString(DATETIME_FORMAT),
+                        ROUNDED_BASE_DATETIME.plusDays(1).toString(DATETIME_FORMAT)
+                );
+                softly.assertThat(getDataFromColumn(sheet, 1)).containsExactly(
+                        "Lähde", unknownSource, unknownSource, WEB_UI_SOURCE, WEB_UI_SOURCE, WEB_UI_SOURCE, WEB_UI_SOURCE
+                );
+                softly.assertThat(getDataFromColumn(sheet, 2)).containsExactly(
+                        "Polku", FACILITY, HUB, FACILITY, HUB, FACILITY, FACILITY
+                );
+                softly.assertThat(getDataFromColumn(sheet, 3)).containsExactly(
+                        "Kutsujen määrä", "12", "8", "12", "8", "12", "12"
+                );
+            }
+        });
 
     }
 
@@ -156,33 +158,34 @@ public class RequestLogITest extends AbstractIntegrationTest {
         params.requestLogInterval = RequestLogInterval.DAY;
 
         final Response whenPostingToReportUrl = postToReportUrl(params, "RequestLog", adminUser);
-        final Workbook workbook = readWorkbookFrom(whenPostingToReportUrl);
-        final Sheet sheet = workbook.getSheetAt(0);
+        withWorkbook(whenPostingToReportUrl, workbook -> {
+            final Sheet sheet = workbook.getSheetAt(0);
 
-        try (AutoCloseableSoftAssertions softly = new AutoCloseableSoftAssertions()) {
-            // Headings
-            softly.assertThat(getDataFromRow(sheet, 0))
-                    .containsExactly("Päivämäärä", "Lähde", "Polku", "Kutsujen määrä");
+            try (AutoCloseableSoftAssertions softly = new AutoCloseableSoftAssertions()) {
+                // Headings
+                softly.assertThat(getDataFromRow(sheet, 0))
+                        .containsExactly("Päivämäärä", "Lähde", "Polku", "Kutsujen määrä");
 
-            // Check rows, one less that in hourly report since the current+1 hour has been summed up with the current
-            softly.assertThat(getDataFromColumn(sheet, 0)).containsExactly(
-                    "Päivämäärä",
-                    ROUNDED_BASE_DATETIME.toString(DATE_FORMAT),
-                    ROUNDED_BASE_DATETIME.toString(DATE_FORMAT),
-                    ROUNDED_BASE_DATETIME.toString(DATE_FORMAT),
-                    ROUNDED_BASE_DATETIME.toString(DATE_FORMAT),
-                    ROUNDED_BASE_DATETIME.plusDays(1).toString(DATE_FORMAT)
-            );
-            softly.assertThat(getDataFromColumn(sheet, 1)).containsExactly(
-                    "Lähde", unknownSource, unknownSource, WEB_UI_SOURCE, WEB_UI_SOURCE, WEB_UI_SOURCE
-            );
-            softly.assertThat(getDataFromColumn(sheet, 2)).containsExactly(
-                    "Polku", FACILITY, HUB, FACILITY, HUB, FACILITY
-            );
-            softly.assertThat(getDataFromColumn(sheet, 3)).containsExactly(
-                    "Kutsujen määrä", "12", "8", "24", "8", "12"
-            );
-        }
+                // Check rows, one less that in hourly report since the current+1 hour has been summed up with the current
+                softly.assertThat(getDataFromColumn(sheet, 0)).containsExactly(
+                        "Päivämäärä",
+                        ROUNDED_BASE_DATETIME.toString(DATE_FORMAT),
+                        ROUNDED_BASE_DATETIME.toString(DATE_FORMAT),
+                        ROUNDED_BASE_DATETIME.toString(DATE_FORMAT),
+                        ROUNDED_BASE_DATETIME.toString(DATE_FORMAT),
+                        ROUNDED_BASE_DATETIME.plusDays(1).toString(DATE_FORMAT)
+                );
+                softly.assertThat(getDataFromColumn(sheet, 1)).containsExactly(
+                        "Lähde", unknownSource, unknownSource, WEB_UI_SOURCE, WEB_UI_SOURCE, WEB_UI_SOURCE
+                );
+                softly.assertThat(getDataFromColumn(sheet, 2)).containsExactly(
+                        "Polku", FACILITY, HUB, FACILITY, HUB, FACILITY
+                );
+                softly.assertThat(getDataFromColumn(sheet, 3)).containsExactly(
+                        "Kutsujen määrä", "12", "8", "24", "8", "12"
+                );
+            }
+        });
     }
 
     @Test
@@ -194,33 +197,34 @@ public class RequestLogITest extends AbstractIntegrationTest {
         params.startDate = BASE_DATE_TIME.minusMonths(1).withDayOfMonth(1).toLocalDate();
 
         final Response whenPostingToReportUrl = postToReportUrl(params, "RequestLog", adminUser);
-        final Workbook workbook = readWorkbookFrom(whenPostingToReportUrl);
-        final Sheet sheet = workbook.getSheetAt(0);
+        withWorkbook(whenPostingToReportUrl, workbook -> {
+            final Sheet sheet = workbook.getSheetAt(0);
 
-        try (AutoCloseableSoftAssertions softly = new AutoCloseableSoftAssertions()) {
-            // Headings
-            softly.assertThat(getDataFromRow(sheet, 0))
-                    .containsExactly("Kuukausi", "Lähde", "Polku", "Kutsujen määrä");
+            try (AutoCloseableSoftAssertions softly = new AutoCloseableSoftAssertions()) {
+                // Headings
+                softly.assertThat(getDataFromRow(sheet, 0))
+                        .containsExactly("Kuukausi", "Lähde", "Polku", "Kutsujen määrä");
 
-            // Check rows
-            softly.assertThat(getDataFromColumn(sheet, 0)).containsExactly(
-                    "Kuukausi",
-                    ROUNDED_BASE_DATETIME.minusMonths(1).toString(MONTH_FORMAT),
-                    ROUNDED_BASE_DATETIME.toString(MONTH_FORMAT),
-                    ROUNDED_BASE_DATETIME.toString(MONTH_FORMAT),
-                    ROUNDED_BASE_DATETIME.toString(MONTH_FORMAT),
-                    ROUNDED_BASE_DATETIME.toString(MONTH_FORMAT)
-            );
-            softly.assertThat(getDataFromColumn(sheet, 1)).containsExactly(
-                    "Lähde", WEB_UI_SOURCE, unknownSource, unknownSource, WEB_UI_SOURCE, WEB_UI_SOURCE
-            );
-            softly.assertThat(getDataFromColumn(sheet, 2)).containsExactly(
-                    "Polku", FACILITY, FACILITY, HUB, FACILITY, HUB
-            );
-            softly.assertThat(getDataFromColumn(sheet, 3)).containsExactly(
-                    "Kutsujen määrä", "12", "12", "8", "36", "8"
-            );
-        }
+                // Check rows
+                softly.assertThat(getDataFromColumn(sheet, 0)).containsExactly(
+                        "Kuukausi",
+                        ROUNDED_BASE_DATETIME.minusMonths(1).toString(MONTH_FORMAT),
+                        ROUNDED_BASE_DATETIME.toString(MONTH_FORMAT),
+                        ROUNDED_BASE_DATETIME.toString(MONTH_FORMAT),
+                        ROUNDED_BASE_DATETIME.toString(MONTH_FORMAT),
+                        ROUNDED_BASE_DATETIME.toString(MONTH_FORMAT)
+                );
+                softly.assertThat(getDataFromColumn(sheet, 1)).containsExactly(
+                        "Lähde", WEB_UI_SOURCE, unknownSource, unknownSource, WEB_UI_SOURCE, WEB_UI_SOURCE
+                );
+                softly.assertThat(getDataFromColumn(sheet, 2)).containsExactly(
+                        "Polku", FACILITY, FACILITY, HUB, FACILITY, HUB
+                );
+                softly.assertThat(getDataFromColumn(sheet, 3)).containsExactly(
+                        "Kutsujen määrä", "12", "12", "8", "36", "8"
+                );
+            }
+        });
     }
 
     @Test
@@ -241,10 +245,11 @@ public class RequestLogITest extends AbstractIntegrationTest {
         final ReportParameters params = baseParams(BASE_DATE_TIME.toLocalDate());
         final Response whenPostingToReportUrl = postToReportUrl(params, "RequestLog", adminUser);
         // If this succeeds, the response was a valid excel file
-        final Workbook workbook = readWorkbookFrom(whenPostingToReportUrl);
-        // No requests logged
-        final Sheet sheet = workbook.getSheetAt(0);
-        assertThat(sheet.getPhysicalNumberOfRows()).isEqualTo(1);
+        withWorkbook(whenPostingToReportUrl, workbook -> {
+            // No requests logged
+            final Sheet sheet = workbook.getSheetAt(0);
+            assertThat(sheet.getPhysicalNumberOfRows()).isEqualTo(1);
+        });
     }
 
     @Test
@@ -354,6 +359,15 @@ public class RequestLogITest extends AbstractIntegrationTest {
                 .body(params)
                 .when()
                 .post(UrlSchema.REPORT, reportType);
+    }
+
+    private void withWorkbook(Response response, Consumer<Workbook> workbookConsumer) {
+        try (Workbook workbook = readWorkbookFrom(response)) {
+            workbookConsumer.accept(workbook);
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new AssertionFailedError(e.getMessage());
+        }
     }
 
     private Workbook readWorkbookFrom(Response whenPostingToReportUrl) {

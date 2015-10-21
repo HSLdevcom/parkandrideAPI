@@ -10,6 +10,7 @@ import com.querydsl.core.types.MappingProjection;
 import com.querydsl.core.types.dsl.NumberPath;
 import com.querydsl.sql.SQLExpressions;
 import com.querydsl.sql.dml.SQLInsertClause;
+import com.querydsl.sql.postgresql.PostgreSQLQuery;
 import com.querydsl.sql.postgresql.PostgreSQLQueryFactory;
 import fi.hsl.parkandride.back.sql.QFacilityCapacityHistory;
 import fi.hsl.parkandride.back.sql.QFacilityStatusHistory;
@@ -19,11 +20,13 @@ import fi.hsl.parkandride.core.domain.*;
 import fi.hsl.parkandride.core.service.TransactionalRead;
 import fi.hsl.parkandride.core.service.TransactionalWrite;
 import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Consumer;
 
 import static com.querydsl.core.group.GroupBy.groupBy;
 import static com.querydsl.core.group.GroupBy.list;
@@ -170,6 +173,20 @@ public class FacilityHistoryDao implements FacilityHistoryRepository {
     @Override
     @TransactionalRead
     public List<FacilityStatusHistory> getStatusHistory(long facilityId) {
+        return getStatusHistoryQuery(facilityId).fetch();
+    }
+
+    @Override
+    @TransactionalRead
+    public List<FacilityStatusHistory> getStatusHistory(long facilityId, LocalDate startInclusive, LocalDate endInclusive) {
+        return getStatusHistoryQuery(facilityId)
+                .where(qFacilityStatusHistory.startTs.loe(endInclusive.toDateTimeAtStartOfDay().millisOfDay().withMaximumValue()).andAnyOf(
+                        qFacilityStatusHistory.endTs.isNull(),
+                        qFacilityStatusHistory.endTs.goe(startInclusive.toDateTimeAtStartOfDay())
+                )).fetch();
+    }
+
+    private PostgreSQLQuery<FacilityStatusHistory> getStatusHistoryQuery(long facilityId) {
         return queryFactory.query()
                 .select(constructor(
                         FacilityStatusHistory.class,
@@ -181,14 +198,27 @@ public class FacilityHistoryDao implements FacilityHistoryRepository {
                 ))
                 .from(qFacilityStatusHistory)
                 .where(qFacilityStatusHistory.facilityId.eq(facilityId))
-                .orderBy(qFacilityStatusHistory.startTs.asc())
-                .fetch();
+                .orderBy(qFacilityStatusHistory.startTs.asc());
     }
 
     @Override
     @TransactionalRead
     public List<FacilityCapacityHistory> getCapacityHistory(long facilityId) {
-        final List<ExtendedCapacityHistory> capacityHistory = getCapacityHistoryWithoutUnavailableCapacities(facilityId);
+        return getFacilityCapacityHistories(facilityId, q -> {});
+    }
+
+    @Override
+    @TransactionalRead
+    public List<FacilityCapacityHistory> getCapacityHistory(long facilityId, LocalDate startInclusive, LocalDate endInclusive) {
+        return getFacilityCapacityHistories(facilityId, q -> q.where(
+                qFacilityCapacityHistory.startTs.loe(endInclusive.toDateTimeAtStartOfDay().millisOfDay().withMaximumValue()).andAnyOf(
+                        qFacilityCapacityHistory.endTs.isNull(),
+                        qFacilityCapacityHistory.endTs.goe(startInclusive.toDateTimeAtStartOfDay())
+                )));
+    }
+
+    private List<FacilityCapacityHistory> getFacilityCapacityHistories(long facilityId, Consumer<PostgreSQLQuery<ExtendedCapacityHistory>> modifyQuery) {
+        final List<ExtendedCapacityHistory> capacityHistory = getCapacityHistoryWithoutUnavailableCapacities(facilityId, modifyQuery);
 
         final Set<Long> historyEntryIds = capacityHistory.stream().map(c -> c.id).collect(toSet());
         final Map<Long, List<UnavailableCapacity>> unavailableCapacities = queryFactory
@@ -204,8 +234,8 @@ public class FacilityHistoryDao implements FacilityHistoryRepository {
                 .collect(toList());
     }
 
-    private List<ExtendedCapacityHistory> getCapacityHistoryWithoutUnavailableCapacities(long facilityId) {
-        return queryFactory.query()
+    private List<ExtendedCapacityHistory> getCapacityHistoryWithoutUnavailableCapacities(long facilityId, Consumer<PostgreSQLQuery<ExtendedCapacityHistory>> modifyQuery) {
+        final PostgreSQLQuery<ExtendedCapacityHistory> q = queryFactory.query()
                 .select(constructor(
                         ExtendedCapacityHistory.class,
                         qFacilityCapacityHistory.id,
@@ -228,8 +258,9 @@ public class FacilityHistoryDao implements FacilityHistoryRepository {
                 ))
                 .from(qFacilityCapacityHistory)
                 .where(qFacilityCapacityHistory.facilityId.eq(facilityId))
-                .orderBy(qFacilityCapacityHistory.startTs.asc())
-                .fetch();
+                .orderBy(qFacilityCapacityHistory.startTs.asc());
+        modifyQuery.accept(q);
+        return q.fetch();
     }
 
     public static class ExtendedCapacityHistory extends FacilityCapacityHistory {

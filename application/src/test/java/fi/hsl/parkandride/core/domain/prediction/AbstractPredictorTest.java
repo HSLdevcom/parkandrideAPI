@@ -12,11 +12,18 @@ import fi.hsl.parkandride.core.domain.Utilization;
 import fi.hsl.parkandride.core.domain.UtilizationKey;
 import org.joda.time.DateTime;
 import org.junit.Before;
+import org.junit.Test;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.inject.Inject;
 import java.util.Collections;
 import java.util.List;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.is;
+
+@Transactional
 public abstract class AbstractPredictorTest extends AbstractDaoTest {
 
     @Inject private Dummies dummies;
@@ -52,5 +59,10 @@ public abstract class AbstractPredictorTest extends AbstractDaoTest {
 
     public List<Prediction> predict() {
         return predictor.predict(predictorState, utilizationHistory);
+    }
+
+    @Test
+    public void when_no_history_then_no_predictions() {
+        assertThat(predict(), is(empty()));
     }
 }

@@ -36,6 +36,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toList;
+import static org.joda.time.Duration.standardHours;
+import static org.joda.time.Duration.standardMinutes;
 
 public class PredictionDao implements PredictionRepository {
 
@@ -51,6 +53,10 @@ public class PredictionDao implements PredictionRepository {
 
     private final PostgreSQLQueryFactory queryFactory;
     private final ValidationService validationService;
+    private final List<Duration> predictionsDistancesToStore = Collections.unmodifiableList(
+            Arrays.<Duration>asList(standardMinutes(5), standardMinutes(10), standardMinutes(15), standardMinutes(20),
+                    standardMinutes(30), standardMinutes(45), standardHours(1), standardHours(2), standardHours(4),
+                    standardHours(8), standardHours(12), standardHours(16), standardHours(20), standardHours(24)));
 
     public PredictionDao(PostgreSQLQueryFactory queryFactory, ValidationService validationService) {
         this.queryFactory = queryFactory;
@@ -72,6 +78,18 @@ public class PredictionDao implements PredictionRepository {
         } else {
             savePredictionHistory(predictorId, start, predictions);
         }
+    }
+
+    @TransactionalWrite
+    @Override
+    public void updateOnlyPredictionHistory(PredictionBatch pb, Long predictorId) {
+        validationService.validate(pb);
+        DateTime start = toPredictionResolution(pb.sourceTimestamp);
+        List<Prediction> predictions = normalizeToPredictionWindow(start, pb.predictions);
+        predictions = predictions.stream()
+                .filter(p -> predictionsDistancesToStore.contains(new Duration(start, p.timestamp)))
+                .collect(toList());
+        savePredictionHistory(predictorId, start, predictions);
     }
 
     private static List<Prediction> normalizeToPredictionWindow(DateTime start, List<Prediction> predictions) {

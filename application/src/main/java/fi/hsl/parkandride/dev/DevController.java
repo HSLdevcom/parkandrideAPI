@@ -3,6 +3,7 @@
 
 package fi.hsl.parkandride.dev;
 
+import com.google.common.collect.Lists;
 import fi.hsl.parkandride.FeatureProfile;
 import fi.hsl.parkandride.back.ContactDao;
 import fi.hsl.parkandride.back.FacilityDao;
@@ -14,6 +15,8 @@ import fi.hsl.parkandride.core.service.*;
 import org.joda.time.DateTime;
 import org.joda.time.Minutes;
 import org.joda.time.ReadablePeriod;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.Assert;
@@ -159,6 +162,25 @@ public class DevController {
                         .collect(toList());
         utilizationRepository.insertUtilizations(utilizations);
         predictionService.signalUpdateNeeded(utilizations);
+        return new ResponseEntity<>(CREATED);
+    }
+
+    @RequestMapping(method = PUT, value = DEV_PREDICTION_HISTORY)
+    @TransactionalRead // each call to predictionService.updatePredictionsHistoryForFacility creates a separate write transaction to avoid too long transactions
+    public ResponseEntity<Void> generatePredictionHistory(@NotNull @PathVariable(FACILITY_ID) Long facilityId) {
+        facilityRepository.getFacility(facilityId); // ensure facility exists
+        final UtilizationSearch utilizationSearch = new UtilizationSearch();
+        utilizationSearch.start = DateTime.now().minusWeeks(5);
+        utilizationSearch.end = DateTime.now();
+        utilizationSearch.facilityIds = Collections.singleton(facilityId);
+        final List<Utilization> utilizations = Lists.newArrayList(utilizationRepository.findUtilizations(utilizationSearch));
+        DateTime lastTimestamp = utilizations.stream().map(u -> u.timestamp).max(DateTime::compareTo).orElse(utilizationSearch.end);
+        StreamSupport.stream(
+                spliteratorUnknownSize(new DateTimeIterator(utilizationSearch.start.plusWeeks(4),
+                        lastTimestamp.minus(PredictionRepository.PREDICTION_RESOLUTION), // avoid collision with scheduled predictions
+                        PredictionRepository.PREDICTION_RESOLUTION), Spliterator.ORDERED), false)
+                .map(endTime -> utilizations.stream().filter(utilization -> utilization.timestamp.isBefore(endTime)).collect(toList()))
+                .forEach(utilizationList -> predictionService.updatePredictionsHistoryForFacility(utilizationList));
         return new ResponseEntity<>(CREATED);
     }
 

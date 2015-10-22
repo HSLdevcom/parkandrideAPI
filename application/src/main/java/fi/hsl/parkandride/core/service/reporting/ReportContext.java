@@ -2,7 +2,10 @@ package fi.hsl.parkandride.core.service.reporting;
 
 import fi.hsl.parkandride.core.domain.*;
 import org.geolatte.geom.Geometry;
+
 import java.util.*;
+
+import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonMap;
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.*;
@@ -13,6 +16,7 @@ final class ReportContext {
     final Map<Long, Operator> operators;
     final Map<Long, List<Facility>> facilitiesByHubId;
     final Map<Long, List<Long>> facilityIdsByOperatorId;
+    final Map<Long, Set<Operator>> operatorsByHubId;
     final Map<Long, List<Hub>> hubsByFacilityId;
     final Map<Long, Region> regionByFacilityId;
     final Map<Long, Region> regionByHubId;
@@ -39,6 +43,15 @@ final class ReportContext {
             regionByFacilityId.put(facility.id, getRegion(facility.location));
         });
         facilityIdsByOperatorId = facilities.values().stream().collect(groupingBy(f -> f.operatorId, mapping(f -> f.id, toList())));
+
+        operatorsByHubId = hubs.values().stream().collect(toMap(
+                hub -> hub.id,
+                hub -> facilitiesByHubId.getOrDefault(hub.id, emptyList())
+                        .stream()
+                        .map(fac -> fac.operatorId)
+                        .map(opId -> operators.get(opId))
+                        .collect(toSet())
+        ));
     }
 
     private Region getRegion(Geometry location) {

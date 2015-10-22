@@ -3,23 +3,21 @@
 
 package fi.hsl.parkandride;
 
-import static java.lang.String.format;
-
-import java.io.IOException;
-import java.util.UUID;
-import java.util.regex.Pattern;
+import fi.hsl.parkandride.front.IllegalHeaderException;
+import org.slf4j.MDC;
+import org.springframework.stereotype.Component;
+import org.springframework.web.filter.GenericFilterBean;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
+import java.util.UUID;
+import java.util.regex.Pattern;
 
-import org.slf4j.MDC;
-import org.springframework.stereotype.Component;
-import org.springframework.web.filter.GenericFilterBean;
-
-import fi.hsl.parkandride.front.IllegalHeaderException;
+import static java.lang.String.format;
 
 @Component
 public class MDCFilter extends GenericFilterBean {
@@ -53,7 +51,6 @@ public class MDCFilter extends GenericFilterBean {
         MDC.put(Key.USERNAME, "<ANONYMOUS>");
         String appId = httpReq.getHeader(LIIPI_APPLICATION_ID);
         if (appId != null) {
-            validateAppId(appId);
             MDC.put(Key.APPID, appId);
         }
     }

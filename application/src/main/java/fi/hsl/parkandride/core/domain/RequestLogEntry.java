@@ -3,6 +3,7 @@
 
 package fi.hsl.parkandride.core.domain;
 
+import com.google.common.base.Objects;
 import org.joda.time.DateTime;
 
 import static com.google.common.base.MoreObjects.toStringHelper;
@@ -37,5 +38,23 @@ public class RequestLogEntry {
             throw new IllegalArgumentException(String.format("Can't sum request log entries with different keys: %s %s", this.key, other.key));
         }
         return new RequestLogEntry(key, this.count + other.count);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof RequestLogEntry)) {
+            return false;
+        }
+        RequestLogEntry that = (RequestLogEntry) o;
+        return Objects.equal(key, that.key) &&
+                Objects.equal(count, that.count);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(key, count);
     }
 }

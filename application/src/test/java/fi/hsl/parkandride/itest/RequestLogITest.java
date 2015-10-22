@@ -8,8 +8,10 @@ import com.jayway.restassured.response.Header;
 import com.jayway.restassured.response.Response;
 import com.jayway.restassured.specification.RequestSpecification;
 import fi.hsl.parkandride.back.Dummies;
+import fi.hsl.parkandride.back.RequestLogDao;
 import fi.hsl.parkandride.core.domain.Facility;
 import fi.hsl.parkandride.core.domain.NewUser;
+import fi.hsl.parkandride.core.domain.RequestLogEntry;
 import fi.hsl.parkandride.core.domain.User;
 import fi.hsl.parkandride.core.service.BatchingRequestLogService;
 import fi.hsl.parkandride.core.service.FacilityService;
@@ -21,7 +23,6 @@ import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.*;
 import org.assertj.core.api.AutoCloseableSoftAssertions;
 import org.joda.time.DateTime;
-import org.joda.time.DateTimeUtils;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalTime;
 import org.junit.Before;
@@ -36,8 +37,10 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
 import java.util.NoSuchElementException;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 import java.util.function.Consumer;
-import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 import static com.jayway.restassured.RestAssured.given;
 import static com.jayway.restassured.RestAssured.when;
@@ -47,9 +50,11 @@ import static fi.hsl.parkandride.front.ReportController.MEDIA_TYPE_EXCEL;
 import static fi.hsl.parkandride.front.RequestLoggingInterceptor.SOURCE_HEADER;
 import static fi.hsl.parkandride.front.UrlSchema.FACILITY;
 import static fi.hsl.parkandride.front.UrlSchema.HUB;
+import static fi.hsl.parkandride.test.DateTimeTestUtils.withDate;
 import static java.util.Spliterator.ORDERED;
 import static java.util.Spliterators.spliteratorUnknownSize;
 import static java.util.stream.Collectors.toList;
+import static java.util.stream.IntStream.range;
 import static java.util.stream.StreamSupport.stream;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -69,6 +74,7 @@ public class RequestLogITest extends AbstractIntegrationTest {
     @Inject FacilityService facilityService;
 
     @Inject BatchingRequestLogService batchingRequestLogService;
+    @Inject RequestLogDao requestLogDao;
     @Inject MessageSource messageSource;
     private String unknownSource;
     private User adminUser;
@@ -237,10 +243,10 @@ public class RequestLogITest extends AbstractIntegrationTest {
 
     @Test
     public void report_RequestLog_nonExistentUrl_andUrlOutsideApi() {
-        DateTimeUtils.setCurrentMillisFixed(BASE_DATE_TIME.getMillis());
-        when().get(UrlSchema.API + "/foobarbazqux");
-        when().get(UrlSchema.DOCS);
-        DateTimeUtils.setCurrentMillisSystem();
+        withDate(BASE_DATE_TIME, () -> {
+            when().get(UrlSchema.API + "/foobarbazqux");
+            when().get(UrlSchema.DOCS);
+        });
         batchingRequestLogService.updateRequestLogs();
 
         // Defaults to DAY interval, the month is empty so report should be empty
@@ -272,6 +278,34 @@ public class RequestLogITest extends AbstractIntegrationTest {
             .then().assertThat().statusCode(HttpStatus.BAD_REQUEST.value());
     }
 
+    @Test
+    public void generateConcurrent() {
+        withDate(DateTime.now().withTime(12, 2, 0, 0), () -> {
+            final Stream<CompletableFuture<Integer>> statusCodes = range(0, 1000).parallel().mapToObj(i -> {
+                final Response response = given().header(SOURCE_HEADER, WEB_UI_SOURCE).when().get(UrlSchema.CAPACITY_TYPES)
+                        .thenReturn();
+                return CompletableFuture.completedFuture(response.statusCode());
+            });
+
+            final Stream<CompletableFuture<Integer>> updates = range(0, 100).parallel().mapToObj(i -> {
+                batchingRequestLogService.updateRequestLogs();
+                return CompletableFuture.completedFuture(0);
+            });
+
+            try {
+                CompletableFuture.allOf(Stream.concat(statusCodes, updates).toArray(i -> new CompletableFuture[i])).get();
+            } catch (InterruptedException|ExecutionException e) {
+                e.printStackTrace();
+                throw new AssertionFailedError(e.getMessage());
+            }
+        });
+
+        batchingRequestLogService.updateRequestLogs();
+        final List<RequestLogEntry> logEntriesBetween = requestLogDao.getLogEntriesBetween(DateTime.now().millisOfDay().withMinimumValue(), DateTime.now().millisOfDay().withMaximumValue());
+        assertThat(logEntriesBetween).hasSize(1)
+                .containsExactly(new RequestLogEntry(UrlSchema.CAPACITY_TYPES, WEB_UI_SOURCE, DateTime.now().withTime(12, 0, 0, 0), 1000l));
+    }
+
 
     private List<String> findRowWithColumn(Sheet sheet, int columnNumber, String content) {
         for (int i = 0; i < sheet.getPhysicalNumberOfRows(); i++) {
@@ -286,31 +320,32 @@ public class RequestLogITest extends AbstractIntegrationTest {
 
     private void generateDummyRequestLog() {
         // Today
-        DateTimeUtils.setCurrentMillisFixed(BASE_DATE_TIME.getMillis());
-        IntStream.range(0, 12).forEach(i -> given().header(SOURCE_HEADER, WEB_UI_SOURCE).when().get(UrlSchema.FACILITY, i));
-        IntStream.range(0, 8).forEach(i -> given().header(SOURCE_HEADER, WEB_UI_SOURCE).when().get(UrlSchema.HUB, i));
+        withDate(BASE_DATE_TIME, () -> {
+            range(0, 12).forEach(i -> given().header(SOURCE_HEADER, WEB_UI_SOURCE).when().get(UrlSchema.FACILITY, i));
+            range(0, 8).forEach(i -> given().header(SOURCE_HEADER, WEB_UI_SOURCE).when().get(UrlSchema.HUB, i));
 
-        // Without Source header
-        IntStream.range(0, 12).forEach(i -> when().get(UrlSchema.FACILITY, i));
-        IntStream.range(0, 8).forEach(i -> when().get(UrlSchema.HUB, i));
+            // Without Source header
+            range(0, 12).forEach(i -> when().get(UrlSchema.FACILITY, i));
+            range(0, 8).forEach(i -> when().get(UrlSchema.HUB, i));
+        });
 
         // An hour after now
-        DateTimeUtils.setCurrentMillisFixed(BASE_DATE_TIME.plusHours(1).getMillis());
-        IntStream.range(0, 12).forEach(i -> given().header(SOURCE_HEADER, WEB_UI_SOURCE).when().get(UrlSchema.FACILITY, i));
+        withDate(BASE_DATE_TIME.plusHours(1), () -> {
+            range(0, 12).forEach(i -> given().header(SOURCE_HEADER, WEB_UI_SOURCE).when().get(UrlSchema.FACILITY, i));
+        });
 
         // A day after now
-        DateTimeUtils.setCurrentMillisFixed(BASE_DATE_TIME.plusDays(1).getMillis());
-        IntStream.range(0, 12).forEach(i -> given().header(SOURCE_HEADER, WEB_UI_SOURCE).when().get(UrlSchema.FACILITY, i));
+        withDate(BASE_DATE_TIME.plusDays(1), () -> {
+            range(0, 12).forEach(i -> given().header(SOURCE_HEADER, WEB_UI_SOURCE).when().get(UrlSchema.FACILITY, i));
+        });
 
         // A month before now
-        DateTimeUtils.setCurrentMillisFixed(BASE_DATE_TIME.minusMonths(1).getMillis());
-        IntStream.range(0, 12).forEach(i -> given().header(SOURCE_HEADER, WEB_UI_SOURCE).when().get(UrlSchema.FACILITY, i));
-
-        DateTimeUtils.setCurrentMillisSystem();
+        withDate(BASE_DATE_TIME.minusMonths(1), () -> {
+            range(0, 12).forEach(i -> given().header(SOURCE_HEADER, WEB_UI_SOURCE).when().get(UrlSchema.FACILITY, i));
+        });
 
         // Store the batch to database
         batchingRequestLogService.updateRequestLogs();
-
     }
 
     // ---------------------

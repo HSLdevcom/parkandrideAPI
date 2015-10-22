@@ -361,6 +361,10 @@ public class ReportingITest extends AbstractIntegrationTest {
         // Day 15 to ensure that weekdays stay in the same month
         final DateTime baseDate = BASE_DATE.toDateTimeAtCurrentTime().withDayOfMonth(15);
         facilityService.registerUtilization(f.id, asList(
+                utilize(CAR, capacity, baseDate.withDayOfWeek(MONDAY).minusWeeks(1), f),
+                utilize(CAR, capacity, baseDate.withDayOfWeek(SATURDAY).minusWeeks(1), f),
+                utilize(CAR, capacity, baseDate.withDayOfWeek(SUNDAY).minusWeeks(1), f),
+
                 // 50/50 = 100%
                 utilize(CAR, 0, baseDate.withDayOfWeek(MONDAY), f),
                 // 25/50 =  50%

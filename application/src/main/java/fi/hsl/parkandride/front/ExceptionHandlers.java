@@ -3,21 +3,14 @@
 
 package fi.hsl.parkandride.front;
 
-import static org.springframework.http.HttpStatus.BAD_REQUEST;
-import static org.springframework.http.HttpStatus.FORBIDDEN;
-import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
-import static org.springframework.http.HttpStatus.NOT_FOUND;
-import static org.springframework.http.HttpStatus.UNAUTHORIZED;
-import static org.springframework.http.MediaType.APPLICATION_JSON;
-
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.google.common.collect.ImmutableList;
+import fi.hsl.parkandride.MDCFilter;
+import fi.hsl.parkandride.core.domain.NotFoundException;
+import fi.hsl.parkandride.core.domain.Violation;
+import fi.hsl.parkandride.core.service.AccessDeniedException;
+import fi.hsl.parkandride.core.service.AuthenticationRequiredException;
+import fi.hsl.parkandride.core.service.ValidationException;
 import org.apache.catalina.connector.ClientAbortException;
 import org.joda.time.DateTime;
 import org.springframework.http.HttpHeaders;
@@ -25,26 +18,30 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindException;
-import org.springframework.validation.FieldError;
 import org.springframework.web.HttpMediaTypeException;
-import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
-import org.springframework.web.bind.annotation.ControllerAdvice;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.*;
 
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.google.common.collect.ImmutableList;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
-import fi.hsl.parkandride.core.domain.NotFoundException;
-import fi.hsl.parkandride.core.domain.Violation;
-import fi.hsl.parkandride.core.service.AccessDeniedException;
-import fi.hsl.parkandride.core.service.AuthenticationRequiredException;
-import fi.hsl.parkandride.core.service.ValidationException;
+import static fi.hsl.parkandride.MDCFilter.LIIPI_APPLICATION_ID;
+import static java.util.stream.Collectors.toList;
+import static org.springframework.http.HttpStatus.*;
+import static org.springframework.http.MediaType.APPLICATION_JSON;
 
 @ControllerAdvice
 public class ExceptionHandlers {
+
+    @InitBinder
+    public void validateApplicationId(HttpServletRequest request) {
+        final String appId = request.getHeader(LIIPI_APPLICATION_ID);
+        Optional.ofNullable(appId).ifPresent(MDCFilter::validateAppId);
+    }
 
     @ExceptionHandler(NotFoundException.class)
     @ResponseStatus(value= NOT_FOUND)
@@ -69,10 +66,9 @@ public class ExceptionHandlers {
 
     @ExceptionHandler(BindException.class)
     public ResponseEntity<Map<String, Object>> bindException(HttpServletRequest request, BindException ex) {
-        List<Violation> violations = new ArrayList<>();
-        for (FieldError fieldError : ex.getFieldErrors()) {
-            violations.add(new Violation(fieldError.getCode(), fieldError.getField(), fieldError.getDefaultMessage()));
-        }
+        List<Violation> violations = ex.getFieldErrors().stream()
+                .map(fieldError -> new Violation(fieldError.getCode(), fieldError.getField(), fieldError.getDefaultMessage()))
+                .collect(toList());
         return handleError(request, BAD_REQUEST, ex, "Invalid request parameters", violations);
     }
 

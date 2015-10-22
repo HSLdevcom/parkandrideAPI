@@ -6,6 +6,7 @@ package fi.hsl.parkandride.itest;
 import com.jayway.restassured.http.ContentType;
 import com.jayway.restassured.response.Header;
 import com.jayway.restassured.response.Response;
+import com.jayway.restassured.specification.RequestSpecification;
 import fi.hsl.parkandride.back.Dummies;
 import fi.hsl.parkandride.core.domain.Facility;
 import fi.hsl.parkandride.core.domain.NewUser;
@@ -62,6 +63,7 @@ public class RequestLogITest extends AbstractIntegrationTest {
     private static final String DATE_FORMAT = "d.M.yyyy";
     private static final String DATETIME_FORMAT = "d.M.yyyy HH:mm";
     private static final String WEB_UI_SOURCE = "liipi-ui";
+    private static final String REQUEST_LOG = "RequestLog";
 
     @Inject Dummies dummies;
     @Inject FacilityService facilityService;
@@ -97,7 +99,7 @@ public class RequestLogITest extends AbstractIntegrationTest {
 
         // Defaults to DAY interval, the month is empty so report should be empty
         final ReportParameters params = baseParams(BASE_DATE_TIME.minusMonths(2).toLocalDate());
-        final Response whenPostingToReportUrl = postToReportUrl(params, "RequestLog", adminUser);
+        final Response whenPostingToReportUrl = postToReportUrl(params, REQUEST_LOG, adminUser);
         // If this succeeds, the response was a valid excel file
         withWorkbook(whenPostingToReportUrl, workbook -> {
             assertThat(workbook.getSheetName(0)).isEqualTo("Rajapintakutsut");
@@ -117,7 +119,7 @@ public class RequestLogITest extends AbstractIntegrationTest {
         final ReportParameters params = baseParams(BASE_DATE_TIME.toLocalDate());
         params.requestLogInterval = RequestLogInterval.HOUR;
 
-        final Response whenPostingToReportUrl = postToReportUrl(params, "RequestLog", adminUser);
+        final Response whenPostingToReportUrl = postToReportUrl(params, REQUEST_LOG, adminUser);
         withWorkbook(whenPostingToReportUrl, workbook -> {
             final Sheet sheet = workbook.getSheetAt(0);
 
@@ -157,7 +159,7 @@ public class RequestLogITest extends AbstractIntegrationTest {
         final ReportParameters params = baseParams(BASE_DATE_TIME.toLocalDate());
         params.requestLogInterval = RequestLogInterval.DAY;
 
-        final Response whenPostingToReportUrl = postToReportUrl(params, "RequestLog", adminUser);
+        final Response whenPostingToReportUrl = postToReportUrl(params, REQUEST_LOG, adminUser);
         withWorkbook(whenPostingToReportUrl, workbook -> {
             final Sheet sheet = workbook.getSheetAt(0);
 
@@ -196,7 +198,7 @@ public class RequestLogITest extends AbstractIntegrationTest {
         params.requestLogInterval = RequestLogInterval.MONTH;
         params.startDate = BASE_DATE_TIME.minusMonths(1).withDayOfMonth(1).toLocalDate();
 
-        final Response whenPostingToReportUrl = postToReportUrl(params, "RequestLog", adminUser);
+        final Response whenPostingToReportUrl = postToReportUrl(params, REQUEST_LOG, adminUser);
         withWorkbook(whenPostingToReportUrl, workbook -> {
             final Sheet sheet = workbook.getSheetAt(0);
 
@@ -229,7 +231,7 @@ public class RequestLogITest extends AbstractIntegrationTest {
 
     @Test
     public void report_RequestLog_emptyParams() {
-        final Response requestLog = whenPostingToReportUrl(new ReportParameters(), "RequestLog", adminUser);
+        final Response requestLog = whenPostingToReportUrl(new ReportParameters(), REQUEST_LOG, adminUser);
         requestLog.then().assertThat().statusCode(HttpStatus.BAD_REQUEST.value());
     }
 
@@ -243,7 +245,7 @@ public class RequestLogITest extends AbstractIntegrationTest {
 
         // Defaults to DAY interval, the month is empty so report should be empty
         final ReportParameters params = baseParams(BASE_DATE_TIME.toLocalDate());
-        final Response whenPostingToReportUrl = postToReportUrl(params, "RequestLog", adminUser);
+        final Response whenPostingToReportUrl = postToReportUrl(params, REQUEST_LOG, adminUser);
         // If this succeeds, the response was a valid excel file
         withWorkbook(whenPostingToReportUrl, workbook -> {
             // No requests logged
@@ -259,9 +261,15 @@ public class RequestLogITest extends AbstractIntegrationTest {
                 .header(authorization(devHelper.login(apiUser.username).token))
                 .body(new ReportParameters())
                 .when()
-                .post(UrlSchema.REPORT, "RequestLog")
+                .post(UrlSchema.REPORT, REQUEST_LOG)
                 .then()
                 .assertThat().statusCode(HttpStatus.FORBIDDEN.value());
+    }
+
+    @Test
+    public void illegalApplicationId_resultsInBadRequest() {
+        given().header(SOURCE_HEADER, "ömmöm").when().get(UrlSchema.FACILITY, 1)
+            .then().assertThat().statusCode(HttpStatus.BAD_REQUEST.value());
     }
 
 
@@ -333,7 +341,7 @@ public class RequestLogITest extends AbstractIntegrationTest {
                 .header(authorization(devHelper.login(adminUser.username).token))
                 .body(params)
                 .when()
-                .post(UrlSchema.REPORT, "RequestLog")
+                .post(UrlSchema.REPORT, REQUEST_LOG)
                 .then()
                 .assertThat().statusCode(HttpStatus.BAD_REQUEST.value());
     }
@@ -352,13 +360,20 @@ public class RequestLogITest extends AbstractIntegrationTest {
     }
 
     private Response whenPostingToReportUrl(ReportParameters params, String reportType, User user) {
+        final RequestSpecification createRequest = createRequest(params, user);
+        return whenPostingToReportUrl(reportType, createRequest);
+    }
+
+    private Response whenPostingToReportUrl(String reportType, RequestSpecification createRequest) {
+        return createRequest.when().post(UrlSchema.REPORT, reportType);
+    }
+
+    private RequestSpecification createRequest(ReportParameters params, User user) {
         final String authToken = devHelper.login(user.username).token;
         return given().contentType(ContentType.JSON)
                 .accept(MEDIA_TYPE_EXCEL)
                 .header(authorization(authToken))
-                .body(params)
-                .when()
-                .post(UrlSchema.REPORT, reportType);
+                .body(params);
     }
 
     private void withWorkbook(Response response, Consumer<Workbook> workbookConsumer) {

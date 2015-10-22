@@ -425,7 +425,7 @@ public class RequestLogITest extends AbstractIntegrationTest {
     }
 
 
-    private void printSheet(Sheet sheet) {
+    static void printSheet(Sheet sheet) {
         final DataFormatter dataFormatter = new DataFormatter();
         for (Row row : sheet) {
             for (Cell cell : row) {

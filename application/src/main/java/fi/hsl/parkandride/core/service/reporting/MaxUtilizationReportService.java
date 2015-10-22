@@ -16,6 +16,7 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import static com.google.common.collect.Iterators.filter;
 import static fi.hsl.parkandride.core.domain.Region.UNKNOWN_REGION;
 import static java.lang.Math.min;
 import static java.util.Arrays.asList;
@@ -39,7 +40,11 @@ public class MaxUtilizationReportService extends AbstractReportService {
         // min available space per [facility, dayType, usage, capacity]
         Map<MaxUtilizationReportKey, Integer> facilityStats = new LinkedHashMap<>();
         try (CloseableIterator<Utilization> utilizations = utilizationRepository.findUtilizations(search)) {
-            addFilters(utilizations, ctx, parameters).forEachRemaining(u -> {
+            filter(addFilters(utilizations, ctx, parameters), u -> {
+                Facility facility = ctx.facilities.get(u.facilityId);
+                // Filter out entries with no corresponding built capacity
+                return facility.builtCapacity.containsKey(u.capacityType);
+            }).forEachRemaining(u -> {
                 MaxUtilizationReportKey key = new MaxUtilizationReportKey(u);
                 key.facility = ctx.facilities.get(u.facilityId);
                 facilityStats.merge(key, u.spacesAvailable, (o, n) -> min(o, n));
@@ -99,7 +104,6 @@ public class MaxUtilizationReportService extends AbstractReportService {
 
         return excel;
     }
-
 
     static class MaxUtilizationReportRow implements Comparable<MaxUtilizationReportRow> {
         final Hub hub;

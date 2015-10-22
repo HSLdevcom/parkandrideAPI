@@ -347,7 +347,10 @@ public class ReportingITest extends AbstractIntegrationTest {
         // If this succeeds, the response was a valid excel file
         // Both operators are displayed with joined name
         withWorkbook(whenPostingToReportUrl, workbook -> {
-            assertThat(getDataFromColumn(workbook.getSheetAt(0), 2))
+            final Sheet sheet = workbook.getSheetAt(0);
+            // Should not contain bicycle, even if when utilization is registered, since there is no built capacity
+            assertThat(getDataFromColumn(sheet, 4)).containsOnly("Ajoneuvotyyppi", "Henkilöauto");
+            assertThat(getDataFromColumn(sheet, 2))
                     .hasSize(4) // header + rows for working days, Sat, and Sun
                     .containsOnly("Operaattori", String.join(", ", operator1.name.fi, operator2.name.fi));
         });
@@ -363,7 +366,10 @@ public class ReportingITest extends AbstractIntegrationTest {
                 // 25/50 =  50%
                 utilize(CAR, capacity - (capacity / 2), baseDate.withDayOfWeek(SATURDAY), f),
                 // 10/50 =  20%
-                utilize(CAR, capacity - (capacity / 5), baseDate.withDayOfWeek(SUNDAY), f)
+                utilize(CAR, capacity - (capacity / 5), baseDate.withDayOfWeek(SUNDAY), f),
+
+                // BICYCLE_SECURE_SPACE does not exist in built capacity, should not fail
+                utilize(BICYCLE_SECURE_SPACE, 0, baseDate.withDayOfWeek(MONDAY), f)
         ), apiUser);
     }
 

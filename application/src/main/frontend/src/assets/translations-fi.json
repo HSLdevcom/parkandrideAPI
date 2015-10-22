@@ -673,7 +673,7 @@
         },
         "label": {
             "range": "Päivä(t)",
-            "interval": "Raportoinnin tarkuus",
+            "interval": "Raportoinnin tarkkuus",
             "operator": "Operaattori",
             "usage": "Käyttötapa",
             "capacity":"Ajoneuvotyyppi",

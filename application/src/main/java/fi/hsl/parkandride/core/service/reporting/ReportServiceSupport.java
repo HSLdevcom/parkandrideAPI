@@ -18,8 +18,9 @@ public abstract class ReportServiceSupport {
     final UtilizationRepository utilizationRepository;
     final TranslationService translationService;
     final RegionRepository regionRepository;
+    final FacilityHistoryService facilityHistoryService;
 
-    protected ReportServiceSupport(FacilityService facilityService, OperatorService operatorService, ContactService contactService, HubService hubService, UtilizationRepository utilizationRepository, TranslationService translationService, RegionRepository regionRepository) {
+    protected ReportServiceSupport(FacilityService facilityService, OperatorService operatorService, ContactService contactService, HubService hubService, UtilizationRepository utilizationRepository, TranslationService translationService, RegionRepository regionRepository, FacilityHistoryService facilityHistoryService) {
         this.facilityService = facilityService;
         this.operatorService = operatorService;
         this.contactService = contactService;
@@ -27,5 +28,6 @@ public abstract class ReportServiceSupport {
         this.utilizationRepository = utilizationRepository;
         this.translationService = translationService;
         this.regionRepository = regionRepository;
+        this.facilityHistoryService = facilityHistoryService;
     }
 }

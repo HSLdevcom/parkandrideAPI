@@ -125,7 +125,7 @@ public class CoreConfiguration {
 
     @Bean
     public HubsAndFacilitiesReportService hubsAndFacilitiesReportService() {
-        return new HubsAndFacilitiesReportService(facilityService(), operatorService(), contactService(), hubService(), utilizationRepository(), regionRepository(), translationService());
+        return new HubsAndFacilitiesReportService(facilityService(), operatorService(), contactService(), hubService(), utilizationRepository(), regionRepository(), translationService(), facilityHistoryService());
     }
 
     @Bean
@@ -135,12 +135,17 @@ public class CoreConfiguration {
 
     @Bean
     public FacilityUsageReportService facilityUsageReportService() {
-        return new FacilityUsageReportService(facilityService(), operatorService(), contactService(), hubService(), utilizationRepository(), regionRepository(), translationService());
+        return new FacilityUsageReportService(facilityService(), operatorService(), contactService(), hubService(), utilizationRepository(), regionRepository(), translationService(), facilityHistoryService());
     }
 
     @Bean
     public MaxUtilizationReportService maxUtilizationReportService() {
-        return new MaxUtilizationReportService(facilityService(), operatorService(), contactService(), hubService(), utilizationRepository(), regionRepository(), translationService());
+        return new MaxUtilizationReportService(facilityService(), operatorService(), contactService(), hubService(), utilizationRepository(), regionRepository(), translationService(), facilityHistoryService());
+    }
+
+    @Bean
+    public FacilityHistoryService facilityHistoryService() {
+        return new FacilityHistoryService(facilityHistoryRepository());
     }
 
     @Bean

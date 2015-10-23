@@ -27,8 +27,8 @@ public abstract class AbstractReportService extends ReportServiceSupport impleme
     @Inject
     ExcelUtil excelUtil;
 
-    protected AbstractReportService(String reportName, FacilityService facilityService, OperatorService operatorService, ContactService contactService, HubService hubService, UtilizationRepository utilizationRepository, TranslationService translationService, RegionRepository regionRepository) {
-        super(facilityService, operatorService, contactService, hubService, utilizationRepository, translationService, regionRepository);
+    protected AbstractReportService(String reportName, FacilityService facilityService, OperatorService operatorService, ContactService contactService, HubService hubService, UtilizationRepository utilizationRepository, TranslationService translationService, RegionRepository regionRepository, FacilityHistoryService facilityHistoryService) {
+        super(facilityService, operatorService, contactService, hubService, utilizationRepository, translationService, regionRepository, facilityHistoryService);
         this.reportName = reportName;
     }
 

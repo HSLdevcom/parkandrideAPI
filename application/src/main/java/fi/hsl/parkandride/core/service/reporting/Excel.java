@@ -57,7 +57,7 @@ class Excel {
         integer.setFont(font12pt);
         decimal.setDataFormat(df.getFormat("#,####0.0000"));
         decimal.setFont(font12pt);
-        percent.setDataFormat(df.getFormat("0%"));
+        percent.setDataFormat(df.getFormat("0.00 %"));
         percent.setFont(font12pt);
         date.setDataFormat(df.getFormat("d.M.yyyy"));
         date.setFont(font12pt);

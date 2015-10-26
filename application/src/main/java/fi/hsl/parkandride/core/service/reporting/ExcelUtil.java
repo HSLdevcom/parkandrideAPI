@@ -21,7 +21,7 @@ public class ExcelUtil {
         this.messageSource = messageSource;
     }
 
-    static String time(TimeDuration time) {
+    public static String time(TimeDuration time) {
         return time == null ? null : format("%02d:%02d - %02d:%02d", time.from.getHour(), time.from.getMinute(), time.until.getHour(), time.until.getMinute());
     }
 

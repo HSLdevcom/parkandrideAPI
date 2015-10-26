@@ -12,7 +12,7 @@ import java.util.Optional;
 
 public interface UtilizationHistory {
 
-    Utilization getLatest();
+    Optional<Utilization> getLatest();
 
     List<Utilization> getRange(DateTime startInclusive, DateTime endInclusive);
 

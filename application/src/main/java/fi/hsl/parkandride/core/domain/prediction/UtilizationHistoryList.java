@@ -25,8 +25,9 @@ public class UtilizationHistoryList implements UtilizationHistory {
     }
 
     @Override
-    public Utilization getLatest() {
-        return utilizationList.stream().reduce(utilizationList.get(0), BinaryOperator.maxBy((a, b) -> a.timestamp.compareTo(b.timestamp)));
+    public Optional<Utilization> getLatest() {
+        return Optional.of(utilizationList.stream()
+                .reduce(utilizationList.get(0), BinaryOperator.maxBy((a, b) -> a.timestamp.compareTo(b.timestamp))));
     }
 
     @Override

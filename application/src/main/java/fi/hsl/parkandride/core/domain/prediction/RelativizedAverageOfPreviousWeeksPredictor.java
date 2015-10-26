@@ -28,8 +28,9 @@ public class RelativizedAverageOfPreviousWeeksPredictor implements Predictor {
 
     @Override
     public List<Prediction> predict(PredictorState state, UtilizationHistory history) {
-        Utilization latest = history.getLatest();
-        DateTime now = state.latestUtilization = latest.timestamp;
+        Optional<Utilization> latest = history.getLatest();
+        if (!latest.isPresent()) return Collections.emptyList();
+        DateTime now = state.latestUtilization = latest.get().timestamp;
 
         final UtilizationHistory inMemoryHistory = new UtilizationHistoryList(history.getRange(now.minusWeeks(3), now));
 
@@ -38,21 +39,36 @@ public class RelativizedAverageOfPreviousWeeksPredictor implements Predictor {
                 .map(offset -> {
                     DateTime start = now.minus(offset);
                     DateTime end = start.plus(PredictionRepository.PREDICTION_WINDOW);
+                    Optional<Utilization> utilizationAtReferenceTime = inMemoryHistory.getAt(start);
+                    if (!utilizationAtReferenceTime.isPresent()) {
+                        return null;
+                    }
+
+                    Integer spacesAvailableAtReferenceTime = utilizationAtReferenceTime.get().spacesAvailable;
                     List<Utilization> utilizations = inMemoryHistory.getRange(start, end);
                     return utilizations.stream()
-                            .map(u -> new Prediction(u.timestamp.plus(offset), u.spacesAvailable))
+                            .map(u -> new Prediction(u.timestamp.plus(offset), u.spacesAvailable - spacesAvailableAtReferenceTime))
                             .collect(Collectors.toList());
                 })
+                .filter(Objects::nonNull)
                 .collect(Collectors.toList());
 
         List<List<Prediction>> groupedByTimeOfDay = transpose(groupedByWeek);
 
         return groupedByTimeOfDay.stream()
-                .map(this::reduce)
+                .map(predictions -> reduce(predictions, latest.get().spacesAvailable))
                 .collect(Collectors.toList());
     }
 
-    private Prediction reduce(List<Prediction> predictions) {
+    private OptionalDouble getHistoricUtilizationAt(UtilizationHistory inMemoryHistory, DateTime timestamp, List<ReadablePeriod> lookbackPeriods) {
+        return lookbackPeriods.stream()
+                .map(period -> inMemoryHistory.getAt(timestamp.minus(period)))
+                .filter(Optional::isPresent)
+                .mapToDouble(utilization -> utilization.get().spacesAvailable)
+                .average();
+    }
+
+    private Prediction reduce(List<Prediction> predictions, int spacesAvailableCorrection) {
         DateTime timestamp = predictions.get(0).timestamp;
         if (!predictions.stream()
                 .map(p -> p.timestamp)
@@ -60,10 +76,10 @@ public class RelativizedAverageOfPreviousWeeksPredictor implements Predictor {
             log.warn("Something went wrong. Not all predictions have the same timestamp: {}", predictions);
         }
         int spacesAvailable = (int) Math.round(predictions.stream()
-                .mapToInt(u -> u.spacesAvailable)
+                .mapToDouble(u -> u.spacesAvailable)
                 .average()
                 .getAsDouble());
-        return new Prediction(timestamp, spacesAvailable);
+        return new Prediction(timestamp, spacesAvailable + spacesAvailableCorrection);
     }
 
     private static <T> List<List<T>> transpose(List<List<T>> sources) {

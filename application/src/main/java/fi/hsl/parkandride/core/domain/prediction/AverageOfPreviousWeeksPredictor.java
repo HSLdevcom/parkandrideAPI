@@ -10,9 +10,7 @@ import org.joda.time.Weeks;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -29,8 +27,9 @@ public class AverageOfPreviousWeeksPredictor implements Predictor {
 
     @Override
     public List<Prediction> predict(PredictorState state, UtilizationHistory history) {
-        Utilization latest = history.getLatest();
-        DateTime now = state.latestUtilization = latest.timestamp;
+        Optional<Utilization> latest = history.getLatest();
+        if (!latest.isPresent()) return Collections.emptyList();
+        DateTime now = state.latestUtilization = latest.get().timestamp;
 
         List<List<Prediction>> groupedByWeek = Stream.of(Weeks.weeks(1), Weeks.weeks(2), Weeks.weeks(3))
                 .map(offset -> {

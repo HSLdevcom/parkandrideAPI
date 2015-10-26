@@ -52,7 +52,8 @@ public class UtilizationHistoryListTest {
     public static class GetLatest extends Base {
         @Test
         public void latest_utilization_is_returned() throws Exception {
-            assertThat(historyList.getLatest().timestamp).isEqualTo(LATEST_DATETIME);
+            assertThat(historyList.getLatest()).isPresent();
+            assertThat(historyList.getLatest().get().timestamp).isEqualTo(LATEST_DATETIME);
         }
     }
 

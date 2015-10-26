@@ -25,14 +25,11 @@ public class UtilizationHistoryImpl implements UtilizationHistory {
     }
 
     @Override
-    public Utilization getLatest() {
+    public Optional<Utilization> getLatest() {
         Set<Utilization> utilizations = utilizationRepository.findLatestUtilization(utilizationKey.facilityId);
         return utilizations.stream()
                 .filter(u -> u.getUtilizationKey().equals(utilizationKey))
-                .findAny()
-                .orElseGet(() -> {
-                    throw new IllegalStateException(utilizationKey + " was not found in " + utilizations);
-                });
+                .findAny();
     }
 
     @Override

@@ -11,6 +11,7 @@ import fi.hsl.parkandride.core.domain.UtilizationKey;
 import org.joda.time.DateTime;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 public class UtilizationHistoryImpl implements UtilizationHistory {
@@ -44,5 +45,10 @@ public class UtilizationHistoryImpl implements UtilizationHistory {
         DateTime start = startExclusive.plusMillis(1);
         DateTime end = new DateTime().plusYears(1);
         return utilizationRepository.findUtilizationsBetween(utilizationKey, start, end);
+    }
+
+    @Override
+    public Optional<Utilization> getAt(DateTime instant) {
+        return utilizationRepository.findUtilizationAtInstant(utilizationKey, instant);
     }
 }

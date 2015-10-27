@@ -3,6 +3,7 @@
 
 package fi.hsl.parkandride.core.domain.prediction;
 
+import fi.hsl.parkandride.back.ListUtil;
 import fi.hsl.parkandride.core.back.PredictionRepository;
 import fi.hsl.parkandride.core.domain.Utilization;
 import org.joda.time.DateTime;
@@ -42,7 +43,7 @@ public class AverageOfPreviousWeeksPredictor implements Predictor {
                 })
                 .collect(Collectors.toList());
 
-        List<List<Prediction>> groupedByTimeOfDay = transpose(groupedByWeek);
+        List<List<Prediction>> groupedByTimeOfDay = ListUtil.transpose(groupedByWeek);
 
         return groupedByTimeOfDay.stream()
                 .map(this::reduce)
@@ -61,27 +62,5 @@ public class AverageOfPreviousWeeksPredictor implements Predictor {
                 .average()
                 .getAsDouble());
         return new Prediction(timestamp, spacesAvailable);
-    }
-
-    private static <T> List<List<T>> transpose(List<List<T>> sources) {
-        List<Iterator<T>> iterators = sources.stream()
-                .map(List::iterator)
-                .collect(Collectors.toList());
-        List<List<T>> results = new ArrayList<>();
-        while (hasNexts(iterators)) {
-            results.add(nexts(iterators));
-        }
-        return results;
-    }
-
-    private static <T> boolean hasNexts(List<Iterator<T>> heads) {
-        return heads.stream().anyMatch(Iterator::hasNext);
-    }
-
-    private static <T> List<T> nexts(List<Iterator<T>> heads) {
-        return heads.stream()
-                .filter(Iterator::hasNext)
-                .map(Iterator::next)
-                .collect(Collectors.toList());
     }
 }

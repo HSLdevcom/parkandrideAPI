@@ -3,6 +3,7 @@
 
 package fi.hsl.parkandride.core.domain.prediction;
 
+import fi.hsl.parkandride.back.ListUtil;
 import fi.hsl.parkandride.core.back.PredictionRepository;
 import fi.hsl.parkandride.core.domain.Utilization;
 import org.joda.time.DateTime;
@@ -70,7 +71,7 @@ public class RelativizedAverageOfPreviousWeeksPredictor implements Predictor {
                         .filter(Objects::nonNull)
                         .collect(Collectors.toList());
 
-        List<List<Prediction>> groupedByTimeOfDay = transpose(groupedByWeek);
+        List<List<Prediction>> groupedByTimeOfDay = ListUtil.transpose(groupedByWeek);
 
         return groupedByTimeOfDay.stream()
                 .map(predictions -> reduce(predictions, latest.get().spacesAvailable, utilizationMultiplier))
@@ -96,27 +97,5 @@ public class RelativizedAverageOfPreviousWeeksPredictor implements Predictor {
                 .getAsDouble());
         final int predictedSpacesAvailable = Math.max(0, spacesAvailable + spacesAvailableCorrection);
         return new Prediction(timestamp, predictedSpacesAvailable);
-    }
-
-    private static <T> List<List<T>> transpose(List<List<T>> sources) {
-        List<Iterator<T>> iterators = sources.stream()
-                .map(List::iterator)
-                .collect(Collectors.toList());
-        List<List<T>> results = new ArrayList<>();
-        while (hasNexts(iterators)) {
-            results.add(nexts(iterators));
-        }
-        return results;
-    }
-
-    private static <T> boolean hasNexts(List<Iterator<T>> heads) {
-        return heads.stream().anyMatch(Iterator::hasNext);
-    }
-
-    private static <T> List<T> nexts(List<Iterator<T>> heads) {
-        return heads.stream()
-                .filter(Iterator::hasNext)
-                .map(Iterator::next)
-                .collect(Collectors.toList());
     }
 }

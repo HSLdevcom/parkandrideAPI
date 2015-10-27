@@ -94,7 +94,8 @@ public class RelativizedAverageOfPreviousWeeksPredictor implements Predictor {
                 .mapToDouble(u -> u.spacesAvailable)
                 .average()
                 .getAsDouble());
-        return new Prediction(timestamp, spacesAvailable + spacesAvailableCorrection);
+        final int predictedSpacesAvailable = Math.max(0, spacesAvailable + spacesAvailableCorrection);
+        return new Prediction(timestamp, predictedSpacesAvailable);
     }
 
     private static <T> List<List<T>> transpose(List<List<T>> sources) {

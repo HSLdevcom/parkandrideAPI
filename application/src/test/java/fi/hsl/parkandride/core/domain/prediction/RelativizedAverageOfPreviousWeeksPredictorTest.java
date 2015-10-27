@@ -146,4 +146,34 @@ public class RelativizedAverageOfPreviousWeeksPredictorTest extends AbstractPred
                 new Prediction(now.plusMinutes(15), 26),
                 new Prediction(now.plusMinutes(20), 30));
     }
+
+    @Test
+    public void available_spaces_cannot_go_to_negative_values() {
+        insertUtilization(now.minusDays(7).minus(LOOKBACK_MINUTES), 20);
+        insertUtilization(now.minusDays(7).minusMinutes(15), 19);
+        insertUtilization(now.minusDays(7).minusMinutes(10), 18);
+        insertUtilization(now.minusDays(7).minusMinutes(5), 17);
+        insertUtilization(now.minusDays(7), 16);
+        insertUtilization(now.minusDays(7).plusMinutes(5), 15);
+        insertUtilization(now.minusDays(7).plusMinutes(10), 14);
+        insertUtilization(now.minusDays(7).plusMinutes(15), 13);
+        insertUtilization(now.minusDays(7).plusMinutes(20), 12);
+
+        insertUtilization(now.minus(LOOKBACK_MINUTES), 4);
+        insertUtilization(now.minusMinutes(15), 3);
+        insertUtilization(now.minusMinutes(10), 2);
+        insertUtilization(now.minusMinutes(5), 1);
+
+        List<Prediction> predictions = predict();
+
+        assertThat(utilizationHistory.getLatest())
+                .isPresent();
+        assertThat(utilizationHistory.getLatest().get().spacesAvailable).isEqualTo(1);
+        assertThat(predictions).containsSubsequence(
+                new Prediction(now, 0),
+                new Prediction(now.plusMinutes(5), 0),
+                new Prediction(now.plusMinutes(10), 0),
+                new Prediction(now.plusMinutes(15), 0),
+                new Prediction(now.plusMinutes(20), 0));
+    }
 }

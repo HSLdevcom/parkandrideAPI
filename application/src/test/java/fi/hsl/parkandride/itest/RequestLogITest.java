@@ -173,7 +173,7 @@ public class RequestLogITest extends AbstractReportingITest {
 
     @Test
     public void generateConcurrent() {
-        concurrentlyGenerateLogs(1000, 100);
+        concurrentlyGenerateLogs(1000, 10);
         batchingRequestLogService.updateRequestLogs();
         final List<RequestLogEntry> logEntriesBetween = requestLogDao.getLogEntriesBetween(DateTime.now().millisOfDay().withMinimumValue(), DateTime.now().millisOfDay().withMaximumValue());
         assertThat(logEntriesBetween).hasSize(1)
@@ -183,27 +183,27 @@ public class RequestLogITest extends AbstractReportingITest {
     private void generateDummyRequestLog() {
         // Today
         withDate(BASE_DATE_TIME, () -> {
-            range(0, 12).forEach(i -> given().header(SOURCE_HEADER, WEB_UI_SOURCE).when().get(UrlSchema.FACILITY, i));
-            range(0, 8).forEach(i -> given().header(SOURCE_HEADER, WEB_UI_SOURCE).when().get(UrlSchema.HUB, i));
+            range(0, 12).forEach(i -> given().header(SOURCE_HEADER, WEB_UI_SOURCE).when().get(UrlSchema.FACILITY, facility1.id));
+            range(0, 8).forEach(i -> given().header(SOURCE_HEADER, WEB_UI_SOURCE).when().get(UrlSchema.HUB, hub.id));
 
             // Without Source header
-            range(0, 12).forEach(i -> when().get(UrlSchema.FACILITY, i));
-            range(0, 8).forEach(i -> when().get(UrlSchema.HUB, i));
+            range(0, 12).forEach(i -> when().get(UrlSchema.FACILITY, facility1.id));
+            range(0, 8).forEach(i -> when().get(UrlSchema.HUB, hub.id));
         });
 
         // An hour after now
         withDate(BASE_DATE_TIME.plusHours(1), () -> {
-            range(0, 12).forEach(i -> given().header(SOURCE_HEADER, WEB_UI_SOURCE).when().get(UrlSchema.FACILITY, i));
+            range(0, 12).forEach(i -> given().header(SOURCE_HEADER, WEB_UI_SOURCE).when().get(UrlSchema.FACILITY, facility1.id));
         });
 
         // A day after now
         withDate(BASE_DATE_TIME.plusDays(1), () -> {
-            range(0, 12).forEach(i -> given().header(SOURCE_HEADER, WEB_UI_SOURCE).when().get(UrlSchema.FACILITY, i));
+            range(0, 12).forEach(i -> given().header(SOURCE_HEADER, WEB_UI_SOURCE).when().get(UrlSchema.FACILITY, facility1.id));
         });
 
         // A month before now
         withDate(BASE_DATE_TIME.minusMonths(1), () -> {
-            range(0, 12).forEach(i -> given().header(SOURCE_HEADER, WEB_UI_SOURCE).when().get(UrlSchema.FACILITY, i));
+            range(0, 12).forEach(i -> given().header(SOURCE_HEADER, WEB_UI_SOURCE).when().get(UrlSchema.FACILITY, facility1.id));
         });
 
         // Store the batch to database
@@ -225,7 +225,7 @@ public class RequestLogITest extends AbstractReportingITest {
 
             try {
                 CompletableFuture.allOf(Stream.concat(statusCodes, updates).toArray(i -> new CompletableFuture[i])).get();
-            } catch (InterruptedException|ExecutionException e) {
+            } catch (InterruptedException | ExecutionException e) {
                 e.printStackTrace();
                 throw new AssertionFailedError(e.getMessage());
             }

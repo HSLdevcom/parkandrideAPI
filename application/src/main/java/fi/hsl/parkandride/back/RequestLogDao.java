@@ -21,11 +21,12 @@ import fi.hsl.parkandride.core.back.RequestLogRepository;
 import fi.hsl.parkandride.core.domain.RequestLogEntry;
 import fi.hsl.parkandride.core.domain.RequestLogKey;
 import fi.hsl.parkandride.core.service.TransactionalRead;
-import fi.hsl.parkandride.core.service.TransactionalWrite;
 import fi.hsl.parkandride.util.MapUtils;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
 import java.util.List;
@@ -40,7 +41,7 @@ import static com.querydsl.core.types.Projections.constructor;
 import static fi.hsl.parkandride.util.MapUtils.extractFromKeys;
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.*;
-import static java.util.stream.Stream.concat;
+import static org.springframework.transaction.annotation.Isolation.SERIALIZABLE;
 
 public class RequestLogDao implements RequestLogRepository {
 
@@ -74,7 +75,7 @@ public class RequestLogDao implements RequestLogRepository {
     }
 
     @Override
-    @TransactionalWrite
+    @Transactional(readOnly = false, isolation = SERIALIZABLE, propagation = Propagation.REQUIRES_NEW)
     public void batchIncrement(Map<RequestLogKey, Long> nonNormalizedRequestLogCounts) {
         if (nonNormalizedRequestLogCounts.isEmpty()) {
             return;
@@ -97,13 +98,8 @@ public class RequestLogDao implements RequestLogRepository {
 
         // Insert non-existing rows
         insertNew(partitioned.get(Boolean.FALSE), allSources.inverse(), allUrls.inverse());
-
-        // Update counts for existing keys
-        final Map<RequestLogKey, Long> summedCounts = concat(
-                partitioned.get(Boolean.TRUE).stream(),
-                previousCountsForUpdate.entrySet().stream()
-        ).collect(toMapSummingCounts());
-        updateExisting(summedCounts, allSources.inverse(), allUrls.inverse());
+        // Update
+        updateExisting(partitioned.get(Boolean.TRUE), allSources.inverse(), allUrls.inverse());
     }
 
     private BiMap<Long, String> insertNewUrls(Set<String> toInsert) {
@@ -144,7 +140,7 @@ public class RequestLogDao implements RequestLogRepository {
         insert.execute();
     }
 
-    private <T> void updateBatch(Set<T> batch, RelationalPath<?> expression, BiConsumer<SQLUpdateClause, T> processor) {
+    private <T> void updateBatch(Collection<T> batch, RelationalPath<?> expression, BiConsumer<SQLUpdateClause, T> processor) {
         if (batch.isEmpty()) {
             return;
         }
@@ -156,10 +152,10 @@ public class RequestLogDao implements RequestLogRepository {
         update.execute();
     }
 
-    private void updateExisting(Map<RequestLogKey, Long> entries, Map<String, Long> sourceIdsBySource, Map<String, Long> urlIdsByUrl) {
-        updateBatch(entries.entrySet(), qRequestLog, (update, entry) -> {
+    private void updateExisting(Collection<Map.Entry<RequestLogKey, Long>> entries, Map<String, Long> sourceIdsBySource, Map<String, Long> urlIdsByUrl) {
+        updateBatch(entries, qRequestLog, (update, entry) -> {
             final RequestLogKey key = entry.getKey();
-            update.set(qRequestLog.count, entry.getValue());
+            update.set(qRequestLog.count, qRequestLog.count.add(entry.getValue()));
             update.where(qRequestLog.ts.eq(key.timestamp)
                             .and(qRequestLog.sourceId.eq(sourceIdsBySource.get(key.source)))
                             .and(qRequestLog.urlId.eq(urlIdsByUrl.get(key.urlPattern)))

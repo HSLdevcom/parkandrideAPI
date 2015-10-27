@@ -15,7 +15,7 @@ import java.util.Map;
 
 import static com.google.common.collect.Maps.newHashMap;
 
-public class FacilityCapacityHistory {
+public class FacilityCapacityHistory implements HasInterval {
     public Long facilityId;
     public DateTime startDate;
     public DateTime endDate;
@@ -75,4 +75,13 @@ public class FacilityCapacityHistory {
     }
 
 
+    @Override
+    public DateTime getStart() {
+        return startDate;
+    }
+
+    @Override
+    public DateTime getEnd() {
+        return endDate;
+    }
 }

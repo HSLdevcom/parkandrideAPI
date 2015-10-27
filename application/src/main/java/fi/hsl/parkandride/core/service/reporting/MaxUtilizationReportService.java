@@ -20,6 +20,7 @@ import java.util.stream.Collectors;
 import static fi.hsl.parkandride.core.domain.FacilityStatus.INACTIVE;
 import static fi.hsl.parkandride.core.domain.FacilityStatus.TEMPORARILY_CLOSED;
 import static fi.hsl.parkandride.core.domain.Region.UNKNOWN_REGION;
+import static fi.hsl.parkandride.util.MapUtils.entriesToMap;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.sort;
@@ -51,11 +52,14 @@ public class MaxUtilizationReportService extends AbstractReportService {
         Map<Long, Map<LocalDate, FacilityStatus>> facilityStatusHistory = getFacilityStatusHistory(parameters, facilityStats);
         Map<MaxUtilizationReportKeyWithDate, Integer> facilityCapacityPerDate = getMaxCapacityPerDate(ctx, facilityStatusHistory, facilityStats);
 
+        // Unavailable capacity history
+        Map<MaxUtilizationReportKey, Integer> facilityUnavailableCapacity = getFacilityUnavailableCapacity(parameters, facilityStats);
+
         // group facility keys by hubs
         Map<HubReportKey, List<MaxUtilizationReportKeyWithDate>> hubStats = groupStatsByHubs(ctx, facilityStats);
 
         // calculate averages and sums
-        List<MaxUtilizationReportRow> rows = createReportRows(ctx, facilityStats, hubStats, facilityCapacityPerDate, facilityStatusHistory);
+        List<MaxUtilizationReportRow> rows = createReportRows(ctx, facilityStats, hubStats, facilityCapacityPerDate, facilityStatusHistory, facilityUnavailableCapacity);
 
         Excel excel = createExcelReport(ctx, rows);
 
@@ -82,6 +86,26 @@ public class MaxUtilizationReportService extends AbstractReportService {
                 ));
     }
 
+    private Map<MaxUtilizationReportKey, Integer> getFacilityUnavailableCapacity(ReportParameters parameters, Map<MaxUtilizationReportKeyWithDate, Integer> facilityStats) {
+        return facilityStats.keySet().stream()
+                .map(key -> key.targetId)
+                .distinct()
+                .flatMap((Long id) -> facilityHistoryService.getUnavailableCapacityHistory(id, parameters.startDate, parameters.endDate)
+                        .entrySet().stream()
+                        .flatMap(entry -> {
+                            final DayType dayType = DayType.valueOf(entry.getKey());
+                            return entry.getValue().stream().map(unc -> {
+                                final MaxUtilizationReportKey key = new MaxUtilizationReportKey();
+                                key.targetId = id;
+                                key.dayType = dayType;
+                                key.usage = unc.usage;
+                                key.capacityType = unc.capacityType;
+                                return new AbstractMap.SimpleImmutableEntry<>(key, unc.getCapacity());
+                            });
+                }))
+                .collect(entriesToMap(Math::max));
+    }
+
     private Excel createExcelReport(ReportContext ctx, List<MaxUtilizationReportRow> rows) {
         Excel excel = new Excel();
         Function<MaxUtilizationReportRow, Object> valFn = (MaxUtilizationReportRow r) -> r.average;
@@ -93,6 +117,7 @@ public class MaxUtilizationReportService extends AbstractReportService {
                 excelUtil.tcol("reports.utilization.col.capacityType", (MaxUtilizationReportRow r) -> translationService.translate(r.key.capacityType)),
                 excelUtil.tcol("reports.utilization.col.status", (MaxUtilizationReportRow r) -> translationService.translate(r.key.facility.status)),
                 excelUtil.tcol("reports.utilization.col.totalCapacity", (MaxUtilizationReportRow r) -> r.totalCapacity),
+                excelUtil.tcol("reports.utilization.col.unavailableCapacity", (MaxUtilizationReportRow r) -> r.unavailableCapacity),
                 excelUtil.tcol("reports.utilization.col.dayType", (MaxUtilizationReportRow r) -> translationService.translate(r.key.dayType)),
                 excelUtil.tcol("reports.utilization.col.averageMaxUsage", valFn, excel.percent)
         );
@@ -102,7 +127,7 @@ public class MaxUtilizationReportService extends AbstractReportService {
         return excel;
     }
 
-    private List<MaxUtilizationReportRow> createReportRows(ReportContext ctx, Map<MaxUtilizationReportKeyWithDate, Integer> facilityStats, Map<HubReportKey, List<MaxUtilizationReportKeyWithDate>> hubStats, Map<MaxUtilizationReportKeyWithDate, Integer> facilityCapacityPerDate, Map<Long, Map<LocalDate, FacilityStatus>> statusHistory) {
+    private List<MaxUtilizationReportRow> createReportRows(ReportContext ctx, Map<MaxUtilizationReportKeyWithDate, Integer> facilityStats, Map<HubReportKey, List<MaxUtilizationReportKeyWithDate>> hubStats, Map<MaxUtilizationReportKeyWithDate, Integer> facilityCapacityPerDate, Map<Long, Map<LocalDate, FacilityStatus>> statusHistory, Map<MaxUtilizationReportKey, Integer> facilityUnavailableCapacity) {
         List<MaxUtilizationReportRow> rows = new ArrayList<>();
 
         // At this point, the hub key is grouped by dayType, facility keys still contain the actual dat
@@ -126,12 +151,15 @@ public class MaxUtilizationReportService extends AbstractReportService {
                             entry -> 1.0d - (entry.getValue() / capacityPerDate.get(entry.getKey())) // Fraction per day
                     ));
 
-            final Double averageOfPercentages = utilizationPerDay.values().stream().collect(averagingDouble(i -> i));
-//            final Double averageOfPercentages = freeSpacesPerDay.values().stream()
-//                    .map(freeSpaces -> 1.0d - (freeSpaces / totalCapacity)) // Fraction per day
-//                    .collect(averagingDouble(i -> i));
 
-            rows.add(new MaxUtilizationReportRow(hubKey.hub, facilityKeys.get(0).toReportKey(), operatorNames(ctx, hubKey), averageOfPercentages, totalCapacity));
+            final Double averageOfPercentages = utilizationPerDay.values().stream().collect(averagingDouble(i -> i));
+
+            final Map<MaxUtilizationReportKey, Integer> facilityUnavailableCapacity1 = facilityUnavailableCapacity;
+            final Integer unavailableCapacity = facilityKeys.stream()
+                    .map(k -> k.toReportKey())
+                    .collect(summingInt(k -> facilityUnavailableCapacity.getOrDefault(k, 0)));
+
+            rows.add(new MaxUtilizationReportRow(hubKey.hub, facilityKeys.get(0).toReportKey(), operatorNames(ctx, hubKey), averageOfPercentages, totalCapacity, unavailableCapacity));
         });
         sort(rows);
         return rows;
@@ -195,13 +223,15 @@ public class MaxUtilizationReportService extends AbstractReportService {
         final String operatorNames;
         final double average;
         final int totalCapacity;
+        final int unavailableCapacity;
 
-        MaxUtilizationReportRow(Hub hub, MaxUtilizationReportKey key, String operatorNames, double average, int totalCapacity) {
+        MaxUtilizationReportRow(Hub hub, MaxUtilizationReportKey key, String operatorNames, double average, int totalCapacity, int unavailableCapacity) {
             this.hub = hub;
             this.key = key;
             this.operatorNames = operatorNames;
             this.average = average;
             this.totalCapacity = totalCapacity;
+            this.unavailableCapacity = unavailableCapacity;
         }
 
         @Override

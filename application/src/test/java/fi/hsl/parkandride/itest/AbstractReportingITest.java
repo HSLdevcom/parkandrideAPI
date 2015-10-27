@@ -72,7 +72,11 @@ public abstract class AbstractReportingITest extends AbstractIntegrationTest {
     @Inject MessageSource messageSource;
 
     @Before
-    public final void initFixture() {
+    public void initialize() {
+        initFixture();
+    }
+
+    protected final void initFixture() {
         devHelper.deleteAll();
         long facilityId1 = dummies.createFacility();
         long facilityId2 = dummies.createFacility();

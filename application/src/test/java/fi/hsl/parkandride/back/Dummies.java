@@ -36,8 +36,13 @@ public class Dummies {
 
     @TransactionalWrite
     public long createHub(Long... facilityIds) {
+        return createHub(new MultilingualString("Malmi"), facilityIds);
+    }
+
+    @TransactionalWrite
+    public long createHub(MultilingualString name, Long... facilityIds) {
         final Hub hub = new Hub();
-        hub.name = new MultilingualString("Malmi");
+        hub.name = name;
         hub.location = (Point) fromWkt("POINT(25.010563 60.251022)");
         hub.facilityIds = ImmutableSet.of(1L, 2L, 3L);
         hub.address = new Address(new MultilingualString("street"), "00100", new MultilingualString("city"));

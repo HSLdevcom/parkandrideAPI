@@ -145,7 +145,7 @@ public class CoreConfiguration {
 
     @Bean
     public FacilityHistoryService facilityHistoryService() {
-        return new FacilityHistoryService(facilityHistoryRepository());
+        return new FacilityHistoryService(facilityHistoryRepository(), facilityRepository());
     }
 
     @Bean

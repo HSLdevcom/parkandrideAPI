@@ -3,16 +3,25 @@
 
 package fi.hsl.parkandride.core.domain;
 
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeConstants;
+import org.joda.time.*;
+
+import java.util.Optional;
 
 public enum DayType {
     BUSINESS_DAY,
     SATURDAY,
     SUNDAY;
 
-    public static DayType valueOf(DateTime timestamp) {
-        switch (timestamp.getDayOfWeek()) {
+    public static DayType valueOf(ReadableInstant timestamp) {
+        return valueOf(Optional.ofNullable(timestamp).map(ts -> ts.get(DateTimeFieldType.dayOfWeek())).orElse(null));
+    }
+
+    public static DayType valueOf(ReadablePartial timestamp) {
+        return valueOf(Optional.ofNullable(timestamp).map(ts -> ts.get(DateTimeFieldType.dayOfWeek())).orElse(null));
+    }
+
+    private static DayType valueOf(Integer dayOfWeek) {
+        switch (dayOfWeek) {
         case DateTimeConstants.SATURDAY:
             return SATURDAY;
         case DateTimeConstants.SUNDAY:

@@ -7,7 +7,7 @@ import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
 import org.joda.time.DateTime;
 
-public class FacilityStatusHistory {
+public class FacilityStatusHistory implements HasInterval {
     public Long facilityId;
     public DateTime startDate;
     public DateTime endDate;
@@ -58,4 +58,13 @@ public class FacilityStatusHistory {
     }
 
 
+    @Override
+    public DateTime getStart() {
+        return startDate;
+    }
+
+    @Override
+    public DateTime getEnd() {
+        return endDate;
+    }
 }

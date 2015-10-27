@@ -5,24 +5,28 @@ package fi.hsl.parkandride.itest;
 
 import com.jayway.restassured.response.Response;
 import fi.hsl.parkandride.core.back.FacilityHistoryRepository;
+import fi.hsl.parkandride.core.back.FacilityRepository;
 import fi.hsl.parkandride.core.domain.*;
 import fi.hsl.parkandride.core.service.reporting.ReportParameters;
 import org.joda.time.DateTime;
+import org.junit.Before;
 import org.junit.Test;
 
 import javax.inject.Inject;
 import java.util.List;
 import java.util.Locale;
 
+import static com.google.common.collect.Lists.newArrayList;
 import static fi.hsl.parkandride.core.domain.CapacityType.BICYCLE_SECURE_SPACE;
 import static fi.hsl.parkandride.core.domain.CapacityType.CAR;
 import static fi.hsl.parkandride.core.domain.Usage.PARK_AND_RIDE;
+import static fi.hsl.parkandride.test.DateTimeTestUtils.withDate;
 import static java.util.Arrays.asList;
-import static java.util.Collections.singletonList;
+import static java.util.Collections.*;
 import static java.util.stream.Collectors.joining;
 import static org.apache.commons.lang3.RandomUtils.nextInt;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.joda.time.DateTimeConstants.*;
+import static org.joda.time.DateTimeConstants.MONDAY;
 
 public class MaxUtilizationReportITest extends AbstractReportingITest {
     private static final String MAX_UTILIZATION = "MaxUtilization";
@@ -30,16 +34,34 @@ public class MaxUtilizationReportITest extends AbstractReportingITest {
     // Day 15 to ensure that weekdays stay in the same month
     private static final DateTime baseDate = BASE_DATE.toDateTimeAtCurrentTime().withDayOfMonth(15);
     private static final DateTime mon = baseDate.withDayOfWeek(MONDAY);
-    private static final DateTime tue = baseDate.withDayOfWeek(TUESDAY);
-    private static final DateTime wed = baseDate.withDayOfWeek(WEDNESDAY);
-    private static final DateTime sat = baseDate.withDayOfWeek(SATURDAY);
-    private static final DateTime sun = baseDate.withDayOfWeek(SUNDAY);
+    private static final DateTime tue = mon.plusDays(1);
+    private static final DateTime wed = mon.plusDays(2);
+    private static final DateTime sat = mon.plusDays(5);
+    private static final DateTime sun = mon.plusDays(6);
 
     @Inject FacilityHistoryRepository facilityHistoryRepository;
+    @Inject FacilityRepository facilityRepository;
 
     // ---------------------
     // MAX UTILIZATION REPORT
     // ---------------------
+
+    @Before
+    @Override
+    public void initialize() {
+        // Needed to ensure history linearity
+        withDate(mon.minusMonths(1), () -> {
+            this.initFixture();
+
+            // Clear the unavailable capacities history
+            facility1.unavailableCapacities = newArrayList();
+            facility2.unavailableCapacities = newArrayList();
+            facilityRepository.updateFacility(facility1.id, facility1);
+            facilityRepository.updateFacility(facility2.id, facility2);
+        });
+        facility1 = facilityRepository.getFacility(facility1.id);
+        facility2 = facilityRepository.getFacility(facility2.id);
+    }
 
     @Test
     public void report_MaxUtilization_calculatedCorrectly() {
@@ -82,7 +104,7 @@ public class MaxUtilizationReportITest extends AbstractReportingITest {
         // Only one row
         checkSheetContents(whenPostingToReportUrl, 0,
                 headers(),
-                hubRow(asList(operator1, operator2), PARK_AND_RIDE, CAR, DayType.BUSINESS_DAY, 100, 0.8333)
+                hubRow(asList(operator1, operator2), PARK_AND_RIDE, CAR, DayType.BUSINESS_DAY, 100, 0, 0.8333)
         );
     }
 
@@ -100,9 +122,9 @@ public class MaxUtilizationReportITest extends AbstractReportingITest {
 
             checkSheetContents(workbook, 0,
                     headers(),
-                    hubRow(operator1, PARK_AND_RIDE, CAR, DayType.BUSINESS_DAY, 50, 1.0),
-                    hubRow(operator1, PARK_AND_RIDE, CAR, DayType.SATURDAY, 50, 0.5),
-                    hubRow(operator1, PARK_AND_RIDE, CAR, DayType.SUNDAY, 50, 0.2)
+                    hubRow(operator1, PARK_AND_RIDE, CAR, DayType.BUSINESS_DAY, 50, 0, 1.0),
+                    hubRow(operator1, PARK_AND_RIDE, CAR, DayType.SATURDAY, 50, 0, 0.5),
+                    hubRow(operator1, PARK_AND_RIDE, CAR, DayType.SUNDAY, 50, 0, 0.2)
             );
         });
     }
@@ -117,9 +139,9 @@ public class MaxUtilizationReportITest extends AbstractReportingITest {
 
         checkSheetContents(whenPostingToReportUrl, 0,
                 headers(),
-                hubRow(asList(operator1, operator2), PARK_AND_RIDE, CAR, DayType.BUSINESS_DAY, 100, 1.0),
-                hubRow(asList(operator1, operator2), PARK_AND_RIDE, CAR, DayType.SATURDAY, 100, 0.5),
-                hubRow(asList(operator1, operator2), PARK_AND_RIDE, CAR, DayType.SUNDAY, 100, 0.2)
+                hubRow(asList(operator1, operator2), PARK_AND_RIDE, CAR, DayType.BUSINESS_DAY, 100, 0, 1.0),
+                hubRow(asList(operator1, operator2), PARK_AND_RIDE, CAR, DayType.SATURDAY, 100, 0, 0.5),
+                hubRow(asList(operator1, operator2), PARK_AND_RIDE, CAR, DayType.SUNDAY, 100, 0, 0.2)
         );
     }
 
@@ -139,9 +161,9 @@ public class MaxUtilizationReportITest extends AbstractReportingITest {
         // 100% utilization, since facility 2 is fully utilized every day
         checkSheetContents(whenPostingToReportUrl, 0,
                 headers(),
-                hubRow(asList(operator1, operator2), PARK_AND_RIDE, CAR, DayType.BUSINESS_DAY, 100, 1.0),
-                hubRow(asList(operator1, operator2), PARK_AND_RIDE, CAR, DayType.SATURDAY, 100, 1.0),
-                hubRow(asList(operator1, operator2), PARK_AND_RIDE, CAR, DayType.SUNDAY, 100, 1.0)
+                hubRow(asList(operator1, operator2), PARK_AND_RIDE, CAR, DayType.BUSINESS_DAY, 100, 0, 1.0),
+                hubRow(asList(operator1, operator2), PARK_AND_RIDE, CAR, DayType.SATURDAY, 100, 0, 1.0),
+                hubRow(asList(operator1, operator2), PARK_AND_RIDE, CAR, DayType.SUNDAY, 100, 0, 1.0)
         );
     }
 
@@ -157,9 +179,28 @@ public class MaxUtilizationReportITest extends AbstractReportingITest {
         final Response whenPostingToReportUrl = postToReportUrl(baseParams(), MAX_UTILIZATION, adminUser);
         checkSheetContents(whenPostingToReportUrl, 0,
                 headers(),
-                hubRow(asList(operator1, operator2), PARK_AND_RIDE, CAR, DayType.BUSINESS_DAY, 100, 0.0),
-                hubRow(asList(operator1, operator2), PARK_AND_RIDE, CAR, DayType.SATURDAY, 100, 0.0),
-                hubRow(asList(operator1, operator2), PARK_AND_RIDE, CAR, DayType.SUNDAY, 100, 0.0)
+                hubRow(asList(operator1, operator2), PARK_AND_RIDE, CAR, DayType.BUSINESS_DAY, 100, 0, 0.0),
+                hubRow(asList(operator1, operator2), PARK_AND_RIDE, CAR, DayType.SATURDAY, 100, 0, 0.0),
+                hubRow(asList(operator1, operator2), PARK_AND_RIDE, CAR, DayType.SUNDAY, 100, 0, 0.0)
+        );
+    }
+
+    @Test
+    public void report_MaxUtilization_unavailableCapacities() {
+        addMockMaxUtilizations(facility1, apiUser, 0, 0, 0);
+        facilityHistoryRepository.updateCapacityHistory(mon, facility1.id, emptyMap(), singletonList(new UnavailableCapacity(CAR, PARK_AND_RIDE, 10)));
+        facilityHistoryRepository.updateCapacityHistory(tue, facility1.id, emptyMap(), singletonList(new UnavailableCapacity(CAR, PARK_AND_RIDE, 15)));
+        facilityHistoryRepository.updateCapacityHistory(wed, facility1.id, emptyMap(), singletonList(new UnavailableCapacity(CAR, PARK_AND_RIDE, 5)));
+        facilityHistoryRepository.updateCapacityHistory(sat.minusDays(1), facility1.id, emptyMap(), singletonList(new UnavailableCapacity(CAR, PARK_AND_RIDE, 7)));
+        facilityHistoryRepository.updateCapacityHistory(sat.withTime(18, 0, 0, 0), facility1.id, emptyMap(), emptyList());
+        facilityHistoryRepository.updateCapacityHistory(mon.minusDays(1), facility2.id, emptyMap(), emptyList());
+
+        final Response whenPostingToReportUrl = postToReportUrl(baseParams(), MAX_UTILIZATION, adminUser);
+        checkSheetContents(whenPostingToReportUrl, 0,
+                headers(),
+                hubRow(asList(operator1, operator2), PARK_AND_RIDE, CAR, DayType.BUSINESS_DAY, 50, 15, 1.0),
+                hubRow(asList(operator1, operator2), PARK_AND_RIDE, CAR, DayType.SATURDAY, 50, 7, 1.0),
+                hubRow(asList(operator1, operator2), PARK_AND_RIDE, CAR, DayType.SUNDAY, 50, 0, 1.0)
         );
     }
 
@@ -171,6 +212,7 @@ public class MaxUtilizationReportITest extends AbstractReportingITest {
                 "Ajoneuvotyyppi",
                 "Status",
                 "Pysäköintipaikkojen määrä",
+                "Tilapäisesti poissa käytöstä",
                 "Päivätyyppi",
                 "Keskimääräinen maksimitäyttöaste");
     }
@@ -194,11 +236,11 @@ public class MaxUtilizationReportITest extends AbstractReportingITest {
         ), apiUser);
     }
 
-    private List<String> hubRow(Operator operator, Usage usage, CapacityType type, DayType dayType, Integer totalCapacity, Double percentage) {
-        return hubRow(singletonList(operator), usage, type, dayType, totalCapacity, percentage);
+    private List<String> hubRow(Operator operator, Usage usage, CapacityType type, DayType dayType, Integer totalCapacity, Integer unavailableCapacity, Double percentage) {
+        return hubRow(singletonList(operator), usage, type, dayType, totalCapacity, unavailableCapacity, percentage);
     }
 
-    private List<String> hubRow(List<Operator> operators, Usage usage, CapacityType type, DayType dayType, Integer totalCapacity, Double percentage) {
+    private List<String> hubRow(List<Operator> operators, Usage usage, CapacityType type, DayType dayType, Integer totalCapacity, Integer unavailableCapacity, Double percentage) {
         return asList(
                 hub.name.fi,
                 "Helsinki",
@@ -207,8 +249,9 @@ public class MaxUtilizationReportITest extends AbstractReportingITest {
                 translationService.translate(type),
                 translationService.translate(facility1.status),
                 totalCapacity.toString(),
+                unavailableCapacity.toString(),
                 translationService.translate(dayType),
-                String.format(Locale.ENGLISH, "%.2f %%", percentage*100.0)
+                String.format(Locale.ENGLISH, "%.2f %%", percentage * 100.0)
         );
     }
 

@@ -90,11 +90,11 @@ public class MaxUtilizationReportService extends AbstractReportService {
         return facilityStats.keySet().stream()
                 .map(key -> key.targetId)
                 .distinct()
-                .flatMap((Long id) -> facilityHistoryService.getUnavailableCapacityHistory(id, parameters.startDate, parameters.endDate)
+                .flatMap((Long id) -> facilityHistoryService.getCapacityHistory(id, parameters.startDate, parameters.endDate)
                         .entrySet().stream()
                         .flatMap(entry -> {
                             final DayType dayType = DayType.valueOf(entry.getKey());
-                            return entry.getValue().stream().map(unc -> {
+                            return entry.getValue().unavailableCapacities.stream().map(unc -> {
                                 final MaxUtilizationReportKey key = new MaxUtilizationReportKey();
                                 key.targetId = id;
                                 key.dayType = dayType;

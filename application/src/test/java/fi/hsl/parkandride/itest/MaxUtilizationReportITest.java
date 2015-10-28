@@ -36,6 +36,7 @@ public class MaxUtilizationReportITest extends AbstractReportingITest {
     private static final DateTime mon = baseDate.withDayOfWeek(MONDAY);
     private static final DateTime tue = mon.plusDays(1);
     private static final DateTime wed = mon.plusDays(2);
+    private static final DateTime fri = mon.plusDays(4);
     private static final DateTime sat = mon.plusDays(5);
     private static final DateTime sun = mon.plusDays(6);
 
@@ -188,12 +189,12 @@ public class MaxUtilizationReportITest extends AbstractReportingITest {
     @Test
     public void report_MaxUtilization_unavailableCapacities() {
         addMockMaxUtilizations(facility1, apiUser, 0, 0, 0);
-        facilityHistoryRepository.updateCapacityHistory(mon, facility1.id, emptyMap(), singletonList(new UnavailableCapacity(CAR, PARK_AND_RIDE, 10)));
-        facilityHistoryRepository.updateCapacityHistory(tue, facility1.id, emptyMap(), singletonList(new UnavailableCapacity(CAR, PARK_AND_RIDE, 15)));
-        facilityHistoryRepository.updateCapacityHistory(wed, facility1.id, emptyMap(), singletonList(new UnavailableCapacity(CAR, PARK_AND_RIDE, 5)));
-        facilityHistoryRepository.updateCapacityHistory(sat.minusDays(1), facility1.id, emptyMap(), singletonList(new UnavailableCapacity(CAR, PARK_AND_RIDE, 7)));
+
+        facilityHistoryRepository.updateCapacityHistory(mon, facility1.id, facility1.builtCapacity, singletonList(new UnavailableCapacity(CAR, PARK_AND_RIDE, 10)));
+        facilityHistoryRepository.updateCapacityHistory(tue, facility1.id, facility1.builtCapacity, singletonList(new UnavailableCapacity(CAR, PARK_AND_RIDE, 15)));
+        facilityHistoryRepository.updateCapacityHistory(wed, facility1.id, facility1.builtCapacity, singletonList(new UnavailableCapacity(CAR, PARK_AND_RIDE, 5)));
+        facilityHistoryRepository.updateCapacityHistory(fri, facility1.id, emptyMap(), singletonList(new UnavailableCapacity(CAR, PARK_AND_RIDE, 7)));
         facilityHistoryRepository.updateCapacityHistory(sat.withTime(18, 0, 0, 0), facility1.id, emptyMap(), emptyList());
-        facilityHistoryRepository.updateCapacityHistory(mon.minusDays(1), facility2.id, emptyMap(), emptyList());
 
         final Response whenPostingToReportUrl = postToReportUrl(baseParams(), MAX_UTILIZATION, adminUser);
         checkSheetContents(whenPostingToReportUrl, 0,

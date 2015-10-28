@@ -20,6 +20,7 @@ import java.util.function.BinaryOperator;
 
 import static fi.hsl.parkandride.util.Iterators.iterateFor;
 import static java.util.Collections.emptyList;
+import static java.util.Collections.emptyMap;
 import static java.util.stream.Collectors.reducing;
 
 public class FacilityHistoryService {
@@ -53,14 +54,18 @@ public class FacilityHistoryService {
      * mostly active during the the period of 6 to 10 am. is selected.
      */
     @TransactionalRead
-    public Map<LocalDate, List<UnavailableCapacity>> getUnavailableCapacityHistory(final long facilityId, final LocalDate start, final LocalDate end) {
+    public Map<LocalDate, FacilityCapacity> getCapacityHistory(final long facilityId, final LocalDate start, final LocalDate end) {
         final List<FacilityCapacityHistory> capacityHistory = facilityHistoryRepository.getCapacityHistory(facilityId, start, end);
 
         // Fall back to current unavailable capacities
         final Facility facility = facilityRepository.getFacility(facilityId);
-        final FacilityCapacityHistory identity = new FacilityCapacityHistory(null, null, null, null, facility.unavailableCapacities);
+        final FacilityCapacityHistory identity = new FacilityCapacityHistory(
+                null, null, null,
+                Optional.ofNullable(facility.builtCapacity).orElse(emptyMap()),
+                Optional.ofNullable(facility.unavailableCapacities).orElse(emptyList())
+        );
 
-        return Maps.toMap(dateRangeClosed(start, end), date -> Optional.ofNullable(findEntryForDate(capacityHistory, date, identity).unavailableCapacities).orElse(emptyList()));
+        return Maps.toMap(dateRangeClosed(start, end), date -> new FacilityCapacity(findEntryForDate(capacityHistory, date, identity)));
     }
 
     private static <T extends HasInterval> T findEntryForDate(List<T> entries, LocalDate date, T identity) {

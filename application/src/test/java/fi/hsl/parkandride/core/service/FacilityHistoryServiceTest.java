@@ -3,6 +3,7 @@
 
 package fi.hsl.parkandride.core.service;
 
+import com.google.common.collect.ImmutableMap;
 import fi.hsl.parkandride.core.back.FacilityHistoryRepository;
 import fi.hsl.parkandride.core.back.FacilityRepository;
 import fi.hsl.parkandride.core.domain.*;
@@ -20,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 
 import static com.google.common.collect.Lists.newArrayList;
+import static fi.hsl.parkandride.core.domain.CapacityType.CAR;
 import static fi.hsl.parkandride.core.domain.FacilityStatus.*;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
@@ -114,44 +116,39 @@ public class FacilityHistoryServiceTest {
 
     @Test
     public void capacityHistory_hasKeysForAllDays_capacityFromCurrent_ifNoHistory() {
-        final List<UnavailableCapacity> unavailableCapacities = returnFacilityWithDummyCapacities(dummyUnavailable());
+        Facility fac = returnFacilityWithDummyCapacities(dummyUnavailable());
 
-        final Map<LocalDate, List<UnavailableCapacity>> historyByDate = service.getUnavailableCapacityHistory(1l, START, END);
+        final Map<LocalDate, FacilityCapacity> historyByDate = service.getCapacityHistory(1l, START, END);
         assertThat(historyByDate.keySet()).hasSize(11);
         historyByDate.keySet().forEach(date -> assertThat(date).isLessThanOrEqualTo(END).isGreaterThanOrEqualTo(START));
-        historyByDate.values().forEach(s -> assertThat(s).isEqualTo(unavailableCapacities));
+        historyByDate.values().forEach(s -> assertThat(s).isEqualTo(new FacilityCapacity(fac.builtCapacity, fac.unavailableCapacities)));
     }
 
     @Test
     public void capacityHistory_changedAtMidnight() {
         returnFacilityWithDummyCapacities(dummyUnavailable());
-        final List<UnavailableCapacity> unavailable = dummyUnavailable();
-        when(repository.getCapacityHistory(1l, START, NEXT)).thenReturn(asList(
-                new FacilityCapacityHistory(1l, START_DATETIME, NEXT_DATETIME, null, null),
-                new FacilityCapacityHistory(1l, NEXT_DATETIME, null, null, unavailable)
-        ));
 
-        final Map<LocalDate, List<UnavailableCapacity>> historyByDate = service.getUnavailableCapacityHistory(1l, START, NEXT);
+        final FacilityCapacityHistory first = new FacilityCapacityHistory(1l, START_DATETIME, NEXT_DATETIME, null, null);
+        final FacilityCapacityHistory second = new FacilityCapacityHistory(1l, NEXT_DATETIME, null, null, dummyUnavailable());
+        when(repository.getCapacityHistory(1l, START, NEXT)).thenReturn(asList(first, second));
+
+        final Map<LocalDate, FacilityCapacity> historyByDate = service.getCapacityHistory(1l, START, NEXT);
         assertThat(historyByDate).hasSize(2)
-                .containsEntry(START, emptyList())
-                .containsEntry(NEXT, unavailable);
+                .containsEntry(START, new FacilityCapacity(first))
+                .containsEntry(NEXT, new FacilityCapacity(second));
     }
 
     @Test
     public void capacityHistory_mostEffectiveStatusSelected() {
         returnFacilityWithDummyCapacities(newArrayList());
-        final List<UnavailableCapacity> firstDummy = dummyUnavailable();
-        final List<UnavailableCapacity> secondDummy = dummyUnavailable();
-        final List<UnavailableCapacity> thirdDummy = dummyUnavailable();
-        final List<UnavailableCapacity> fourthDummy = dummyUnavailable();
-        when(repository.getCapacityHistory(1l, START, fourth.toLocalDate())).thenReturn(asList(
-                new FacilityCapacityHistory(1l, first, second, null, firstDummy),
-                new FacilityCapacityHistory(1l, second, third, null, secondDummy),
-                new FacilityCapacityHistory(1l, third, fourth, null, thirdDummy),
-                new FacilityCapacityHistory(1l, fourth, null, null, fourthDummy)
-        ));
 
-        final Map<LocalDate, List<UnavailableCapacity>> statusHistoryByDay = service.getUnavailableCapacityHistory(1l, START, fourth.toLocalDate());
+        final FacilityCapacityHistory first = new FacilityCapacityHistory(1l, FacilityHistoryServiceTest.first, second, null, dummyUnavailable());
+        final FacilityCapacityHistory second = new FacilityCapacityHistory(1l, FacilityHistoryServiceTest.second, third, null, dummyUnavailable());
+        final FacilityCapacityHistory third = new FacilityCapacityHistory(1l, FacilityHistoryServiceTest.third, fourth, null, dummyUnavailable());
+        final FacilityCapacityHistory fourth = new FacilityCapacityHistory(1l, FacilityHistoryServiceTest.fourth, null, null, dummyUnavailable());
+        when(repository.getCapacityHistory(1l, START, FacilityHistoryServiceTest.fourth.toLocalDate())).thenReturn(asList(first, second, third, fourth));
+
+        final Map<LocalDate, FacilityCapacity> statusHistoryByDay = service.getCapacityHistory(1l, START, FacilityHistoryServiceTest.fourth.toLocalDate());
         // First  -> Exceptional situation whole day
         // Second -> Exceptional situation end at 7.59 (1.59 in window 6-10)
         //           In operation for 2.01 of the significant window
@@ -160,17 +157,18 @@ public class FacilityHistoryServiceTest {
         // Fourth -> Returns to operation at 8.01, temporarily closed for 2.01 of the window
         assertThat(statusHistoryByDay)
                 .hasSize(4)
-                .containsEntry(START, firstDummy)
-                .containsEntry(START.plusDays(1), secondDummy)
-                .containsEntry(START.plusDays(2), secondDummy)
-                .containsEntry(START.plusDays(3), thirdDummy);
+                .containsEntry(START, new FacilityCapacity(first))
+                .containsEntry(START.plusDays(1), new FacilityCapacity(second))
+                .containsEntry(START.plusDays(2), new FacilityCapacity(second))
+                .containsEntry(START.plusDays(3), new FacilityCapacity(third));
     }
 
-    private List<UnavailableCapacity> returnFacilityWithDummyCapacities(List<UnavailableCapacity> capacities) {
+    private Facility returnFacilityWithDummyCapacities(List<UnavailableCapacity> capacities) {
         final Facility facility = new Facility();
+        facility.builtCapacity = ImmutableMap.of(CAR, 50);
         facility.unavailableCapacities = capacities;
         when(facilityRepository.getFacility(1l)).thenReturn(facility);
-        return facility.unavailableCapacities;
+        return facility;
     }
 
     private List<UnavailableCapacity> dummyUnavailable() {

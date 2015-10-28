@@ -141,13 +141,17 @@ public class FacilityHistoryDao implements FacilityHistoryRepository {
     }
 
     private void setEndDateForPreviousStateHistoryEntry(long facilityId, DateTime currentDate) {
-        final Long lastHistoryEntryId = queryFactory.query().select(qFacilityStatusHistory.id)
+        final Tuple lastHistoryEntry = queryFactory.query()
+                .select(qFacilityStatusHistory.id, qFacilityStatusHistory.startTs)
                 .from(qFacilityStatusHistory)
                 .where(qFacilityStatusHistory.facilityId.eq(facilityId))
-                .orderBy(qFacilityStatusHistory.startTs.desc())
+                .orderBy(qFacilityStatusHistory.endTs.desc().nullsFirst())
                 .fetchFirst();
 
-        if (lastHistoryEntryId != null) {
+        if (lastHistoryEntry != null) {
+            Long lastHistoryEntryId = lastHistoryEntry.get(qFacilityStatusHistory.id);
+            final DateTime lastEntryStartTs = lastHistoryEntry.get(qFacilityStatusHistory.startTs);
+            validateTimestamp(facilityId, currentDate, lastEntryStartTs, lastHistoryEntryId);
             queryFactory.update(qFacilityStatusHistory)
                     .set(qFacilityStatusHistory.endTs, currentDate)
                     .where(qFacilityStatusHistory.id.eq(lastHistoryEntryId))
@@ -156,17 +160,30 @@ public class FacilityHistoryDao implements FacilityHistoryRepository {
     }
 
     private void setEndDateForPreviousCapacityHistoryEntry(long facilityId, DateTime currentDate) {
-        final Long lastHistoryEntryId = queryFactory.query().select(qFacilityCapacityHistory.id)
+        final Tuple lastHistoryEntry = queryFactory.query()
+                .select(qFacilityCapacityHistory.id, qFacilityCapacityHistory.startTs)
                 .from(qFacilityCapacityHistory)
                 .where(qFacilityCapacityHistory.facilityId.eq(facilityId))
-                .orderBy(qFacilityCapacityHistory.startTs.desc())
+                .orderBy(qFacilityCapacityHistory.endTs.desc().nullsFirst())
                 .fetchFirst();
 
-        if (lastHistoryEntryId != null) {
+        if (lastHistoryEntry != null) {
+            Long lastHistoryEntryId = lastHistoryEntry.get(qFacilityCapacityHistory.id);
+            final DateTime lastEntryStartTs = lastHistoryEntry.get(qFacilityCapacityHistory.startTs);
+            validateTimestamp(facilityId, currentDate, lastEntryStartTs, lastHistoryEntryId);
             queryFactory.update(qFacilityCapacityHistory)
                     .set(qFacilityCapacityHistory.endTs, currentDate)
                     .where(qFacilityCapacityHistory.id.eq(lastHistoryEntryId))
                     .execute();
+        }
+    }
+
+    private static void validateTimestamp(long facilityId, DateTime currentDate, DateTime lastEntryStartTs, Long lastHistoryEntryId) {
+        if (lastEntryStartTs.isAfter(currentDate)) {
+            throw new IllegalStateException(String.format(
+                    "Trying to set end date <%s> before start date <%s> for last history entry <id=%d> of facility <id=%d>! Something is really wrong!",
+                    currentDate, lastEntryStartTs, lastHistoryEntryId, facilityId
+            ));
         }
     }
 

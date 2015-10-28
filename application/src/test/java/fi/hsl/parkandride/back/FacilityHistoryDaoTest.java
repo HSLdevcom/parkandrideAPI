@@ -15,10 +15,12 @@ import java.util.List;
 import java.util.Map;
 
 import static com.google.common.collect.Lists.newArrayList;
+import static fi.hsl.parkandride.core.domain.CapacityType.BICYCLE;
 import static fi.hsl.parkandride.core.domain.CapacityType.CAR;
 import static fi.hsl.parkandride.core.domain.CapacityType.ELECTRIC_CAR;
 import static fi.hsl.parkandride.core.domain.FacilityStatus.EXCEPTIONAL_SITUATION;
 import static fi.hsl.parkandride.core.domain.FacilityStatus.INACTIVE;
+import static fi.hsl.parkandride.core.domain.FacilityStatus.TEMPORARILY_CLOSED;
 import static fi.hsl.parkandride.core.domain.Usage.PARK_AND_RIDE;
 import static fi.hsl.parkandride.test.DateTimeTestUtils.withDate;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -156,4 +158,23 @@ public class FacilityHistoryDaoTest extends AbstractDaoTest {
         assertThat(historyAt).containsExactly(second);
     }
 
+    @Test(expected = IllegalStateException.class)
+    public void ensuresCapacityHistoryLinearity() {
+        final Facility fac = withDate(secondDate, () -> facilityDao.getFacility(facilityDao.insertFacility(facility)));
+
+        withDate(firstDate, () -> {
+            fac.unavailableCapacities = newArrayList(new UnavailableCapacity(BICYCLE, PARK_AND_RIDE, 5));
+            facilityDao.updateFacility(fac.id, fac);
+        });
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void ensuresStatusHistoryLinearity() {
+        final Facility fac = withDate(secondDate, () -> facilityDao.getFacility(facilityDao.insertFacility(facility)));
+
+        withDate(firstDate, () -> {
+            fac.status = TEMPORARILY_CLOSED;
+            facilityDao.updateFacility(fac.id, fac);
+        });
+    }
 }

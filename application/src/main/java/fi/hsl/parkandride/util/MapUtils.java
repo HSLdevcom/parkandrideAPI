@@ -3,8 +3,10 @@
 
 package fi.hsl.parkandride.util;
 
+import java.util.AbstractMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.BiFunction;
 import java.util.function.BinaryOperator;
 import java.util.function.Function;
 import java.util.stream.Collector;
@@ -41,5 +43,9 @@ public final class MapUtils {
                 entry -> entry.getValue(),
                 mergeFn
         );
+    }
+
+    public static <K, V, W> Function<Map.Entry<K,V>, Map.Entry<K, W>> mappingValue(BiFunction<K, V, W> mapper) {
+        return entry -> new AbstractMap.SimpleImmutableEntry<>(entry.getKey(), mapper.apply(entry.getKey(), entry.getValue()));
     }
 }

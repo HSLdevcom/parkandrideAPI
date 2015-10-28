@@ -15,12 +15,16 @@ import org.joda.time.LocalDate;
 
 import java.util.*;
 import java.util.function.Function;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
+import static com.google.common.base.MoreObjects.firstNonNull;
+import static com.google.common.collect.Lists.newArrayList;
 import static fi.hsl.parkandride.core.domain.FacilityStatus.INACTIVE;
 import static fi.hsl.parkandride.core.domain.FacilityStatus.TEMPORARILY_CLOSED;
 import static fi.hsl.parkandride.core.domain.Region.UNKNOWN_REGION;
 import static fi.hsl.parkandride.util.MapUtils.entriesToMap;
+import static fi.hsl.parkandride.util.MapUtils.mappingValue;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.sort;
@@ -33,6 +37,14 @@ public class MaxUtilizationReportService extends AbstractReportService {
 
     private static final String REPORT_NAME = "MaxUtilization";
     private static final Set<FacilityStatus> EXCLUDED_STATES = ImmutableSet.of(INACTIVE, TEMPORARILY_CLOSED);
+    private static final Collector<Map.Entry<MaxUtilizationReportKeyWithDate, FacilityRowInfo>, ?, MaxUtilizationReportInfo> toMaxUtilizationReportInfo = Collector.of(
+            MaxUtilizationReportInfo::new,
+            (info, entry) -> info.addRow(entry.getKey(), entry.getValue()),
+            (info1, info2) -> {
+                info2.rows.forEach(info1::addRow);
+                return info1;
+            }
+    );
 
     public MaxUtilizationReportService(FacilityService facilityService, OperatorService operatorService, ContactService contactService, HubService hubService,
                                        UtilizationRepository utilizationRepository, RegionRepository regionRepository, TranslationService translationService,
@@ -43,27 +55,65 @@ public class MaxUtilizationReportService extends AbstractReportService {
 
     @Override
     protected Excel generateReport(ReportContext ctx, ReportParameters parameters) {
-        UtilizationSearch search = toUtilizationSearch(parameters, ctx);
-        
-        // min available space per [facility, dayType, usage, capacity]
-        Map<MaxUtilizationReportKeyWithDate, Integer> facilityStats = getFacilityStats(ctx, parameters, search);
-
-        // Currently returns 0 for dates with excluded status and builtCapacity otherwise
-        Map<Long, Map<LocalDate, FacilityStatus>> facilityStatusHistory = getFacilityStatusHistory(parameters, facilityStats);
-        Map<MaxUtilizationReportKeyWithDate, Integer> facilityCapacityPerDate = getMaxCapacityPerDate(ctx, facilityStatusHistory, facilityStats);
-
-        // Unavailable capacity history
-        Map<MaxUtilizationReportKey, Integer> facilityUnavailableCapacity = getFacilityUnavailableCapacity(parameters, facilityStats);
+        // Filtered utilizations to spaces available
+        // (Facility, LocalDate, CapacityType, Usage) -> [totalCapacity,unavailableCapacity,availableSpaces]
+        MaxUtilizationReportInfo reportInfo = getReportInfo(ctx, parameters);
 
         // group facility keys by hubs
-        Map<HubReportKey, List<MaxUtilizationReportKeyWithDate>> hubStats = groupStatsByHubs(ctx, facilityStats);
+        Map<HubReportKey, List<MaxUtilizationReportKeyWithDate>> hubStats = groupKeysByHubs(ctx, reportInfo.rows.keySet());
 
         // calculate averages and sums
-        List<MaxUtilizationReportRow> rows = createReportRows(ctx, facilityStats, hubStats, facilityCapacityPerDate, facilityStatusHistory, facilityUnavailableCapacity);
+        List<MaxUtilizationReportRow> rows = createReportRows(ctx, hubStats, reportInfo);
 
         Excel excel = createExcelReport(ctx, rows);
 
         return excel;
+    }
+
+    private MaxUtilizationReportInfo getReportInfo(ReportContext ctx, ReportParameters params) {
+        Map<MaxUtilizationReportKeyWithDate, Integer> facilityStats = getFacilityStats(ctx, params, toUtilizationSearch(params, ctx));
+        Set<Long> facilityIds = facilityStats.keySet().stream().map(key -> key.targetId).distinct().collect(toSet());
+        // Historical information
+        Map<Long, Map<LocalDate, FacilityStatus>> facilityStatusHistory = getFacilityStatusHistory(params, facilityIds);
+        Map<MaxUtilizationReportKeyWithDate, Integer> facilityCapacityPerDate = getMaxCapacityPerDate(ctx, facilityStatusHistory, facilityStats);
+        Map<MaxUtilizationReportKey, Integer> facilityUnavailableCapacity = getFacilityUnavailableCapacity(params, facilityIds);
+
+        return facilityStats.entrySet().stream().map(mappingValue((key, spacesAvailable) -> {
+            final Facility facility = ctx.facilities.get(key.targetId);
+
+            final FacilityRowInfo info = new FacilityRowInfo();
+            info.facility = key.facility;
+            info.spacesAvailable = spacesAvailable;
+            info.totalCapacity = Optional.ofNullable(facilityCapacityPerDate.get(key)).orElse(facility.builtCapacity.get(key.capacityType));
+            info.unavailableCapacity = facilityUnavailableCapacity.get(key.toReportKey());
+            info.status = facilityStatusHistory.get(key.targetId).get(key.date);
+            info.date = key.date;
+            return info;
+        })).collect(toMaxUtilizationReportInfo);
+    }
+
+    private static class MaxUtilizationReportInfo {
+
+        Map<MaxUtilizationReportKeyWithDate, FacilityRowInfo> rows = new LinkedHashMap<>();
+        Map<MaxUtilizationReportKey, List<FacilityRowInfo>> groupedByDayType = new LinkedHashMap<>();
+
+        public MaxUtilizationReportInfo addRow(MaxUtilizationReportKeyWithDate key, FacilityRowInfo info) {
+            rows.merge(key, info, (r1, r2) -> {
+                throw new IllegalArgumentException(String.format("Duplicate keys encountered: <%s> <%s>", r1, r2));
+            });
+            groupedByDayType.computeIfAbsent(key.toReportKey(), k -> newArrayList()).add(info);
+            return this;
+        }
+
+    }
+
+    private static class FacilityRowInfo {
+        Facility facility;
+        Integer spacesAvailable;
+        Integer totalCapacity;
+        Integer unavailableCapacity;
+        FacilityStatus status;
+        LocalDate date;
     }
 
     private ImmutableMap<MaxUtilizationReportKeyWithDate, Integer> getMaxCapacityPerDate(ReportContext ctx, Map<Long, Map<LocalDate, FacilityStatus>> facilityStatusHistory, Map<MaxUtilizationReportKeyWithDate, Integer> facilityStats) {
@@ -76,20 +126,15 @@ public class MaxUtilizationReportService extends AbstractReportService {
         });
     }
 
-    private Map<Long, Map<LocalDate, FacilityStatus>> getFacilityStatusHistory(ReportParameters parameters, Map<MaxUtilizationReportKeyWithDate, Integer> facilityStats) {
-        return facilityStats.keySet().stream()
-                .map(key -> key.targetId)
-                .distinct()
-                .collect(toMap(
-                        identity(),
-                        id -> facilityHistoryService.getStatusHistoryByDay(id, parameters.startDate, parameters.endDate)
-                ));
+    private Map<Long, Map<LocalDate, FacilityStatus>> getFacilityStatusHistory(ReportParameters parameters, Set<Long> facilityIds) {
+        return facilityIds.stream().collect(toMap(
+                identity(),
+                id -> facilityHistoryService.getStatusHistoryByDay(id, parameters.startDate, parameters.endDate)
+        ));
     }
 
-    private Map<MaxUtilizationReportKey, Integer> getFacilityUnavailableCapacity(ReportParameters parameters, Map<MaxUtilizationReportKeyWithDate, Integer> facilityStats) {
-        return facilityStats.keySet().stream()
-                .map(key -> key.targetId)
-                .distinct()
+    private Map<MaxUtilizationReportKey, Integer> getFacilityUnavailableCapacity(ReportParameters parameters, Set<Long> facilityIds) {
+        return facilityIds.stream()
                 .flatMap((Long id) -> facilityHistoryService.getCapacityHistory(id, parameters.startDate, parameters.endDate)
                         .entrySet().stream()
                         .flatMap(entry -> {
@@ -102,7 +147,7 @@ public class MaxUtilizationReportService extends AbstractReportService {
                                 key.capacityType = unc.capacityType;
                                 return new AbstractMap.SimpleImmutableEntry<>(key, unc.getCapacity());
                             });
-                }))
+                        }))
                 .collect(entriesToMap(Math::max));
     }
 
@@ -127,37 +172,33 @@ public class MaxUtilizationReportService extends AbstractReportService {
         return excel;
     }
 
-    private List<MaxUtilizationReportRow> createReportRows(ReportContext ctx, Map<MaxUtilizationReportKeyWithDate, Integer> facilityStats, Map<HubReportKey, List<MaxUtilizationReportKeyWithDate>> hubStats, Map<MaxUtilizationReportKeyWithDate, Integer> facilityCapacityPerDate, Map<Long, Map<LocalDate, FacilityStatus>> statusHistory, Map<MaxUtilizationReportKey, Integer> facilityUnavailableCapacity) {
+    private List<MaxUtilizationReportRow> createReportRows(ReportContext ctx, Map<HubReportKey, List<MaxUtilizationReportKeyWithDate>> hubStats, MaxUtilizationReportInfo reportInfo) {
         List<MaxUtilizationReportRow> rows = new ArrayList<>();
 
         // At this point, the hub key is grouped by dayType, facility keys still contain the actual dat
         // However, the maximum utilization value has already been calculated for each facility and date.
         hubStats.forEach((hubKey, facilityKeys) -> {
-            int totalCapacity = facilityKeys.stream().map(fk -> fk.toReportKey()).distinct()
-                    .map(key -> key.facility.builtCapacity.get(hubKey.capacityType)).collect(summingInt(i -> i));
+            final Integer totalCapacity = facilityKeys.stream()
+                    .map(k -> k.targetId)
+                    .distinct()
+                    .map(id -> ctx.facilities.get(id))
+                    .collect(summingInt(f -> f.builtCapacity.get(hubKey.capacityType)));
 
-            final Map<LocalDate, Integer> capacityPerDate = facilityKeys.stream().collect(groupingBy(
-                    key -> key.date,
-                    summingInt(key -> facilityCapacityPerDate.getOrDefault(key, key.facility.builtCapacity.getOrDefault(hubKey.capacityType, 0)))
-            ));
+            final List<FacilityRowInfo> facilityInfos = facilityKeys.stream().map(k -> reportInfo.rows.get(k)).collect(toList());
+            final int unavailableCapacity = facilityInfos.stream().collect(summingInt(row -> firstNonNull(row.unavailableCapacity, 0)));
 
-            Map<LocalDate, Double> freeSpacesPerDay = facilityKeys.stream()
-                    .filter(k -> statusNotExcluded(k, statusHistory))
-                    .collect(groupingBy(k -> k.date, summingDouble(k -> facilityStats.getOrDefault(k, 0))));
+            final Map<LocalDate, Integer> capacityPerDate = facilityInfos.stream()
+                    .collect(groupingBy(info -> info.date, summingInt(info -> info.totalCapacity)));
+            final Map<LocalDate, Double> freeSpacesPerDate = facilityInfos.stream()
+                    .filter(info -> !EXCLUDED_STATES.contains(info.status))
+                    .collect(groupingBy(info -> info.date, summingDouble(info -> info.spacesAvailable)));
 
-            Map<LocalDate, Double> utilizationPerDay = freeSpacesPerDay.entrySet().stream()
-                    .collect(toMap(
-                            entry -> entry.getKey(),
-                            entry -> 1.0d - (entry.getValue() / capacityPerDate.get(entry.getKey())) // Fraction per day
-                    ));
-
-
-            final Double averageOfPercentages = utilizationPerDay.values().stream().collect(averagingDouble(i -> i));
-
-            final Map<MaxUtilizationReportKey, Integer> facilityUnavailableCapacity1 = facilityUnavailableCapacity;
-            final Integer unavailableCapacity = facilityKeys.stream()
-                    .map(k -> k.toReportKey())
-                    .collect(summingInt(k -> facilityUnavailableCapacity.getOrDefault(k, 0)));
+            final Double averageOfPercentages = freeSpacesPerDate.entrySet().stream()
+                    .map(mappingValue((date, freeSpaces) -> {
+                        final Integer capacity = capacityPerDate.get(date);
+                        return capacity == 0 ? 0.0d : 1.0d - (freeSpaces / ((double) capacity));
+                    }))
+                    .collect(averagingDouble(e -> e.getValue()));
 
             rows.add(new MaxUtilizationReportRow(hubKey.hub, facilityKeys.get(0).toReportKey(), operatorNames(ctx, hubKey), averageOfPercentages, totalCapacity, unavailableCapacity));
         });
@@ -169,9 +210,9 @@ public class MaxUtilizationReportService extends AbstractReportService {
         return ctx.operatorsByHubId.get(hubKey.targetId).stream().map(op -> op.name.fi).sorted().collect(Collectors.joining(", "));
     }
 
-    private Map<HubReportKey, List<MaxUtilizationReportKeyWithDate>> groupStatsByHubs(ReportContext ctx, Map<MaxUtilizationReportKeyWithDate, Integer> facilityStats) {
+    private Map<HubReportKey, List<MaxUtilizationReportKeyWithDate>> groupKeysByHubs(ReportContext ctx, Set<MaxUtilizationReportKeyWithDate> reportKeys) {
         Map<HubReportKey, List<MaxUtilizationReportKeyWithDate>> hubStats = new LinkedHashMap<>();
-        facilityStats.forEach((key, val) -> {
+        reportKeys.forEach(key -> {
             ctx.hubsByFacilityId.getOrDefault(key.targetId, emptyList()).forEach(hub -> {
                 List<MaxUtilizationReportKeyWithDate> l = new ArrayList<>();
                 l.add(key);
@@ -206,15 +247,8 @@ public class MaxUtilizationReportService extends AbstractReportService {
         }
     }
 
-    private boolean hasBuiltCapacity(Utilization u, Map<Long, Facility> facilities) {
+    private static boolean hasBuiltCapacity(Utilization u, Map<Long, Facility> facilities) {
         return facilities.get(u.facilityId).builtCapacity.containsKey(u.capacityType);
-    }
-
-    private boolean statusNotExcluded(MaxUtilizationReportKeyWithDate key, Map<Long, Map<LocalDate, FacilityStatus>> facilityStatusHistory) {
-        return !Optional.ofNullable(facilityStatusHistory.get(key.targetId))
-                .map(e -> e.get(key.date))
-                .filter(status -> EXCLUDED_STATES.contains(status))
-                .isPresent();
     }
 
     static class MaxUtilizationReportRow implements Comparable<MaxUtilizationReportRow> {

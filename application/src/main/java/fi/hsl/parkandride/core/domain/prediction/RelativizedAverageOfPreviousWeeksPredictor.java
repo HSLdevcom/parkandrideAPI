@@ -37,19 +37,7 @@ public class RelativizedAverageOfPreviousWeeksPredictor implements Predictor {
             return Collections.emptyList();
         }
         DateTime now = state.latestUtilization = latest.get().timestamp;
-
         final UtilizationHistory inMemoryHistory = new UtilizationHistoryList(history.getRange(now.minusWeeks(3).minus(LOOKBACK_MINUTES), now));
-        final List<Utilization> recentUtilizations = inMemoryHistory.getRange(now.minus(LOOKBACK_MINUTES), now);
-        Double recentUtilizationArea = Math.max(1, calculateAreaAverageByDataPoints(recentUtilizations));
-        Double referenceUtilizationAreaAverage = Math.max(1,
-                LOOKBACK_PERIODS.stream()
-                        .map(offset -> now.minus(offset))
-                        .map(referenceTime -> inMemoryHistory.getRange(referenceTime.minus(LOOKBACK_MINUTES), referenceTime))
-                        .filter(utilizationList -> !utilizationList.isEmpty())
-                        .mapToDouble(utilizationList -> calculateAreaAverageByDataPoints(utilizationList))
-                        .average()
-                        .orElseGet(() -> recentUtilizationArea));
-        final Double utilizationMultiplier = Math.max(1, recentUtilizationArea / referenceUtilizationAreaAverage);
 
         List<List<Prediction>> groupedByWeek =
                 LOOKBACK_PERIODS.stream()
@@ -74,8 +62,22 @@ public class RelativizedAverageOfPreviousWeeksPredictor implements Predictor {
         List<List<Prediction>> groupedByTimeOfDay = ListUtil.transpose(groupedByWeek);
 
         return groupedByTimeOfDay.stream()
-                .map(predictions -> reduce(predictions, latest.get().spacesAvailable, utilizationMultiplier))
+                .map(predictions -> reduce(predictions, latest.get().spacesAvailable, getUtilizationMultiplier(now, inMemoryHistory)))
                 .collect(Collectors.toList());
+    }
+
+    private Double getUtilizationMultiplier(DateTime now, UtilizationHistory inMemoryHistory) {
+        final List<Utilization> recentUtilizations = inMemoryHistory.getRange(now.minus(LOOKBACK_MINUTES), now);
+        Double recentUtilizationArea = Math.max(1, calculateAreaAverageByDataPoints(recentUtilizations));
+        Double referenceUtilizationAreaAverage = Math.max(1,
+                LOOKBACK_PERIODS.stream()
+                        .map(offset -> now.minus(offset))
+                        .map(referenceTime -> inMemoryHistory.getRange(referenceTime.minus(LOOKBACK_MINUTES), referenceTime))
+                        .filter(utilizationList -> !utilizationList.isEmpty())
+                        .mapToDouble(utilizationList -> calculateAreaAverageByDataPoints(utilizationList))
+                        .average()
+                        .orElseGet(() -> recentUtilizationArea));
+        return Math.max(1, recentUtilizationArea / referenceUtilizationAreaAverage);
     }
 
     private double calculateAreaAverageByDataPoints(List<Utilization> utilizationList) {

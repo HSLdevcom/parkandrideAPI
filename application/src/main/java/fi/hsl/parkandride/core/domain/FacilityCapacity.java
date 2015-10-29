@@ -26,6 +26,10 @@ public class FacilityCapacity {
         this(entry.builtCapacity, entry.unavailableCapacities);
     }
 
+    public FacilityCapacity(Facility facility) {
+        this(facility.builtCapacity, facility.unavailableCapacities);
+    }
+
     @Override
     public String toString() {
         return MoreObjects.toStringHelper(this)

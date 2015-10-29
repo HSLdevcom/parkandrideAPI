@@ -48,4 +48,12 @@ public final class MapUtils {
     public static <K, V, W> Function<Map.Entry<K,V>, Map.Entry<K, W>> mappingValue(BiFunction<K, V, W> mapper) {
         return entry -> new AbstractMap.SimpleImmutableEntry<>(entry.getKey(), mapper.apply(entry.getKey(), entry.getValue()));
     }
+
+    public static <K, V, KK> Function<Map.Entry<K,V>, Map.Entry<KK, V>> mappingKey(BiFunction<K, V, KK> mapper) {
+        return entry -> new AbstractMap.SimpleImmutableEntry<>(mapper.apply(entry.getKey(), entry.getValue()), entry.getValue());
+    }
+
+    public static <K, V, OUT> Function<Map.Entry<K,V>, OUT> mappingEntry(BiFunction<K, V, OUT> mapper) {
+        return entry -> mapper.apply(entry.getKey(), entry.getValue());
+    }
 }

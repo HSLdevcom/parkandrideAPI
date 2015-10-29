@@ -3,6 +3,7 @@
 
 package fi.hsl.parkandride.itest;
 
+import com.google.common.collect.ImmutableMap;
 import com.jayway.restassured.response.Response;
 import fi.hsl.parkandride.core.back.FacilityHistoryRepository;
 import fi.hsl.parkandride.core.back.FacilityRepository;
@@ -39,6 +40,7 @@ public class MaxUtilizationReportITest extends AbstractReportingITest {
     private static final DateTime fri = mon.plusDays(4);
     private static final DateTime sat = mon.plusDays(5);
     private static final DateTime sun = mon.plusDays(6);
+    private static final DateTime initial = mon.minusMonths(1);
 
     @Inject FacilityHistoryRepository facilityHistoryRepository;
     @Inject FacilityRepository facilityRepository;
@@ -51,7 +53,7 @@ public class MaxUtilizationReportITest extends AbstractReportingITest {
     @Override
     public void initialize() {
         // Needed to ensure history linearity
-        withDate(mon.minusMonths(1), () -> {
+        withDate(initial, () -> {
             this.initFixture();
 
             // Clear the unavailable capacities history
@@ -193,8 +195,8 @@ public class MaxUtilizationReportITest extends AbstractReportingITest {
         facilityHistoryRepository.updateCapacityHistory(mon, facility1.id, facility1.builtCapacity, singletonList(new UnavailableCapacity(CAR, PARK_AND_RIDE, 10)));
         facilityHistoryRepository.updateCapacityHistory(tue, facility1.id, facility1.builtCapacity, singletonList(new UnavailableCapacity(CAR, PARK_AND_RIDE, 15)));
         facilityHistoryRepository.updateCapacityHistory(wed, facility1.id, facility1.builtCapacity, singletonList(new UnavailableCapacity(CAR, PARK_AND_RIDE, 5)));
-        facilityHistoryRepository.updateCapacityHistory(fri, facility1.id, emptyMap(), singletonList(new UnavailableCapacity(CAR, PARK_AND_RIDE, 7)));
-        facilityHistoryRepository.updateCapacityHistory(sat.withTime(18, 0, 0, 0), facility1.id, emptyMap(), emptyList());
+        facilityHistoryRepository.updateCapacityHistory(fri, facility1.id, facility1.builtCapacity, singletonList(new UnavailableCapacity(CAR, PARK_AND_RIDE, 7)));
+        facilityHistoryRepository.updateCapacityHistory(sat.withTime(18, 0, 0, 0), facility1.id, facility1.builtCapacity, emptyList());
 
         final Response whenPostingToReportUrl = postToReportUrl(baseParams(), MAX_UTILIZATION, adminUser);
         checkSheetContents(whenPostingToReportUrl, 0,
@@ -202,6 +204,28 @@ public class MaxUtilizationReportITest extends AbstractReportingITest {
                 hubRow(asList(operator1, operator2), PARK_AND_RIDE, CAR, DayType.BUSINESS_DAY, 50, 15, 1.0),
                 hubRow(asList(operator1, operator2), PARK_AND_RIDE, CAR, DayType.SATURDAY, 50, 7, 1.0),
                 hubRow(asList(operator1, operator2), PARK_AND_RIDE, CAR, DayType.SUNDAY, 50, 0, 1.0)
+        );
+    }
+
+    @Test
+    public void report_MaxUtilization_changingCapacity() {
+        addMockMaxUtilizations(facility1, apiUser,  50, 50, 50);
+        addMockMaxUtilizations(facility2, apiUser2, 0, 50, 10);
+
+        withDate(sun, () -> {
+            facility1.builtCapacity = ImmutableMap.of(CAR, 100);
+            facilityRepository.updateFacility(facility1.id, facility1);
+        });
+
+        // Monday   = 1 - ((50 +  0) / (  50 + 50)) = 50%
+        // Saturday = 1 - ((50 + 50) / (  50 + 50)) = 0%
+        // Sunday   = 1 - ((50 + 10) / ( 100 + 50)) = 40%
+        final Response whenPostingToReportUrl = postToReportUrl(baseParams(), MAX_UTILIZATION, adminUser);
+        checkSheetContents(whenPostingToReportUrl, 0,
+                headers(),
+                hubRow(asList(operator1, operator2), PARK_AND_RIDE, CAR, DayType.BUSINESS_DAY, 150, 0, 0.5),
+                hubRow(asList(operator1, operator2), PARK_AND_RIDE, CAR, DayType.SATURDAY,     150, 0, 0.0),
+                hubRow(asList(operator1, operator2), PARK_AND_RIDE, CAR, DayType.SUNDAY,       150, 0, 0.4)
         );
     }
 

@@ -3,7 +3,6 @@
 
 package fi.hsl.parkandride.core.service.reporting;
 
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 import com.mysema.commons.lang.CloseableIterator;
@@ -25,9 +24,7 @@ import static fi.hsl.parkandride.core.domain.FacilityStatus.TEMPORARILY_CLOSED;
 import static fi.hsl.parkandride.core.domain.Region.UNKNOWN_REGION;
 import static fi.hsl.parkandride.util.MapUtils.*;
 import static java.util.Arrays.asList;
-import static java.util.Collections.emptyList;
-import static java.util.Collections.emptyMap;
-import static java.util.Collections.sort;
+import static java.util.Collections.*;
 import static java.util.Spliterators.spliteratorUnknownSize;
 import static java.util.stream.Collectors.*;
 import static java.util.stream.StreamSupport.stream;
@@ -79,7 +76,6 @@ public class MaxUtilizationReportService extends AbstractReportService {
         Map<Long, Map<LocalDate, FacilityStatus>> facilityStatusHistory = getFacilityStatusHistory(facilityIds, params.startDate, params.endDate);
         Map<Long, Map<LocalDate, FacilityCapacity>> facilityCapacityHistory = getFacilityCapacityHistory(facilityIds, params.startDate, params.endDate);
 
-        Map<MaxUtilizationReportKeyWithDate, Integer> facilityCapacityPerDate = getMaxCapacityPerDate(ctx, facilityStatusHistory, facilityStats.keySet());
         Map<MaxUtilizationReportKey, Integer> facilityUnavailableCapacity = getFacilityUnavailableCapacity(ctx, facilityCapacityHistory);
 
         return facilityStats.entrySet().stream().map(mappingValue((key, spacesAvailable) -> {
@@ -88,22 +84,16 @@ public class MaxUtilizationReportService extends AbstractReportService {
             final FacilityRowInfo info = new FacilityRowInfo();
             info.facility = key.facility;
             info.spacesAvailable = spacesAvailable;
-            info.totalCapacity = Optional.ofNullable(facilityCapacityPerDate.get(key)).orElse(facility.builtCapacity.get(key.capacityType));
+
+            info.totalCapacity = facilityCapacityHistory
+                    .getOrDefault(key.targetId, emptyMap())
+                    .getOrDefault(key.date, new FacilityCapacity(facility))
+                    .builtCapacity.getOrDefault(key.capacityType, 0);
             info.unavailableCapacity = facilityUnavailableCapacity.get(key.toReportKey());
             info.status = facilityStatusHistory.get(key.targetId).get(key.date);
             info.date = key.date;
             return info;
         })).collect(toMaxUtilizationReportInfo);
-    }
-
-    private ImmutableMap<MaxUtilizationReportKeyWithDate, Integer> getMaxCapacityPerDate(ReportContext ctx, Map<Long, Map<LocalDate, FacilityStatus>> facilityStatusHistory, Set<MaxUtilizationReportKeyWithDate> reportKeys) {
-        return Maps.toMap(reportKeys, key -> {
-            return Optional.ofNullable(facilityStatusHistory.get(key.targetId)).map(m -> m.get(key.date))
-                    .filter(status -> !EXCLUDED_STATES.contains(status))
-                    .map(s -> ctx.facilities.get(key.targetId))
-                    .map(fac -> fac.builtCapacity.get(key.capacityType))
-                    .orElse(0);
-        });
     }
 
     private Map<Long, Map<LocalDate, FacilityStatus>> getFacilityStatusHistory(Set<Long> facilityIds, LocalDate startDate, LocalDate endDate) {

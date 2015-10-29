@@ -52,6 +52,9 @@ public class MaxUtilizationReportService extends AbstractReportService {
         super(REPORT_NAME, facilityService, operatorService, contactService, hubService, utilizationRepository, translationService, regionRepository, facilityHistoryService);
     }
 
+    private static boolean hasBuiltCapacity(Utilization u, Map<Long, Facility> facilities) {
+        return facilities.get(u.facilityId).builtCapacity.containsKey(u.capacityType);
+    }
 
     @Override
     protected Excel generateReport(ReportContext ctx, ReportParameters parameters) {
@@ -90,30 +93,6 @@ public class MaxUtilizationReportService extends AbstractReportService {
             info.date = key.date;
             return info;
         })).collect(toMaxUtilizationReportInfo);
-    }
-
-    private static class MaxUtilizationReportInfo {
-
-        Map<MaxUtilizationReportKeyWithDate, FacilityRowInfo> rows = new LinkedHashMap<>();
-        Map<MaxUtilizationReportKey, List<FacilityRowInfo>> groupedByDayType = new LinkedHashMap<>();
-
-        public MaxUtilizationReportInfo addRow(MaxUtilizationReportKeyWithDate key, FacilityRowInfo info) {
-            rows.merge(key, info, (r1, r2) -> {
-                throw new IllegalArgumentException(String.format("Duplicate keys encountered: <%s> <%s>", r1, r2));
-            });
-            groupedByDayType.computeIfAbsent(key.toReportKey(), k -> newArrayList()).add(info);
-            return this;
-        }
-
-    }
-
-    private static class FacilityRowInfo {
-        Facility facility;
-        Integer spacesAvailable;
-        Integer totalCapacity;
-        Integer unavailableCapacity;
-        FacilityStatus status;
-        LocalDate date;
     }
 
     private ImmutableMap<MaxUtilizationReportKeyWithDate, Integer> getMaxCapacityPerDate(ReportContext ctx, Map<Long, Map<LocalDate, FacilityStatus>> facilityStatusHistory, Map<MaxUtilizationReportKeyWithDate, Integer> facilityStats) {
@@ -247,8 +226,28 @@ public class MaxUtilizationReportService extends AbstractReportService {
         }
     }
 
-    private static boolean hasBuiltCapacity(Utilization u, Map<Long, Facility> facilities) {
-        return facilities.get(u.facilityId).builtCapacity.containsKey(u.capacityType);
+    private static class MaxUtilizationReportInfo {
+
+        Map<MaxUtilizationReportKeyWithDate, FacilityRowInfo> rows = new LinkedHashMap<>();
+        Map<MaxUtilizationReportKey, List<FacilityRowInfo>> groupedByDayType = new LinkedHashMap<>();
+
+        public MaxUtilizationReportInfo addRow(MaxUtilizationReportKeyWithDate key, FacilityRowInfo info) {
+            rows.merge(key, info, (r1, r2) -> {
+                throw new IllegalArgumentException(String.format("Duplicate keys encountered: <%s> <%s>", r1, r2));
+            });
+            groupedByDayType.computeIfAbsent(key.toReportKey(), k -> newArrayList()).add(info);
+            return this;
+        }
+
+    }
+
+    private static class FacilityRowInfo {
+        Facility facility;
+        Integer spacesAvailable;
+        Integer totalCapacity;
+        Integer unavailableCapacity;
+        FacilityStatus status;
+        LocalDate date;
     }
 
     static class MaxUtilizationReportRow implements Comparable<MaxUtilizationReportRow> {
@@ -322,7 +321,8 @@ public class MaxUtilizationReportService extends AbstractReportService {
         LocalDate date;
         Facility facility;
 
-        public MaxUtilizationReportKeyWithDate() {}
+        public MaxUtilizationReportKeyWithDate() {
+        }
 
         public MaxUtilizationReportKeyWithDate(Utilization u) {
             super(u);

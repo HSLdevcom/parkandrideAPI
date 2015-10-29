@@ -8,8 +8,8 @@ import fi.hsl.parkandride.back.*;
 import fi.hsl.parkandride.back.prediction.PredictionDao;
 import fi.hsl.parkandride.back.prediction.PredictorDao;
 import fi.hsl.parkandride.core.back.*;
-import fi.hsl.parkandride.core.domain.prediction.AverageOfPreviousWeeksPredictor;
 import fi.hsl.parkandride.core.domain.prediction.Predictor;
+import fi.hsl.parkandride.core.domain.prediction.RelativizedAverageOfPreviousWeeksPredictor;
 import fi.hsl.parkandride.core.service.*;
 import fi.hsl.parkandride.core.service.reporting.*;
 import org.jasypt.util.password.PasswordEncryptor;
@@ -180,7 +180,7 @@ public class CoreConfiguration {
 
     @Bean
     public Predictor[] predictors() {
-        return new Predictor[]{new AverageOfPreviousWeeksPredictor()};
+        return new Predictor[]{new RelativizedAverageOfPreviousWeeksPredictor()};
     }
 
     @Bean

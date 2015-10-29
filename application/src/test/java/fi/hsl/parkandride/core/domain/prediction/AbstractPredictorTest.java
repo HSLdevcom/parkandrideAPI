@@ -12,21 +12,30 @@ import fi.hsl.parkandride.core.domain.Utilization;
 import fi.hsl.parkandride.core.domain.UtilizationKey;
 import org.joda.time.DateTime;
 import org.junit.Before;
+import org.junit.Test;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.inject.Inject;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.is;
+
+@Transactional
 public abstract class AbstractPredictorTest extends AbstractDaoTest {
 
     @Inject private Dummies dummies;
     @Inject private UtilizationRepository utilizationRepository;
     private final Predictor predictor;
 
-    private UtilizationKey utilizationKey;
-    private UtilizationHistory utilizationHistory;
+    protected UtilizationKey utilizationKey;
+    protected UtilizationHistory utilizationHistory;
     protected PredictorState predictorState;
     protected final DateTime now = new DateTime();
+    protected Optional<Utilization> latestInsertedUtilization = Optional.empty();
 
     protected AbstractPredictorTest(Predictor predictor) {
         this.predictor = predictor;
@@ -48,9 +57,17 @@ public abstract class AbstractPredictorTest extends AbstractDaoTest {
         u.timestamp = timestamp;
         u.spacesAvailable = spacesAvailable;
         utilizationRepository.insertUtilizations(Collections.singletonList(u));
+        if (!latestInsertedUtilization.isPresent() || latestInsertedUtilization.get().timestamp.isBefore(timestamp)) {
+            latestInsertedUtilization = Optional.of(u);
+        }
     }
 
     public List<Prediction> predict() {
         return predictor.predict(predictorState, utilizationHistory);
+    }
+
+    @Test
+    public void when_no_history_then_no_predictions() {
+        assertThat(predict(), is(empty()));
     }
 }

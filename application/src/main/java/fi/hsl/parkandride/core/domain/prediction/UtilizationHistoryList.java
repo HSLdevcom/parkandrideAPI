@@ -5,13 +5,13 @@ package fi.hsl.parkandride.core.domain.prediction;
 
 import com.mysema.commons.lang.CloseableIterator;
 import com.mysema.commons.lang.IteratorAdapter;
-import fi.hsl.parkandride.core.back.UtilizationRepository;
 import fi.hsl.parkandride.core.domain.Utilization;
-import fi.hsl.parkandride.core.domain.UtilizationKey;
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeComparator;
 
-import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.function.BinaryOperator;
 import java.util.stream.Collectors;
 
@@ -25,8 +25,9 @@ public class UtilizationHistoryList implements UtilizationHistory {
     }
 
     @Override
-    public Utilization getLatest() {
-        return utilizationList.stream().reduce(utilizationList.get(0), BinaryOperator.maxBy((a, b) -> a.timestamp.compareTo(b.timestamp)));
+    public Optional<Utilization> getLatest() {
+        return Optional.of(utilizationList.stream()
+                .reduce(utilizationList.get(0), BinaryOperator.maxBy((a, b) -> a.timestamp.compareTo(b.timestamp))));
     }
 
     @Override
@@ -40,8 +41,16 @@ public class UtilizationHistoryList implements UtilizationHistory {
     public CloseableIterator<Utilization> getUpdatesSince(DateTime startExclusive) {
         return new IteratorAdapter<Utilization>(
                 utilizationList.stream()
-                .filter(utilization -> utilization.timestamp.isAfter(startExclusive))
+                .filter(utilization -> !utilization.timestamp.isBefore(startExclusive))
                 .iterator()
         );
+    }
+
+    @Override
+    public Optional<Utilization> getAt(DateTime timestamp) {
+        return utilizationList.stream()
+                .filter(Objects::nonNull)
+                .filter(u -> !u.timestamp.isAfter(timestamp))
+                .max((u1, u2) -> u1.timestamp.compareTo(u2.timestamp));
     }
 }

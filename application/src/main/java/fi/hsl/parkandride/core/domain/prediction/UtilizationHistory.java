@@ -8,12 +8,15 @@ import fi.hsl.parkandride.core.domain.Utilization;
 import org.joda.time.DateTime;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface UtilizationHistory {
 
-    Utilization getLatest();
+    Optional<Utilization> getLatest();
 
     List<Utilization> getRange(DateTime startInclusive, DateTime endInclusive);
 
     CloseableIterator<Utilization> getUpdatesSince(DateTime startExclusive);
+
+    Optional<Utilization> getAt(DateTime timestamp);
 }

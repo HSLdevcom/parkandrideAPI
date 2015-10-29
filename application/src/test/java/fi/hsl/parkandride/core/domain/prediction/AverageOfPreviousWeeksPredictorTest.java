@@ -6,13 +6,11 @@ package fi.hsl.parkandride.core.domain.prediction;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@Transactional
 public class AverageOfPreviousWeeksPredictorTest extends AbstractPredictorTest {
 
     public AverageOfPreviousWeeksPredictorTest() {
@@ -28,13 +26,6 @@ public class AverageOfPreviousWeeksPredictorTest extends AbstractPredictorTest {
     @After
     public void checkUpdatesLatestUtilization() {
         assertThat(predictorState.latestUtilization).isEqualTo(now);
-    }
-
-    @Test
-    public void when_no_history_then_no_predictions() {
-        List<Prediction> predictions = predict();
-
-        assertThat(predictions).isEmpty();
     }
 
     @Test

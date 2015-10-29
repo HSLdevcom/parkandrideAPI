@@ -3,6 +3,7 @@
 
 package fi.hsl.parkandride.core.domain.prediction;
 
+import fi.hsl.parkandride.back.ListUtil;
 import fi.hsl.parkandride.core.back.PredictionRepository;
 import fi.hsl.parkandride.core.domain.Utilization;
 import org.joda.time.DateTime;
@@ -10,9 +11,7 @@ import org.joda.time.Weeks;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -29,8 +28,9 @@ public class AverageOfPreviousWeeksPredictor implements Predictor {
 
     @Override
     public List<Prediction> predict(PredictorState state, UtilizationHistory history) {
-        Utilization latest = history.getLatest();
-        DateTime now = state.latestUtilization = latest.timestamp;
+        Optional<Utilization> latest = history.getLatest();
+        if (!latest.isPresent()) return Collections.emptyList();
+        DateTime now = state.latestUtilization = latest.get().timestamp;
 
         List<List<Prediction>> groupedByWeek = Stream.of(Weeks.weeks(1), Weeks.weeks(2), Weeks.weeks(3))
                 .map(offset -> {
@@ -43,7 +43,7 @@ public class AverageOfPreviousWeeksPredictor implements Predictor {
                 })
                 .collect(Collectors.toList());
 
-        List<List<Prediction>> groupedByTimeOfDay = transpose(groupedByWeek);
+        List<List<Prediction>> groupedByTimeOfDay = ListUtil.transpose(groupedByWeek);
 
         return groupedByTimeOfDay.stream()
                 .map(this::reduce)
@@ -62,27 +62,5 @@ public class AverageOfPreviousWeeksPredictor implements Predictor {
                 .average()
                 .getAsDouble());
         return new Prediction(timestamp, spacesAvailable);
-    }
-
-    private static <T> List<List<T>> transpose(List<List<T>> sources) {
-        List<Iterator<T>> iterators = sources.stream()
-                .map(List::iterator)
-                .collect(Collectors.toList());
-        List<List<T>> results = new ArrayList<>();
-        while (hasNexts(iterators)) {
-            results.add(nexts(iterators));
-        }
-        return results;
-    }
-
-    private static <T> boolean hasNexts(List<Iterator<T>> heads) {
-        return heads.stream().anyMatch(Iterator::hasNext);
-    }
-
-    private static <T> List<T> nexts(List<Iterator<T>> heads) {
-        return heads.stream()
-                .filter(Iterator::hasNext)
-                .map(Iterator::next)
-                .collect(Collectors.toList());
     }
 }

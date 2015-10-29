@@ -19,9 +19,11 @@ import java.util.stream.Collectors;
 
 import static com.google.common.base.MoreObjects.firstNonNull;
 import static com.google.common.collect.Lists.newArrayList;
+import static fi.hsl.parkandride.core.domain.FacilityStatus.EXCEPTIONAL_SITUATION;
 import static fi.hsl.parkandride.core.domain.FacilityStatus.INACTIVE;
 import static fi.hsl.parkandride.core.domain.FacilityStatus.TEMPORARILY_CLOSED;
 import static fi.hsl.parkandride.core.domain.Region.UNKNOWN_REGION;
+import static fi.hsl.parkandride.core.service.reporting.Excel.TableColumn.col;
 import static fi.hsl.parkandride.util.MapUtils.*;
 import static java.util.Arrays.asList;
 import static java.util.Collections.*;
@@ -146,7 +148,8 @@ public class MaxUtilizationReportService extends AbstractReportService {
                 excelUtil.tcol("reports.utilization.col.totalCapacity", (MaxUtilizationReportRow r) -> r.totalCapacity),
                 excelUtil.tcol("reports.utilization.col.unavailableCapacity", (MaxUtilizationReportRow r) -> r.unavailableCapacity),
                 excelUtil.tcol("reports.utilization.col.dayType", (MaxUtilizationReportRow r) -> translationService.translate(r.key.dayType)),
-                excelUtil.tcol("reports.utilization.col.averageMaxUsage", valFn, excel.percent)
+                excelUtil.tcol("reports.utilization.col.averageMaxUsage", valFn, excel.percent),
+                col("", (MaxUtilizationReportRow r) -> r.hasHadExceptionalStates ? excelUtil.getMessage("reports.utilization.exceptionalSituation") : null)
         );
         excel.addSheet(excelUtil.getMessage("reports.utilization.sheets.summary"), rows, columns);
         excel.addSheet(excelUtil.getMessage("reports.utilization.sheets.legend"),
@@ -182,7 +185,8 @@ public class MaxUtilizationReportService extends AbstractReportService {
                     }))
                     .collect(averagingDouble(e -> e.getValue()));
 
-            rows.add(new MaxUtilizationReportRow(hubKey.hub, facilityKeys.get(0).toReportKey(), operatorNames(ctx, hubKey), averageOfPercentages, totalCapacity, unavailableCapacity));
+            final boolean hasHadExceptionalStates = facilityInfos.stream().map(i -> i.status).anyMatch(s -> EXCEPTIONAL_SITUATION.equals(s));
+            rows.add(new MaxUtilizationReportRow(hubKey.hub, facilityKeys.get(0).toReportKey(), operatorNames(ctx, hubKey), averageOfPercentages, totalCapacity, unavailableCapacity, hasHadExceptionalStates));
         });
         sort(rows);
         return rows;
@@ -260,14 +264,16 @@ public class MaxUtilizationReportService extends AbstractReportService {
         final double average;
         final int totalCapacity;
         final int unavailableCapacity;
+        final boolean hasHadExceptionalStates;
 
-        MaxUtilizationReportRow(Hub hub, MaxUtilizationReportKey key, String operatorNames, double average, int totalCapacity, int unavailableCapacity) {
+        MaxUtilizationReportRow(Hub hub, MaxUtilizationReportKey key, String operatorNames, double average, int totalCapacity, int unavailableCapacity, boolean hasHadExceptionalStates) {
             this.hub = hub;
             this.key = key;
             this.operatorNames = operatorNames;
             this.average = average;
             this.totalCapacity = totalCapacity;
             this.unavailableCapacity = unavailableCapacity;
+            this.hasHadExceptionalStates = hasHadExceptionalStates;
         }
 
         @Override

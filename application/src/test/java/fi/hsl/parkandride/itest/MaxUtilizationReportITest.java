@@ -57,6 +57,8 @@ public class MaxUtilizationReportITest extends AbstractReportingITest {
             this.initFixture();
 
             // Clear the unavailable capacities history
+            facility1.status = FacilityStatus.IN_OPERATION;
+            facility2.status = FacilityStatus.IN_OPERATION;
             facility1.unavailableCapacities = newArrayList();
             facility2.unavailableCapacities = newArrayList();
             facilityRepository.updateFacility(facility1.id, facility1);
@@ -229,6 +231,24 @@ public class MaxUtilizationReportITest extends AbstractReportingITest {
         );
     }
 
+    @Test
+    public void report_MaxUtilization_exceptionalSituation() {
+        addMockMaxUtilizations(facility1, apiUser, 0, 0, 0);
+        addMockMaxUtilizations(facility2, apiUser2, 0, 0, 0);
+        withDate(sat.withTime(7, 0, 0, 0), () -> {
+            facility2.status = FacilityStatus.EXCEPTIONAL_SITUATION;
+            facilityRepository.updateFacility(facility2.id, facility2);
+        });
+
+        final Response whenPostingToReportUrl = postToReportUrl(baseParams(), MAX_UTILIZATION, adminUser);
+        checkSheetContents(whenPostingToReportUrl, 0,
+                headers(),
+                hubRow(asList(operator1, operator2), PARK_AND_RIDE, CAR, DayType.BUSINESS_DAY, 100, 0, 1.0),
+                hubRow(asList(operator1, operator2), PARK_AND_RIDE, CAR, DayType.SATURDAY,     100, 0, 1.0, true),
+                hubRow(asList(operator1, operator2), PARK_AND_RIDE, CAR, DayType.SUNDAY,       100, 0, 1.0, true)
+        );
+    }
+
     private List<String> headers() {
         return asList("Alueen nimi",
                 "Kunta",
@@ -239,7 +259,9 @@ public class MaxUtilizationReportITest extends AbstractReportingITest {
                 "Pysäköintipaikkojen määrä",
                 "Tilapäisesti poissa käytöstä",
                 "Päivätyyppi",
-                "Keskimääräinen maksimitäyttöaste");
+                "Keskimääräinen maksimitäyttöaste",
+                ""
+        );
     }
 
     private void addMockMaxUtilizations(Facility f, User apiUser) {
@@ -266,6 +288,10 @@ public class MaxUtilizationReportITest extends AbstractReportingITest {
     }
 
     private List<String> hubRow(List<Operator> operators, Usage usage, CapacityType type, DayType dayType, Integer totalCapacity, Integer unavailableCapacity, Double percentage) {
+        return hubRow(operators, usage, type, dayType, totalCapacity, unavailableCapacity, percentage, false);
+    }
+
+    private List<String> hubRow(List<Operator> operators, Usage usage, CapacityType type, DayType dayType, Integer totalCapacity, Integer unavailableCapacity, Double percentage, boolean hasHadExceptionalSituation) {
         return asList(
                 hub.name.fi,
                 "Helsinki",
@@ -276,7 +302,8 @@ public class MaxUtilizationReportITest extends AbstractReportingITest {
                 totalCapacity.toString(),
                 unavailableCapacity.toString(),
                 translationService.translate(dayType),
-                String.format(Locale.ENGLISH, "%.2f %%", percentage * 100.0)
+                String.format(Locale.ENGLISH, "%.2f %%", percentage * 100.0),
+                hasHadExceptionalSituation ? "Huom! Ajanjaksolla ollut poikkeustilanne" : ""
         );
     }
 

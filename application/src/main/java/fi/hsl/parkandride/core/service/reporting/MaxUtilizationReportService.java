@@ -5,6 +5,7 @@ package fi.hsl.parkandride.core.service.reporting;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Ordering;
 import com.mysema.commons.lang.CloseableIterator;
 import fi.hsl.parkandride.back.RegionRepository;
 import fi.hsl.parkandride.core.back.UtilizationRepository;
@@ -17,11 +18,8 @@ import java.util.function.Function;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
-import static com.google.common.base.MoreObjects.firstNonNull;
 import static com.google.common.collect.Lists.newArrayList;
-import static fi.hsl.parkandride.core.domain.FacilityStatus.EXCEPTIONAL_SITUATION;
-import static fi.hsl.parkandride.core.domain.FacilityStatus.INACTIVE;
-import static fi.hsl.parkandride.core.domain.FacilityStatus.TEMPORARILY_CLOSED;
+import static fi.hsl.parkandride.core.domain.FacilityStatus.*;
 import static fi.hsl.parkandride.core.domain.Region.UNKNOWN_REGION;
 import static fi.hsl.parkandride.core.service.reporting.Excel.TableColumn.col;
 import static fi.hsl.parkandride.util.MapUtils.*;
@@ -170,7 +168,12 @@ public class MaxUtilizationReportService extends AbstractReportService {
                     .collect(summingInt(f -> f.builtCapacity.get(hubKey.capacityType)));
 
             final List<FacilityRowInfo> facilityInfos = facilityKeys.stream().map(k -> reportInfo.rows.get(k)).collect(toList());
-            final int unavailableCapacity = facilityInfos.stream().collect(summingInt(row -> firstNonNull(row.unavailableCapacity, 0)));
+
+            final int unavailableCapacity = facilityInfos.stream()
+                    .map(row -> row.unavailableCapacity)
+                    .filter(Objects::nonNull)
+                    .max(Ordering.natural())
+                    .orElse(0);
 
             final Map<LocalDate, Integer> capacityPerDate = facilityInfos.stream()
                     .collect(groupingBy(info -> info.date, summingInt(info -> info.totalCapacity)));

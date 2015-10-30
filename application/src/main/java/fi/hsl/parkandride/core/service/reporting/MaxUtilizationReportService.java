@@ -140,7 +140,7 @@ public class MaxUtilizationReportService extends AbstractReportService {
         Function<MaxUtilizationReportRow, Object> valFn = (MaxUtilizationReportRow r) -> r.average;
         List<Excel.TableColumn<MaxUtilizationReportRow>> columns = asList(
                 excelUtil.tcol("reports.utilization.col.hub", (MaxUtilizationReportRow r) -> r.hub.name),
-                excelUtil.tcol("reports.utilization.col.region", (MaxUtilizationReportRow r) -> ctx.regionByHubId.getOrDefault(r.key.targetId, UNKNOWN_REGION).name),
+                excelUtil.tcol("reports.utilization.col.region", (MaxUtilizationReportRow r) -> ctx.regionByHubId.getOrDefault(r.hub.id, UNKNOWN_REGION).name),
                 excelUtil.tcol("reports.utilization.col.operator", (MaxUtilizationReportRow r) -> r.operatorNames),
                 excelUtil.tcol("reports.utilization.col.usage", (MaxUtilizationReportRow r) -> translationService.translate(r.key.usage)),
                 excelUtil.tcol("reports.utilization.col.capacityType", (MaxUtilizationReportRow r) -> translationService.translate(r.key.capacityType)),
@@ -185,7 +185,6 @@ public class MaxUtilizationReportService extends AbstractReportService {
                     }))
                     .collect(averagingDouble(e -> e.getValue()));
 
-            int a = 5;
             final boolean hasHadExceptionalStates = facilityInfos.stream().map(i -> i.status).anyMatch(s -> EXCEPTIONAL_SITUATION.equals(s));
             rows.add(new MaxUtilizationReportRow(hubKey.hub, facilityKeys.get(0).toReportKey(), operatorNames(ctx, hubKey), averageOfPercentages, totalCapacity, unavailableCapacity, hasHadExceptionalStates));
         });

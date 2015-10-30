@@ -8,14 +8,18 @@ import com.jayway.restassured.response.Response;
 import fi.hsl.parkandride.core.back.FacilityHistoryRepository;
 import fi.hsl.parkandride.core.back.FacilityRepository;
 import fi.hsl.parkandride.core.domain.*;
+import fi.hsl.parkandride.core.service.FacilityHistoryService;
 import fi.hsl.parkandride.core.service.reporting.ReportParameters;
 import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
+import org.joda.time.LocalTime;
 import org.junit.Before;
 import org.junit.Test;
 
 import javax.inject.Inject;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static fi.hsl.parkandride.core.domain.CapacityType.BICYCLE_SECURE_SPACE;
@@ -33,7 +37,7 @@ public class MaxUtilizationReportITest extends AbstractReportingITest {
     private static final String MAX_UTILIZATION = "MaxUtilization";
 
     // Day 15 to ensure that weekdays stay in the same month
-    private static final DateTime baseDate = BASE_DATE.toDateTimeAtCurrentTime().withDayOfMonth(15);
+    private static final DateTime baseDate = BASE_DATE.toDateTime(new LocalTime("7:59")).withDayOfMonth(15);
     private static final DateTime mon = baseDate.withDayOfWeek(MONDAY);
     private static final DateTime tue = mon.plusDays(1);
     private static final DateTime wed = mon.plusDays(2);
@@ -43,6 +47,7 @@ public class MaxUtilizationReportITest extends AbstractReportingITest {
     private static final DateTime initial = mon.minusMonths(1);
 
     @Inject FacilityHistoryRepository facilityHistoryRepository;
+    @Inject FacilityHistoryService facilityHistoryService;
     @Inject FacilityRepository facilityRepository;
 
     // ---------------------
@@ -211,23 +216,25 @@ public class MaxUtilizationReportITest extends AbstractReportingITest {
 
     @Test
     public void report_MaxUtilization_changingCapacity() {
-        addMockMaxUtilizations(facility1, apiUser,  50, 50, 50);
-        addMockMaxUtilizations(facility2, apiUser2, 0, 50, 10);
-
-        withDate(sun, () -> {
+        withDate(fri, () -> {
             facility1.builtCapacity = ImmutableMap.of(CAR, 100);
             facilityRepository.updateFacility(facility1.id, facility1);
         });
+        addMockMaxUtilizations(facility1, apiUser,  50, 50, 50);
+        addMockMaxUtilizations(facility2, apiUser2, 0, 50, 10);
+
+        final List<FacilityCapacityHistory> capacityHistory = facilityHistoryRepository.getCapacityHistory(facility1.id);
+        final Map<LocalDate, FacilityCapacity> capacityHistory1 = facilityHistoryService.getCapacityHistory(facility1.id, mon.withDayOfMonth(1).toLocalDate(), mon.withDayOfMonth(30).toLocalDate());
 
         // Monday   = 1 - ((50 +  0) / (  50 + 50)) = 50%
-        // Saturday = 1 - ((50 + 50) / (  50 + 50)) = 0%
+        // Saturday = 1 - ((50 + 50) / ( 100 + 50)) = 33.33%
         // Sunday   = 1 - ((50 + 10) / ( 100 + 50)) = 40%
         final Response whenPostingToReportUrl = postToReportUrl(baseParams(), MAX_UTILIZATION, adminUser);
         checkSheetContents(whenPostingToReportUrl, 0,
                 headers(),
                 hubRow(asList(operator1, operator2), PARK_AND_RIDE, CAR, DayType.BUSINESS_DAY, 150, 0, 0.5),
-                hubRow(asList(operator1, operator2), PARK_AND_RIDE, CAR, DayType.SATURDAY,     150, 0, 0.0),
-                hubRow(asList(operator1, operator2), PARK_AND_RIDE, CAR, DayType.SUNDAY,       150, 0, 0.4)
+                hubRow(asList(operator1, operator2), PARK_AND_RIDE, CAR, DayType.SATURDAY,     150, 0, 0.3333),
+                hubRow(asList(operator1, operator2), PARK_AND_RIDE, CAR, DayType.SUNDAY,       150, 0, 0.6)
         );
     }
 

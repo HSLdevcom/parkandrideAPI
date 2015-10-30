@@ -185,6 +185,7 @@ public class MaxUtilizationReportService extends AbstractReportService {
                     }))
                     .collect(averagingDouble(e -> e.getValue()));
 
+            int a = 5;
             final boolean hasHadExceptionalStates = facilityInfos.stream().map(i -> i.status).anyMatch(s -> EXCEPTIONAL_SITUATION.equals(s));
             rows.add(new MaxUtilizationReportRow(hubKey.hub, facilityKeys.get(0).toReportKey(), operatorNames(ctx, hubKey), averageOfPercentages, totalCapacity, unavailableCapacity, hasHadExceptionalStates));
         });

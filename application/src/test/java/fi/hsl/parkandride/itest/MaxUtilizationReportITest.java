@@ -11,7 +11,6 @@ import fi.hsl.parkandride.core.domain.*;
 import fi.hsl.parkandride.core.service.FacilityHistoryService;
 import fi.hsl.parkandride.core.service.reporting.ReportParameters;
 import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
 import org.joda.time.LocalTime;
 import org.junit.Before;
 import org.junit.Test;
@@ -19,7 +18,6 @@ import org.junit.Test;
 import javax.inject.Inject;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static fi.hsl.parkandride.core.domain.CapacityType.BICYCLE_SECURE_SPACE;
@@ -27,7 +25,8 @@ import static fi.hsl.parkandride.core.domain.CapacityType.CAR;
 import static fi.hsl.parkandride.core.domain.Usage.PARK_AND_RIDE;
 import static fi.hsl.parkandride.test.DateTimeTestUtils.withDate;
 import static java.util.Arrays.asList;
-import static java.util.Collections.*;
+import static java.util.Collections.emptyList;
+import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.joining;
 import static org.apache.commons.lang3.RandomUtils.nextInt;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -222,9 +221,6 @@ public class MaxUtilizationReportITest extends AbstractReportingITest {
         });
         addMockMaxUtilizations(facility1, apiUser,  50, 50, 50);
         addMockMaxUtilizations(facility2, apiUser2, 0, 50, 10);
-
-        final List<FacilityCapacityHistory> capacityHistory = facilityHistoryRepository.getCapacityHistory(facility1.id);
-        final Map<LocalDate, FacilityCapacity> capacityHistory1 = facilityHistoryService.getCapacityHistory(facility1.id, mon.withDayOfMonth(1).toLocalDate(), mon.withDayOfMonth(30).toLocalDate());
 
         // Monday   = 1 - ((50 +  0) / (  50 + 50)) = 50%
         // Saturday = 1 - ((50 + 50) / ( 100 + 50)) = 33.33%

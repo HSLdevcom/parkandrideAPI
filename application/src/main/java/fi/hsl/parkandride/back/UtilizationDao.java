@@ -5,6 +5,7 @@ package fi.hsl.parkandride.back;
 
 import com.mysema.commons.lang.CloseableIterator;
 import com.querydsl.core.Tuple;
+import com.querydsl.sql.StatementOptions;
 import com.querydsl.sql.dml.SQLInsertClause;
 import com.querydsl.sql.postgresql.PostgreSQLQuery;
 import com.querydsl.sql.postgresql.PostgreSQLQueryFactory;
@@ -151,6 +152,7 @@ public class UtilizationDao implements UtilizationRepository {
         addCriteria(q, search.facilityIds, qUtilization.facilityId);
         addCriteria(q, search.capacityTypes, qUtilization.capacityType);
         addCriteria(q, search.usages, qUtilization.usage);
+        q.setStatementOptions(StatementOptions.builder().setFetchSize(100).build());
         return q.orderBy(qUtilization.ts.asc()).iterate();
     }
 

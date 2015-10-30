@@ -15,10 +15,12 @@ import java.util.List;
 import java.util.Map;
 
 import static com.google.common.collect.Lists.newArrayList;
+import static fi.hsl.parkandride.core.domain.CapacityType.BICYCLE;
 import static fi.hsl.parkandride.core.domain.CapacityType.CAR;
 import static fi.hsl.parkandride.core.domain.CapacityType.ELECTRIC_CAR;
 import static fi.hsl.parkandride.core.domain.FacilityStatus.EXCEPTIONAL_SITUATION;
 import static fi.hsl.parkandride.core.domain.FacilityStatus.INACTIVE;
+import static fi.hsl.parkandride.core.domain.FacilityStatus.TEMPORARILY_CLOSED;
 import static fi.hsl.parkandride.core.domain.Usage.PARK_AND_RIDE;
 import static fi.hsl.parkandride.test.DateTimeTestUtils.withDate;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -36,6 +38,11 @@ public class FacilityHistoryDaoTest extends AbstractDaoTest {
 
     private Facility facility;
 
+    final DateTime firstDate  = new DateTime().minusDays(10);
+    final DateTime secondDate = firstDate.plusDays(1);
+    final DateTime thirdDate  = firstDate.plusDays(2);
+    final DateTime fourthDate = firstDate.plusDays(3);
+
     @Before
     public void initialize() {
         final Long dummyOperator = dummies.createDummyOperator();
@@ -44,11 +51,6 @@ public class FacilityHistoryDaoTest extends AbstractDaoTest {
 
     @Test
     public void facility_status_history_is_saved() {
-        final DateTime firstDate  = new DateTime().minusDays(10);
-        final DateTime secondDate = firstDate.plusDays(1);
-        final DateTime thirdDate  = firstDate.plusDays(2);
-        final DateTime fourthDate = firstDate.plusDays(3);
-
         // First date
         final long facilityId = withDate(firstDate, () -> {
             long facId = facilityDao.insertFacility(facility);
@@ -80,22 +82,25 @@ public class FacilityHistoryDaoTest extends AbstractDaoTest {
             facilityDao.updateFacility(facilityId, fac);
         });
 
-        final List<FacilityStatusHistory> history = facilityHistoryDao.getStatusHistory(facilityId);
-        assertThat(history).containsExactly(
-                new FacilityStatusHistory(facilityId, firstDate, secondDate, EXCEPTIONAL_SITUATION, FacilityDaoTest.STATUS_DESCRIPTION),
-                new FacilityStatusHistory(facilityId, secondDate, fourthDate, INACTIVE, FacilityDaoTest.STATUS_DESCRIPTION),
-                new FacilityStatusHistory(facilityId, fourthDate, null, INACTIVE, newStatus)
-        );
-    }
+        final FacilityStatusHistory first = new FacilityStatusHistory(facilityId, firstDate, secondDate, EXCEPTIONAL_SITUATION, FacilityDaoTest.STATUS_DESCRIPTION);
+        final FacilityStatusHistory second = new FacilityStatusHistory(facilityId, secondDate, fourthDate, INACTIVE, FacilityDaoTest.STATUS_DESCRIPTION);
+        final FacilityStatusHistory third = new FacilityStatusHistory(facilityId, fourthDate, null, INACTIVE, newStatus);
 
+        // Get all of history
+        final List<FacilityStatusHistory> history = facilityHistoryDao.getStatusHistory(facilityId);
+        assertThat(history).containsExactly(first, second, third);
+
+        // All included
+        final List<FacilityStatusHistory> historyBetween = facilityHistoryDao.getStatusHistory(facilityId, firstDate.toLocalDate(), fourthDate.toLocalDate());
+        assertThat(historyBetween).containsExactly(first, second, third);
+
+        // Only second overlaps
+        final List<FacilityStatusHistory> historyAt = facilityHistoryDao.getStatusHistory(facilityId, thirdDate.toLocalDate(), thirdDate.toLocalDate());
+        assertThat(historyAt).containsExactly(second);
+    }
 
     @Test
     public void facility_capacity_history_is_saved() {
-        final DateTime firstDate  = new DateTime().minusDays(10);
-        final DateTime secondDate = firstDate.plusDays(1);
-        final DateTime thirdDate  = firstDate.plusDays(2);
-        final DateTime fourthDate = firstDate.plusDays(3);
-
         // First date
         final long facilityId = withDate(firstDate, () -> {
             facility.unavailableCapacities = newArrayList(new UnavailableCapacity(
@@ -111,7 +116,7 @@ public class FacilityHistoryDaoTest extends AbstractDaoTest {
 
         // Second date
         // We change a value
-        final Map<CapacityType, Integer> second = withDate(secondDate, () -> {
+        final Map<CapacityType, Integer> modifiedCapacity = withDate(secondDate, () -> {
             fac.builtCapacity.put(CAR, 49);
             facilityDao.updateFacility(facilityId, fac);
             assertThat(facilityHistoryDao.getCapacityHistory(facilityId)).hasSize(2);
@@ -136,11 +141,40 @@ public class FacilityHistoryDaoTest extends AbstractDaoTest {
             return ImmutableList.copyOf(fac.unavailableCapacities);
         });
 
+        final FacilityCapacityHistory first = new FacilityCapacityHistory(facilityId, firstDate, secondDate, original, unavailable);
+        final FacilityCapacityHistory second = new FacilityCapacityHistory(facilityId, secondDate, fourthDate, modifiedCapacity, unavailable);
+        final FacilityCapacityHistory third = new FacilityCapacityHistory(facilityId, fourthDate, null, modifiedCapacity, modified);
+
+        // Get all of history
         final List<FacilityCapacityHistory> history = facilityHistoryDao.getCapacityHistory(facilityId);
-        assertThat(history).containsExactly(
-                new FacilityCapacityHistory(facilityId, firstDate, secondDate, original, unavailable),
-                new FacilityCapacityHistory(facilityId, secondDate, fourthDate, second, unavailable),
-                new FacilityCapacityHistory(facilityId, fourthDate, null, second, modified)
-        );
+        assertThat(history).containsExactly(first, second, third);
+
+        // All included
+        final List<FacilityCapacityHistory> historyBetween = facilityHistoryDao.getCapacityHistory(facilityId, firstDate.toLocalDate(), fourthDate.toLocalDate());
+        assertThat(historyBetween).containsExactly(first, second, third);
+
+        // Only second overlaps
+        final List<FacilityCapacityHistory> historyAt = facilityHistoryDao.getCapacityHistory(facilityId, thirdDate.toLocalDate(), thirdDate.toLocalDate());
+        assertThat(historyAt).containsExactly(second);
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void ensuresCapacityHistoryLinearity() {
+        final Facility fac = withDate(secondDate, () -> facilityDao.getFacility(facilityDao.insertFacility(facility)));
+
+        withDate(firstDate, () -> {
+            fac.unavailableCapacities = newArrayList(new UnavailableCapacity(BICYCLE, PARK_AND_RIDE, 5));
+            facilityDao.updateFacility(fac.id, fac);
+        });
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void ensuresStatusHistoryLinearity() {
+        final Facility fac = withDate(secondDate, () -> facilityDao.getFacility(facilityDao.insertFacility(facility)));
+
+        withDate(firstDate, () -> {
+            fac.status = TEMPORARILY_CLOSED;
+            facilityDao.updateFacility(fac.id, fac);
+        });
     }
 }

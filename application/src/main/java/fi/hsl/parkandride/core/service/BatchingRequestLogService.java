@@ -11,14 +11,14 @@ import org.springframework.scheduling.annotation.Scheduled;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.LongAdder;
 
 import static java.util.stream.Collectors.toMap;
 
 public class BatchingRequestLogService {
 
     private static final Logger logger = LoggerFactory.getLogger(BatchingRequestLogService.class);
-    private final ConcurrentHashMap<RequestLogKey, AtomicInteger> requestLogBatch = new ConcurrentHashMap<>();
+    private Map<RequestLogKey, LongAdder> requestLogBatch = new ConcurrentHashMap<>();
 
     private final RequestLogRepository requestLogRepository;
 
@@ -28,23 +28,25 @@ public class BatchingRequestLogService {
 
     public void increment(RequestLogKey key) {
         final RequestLogKey roundedTimestamp = key.roundTimestampDown();
-        requestLogBatch.putIfAbsent(roundedTimestamp, new AtomicInteger(0));
-        requestLogBatch.get(roundedTimestamp).incrementAndGet();
+        requestLogBatch.computeIfAbsent(roundedTimestamp, k -> new LongAdder()).increment();
     }
 
     @Scheduled(cron = "${requestlog.cron:0 */5 * * * *}")
-    @TransactionalWrite
     public void updateRequestLogs() {
         logger.info("Update request logs");
-        final Map<RequestLogKey, Long> requestCounts = requestLogBatch.keySet().stream()
+
+        final Map<RequestLogKey, LongAdder> previousMap = this.requestLogBatch;
+        clearLogStash();
+
+        final Map<RequestLogKey, Long> requestCounts = previousMap.keySet().stream()
                 .collect(toMap(
                         key -> key,
-                        key -> requestLogBatch.remove(key).longValue()
+                        key -> previousMap.get(key).sum()
                 ));
         requestLogRepository.batchIncrement(requestCounts);
     }
 
     public void clearLogStash() {
-        requestLogBatch.clear();
+        requestLogBatch = new ConcurrentHashMap<>();
     }
 }

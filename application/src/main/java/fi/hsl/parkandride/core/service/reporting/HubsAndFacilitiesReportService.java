@@ -26,8 +26,8 @@ public class HubsAndFacilitiesReportService extends AbstractReportService {
     private static final String REPORT_NAME = "HubsAndFacilities";
 
     public HubsAndFacilitiesReportService(FacilityService facilityService, OperatorService operatorService, ContactService contactService, HubService hubService,
-                                          UtilizationRepository utilizationRepository, RegionRepository regionRepository, TranslationService translationService) {
-        super(REPORT_NAME, facilityService, operatorService, contactService, hubService, utilizationRepository, translationService, regionRepository);
+                                          UtilizationRepository utilizationRepository, RegionRepository regionRepository, TranslationService translationService, FacilityHistoryService facilityHistoryService) {
+        super(REPORT_NAME, facilityService, operatorService, contactService, hubService, utilizationRepository, translationService, regionRepository, facilityHistoryService);
     }
 
     @Override

@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
 import static fi.hsl.parkandride.core.domain.DayType.*;
 import static fi.hsl.parkandride.util.ArgumentValidator.validate;
@@ -34,8 +35,8 @@ public class FacilityUsageReportService extends AbstractReportService {
     private static final String REPORT_NAME = "FacilityUsage";
 
     public FacilityUsageReportService(FacilityService facilityService, OperatorService operatorService, ContactService contactService, HubService hubService,
-                                      UtilizationRepository utilizationRepository, RegionRepository regionRepository, TranslationService translationService) {
-        super(REPORT_NAME, facilityService, operatorService, contactService, hubService, utilizationRepository, translationService, regionRepository);
+                                      UtilizationRepository utilizationRepository, RegionRepository regionRepository, TranslationService translationService, FacilityHistoryService facilityHistoryService) {
+        super(REPORT_NAME, facilityService, operatorService, contactService, hubService, utilizationRepository, translationService, regionRepository, facilityHistoryService);
     }
 
     @Override
@@ -48,21 +49,8 @@ public class FacilityUsageReportService extends AbstractReportService {
         Map<UtilizationReportKey, UtilizationReportRow> reportRows = new LinkedHashMap<>();
 
         try (CloseableIterator<Utilization> utilizations = utilizationRepository.findUtilizations(search)) {
-            addFilters(utilizations, ctx, parameters).forEachRemaining(u -> {
-                UtilizationReportKey key = new UtilizationReportKey(u);
-                key.facility = ctx.facilities.get(u.facilityId);
-                UtilizationReportRow value = reportRows.get(key);
-                if (value == null) {
-                    UtilizationReportRow prevDayRow = reportRows.get(key.prevDay());
-                    int initialValue = 0;
-                    if (prevDayRow != null) {
-                        initialValue = prevDayRow.values[prevDayRow.values.length - 1];
-                    }
-                    value = new UtilizationReportRow(key, intervalSeconds, initialValue);
-                    reportRows.put(key, value);
-                }
-                value.setValue(u.timestamp, u.spacesAvailable);
-            });
+            addFilters(utilizations, ctx, parameters)
+                    .forEachRemaining(setValueToLatestFreeSpacesInWindow(ctx, intervalSeconds, reportRows));
         }
 
         Excel excel = new Excel();
@@ -99,6 +87,24 @@ public class FacilityUsageReportService extends AbstractReportService {
         excel.addSheet(excelUtil.getMessage("reports.usage.sheets.legend"),
                 excelUtil.getMessage("reports.usage.legend").split("\n"));
         return excel;
+    }
+
+    private Consumer<Utilization> setValueToLatestFreeSpacesInWindow(ReportContext ctx, int intervalSeconds, Map<UtilizationReportKey, UtilizationReportRow> reportRows) {
+        return u -> {
+            UtilizationReportKey key = new UtilizationReportKey(u);
+            key.facility = ctx.facilities.get(u.facilityId);
+            UtilizationReportRow value = reportRows.get(key);
+            if (value == null) {
+                UtilizationReportRow prevDayRow = reportRows.get(key.prevDay());
+                int initialValue = 0;
+                if (prevDayRow != null) {
+                    initialValue = prevDayRow.values[prevDayRow.values.length - 1];
+                }
+                value = new UtilizationReportRow(key, intervalSeconds, initialValue);
+                reportRows.put(key, value);
+            }
+            value.setValue(u.timestamp, u.spacesAvailable);
+        };
     }
 
 

@@ -311,6 +311,29 @@ public class MaxUtilizationReportITest extends AbstractReportingITest {
         });
     }
 
+    @Test
+    public void testThat_startAndEndDateAreInclusive() {
+        final ReportParameters params = baseParams();
+        params.startDate = new LocalDate(2015, 10, 1); // Thursday
+        params.endDate = new LocalDate(2015, 10, 31); // Saturday
+
+        facilityService.registerUtilization(facility1.id, asList(
+                utilize(CAR, 10, params.startDate.toDateTimeAtCurrentTime(), facility1),
+                utilize(CAR, 20, params.endDate.toDateTimeAtCurrentTime(), facility1)
+        ), apiUser);
+        facilityService.registerUtilization(facility2.id, asList(
+                utilize(CAR, 0, params.startDate.toDateTimeAtCurrentTime(), facility2),
+                utilize(CAR, 0, params.endDate.toDateTimeAtCurrentTime(), facility2)
+        ), apiUser2);
+
+        final Response whenPostingToReportUrl = postToReportUrl(params, MAX_UTILIZATION, adminUser);
+        checkSheetContents(whenPostingToReportUrl, 0,
+                headers(),
+                hubRow(asList(operator1, operator2), PARK_AND_RIDE, CAR, DayType.BUSINESS_DAY, 100, 0, 0.9),
+                hubRow(asList(operator1, operator2), PARK_AND_RIDE, CAR, DayType.SATURDAY, 100, 0, 0.8)
+        );
+    }
+
     private Utilization mockUtilize(Facility f, String date, int spaces) {
         return utilize(CAR, spaces, DateTime.parse(date), f);
     }

@@ -205,7 +205,8 @@ public abstract class AbstractReportingITest extends AbstractIntegrationTest {
     }
 
     protected List<String> getDataFromRow(Sheet sheet, int rownum) {
-        return getDataFromRow(sheet.getRow(rownum));
+        final Row row = sheet.getRow(rownum);
+        return row == null ? null : getDataFromRow(row);
     }
 
     protected List<String> getDataFromRow(Row row) {

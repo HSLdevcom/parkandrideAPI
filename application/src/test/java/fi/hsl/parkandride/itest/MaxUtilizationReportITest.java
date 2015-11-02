@@ -12,7 +12,6 @@ import fi.hsl.parkandride.core.service.FacilityHistoryService;
 import fi.hsl.parkandride.core.service.reporting.ReportParameters;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
-import org.joda.time.LocalTime;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -40,14 +39,7 @@ public class MaxUtilizationReportITest extends AbstractReportingITest {
     private static final String MAX_UTILIZATION = "MaxUtilization";
 
     // Day 15 to ensure that weekdays stay in the same month
-    private static final DateTime baseDate = BASE_DATE.toDateTime(new LocalTime("7:59")).withDayOfMonth(15);
-    private static final DateTime mon = baseDate.withDayOfWeek(MONDAY);
-    private static final DateTime tue = mon.plusDays(1);
-    private static final DateTime wed = mon.plusDays(2);
-    private static final DateTime fri = mon.plusDays(4);
-    private static final DateTime sat = mon.plusDays(5);
-    private static final DateTime sun = mon.plusDays(6);
-    private static final DateTime initial = mon.minusMonths(1);
+
     private static final int UNAVAILABLE_COLUMN = 6;
 
     @Inject FacilityHistoryRepository facilityHistoryRepository;

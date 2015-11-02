@@ -41,4 +41,8 @@ public class ExcelUtil {
     <T> Excel.TableColumn<T> tcol(String key, Function<T, Object> valFn, CellStyle cellStyle) {
         return Excel.TableColumn.col(getMessage(key), valFn, cellStyle);
     }
+
+    <T> Excel.TableColumn<T> tcol(String key, Function<T, Object> valFn, Function<T, CellStyle> styleFn) {
+        return Excel.TableColumn.col(getMessage(key), valFn, styleFn);
+    }
 }

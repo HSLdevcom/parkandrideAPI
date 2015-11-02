@@ -3,25 +3,37 @@
 
 package fi.hsl.parkandride.itest;
 
+import com.google.common.collect.ImmutableMap;
 import com.jayway.restassured.response.Response;
 import fi.hsl.parkandride.core.domain.*;
 import fi.hsl.parkandride.core.service.reporting.ReportParameters;
+import org.apache.poi.ss.usermodel.Sheet;
 import org.joda.time.DateTime;
+import org.joda.time.Days;
+import org.joda.time.LocalDate;
 import org.joda.time.LocalTime;
+import org.junit.Before;
 import org.junit.Test;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.function.BiFunction;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import static com.google.common.base.MoreObjects.firstNonNull;
 import static com.google.common.collect.Lists.newArrayList;
 import static fi.hsl.parkandride.core.domain.CapacityType.CAR;
 import static fi.hsl.parkandride.core.domain.CapacityType.ELECTRIC_CAR;
+import static fi.hsl.parkandride.core.domain.FacilityStatus.*;
 import static fi.hsl.parkandride.core.service.reporting.ExcelUtil.time;
+import static fi.hsl.parkandride.itest.FacilityUsageReportITest.ListBuilder.listFrom;
+import static fi.hsl.parkandride.test.DateTimeTestUtils.withDate;
 import static fi.hsl.parkandride.util.Iterators.iterateFor;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singleton;
+import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -37,6 +49,12 @@ public class FacilityUsageReportITest extends AbstractReportingITest {
     // ---------------------
     // FACILITY USAGE REPORT
     // ---------------------
+    @Before
+    @Override
+    public void initialize() {
+        // Needed to ensure history linearity
+        withDate(initial, this::initFixture);
+    }
 
     @Test
     public void report_FacilityUsage_asAdmin_oneFacility() {
@@ -93,6 +111,82 @@ public class FacilityUsageReportITest extends AbstractReportingITest {
             );
         });
     }
+
+    @Test
+    public void report_FacilityUsage_withStatusHistory() {
+        final ReportParameters params = baseParams();
+        params.interval = Days.ONE.toStandardMinutes().getMinutes();
+
+        // Add data for whole month to get all rows
+        final LocalDate start = params.startDate;
+        final List<LocalDate> dates = newArrayList(iterateFor(start, p -> !p.isAfter(params.endDate), d -> d.plusDays(1)));
+        dates.forEach(d -> facilityService.registerUtilization(facility1.id, singletonList(
+                utilize(CAR, 10, d.toDateTime(new LocalTime("13:37")), facility1)
+        ), apiUser));
+
+        // Add status history, relates to the time window of 6-10
+        // 1st day -> IN_OPERATION
+        // 2nd and 3rd day -> TEMPORARILY_CLOSED
+        // 4th day -> INACTIVE
+        // 5th day onwards -> IN_OPERATION
+        updateStatus(start.toDateTime(new LocalTime("07:00")), IN_OPERATION);
+        updateStatus(start.plusDays(1).toDateTime(new LocalTime("07:59")), TEMPORARILY_CLOSED);
+        updateStatus(start.plusDays(2).toDateTime(new LocalTime("08:00")), INACTIVE);
+        updateStatus(start.plusDays(3).toDateTime(new LocalTime("08:01")), IN_OPERATION);
+
+        final Response whenPostingToReportUrl = postToReportUrl(params, FACILITY_USAGE, adminUser);
+        withWorkbook(whenPostingToReportUrl, wb -> {
+            Sheet sheet = wb.getSheetAt(0);
+            final List<String> expectedStates = listFrom("Status")
+                    .add(translationService.translate(IN_OPERATION))
+                    .addTimes(2, translationService.translate(TEMPORARILY_CLOSED))
+                    .add(translationService.translate(INACTIVE))
+                    .addTimes(dates.size() - 4, translationService.translate(IN_OPERATION))
+                    .build();
+            assertThat(getDataFromColumn(sheet, ReportColumns.DATE))
+                    .containsSequence(dates.stream().map(d -> d.toString("d.M.yyyy")).toArray(String[]::new));
+            assertThat(getDataFromColumn(sheet, ReportColumns.STATUS))
+                    .containsExactlyElementsOf(expectedStates);
+        });
+    }
+
+    private void updateStatus(DateTime dateTime, FacilityStatus status) {
+        withDate(dateTime, () -> {
+            facility1.status = status;
+            facility1.builtCapacity = ImmutableMap.of(CAR, 50);
+            facilityService.updateFacility(facility1.id, facility1, adminUser);
+        });
+    }
+
+    static class ListBuilder<T> {
+
+        private final List<T> list = new ArrayList<>();
+
+        public static <T> ListBuilder<T> listFrom(T... items) {
+            final ListBuilder<T> builder = new ListBuilder<>();
+            return builder.addAll(items);
+        }
+
+        public ListBuilder<T> add(T item) {
+            list.add(item);
+            return this;
+        }
+
+        public ListBuilder<T> addAll(T... items) {
+            Arrays.stream(items).forEach(this::add);
+            return this;
+        }
+
+        public ListBuilder<T> addTimes(int times, T item) {
+            IntStream.range(0, times).forEach(i -> list.add(item));
+            return this;
+        }
+
+        public List<T> build() {
+            return list;
+        }
+    }
+
 
     private List<String> headersWithTimes(int intervalMinutes) {
         final Stream<String> times = getReportTimes(intervalMinutes).map(t -> t.toString("HH:mm"));
@@ -155,4 +249,8 @@ public class FacilityUsageReportITest extends AbstractReportingITest {
         }
     }
 
+    private interface ReportColumns {
+        int STATUS = 6;
+        int DATE = 11;
+    }
 }

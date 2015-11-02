@@ -46,7 +46,7 @@ import static java.util.stream.StreamSupport.stream;
 import static org.joda.time.DateTimeConstants.MONDAY;
 
 public abstract class AbstractReportingITest extends AbstractIntegrationTest {
-    protected static final DateTime BASE_DATE_TIME = LocalDate.now().minusMonths(1).withDayOfMonth(15).toDateTime(LocalTime.parse("12:37"));
+    protected static final DateTime BASE_DATE_TIME = new DateTime(2015, 9, 15, 12, 37);
     protected static final DateTime ROUNDED_BASE_DATETIME = BASE_DATE_TIME.withMinuteOfHour(0);
     protected static final LocalDate BASE_DATE = BASE_DATE_TIME.toLocalDate();
     protected static final String MONTH_FORMAT = "M/yyyy";

@@ -43,6 +43,7 @@ import static java.util.Spliterator.ORDERED;
 import static java.util.Spliterators.spliteratorUnknownSize;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.StreamSupport.stream;
+import static org.joda.time.DateTimeConstants.MONDAY;
 
 public abstract class AbstractReportingITest extends AbstractIntegrationTest {
     protected static final DateTime BASE_DATE_TIME = LocalDate.now().minusMonths(1).withDayOfMonth(15).toDateTime(LocalTime.parse("12:37"));
@@ -51,6 +52,15 @@ public abstract class AbstractReportingITest extends AbstractIntegrationTest {
     protected static final String MONTH_FORMAT = "M/yyyy";
     protected static final String DATE_FORMAT = "d.M.yyyy";
     protected static final String DATETIME_FORMAT = "d.M.yyyy HH:mm";
+
+    protected static final DateTime baseDate = BASE_DATE.toDateTime(new LocalTime("7:59")).withDayOfMonth(15);
+    protected static final DateTime mon = baseDate.withDayOfWeek(MONDAY);
+    protected static final DateTime tue = mon.plusDays(1);
+    protected static final DateTime wed = mon.plusDays(2);
+    protected static final DateTime fri = mon.plusDays(4);
+    protected static final DateTime sat = mon.plusDays(5);
+    protected static final DateTime sun = mon.plusDays(6);
+    protected static final DateTime initial = mon.minusMonths(1);
 
     protected User adminUser;
     protected User apiUser;

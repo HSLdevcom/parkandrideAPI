@@ -11,22 +11,26 @@ import fi.hsl.parkandride.core.domain.*;
 import fi.hsl.parkandride.core.service.FacilityHistoryService;
 import fi.hsl.parkandride.core.service.reporting.ReportParameters;
 import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 import org.joda.time.LocalTime;
 import org.junit.Before;
 import org.junit.Test;
 
 import javax.inject.Inject;
+import java.util.AbstractMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.stream.Stream;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static fi.hsl.parkandride.core.domain.CapacityType.BICYCLE_SECURE_SPACE;
 import static fi.hsl.parkandride.core.domain.CapacityType.CAR;
 import static fi.hsl.parkandride.core.domain.Usage.PARK_AND_RIDE;
 import static fi.hsl.parkandride.test.DateTimeTestUtils.withDate;
+import static fi.hsl.parkandride.util.MapUtils.consumingEntry;
 import static java.util.Arrays.asList;
-import static java.util.Collections.emptyList;
-import static java.util.Collections.singletonList;
+import static java.util.Collections.*;
 import static java.util.stream.Collectors.joining;
 import static org.apache.commons.lang3.RandomUtils.nextInt;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -44,6 +48,7 @@ public class MaxUtilizationReportITest extends AbstractReportingITest {
     private static final DateTime sat = mon.plusDays(5);
     private static final DateTime sun = mon.plusDays(6);
     private static final DateTime initial = mon.minusMonths(1);
+    private static final int UNAVAILABLE_COLUMN = 6;
 
     @Inject FacilityHistoryRepository facilityHistoryRepository;
     @Inject FacilityHistoryService facilityHistoryService;
@@ -211,6 +216,108 @@ public class MaxUtilizationReportITest extends AbstractReportingITest {
                 hubRow(asList(operator1, operator2), PARK_AND_RIDE, CAR, DayType.SATURDAY, 50, 7, 1.0),
                 hubRow(asList(operator1, operator2), PARK_AND_RIDE, CAR, DayType.SUNDAY, 50, 0, 1.0)
         );
+    }
+
+    @Test
+    public void report_MaxUtilization_unavailableCapacities_withLotsOfData() {
+        Facility f = withDate(DateTime.parse("2015-08-01T00:00:00.000"), () -> {
+            final Facility fac = dummies.createFacility(operator1.id, facility1.contacts);
+            fac.status = FacilityStatus.IN_OPERATION;
+            return facilityRepository.getFacility(facilityRepository.insertFacility(fac));
+        });
+        hub.facilityIds = singleton(f.id);
+        hubService.updateHub(hub.id, hub, adminUser);
+
+        Stream.of(
+                mockUnavailable("2015-09-01T01:00:00.000", 1),
+                mockUnavailable("2015-09-25T06:30:00.000", 0),
+                mockUnavailable("2015-09-27T06:30:00.000", 0),
+                mockUnavailable("2015-10-02T07:50:00.000", 5),
+                mockUnavailable("2015-10-03T07:50:00.000", 10),
+                mockUnavailable("2015-10-04T07:50:00.000", 49),
+                mockUnavailable("2015-10-09T06:01:00.000", 10),
+                mockUnavailable("2015-10-10T06:01:00.000", 1),
+                mockUnavailable("2015-10-11T06:01:00.000", 0),
+                mockUnavailable("2015-10-16T06:15:00.000", 1),
+                mockUnavailable("2015-10-16T07:15:00.000", 10),
+                mockUnavailable("2015-10-16T08:30:00.000", 19),
+                mockUnavailable("2015-10-16T09:00:00.000", 1),
+                mockUnavailable("2015-10-17T07:59:00.000", 20),
+                mockUnavailable("2015-10-18T07:59:00.000", 19),
+                mockUnavailable("2015-10-23T07:00:00.000", 5),
+                mockUnavailable("2015-10-24T07:00:00.000", 5),
+                mockUnavailable("2015-10-25T07:00:00.000", 40),
+                mockUnavailable("2015-10-30T09:59:00.000", 0)
+        ).forEachOrdered(consumingEntry((date, uc) -> {
+            withDate(date, () -> {
+                f.unavailableCapacities = singletonList(uc);
+                facilityRepository.updateFacility(f.id, f);
+            });
+        }));
+
+        facilityService.registerUtilization(f.id, asList(
+            mockUtilize(f, "2015-09-25T08:37:26", 0),
+            mockUtilize(f, "2015-09-26T08:35:26", 1),
+            mockUtilize(f, "2015-09-27T08:37:26", 20),
+            mockUtilize(f, "2015-09-28T08:37:26", 20),
+            mockUtilize(f, "2015-09-29T08:37:26", 21),
+            mockUtilize(f, "2015-09-30T08:37:26", 21),
+            mockUtilize(f, "2015-10-01T08:37:26", 21),
+            mockUtilize(f, "2015-10-02T08:37:26", 5),
+            mockUtilize(f, "2015-10-03T08:37:26", 4),
+            mockUtilize(f, "2015-10-04T08:37:26", 1),
+            mockUtilize(f, "2015-10-05T08:37:26", 21),
+            mockUtilize(f, "2015-10-06T08:37:26", 21),
+            mockUtilize(f, "2015-10-07T08:37:26", 21),
+            mockUtilize(f, "2015-10-08T08:37:26", 21),
+            mockUtilize(f, "2015-10-09T08:30:26", 15),
+            mockUtilize(f, "2015-10-09T08:57:26", 10),
+            mockUtilize(f, "2015-10-09T09:37:26", 25),
+            mockUtilize(f, "2015-10-09T10:37:26", 5),
+            mockUtilize(f, "2015-10-09T11:37:26", 20),
+            mockUtilize(f, "2015-10-10T08:37:26", 30),
+            mockUtilize(f, "2015-10-11T08:37:26", 30),
+            mockUtilize(f, "2015-10-12T08:37:26", 21),
+            mockUtilize(f, "2015-10-13T08:37:26", 21),
+            mockUtilize(f, "2015-10-14T08:37:26", 21),
+            mockUtilize(f, "2015-10-15T08:37:26", 21),
+            mockUtilize(f, "2015-10-16T08:37:26", 20),
+            mockUtilize(f, "2015-10-17T08:37:26", 3),
+            mockUtilize(f, "2015-10-18T08:37:26", 1),
+            mockUtilize(f, "2015-10-19T08:37:26", 15),
+            mockUtilize(f, "2015-10-20T08:37:26", 15),
+            mockUtilize(f, "2015-10-21T08:37:26", 15),
+            mockUtilize(f, "2015-10-22T08:37:26", 15),
+            mockUtilize(f, "2015-10-23T08:37:26", 10),
+            mockUtilize(f, "2015-10-24T08:37:26", 5),
+            mockUtilize(f, "2015-10-25T07:37:26", 30),
+            mockUtilize(f, "2015-10-26T07:37:26", 5),
+            mockUtilize(f, "2015-10-27T07:37:26", 5),
+            mockUtilize(f, "2015-10-28T07:37:26", 5),
+            mockUtilize(f, "2015-10-29T07:37:26", 5),
+            mockUtilize(f, "2015-10-30T07:37:26", 25)
+        ), apiUser);
+
+
+        final ReportParameters params = baseParams();
+        params.startDate = new LocalDate("2015-10-01");
+        params.endDate   = new LocalDate("2015-10-30");
+        final Response whenPostingToReportUrl = postToReportUrl(params, MAX_UTILIZATION, adminUser);
+
+        // Assert correct values as tested manually
+        withWorkbook(whenPostingToReportUrl, wb -> {
+            assertThat(getDataFromColumn(wb.getSheetAt(0), UNAVAILABLE_COLUMN))
+                    .containsExactly("Tilapäisesti poissa käytöstä", "49", "20", "49");
+        });
+    }
+
+    private Utilization mockUtilize(Facility f, String date, int spaces) {
+        return utilize(CAR, spaces, DateTime.parse(date), f);
+    }
+
+
+    private Map.Entry<DateTime, UnavailableCapacity> mockUnavailable(String date, int val) {
+        return new AbstractMap.SimpleImmutableEntry<>(DateTime.parse(date), new UnavailableCapacity(CAR, PARK_AND_RIDE, val));
     }
 
     @Test

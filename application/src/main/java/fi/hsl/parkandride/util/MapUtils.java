@@ -6,9 +6,7 @@ package fi.hsl.parkandride.util;
 import java.util.AbstractMap;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.BiFunction;
-import java.util.function.BinaryOperator;
-import java.util.function.Function;
+import java.util.function.*;
 import java.util.stream.Collector;
 
 import static java.util.function.Function.identity;
@@ -55,5 +53,9 @@ public final class MapUtils {
 
     public static <K, V, OUT> Function<Map.Entry<K,V>, OUT> mappingEntry(BiFunction<K, V, OUT> mapper) {
         return entry -> mapper.apply(entry.getKey(), entry.getValue());
+    }
+
+    public static <K, V> Consumer<Map.Entry<K,V>> consumingEntry(BiConsumer<K, V> consumer) {
+        return entry -> consumer.accept(entry.getKey(), entry.getValue());
     }
 }

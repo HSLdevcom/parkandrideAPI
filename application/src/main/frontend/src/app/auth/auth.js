@@ -90,7 +90,7 @@
        };
     });
 
-    m.controller('LoginController', function($scope, $modalInstance, $http, Session, passwordReminderModal, passwordExpiredModal) {
+    m.controller('LoginController', function($scope, $modalInstance, $http, Session, $state, passwordReminderModal, passwordExpiredModal, $q) {
         $scope.credentials = {
             username: "",
             password: ""
@@ -99,22 +99,23 @@
             $scope.loginError = false;
             $http.post("internal/login", credentials, {"skipDefaultViolationsHandling": true}).then(
                 function(result) {
-                    Session.set(result.data);
-                    var user = Session.get();
-                    if (user.passwordExpireInDays > 0) {
-                        passwordReminderModal.open(user.passwordExpireInDays).result.then(function() { });
-                    }
-                    else if (user.passwordExpireInDays < 0) {
-                        passwordExpiredModal.open(user).result.then(
-                            function() {
-                                $state.reload();
-                            },
-                            function() {
-                            	Session.remove();
-                                $state.reload();
-                            });
-                    }
-                    $modalInstance.close(result.data);
+                    var promise = $q(function (resolve, reject) {
+                        var userData = result.data;
+                        if (userData.passwordExpireInDays < 0) {
+                            passwordExpiredModal.open(userData).result.then(
+                                function () { resolve(userData); },
+                                function () { reject(userData); }
+                            );
+                        } else {
+                            if (userData.passwordExpireInDays > 0) {
+                                passwordReminderModal.open(userData.passwordExpireInDays).result.then(function () { });
+                            }
+                            resolve(userData);
+                        }
+                    });
+                    promise.then($modalInstance.close.bind($modalInstance), $modalInstance.close.bind($modalInstance));
+                    promise.then(Session.set.bind(Session), Session.remove.bind(Session));
+                    return promise;
                 },
                 function(rejection) {
                     $scope.loginError = true;

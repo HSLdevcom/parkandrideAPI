@@ -40,7 +40,7 @@ function run() {
       -DnewVersion="$version" \
       --file parent/pom.xml
 
-  mvn clean deploy \
+  mvn -Pnoui clean deploy \
       --update-snapshots \
       --batch-mode \
       --errors \

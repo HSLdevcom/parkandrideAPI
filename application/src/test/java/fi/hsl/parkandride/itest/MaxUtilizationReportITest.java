@@ -25,6 +25,8 @@ import java.util.stream.Stream;
 import static com.google.common.collect.Lists.newArrayList;
 import static fi.hsl.parkandride.core.domain.CapacityType.BICYCLE_SECURE_SPACE;
 import static fi.hsl.parkandride.core.domain.CapacityType.CAR;
+import static fi.hsl.parkandride.core.domain.CapacityType.ELECTRIC_CAR;
+import static fi.hsl.parkandride.core.domain.Usage.COMMERCIAL;
 import static fi.hsl.parkandride.core.domain.Usage.PARK_AND_RIDE;
 import static fi.hsl.parkandride.test.DateTimeTestUtils.withDate;
 import static fi.hsl.parkandride.util.MapUtils.consumingEntry;
@@ -41,6 +43,8 @@ public class MaxUtilizationReportITest extends AbstractReportingITest {
     // Day 15 to ensure that weekdays stay in the same month
 
     private static final int UNAVAILABLE_COLUMN = 6;
+    private static final String REGION_FOR_DUMMY_HUB = "Helsinki";
+    private static final String EXCEPTIONAL_SITUATION_TEXT = "Huom! Ajanjaksolla ollut poikkeustilanne";
 
     @Inject FacilityHistoryRepository facilityHistoryRepository;
     @Inject FacilityHistoryService facilityHistoryService;
@@ -374,13 +378,65 @@ public class MaxUtilizationReportITest extends AbstractReportingITest {
         );
     }
 
+    @Test
+    public void report_MaxUtilization_multiplePricingAndUsages() {
+        withDate(initial.plusDays(1), () -> {
+            facility1.status = FacilityStatus.IN_OPERATION;
+            facility1.builtCapacity = ImmutableMap.of(CAR, 100, ELECTRIC_CAR, 10);
+            facility1.pricing = asList(
+                    new Pricing(CAR, PARK_AND_RIDE, 100, DayType.BUSINESS_DAY,  "00", "24", null),
+                    new Pricing(CAR, PARK_AND_RIDE, 100, DayType.SATURDAY,      "00", "24", null),
+                    new Pricing(CAR, PARK_AND_RIDE, 100, DayType.SUNDAY,        "00", "24", null),
+
+                    new Pricing(CAR, COMMERCIAL, 50, DayType.BUSINESS_DAY,  "00", "24", "1 ege"),
+                    new Pricing(CAR, COMMERCIAL, 50, DayType.SATURDAY,      "00", "24", "1 ege"),
+                    new Pricing(CAR, COMMERCIAL, 50, DayType.SUNDAY,        "00", "24", "1 ege"),
+
+                    new Pricing(ELECTRIC_CAR, COMMERCIAL, 10, DayType.BUSINESS_DAY, "00", "24", "1 ege"),
+                    new Pricing(ELECTRIC_CAR, COMMERCIAL, 10, DayType.SATURDAY,     "00", "24", "1 ege"),
+                    new Pricing(ELECTRIC_CAR, COMMERCIAL, 10, DayType.SUNDAY,       "00", "24", "1 ege")
+            );
+
+            facility2.builtCapacity = ImmutableMap.of(CAR, 50);
+            facility2.pricing = asList(
+                    new Pricing(CAR, PARK_AND_RIDE, 50, DayType.BUSINESS_DAY,  "00", "24", null),
+                    new Pricing(CAR, PARK_AND_RIDE, 50, DayType.SATURDAY,      "00", "24", null),
+                    new Pricing(CAR, PARK_AND_RIDE, 50, DayType.SUNDAY,        "00", "24", null)
+            );
+
+            facilityRepository.updateFacility(facility1.id, facility1);
+            facilityRepository.updateFacility(facility2.id, facility2);
+            facility1 = facilityRepository.getFacility(facility1.id);
+            facility2 = facilityRepository.getFacility(facility2.id);
+        });
+        addMockMaxUtilizations(facility1, apiUser, 15, 30, 45, CAR, PARK_AND_RIDE);
+        addMockMaxUtilizations(facility1, apiUser, 10, 20, 30, CAR, COMMERCIAL);
+        addMockMaxUtilizations(facility1, apiUser,  2,  4,  5, ELECTRIC_CAR, COMMERCIAL);
+        addMockMaxUtilizations(facility2, apiUser2, 0, 0, 0);
+
+        final Response whenPostingToReportUrl = whenPostingToReportUrl(baseParams(), MAX_UTILIZATION, adminUser);
+        checkSheetContents(whenPostingToReportUrl, 0,
+                headers(),
+                hubRow(asList(operator1, operator2), PARK_AND_RIDE, CAR, DayType.BUSINESS_DAY, 150, 0, 0.9),
+                hubRow(asList(operator1, operator2), PARK_AND_RIDE, CAR, DayType.SATURDAY,     150, 0, 0.8),
+                hubRow(asList(operator1, operator2), PARK_AND_RIDE, CAR, DayType.SUNDAY,       150, 0, 0.7),
+
+                hubRow(asList(operator1, operator2), COMMERCIAL, CAR, DayType.BUSINESS_DAY,    100, 0, 0.9),
+                hubRow(asList(operator1, operator2), COMMERCIAL, CAR, DayType.SATURDAY,        100, 0, 0.8),
+                hubRow(asList(operator1, operator2), COMMERCIAL, CAR, DayType.SUNDAY,          100, 0, 0.7),
+
+                hubRow(asList(operator1, operator2), COMMERCIAL, ELECTRIC_CAR, DayType.BUSINESS_DAY, 10, 0, 0.8),
+                hubRow(asList(operator1, operator2), COMMERCIAL, ELECTRIC_CAR, DayType.SATURDAY,     10, 0, 0.6),
+                hubRow(asList(operator1, operator2), COMMERCIAL, ELECTRIC_CAR, DayType.SUNDAY,       10, 0, 0.5)
+        );
+    }
+
     private List<String> headers() {
         return asList("Alueen nimi",
                 "Kunta",
                 "Operaattori",
                 "Käyttötapa",
                 "Ajoneuvotyyppi",
-//                "Status",
                 "Pysäköintipaikkojen määrä",
                 "Tilapäisesti poissa käytöstä",
                 "Päivätyyppi",
@@ -398,10 +454,14 @@ public class MaxUtilizationReportITest extends AbstractReportingITest {
     }
 
     private void addMockMaxUtilizations(Facility f, User apiUser, int businessDay, int saturday, int sunday) {
+        addMockMaxUtilizations(f, apiUser, businessDay, saturday, sunday, CAR, PARK_AND_RIDE);
+    }
+
+    private void addMockMaxUtilizations(Facility f, User apiUser, int businessDay, int saturday, int sunday, CapacityType capacityType, Usage usage) {
         facilityService.registerUtilization(f.id, asList(
-                utilize(CAR, businessDay, mon, f),
-                utilize(CAR, saturday, sat, f),
-                utilize(CAR, sunday, sun, f),
+                utilize(capacityType, usage, businessDay, mon, f),
+                utilize(capacityType, usage, saturday, sat, f),
+                utilize(capacityType, usage, sunday, sun, f),
 
                 // BICYCLE_SECURE_SPACE does not exist in built capacity, should not fail
                 utilize(BICYCLE_SECURE_SPACE, 0, baseDate.withDayOfWeek(MONDAY), f)
@@ -417,18 +477,21 @@ public class MaxUtilizationReportITest extends AbstractReportingITest {
     }
 
     private List<String> hubRow(List<Operator> operators, Usage usage, CapacityType type, DayType dayType, Integer totalCapacity, Integer unavailableCapacity, Double percentage, boolean hasHadExceptionalSituation) {
+        return hubRow(hub.name.fi, REGION_FOR_DUMMY_HUB, operators, usage, type, dayType, totalCapacity, unavailableCapacity, percentage, hasHadExceptionalSituation);
+    }
+
+    private List<String> hubRow(String hubName, String region, List<Operator> operators, Usage usage, CapacityType type, DayType dayType, Integer totalCapacity, Integer unavailableCapacity, Double percentage, boolean hasHadExceptionalSituation) {
         return asList(
-                hub.name.fi,
-                "Helsinki",
+                hubName,
+                region,
                 operators.stream().map(o -> o.name.fi).collect(joining(", ")),
                 translationService.translate(usage),
                 translationService.translate(type),
-//                translationService.translate(facility1.status),
                 totalCapacity.toString(),
                 unavailableCapacity.toString(),
                 translationService.translate(dayType),
                 String.format(Locale.ENGLISH, "%.2f %%", percentage * 100.0),
-                hasHadExceptionalSituation ? "Huom! Ajanjaksolla ollut poikkeustilanne" : ""
+                hasHadExceptionalSituation ? EXCEPTIONAL_SITUATION_TEXT : ""
         );
     }
 

@@ -137,8 +137,8 @@ public class MaxUtilizationReportService extends AbstractReportService {
         Excel excel = new Excel();
         Function<MaxUtilizationReportRow, Object> valFn = (MaxUtilizationReportRow r) -> r.average;
         List<Excel.TableColumn<MaxUtilizationReportRow>> columns = asList(
-                excelUtil.tcol("reports.utilization.col.hub", (MaxUtilizationReportRow r) -> r.hub.name),
-                excelUtil.tcol("reports.utilization.col.region", (MaxUtilizationReportRow r) -> ctx.regionByHubId.getOrDefault(r.hub.id, UNKNOWN_REGION).name),
+                excelUtil.tcol("reports.utilization.col.hub", (MaxUtilizationReportRow r) -> r.hubName),
+                excelUtil.tcol("reports.utilization.col.region", (MaxUtilizationReportRow r) -> r.regionName),
                 excelUtil.tcol("reports.utilization.col.operator", (MaxUtilizationReportRow r) -> r.operatorNames),
                 excelUtil.tcol("reports.utilization.col.usage", (MaxUtilizationReportRow r) -> translationService.translate(r.key.usage)),
                 excelUtil.tcol("reports.utilization.col.capacityType", (MaxUtilizationReportRow r) -> translationService.translate(r.key.capacityType)),
@@ -176,19 +176,14 @@ public class MaxUtilizationReportService extends AbstractReportService {
         final Map<MaxUtilizationReportKey, List<MaxUtilizationReportKeyWithDate>> groupedByFacility = facilityKeys.stream().collect(groupingBy(k -> k.toReportKey()));
 
         return groupedByFacility.entrySet().stream().map(mappingEntry((facilityKey, keys) -> {
-            Hub fakeHub = new Hub();
-            fakeHub.id = -facilityKey.facility.id; // Fake ids are negative for the sake of this report
-            fakeHub.name = facilityKey.facility.name;
-
             final RowMetrics rowMetrics = calculateRowMetrics(ctx, reportInfo, keys, facilityKey.capacityType);
-
-            return new MaxUtilizationReportRow(fakeHub, facilityKey, ctx.operators.get(facilityKey.facility.operatorId).name.fi, rowMetrics);
+            return new MaxUtilizationReportRow(facilityKey.facility.name, ctx.regionByFacilityId.getOrDefault(facilityKey.facility.id, UNKNOWN_REGION).name, facilityKey, ctx.operators.get(facilityKey.facility.operatorId).name.fi, rowMetrics);
         })).collect(toList());
     }
 
     private MaxUtilizationReportRow createRowForHub(ReportContext ctx, MaxUtilizationReportInfo reportInfo, HubReportKey hubKey, List<MaxUtilizationReportKeyWithDate> facilityKeys) {
         final RowMetrics rowMetrics = calculateRowMetrics(ctx, reportInfo, facilityKeys, hubKey.capacityType);
-        return new MaxUtilizationReportRow(hubKey.hub, facilityKeys.get(0).toReportKey(), operatorNames(ctx, hubKey), rowMetrics);
+        return new MaxUtilizationReportRow(hubKey.hub.name, ctx.regionByHubId.getOrDefault(hubKey.hub.id, UNKNOWN_REGION).name, facilityKeys.get(0).toReportKey(), operatorNames(ctx, hubKey), rowMetrics);
     }
 
     private static class RowMetrics {
@@ -310,7 +305,8 @@ public class MaxUtilizationReportService extends AbstractReportService {
     }
 
     static class MaxUtilizationReportRow implements Comparable<MaxUtilizationReportRow> {
-        final Hub hub;
+        final MultilingualString hubName;
+        final MultilingualString regionName;
         final MaxUtilizationReportKey key;
         final String operatorNames;
         final double average;
@@ -318,8 +314,9 @@ public class MaxUtilizationReportService extends AbstractReportService {
         final int unavailableCapacity;
         final boolean hasHadExceptionalStates;
 
-        MaxUtilizationReportRow(Hub hub, MaxUtilizationReportKey key, String operatorNames, double average, int totalCapacity, int unavailableCapacity, boolean hasHadExceptionalStates) {
-            this.hub = hub;
+        MaxUtilizationReportRow(MultilingualString hubName, MultilingualString regionName, MaxUtilizationReportKey key, String operatorNames, double average, int totalCapacity, int unavailableCapacity, boolean hasHadExceptionalStates) {
+            this.hubName = hubName;
+            this.regionName = regionName;
             this.key = key;
             this.operatorNames = operatorNames;
             this.average = average;
@@ -328,13 +325,13 @@ public class MaxUtilizationReportService extends AbstractReportService {
             this.hasHadExceptionalStates = hasHadExceptionalStates;
         }
 
-        MaxUtilizationReportRow(Hub hub, MaxUtilizationReportKey key, String operatorNames, RowMetrics rowMetrics) {
-            this(hub, key, operatorNames, rowMetrics.utilizationRate, rowMetrics.totalCapacity, rowMetrics.unavailableCapacity, rowMetrics.hasHadExceptionalStates);
+        MaxUtilizationReportRow(MultilingualString hubName, MultilingualString regionName, MaxUtilizationReportKey key, String operatorNames, RowMetrics rowMetrics) {
+            this(hubName, regionName, key, operatorNames, rowMetrics.utilizationRate, rowMetrics.totalCapacity, rowMetrics.unavailableCapacity, rowMetrics.hasHadExceptionalStates);
         }
 
         @Override
         public int compareTo(MaxUtilizationReportRow o) {
-            int c = hub.name.fi.compareTo(o.hub.name.fi);
+            int c = hubName.fi.compareTo(o.hubName.fi);
             if (c != 0) {
                 return c;
             }

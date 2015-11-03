@@ -5,11 +5,17 @@ package fi.hsl.parkandride.itest;
 
 import com.google.common.collect.ImmutableMap;
 import com.jayway.restassured.response.Response;
+import fi.hsl.parkandride.back.RegionDao;
 import fi.hsl.parkandride.core.back.FacilityHistoryRepository;
 import fi.hsl.parkandride.core.back.FacilityRepository;
 import fi.hsl.parkandride.core.domain.*;
 import fi.hsl.parkandride.core.service.FacilityHistoryService;
 import fi.hsl.parkandride.core.service.reporting.ReportParameters;
+import org.geolatte.geom.DimensionalFlag;
+import org.geolatte.geom.PointSequence;
+import org.geolatte.geom.Polygon;
+import org.geolatte.geom.codec.sqlserver.CountingPointSequenceBuilder;
+import org.geolatte.geom.crs.CrsId;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.junit.Before;
@@ -23,9 +29,7 @@ import java.util.Map;
 import java.util.stream.Stream;
 
 import static com.google.common.collect.Lists.newArrayList;
-import static fi.hsl.parkandride.core.domain.CapacityType.BICYCLE_SECURE_SPACE;
-import static fi.hsl.parkandride.core.domain.CapacityType.CAR;
-import static fi.hsl.parkandride.core.domain.CapacityType.ELECTRIC_CAR;
+import static fi.hsl.parkandride.core.domain.CapacityType.*;
 import static fi.hsl.parkandride.core.domain.Usage.COMMERCIAL;
 import static fi.hsl.parkandride.core.domain.Usage.PARK_AND_RIDE;
 import static fi.hsl.parkandride.test.DateTimeTestUtils.withDate;
@@ -45,10 +49,19 @@ public class MaxUtilizationReportITest extends AbstractReportingITest {
     private static final int UNAVAILABLE_COLUMN = 6;
     private static final String REGION_FOR_DUMMY_HUB = "Helsinki";
     private static final String EXCEPTIONAL_SITUATION_TEXT = "Huom! Ajanjaksolla ollut poikkeustilanne";
+    private static final PointSequence PORNAINEN_LOCATION = new CountingPointSequenceBuilder(DimensionalFlag.d2D, CrsId.parse("EPSG:4326"))
+            .add(25.36814469146677d, 60.47434669678006d)
+            .add(25.36260861206003d, 60.4754675875692d)
+            .add(25.364840209960423d, 60.47694795002815d)
+            .add(25.368831336974583d, 60.47656729184641d)
+            .add(25.36814469146677d, 60.47434669678006d)
+            .toPointSequence();
+    private static final Polygon PORNAINEN_POLYGON = new Polygon(PORNAINEN_LOCATION);
 
     @Inject FacilityHistoryRepository facilityHistoryRepository;
     @Inject FacilityHistoryService facilityHistoryService;
     @Inject FacilityRepository facilityRepository;
+    @Inject RegionDao regionDao;
 
     // ---------------------
     // MAX UTILIZATION REPORT
@@ -438,7 +451,7 @@ public class MaxUtilizationReportITest extends AbstractReportingITest {
             f.status = FacilityStatus.IN_OPERATION;
             f.builtCapacity = ImmutableMap.of(CAR, 100);
             f.unavailableCapacities = emptyList();
-
+            f.location = PORNAINEN_POLYGON;
             return facilityRepository.getFacility(facilityRepository.insertFacility(f));
         });
         addMockMaxUtilizations(facility, apiUser, 0, 25, 50);
@@ -449,9 +462,9 @@ public class MaxUtilizationReportITest extends AbstractReportingITest {
         checkSheetContents(whenPostingToReportUrl, 0,
                 headers(),
 
-                hubRow(facility.name.fi,"",singletonList(operator1), PARK_AND_RIDE, CAR, DayType.BUSINESS_DAY, 100, 0, 1.0,  false),
-                hubRow(facility.name.fi,"",singletonList(operator1), PARK_AND_RIDE, CAR, DayType.SATURDAY,     100, 0, 0.75, false),
-                hubRow(facility.name.fi,"",singletonList(operator1), PARK_AND_RIDE, CAR, DayType.SUNDAY,       100, 0, 0.5,  false),
+                hubRow(facility.name.fi,"Pornainen",singletonList(operator1), PARK_AND_RIDE, CAR, DayType.BUSINESS_DAY, 100, 0, 1.0,  false),
+                hubRow(facility.name.fi,"Pornainen",singletonList(operator1), PARK_AND_RIDE, CAR, DayType.SATURDAY,     100, 0, 0.75, false),
+                hubRow(facility.name.fi,"Pornainen",singletonList(operator1), PARK_AND_RIDE, CAR, DayType.SUNDAY,       100, 0, 0.5,  false),
 
                 hubRow(asList(operator1, operator2), PARK_AND_RIDE, CAR, DayType.BUSINESS_DAY, 100, 0, 1.0),
                 hubRow(asList(operator1, operator2), PARK_AND_RIDE, CAR, DayType.SATURDAY,     100, 0, 1.0),

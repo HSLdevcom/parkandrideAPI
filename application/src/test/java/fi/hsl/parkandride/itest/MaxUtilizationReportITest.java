@@ -431,6 +431,34 @@ public class MaxUtilizationReportITest extends AbstractReportingITest {
         );
     }
 
+    @Test
+    public void report_MaxUtilization_facilitiesNotInAnyHub() {
+        Facility facility = withDate(initial, () -> {
+            Facility f = dummies.createFacility(operator1.id, facility1.contacts);
+            f.status = FacilityStatus.IN_OPERATION;
+            f.builtCapacity = ImmutableMap.of(CAR, 100);
+            f.unavailableCapacities = emptyList();
+
+            return facilityRepository.getFacility(facilityRepository.insertFacility(f));
+        });
+        addMockMaxUtilizations(facility, apiUser, 0, 25, 50);
+        addMockMaxUtilizations(facility1, apiUser, 0, 0, 0);
+        addMockMaxUtilizations(facility2, apiUser2, 0, 0, 0);
+
+        final Response whenPostingToReportUrl = whenPostingToReportUrl(baseParams(), MAX_UTILIZATION, adminUser);
+        checkSheetContents(whenPostingToReportUrl, 0,
+                headers(),
+
+                hubRow(facility.name.fi,"",singletonList(operator1), PARK_AND_RIDE, CAR, DayType.BUSINESS_DAY, 100, 0, 1.0,  false),
+                hubRow(facility.name.fi,"",singletonList(operator1), PARK_AND_RIDE, CAR, DayType.SATURDAY,     100, 0, 0.75, false),
+                hubRow(facility.name.fi,"",singletonList(operator1), PARK_AND_RIDE, CAR, DayType.SUNDAY,       100, 0, 0.5,  false),
+
+                hubRow(asList(operator1, operator2), PARK_AND_RIDE, CAR, DayType.BUSINESS_DAY, 100, 0, 1.0),
+                hubRow(asList(operator1, operator2), PARK_AND_RIDE, CAR, DayType.SATURDAY,     100, 0, 1.0),
+                hubRow(asList(operator1, operator2), PARK_AND_RIDE, CAR, DayType.SUNDAY,       100, 0, 1.0)
+        );
+    }
+
     private List<String> headers() {
         return asList("Alueen nimi",
                 "Kunta",

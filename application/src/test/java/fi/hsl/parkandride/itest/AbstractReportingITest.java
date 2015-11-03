@@ -150,11 +150,15 @@ public abstract class AbstractReportingITest extends AbstractIntegrationTest {
     }
 
     protected static Utilization utilize(CapacityType capacityType, Integer spacesAvailable, DateTime ts, Facility f) {
+        return utilize(capacityType, f.usages.first(), spacesAvailable, ts, f);
+    }
+
+    protected static Utilization utilize(CapacityType capacityType, Usage usage, Integer spacesAvailable, DateTime ts, Facility f) {
         final Utilization utilization = new Utilization();
         utilization.facilityId = f.id;
         utilization.capacityType = capacityType;
         utilization.spacesAvailable = spacesAvailable;
-        utilization.usage = f.usages.first();
+        utilization.usage = usage;
         utilization.timestamp = ts;
         return utilization;
     }

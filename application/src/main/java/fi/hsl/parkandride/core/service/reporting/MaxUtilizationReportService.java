@@ -137,12 +137,11 @@ public class MaxUtilizationReportService extends AbstractReportService {
         Excel excel = new Excel();
         Function<MaxUtilizationReportRow, Object> valFn = (MaxUtilizationReportRow r) -> r.average;
         List<Excel.TableColumn<MaxUtilizationReportRow>> columns = asList(
-                excelUtil.tcol("reports.utilization.col.hub", (MaxUtilizationReportRow r) -> r.hub.name),
-                excelUtil.tcol("reports.utilization.col.region", (MaxUtilizationReportRow r) -> ctx.regionByHubId.getOrDefault(r.hub.id, UNKNOWN_REGION).name),
+                excelUtil.tcol("reports.utilization.col.hub", (MaxUtilizationReportRow r) -> r.hubName),
+                excelUtil.tcol("reports.utilization.col.region", (MaxUtilizationReportRow r) -> r.regionName),
                 excelUtil.tcol("reports.utilization.col.operator", (MaxUtilizationReportRow r) -> r.operatorNames),
                 excelUtil.tcol("reports.utilization.col.usage", (MaxUtilizationReportRow r) -> translationService.translate(r.key.usage)),
                 excelUtil.tcol("reports.utilization.col.capacityType", (MaxUtilizationReportRow r) -> translationService.translate(r.key.capacityType)),
-//                excelUtil.tcol("reports.utilization.col.status", (MaxUtilizationReportRow r) -> translationService.translate(r.key.facility.status)),
                 excelUtil.tcol("reports.utilization.col.totalCapacity", (MaxUtilizationReportRow r) -> r.totalCapacity),
                 excelUtil.tcol("reports.utilization.col.unavailableCapacity", (MaxUtilizationReportRow r) -> r.unavailableCapacity),
                 excelUtil.tcol("reports.utilization.col.dayType", (MaxUtilizationReportRow r) -> translationService.translate(r.key.dayType)),
@@ -161,38 +160,77 @@ public class MaxUtilizationReportService extends AbstractReportService {
         // At this point, the hub key is grouped by dayType, facility keys still contain the actual dat
         // However, the maximum utilization value has already been calculated for each facility and date.
         hubStats.forEach((hubKey, facilityKeys) -> {
-            final Integer totalCapacity = facilityKeys.stream()
-                    .map(k -> k.targetId)
-                    .distinct()
-                    .map(id -> ctx.facilities.get(id))
-                    .collect(summingInt(f -> f.builtCapacity.get(hubKey.capacityType)));
-
-            final List<FacilityRowInfo> facilityInfos = facilityKeys.stream().map(k -> reportInfo.rows.get(k)).collect(toList());
-
-            final int unavailableCapacity = facilityInfos.stream()
-                    .map(row -> row.unavailableCapacity)
-                    .filter(Objects::nonNull)
-                    .max(Ordering.natural())
-                    .orElse(0);
-
-            final Map<LocalDate, Integer> capacityPerDate = facilityInfos.stream()
-                    .collect(groupingBy(info -> info.date, summingInt(info -> info.totalCapacity)));
-            final Map<LocalDate, Double> freeSpacesPerDate = facilityInfos.stream()
-                    .filter(info -> !EXCLUDED_STATES.contains(info.status))
-                    .collect(groupingBy(info -> info.date, summingDouble(info -> info.spacesAvailable)));
-
-            final Double averageOfPercentages = freeSpacesPerDate.entrySet().stream()
-                    .map(mappingValue((date, freeSpaces) -> {
-                        final Integer capacity = capacityPerDate.get(date);
-                        return capacity == 0 ? 0.0d : 1.0d - (freeSpaces / ((double) capacity));
-                    }))
-                    .collect(averagingDouble(e -> e.getValue()));
-
-            final boolean hasHadExceptionalStates = facilityInfos.stream().map(i -> i.status).anyMatch(s -> EXCEPTIONAL_SITUATION.equals(s));
-            rows.add(new MaxUtilizationReportRow(hubKey.hub, facilityKeys.get(0).toReportKey(), operatorNames(ctx, hubKey), averageOfPercentages, totalCapacity, unavailableCapacity, hasHadExceptionalStates));
+            if (hubKey == null) {
+                // Facilities not belonging to any hub
+                rows.addAll(createRowsForFacilitiesWithoutHub(ctx, reportInfo, facilityKeys));
+            } else {
+                rows.add(createRowForHub(ctx, reportInfo, hubKey, facilityKeys));
+            }
         });
         sort(rows);
         return rows;
+    }
+
+    private List<MaxUtilizationReportRow> createRowsForFacilitiesWithoutHub(ReportContext ctx, MaxUtilizationReportInfo reportInfo, List<MaxUtilizationReportKeyWithDate> facilityKeys) {
+        // Group by facility
+        final Map<MaxUtilizationReportKey, List<MaxUtilizationReportKeyWithDate>> groupedByFacility = facilityKeys.stream().collect(groupingBy(k -> k.toReportKey()));
+
+        return groupedByFacility.entrySet().stream().map(mappingEntry((facilityKey, keys) -> {
+            final RowMetrics rowMetrics = calculateRowMetrics(ctx, reportInfo, keys, facilityKey.capacityType);
+            return new MaxUtilizationReportRow(facilityKey.facility.name, ctx.regionByFacilityId.getOrDefault(facilityKey.facility.id, UNKNOWN_REGION).name, facilityKey, ctx.operators.get(facilityKey.facility.operatorId).name.fi, rowMetrics);
+        })).collect(toList());
+    }
+
+    private MaxUtilizationReportRow createRowForHub(ReportContext ctx, MaxUtilizationReportInfo reportInfo, HubReportKey hubKey, List<MaxUtilizationReportKeyWithDate> facilityKeys) {
+        final RowMetrics rowMetrics = calculateRowMetrics(ctx, reportInfo, facilityKeys, hubKey.capacityType);
+        return new MaxUtilizationReportRow(hubKey.hub.name, ctx.regionByHubId.getOrDefault(hubKey.hub.id, UNKNOWN_REGION).name, facilityKeys.get(0).toReportKey(), operatorNames(ctx, hubKey), rowMetrics);
+    }
+
+    private static class RowMetrics {
+        int totalCapacity;
+        int unavailableCapacity;
+        double utilizationRate;
+
+        boolean hasHadExceptionalStates;
+        public RowMetrics(int totalCapacity, int unavailableCapacity, double utilizationRate, boolean hasHadExceptionalStates) {
+            this.totalCapacity = totalCapacity;
+            this.unavailableCapacity = unavailableCapacity;
+            this.utilizationRate = utilizationRate;
+            this.hasHadExceptionalStates = hasHadExceptionalStates;
+        }
+
+    }
+
+    private RowMetrics calculateRowMetrics(ReportContext ctx, MaxUtilizationReportInfo reportInfo, List<MaxUtilizationReportKeyWithDate> facilityKeys, CapacityType capacityType) {
+        final Integer totalCapacity = facilityKeys.stream()
+                .map(k -> k.targetId)
+                .distinct()
+                .map(id -> ctx.facilities.get(id))
+                .collect(summingInt(f -> f.builtCapacity.get(capacityType)));
+
+        final List<FacilityRowInfo> facilityInfos = facilityKeys.stream().map(k -> reportInfo.rows.get(k)).collect(toList());
+
+        final int unavailableCapacity = facilityInfos.stream()
+                .map(row -> row.unavailableCapacity)
+                .filter(Objects::nonNull)
+                .max(Ordering.natural())
+                .orElse(0);
+
+        final Map<LocalDate, Integer> capacityPerDate = facilityInfos.stream()
+                .collect(groupingBy(info -> info.date, summingInt(info -> info.totalCapacity)));
+        final Map<LocalDate, Double> freeSpacesPerDate = facilityInfos.stream()
+                .filter(info -> !EXCLUDED_STATES.contains(info.status))
+                .collect(groupingBy(info -> info.date, summingDouble(info -> info.spacesAvailable)));
+
+        final Double averageOfPercentages = freeSpacesPerDate.entrySet().stream()
+                .map(mappingValue((date, freeSpaces) -> {
+                    final Integer capacity = capacityPerDate.get(date);
+                    return capacity == 0 ? 0.0d : 1.0d - (freeSpaces / ((double) capacity));
+                }))
+                .collect(averagingDouble(e -> e.getValue()));
+        final boolean hasHadExceptionalStates = facilityInfos.stream().map(i -> i.status).anyMatch(s -> EXCEPTIONAL_SITUATION.equals(s));
+
+        return new RowMetrics(totalCapacity, unavailableCapacity, averageOfPercentages, hasHadExceptionalStates);
     }
 
     private String operatorNames(ReportContext ctx, HubReportKey hubKey) {
@@ -202,23 +240,29 @@ public class MaxUtilizationReportService extends AbstractReportService {
     private Map<HubReportKey, List<MaxUtilizationReportKeyWithDate>> groupKeysByHubs(ReportContext ctx, Set<MaxUtilizationReportKeyWithDate> reportKeys) {
         Map<HubReportKey, List<MaxUtilizationReportKeyWithDate>> hubStats = new LinkedHashMap<>();
         reportKeys.forEach(key -> {
-            ctx.hubsByFacilityId.getOrDefault(key.targetId, emptyList()).forEach(hub -> {
-                List<MaxUtilizationReportKeyWithDate> l = new ArrayList<>();
-                l.add(key);
+            final List<Hub> hubs = ctx.hubsByFacilityId.getOrDefault(key.targetId, emptyList());
+            if (hubs.isEmpty()) {
+                // Belongs to no hubs
+                hubStats.computeIfAbsent(null, k -> new ArrayList<>()).add(key);
+            } else {
+                // Add it to each hub
+                hubs.forEach(hub -> {
+                    List<MaxUtilizationReportKeyWithDate> l = newArrayList(key);
 
-                HubReportKey hubKey = new HubReportKey();
-                // almost same key -> just targetId switches from facilityId to
-                // hubId
-                hubKey.targetId = hub.id;
-                hubKey.capacityType = key.capacityType;
-                hubKey.usage = key.usage;
-                hubKey.dayType = DayType.valueOf(key.date.toDateTimeAtStartOfDay());
-                hubKey.hub = hub;
-                hubStats.merge(hubKey, l, (o, n) -> {
-                    o.addAll(n);
-                    return o;
+                    HubReportKey hubKey = new HubReportKey();
+                    // almost same key -> just targetId switches from facilityId to
+                    // hubId
+                    hubKey.targetId = hub.id;
+                    hubKey.capacityType = key.capacityType;
+                    hubKey.usage = key.usage;
+                    hubKey.dayType = DayType.valueOf(key.date.toDateTimeAtStartOfDay());
+                    hubKey.hub = hub;
+                    hubStats.merge(hubKey, l, (o, n) -> {
+                        o.addAll(n);
+                        return o;
+                    });
                 });
-            });
+            }
         });
         return hubStats;
     }
@@ -261,7 +305,8 @@ public class MaxUtilizationReportService extends AbstractReportService {
     }
 
     static class MaxUtilizationReportRow implements Comparable<MaxUtilizationReportRow> {
-        final Hub hub;
+        final MultilingualString hubName;
+        final MultilingualString regionName;
         final MaxUtilizationReportKey key;
         final String operatorNames;
         final double average;
@@ -269,8 +314,9 @@ public class MaxUtilizationReportService extends AbstractReportService {
         final int unavailableCapacity;
         final boolean hasHadExceptionalStates;
 
-        MaxUtilizationReportRow(Hub hub, MaxUtilizationReportKey key, String operatorNames, double average, int totalCapacity, int unavailableCapacity, boolean hasHadExceptionalStates) {
-            this.hub = hub;
+        MaxUtilizationReportRow(MultilingualString hubName, MultilingualString regionName, MaxUtilizationReportKey key, String operatorNames, double average, int totalCapacity, int unavailableCapacity, boolean hasHadExceptionalStates) {
+            this.hubName = hubName;
+            this.regionName = regionName;
             this.key = key;
             this.operatorNames = operatorNames;
             this.average = average;
@@ -279,9 +325,13 @@ public class MaxUtilizationReportService extends AbstractReportService {
             this.hasHadExceptionalStates = hasHadExceptionalStates;
         }
 
+        MaxUtilizationReportRow(MultilingualString hubName, MultilingualString regionName, MaxUtilizationReportKey key, String operatorNames, RowMetrics rowMetrics) {
+            this(hubName, regionName, key, operatorNames, rowMetrics.utilizationRate, rowMetrics.totalCapacity, rowMetrics.unavailableCapacity, rowMetrics.hasHadExceptionalStates);
+        }
+
         @Override
         public int compareTo(MaxUtilizationReportRow o) {
-            int c = hub.name.fi.compareTo(o.hub.name.fi);
+            int c = hubName.fi.compareTo(o.hubName.fi);
             if (c != 0) {
                 return c;
             }
@@ -297,6 +347,9 @@ public class MaxUtilizationReportService extends AbstractReportService {
         }
     }
 
+    /**
+     * Key for grouping facility keys by hubs
+     */
     static class HubReportKey extends MaxUtilizationReportKey {
         Hub hub;
     }

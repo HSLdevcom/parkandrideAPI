@@ -103,15 +103,15 @@ public class PredictionService {
 
     private void updatePredictor(Long predictorId) {
         PredictorState state = predictorRepository.getForUpdate(predictorId);
-        state.moreUtilizations = false; // by default mark everything as processed, but allow the predictor to override it
+        state.moreUtilizations = false; // by default mark everything as processed, but allow the predictor to override it (and uninstalled predictors get disabled)
         getPredictor(state.predictorType).ifPresent(predictor -> {
             // TODO: consider the update interval of prediction types? or leave that up to the predictor?
             List<Prediction> predictions = predictor.predict(state, new UtilizationHistoryImpl(utilizationRepository, state.utilizationKey));
             // TODO: should we set state.latestUtilization here so that all predictors don't need to remember do it? or will some predictors use different logic for it, for example if they process only part of the updates?
             // TODO: save to prediction log
             predictionRepository.updatePredictions(toPredictionBatch(state, predictions), predictorId);
-            predictorRepository.save(state);
         });
+        predictorRepository.save(state); // save state even if predictor is not present: this disables uninstalled predictors
     }
 
     @Transactional(readOnly = false, isolation = READ_COMMITTED, propagation = REQUIRES_NEW)

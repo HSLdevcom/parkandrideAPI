@@ -42,7 +42,6 @@ public class RelativizedAverageOfPreviousWeeksPredictor implements Predictor {
         List<List<Prediction>> groupedByWeek =
                 LOOKBACK_PERIODS.stream()
                         .map(offset -> {
-                            offset.toMutablePeriod().add(PredictionRepository.PREDICTION_WINDOW);
                             DateTime start = now.minus(offset);
                             DateTime end = start.plus(PredictionRepository.PREDICTION_WINDOW);
                             Optional<Utilization> utilizationAtReferenceTime = inMemoryHistory.getAt(start);

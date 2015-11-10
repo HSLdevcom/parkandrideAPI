@@ -90,10 +90,13 @@ public class PredictionDao implements PredictionRepository {
         validationService.validate(pb);
         DateTime start = toPredictionResolution(pb.sourceTimestamp);
         List<Prediction> predictions = normalizeToPredictionWindow(start, pb.predictions);
-        predictions = predictions.stream()
+        savePredictionHistory(predictorId, start, filterToSelectedPredictionDistances(start, predictions));
+    }
+
+    private List<Prediction> filterToSelectedPredictionDistances(DateTime start, List<Prediction> predictions) {
+        return predictions.stream()
                 .filter(p -> predictionsDistancesToStore.contains(new Duration(start, p.timestamp)))
                 .collect(toList());
-        savePredictionHistory(predictorId, start, predictions);
     }
 
     private static List<Prediction> normalizeToPredictionWindow(DateTime start, List<Prediction> predictions) {

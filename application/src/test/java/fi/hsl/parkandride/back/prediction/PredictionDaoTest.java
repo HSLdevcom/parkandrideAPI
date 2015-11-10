@@ -15,6 +15,7 @@ import fi.hsl.parkandride.core.domain.prediction.PredictionBatch;
 import fi.hsl.parkandride.core.service.ValidationException;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
+import org.joda.time.Duration;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -291,8 +292,13 @@ public class PredictionDaoTest extends AbstractDaoTest {
                 .mapToObj(counter -> counter * PREDICTION_RESOLUTION.getMinutes())
                 .forEach(predictionDistanceInMinutes -> {
                     List<Prediction> predictionHistory = predictionDao.getPredictionHistoryByPredictor(predictorId, now, now.plus(PREDICTION_WINDOW), predictionDistanceInMinutes);
-                    assertThat(predictionHistory).as("Prediction history for prediction distance %d minutes", predictionDistanceInMinutes)
-                            .containsOnly(new Prediction(toPredictionResolution(now.plusMinutes(predictionDistanceInMinutes)), 666));
+                    if (PredictionDao.predictionsDistancesToStore.contains(Duration.standardMinutes(predictionDistanceInMinutes))) {
+                        assertThat(predictionHistory).as("Prediction history for prediction distance %d minutes exists", predictionDistanceInMinutes)
+                                .containsOnly(new Prediction(toPredictionResolution(now.plusMinutes(predictionDistanceInMinutes)), 666));
+                    } else {
+                        assertThat(predictionHistory).as("Prediction history for prediction distance %d minutes does not exist", predictionDistanceInMinutes)
+                                .isEmpty();
+                    }
                 });
     }
 

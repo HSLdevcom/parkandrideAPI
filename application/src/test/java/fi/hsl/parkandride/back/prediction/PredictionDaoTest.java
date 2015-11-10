@@ -25,6 +25,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.IntStream;
 
 import static fi.hsl.parkandride.core.back.PredictionRepository.PREDICTION_RESOLUTION;
 import static fi.hsl.parkandride.core.back.PredictionRepository.PREDICTION_WINDOW;
@@ -278,6 +279,22 @@ public class PredictionDaoTest extends AbstractDaoTest {
         );
     }
 
+    @Test
+    public void prediction_history_is_generated_for_all_prediction_distances() {
+        PredictionBatch pb1 = newPredictionBatch(now,
+                new Prediction(now, 666),
+                new Prediction(now.plus(PREDICTION_WINDOW), 666)
+        );
+        predictionDao.updatePredictions(pb1, predictorId);
+
+        IntStream.range(1, PREDICTION_WINDOW.toStandardMinutes().getMinutes() / PREDICTION_RESOLUTION.getMinutes())
+                .mapToObj(counter -> counter * PREDICTION_RESOLUTION.getMinutes())
+                .forEach(predictionDistanceInMinutes -> {
+                    List<Prediction> predictionHistory = predictionDao.getPredictionHistoryByPredictor(predictorId, now, now.plus(PREDICTION_WINDOW), predictionDistanceInMinutes);
+                    assertThat(predictionHistory).as("Prediction history for prediction distance %d minutes", predictionDistanceInMinutes)
+                            .containsOnly(new Prediction(toPredictionResolution(now.plusMinutes(predictionDistanceInMinutes)), 666));
+                });
+    }
 
     // helpers
 

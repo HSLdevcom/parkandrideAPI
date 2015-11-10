@@ -55,12 +55,13 @@ public class PredictionDao implements PredictionRepository {
                             p -> p.getMetadata().getName().substring("spacesAvailableAt".length()),
                             Function.identity())));
 
-    private final PostgreSQLQueryFactory queryFactory;
-    private final ValidationService validationService;
-    private final List<Duration> predictionsDistancesToStore = Collections.unmodifiableList(
+    public static final List<Duration> predictionsDistancesToStore = Collections.unmodifiableList(
             Arrays.<Duration>asList(standardMinutes(5), standardMinutes(10), standardMinutes(15), standardMinutes(20),
                     standardMinutes(30), standardMinutes(45), standardHours(1), standardHours(2), standardHours(4),
                     standardHours(8), standardHours(12), standardHours(16), standardHours(20), standardHours(24)));
+
+    private final PostgreSQLQueryFactory queryFactory;
+    private final ValidationService validationService;
 
     public PredictionDao(PostgreSQLQueryFactory queryFactory, ValidationService validationService) {
         this.queryFactory = queryFactory;
@@ -80,7 +81,7 @@ public class PredictionDao implements PredictionRepository {
             initializePredictionLookupTable(utilizationKey);
             updatePredictions(pb, predictorId); // retry now that the lookup table exists
         } else {
-            savePredictionHistory(predictorId, start, predictions);
+            savePredictionHistory(predictorId, start, filterToSelectedPredictionDistances(start, predictions));
         }
     }
 
@@ -90,10 +91,13 @@ public class PredictionDao implements PredictionRepository {
         validationService.validate(pb);
         DateTime start = toPredictionResolution(pb.sourceTimestamp);
         List<Prediction> predictions = normalizeToPredictionWindow(start, pb.predictions);
-        predictions = predictions.stream()
+        savePredictionHistory(predictorId, start, filterToSelectedPredictionDistances(start, predictions));
+    }
+
+    private List<Prediction> filterToSelectedPredictionDistances(DateTime start, List<Prediction> predictions) {
+        return predictions.stream()
                 .filter(p -> predictionsDistancesToStore.contains(new Duration(start, p.timestamp)))
                 .collect(toList());
-        savePredictionHistory(predictorId, start, predictions);
     }
 
     private static List<Prediction> normalizeToPredictionWindow(DateTime start, List<Prediction> predictions) {

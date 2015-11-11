@@ -629,7 +629,7 @@
         },
         "expiredPassword": {
             "title": "Päivitä salasana",
-            "text": "Salasanasi on vanhentunut ja se tulee päivittää välittömästi käytön jatkamiseksi",
+            "text": "Salasanasi on vanhentunut ja se tulee päivittää välittömästi käytön jatkamiseksi.",
             "label": "Uusi salasana",
             "label2": "Vahvista uusi salasana"
         },
@@ -703,7 +703,7 @@
         },
         "RequestLog": {
             "name": "Rajapintakutsut",
-            "info": "Raportti kertoo summatietona REST-rajapintakutsujen määrän eri liikennelähteistä",
+            "info": "Raportti kertoo summatietona REST-rajapintakutsujen määrän eri liikennelähteistä.",
             "intervals": {
                 "hour": "tunneittain",
                 "day":  "päivittäin",
@@ -723,7 +723,7 @@
         "passwordReminder": {
             "title": "Salasanasi on vanhentumassa",
             "text1": "Salasanasi vanhenee",
-            "text2": "päivään kuluttua. Salasanan voi päivittää Käyttäjät-välilehdellä oman käyttäjätunnuksen kohdalta"
+            "text2": "päivän kuluttua. Salasanan voi päivittää Käyttäjät-välilehdellä oman käyttäjätunnuksen kohdalta."
         }
     },
     "common": {

@@ -103,6 +103,10 @@ public class PredictionService {
 
     private void updatePredictor(Long predictorId) {
         PredictorState state = predictorRepository.getForUpdate(predictorId);
+        if (state.moreUtilizations == false) {
+            log.debug("Another cluster node already updated predictor ID {} (type {} for {}), skipping...", state.predictorId, state.predictorType, state.utilizationKey);
+            return;
+        }
         state.moreUtilizations = false; // by default mark everything as processed, but allow the predictor to override it (and uninstalled predictors get disabled)
         getPredictor(state.predictorType).ifPresent(predictor -> {
             // TODO: consider the update interval of prediction types? or leave that up to the predictor?

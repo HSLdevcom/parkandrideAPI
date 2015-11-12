@@ -26,7 +26,6 @@ import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.Duration;
 import org.joda.time.format.DateTimeFormat;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 import java.util.function.BinaryOperator;
@@ -39,9 +38,6 @@ import java.util.stream.Stream;
 import static java.util.stream.Collectors.toList;
 import static org.joda.time.Duration.standardHours;
 import static org.joda.time.Duration.standardMinutes;
-import static org.springframework.transaction.annotation.Isolation.READ_COMMITTED;
-import static org.springframework.transaction.annotation.Isolation.SERIALIZABLE;
-import static org.springframework.transaction.annotation.Propagation.REQUIRED;
 
 public class PredictionDao implements PredictionRepository {
 
@@ -68,7 +64,7 @@ public class PredictionDao implements PredictionRepository {
         this.validationService = validationService;
     }
 
-    @Transactional(readOnly = false, isolation = SERIALIZABLE, propagation = REQUIRED)
+    @TransactionalWrite
     @Override
     public void updatePredictions(PredictionBatch pb, Long predictorId) {
         validationService.validate(pb);

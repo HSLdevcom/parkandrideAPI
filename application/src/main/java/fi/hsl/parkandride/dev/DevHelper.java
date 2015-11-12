@@ -112,8 +112,8 @@ public class DevHelper {
     @TransactionalWrite
     public void deleteFacilities() {
         delete(
-                QFacilityPrediction.facilityPrediction,
                 QFacilityPredictionHistory.facilityPredictionHistory,
+                QFacilityPrediction.facilityPrediction,
                 QPredictor.predictor,
                 QFacilityUtilization.facilityUtilization,
                 QFacilityService.facilityService,

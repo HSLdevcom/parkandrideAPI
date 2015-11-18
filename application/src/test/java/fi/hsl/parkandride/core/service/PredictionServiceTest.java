@@ -5,6 +5,7 @@ package fi.hsl.parkandride.core.service;
 
 import fi.hsl.parkandride.back.AbstractDaoTest;
 import fi.hsl.parkandride.back.Dummies;
+import fi.hsl.parkandride.core.back.FacilityRepository;
 import fi.hsl.parkandride.core.back.PredictionRepository;
 import fi.hsl.parkandride.core.back.PredictorRepository;
 import fi.hsl.parkandride.core.back.UtilizationRepository;
@@ -36,6 +37,7 @@ public class PredictionServiceTest extends AbstractDaoTest {
     @Inject UtilizationRepository utilizationRepository;
     @Inject PredictionRepository predictionRepository;
     @Inject PredictorRepository predictorRepository;
+    @Inject FacilityRepository facilityRepository;
     @Inject PlatformTransactionManager transactionManager;
     private PredictionService predictionService;
 
@@ -76,9 +78,9 @@ public class PredictionServiceTest extends AbstractDaoTest {
         List<String> spy = new ArrayList<>();
         usePredictor(new SameAsLatestPredictor() {
             @Override
-            public List<Prediction> predict(PredictorState state, UtilizationHistory history) {
+            public List<Prediction> predict(PredictorState state, UtilizationHistory history, int maxCapacity) {
                 spy.add(state.internalState + "@" + state.latestUtilization);
-                super.predict(state, history);
+                super.predict(state, history, maxCapacity);
                 state.internalState += "x";
                 return Collections.emptyList();
             }
@@ -106,7 +108,7 @@ public class PredictionServiceTest extends AbstractDaoTest {
         predictionService.updatePredictions();
         predictionService.updatePredictions();
 
-        verify(predictor, times(1)).predict(Matchers.<PredictorState>any(), Matchers.<UtilizationHistory>any());
+        verify(predictor, times(1)).predict(Matchers.<PredictorState>any(), Matchers.<UtilizationHistory>any(), Matchers.anyInt());
     }
 
     @Test
@@ -142,7 +144,7 @@ public class PredictionServiceTest extends AbstractDaoTest {
 
     private void usePredictor(Predictor predictor) {
         predictionService = new PredictionService(utilizationRepository, predictionRepository,
-                predictorRepository, transactionManager, predictor);
+                predictorRepository, facilityRepository, transactionManager, predictor);
     }
 
     private void registerUtilizations(Utilization... utilizations) {
@@ -188,12 +190,12 @@ public class PredictionServiceTest extends AbstractDaoTest {
         private final AtomicInteger maxConcurrentPredictors = new AtomicInteger(0);
 
         @Override
-        public List<Prediction> predict(PredictorState state, UtilizationHistory history) {
+        public List<Prediction> predict(PredictorState state, UtilizationHistory history, int maxCapacity) {
             int current = concurrentPredictors.incrementAndGet();
             maxConcurrentPredictors.updateAndGet(max -> Math.max(max, current));
             try {
                 increaseProbabilityOfConcurrency();
-                return super.predict(state, history);
+                return super.predict(state, history, maxCapacity);
             } finally {
                 concurrentPredictors.decrementAndGet();
             }

@@ -176,4 +176,25 @@ public class RelativizedAverageOfPreviousWeeksPredictorTest extends AbstractPred
                 new Prediction(now.plusMinutes(15), 0),
                 new Prediction(now.plusMinutes(20), 0));
     }
+
+    @Test
+    public void available_spaces_cannot_be_more_than_max_available_capacity() {
+        insertUtilization(now.minusDays(7), 10);
+        insertUtilization(now.minusDays(7).plusMinutes(5), 11);
+        insertUtilization(now.minusDays(7).plusMinutes(10), 12);
+        insertUtilization(now.minusDays(7).plusMinutes(15), 13);
+        insertUtilization(now.minusDays(7).plusMinutes(20), 14);
+        insertUtilization(now.minus(LOOKBACK_MINUTES), 10);
+        insertUtilization(now, 10);
+
+        availableMaxCapacity = 12;
+        List<Prediction> predictions = predict();
+
+        assertThat(predictions).containsSubsequence(
+                new Prediction(now, 10),
+                new Prediction(now.plusMinutes(5), 11),
+                new Prediction(now.plusMinutes(10), 12),
+                new Prediction(now.plusMinutes(15), 12),
+                new Prediction(now.plusMinutes(20), 12));
+    }
 }

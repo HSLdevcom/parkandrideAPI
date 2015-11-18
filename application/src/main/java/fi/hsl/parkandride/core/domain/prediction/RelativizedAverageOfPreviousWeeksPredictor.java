@@ -31,7 +31,7 @@ public class RelativizedAverageOfPreviousWeeksPredictor implements Predictor {
     }
 
     @Override
-    public List<Prediction> predict(PredictorState state, UtilizationHistory history) {
+    public List<Prediction> predict(PredictorState state, UtilizationHistory history, int maxCapacity) {
         Optional<Utilization> latest = history.getLatest();
         if (!latest.isPresent()) {
             return Collections.emptyList();
@@ -61,7 +61,7 @@ public class RelativizedAverageOfPreviousWeeksPredictor implements Predictor {
         List<List<Prediction>> groupedByTimeOfDay = ListUtil.transpose(groupedByWeek);
 
         return groupedByTimeOfDay.stream()
-                .map(predictions -> reduce(predictions, latest.get().spacesAvailable, getUtilizationMultiplier(now, inMemoryHistory)))
+                .map(predictions -> reduce(predictions, latest.get().spacesAvailable, getUtilizationMultiplier(now, inMemoryHistory), maxCapacity))
                 .collect(Collectors.toList());
     }
 
@@ -85,7 +85,7 @@ public class RelativizedAverageOfPreviousWeeksPredictor implements Predictor {
                 .mapToDouble(u -> Math.abs(u.spacesAvailable - referenceSpaces)).average().getAsDouble();
     }
 
-    private Prediction reduce(List<Prediction> predictions, int spacesAvailableCorrection, double utilizationMultiplier) {
+    private Prediction reduce(List<Prediction> predictions, int spacesAvailableCorrection, double utilizationMultiplier, int maxCapacity) {
         DateTime timestamp = predictions.get(0).timestamp;
         if (!predictions.stream()
                 .map(p -> p.timestamp)
@@ -96,7 +96,8 @@ public class RelativizedAverageOfPreviousWeeksPredictor implements Predictor {
                 .mapToDouble(u -> u.spacesAvailable)
                 .average()
                 .getAsDouble());
-        final int predictedSpacesAvailable = Math.max(0, spacesAvailable + spacesAvailableCorrection);
+        final int predictedSpacesAvailable =
+                Math.min(maxCapacity, Math.max(0, spacesAvailable + spacesAvailableCorrection));
         return new Prediction(timestamp, predictedSpacesAvailable);
     }
 }

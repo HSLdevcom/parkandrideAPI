@@ -24,7 +24,7 @@ public class SameAsLatestPredictor implements Predictor {
     }
 
     @Override
-    public List<Prediction> predict(PredictorState state, UtilizationHistory history) {
+    public List<Prediction> predict(PredictorState state, UtilizationHistory history, int maxCapacity) {
         List<Prediction> predictions = new ArrayList<>();
         try (CloseableIterator<Utilization>  utilizations = history.getUpdatesSince(state.latestUtilization)) {
             stream(spliteratorUnknownSize(utilizations, NONNULL | IMMUTABLE), false)

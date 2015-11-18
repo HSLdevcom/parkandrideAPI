@@ -180,7 +180,7 @@ public class CoreConfiguration {
 
     @Bean
     public PredictionService predictionService() {
-        return new PredictionService(utilizationRepository(), predictionRepository(), predictorRepository(), transactionManager, predictors());
+        return new PredictionService(utilizationRepository(), predictionRepository(), predictorRepository(), facilityRepository(), transactionManager, predictors());
     }
 
     @Bean

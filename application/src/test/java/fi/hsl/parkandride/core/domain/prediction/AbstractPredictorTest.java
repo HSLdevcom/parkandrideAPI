@@ -35,7 +35,8 @@ public abstract class AbstractPredictorTest extends AbstractDaoTest {
     protected UtilizationHistory utilizationHistory;
     protected PredictorState predictorState;
     protected final DateTime now = new DateTime();
-    protected Optional<Utilization> latestInsertedUtilization = Optional.empty();
+    protected Optional<Utilization> latestInsertedUtilization;
+    protected int availableMaxCapacity;
 
     protected AbstractPredictorTest(Predictor predictor) {
         this.predictor = predictor;
@@ -47,6 +48,8 @@ public abstract class AbstractPredictorTest extends AbstractDaoTest {
         utilizationKey = new UtilizationKey(facilityId, CapacityType.CAR, Usage.PARK_AND_RIDE);
         utilizationHistory = new UtilizationHistoryImpl(utilizationRepository, utilizationKey);
         predictorState = new PredictorState(1L, predictor.getType(), utilizationKey);
+        latestInsertedUtilization = Optional.empty();
+        availableMaxCapacity = 5000;
     }
 
     public void insertUtilization(DateTime timestamp, int spacesAvailable) {
@@ -63,7 +66,7 @@ public abstract class AbstractPredictorTest extends AbstractDaoTest {
     }
 
     public List<Prediction> predict() {
-        return predictor.predict(predictorState, utilizationHistory);
+        return predictor.predict(predictorState, utilizationHistory, availableMaxCapacity);
     }
 
     @Test

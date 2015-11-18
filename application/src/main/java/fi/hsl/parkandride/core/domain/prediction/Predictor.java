@@ -9,5 +9,5 @@ public interface Predictor {
 
     String getType();
 
-    List<Prediction> predict(PredictorState state, UtilizationHistory history);
+    List<Prediction> predict(PredictorState state, UtilizationHistory history, int maxCapacity);
 }

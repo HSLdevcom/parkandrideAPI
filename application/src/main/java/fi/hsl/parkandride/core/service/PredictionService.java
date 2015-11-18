@@ -3,9 +3,11 @@
 
 package fi.hsl.parkandride.core.service;
 
+import fi.hsl.parkandride.core.back.FacilityRepository;
 import fi.hsl.parkandride.core.back.PredictionRepository;
 import fi.hsl.parkandride.core.back.PredictorRepository;
 import fi.hsl.parkandride.core.back.UtilizationRepository;
+import fi.hsl.parkandride.core.domain.Facility;
 import fi.hsl.parkandride.core.domain.Utilization;
 import fi.hsl.parkandride.core.domain.UtilizationKey;
 import fi.hsl.parkandride.core.domain.prediction.*;
@@ -32,16 +34,19 @@ public class PredictionService {
     private final PredictorRepository predictorRepository;
     private final PlatformTransactionManager transactionManager;
     private final Map<String, Predictor> predictorsByType;
+    private final FacilityRepository facilityRepository;
 
     public PredictionService(UtilizationRepository utilizationRepository,
                              PredictionRepository predictionRepository,
                              PredictorRepository predictorRepository,
+                             FacilityRepository facilityRepository,
                              PlatformTransactionManager transactionManager,
                              Predictor... predictors) {
         this.utilizationRepository = utilizationRepository;
         this.predictionRepository = predictionRepository;
         this.predictorRepository = predictorRepository;
         this.transactionManager = transactionManager;
+        this.facilityRepository = facilityRepository;
         Map<String, Predictor> predictorsByType = new HashMap<>();
         for (Predictor predictor : predictors) {
             predictorsByType.put(predictor.getType(), predictor);
@@ -110,7 +115,7 @@ public class PredictionService {
         state.moreUtilizations = false; // by default mark everything as processed, but allow the predictor to override it (and uninstalled predictors get disabled)
         getPredictor(state.predictorType).ifPresent(predictor -> {
             // TODO: consider the update interval of prediction types? or leave that up to the predictor?
-            List<Prediction> predictions = predictor.predict(state, new UtilizationHistoryImpl(utilizationRepository, state.utilizationKey));
+            List<Prediction> predictions = predictor.predict(state, new UtilizationHistoryImpl(utilizationRepository, state.utilizationKey), getAvailableMaxCapacity(state));
             // TODO: should we set state.latestUtilization here so that all predictors don't need to remember do it? or will some predictors use different logic for it, for example if they process only part of the updates?
             // TODO: save to prediction log
             predictionRepository.updatePredictions(toPredictionBatch(state, predictions), predictorId);
@@ -132,7 +137,7 @@ public class PredictionService {
     private void updatePredictionHistoryForPredictor(Long predictorId, List<Utilization> utilizationList) {
         PredictorState state = predictorRepository.getById(predictorId);
         getPredictor(state.predictorType).ifPresent(predictor -> {
-            List<Prediction> predictions = predictor.predict(state, new UtilizationHistoryList(utilizationList));
+            List<Prediction> predictions = predictor.predict(state, new UtilizationHistoryList(utilizationList), getAvailableMaxCapacity(state));
             predictionRepository.updateOnlyPredictionHistory(toPredictionBatch(state, predictions), predictorId);
         });
     }
@@ -145,4 +150,13 @@ public class PredictionService {
         return batch;
     }
 
+    private int getAvailableMaxCapacity(PredictorState state) {
+        final UtilizationKey uKey = state.utilizationKey;
+        final Facility facility = facilityRepository.getFacility(uKey.facilityId);
+        final int builtCapacity = facility.builtCapacity.get(uKey.capacityType);
+        final int unavailable = facility.unavailableCapacities.stream()
+                .filter(uc -> uc.capacityType == uKey.capacityType && uc.usage == uKey.usage)
+                .mapToInt(uc -> uc.capacity).max().orElse(0);
+        return builtCapacity - unavailable;
+    }
 }

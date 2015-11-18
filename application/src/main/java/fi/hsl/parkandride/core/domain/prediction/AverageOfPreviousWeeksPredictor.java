@@ -27,7 +27,7 @@ public class AverageOfPreviousWeeksPredictor implements Predictor {
     }
 
     @Override
-    public List<Prediction> predict(PredictorState state, UtilizationHistory history) {
+    public List<Prediction> predict(PredictorState state, UtilizationHistory history, int maxCapacity) {
         Optional<Utilization> latest = history.getLatest();
         if (!latest.isPresent()) return Collections.emptyList();
         DateTime now = state.latestUtilization = latest.get().timestamp;

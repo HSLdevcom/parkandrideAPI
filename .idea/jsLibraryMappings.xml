@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project version="4">
-  <component name="JavaScriptLibraryMappings">
-    <file url="file://$PROJECT_DIR$/application/src/main/frontend" libraries="{Node.js v0.12.0 Core Modules}" />
-    <file url="file://$PROJECT_DIR$/etc/protractor" libraries="{Node.js v0.12.0 Core Modules}" />
-  </component>
-</project>

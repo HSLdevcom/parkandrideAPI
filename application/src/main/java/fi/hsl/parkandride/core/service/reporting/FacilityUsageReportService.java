@@ -12,6 +12,7 @@ import fi.hsl.parkandride.core.service.*;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
+import org.joda.time.LocalTime;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -88,9 +89,16 @@ public class FacilityUsageReportService extends AbstractReportService {
                 excelUtil.tcol("reports.usage.col.date", (UtilizationReportRow r) -> r.key.date)
         );
         columns = new ArrayList<>(columns);
+        final DateTime currentDateTime = DateTime.now();
+
         for (int s = 0, i = 0; s < SECONDS_IN_DAY; s += intervalSeconds, i++) {
+            final long millis = s * 1000;
             final int idx = i;
-            columns.add(Excel.TableColumn.col(ofSecondOfDay(s).toString(), (UtilizationReportRow r) -> r.values[idx]));
+            columns.add(Excel.TableColumn.col(ofSecondOfDay(s).toString(), (UtilizationReportRow r) -> {
+                // Special case, hide data for future columns
+                final DateTime dateTime = r.key.date.toDateTime(LocalTime.fromMillisOfDay(millis));
+                return dateTime.isAfter(currentDateTime) ? "" : r.values[idx];
+            }));
         }
         excel.addSheet(excelUtil.getMessage("reports.usage.sheets.usage"), rows, columns);
         excel.addSheet(excelUtil.getMessage("reports.usage.sheets.legend"),

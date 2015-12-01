@@ -11,7 +11,8 @@
         var storageKey = "login";
         var loginCache;
         return {
-            set: function(user) {
+            set: function(user, _opts) {
+                var opts = _opts || {transient: false};
                 if (_.isArray(user.permissions)) {
                     user.permissions = _.reduce(
                         user.permissions,
@@ -23,7 +24,9 @@
                     );
                 }
                 loginCache = user;
-                sessionStorage.setItem(storageKey, angular.toJson(user));
+                if (!opts.transient) {
+                    sessionStorage.setItem(storageKey, angular.toJson(user));
+                }
             },
             remove: function() {
                 loginCache = null;
@@ -101,6 +104,9 @@
                 function(result) {
                     var promise = $q(function (resolve, reject) {
                         var userData = result.data;
+                        // Set for the duration of the current execution to prevent reload from authenticating
+                        // but allowing user to save the new password in expiration dialog
+                        Session.set(userData, { transient: true });
                         if (userData.passwordExpireInDays < 0) {
                             passwordExpiredModal.open(userData).result.then(
                                 function () { resolve(userData); },

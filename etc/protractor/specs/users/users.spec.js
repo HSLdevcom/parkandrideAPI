@@ -228,7 +228,7 @@ describe('users', function () {
             usersPage.userModal.setUsername(newoperator.username);
             usersPage.userModal.save();
 
-            usersPage.userModal.isDisplayed(false);
+            usersPage.userModal.waitUntilAbsent();
 
             usersPage.getUsers().then(function (actual){
                 expect(actual.length).toBe(3);

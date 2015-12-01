@@ -609,6 +609,7 @@
     },
     "users": {
         "title": "Käyttäjät",
+        "label": "Käyttäjän tiedot",
         "help": {
             "summary": "Tälle sivulle on koottu järjestelmään tallennetut käyttäjät",
             "bullet1": "Operaattorit voivat lisätä ja hallinnoida omia käyttäjiään",

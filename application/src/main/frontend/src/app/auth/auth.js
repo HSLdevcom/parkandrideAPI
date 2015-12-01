@@ -7,8 +7,34 @@
         'parkandride.auth.passwordExpiredModal'
     ]);
 
-    m.factory('Session', function() {
-        var storageKey = "login";
+    m.provider('LoginStorage', function() {
+        var storageKey = 'login';
+
+        function LoginStorage() {}
+        LoginStorage.prototype.load = function() {
+            return window.sessionStorage.getItem(storageKey);
+        };
+        LoginStorage.prototype.save = function(user) {
+            window.sessionStorage.setItem(storageKey, angular.toJson(user));
+        };
+        LoginStorage.prototype.clear = function() {
+            window.sessionStorage.clear();
+        };
+
+        this.$get = [function() {
+           if (!window.sessionStorage) {
+               return {
+                   save: angular.noop,
+                   load: angular.noop,
+                   clear: angular.noop
+               };
+           } else {
+               return new LoginStorage();
+           }
+        }];
+    });
+
+    m.factory('Session', function(LoginStorage) {
         var loginCache;
         return {
             set: function(user, _opts) {
@@ -25,18 +51,18 @@
                 }
                 loginCache = user;
                 if (!opts.transient) {
-                    sessionStorage.setItem(storageKey, angular.toJson(user));
+                    LoginStorage.save(user);
                 }
             },
             remove: function() {
                 loginCache = null;
-                sessionStorage.clear();
+                LoginStorage.clear();
             },
             get: function() {
                 if (loginCache) {
                     return loginCache;
                 }
-                var loginData = sessionStorage.getItem(storageKey);
+                var loginData = LoginStorage.load();
                 if (loginData) {
                     loginCache = angular.fromJson(loginData);
                 }

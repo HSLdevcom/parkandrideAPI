@@ -529,7 +529,7 @@ public class ApiDocumentation extends AbstractIntegrationTest {
     public static Utilization newUtilization() {
         Utilization u = new Utilization();
         u.capacityType = CapacityType.CAR;
-        u.usage = Usage.HSL_TRAVEL_CARD;
+        u.usage = Usage.PARK_AND_RIDE;
         u.spacesAvailable = 30;
         u.timestamp = new DateTime();
         return u;

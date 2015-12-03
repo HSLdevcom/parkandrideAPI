@@ -15,8 +15,6 @@ import fi.hsl.parkandride.core.service.*;
 import org.joda.time.DateTime;
 import org.joda.time.Minutes;
 import org.joda.time.ReadablePeriod;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.Assert;
@@ -150,7 +148,7 @@ public class DevController {
                             final Stream.Builder<UtilizationKey> builder = Stream.builder();
                             builder.add(new UtilizationKey(facilityId, capacityType, Usage.PARK_AND_RIDE));
                             if (capacityType == CAR) {
-                                builder.add(new UtilizationKey(facilityId, capacityType, Usage.HSL_TRAVEL_CARD));
+                                builder.add(new UtilizationKey(facilityId, capacityType, Usage.COMMERCIAL));
                             }
                             return builder.build();
                         })

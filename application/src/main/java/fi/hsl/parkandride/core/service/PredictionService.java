@@ -22,6 +22,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 import java.util.*;
 
+import static java.util.stream.Collectors.toList;
 import static org.springframework.transaction.annotation.Isolation.READ_COMMITTED;
 import static org.springframework.transaction.annotation.Propagation.REQUIRES_NEW;
 
@@ -83,6 +84,24 @@ public class PredictionService {
 
     public List<PredictionBatch> getPredictionsByFacility(Long facilityId, DateTime time) {
         return predictionRepository.getPredictionsByFacility(facilityId, time);
+    }
+
+    /**
+     * Get the predictions by facility. Predictions that don't match the current built capacity
+     * or usage of the facility are left out.
+     *
+     * @param facilityId the id of the facility
+     * @param time the timestamp for the predictions
+     * @return prediction results
+     */
+    public List<PredictionResult> getPredictionResultByFacility(long facilityId, DateTime time) {
+        final Facility facility = facilityRepository.getFacility(facilityId);
+        return getPredictionsByFacility(facilityId, time)
+                .stream()
+                .flatMap(pb -> PredictionResult.from(pb).stream())
+                .filter(pr -> facility.usages.contains(pr.usage))
+                .filter(pr -> facility.builtCapacity.getOrDefault(pr.capacityType, 0) > 0)
+                .collect(toList());
     }
 
     @Scheduled(cron = "0 */5 * * * *") // every 5 minutes to match PredictionDao.PREDICTION_RESOLUTION

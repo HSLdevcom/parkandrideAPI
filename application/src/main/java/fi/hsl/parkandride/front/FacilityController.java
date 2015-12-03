@@ -4,7 +4,6 @@
 package fi.hsl.parkandride.front;
 
 import fi.hsl.parkandride.core.domain.*;
-import fi.hsl.parkandride.core.domain.prediction.PredictionBatch;
 import fi.hsl.parkandride.core.domain.prediction.PredictionRequest;
 import fi.hsl.parkandride.core.domain.prediction.PredictionResult;
 import fi.hsl.parkandride.core.service.FacilityService;
@@ -26,7 +25,6 @@ import java.util.Set;
 
 import static fi.hsl.parkandride.front.UrlSchema.*;
 import static fi.hsl.parkandride.front.geojson.FeatureCollection.FACILITY_TO_FEATURE;
-import static java.util.stream.Collectors.toList;
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
@@ -119,10 +117,8 @@ public class FacilityController {
                                                                 @ModelAttribute @Valid PredictionRequest request) {
         DateTime time = request.requestedTime();
         log.info("getPrediction({}, {})", facilityId, time);
-        List<PredictionBatch> predictions = predictionService.getPredictionsByFacility(facilityId, time);
-        List<PredictionResult> results = predictions.stream()
-                .flatMap(pb -> PredictionResult.from(pb).stream())
-                .collect(toList());
+        List<PredictionResult> results = predictionService.getPredictionResultByFacility(facilityId, time);
         return new ResponseEntity<>(results, OK);
     }
+
 }

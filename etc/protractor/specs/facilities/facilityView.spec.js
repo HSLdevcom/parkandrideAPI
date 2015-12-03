@@ -68,7 +68,7 @@ describe('facility view', function () {
             expect(viewPage.predictionsTable.getSize()).toBe(4);
             // The second row is empty: we don't want repeated titles
             expect(viewPage.predictionsTable.getTypes()).toEqual(['Henkilöauto', '', 'Invapaikka', 'Sähköauto']);
-            expect(viewPage.predictionsTable.getUsages()).toEqual(['Liityntä', 'Liityntä matkakortilla', 'Liityntä', 'Liityntä']);
+            expect(viewPage.predictionsTable.getUsages()).toEqual(['Liityntä', 'Kaupallinen', 'Liityntä', 'Liityntä']);
 
             expect(viewPage.isServicesDisplayed()).toBe(true);
             expect(viewPage.getServices()).toEqual("Valaistus, Katettu");

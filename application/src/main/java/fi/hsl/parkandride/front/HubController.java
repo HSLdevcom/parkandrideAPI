@@ -9,7 +9,6 @@ import fi.hsl.parkandride.core.domain.SearchResults;
 import fi.hsl.parkandride.core.domain.User;
 import fi.hsl.parkandride.core.domain.prediction.HubPredictionResult;
 import fi.hsl.parkandride.core.domain.prediction.PredictionRequest;
-import fi.hsl.parkandride.core.domain.prediction.PredictionResult;
 import fi.hsl.parkandride.core.service.HubService;
 import fi.hsl.parkandride.core.service.PredictionService;
 import fi.hsl.parkandride.front.geojson.Feature;
@@ -101,8 +100,7 @@ public class HubController {
         log.info("getPrediction({}, {})", hubId, time);
         final List<HubPredictionResult> results = hubService.getHub(hubId).facilityIds
                 .stream()
-                .flatMap(facilityId -> predictionService.getPredictionsByFacility(facilityId, time).stream())
-                .flatMap(pb -> PredictionResult.from(pb).stream())
+                .flatMap(facilityId -> predictionService.getPredictionResultByFacility(facilityId, time).stream())
                 .collect(groupingBy(result -> result.capacityType.name() + result.usage.name()))
                 .values().stream()
                 .map(list -> HubPredictionResult.sumFrom(hubId, list))

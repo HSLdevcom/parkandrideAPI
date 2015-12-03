@@ -3,6 +3,7 @@
 
 package fi.hsl.parkandride.itest;
 
+import com.google.common.collect.ImmutableMap;
 import com.jayway.restassured.path.json.JsonPath;
 import com.jayway.restassured.response.Response;
 import fi.hsl.parkandride.back.Dummies;
@@ -28,8 +29,20 @@ import java.util.Collections;
 import java.util.Map;
 
 import static com.jayway.restassured.RestAssured.when;
+import static fi.hsl.parkandride.core.domain.CapacityType.CAR;
+import static fi.hsl.parkandride.core.domain.DayType.BUSINESS_DAY;
+import static fi.hsl.parkandride.core.domain.DayType.SATURDAY;
+import static fi.hsl.parkandride.core.domain.DayType.SUNDAY;
+import static fi.hsl.parkandride.core.domain.PricingMethod.CUSTOM;
+import static fi.hsl.parkandride.core.domain.PricingMethod.PARK_AND_RIDE_247_FREE;
+import static fi.hsl.parkandride.core.domain.Role.ADMIN;
 import static fi.hsl.parkandride.core.domain.Role.OPERATOR_API;
+import static fi.hsl.parkandride.core.domain.Usage.COMMERCIAL;
+import static fi.hsl.parkandride.core.domain.Usage.HSL_TRAVEL_CARD;
+import static fi.hsl.parkandride.core.domain.Usage.PARK_AND_RIDE;
+import static java.util.Arrays.asList;
 import static java.util.Arrays.stream;
+import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.containsString;
 
@@ -41,17 +54,26 @@ public class PredictionITest extends AbstractIntegrationTest {
     @Inject PredictionService predictionService;
 
     private long facilityId;
-    private String authToken;
+    private Facility f;
     private User user;
     private final DateTime now = new DateTime();
+    private User adminUser;
 
     @Before
     public void initFixture() {
         devHelper.deleteAll();
         facilityId = dummies.createFacility();
-        Long operatorId = facilityService.getFacility(facilityId).operatorId;
+        f = facilityService.getFacility(facilityId);
+
+        Long operatorId = f.operatorId;
         user = devHelper.createOrUpdateUser(new NewUser(1L, "operator", OPERATOR_API, operatorId, "operator"));
-        authToken = devHelper.login(user.username).token;
+
+        adminUser = devHelper.createOrUpdateUser(new NewUser(100l, "admin", ADMIN, "admin"));
+
+        // Ensure validation passes
+        f.pricingMethod = PricingMethod.PARK_AND_RIDE_247_FREE;
+        f.pricing = emptyList();
+        facilityService.updateFacility(f.id, f, adminUser);
     }
 
     @Test
@@ -90,6 +112,18 @@ public class PredictionITest extends AbstractIntegrationTest {
     public void returns_predictions_for_all_capacity_types_and_usages() {
         makeDummyPredictions(Usage.HSL_TRAVEL_CARD);
         makeDummyPredictions(Usage.COMMERCIAL);
+
+        f.builtCapacity = ImmutableMap.of(CAR, 1000);
+        f.pricingMethod = CUSTOM;
+        f.pricing = asList(
+                new Pricing(CAR, HSL_TRAVEL_CARD, 1000, BUSINESS_DAY, "00", "24", "0"),
+                new Pricing(CAR, HSL_TRAVEL_CARD, 1000, SATURDAY, "00", "24", "0"),
+                new Pricing(CAR, HSL_TRAVEL_CARD, 1000, SUNDAY, "00", "24", "0"),
+                new Pricing(CAR, COMMERCIAL, 1000, BUSINESS_DAY, "00", "24", "0"),
+                new Pricing(CAR, COMMERCIAL, 1000, SATURDAY, "00", "24", "0"),
+                new Pricing(CAR, COMMERCIAL, 1000, SUNDAY, "00", "24", "0")
+        );
+        facilityService.updateFacility(f.id, f, adminUser);
 
         PredictionResult[] predictions = getPredictions(facilityId);
 
@@ -150,6 +184,26 @@ public class PredictionITest extends AbstractIntegrationTest {
         assertIsNear(requestedTime, predictions[0].timestamp);
     }
 
+    @Test
+    public void does_not_show_prediction_if_no_built_capacity() {
+        makeDummyPredictions();
+
+        assertThat(getPredictions(facilityId)).hasSize(1)
+            .extracting(pr -> pr.capacityType)
+            .containsExactly(CapacityType.CAR);
+
+        f.builtCapacity = ImmutableMap.of(CapacityType.BICYCLE, 1);
+        facilityService.updateFacility(f.id, f, adminUser);
+
+        assertThat(getPredictions(facilityId)).isEmpty();
+    }
+
+    @Test
+    public void does_not_show_prediction_if_no_usage() {
+        makeDummyPredictions(COMMERCIAL);
+        assertThat(getPredictions(facilityId)).isEmpty();
+    }
+
     // predictions for hubs
 
     @Test
@@ -163,8 +217,21 @@ public class PredictionITest extends AbstractIntegrationTest {
         makeDummyPredictions(Usage.PARK_AND_RIDE, facility2Id, user2);
         makeDummyPredictions(Usage.COMMERCIAL, facility2Id, user2);
 
-        final HubPredictionResult[] predictionsForHub = getPredictionsForHub(hubId);
+        final Facility f2 = facilityService.getFacility(facility2Id);
+        f2.builtCapacity = ImmutableMap.of(CAR, 1000);
+        f2.pricing = asList(
+                new Pricing(CAR, PARK_AND_RIDE, 1000, BUSINESS_DAY, "00", "24", "0"),
+                new Pricing(CAR, PARK_AND_RIDE, 1000, SATURDAY, "00", "24", "0"),
+                new Pricing(CAR, PARK_AND_RIDE, 1000, SUNDAY, "00", "24", "0"),
+                new Pricing(CAR, COMMERCIAL, 1000, BUSINESS_DAY, "00", "24", "0"),
+                new Pricing(CAR, COMMERCIAL, 1000, SATURDAY, "00", "24", "0"),
+                new Pricing(CAR, COMMERCIAL, 1000, SUNDAY, "00", "24", "0")
+        );;
+        f2.pricingMethod = PricingMethod.CUSTOM;
+        facilityService.updateFacility(f2.id, f2, adminUser);
 
+        final HubPredictionResult[] predictionsForHub = getPredictionsForHub(hubId);
+        assertThat(predictionsForHub).hasSize(2);
 
         assertThat(predictionsForHub[0].hubId).isEqualTo(hubId);
         assertThat(predictionsForHub[0].capacityType).isEqualTo(CapacityType.CAR);
@@ -180,6 +247,69 @@ public class PredictionITest extends AbstractIntegrationTest {
                 .filter(pred -> pred.usage == Usage.COMMERCIAL)
                 .findFirst().get();
         assertThat(commercial.spacesAvailable).isEqualTo(SPACES_AVAILABLE);
+    }
+
+    @Test
+    public void hub_excludes_prediction_if_no_built_capacity() {
+        final long facility2Id = dummies.createFacility();
+        final Long operator2Id = facilityService.getFacility(facility2Id).operatorId;
+        final User user2 = devHelper.createOrUpdateUser(new NewUser(2L, "operator2", OPERATOR_API, operator2Id, "operator"));
+        final long hubId = dummies.createHub(facilityId, facility2Id);
+
+        makeDummyPredictions(Usage.PARK_AND_RIDE, facilityId, user);
+        makeDummyPredictions(Usage.PARK_AND_RIDE, facility2Id, user2);
+        makeDummyPredictions(Usage.COMMERCIAL, facility2Id, user2);
+
+        final Facility f2 = facilityService.getFacility(facility2Id);
+        f2.pricing = emptyList();
+        f2.pricingMethod = PricingMethod.PARK_AND_RIDE_247_FREE;
+        f2.builtCapacity = ImmutableMap.of(CapacityType.BICYCLE, 1);
+        facilityService.updateFacility(f2.id, f2, adminUser);
+
+        final HubPredictionResult[] predictionsForHub = getPredictionsForHub(hubId);
+        assertThat(predictionsForHub).hasSize(1);
+
+        assertThat(predictionsForHub[0].hubId).isEqualTo(hubId);
+        assertThat(predictionsForHub[0].capacityType).isEqualTo(CapacityType.CAR);
+        assertIsNear(DateTime.now(), predictionsForHub[0].timestamp);
+
+
+        // Only first facility is taken into account, since the second one does not have built capacity
+        final HubPredictionResult parkAndRide = stream(predictionsForHub)
+                .filter(pred -> pred.usage == Usage.PARK_AND_RIDE)
+                .findFirst().get();
+        assertThat(parkAndRide.spacesAvailable).isEqualTo(SPACES_AVAILABLE);
+    }
+
+    @Test
+    public void hub_excludes_prediction_if_no_usage() {
+        final long facility2Id = dummies.createFacility();
+        final Long operator2Id = facilityService.getFacility(facility2Id).operatorId;
+        final User user2 = devHelper.createOrUpdateUser(new NewUser(2L, "operator2", OPERATOR_API, operator2Id, "operator"));
+        final long hubId = dummies.createHub(facilityId, facility2Id);
+
+        makeDummyPredictions(Usage.PARK_AND_RIDE, facilityId, user);
+        makeDummyPredictions(Usage.PARK_AND_RIDE, facility2Id, user2);
+        makeDummyPredictions(Usage.COMMERCIAL, facility2Id, user2);
+
+        final Facility f2 = facilityService.getFacility(facility2Id);
+        f2.builtCapacity = ImmutableMap.of(CAR, 1000);
+        f2.pricingMethod = PARK_AND_RIDE_247_FREE;
+        f2.pricing = emptyList();
+        facilityService.updateFacility(f2.id, f2, adminUser);
+
+        final HubPredictionResult[] predictionsForHub = getPredictionsForHub(hubId);
+
+        assertThat(predictionsForHub[0].hubId).isEqualTo(hubId);
+        assertThat(predictionsForHub[0].capacityType).isEqualTo(CapacityType.CAR);
+        assertIsNear(DateTime.now(), predictionsForHub[0].timestamp);
+
+
+        // Commer
+        assertThat(predictionsForHub).hasSize(1)
+            .extracting(hpr -> hpr.usage).containsExactly(PARK_AND_RIDE);
+        final HubPredictionResult parkAndRide = predictionsForHub[0];
+        assertThat(parkAndRide.spacesAvailable).isEqualTo(SPACES_AVAILABLE * 2);
     }
 
     @Test

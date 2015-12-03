@@ -4,6 +4,7 @@
 package fi.hsl.parkandride.itest;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.jayway.restassured.response.Response;
 import com.jayway.restassured.response.ValidatableResponse;
@@ -26,9 +27,19 @@ import javax.inject.Inject;
 import java.util.List;
 
 import static com.jayway.restassured.RestAssured.when;
+import static fi.hsl.parkandride.core.domain.CapacityType.BICYCLE;
+import static fi.hsl.parkandride.core.domain.CapacityType.CAR;
+import static fi.hsl.parkandride.core.domain.CapacityType.ELECTRIC_CAR;
+import static fi.hsl.parkandride.core.domain.DayType.BUSINESS_DAY;
+import static fi.hsl.parkandride.core.domain.DayType.SATURDAY;
+import static fi.hsl.parkandride.core.domain.DayType.SUNDAY;
 import static fi.hsl.parkandride.core.domain.FacilityStatus.IN_OPERATION;
+import static fi.hsl.parkandride.core.domain.PricingMethod.CUSTOM;
 import static fi.hsl.parkandride.core.domain.PricingMethod.PARK_AND_RIDE_247_FREE;
 import static fi.hsl.parkandride.core.domain.Role.OPERATOR_API;
+import static fi.hsl.parkandride.core.domain.Usage.COMMERCIAL;
+import static fi.hsl.parkandride.core.domain.Usage.PARK_AND_RIDE;
+import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
 import static org.hamcrest.Matchers.*;
@@ -83,6 +94,11 @@ public class UtilizationITest extends AbstractIntegrationTest {
         f.operatorId = 1l;
         f.location = Spatial.fromWktPolygon("POLYGON((25.010822 60.25054, 25.010822 60.250023, 25.012479 60.250337, 25.011449 60.250885, 25.010822 60.25054))");
         f.contacts = new FacilityContacts(c.id, c.id);
+        f.builtCapacity = ImmutableMap.of(
+                CAR, 1000,
+                BICYCLE, 100,
+                ELECTRIC_CAR, 10
+        );
 
         operatorDao.insertOperator(o, o.id);
         contactDao.insertContact(c, c.id);
@@ -240,6 +256,44 @@ public class UtilizationITest extends AbstractIntegrationTest {
     }
 
 
+    @Test
+    public void does_not_show_utilizations_without_built_capacities() {
+        multiCapacityCreate();
+
+        f.builtCapacity = ImmutableMap.of(CAR, 1000);
+        facilityDao.updateFacility(f.id, f);
+
+        Utilization[] results = getUtilizations();
+
+        assertThat(results)
+                .extracting("facilityId", "capacityType", "usage", "spacesAvailable")
+                .containsOnly(tuple(f.id, CAR, PARK_AND_RIDE, 1));
+    }
+
+    @Test
+    public void does_not_show_utilizations_without_usages() {
+        multiCapacityCreate();
+
+        f.builtCapacity = ImmutableMap.of(CAR, 1000);
+        f.pricingMethod = CUSTOM;
+        f.pricing = asList(
+                new Pricing(CAR, COMMERCIAL, 1000, BUSINESS_DAY, "00", "24", "0"),
+                new Pricing(CAR, COMMERCIAL, 1000, SATURDAY, "00", "24", "0"),
+                new Pricing(CAR, COMMERCIAL, 1000, SUNDAY, "00", "24", "0")
+        );
+        facilityDao.updateFacility(f.id, f);
+
+        Utilization[] results = getUtilizations();
+
+        assertThat(results).isEmpty();
+    }
+
+    private Utilization[] getUtilizations() {
+        return when().get(UrlSchema.FACILITY_UTILIZATION, f.id)
+                .then().statusCode(OK.value())
+                .extract().as(Utilization[].class);
+    }
+
     // helpers
 
     private static JSONObjectBuilder minValidPayload() {
@@ -296,9 +350,7 @@ public class UtilizationITest extends AbstractIntegrationTest {
                 .then()
                 .statusCode(OK.value());
 
-        Utilization[] results = when().get(UrlSchema.FACILITY_UTILIZATION, f.id)
-                .then().statusCode(OK.value())
-                .extract().as(Utilization[].class);
+        Utilization[] results = getUtilizations();
 
         assertThat(results)
                 .extracting("facilityId", "capacityType", "usage", "spacesAvailable", "timestamp")

@@ -47,4 +47,28 @@
             }
         };
     });
+
+    /**
+     * Limits the maximum input length
+     */
+    m.directive('limitTo', [function() {
+        return {
+            require: 'ngModel',
+            link: function(scope, elem, attrs, ngModel) {
+                var limit = parseInt(attrs.limitTo);
+                ngModel.$parsers.unshift(function(value) {
+                    if (typeof value === 'string') {
+                        var sub = value.substring(0, limit);
+                        if (sub !== value) {
+                            ngModel.$setViewValue(sub);
+                            ngModel.$render();
+                        }
+                        return sub;
+                    }
+                    return value;
+                });
+            }
+        };
+    }]);
+
 })();

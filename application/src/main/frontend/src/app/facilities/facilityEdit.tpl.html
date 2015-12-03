@@ -123,7 +123,7 @@
 					<td>
 						<input name="builtCapacity{{capacityType.id}}" type="number" class="form-control capacityInput"
 							   ng-model="editCtrl.facility.builtCapacity[capacityType.id]"
-							   min="0" show-errors>
+							   min="0" max="100000" show-errors limit-to="6">
 					</td>
 				</tr>
 				</tbody>
@@ -160,7 +160,7 @@
 					<td>
 						<input name="unavailableCapacity{{unavailableCapacity.capacityType}}{{unavailableCapacity.usage}}" type="number" class="form-control capacityInput"
 							   ng-model="unavailableCapacity.capacity"
-							   min="0" show-errors>
+							   min="0" limit-to="6" show-errors>
 					</td>
 				</tr>
 				</tbody>

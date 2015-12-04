@@ -10,6 +10,8 @@ import fi.hsl.parkandride.core.back.UtilizationRepository;
 import fi.hsl.parkandride.core.domain.*;
 import org.joda.time.DateTime;
 import org.joda.time.Seconds;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
@@ -18,6 +20,7 @@ import static fi.hsl.parkandride.core.service.AuthenticationService.authorize;
 import static java.util.stream.Collectors.toSet;
 
 public class FacilityService {
+    private static final Logger logger = LoggerFactory.getLogger(FacilityService.class);
 
     private final FacilityRepository repository;
     private final UtilizationRepository utilizationRepository;
@@ -95,12 +98,31 @@ public class FacilityService {
 
     @TransactionalWrite
     public void registerUtilization(long facilityId, List<Utilization> utilization, User currentUser) {
-        authorize(currentUser, repository.getFacilityInfo(facilityId), FACILITY_UTILIZATION_UPDATE);
+        final FacilityInfo facilityInfo = repository.getFacilityInfo(facilityId);
+        authorize(currentUser, facilityInfo, FACILITY_UTILIZATION_UPDATE);
 
         initUtilizationDefaults(facilityId, utilization);
         validateUtilizations(facilityId, utilization);
+
+        checkUtilizationApplicability(facilityInfo, utilization);
+
         utilizationRepository.insertUtilizations(utilization);
         predictionService.signalUpdateNeeded(utilization);
+    }
+
+    /**
+     * Logs a warning for each utilization whose usage or capacity type is not included in the facility info
+     * or whose number of spaces available exceeds the corresponding built capacity.
+     */
+    private void checkUtilizationApplicability(FacilityInfo info, List<Utilization> utilization) {
+        utilization.stream()
+                .filter(u -> !info.usages.contains(u.usage) ||
+                        info.builtCapacity.getOrDefault(u.capacityType, -1) < u.spacesAvailable
+                )
+                .forEach(u -> logger.warn(
+                        "Unexpected utilization for facility id={}: usage {} not found in {} or spaces available ({}) exceeds built capacity ({})",
+                        info.id, u.usage, info.usages, u.spacesAvailable, info.builtCapacity.get(u.capacityType)
+                ));
     }
 
     private static void initUtilizationDefaults(long facilityId, List<Utilization> utilization) {

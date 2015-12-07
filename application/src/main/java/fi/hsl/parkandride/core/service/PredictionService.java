@@ -108,7 +108,7 @@ public class PredictionService {
     public void updatePredictions() {
         log.info("updatePredictions");
         TransactionTemplate txTemplate = new TransactionTemplate(transactionManager);
-        txTemplate.setIsolationLevel(TransactionDefinition.ISOLATION_READ_COMMITTED); // TODO: set in Core/JdbcConfiguration
+        txTemplate.setIsolationLevel(TransactionDefinition.ISOLATION_SERIALIZABLE); // TODO: set in Core/JdbcConfiguration
         txTemplate.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
 
         for (Long predictorId : findPredictorsNeedingUpdate()) {

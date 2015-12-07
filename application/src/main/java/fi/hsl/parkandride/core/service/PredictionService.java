@@ -126,7 +126,15 @@ public class PredictionService {
     }
 
     private void updatePredictor(Long predictorId) {
-        PredictorState state = predictorRepository.getForUpdate(predictorId);
+        PredictorState readState = null;
+        try {
+            readState = predictorRepository.getForUpdate(predictorId);
+        } catch (Exception e) {
+            log.debug("Failed to lock predictor ID {} (type {} for {}) for update probably due to another node updating it already. " +
+                    "Continuing to the next predictor", readState.predictorId, readState.predictorType, readState.utilizationKey, e);
+            return;
+        }
+        final PredictorState state = readState;
         if (state.moreUtilizations == false) {
             log.debug("Another cluster node already updated predictor ID {} (type {} for {}), skipping...", state.predictorId, state.predictorType, state.utilizationKey);
             return;

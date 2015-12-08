@@ -7,9 +7,7 @@ import fi.hsl.parkandride.core.back.FacilityRepository;
 import fi.hsl.parkandride.core.back.PredictionRepository;
 import fi.hsl.parkandride.core.back.PredictorRepository;
 import fi.hsl.parkandride.core.back.UtilizationRepository;
-import fi.hsl.parkandride.core.domain.Facility;
-import fi.hsl.parkandride.core.domain.Utilization;
-import fi.hsl.parkandride.core.domain.UtilizationKey;
+import fi.hsl.parkandride.core.domain.*;
 import fi.hsl.parkandride.core.domain.prediction.*;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
@@ -22,6 +20,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 import java.util.*;
 
+import static java.util.Collections.emptySet;
 import static java.util.stream.Collectors.toList;
 import static org.springframework.transaction.annotation.Isolation.READ_COMMITTED;
 import static org.springframework.transaction.annotation.Propagation.REQUIRES_NEW;
@@ -96,10 +95,13 @@ public class PredictionService {
      */
     public List<PredictionResult> getPredictionResultByFacility(long facilityId, DateTime time) {
         final Facility facility = facilityRepository.getFacility(facilityId);
+
+        Map<CapacityType, Set<Usage>> usagesByCapacityType = FacilityUtil.usagesByCapacityType(facility);
+
         return getPredictionsByFacility(facilityId, time)
                 .stream()
                 .flatMap(pb -> PredictionResult.from(pb).stream())
-                .filter(pr -> facility.usages.contains(pr.usage))
+                .filter(pr -> usagesByCapacityType.getOrDefault(pr.capacityType, emptySet()).contains(pr.usage))
                 .filter(pr -> facility.builtCapacity.getOrDefault(pr.capacityType, 0) > 0)
                 .collect(toList());
     }

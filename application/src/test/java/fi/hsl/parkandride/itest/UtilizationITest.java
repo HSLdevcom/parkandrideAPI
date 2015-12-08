@@ -27,12 +27,8 @@ import javax.inject.Inject;
 import java.util.List;
 
 import static com.jayway.restassured.RestAssured.when;
-import static fi.hsl.parkandride.core.domain.CapacityType.BICYCLE;
-import static fi.hsl.parkandride.core.domain.CapacityType.CAR;
-import static fi.hsl.parkandride.core.domain.CapacityType.ELECTRIC_CAR;
-import static fi.hsl.parkandride.core.domain.DayType.BUSINESS_DAY;
-import static fi.hsl.parkandride.core.domain.DayType.SATURDAY;
-import static fi.hsl.parkandride.core.domain.DayType.SUNDAY;
+import static fi.hsl.parkandride.core.domain.CapacityType.*;
+import static fi.hsl.parkandride.core.domain.DayType.*;
 import static fi.hsl.parkandride.core.domain.FacilityStatus.IN_OPERATION;
 import static fi.hsl.parkandride.core.domain.PricingMethod.CUSTOM;
 import static fi.hsl.parkandride.core.domain.PricingMethod.PARK_AND_RIDE_247_FREE;
@@ -288,6 +284,38 @@ public class UtilizationITest extends AbstractIntegrationTest {
         assertThat(results).isEmpty();
     }
 
+    @Test
+    public void does_not_show_utilizations_when_usage_for_different_capacity_type() {
+        // CAR & COMMERCIAL should not show up in the list
+        // ELECTRIC_CAR & PARK_AND_RIDE should not show up in the list
+        registerUtilizations(asList(
+                utilize(CAR, PARK_AND_RIDE),
+                utilize(ELECTRIC_CAR, PARK_AND_RIDE),
+                utilize(CAR, COMMERCIAL),
+                utilize(ELECTRIC_CAR, COMMERCIAL)
+        ));
+        f.pricing = asList(
+                new Pricing(CAR, PARK_AND_RIDE, 100, BUSINESS_DAY, "00", "24", "0"),
+                new Pricing(CAR, PARK_AND_RIDE, 100, SATURDAY, "00", "24", "0"),
+                new Pricing(CAR, PARK_AND_RIDE, 100, SUNDAY, "00", "24", "0"),
+                new Pricing(ELECTRIC_CAR, COMMERCIAL, 50, BUSINESS_DAY, "00", "24", "0"),
+                new Pricing(ELECTRIC_CAR, COMMERCIAL, 50, SATURDAY, "00", "24", "0"),
+                new Pricing(ELECTRIC_CAR, COMMERCIAL, 50, SUNDAY, "00", "24", "0")
+        );
+        f.pricingMethod = CUSTOM;
+        facilityDao.updateFacility(f.id, f);
+
+        final Utilization[] results = getUtilizations();
+
+        assertThat(results)
+                .extracting(u -> tuple(u.capacityType, u.usage))
+                .hasSize(2)
+                .contains(
+                        tuple(CAR, PARK_AND_RIDE),
+                        tuple(ELECTRIC_CAR, COMMERCIAL)
+                );
+    }
+
     private Utilization[] getUtilizations() {
         return when().get(UrlSchema.FACILITY_UTILIZATION, f.id)
                 .then().statusCode(OK.value())
@@ -321,34 +349,33 @@ public class UtilizationITest extends AbstractIntegrationTest {
     }
 
     private void multiCapacityCreate() {
+        multiCapacityCreate(Usage.PARK_AND_RIDE, Usage.PARK_AND_RIDE, Usage.PARK_AND_RIDE);
+    }
+
+    private void multiCapacityCreate(Usage usageCar, Usage usageBike, Usage usageElectric) {
         DateTime now = DateTime.now();
 
         Utilization u1 = new Utilization();
         u1.timestamp = now;
         u1.spacesAvailable = 1;
         u1.capacityType = CapacityType.CAR;
-        u1.usage = Usage.PARK_AND_RIDE;
+        u1.usage = usageCar;
 
         Utilization u2 = new Utilization();
         u2.timestamp = now.minusSeconds(10);
         u2.spacesAvailable = 1;
         u2.capacityType = CapacityType.BICYCLE;
-        u2.usage = Usage.PARK_AND_RIDE;
+        u2.usage = usageBike;
 
         Utilization u3 = new Utilization();
         u3.timestamp = now.minusSeconds(20);
         u3.spacesAvailable = 2;
         u3.capacityType = CapacityType.ELECTRIC_CAR;
-        u3.usage = Usage.PARK_AND_RIDE;
+        u3.usage = usageElectric;
 
         List<Utilization> payload = Lists.newArrayList(u1, u2, u3);
 
-        givenWithContent(authToken)
-                .body(payload)
-                .when()
-                .put(UrlSchema.FACILITY_UTILIZATION, f.id)
-                .then()
-                .statusCode(OK.value());
+        registerUtilizations(payload);
 
         Utilization[] results = getUtilizations();
 
@@ -358,5 +385,24 @@ public class UtilizationITest extends AbstractIntegrationTest {
                         tuple(f.id, u1.capacityType, u1.usage, u1.spacesAvailable, u1.timestamp.toInstant()),
                         tuple(f.id, u2.capacityType, u2.usage, u2.spacesAvailable, u2.timestamp.toInstant()),
                         tuple(f.id, u3.capacityType, u3.usage, u3.spacesAvailable, u3.timestamp.toInstant()));
+    }
+
+    protected Utilization utilize(CapacityType capacityType, Usage usage) {
+        final Utilization utilization = new Utilization();
+        utilization.facilityId = f.id;
+        utilization.capacityType = capacityType;
+        utilization.spacesAvailable = 50;
+        utilization.usage = usage;
+        utilization.timestamp = DateTime.now().minusSeconds(10);
+        return utilization;
+    }
+
+    private void registerUtilizations(List<Utilization> payload) {
+        givenWithContent(authToken)
+                .body(payload)
+                .when()
+                .put(UrlSchema.FACILITY_UTILIZATION, f.id)
+                .then()
+                .statusCode(OK.value());
     }
 }

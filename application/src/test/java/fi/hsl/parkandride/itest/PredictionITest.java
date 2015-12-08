@@ -30,20 +30,18 @@ import java.util.Map;
 
 import static com.jayway.restassured.RestAssured.when;
 import static fi.hsl.parkandride.core.domain.CapacityType.CAR;
-import static fi.hsl.parkandride.core.domain.DayType.BUSINESS_DAY;
-import static fi.hsl.parkandride.core.domain.DayType.SATURDAY;
-import static fi.hsl.parkandride.core.domain.DayType.SUNDAY;
+import static fi.hsl.parkandride.core.domain.CapacityType.ELECTRIC_CAR;
+import static fi.hsl.parkandride.core.domain.DayType.*;
 import static fi.hsl.parkandride.core.domain.PricingMethod.CUSTOM;
 import static fi.hsl.parkandride.core.domain.PricingMethod.PARK_AND_RIDE_247_FREE;
 import static fi.hsl.parkandride.core.domain.Role.ADMIN;
 import static fi.hsl.parkandride.core.domain.Role.OPERATOR_API;
-import static fi.hsl.parkandride.core.domain.Usage.COMMERCIAL;
-import static fi.hsl.parkandride.core.domain.Usage.HSL_TRAVEL_CARD;
-import static fi.hsl.parkandride.core.domain.Usage.PARK_AND_RIDE;
+import static fi.hsl.parkandride.core.domain.Usage.*;
 import static java.util.Arrays.asList;
 import static java.util.Arrays.stream;
 import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.groups.Tuple.tuple;
 import static org.hamcrest.Matchers.containsString;
 
 public class PredictionITest extends AbstractIntegrationTest {
@@ -204,6 +202,36 @@ public class PredictionITest extends AbstractIntegrationTest {
         assertThat(getPredictions(facilityId)).isEmpty();
     }
 
+    @Test
+    public void does_not_show_prediction_if_usage_for_different_capacity_type() {
+        // CAR & COMMERCIAL should not show up in the list
+        // ELECTRIC_CAR & PARK_AND_RIDE should not show up in the list
+        makeDummyPredictions(CAR, PARK_AND_RIDE);
+        makeDummyPredictions(ELECTRIC_CAR, PARK_AND_RIDE);
+        makeDummyPredictions(CAR, COMMERCIAL);
+        makeDummyPredictions(ELECTRIC_CAR, COMMERCIAL);
+
+        f.builtCapacity = ImmutableMap.of(CAR, 100, ELECTRIC_CAR, 50);
+        f.pricingMethod = CUSTOM;
+        f.pricing = asList(
+                new Pricing(CAR, PARK_AND_RIDE, 100, BUSINESS_DAY, "00", "24", "0"),
+                new Pricing(CAR, PARK_AND_RIDE, 100, SATURDAY, "00", "24", "0"),
+                new Pricing(CAR, PARK_AND_RIDE, 100, SUNDAY, "00", "24", "0"),
+                new Pricing(ELECTRIC_CAR, COMMERCIAL, 50, BUSINESS_DAY, "00", "24", "0"),
+                new Pricing(ELECTRIC_CAR, COMMERCIAL, 50, SATURDAY, "00", "24", "0"),
+                new Pricing(ELECTRIC_CAR, COMMERCIAL, 50, SUNDAY, "00", "24", "0")
+        );
+        facilityService.updateFacility(f.id, f, adminUser);
+
+        assertThat(getPredictions(f.id))
+                .extracting(pr -> tuple(pr.capacityType, pr.usage))
+                .hasSize(2)
+                .containsOnly(
+                        tuple(CAR, PARK_AND_RIDE),
+                        tuple(ELECTRIC_CAR, COMMERCIAL)
+                );
+    }
+
     // predictions for hubs
 
     @Test
@@ -213,9 +241,9 @@ public class PredictionITest extends AbstractIntegrationTest {
         final User user2 = devHelper.createOrUpdateUser(new NewUser(2L, "operator2", OPERATOR_API, operator2Id, "operator"));
         final long hubId = dummies.createHub(facilityId, facility2Id);
 
-        makeDummyPredictions(Usage.PARK_AND_RIDE, facilityId, user);
-        makeDummyPredictions(Usage.PARK_AND_RIDE, facility2Id, user2);
-        makeDummyPredictions(Usage.COMMERCIAL, facility2Id, user2);
+        makeDummyPredictions(Usage.PARK_AND_RIDE, facilityId, user, CapacityType.CAR);
+        makeDummyPredictions(Usage.PARK_AND_RIDE, facility2Id, user2, CapacityType.CAR);
+        makeDummyPredictions(Usage.COMMERCIAL, facility2Id, user2, CapacityType.CAR);
 
         final Facility f2 = facilityService.getFacility(facility2Id);
         f2.builtCapacity = ImmutableMap.of(CAR, 1000);
@@ -256,9 +284,9 @@ public class PredictionITest extends AbstractIntegrationTest {
         final User user2 = devHelper.createOrUpdateUser(new NewUser(2L, "operator2", OPERATOR_API, operator2Id, "operator"));
         final long hubId = dummies.createHub(facilityId, facility2Id);
 
-        makeDummyPredictions(Usage.PARK_AND_RIDE, facilityId, user);
-        makeDummyPredictions(Usage.PARK_AND_RIDE, facility2Id, user2);
-        makeDummyPredictions(Usage.COMMERCIAL, facility2Id, user2);
+        makeDummyPredictions(Usage.PARK_AND_RIDE, facilityId, user, CapacityType.CAR);
+        makeDummyPredictions(Usage.PARK_AND_RIDE, facility2Id, user2, CapacityType.CAR);
+        makeDummyPredictions(Usage.COMMERCIAL, facility2Id, user2, CapacityType.CAR);
 
         final Facility f2 = facilityService.getFacility(facility2Id);
         f2.pricing = emptyList();
@@ -288,9 +316,9 @@ public class PredictionITest extends AbstractIntegrationTest {
         final User user2 = devHelper.createOrUpdateUser(new NewUser(2L, "operator2", OPERATOR_API, operator2Id, "operator"));
         final long hubId = dummies.createHub(facilityId, facility2Id);
 
-        makeDummyPredictions(Usage.PARK_AND_RIDE, facilityId, user);
-        makeDummyPredictions(Usage.PARK_AND_RIDE, facility2Id, user2);
-        makeDummyPredictions(Usage.COMMERCIAL, facility2Id, user2);
+        makeDummyPredictions(Usage.PARK_AND_RIDE, facilityId, user, CapacityType.CAR);
+        makeDummyPredictions(Usage.PARK_AND_RIDE, facility2Id, user2, CapacityType.CAR);
+        makeDummyPredictions(Usage.COMMERCIAL, facility2Id, user2, CapacityType.CAR);
 
         final Facility f2 = facilityService.getFacility(facility2Id);
         f2.builtCapacity = ImmutableMap.of(CAR, 1000);
@@ -367,13 +395,17 @@ public class PredictionITest extends AbstractIntegrationTest {
     }
 
     private Utilization makeDummyPredictions(Usage usage) {
-        return makeDummyPredictions(usage, facilityId, user);
+        return makeDummyPredictions(CapacityType.CAR, usage);
     }
 
-    private Utilization makeDummyPredictions(Usage usage, long facilityId, User user) {
+    private Utilization makeDummyPredictions(CapacityType capacityType, Usage usage) {
+        return makeDummyPredictions(usage, facilityId, user, capacityType);
+    }
+
+    private Utilization makeDummyPredictions(Usage usage, long facilityId, User user, CapacityType capacityType) {
         Utilization u = new Utilization();
         u.facilityId = facilityId;
-        u.capacityType = CapacityType.CAR;
+        u.capacityType = capacityType;
         u.usage = usage;
         u.timestamp = now;
         u.spacesAvailable = SPACES_AVAILABLE;

@@ -50,7 +50,10 @@ describe('facility view', function () {
 
     describe('with full data', function () {
         beforeEach(function () {
-            f = toView(facFull, true);
+            var fac = facFull.copy();
+            fac.pricing.push({"capacityType":"CAR","usage":"COMMERCIAL","maxCapacity":5,"dayType":"SATURDAY",
+                "time":{"from":"08","until":"18"},"price":"1e"});
+            f = toView(fac, true);
         });
 
         it('displays full data', function () {
@@ -65,10 +68,13 @@ describe('facility view', function () {
             expect(viewPage.isPredictionsDisplayed()).toBe(true);
             // 4 since devApi creates four rows. Two for CAR, one for DISABLED and ELECTIC_CAR
             // See fi.hsl.parkandride.dev.DevController#generateUtilizationData
-            expect(viewPage.predictionsTable.getSize()).toBe(4);
+            expect(viewPage.predictionsTable.getSize()).toBe(7);
             // The second row is empty: we don't want repeated titles
-            expect(viewPage.predictionsTable.getTypes()).toEqual(['Henkilöauto', '', 'Invapaikka', 'Sähköauto']);
-            expect(viewPage.predictionsTable.getUsages()).toEqual(['Liityntä', 'Kaupallinen', 'Liityntä', 'Liityntä']);
+            expect(viewPage.predictionsTable.getTypes()).toEqual(
+                ['Henkilöauto', '', 'Invapaikka', 'Sähköauto', 'Moottoripyörä', 'Polkupyörä', 'Polkupyörä, lukittu tila']);
+            expect(viewPage.predictionsTable.getUsages()).toEqual(
+                ['Liityntä', 'Kaupallinen', 'Kaupallinen', 'Kaupallinen', 'Liityntä', 'Liityntä', 'Kaupallinen']
+            );
 
             expect(viewPage.isServicesDisplayed()).toBe(true);
             expect(viewPage.getServices()).toEqual("Valaistus, Katettu");
@@ -86,6 +92,9 @@ describe('facility view', function () {
                 {capacityType: "Henkilöauto", usage: "Liityntä", maxCapacity: "10",
                     dayType: "Arkipäivä", is24h: "✓", from: "", until: "",
                     isFree: "✓", priceFi: "", priceSv: "", priceEn: ""},
+                {capacityType: "", usage: "Kaupallinen", maxCapacity: "5",
+                    dayType: "Lauantai", is24h: "", from: "08", until: "18",
+                    isFree: "", priceFi: "1e", priceSv: "1e", priceEn: "1e"},
                 {capacityType: "Invapaikka", usage: "Kaupallinen", maxCapacity: "40",
                     dayType: "Lauantai", is24h: "", from: "08", until: "18",
                     isFree: "", priceFi: "price fi", priceSv: "price sv", priceEn: "price en"},
@@ -105,6 +114,7 @@ describe('facility view', function () {
 
             expect(viewPage.getUnavailableCapacities()).toEqual([
                 {capacityType: "Henkilöauto", usage: "Liityntä", capacity: "1"},
+                {capacityType: "", usage: "Kaupallinen", capacity: "0"},
                 {capacityType: "Invapaikka", usage: "Kaupallinen", capacity: "0"},
                 {capacityType: "Sähköauto", usage: "Kaupallinen", capacity: "0"},
                 {capacityType: "Moottoripyörä", usage: "Liityntä", capacity: "0"},

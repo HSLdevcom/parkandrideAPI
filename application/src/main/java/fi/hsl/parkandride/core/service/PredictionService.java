@@ -112,10 +112,14 @@ public class PredictionService {
         txTemplate.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
 
         for (Long predictorId : findPredictorsNeedingUpdate()) {
-            txTemplate.execute(tx -> {
-                updatePredictor(predictorId);
-                return null;
-            });
+            try {
+                txTemplate.execute(tx -> {
+                    updatePredictor(predictorId);
+                    return null;
+                });
+            } catch (ConcurrentAccessException e) {
+                // Suppress exceptions caused by concurrent access prevention!
+            }
         }
     }
 
@@ -125,16 +129,8 @@ public class PredictionService {
         return predictorIds;
     }
 
-    private void updatePredictor(Long predictorId) {
-        PredictorState readState = null;
-        try {
-            readState = predictorRepository.getForUpdate(predictorId);
-        } catch (Exception e) {
-            log.debug("Failed to lock predictor ID {} (type {} for {}) for update probably due to another node updating it already. " +
-                    "Continuing to the next predictor", readState.predictorId, readState.predictorType, readState.utilizationKey, e);
-            return;
-        }
-        final PredictorState state = readState;
+    private void updatePredictor(Long predictorId) throws ConcurrentAccessException {
+        final PredictorState state = getPredictorState(predictorId);
         if (state.moreUtilizations == false) {
             log.debug("Another cluster node already updated predictor ID {} (type {} for {}), skipping...", state.predictorId, state.predictorType, state.utilizationKey);
             return;
@@ -148,6 +144,16 @@ public class PredictionService {
             predictionRepository.updatePredictions(toPredictionBatch(state, predictions), predictorId);
         });
         predictorRepository.save(state); // save state even if predictor is not present: this disables uninstalled predictors
+    }
+
+    private PredictorState getPredictorState(Long predictorId) {
+        try {
+            return predictorRepository.getForUpdate(predictorId);
+        } catch (Exception e) {
+            log.debug("Failed to lock predictor ID {} for update probably due to another node updating it already. " +
+                    "Continuing to the next predictor", predictorId, e);
+            throw new ConcurrentAccessException("Cancel transaction due to concurrent access.", e);
+        }
     }
 
     @Transactional(readOnly = false, isolation = READ_COMMITTED, propagation = REQUIRES_NEW)

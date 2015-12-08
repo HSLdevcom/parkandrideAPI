@@ -102,7 +102,7 @@
                 object: '=',
                 mandatory: '=',
                 placeholder: '@',
-                disabled: '='
+                isDisabled: '='
             },
             templateUrl: 'operators/operatorSelect.tpl.html',
             transclude: false,

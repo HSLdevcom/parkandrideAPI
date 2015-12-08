@@ -17,6 +17,7 @@ import java.util.*;
 
 import static fi.hsl.parkandride.core.domain.Permission.*;
 import static fi.hsl.parkandride.core.service.AuthenticationService.authorize;
+import static java.util.Collections.emptySet;
 import static java.util.stream.Collectors.toSet;
 
 public class FacilityService {
@@ -161,10 +162,11 @@ public class FacilityService {
     @TransactionalRead
     public Set<Utilization> findLatestUtilization(long facilityId) {
         final Facility facility = getFacility(facilityId);
+        final Map<CapacityType, Set<Usage>> usagesByCapacityType = FacilityUtil.usagesByCapacityType(facility);
         return utilizationRepository.findLatestUtilization(facilityId)
                 .stream()
+                .filter(u -> usagesByCapacityType.getOrDefault(u.capacityType, emptySet()).contains(u.usage))
                 .filter(u -> facility.builtCapacity.getOrDefault(u.capacityType, 0) > 0)
-                .filter(u -> facility.usages.contains(u.usage))
                 .collect(toSet());
     }
 }

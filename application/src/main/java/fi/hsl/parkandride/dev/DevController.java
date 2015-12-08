@@ -29,7 +29,6 @@ import java.util.*;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-import static fi.hsl.parkandride.core.domain.CapacityType.*;
 import static fi.hsl.parkandride.front.UrlSchema.*;
 import static java.util.Spliterators.spliteratorUnknownSize;
 import static java.util.stream.Collectors.toList;
@@ -142,15 +141,15 @@ public class DevController {
         final Random random = new Random();
         final List<Utilization> utilizations = StreamSupport.stream(
                 spliteratorUnknownSize(new DateTimeIterator(DateTime.now().minusMonths(1), DateTime.now(), Minutes.minutes(5)), Spliterator.ORDERED), false)
-                .flatMap(ts -> Stream.of(CAR, DISABLED, ELECTRIC_CAR)
-                        .filter(facility.builtCapacity::containsKey)
+                .flatMap(ts -> facility.builtCapacity.keySet().stream()
                         .flatMap(capacityType -> {
-                            final Stream.Builder<UtilizationKey> builder = Stream.builder();
-                            builder.add(new UtilizationKey(facilityId, capacityType, Usage.PARK_AND_RIDE));
-                            if (capacityType == CAR) {
-                                builder.add(new UtilizationKey(facilityId, capacityType, Usage.COMMERCIAL));
+                            if (facility.pricingMethod == PricingMethod.PARK_AND_RIDE_247_FREE) {
+                                return Stream.of(new UtilizationKey(facilityId, capacityType, Usage.PARK_AND_RIDE));
+                            } else {
+                                return facility.pricing.stream()
+                                        .filter(pr -> pr.capacityType == capacityType)
+                                        .map(pr -> new UtilizationKey(facilityId, capacityType, pr.usage));
                             }
-                            return builder.build();
                         })
                         .map(utilizationKey -> newUtilization(
                                 utilizationKey,

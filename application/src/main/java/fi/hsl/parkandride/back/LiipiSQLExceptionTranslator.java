@@ -29,6 +29,7 @@ public class LiipiSQLExceptionTranslator implements SQLExceptionTranslator {
 
     @Override
     public RuntimeException translate(String sql, List<Object> bindings, SQLException e) {
+        chainedSQLExceptionsToSuppressed(e);
         if ("23505".equals(e.getSQLState())) {
             String message = e.getMessage().toLowerCase();
             Matcher m = UNIQUE_CONSTRAINT_NAME.matcher(message);
@@ -43,6 +44,14 @@ public class LiipiSQLExceptionTranslator implements SQLExceptionTranslator {
 
     @Override
     public RuntimeException translate(SQLException e) {
+        chainedSQLExceptionsToSuppressed(e);
         return new QueryException(e);
+    }
+
+    private void chainedSQLExceptionsToSuppressed(SQLException exception) {
+        if (exception == null) return;
+        for (SQLException e = exception.getNextException(); e != null; e = e.getNextException()) {
+            exception.addSuppressed(e);
+        }
     }
 }

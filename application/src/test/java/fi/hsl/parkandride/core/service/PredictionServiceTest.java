@@ -203,7 +203,7 @@ public class PredictionServiceTest extends AbstractDaoTest {
 
         private static void increaseProbabilityOfConcurrency() {
             try {
-                Thread.sleep(5);
+                Thread.sleep(50);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
             }

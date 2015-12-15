@@ -10,7 +10,7 @@ import java.util.Optional;
 
 public interface LockRepository {
 
-    public Optional<Lock> acquireLock(String lockName, String owner, Duration lockDuration);
+    public Optional<Lock> acquireLock(String lockName, Duration lockDuration);
 
     public void releaseLock(Lock lock);
 }

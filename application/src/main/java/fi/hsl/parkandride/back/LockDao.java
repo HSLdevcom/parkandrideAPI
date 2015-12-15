@@ -10,6 +10,7 @@ import com.querydsl.sql.postgresql.PostgreSQLQueryFactory;
 import fi.hsl.parkandride.back.sql.QLock;
 import fi.hsl.parkandride.core.back.LockRepository;
 import fi.hsl.parkandride.core.domain.Lock;
+import fi.hsl.parkandride.core.domain.LockException;
 import fi.hsl.parkandride.core.service.ValidationService;
 import org.joda.time.DateTime;
 import org.joda.time.Duration;
@@ -35,79 +36,87 @@ public class LockDao implements LockRepository {
 
     private final PostgreSQLQueryFactory queryFactory;
     private final ValidationService validationService;
+    private final String ownerName;
 
-    public LockDao(PostgreSQLQueryFactory queryFactory, ValidationService validationService) {
+    public LockDao(PostgreSQLQueryFactory queryFactory, ValidationService validationService, String lockOwnerName) {
         this.queryFactory = queryFactory;
         this.validationService = validationService;
+        this.ownerName = lockOwnerName;
     }
 
     @Override
     @Transactional(propagation = Propagation.REQUIRES_NEW, isolation = Isolation.SERIALIZABLE)
-    public Optional<Lock> acquireLock(String lockName, String owner, Duration lockDuration) {
+    public Optional<Lock> acquireLock(String lockName, Duration lockDuration) {
         Optional<Lock> lock = selectLockIfExists(lockName);
         if (lock.isPresent()) {
             Lock existingLock = lock.get();
             if (existingLock.validUntil.isBefore(DateTime.now())) {
-                return claimExpiredLock(existingLock, owner, lockDuration);
+                return claimExpiredLock(existingLock, lockDuration);
             } else {
                 return Optional.empty(); // existing lock is still valid
             }
         }
-        return insertLock(lockName, owner, lockDuration);
+        return insertLock(lockName, lockDuration);
     }
 
     @Override
     @Transactional(propagation = Propagation.REQUIRES_NEW, isolation = Isolation.SERIALIZABLE)
     public void releaseLock(Lock lock) {
         validationService.validate(lock);
-        deleteLock(lock);
+        if (ownerName.equals(lock.owner)) {
+            deleteLock(lock);
+        } else {
+            throw new LockException("Cannot release lock. Lock is not owned by this node.");
+        }
     }
 
-    private Optional<Lock> selectLockIfExists(String lockName) {
-        return Optional.of(queryFactory.from(qLock)
+    // Following mehods are protected to allow testing
+
+    protected Optional<Lock> selectLockIfExists(String lockName) {
+        return Optional.ofNullable(queryFactory.from(qLock)
                 .where(qLock.name.eq(lockName))
                 .select(lockMapping)
                 .fetchOne());
     }
 
-    private Optional<Lock> claimExpiredLock(Lock existingLock, String newOwner, Duration lockDuration) {
+    protected Optional<Lock> claimExpiredLock(Lock existingLock, Duration lockDuration) {
         try {
             final DateTime newValidUntil = DateTime.now().plus(lockDuration);
             long rowsUpdated = queryFactory.update(qLock)
                     .where(qLock.name.eq(existingLock.name))
                     .where(qLock.owner.eq(existingLock.owner))
                     .where(qLock.validUntil.eq(existingLock.validUntil))
-                    .set(qLock.owner, newOwner)
+                    .set(qLock.owner, ownerName)
                     .set(qLock.validUntil, newValidUntil)
                     .execute();
             if (rowsUpdated > 0) {
-                return Optional.of(new Lock(existingLock.name, newOwner, newValidUntil));
+                return Optional.of(new Lock(existingLock.name, ownerName, newValidUntil));
             }
         } catch (QueryException e) {
-            log.debug("Claiming lock {} for {} failed", existingLock, newOwner, e);
+            log.debug("Claiming lock {} for {} failed", existingLock, ownerName, e);
             // Fall through to return Optional.empty() if update fails e.g. due to race condition
         }
         return Optional.empty();
     }
 
-    private Optional<Lock> insertLock(String lockName, String owner, Duration lockDuration) {
+    protected Optional<Lock> insertLock(String lockName, Duration lockDuration) {
         final DateTime validUntil = DateTime.now().plus(lockDuration);
-        final Lock newLock = new Lock(lockName, owner, validUntil);
+        final Lock newLock = new Lock(lockName, ownerName, validUntil);
         try {
             long rowsInserted = queryFactory.insert(qLock)
                     .columns(qLock.name, qLock.owner, qLock.validUntil)
-                    .values(lockName, owner, validUntil)
+                    .values(lockName, ownerName, validUntil)
                     .execute();
             if (rowsInserted > 0) {
                 return Optional.of(newLock);
             }
         } catch (QueryException e) {
-            log.debug("Failed to get lock {} (insert to DB failed)", newLock, e);
+            log.debug("Failed to get lock {} (lost race to get the lock)", newLock, e);
         }
         return Optional.empty();
     }
 
-    private void deleteLock(Lock lock) {
+    protected void deleteLock(Lock lock) {
         queryFactory.delete(qLock)
                 .where(qLock.name.eq(lock.name))
                 .where(qLock.owner.eq(lock.owner))

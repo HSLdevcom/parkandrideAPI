@@ -7,6 +7,7 @@ import com.google.common.base.MoreObjects;
 import org.joda.time.DateTime;
 
 import javax.validation.constraints.NotNull;
+import java.util.Objects;
 
 /**
  * Cluster-wide mutex lock that can be acquired via LockDao.
@@ -20,6 +21,28 @@ public class Lock {
         this.name = name;
         this.owner = owner;
         this.validUntil = validUntil;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        } else if (obj instanceof Lock) {
+            Lock other = (Lock) obj;
+            return Objects.equals(this.name, other.name)
+                    && Objects.equals(this.owner, other.owner)
+                    && Objects.equals(this.validUntil, other.validUntil);
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        int result = name != null ? name.hashCode() : 0;
+        result = 31 * result + (owner != null ? owner.hashCode() : 0);
+        result = 31 * result + (validUntil != null ? validUntil.hashCode() : 0);
+        return result;
     }
 
     @Override

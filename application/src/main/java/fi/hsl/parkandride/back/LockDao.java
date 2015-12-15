@@ -10,12 +10,11 @@ import com.querydsl.sql.postgresql.PostgreSQLQueryFactory;
 import fi.hsl.parkandride.back.sql.QLock;
 import fi.hsl.parkandride.core.back.LockRepository;
 import fi.hsl.parkandride.core.domain.Lock;
+import fi.hsl.parkandride.core.domain.LockAcquireFailedException;
 import fi.hsl.parkandride.core.domain.LockException;
 import fi.hsl.parkandride.core.service.ValidationService;
 import org.joda.time.DateTime;
 import org.joda.time.Duration;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,7 +23,6 @@ import java.util.Optional;
 
 public class LockDao implements LockRepository {
 
-    private final Logger log = LoggerFactory.getLogger(LockDao.class);
     private static final QLock qLock = QLock.lock;
 
     private static final MappingProjection<Lock> lockMapping = new MappingProjection<Lock>(Lock.class, qLock.all()) {
@@ -46,14 +44,14 @@ public class LockDao implements LockRepository {
 
     @Override
     @Transactional(propagation = Propagation.REQUIRES_NEW, isolation = Isolation.SERIALIZABLE)
-    public Optional<Lock> acquireLock(String lockName, Duration lockDuration) {
+    public Lock acquireLock(String lockName, Duration lockDuration) {
         Optional<Lock> lock = selectLockIfExists(lockName);
         if (lock.isPresent()) {
             Lock existingLock = lock.get();
             if (existingLock.validUntil.isBefore(DateTime.now())) {
                 return claimExpiredLock(existingLock, lockDuration);
             } else {
-                return Optional.empty(); // existing lock is still valid
+                throw new LockAcquireFailedException("Existing lock " + existingLock + " is still valid");
             }
         }
         return insertLock(lockName, lockDuration);
@@ -79,7 +77,7 @@ public class LockDao implements LockRepository {
                 .fetchOne());
     }
 
-    protected Optional<Lock> claimExpiredLock(Lock existingLock, Duration lockDuration) {
+    protected Lock claimExpiredLock(Lock existingLock, Duration lockDuration) {
         try {
             final DateTime newValidUntil = DateTime.now().plus(lockDuration);
             long rowsUpdated = queryFactory.update(qLock)
@@ -90,16 +88,20 @@ public class LockDao implements LockRepository {
                     .set(qLock.validUntil, newValidUntil)
                     .execute();
             if (rowsUpdated > 0) {
-                return Optional.of(new Lock(existingLock.name, ownerName, newValidUntil));
+                return new Lock(existingLock.name, ownerName, newValidUntil);
+            } else {
+                throw getFailedToClaimExpiredLockException(existingLock, null);
             }
         } catch (QueryException e) {
-            log.debug("Claiming lock {} for {} failed", existingLock, ownerName, e);
-            // Fall through to return Optional.empty() if update fails e.g. due to race condition
+            throw getFailedToClaimExpiredLockException(existingLock, e);
         }
-        return Optional.empty();
     }
 
-    protected Optional<Lock> insertLock(String lockName, Duration lockDuration) {
+    private LockAcquireFailedException getFailedToClaimExpiredLockException(Lock existingLock, QueryException e) {
+        return new LockAcquireFailedException("Failed to claim expired lock " + existingLock + " for " + ownerName, e);
+    }
+
+    protected Lock insertLock(String lockName, Duration lockDuration) {
         final DateTime validUntil = DateTime.now().plus(lockDuration);
         final Lock newLock = new Lock(lockName, ownerName, validUntil);
         try {
@@ -108,12 +110,17 @@ public class LockDao implements LockRepository {
                     .values(lockName, ownerName, validUntil)
                     .execute();
             if (rowsInserted > 0) {
-                return Optional.of(newLock);
+                return newLock;
+            } else {
+                throw getInsertLockFailedException(lockName, null);
             }
         } catch (QueryException e) {
-            log.debug("Failed to get lock {} (lost race to get the lock)", newLock, e);
+            throw getInsertLockFailedException(lockName, e);
         }
-        return Optional.empty();
+    }
+
+    private LockAcquireFailedException getInsertLockFailedException(String lockName, QueryException e) {
+        return new LockAcquireFailedException("Failed to acquire lock '" + lockName + "' (lost acquisition race to another node)", e);
     }
 
     protected void deleteLock(Lock lock) {

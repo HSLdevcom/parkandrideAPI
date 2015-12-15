@@ -20,6 +20,7 @@ import java.util.Optional;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 @Transactional
@@ -47,10 +48,11 @@ public class LockDaoTest extends AbstractDaoTest {
 
     @Test
     public void lock_acquisition_creates_a_lock_in_database() {
-        Optional<Lock> lock = lockDao.acquireLock(TEST_LOCK_NAME, TEST_LOCK_DURATION);
-        assertTrue(lock.isPresent());
+        Lock lock = lockDao.acquireLock(TEST_LOCK_NAME, TEST_LOCK_DURATION);
+        assertNotNull(lock);
         Optional<Lock> lockReadFromDatabase = lockDao.selectLockIfExists(TEST_LOCK_NAME);
-        assertThat(lock, is(lockReadFromDatabase));
+        assertTrue(lockReadFromDatabase.isPresent());
+        assertThat(lock, is(lockReadFromDatabase.get()));
     }
 
     @Test

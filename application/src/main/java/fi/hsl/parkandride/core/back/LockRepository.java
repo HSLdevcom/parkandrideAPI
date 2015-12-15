@@ -6,11 +6,9 @@ package fi.hsl.parkandride.core.back;
 import fi.hsl.parkandride.core.domain.Lock;
 import org.joda.time.Duration;
 
-import java.util.Optional;
-
 public interface LockRepository {
 
-    public Optional<Lock> acquireLock(String lockName, Duration lockDuration);
+    Lock acquireLock(String lockName, Duration lockDuration);
 
-    public void releaseLock(Lock lock);
+    void releaseLock(Lock lock);
 }

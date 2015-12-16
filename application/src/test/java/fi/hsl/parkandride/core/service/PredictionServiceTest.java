@@ -5,10 +5,7 @@ package fi.hsl.parkandride.core.service;
 
 import fi.hsl.parkandride.back.AbstractDaoTest;
 import fi.hsl.parkandride.back.Dummies;
-import fi.hsl.parkandride.core.back.FacilityRepository;
-import fi.hsl.parkandride.core.back.PredictionRepository;
-import fi.hsl.parkandride.core.back.PredictorRepository;
-import fi.hsl.parkandride.core.back.UtilizationRepository;
+import fi.hsl.parkandride.core.back.*;
 import fi.hsl.parkandride.core.domain.CapacityType;
 import fi.hsl.parkandride.core.domain.Usage;
 import fi.hsl.parkandride.core.domain.Utilization;
@@ -39,8 +36,9 @@ public class PredictionServiceTest extends AbstractDaoTest {
     @Inject PredictorRepository predictorRepository;
     @Inject FacilityRepository facilityRepository;
     @Inject PlatformTransactionManager transactionManager;
-    private PredictionService predictionService;
+    @Inject LockRepository lockRepostory;
 
+    private PredictionService predictionService;
     private final DateTime now = new DateTime();
     private long facilityId;
 
@@ -144,7 +142,7 @@ public class PredictionServiceTest extends AbstractDaoTest {
 
     private void usePredictor(Predictor predictor) {
         predictionService = new PredictionService(utilizationRepository, predictionRepository,
-                predictorRepository, facilityRepository, transactionManager, predictor);
+                predictorRepository, facilityRepository, transactionManager, lockRepostory, predictor);
     }
 
     private void registerUtilizations(Utilization... utilizations) {

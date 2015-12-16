@@ -28,6 +28,9 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.inject.Inject;
+import java.math.BigInteger;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.security.SecureRandom;
 
 @Configuration
@@ -180,7 +183,12 @@ public class CoreConfiguration {
 
     @Bean
     public PredictionService predictionService() {
-        return new PredictionService(utilizationRepository(), predictionRepository(), predictorRepository(), facilityRepository(), transactionManager, predictors());
+        return new PredictionService(utilizationRepository(), predictionRepository(), predictorRepository(), facilityRepository(), transactionManager, lockRepository(), predictors());
+    }
+
+    @Bean
+    public LockRepository lockRepository() {
+        return new LockDao(queryFactory, validationService(), currentNodeLockName());
     }
 
     @Bean
@@ -216,5 +224,15 @@ public class CoreConfiguration {
     @Bean
     public BatchingRequestLogService batchingRequestLogService(RequestLogRepository requestLogRepository) {
       return new BatchingRequestLogService(requestLogRepository);
+    }
+
+    @Bean
+    public String currentNodeLockName() {
+        String randomString = new BigInteger(40, new SecureRandom()).toString(32);
+        try {
+            return InetAddress.getLocalHost().getHostAddress() + "-" + randomString;
+        } catch (UnknownHostException e) {
+            return randomString;
+        }
     }
 }

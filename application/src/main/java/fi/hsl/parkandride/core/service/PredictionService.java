@@ -3,13 +3,11 @@
 
 package fi.hsl.parkandride.core.service;
 
-import fi.hsl.parkandride.core.back.FacilityRepository;
-import fi.hsl.parkandride.core.back.PredictionRepository;
-import fi.hsl.parkandride.core.back.PredictorRepository;
-import fi.hsl.parkandride.core.back.UtilizationRepository;
+import fi.hsl.parkandride.core.back.*;
 import fi.hsl.parkandride.core.domain.*;
 import fi.hsl.parkandride.core.domain.prediction.*;
 import org.joda.time.DateTime;
+import org.joda.time.Duration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -35,18 +33,21 @@ public class PredictionService {
     private final PlatformTransactionManager transactionManager;
     private final Map<String, Predictor> predictorsByType;
     private final FacilityRepository facilityRepository;
+    private final LockRepository lockRepository;
 
     public PredictionService(UtilizationRepository utilizationRepository,
                              PredictionRepository predictionRepository,
                              PredictorRepository predictorRepository,
                              FacilityRepository facilityRepository,
                              PlatformTransactionManager transactionManager,
+                             LockRepository lockRepository,
                              Predictor... predictors) {
         this.utilizationRepository = utilizationRepository;
         this.predictionRepository = predictionRepository;
         this.predictorRepository = predictorRepository;
         this.transactionManager = transactionManager;
         this.facilityRepository = facilityRepository;
+        this.lockRepository = lockRepository;
         Map<String, Predictor> predictorsByType = new HashMap<>();
         for (Predictor predictor : predictors) {
             predictorsByType.put(predictor.getType(), predictor);
@@ -110,17 +111,24 @@ public class PredictionService {
     public void updatePredictions() {
         log.info("updatePredictions");
         TransactionTemplate txTemplate = new TransactionTemplate(transactionManager);
-        txTemplate.setIsolationLevel(TransactionDefinition.ISOLATION_REPEATABLE_READ); // TODO: set in Core/JdbcConfiguration
+        txTemplate.setIsolationLevel(TransactionDefinition.ISOLATION_READ_COMMITTED); // TODO: set in Core/JdbcConfiguration
         txTemplate.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
 
         for (Long predictorId : findPredictorsNeedingUpdate()) {
+            Optional<Lock> lock = Optional.empty();
             try {
+                lock = Optional.of(lockRepository.acquireLock("predictor-" + predictorId, Duration.standardMinutes(1)));
                 txTemplate.execute(tx -> {
                     updatePredictor(predictorId);
+                    log.debug("Updating predictor {} done", predictorId);
                     return null;
                 });
-            } catch (ConcurrentAccessException e) {
-                // Suppress exceptions caused by concurrent access prevention!
+            } catch (LockException e) {
+                log.debug("Failed to get lock for updating predictorId {} - another node updates this predictor.", predictorId);
+            } catch (Exception e) {
+                log.error("Failed to update predictor {}", predictorId, e);
+            } finally {
+                lock.ifPresent(l -> lockRepository.releaseLock(l));
             }
         }
     }
@@ -131,31 +139,23 @@ public class PredictionService {
         return predictorIds;
     }
 
-    private void updatePredictor(Long predictorId) throws ConcurrentAccessException {
-        final PredictorState state = getPredictorState(predictorId);
+    private void updatePredictor(Long predictorId) {
+        final PredictorState state = predictorRepository.getById(predictorId);
         if (state.moreUtilizations == false) {
             log.debug("Another cluster node already updated predictor ID {} (type {} for {}), skipping...", state.predictorId, state.predictorType, state.utilizationKey);
             return;
         }
+        log.debug("Going to update predictor: {}", state);
         state.moreUtilizations = false; // by default mark everything as processed, but allow the predictor to override it (and uninstalled predictors get disabled)
         getPredictor(state.predictorType).ifPresent(predictor -> {
             // TODO: consider the update interval of prediction types? or leave that up to the predictor?
             List<Prediction> predictions = predictor.predict(state, new UtilizationHistoryImpl(utilizationRepository, state.utilizationKey), getAvailableMaxCapacity(state));
             // TODO: should we set state.latestUtilization here so that all predictors don't need to remember do it? or will some predictors use different logic for it, for example if they process only part of the updates?
             // TODO: save to prediction log
+            log.debug("Got {} predictions. state = {}", predictions.size(), state);
             predictionRepository.updatePredictions(toPredictionBatch(state, predictions), predictorId);
         });
         predictorRepository.save(state); // save state even if predictor is not present: this disables uninstalled predictors
-    }
-
-    private PredictorState getPredictorState(Long predictorId) {
-        try {
-            return predictorRepository.getForUpdate(predictorId);
-        } catch (Exception e) {
-            log.debug("Failed to lock predictor ID {} for update probably due to another node updating it already. " +
-                    "Continuing to the next predictor", predictorId, e);
-            throw new ConcurrentAccessException("Cancel transaction due to concurrent access.", e);
-        }
     }
 
     @Transactional(readOnly = false, isolation = READ_COMMITTED, propagation = REQUIRES_NEW)

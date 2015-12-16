@@ -54,6 +54,12 @@ public class DevHelper {
         deleteUsers();
         deleteOperators();
         deleteRequestLog();
+        deleteLocks();
+    }
+
+    @TransactionalWrite
+    private void deleteLocks() {
+        delete(QLock.lock);
     }
 
     @TransactionalWrite

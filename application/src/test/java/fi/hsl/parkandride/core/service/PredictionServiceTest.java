@@ -122,6 +122,7 @@ public class PredictionServiceTest extends AbstractDaoTest {
         assertThat(spy.getMaxConcurrentPredictors()).as("max concurrent predictors").isEqualTo(1);
     }
 
+    /* Disabled concurrent updates due to concurrency problems in cluster
     @Test
     public void allows_updating_different_predictors_concurrently() throws InterruptedException {
         ConcurrentPredictorsSpy spy = new ConcurrentPredictorsSpy();
@@ -136,7 +137,7 @@ public class PredictionServiceTest extends AbstractDaoTest {
 
         assertThat(spy.getMaxConcurrentPredictors()).as("max concurrent predictors").isEqualTo(2);
     }
-
+    */
 
     // helpers
 

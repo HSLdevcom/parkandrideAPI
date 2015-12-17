@@ -109,22 +109,26 @@ public class PredictionService {
 
     @Scheduled(cron = "0 */5 * * * *") // every 5 minutes to match PredictionDao.PREDICTION_RESOLUTION
     public void updatePredictions() {
-        log.info("updatePredictions");
+        Optional<Lock> lock = Optional.empty();
+        try {
+            lock = Optional.of(lockRepository.acquireLock("update-predictions", Duration.standardMinutes(2)));
+        } catch (LockException e) {
+            log.debug("Failed to get lock for updating predictions - another node updates them.");
+            return;
+        }
+
+        log.info("Updating predictions");
         TransactionTemplate txTemplate = new TransactionTemplate(transactionManager);
         txTemplate.setIsolationLevel(TransactionDefinition.ISOLATION_READ_COMMITTED); // TODO: set in Core/JdbcConfiguration
         txTemplate.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
 
         for (Long predictorId : findPredictorsNeedingUpdate()) {
-            Optional<Lock> lock = Optional.empty();
             try {
-                lock = Optional.of(lockRepository.acquireLock("predictor-" + predictorId, Duration.standardMinutes(1)));
                 txTemplate.execute(tx -> {
                     updatePredictor(predictorId);
                     log.debug("Updating predictor {} done", predictorId);
                     return null;
                 });
-            } catch (LockException e) {
-                log.debug("Failed to get lock for updating predictorId {} - another node updates this predictor.", predictorId);
             } catch (Exception e) {
                 log.error("Failed to update predictor {}", predictorId, e);
             } finally {

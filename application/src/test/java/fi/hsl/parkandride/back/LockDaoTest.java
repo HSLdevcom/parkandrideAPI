@@ -16,6 +16,7 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.inject.Inject;
@@ -92,7 +93,7 @@ public class LockDaoTest extends AbstractDaoTest {
 
     private void testTakenLockAcquisitionWithAnotherOwnerName(String anotherLockOwnerName) throws Exception {
         // Acquire the lock (win the race for the lock)
-        Lock winningLock = acquireLockInSeparateThread(lockDao, TEST_LOCK_DURATION).get();
+        Lock winningLock = runTxInOtherThread(tx -> lockDao.acquireLock(TEST_LOCK_NAME, TEST_LOCK_DURATION)).get();
         assertNotNull(winningLock);
         assertThat(winningLock.owner, is(LOCK_OWNER_NAME));
 
@@ -101,7 +102,7 @@ public class LockDaoTest extends AbstractDaoTest {
         Exception losingLockException = null;
         Lock losingLock = null;
         try {
-            losingLock = acquireLockInSeparateThread(anotherLockDao, TEST_LOCK_DURATION).get();
+            losingLock = runTxInOtherThread(tx -> anotherLockDao.acquireLock(TEST_LOCK_NAME, TEST_LOCK_DURATION)).get();
         } catch (Exception e) {
             losingLockException = e;
         }
@@ -115,12 +116,12 @@ public class LockDaoTest extends AbstractDaoTest {
     @Test
     public void expired_lock_can_be_claimed() throws Exception {
         // Acquire the lock that expires immediately
-        Lock expiringLock = acquireLockInSeparateThread(lockDao, Duration.ZERO).get();
+        Lock expiringLock = runTxInOtherThread(tx -> lockDao.acquireLock(TEST_LOCK_NAME, Duration.ZERO)).get();
         assertNotNull(expiringLock);
         assertThat(expiringLock.owner, is(LOCK_OWNER_NAME));
 
         // New Lock can be claimed when existing lock has expired
-        Lock newLock = acquireLockInSeparateThread(lockDao, TEST_LOCK_DURATION).get();
+        Lock newLock = runTxInOtherThread(tx -> lockDao.acquireLock(TEST_LOCK_NAME, TEST_LOCK_DURATION)).get();
         assertNotNull(newLock);
         assertThat(newLock.owner, is(LOCK_OWNER_NAME));
     }
@@ -138,11 +139,11 @@ public class LockDaoTest extends AbstractDaoTest {
     public void lock_acquisition_race_loss_causes_LockAcquireFailedException() throws Exception {
         // Run a thread to acquire a lock: notice that lock is not taken, but wait before inserting the lock to database
         LosingLockDao losingLockDao = new LosingLockDao(queryFactory, validationService, "another-owner");
-        Future<Lock> losingLockFuture = acquireLockInSeparateThread(losingLockDao, TEST_LOCK_DURATION);
+        Future<Lock> losingLockFuture = runTxInOtherThread(tx -> losingLockDao.acquireLock(TEST_LOCK_NAME, TEST_LOCK_DURATION));
         losingLockDao.waitUntilReadyToInsert();
 
         // Acquire the lock with another thread (win the race for the lock)
-        Lock winningLock = acquireLockInSeparateThread(lockDao, TEST_LOCK_DURATION).get();
+        Lock winningLock = runTxInOtherThread(tx -> lockDao.acquireLock(TEST_LOCK_NAME, TEST_LOCK_DURATION)).get();
         assertNotNull(winningLock);
         assertThat(winningLock.owner, is(LOCK_OWNER_NAME));
 
@@ -164,12 +165,12 @@ public class LockDaoTest extends AbstractDaoTest {
         assertThat(losingLockException.getCause(), instanceOf(LockAcquireFailedException.class));
     }
 
-    private Future<Lock> acquireLockInSeparateThread(final LockDao actingLockDao, Duration lockDuration) {
+    private <T> Future<T> runTxInOtherThread(TransactionCallback<T> transactionCallback) {
         return Executors.newSingleThreadExecutor()
                 .submit(() -> {
                     TransactionTemplate txTemplate = new TransactionTemplate(transactionManager);
                     txTemplate.setTimeout(1);
-                    return txTemplate.execute(tx -> actingLockDao.acquireLock(TEST_LOCK_NAME, lockDuration));
+                    return txTemplate.execute(transactionCallback);
                 });
     }
 

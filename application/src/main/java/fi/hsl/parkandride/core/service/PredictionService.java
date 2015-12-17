@@ -112,11 +112,16 @@ public class PredictionService {
         Optional<Lock> lock = Optional.empty();
         try {
             lock = Optional.of(lockRepository.acquireLock("update-predictions", Duration.standardMinutes(2)));
+            doUpdatePredictions();
         } catch (LockException e) {
             log.debug("Failed to get lock for updating predictions - another node updates them.");
             return;
+        } finally {
+            lock.ifPresent(l -> lockRepository.releaseLock(l));
         }
+    }
 
+    private void doUpdatePredictions() {
         log.info("Updating predictions");
         TransactionTemplate txTemplate = new TransactionTemplate(transactionManager);
         txTemplate.setIsolationLevel(TransactionDefinition.ISOLATION_READ_COMMITTED); // TODO: set in Core/JdbcConfiguration
@@ -131,8 +136,6 @@ public class PredictionService {
                 });
             } catch (Exception e) {
                 log.error("Failed to update predictor {}", predictorId, e);
-            } finally {
-                lock.ifPresent(l -> lockRepository.releaseLock(l));
             }
         }
     }

@@ -48,7 +48,7 @@ public class LockDao implements LockRepository {
         Optional<Lock> lock = selectLockIfExists(lockName);
         if (lock.isPresent()) {
             Lock existingLock = lock.get();
-            if (existingLock.validUntil.isBefore(DateTime.now())) {
+            if (!existingLock.validUntil.isAfter(DateTime.now())) {
                 return claimExpiredLock(existingLock, lockDuration);
             } else {
                 throw new LockAcquireFailedException("Existing lock " + existingLock + " is still valid");

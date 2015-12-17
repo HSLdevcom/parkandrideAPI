@@ -62,18 +62,67 @@ public class LockDaoTest extends AbstractDaoTest {
     }
 
     @Before
-    public void cleanDatabase() {
+    public void clean_database_so_that_test_do_not_need_to_release_locks() {
         cleanup();
     }
 
     @Test
     @Transactional
-    public void lock_acquisition_creates_a_lock_in_database() {
+    public void lock_acquisition_creates_a_lock_in_database_and_releasing_deletes_it() {
         Lock lock = lockDao.acquireLock(TEST_LOCK_NAME, TEST_LOCK_DURATION);
         assertNotNull(lock);
         Optional<Lock> lockReadFromDatabase = lockDao.selectLockIfExists(TEST_LOCK_NAME);
         assertTrue(lockReadFromDatabase.isPresent());
         assertThat(lock, is(lockReadFromDatabase.get()));
+
+        lockDao.releaseLock(lock);
+        lockReadFromDatabase = lockDao.selectLockIfExists(TEST_LOCK_NAME);
+        assertFalse(lockReadFromDatabase.isPresent());
+    }
+
+    @Test
+    public void lock_cannot_be_acquired_by_another_owner_when_it_is_taken_and_still_valid() throws Exception {
+        testTakenLockAcquisitionWithAnotherOwnerName("another-owner");
+    }
+
+    @Test
+    public void lock_cannot_be_acquired_even_by_same_owner_when_it_is_taken_and_still_valid() throws Exception {
+        testTakenLockAcquisitionWithAnotherOwnerName(LOCK_OWNER_NAME);
+    }
+
+    private void testTakenLockAcquisitionWithAnotherOwnerName(String anotherLockOwnerName) throws Exception {
+        // Acquire the lock (win the race for the lock)
+        Lock winningLock = acquireLockInSeparateThread(lockDao, TEST_LOCK_DURATION).get();
+        assertNotNull(winningLock);
+        assertThat(winningLock.owner, is(LOCK_OWNER_NAME));
+
+        // Try to acquire it with another thread (as if another server)
+        LockDao anotherLockDao = new LockDao(queryFactory, validationService, anotherLockOwnerName);
+        Exception losingLockException = null;
+        Lock losingLock = null;
+        try {
+            losingLock = acquireLockInSeparateThread(anotherLockDao, TEST_LOCK_DURATION).get();
+        } catch (Exception e) {
+            losingLockException = e;
+        }
+
+        // Verify that another thread did not get the lock & threw an exception
+        assertNull(losingLock);
+        assertThat(losingLockException, instanceOf(ExecutionException.class));
+        assertThat(losingLockException.getCause(), instanceOf(LockAcquireFailedException.class));
+    }
+
+    @Test
+    public void expired_lock_can_be_claimed() throws Exception {
+        // Acquire the lock that expires immediately
+        Lock expiringLock = acquireLockInSeparateThread(lockDao, Duration.ZERO).get();
+        assertNotNull(expiringLock);
+        assertThat(expiringLock.owner, is(LOCK_OWNER_NAME));
+
+        // New Lock can be claimed when existing lock has expired
+        Lock newLock = acquireLockInSeparateThread(lockDao, TEST_LOCK_DURATION).get();
+        assertNotNull(newLock);
+        assertThat(newLock.owner, is(LOCK_OWNER_NAME));
     }
 
     @Test
@@ -89,11 +138,11 @@ public class LockDaoTest extends AbstractDaoTest {
     public void lock_acquisition_race_loss_causes_LockAcquireFailedException() throws Exception {
         // Run a thread to acquire a lock: notice that lock is not taken, but wait before inserting the lock to database
         LosingLockDao losingLockDao = new LosingLockDao(queryFactory, validationService, "another-owner");
-        Future<Lock> losingLockFuture = acquireLockInSeparateThread(losingLockDao);
+        Future<Lock> losingLockFuture = acquireLockInSeparateThread(losingLockDao, TEST_LOCK_DURATION);
         losingLockDao.waitUntilReadyToInsert();
 
         // Acquire the lock with another thread (win the race for the lock)
-        Lock winningLock = acquireLockInSeparateThread(lockDao).get();
+        Lock winningLock = acquireLockInSeparateThread(lockDao, TEST_LOCK_DURATION).get();
         assertNotNull(winningLock);
         assertThat(winningLock.owner, is(LOCK_OWNER_NAME));
 
@@ -115,12 +164,12 @@ public class LockDaoTest extends AbstractDaoTest {
         assertThat(losingLockException.getCause(), instanceOf(LockAcquireFailedException.class));
     }
 
-    private Future<Lock> acquireLockInSeparateThread(final LockDao actingLockDao) {
+    private Future<Lock> acquireLockInSeparateThread(final LockDao actingLockDao, Duration lockDuration) {
         return Executors.newSingleThreadExecutor()
                 .submit(() -> {
                     TransactionTemplate txTemplate = new TransactionTemplate(transactionManager);
                     txTemplate.setTimeout(1);
-                    return txTemplate.execute(tx -> actingLockDao.acquireLock(TEST_LOCK_NAME, TEST_LOCK_DURATION));
+                    return txTemplate.execute(tx -> actingLockDao.acquireLock(TEST_LOCK_NAME, lockDuration));
                 });
     }
 

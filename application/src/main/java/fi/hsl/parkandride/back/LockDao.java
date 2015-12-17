@@ -59,10 +59,10 @@ public class LockDao implements LockRepository {
 
     @Override
     @Transactional(propagation = Propagation.REQUIRES_NEW, isolation = Isolation.SERIALIZABLE)
-    public void releaseLock(Lock lock) {
+    public boolean releaseLock(Lock lock) {
         validationService.validate(lock);
         if (ownerName.equals(lock.owner)) {
-            deleteLock(lock);
+            return deleteLock(lock) == 1;
         } else {
             throw new LockException("Cannot release lock. Lock is not owned by this node.");
         }
@@ -123,10 +123,11 @@ public class LockDao implements LockRepository {
         return new LockAcquireFailedException("Failed to acquire lock '" + lockName + "' (lost acquisition race to another node)", e);
     }
 
-    protected void deleteLock(Lock lock) {
-        queryFactory.delete(qLock)
+    protected long deleteLock(Lock lock) {
+        return queryFactory.delete(qLock)
                 .where(qLock.name.eq(lock.name))
                 .where(qLock.owner.eq(lock.owner))
+                .where(qLock.validUntil.eq(lock.validUntil))
                 .execute();
     }
 }

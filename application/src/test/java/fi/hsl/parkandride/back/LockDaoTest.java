@@ -27,6 +27,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.Semaphore;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.*;
@@ -114,7 +115,7 @@ public class LockDaoTest extends AbstractDaoTest {
     }
 
     @Test
-    public void expired_lock_can_be_claimed() throws Exception {
+    public void expired_lock_can_be_claimed_and_releasing_expired_lock_does_not_delete_valid_lock() throws Exception {
         // Acquire the lock that expires immediately
         Lock expiringLock = runTxInOtherThread(tx -> lockDao.acquireLock(TEST_LOCK_NAME, Duration.ZERO)).get();
         assertNotNull(expiringLock);
@@ -124,6 +125,15 @@ public class LockDaoTest extends AbstractDaoTest {
         Lock newLock = runTxInOtherThread(tx -> lockDao.acquireLock(TEST_LOCK_NAME, TEST_LOCK_DURATION)).get();
         assertNotNull(newLock);
         assertThat(newLock.owner, is(LOCK_OWNER_NAME));
+
+        // Trying to release the expired lock does not release the valid newLock
+        Boolean wasLockReleased = runTxInOtherThread(tx -> lockDao.releaseLock(expiringLock)).get();
+        assertFalse(wasLockReleased);
+
+        // Verify that database still contains the valid lock
+        Optional<Lock> lockReadFromDatabase = runTxInOtherThread(tx -> lockDao.selectLockIfExists(TEST_LOCK_NAME)).get();
+        assertTrue(lockReadFromDatabase.isPresent());
+        assertThat(lockReadFromDatabase.get(), equalTo(newLock));
     }
 
     @Test

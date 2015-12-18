@@ -10,5 +10,5 @@ public interface LockRepository {
 
     Lock acquireLock(String lockName, Duration lockDuration);
 
-    void releaseLock(Lock lock);
+    boolean releaseLock(Lock lock);
 }

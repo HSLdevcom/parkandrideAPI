@@ -26,7 +26,7 @@ public class SearchResults<T> {
     public static <T> SearchResults<T> of(final List<T> results, final int limit) {
         if (results.isEmpty()) {
             return (SearchResults<T>) SearchResults.EMPTY;
-        } else if (results.size() <= limit) {
+        } else if (limit < 0 || results.size() <= limit) {
             return new SearchResults<T>(results, false);
         } else {
             return new SearchResults<T>(results.subList(0, (int) limit), true);

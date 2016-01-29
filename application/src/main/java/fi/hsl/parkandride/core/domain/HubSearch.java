@@ -21,7 +21,7 @@ public class HubSearch {
 
     private Sort sort;
 
-    private int limit = 100;
+    private int limit = -1;
 
     private long offset = 0;
 

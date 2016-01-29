@@ -7,7 +7,7 @@ public class PageableFacilitySearch extends FacilitySearch {
 
     public Sort sort;
 
-    public int limit = 100;
+    public int limit = -1;
 
     public long offset = 0;
 

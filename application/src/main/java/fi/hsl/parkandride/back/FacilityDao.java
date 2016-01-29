@@ -339,8 +339,12 @@ public class FacilityDao implements FacilityRepository {
     @Override
     public SearchResults<FacilityInfo> findFacilities(PageableFacilitySearch search) {
         final PostgreSQLQuery<FacilityInfo> qry = fromFacility().select(facilityInfoMapping);
-        qry.limit(search.limit + 1);
-        qry.offset(search.offset);
+        if (search.limit >= 0) {
+            qry.limit(search.limit + 1);
+        }
+        if (search.offset > 0) {
+            qry.offset(search.offset);
+        }
 
         buildWhere(search, qry);
         orderBy(search.sort, qry);

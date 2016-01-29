@@ -340,7 +340,7 @@ public class FacilityDao implements FacilityRepository {
     public SearchResults<FacilityInfo> findFacilities(PageableFacilitySearch search) {
         final PostgreSQLQuery<FacilityInfo> qry = fromFacility().select(facilityInfoMapping);
         if (search.limit >= 0) {
-            qry.limit(search.limit + 1);
+            qry.limit(search.limit + 1); // find one extra for hasMore
         }
         if (search.offset > 0) {
             qry.offset(search.offset);

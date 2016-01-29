@@ -128,7 +128,7 @@ public class HubDao implements HubRepository {
     public SearchResults<Hub> findHubs(HubSearch search) {
         final PostgreSQLQuery<Hub> qry = queryFactory.from(qHub).select(hubMapping);
         if (search.getLimit() >= 0) {
-            qry.limit(search.getLimit() + 1);
+            qry.limit(search.getLimit() + 1); // find one extra for hasMore
         }
         if (search.getOffset() > 0) {
             qry.offset(search.getOffset());

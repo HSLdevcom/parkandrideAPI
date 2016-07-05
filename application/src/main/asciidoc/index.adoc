@@ -89,7 +89,7 @@ needs, please include the `Liipi-Application-Id` header in your requests. The he
 pattern: `[a-zA-Z0-9_\-\./]{3,20}`. If no header is specified, the request will still be logged with `null` apllication id.
 The web user interface uses `liipi-ui` as its identifier.
 
-include::{generated}/usage-tracking/http-request.adoc[]
+include::{generated}/usage-tracking-example/http-request.adoc[]
 
 [[formats]]
 === Supported Formats

@@ -237,7 +237,7 @@
 
     <dependency>
       <groupId>org.springframework.restdocs</groupId>
-      <artifactId>spring-restdocs</artifactId>
+      <artifactId>spring-restdocs-mockmvc</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>

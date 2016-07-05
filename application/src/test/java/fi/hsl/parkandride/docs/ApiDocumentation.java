@@ -1,4 +1,4 @@
-// Copyright © 2015 HSL <https://www.hsl.fi>
+// Copyright © 2016 HSL <https://www.hsl.fi>
 // This program is dual-licensed under the EUPL v1.2 and AGPLv3 licenses.
 
 package fi.hsl.parkandride.docs;
@@ -29,11 +29,12 @@ import org.springframework.web.context.WebApplicationContext;
 
 import javax.inject.Inject;
 import javax.servlet.ServletContext;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 
 import static fi.hsl.parkandride.core.domain.Role.OPERATOR_API;
-import static org.hamcrest.Matchers.empty;
-import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.*;
 import static org.springframework.restdocs.RestDocumentation.document;
 import static org.springframework.restdocs.payload.FieldType.NUMBER;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
@@ -383,6 +384,7 @@ public class ApiDocumentation extends AbstractIntegrationTest {
 
         mockMvc.perform(get(UrlSchema.FACILITY_UTILIZATION, facilityId))
                 .andExpect(status().isOk())
+                .andExpect(jsonPath("[*]", hasSize(1)))
                 .andDo(document("utilization-example")
                         .withResponseFields(
                                 fieldWithPath("[]facilityId").description("The facility"),
@@ -393,6 +395,18 @@ public class ApiDocumentation extends AbstractIntegrationTest {
     }
 
     @Test
+    public void utilizationManyExample() throws Exception {
+        List<Utilization> utilizations = utilizationsOfManyUsages();
+        initializePricingForUtilizations(facilityId, utilizations);
+        facilityService.registerUtilization(facilityId, utilizations, currentUser);
+
+        mockMvc.perform(get(UrlSchema.FACILITY_UTILIZATION, facilityId))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("[*]", hasSize(2)))
+                .andDo(document("utilization-many-example"));
+    }
+
+    @Test
     public void utilizationUpdateExample() throws Exception {
         MockHttpServletRequestBuilder request = put(UrlSchema.FACILITY_UTILIZATION, facilityId)
                 .header("Authorization", "Bearer " + authToken)
@@ -400,7 +414,23 @@ public class ApiDocumentation extends AbstractIntegrationTest {
                 .content(objectMapper.writeValueAsString(Collections.singletonList(newUtilization())));
         mockMvc.perform(request)
                 .andExpect(status().isOk())
+                .andExpect(jsonPath("[*]", hasSize(1)))
                 .andDo(document("utilization-update-example"));
+    }
+
+    @Test
+    public void utilizationUpdateManyExample() throws Exception {
+        List<Utilization> utilizations = utilizationsOfManyUsages();
+        initializePricingForUtilizations(facilityId, utilizations);
+
+        MockHttpServletRequestBuilder request = put(UrlSchema.FACILITY_UTILIZATION, facilityId)
+                .header("Authorization", "Bearer " + authToken)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(utilizations));
+        mockMvc.perform(request)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("[*]", hasSize(2)))
+                .andDo(document("utilization-update-many-example"));
     }
 
     @Test
@@ -533,5 +563,23 @@ public class ApiDocumentation extends AbstractIntegrationTest {
         u.spacesAvailable = 30;
         u.timestamp = new DateTime();
         return u;
+    }
+
+    public static List<Utilization> utilizationsOfManyUsages() {
+        Utilization u1 = newUtilization();
+        u1.usage = Usage.HSL_TRAVEL_CARD;
+        u1.spacesAvailable = 351;
+        Utilization u2 = newUtilization();
+        u2.usage = Usage.COMMERCIAL;
+        u2.spacesAvailable = 786;
+        return Arrays.asList(u1, u2);
+    }
+
+    public void initializePricingForUtilizations(long facilityId, List<Utilization> utilizations) {
+        Facility facility = facilityRepository.getFacility(facilityId);
+        for (Utilization u : utilizations) {
+            facility.pricing.add(new Pricing(u.capacityType, u.usage, 1000, DayType.BUSINESS_DAY, "00:00", "24:00", ""));
+        }
+        facilityRepository.updateFacility(facilityId, facility);
     }
 }

@@ -366,11 +366,18 @@ no dynamic utilization information available. Otherwise one should refer to util
 [[utilization]]
 === Utilization
 
-If available, the the latest known number of available parking places is reported for each facility, capacity type and usage combination.
+If available, the latest known number of available parking places is reported.
 
 include::{generated}/utilization-example/http-request.adoc[]
 include::{generated}/utilization-example/http-response.adoc[]
 include::{generated}/utilization-example/response-fields.adoc[]
+
+A single facility may contain many different capacity type and usage combinations.
+This API will show all distinct combinations which have utilization data
+and which are listed in <<facility-details,the facility's pricing field>>.
+
+include::{generated}/utilization-many-example/http-request.adoc[]
+include::{generated}/utilization-many-example/http-response.adoc[]
 
 [[utilization-update]]
 ==== Updating
@@ -391,6 +398,10 @@ The response reports the latest utilization, same as with a GET request.
 include::{generated}/utilization-update-example/curl-request.adoc[]
 include::{generated}/utilization-update-example/http-request.adoc[]
 include::{generated}/utilization-update-example/http-response.adoc[]
+
+Example of updating the utilization of multiple usage types within the same facility:
+
+include::{generated}/utilization-update-many-example/http-request.adoc[]
 
 [[utilization-prediction]]
 ==== Prediction

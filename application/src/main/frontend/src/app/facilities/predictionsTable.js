@@ -1,4 +1,4 @@
-// Copyright © 2015 HSL <https://www.hsl.fi>
+// Copyright © 2016 HSL <https://www.hsl.fi>
 // This program is dual-licensed under the EUPL v1.2 and AGPLv3 licenses.
 
 (function () {
@@ -10,21 +10,13 @@
             scope: {
                 facility: '=',
                 utilization: '=',
-                predictionsData: '=predictions'
+                predictions: '='
             },
             templateUrl: 'facilities/predictionsTable.tpl.html',
             transclude: false,
             link: function (scope) {
 
-                function capacityTypeAndUsage(pred) {
-                    return pred.capacityType + pred.usage;
-                }
-
-                function getUtilization(capacityType, usage) {
-                    return _.find(scope.utilization, { capacityType: capacityType, usage: usage });
-                }
-
-                scope.predictionTimes = _.chain(scope.predictionsData)
+                scope.predictionTimes = _.chain(scope.predictions)
                     .flatten()
                     .map(function(row) {
                         return row.timestamp;
@@ -33,23 +25,37 @@
                     .uniq(true)
                     .value();
 
-                scope.predictions = _.chain(scope.predictionsData)
-                    .flatten()
-                    .groupBy(capacityTypeAndUsage)
-                    .map(function (groupedPredictions) {
-                        var singleItem = groupedPredictions.reduce(function (row, newPrediction) {
-                            row.capacityType = newPrediction.capacityType;
-                            row.usage = newPrediction.usage;
-                            row.capacity = scope.facility.builtCapacity[row.capacityType];
-                            row.predictions[newPrediction.forecastDistanceInMinutes] = newPrediction.spacesAvailable;
-                            row.predictions[newPrediction.timestamp] = newPrediction.spacesAvailable;
-                            return row;
-                        }, {predictions: {}});
-                        singleItem.utilization = getUtilization(singleItem.capacityType, singleItem.usage);
-                        return singleItem;
+                scope.rows = _.chain(scope.utilization)
+                    .map(function (utilization) {
+                        var capacityType = utilization.capacityType;
+                        var usage = utilization.usage;
+                        var predictions = _.chain(scope.predictions)
+                            .flatten()
+                            .filter(function (prediction) {
+                                return prediction.capacityType === capacityType && prediction.usage === usage;
+                            })
+                            .reduce(function (memo, prediction) {
+                                memo[prediction.timestamp] = prediction.spacesAvailable;
+                                return memo;
+                            }, {})
+                            .value();
+                        return {
+                            capacityType: capacityType,
+                            usage: usage,
+                            capacity: scope.facility.builtCapacity[capacityType], // TODO: utilization specific capacity
+                            utilization: {
+                                spacesAvailable: utilization.spacesAvailable,
+                                timestamp: utilization.timestamp
+                            },
+                            predictions: predictions
+                        };
                     })
-                    .sort(Ordering.byUsage(function(val) { return val.usage; }))
-                    .sort(Ordering.byCapacityType(function(val) { return val.capacityType; }))
+                    .sort(Ordering.byUsage(function (row) {
+                        return row.usage;
+                    }))
+                    .sort(Ordering.byCapacityType(function (row) {
+                        return row.capacityType;
+                    }))
                     .value();
             }
         };

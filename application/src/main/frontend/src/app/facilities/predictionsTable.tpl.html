@@ -10,16 +10,16 @@
 		</tr>
 		</thead>
 		<tbody>
-		<tr ng-repeat="row in predictions" class="wdPredictionRow">
+		<tr ng-repeat="row in rows" class="wdPredictionRow">
 			<td class="wdCapacityType">
 				<span ng-bind="'capacityTypes.' + row.capacityType + '.label' | translate"
-					  ng-hide="row.capacityType === predictions[$index - 1].capacityType"></span>
+					  ng-hide="row.capacityType === rows[$index - 1].capacityType"></span>
 			</td>
 			<td ng-bind="'usages.' + row.usage + '.label' | translate" class="wdUsage"></td>
 			<td ng-bind="row.capacity"></td>
 			<td>
 				<span ng-bind="row.utilization.spacesAvailable"></span>
-				<small ng-bind="'(' + (row.utilization.timestamp | date: 'HH:mm') + ')'"></small>
+				<small ng-bind="'(' + (row.utilization.timestamp | date: 'd.M.y HH:mm') + ')'"></small>
 			</td>
 			<td ng-repeat="tm in predictionTimes" ng-bind="row.predictions[tm]"></td>
 		</tr>

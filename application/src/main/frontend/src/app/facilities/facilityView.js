@@ -1,4 +1,4 @@
-// Copyright © 2015 HSL <https://www.hsl.fi>
+// Copyright © 2016 HSL <https://www.hsl.fi>
 // This program is dual-licensed under the EUPL v1.2 and AGPLv3 licenses.
 
 (function() {
@@ -92,8 +92,8 @@
         self.hasOpeningHoursInfo= function() {
             return !_.isEmpty(self.facility.openingHours.info) || !_.isEmpty(self.facility.openingHours.url);
         };
-        self.hasPredictions = function() {
-            return _.flatten(self.predictions).length > 0;
+        self.hasUtilization = function() {
+            return self.utilization.length > 0;
         };
         self.hasCapacities = function() {
           return !_.isEmpty(facility.builtCapacity);

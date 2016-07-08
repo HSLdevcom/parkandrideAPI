@@ -1,17 +1,18 @@
-// Copyright © 2015 HSL <https://www.hsl.fi>
+// Copyright © 2016 HSL <https://www.hsl.fi>
 // This program is dual-licensed under the EUPL v1.2 and AGPLv3 licenses.
 
 package fi.hsl.parkandride.back.prediction;
 
+import com.querydsl.core.QueryException;
 import com.querydsl.core.Tuple;
-import com.querydsl.sql.dml.SQLInsertClause;
-import com.querydsl.sql.dml.SQLUpdateClause;
-import com.querydsl.sql.postgresql.PostgreSQLQueryFactory;
 import com.querydsl.core.types.Expression;
 import com.querydsl.core.types.MappingProjection;
 import com.querydsl.core.types.Path;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.sql.dml.SQLInsertClause;
+import com.querydsl.sql.dml.SQLUpdateClause;
+import com.querydsl.sql.postgresql.PostgreSQLQueryFactory;
 import fi.hsl.parkandride.back.TimeUtil;
 import fi.hsl.parkandride.back.sql.QFacilityPrediction;
 import fi.hsl.parkandride.back.sql.QFacilityPredictionHistory;
@@ -26,6 +27,8 @@ import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.Duration;
 import org.joda.time.format.DateTimeFormat;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.*;
 import java.util.function.BinaryOperator;
@@ -40,6 +43,8 @@ import static org.joda.time.Duration.standardHours;
 import static org.joda.time.Duration.standardMinutes;
 
 public class PredictionDao implements PredictionRepository {
+
+    private static final Logger log = LoggerFactory.getLogger(PredictionDao.class);
 
     private static final QFacilityPrediction qPrediction = QFacilityPrediction.facilityPrediction;
     private static final QFacilityPredictionHistory qPredictionHistory = QFacilityPredictionHistory.facilityPredictionHistory;
@@ -177,15 +182,21 @@ public class PredictionDao implements PredictionRepository {
     }
 
     private void savePredictionHistory(Long predictorId, DateTime start, List<Prediction> predictions) {
-        if (!predictions.isEmpty()) {
-            final SQLInsertClause insert = queryFactory.insert(qPredictionHistory);
-            predictions.forEach(p -> insert
-                    .set(qPredictionHistory.predictorId, predictorId)
-                    .set(qPredictionHistory.forecastDistanceInMinutes, ((int) new Duration(start, p.timestamp).getStandardMinutes()))
-                    .set(qPredictionHistory.ts, p.timestamp)
-                    .set(qPredictionHistory.spacesAvailable, p.spacesAvailable)
-                    .addBatch());
+        if (predictions.isEmpty()) {
+            return;
+        }
+        SQLInsertClause insert = queryFactory.insert(qPredictionHistory);
+        predictions.forEach(p -> insert
+                .set(qPredictionHistory.predictorId, predictorId)
+                .set(qPredictionHistory.forecastDistanceInMinutes, ((int) new Duration(start, p.timestamp).getStandardMinutes()))
+                .set(qPredictionHistory.ts, p.timestamp)
+                .set(qPredictionHistory.spacesAvailable, p.spacesAvailable)
+                .addBatch());
+        try {
             insert.execute();
+        } catch (QueryException e) {
+            // XXX: upsert would be a better way to ignore primary key conflicts, but this shall do for now
+            log.error("Failed save prediction history for predictor " + predictorId, e);
         }
     }
 

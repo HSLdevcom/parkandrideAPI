@@ -1,4 +1,4 @@
-// Copyright © 2015 HSL <https://www.hsl.fi>
+// Copyright © 2016 HSL <https://www.hsl.fi>
 // This program is dual-licensed under the EUPL v1.2 and AGPLv3 licenses.
 
 package fi.hsl.parkandride.back.prediction;
@@ -300,6 +300,18 @@ public class PredictionDaoTest extends AbstractDaoTest {
                                 .isEmpty();
                     }
                 });
+    }
+
+    @Test
+    public void bugfix_prediction_history_primary_key_violation() {
+        PredictionBatch pb = newPredictionBatch(now);
+        for (int i = 0; i < 10; i++) {
+            pb.predictions.add(new Prediction(now.plusMinutes(i), 10));
+        }
+
+        predictionDao.updateOnlyPredictionHistory(pb, predictorId);
+
+        predictionDao.updateOnlyPredictionHistory(pb, predictorId); // this used to crash with "Unique index or primary key violation"
     }
 
     // helpers

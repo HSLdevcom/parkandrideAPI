@@ -323,8 +323,8 @@ include::{generated}/find-facilities-summary-example/http-response.adoc[]
 === Facility Details
 
 include::{generated}/facility-example/http-request.adoc[]
-
 include::{generated}/facility-example/http-response.adoc[]
+include::{generated}/facility-example/response-fields.adoc[]
 
 [[status]]
 ==== Status
@@ -448,10 +448,6 @@ GeoJSON FeatureCollection of facilities:
 
 include::{generated}/geojson-suffix-example/curl-request.adoc[]
 include::{generated}/geojson-suffix-example/http-response.adoc[]
-
-==== Summary of Facility Model
-
-include::{generated}/facility-example/response-fields.adoc[]
 
 
 [[hubs]]

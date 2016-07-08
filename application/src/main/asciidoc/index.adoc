@@ -175,7 +175,7 @@ WARNING: None of the textual fields may contain HTML-markup, and *must be escape
 
 Park and Ride utilizes enumerated values for much of it's metadata. Current value-sets are available via REST.
 
-CapacityType defines different kind of parking slot types:
+Capacity type defines different kind of parking slot types:
 
 include::{generated}/enumeration-capacity-types-example/http-request.adoc[]
 include::{generated}/enumeration-capacity-types-example/http-response.adoc[]
@@ -185,27 +185,27 @@ Usage specifies the purpose of the capacity. See <<capacity,Capacity>>.
 include::{generated}/enumeration-usages-example/http-request.adoc[]
 include::{generated}/enumeration-usages-example/http-response.adoc[]
 
-DayType, a rough categorization of day types with different opening hours and/or pricing:
+Day type is a rough categorization of day types with different opening hours and/or pricing:
 
 include::{generated}/enumeration-day-types-example/http-request.adoc[]
 include::{generated}/enumeration-day-types-example/http-response.adoc[]
 
-Services provided by parking facility:
+Services provided by a facility:
 
 include::{generated}/enumeration-services-example/http-request.adoc[]
 include::{generated}/enumeration-services-example/http-response.adoc[]
 
-PaymentMethods accepted by facility:
+Payment methods accepted by a facility:
 
 include::{generated}/enumeration-payment-methods-example/http-request.adoc[]
 include::{generated}/enumeration-payment-methods-example/http-response.adoc[]
 
-FacilityStatuses:
+Facility status indicates whether the facility is operating normally or is exceptionally closed. See <<status,Status>>.
 
 include::{generated}/enumeration-facility-statuses-example/http-request.adoc[]
 include::{generated}/enumeration-facility-statuses-example/http-response.adoc[]
 
-PricingMethod is a shortcut for maintaining actual facility pricing information:
+Pricing method is a shortcut for maintaining actual facility pricing information:
 
 include::{generated}/enumeration-pricing-methods-example/http-request.adoc[]
 include::{generated}/enumeration-pricing-methods-example/http-response.adoc[]
@@ -325,6 +325,23 @@ include::{generated}/find-facilities-summary-example/http-response.adoc[]
 include::{generated}/facility-example/http-request.adoc[]
 
 include::{generated}/facility-example/http-response.adoc[]
+
+[[status]]
+==== Status
+
+The status of a facility indicates whether the facility is operating normally or not.
+
+`IN_OPERATION`::
+Facility is operating normally and is open according to the regular opening hours.
+See the facility's `openingHours` field to find out whether the facility is open right now.
+`INACTIVE`::
+Facility has been decommissioned or has not yet been opened.
+`TEMPORARILY_CLOSED`::
+Facility is currently closed, ignoring the opening hours, but will be opened again in near future.
+`EXCEPTIONAL_SITUATION`::
+There is something exceptional happening, but the facility is still open.
+For example one gate or floor is closed, but the rest of the facility is working normally.
+See the `statusDescription` field for an explanation of what is happening.
 
 [[capacity]]
 ==== Capacity

@@ -205,7 +205,7 @@ Facility status indicates whether the facility is operating normally or is excep
 include::{generated}/enumeration-facility-statuses-example/http-request.adoc[]
 include::{generated}/enumeration-facility-statuses-example/http-response.adoc[]
 
-Pricing method is a shortcut for maintaining actual facility pricing information:
+Pricing method is a shortcut for maintaining actual facility pricing information. See <<pricing,Pricing>>.
 
 include::{generated}/enumeration-pricing-methods-example/http-request.adoc[]
 include::{generated}/enumeration-pricing-methods-example/http-response.adoc[]

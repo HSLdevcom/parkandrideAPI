@@ -1,19 +1,20 @@
+// Copyright © 2016 HSL <https://www.hsl.fi>
+// This program is dual-licensed under the EUPL v1.2 and AGPLv3 licenses.
+
 package fi.hsl.parkandride.back.sql;
 
-import static com.querydsl.core.types.PathMetadataFactory.*;
-
-import com.querydsl.core.types.dsl.*;
-
-import com.querydsl.core.types.PathMetadata;
-import javax.annotation.Generated;
 import com.querydsl.core.types.Path;
-
+import com.querydsl.core.types.PathMetadata;
+import com.querydsl.core.types.dsl.DateTimePath;
+import com.querydsl.core.types.dsl.EnumPath;
+import com.querydsl.core.types.dsl.NumberPath;
 import com.querydsl.sql.ColumnMetadata;
-import java.sql.Types;
-
 import com.querydsl.sql.spatial.RelationalPathSpatial;
 
-import com.querydsl.spatial.*;
+import javax.annotation.Generated;
+import java.sql.Types;
+
+import static com.querydsl.core.types.PathMetadataFactory.forVariable;
 
 
 
@@ -26,6 +27,8 @@ public class QFacilityUtilization extends RelationalPathSpatial<QFacilityUtiliza
     private static final long serialVersionUID = -1445988396;
 
     public static final QFacilityUtilization facilityUtilization = new QFacilityUtilization("FACILITY_UTILIZATION");
+
+    public final NumberPath<Integer> capacity = createNumber("capacity", Integer.class);
 
     public final EnumPath<fi.hsl.parkandride.core.domain.CapacityType> capacityType = createEnum("capacityType", fi.hsl.parkandride.core.domain.CapacityType.class);
 
@@ -64,6 +67,7 @@ public class QFacilityUtilization extends RelationalPathSpatial<QFacilityUtiliza
     }
 
     public void addMetadata() {
+        addMetadata(capacity, ColumnMetadata.named("CAPACITY").withIndex(6).ofType(Types.INTEGER).withSize(10).notNull());
         addMetadata(capacityType, ColumnMetadata.named("CAPACITY_TYPE").withIndex(2).ofType(Types.VARCHAR).withSize(64).notNull());
         addMetadata(facilityId, ColumnMetadata.named("FACILITY_ID").withIndex(1).ofType(Types.BIGINT).withSize(19).notNull());
         addMetadata(spacesAvailable, ColumnMetadata.named("SPACES_AVAILABLE").withIndex(5).ofType(Types.INTEGER).withSize(10).notNull());

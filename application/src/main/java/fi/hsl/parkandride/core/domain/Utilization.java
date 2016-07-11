@@ -1,4 +1,4 @@
-// Copyright © 2015 HSL <https://www.hsl.fi>
+// Copyright © 2016 HSL <https://www.hsl.fi>
 // This program is dual-licensed under the EUPL v1.2 and AGPLv3 licenses.
 
 package fi.hsl.parkandride.core.domain;
@@ -38,6 +38,10 @@ public class Utilization implements Cloneable {
     @Min(0)
     public Integer spacesAvailable;
 
+    @NotNull
+    @Min(0)
+    public Integer capacity;
+
     @JsonIgnore
     public UtilizationKey getUtilizationKey() {
         return new UtilizationKey(facilityId, capacityType, usage);
@@ -61,12 +65,13 @@ public class Utilization implements Cloneable {
                 && Objects.equals(this.capacityType, that.capacityType)
                 && Objects.equals(this.usage, that.usage)
                 && Objects.equals(this.timestamp, that.timestamp)
-                && Objects.equals(this.spacesAvailable, that.spacesAvailable);
+                && Objects.equals(this.spacesAvailable, that.spacesAvailable)
+                && Objects.equals(this.capacity, that.capacity);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(facilityId, capacityType, usage, timestamp, spacesAvailable);
+        return Objects.hash(facilityId, capacityType, usage, timestamp, spacesAvailable, capacity);
     }
 
     @Override
@@ -77,6 +82,7 @@ public class Utilization implements Cloneable {
                 .add("usage", usage)
                 .add("timestamp", timestamp)
                 .add("spacesAvailable", spacesAvailable)
+                .add("capacity", capacity)
                 .toString();
     }
 }

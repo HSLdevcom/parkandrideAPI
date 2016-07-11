@@ -1,4 +1,4 @@
-// Copyright © 2015 HSL <https://www.hsl.fi>
+// Copyright © 2016 HSL <https://www.hsl.fi>
 // This program is dual-licensed under the EUPL v1.2 and AGPLv3 licenses.
 
 package fi.hsl.parkandride.itest;
@@ -27,6 +27,7 @@ import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.Map;
+import java.util.Set;
 
 import static com.jayway.restassured.RestAssured.when;
 import static fi.hsl.parkandride.core.domain.CapacityType.CAR;
@@ -66,7 +67,7 @@ public class PredictionITest extends AbstractIntegrationTest {
         Long operatorId = f.operatorId;
         user = devHelper.createOrUpdateUser(new NewUser(1L, "operator", OPERATOR_API, operatorId, "operator"));
 
-        adminUser = devHelper.createOrUpdateUser(new NewUser(100l, "admin", ADMIN, "admin"));
+        adminUser = devHelper.createOrUpdateUser(new NewUser(100L, "admin", ADMIN, "admin"));
 
         // Ensure validation passes
         f.pricingMethod = PricingMethod.PARK_AND_RIDE_247_FREE;
@@ -102,8 +103,10 @@ public class PredictionITest extends AbstractIntegrationTest {
 
         assertThat(utilization).as("utilization").isNotEmpty();
         assertThat(prediction).as("prediction").isNotEmpty();
+        Set<String> expectedFields = utilization.keySet();
+        expectedFields.remove("capacity"); // TODO: we are not predicting the capacity; should we add the capacity field to predictions?
         assertThat(prediction.keySet()).as("prediction's fields should be a superset of utilization's fields")
-                .containsAll(utilization.keySet());
+                .containsAll(expectedFields);
     }
 
     @Test

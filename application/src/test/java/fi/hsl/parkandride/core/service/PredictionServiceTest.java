@@ -1,4 +1,4 @@
-// Copyright © 2015 HSL <https://www.hsl.fi>
+// Copyright © 2016 HSL <https://www.hsl.fi>
 // This program is dual-licensed under the EUPL v1.2 and AGPLv3 licenses.
 
 package fi.hsl.parkandride.core.service;
@@ -159,6 +159,7 @@ public class PredictionServiceTest extends AbstractDaoTest {
         u.usage = Usage.PARK_AND_RIDE;
         u.timestamp = now;
         u.spacesAvailable = spacesAvailable;
+        u.capacity = 1000;
         return u;
     }
 

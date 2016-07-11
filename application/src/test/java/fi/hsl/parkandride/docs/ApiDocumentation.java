@@ -378,7 +378,8 @@ public class ApiDocumentation extends AbstractIntegrationTest {
                         fieldWithPath("[]capacityType").description("The capacity type"),
                         fieldWithPath("[]usage").description("The usage"),
                         fieldWithPath("[]timestamp").description("When this information was last updated"),
-                        fieldWithPath("[]spacesAvailable").description("Number of available parking spaces for this facility, capacity type and usage combination"))));
+                        fieldWithPath("[]spacesAvailable").description("Number of available parking spaces for this facility, capacity type and usage combination"),
+                        fieldWithPath("[]capacity").description("Number of parking spaces (both reserved and available) for this facility, capacity type and usage combination"))));
     }
 
     @Test
@@ -524,6 +525,7 @@ public class ApiDocumentation extends AbstractIntegrationTest {
         u.capacityType = CapacityType.CAR;
         u.usage = Usage.PARK_AND_RIDE;
         u.spacesAvailable = 30;
+        u.capacity = 50;
         u.timestamp = new DateTime();
         return u;
     }
@@ -532,9 +534,11 @@ public class ApiDocumentation extends AbstractIntegrationTest {
         Utilization u1 = newUtilization();
         u1.usage = Usage.HSL_TRAVEL_CARD;
         u1.spacesAvailable = 351;
+        u1.capacity = 400;
         Utilization u2 = newUtilization();
         u2.usage = Usage.COMMERCIAL;
         u2.spacesAvailable = 786;
+        u2.capacity = 800;
         return Arrays.asList(u1, u2);
     }
 

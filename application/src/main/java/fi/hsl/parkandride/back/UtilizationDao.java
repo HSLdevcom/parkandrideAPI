@@ -1,16 +1,16 @@
-// Copyright © 2015 HSL <https://www.hsl.fi>
+// Copyright © 2016 HSL <https://www.hsl.fi>
 // This program is dual-licensed under the EUPL v1.2 and AGPLv3 licenses.
 
 package fi.hsl.parkandride.back;
 
 import com.mysema.commons.lang.CloseableIterator;
 import com.querydsl.core.Tuple;
+import com.querydsl.core.types.MappingProjection;
+import com.querydsl.core.types.dsl.ComparableExpressionBase;
 import com.querydsl.sql.StatementOptions;
 import com.querydsl.sql.dml.SQLInsertClause;
 import com.querydsl.sql.postgresql.PostgreSQLQuery;
 import com.querydsl.sql.postgresql.PostgreSQLQueryFactory;
-import com.querydsl.core.types.MappingProjection;
-import com.querydsl.core.types.dsl.ComparableExpressionBase;
 import fi.hsl.parkandride.back.sql.QFacilityUtilization;
 import fi.hsl.parkandride.core.back.UtilizationRepository;
 import fi.hsl.parkandride.core.domain.Utilization;
@@ -41,6 +41,7 @@ public class UtilizationDao implements UtilizationRepository {
             u.usage = row.get(qUtilization.usage);
             u.timestamp = row.get(qUtilization.ts);
             u.spacesAvailable = row.get(qUtilization.spacesAvailable);
+            u.capacity = row.get(qUtilization.capacity);
             return u;
         }
     };
@@ -62,8 +63,9 @@ public class UtilizationDao implements UtilizationRepository {
             insertBatch.set(qUtilization.facilityId, u.facilityId);
             insertBatch.set(qUtilization.capacityType, u.capacityType);
             insertBatch.set(qUtilization.usage, u.usage);
-            insertBatch.set(qUtilization.spacesAvailable, u.spacesAvailable);
             insertBatch.set(qUtilization.ts, u.timestamp);
+            insertBatch.set(qUtilization.spacesAvailable, u.spacesAvailable);
+            insertBatch.set(qUtilization.capacity, u.capacity);
             insertBatch.addBatch();
         });
         insertBatch.execute();

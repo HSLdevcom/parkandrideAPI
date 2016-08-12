@@ -1,4 +1,4 @@
-// Copyright © 2015 HSL <https://www.hsl.fi>
+// Copyright © 2016 HSL <https://www.hsl.fi>
 // This program is dual-licensed under the EUPL v1.2 and AGPLv3 licenses.
 
 package fi.hsl.parkandride.itest;
@@ -43,12 +43,14 @@ import static org.springframework.http.HttpStatus.*;
 
 public class UtilizationITest extends AbstractIntegrationTest {
 
+    private static final int CAR_BUILT_CAPACITY = 1000;
     private interface Key {
         String FACILITY_ID = "facilityId";
         String CAPACITY_TYPE = "capacityType";
         String USAGE = "usage";
-        String SPACES_AVAILABLE = "spacesAvailable";
         String TIMESTAMP = "timestamp";
+        String SPACES_AVAILABLE = "spacesAvailable";
+        String CAPACITY = "capacity";
     }
 
     @Inject ContactDao contactDao;
@@ -91,7 +93,7 @@ public class UtilizationITest extends AbstractIntegrationTest {
         f.location = Spatial.fromWktPolygon("POLYGON((25.010822 60.25054, 25.010822 60.250023, 25.012479 60.250337, 25.011449 60.250885, 25.010822 60.25054))");
         f.contacts = new FacilityContacts(c.id, c.id);
         f.builtCapacity = ImmutableMap.of(
-                CAR, 1000,
+                CAR, CAR_BUILT_CAPACITY,
                 BICYCLE, 100,
                 ELECTRIC_CAR, 10
         );
@@ -251,6 +253,103 @@ public class UtilizationITest extends AbstractIntegrationTest {
                 .body("violations[0].type", is("NotEqual"));
     }
 
+    @Test
+    public void capacity_defaults_to_built_capacity() {
+        submitUtilization(OK, f.id, minValidPayload()
+                .remove(Key.CAPACITY));
+
+        Utilization[] utilizations = getUtilizations();
+        assertThat(utilizations).hasSize(1);
+        assertThat(utilizations[0].capacity).as("capacity").isEqualTo(CAR_BUILT_CAPACITY);
+    }
+
+    @Test
+    public void capacity_defaults_to_spaces_available_if_no_built_capacity() {
+        submitUtilization(OK, f.id, minValidPayload()
+                .put(Key.CAPACITY_TYPE, MOTORCYCLE.name())
+                .put(Key.SPACES_AVAILABLE, 666)
+                .remove(Key.CAPACITY));
+        assertThat(getUtilizations()).isEmpty();            // check that motorcycle doesn't yet have built capacity
+        f.builtCapacity = ImmutableMap.of(MOTORCYCLE, 1);   // give motorcycle some capacity to make its utilization visible
+        facilityDao.updateFacility(f.id, f);
+
+        Utilization[] utilizations = getUtilizations();
+        assertThat(utilizations).hasSize(1);
+        assertThat(utilizations[0].capacity).as("capacity").isEqualTo(666);
+    }
+
+    @Test
+    public void updating_capacity_will_NOT_initialize_built_capacity() {
+        submitUtilization(OK, f.id, minValidPayload()
+                .put(Key.CAPACITY_TYPE, MOTORCYCLE.name())
+                .put(Key.CAPACITY, 100));
+
+        FacilityInfo facility = facilityDao.getFacilityInfo(f.id);
+        assertThat(facility.builtCapacity).doesNotContainKey(MOTORCYCLE);
+    }
+
+    @Test
+    public void updating_capacity_may_increase_built_capacity() {
+        submitUtilization(OK, f.id, minValidPayload()
+                .put(Key.CAPACITY_TYPE, CAR.name())
+                .put(Key.CAPACITY, CAR_BUILT_CAPACITY + 50));
+
+        FacilityInfo facility = facilityDao.getFacilityInfo(f.id);
+        assertThat(facility.builtCapacity).containsEntry(CAR, CAR_BUILT_CAPACITY + 50);
+    }
+
+    @Test
+    public void updating_capacity_will_NOT_decrease_built_capacity() {
+        submitUtilization(OK, f.id, minValidPayload()
+                .put(Key.CAPACITY_TYPE, CAR.name())
+                .put(Key.CAPACITY, CAR_BUILT_CAPACITY - 50));
+
+        FacilityInfo facility = facilityDao.getFacilityInfo(f.id);
+        assertThat(facility.builtCapacity).containsEntry(CAR, CAR_BUILT_CAPACITY);
+    }
+
+    @Test
+    public void updating_capacity_may_increase_temporarily_unavailable_spaces() {
+        submitUtilization(OK, f.id, minValidPayload()
+                .put(Key.CAPACITY_TYPE, CAR.name())
+                .put(Key.CAPACITY, CAR_BUILT_CAPACITY - 50));
+
+        Facility facility = facilityDao.getFacility(f.id);
+        assertThat(facility.unavailableCapacities).contains(new UnavailableCapacity(CAR, PARK_AND_RIDE, 50));
+    }
+
+    @Test
+    public void updating_capacity_may_decrease_temporarily_unavailable_spaces() {
+        f.unavailableCapacities.add(new UnavailableCapacity(CAR, PARK_AND_RIDE, 50));
+        facilityDao.updateFacility(f.id, f);
+
+        submitUtilization(OK, f.id, minValidPayload()
+                .put(Key.CAPACITY_TYPE, CAR.name())
+                .put(Key.CAPACITY, CAR_BUILT_CAPACITY - 40));
+
+        Facility facility = facilityDao.getFacility(f.id);
+        assertThat(facility.unavailableCapacities).contains(new UnavailableCapacity(CAR, PARK_AND_RIDE, 40));
+    }
+
+    @Test
+    public void accepts_spaces_available_which_is_larger_than_capacity() {
+        submitUtilization(OK, f.id, minValidPayload()
+                .put(Key.SPACES_AVAILABLE, CAR_BUILT_CAPACITY + 666)
+                .put(Key.CAPACITY, CAR_BUILT_CAPACITY));
+
+        FacilityInfo facility = facilityDao.getFacilityInfo(f.id);
+        assertThat(facility.builtCapacity).containsEntry(CAR, CAR_BUILT_CAPACITY);
+    }
+
+    @Test
+    public void accepts_spaces_available_which_is_larger_than_built_capacity() {
+        submitUtilization(OK, f.id, minValidPayload()
+                .put(Key.SPACES_AVAILABLE, CAR_BUILT_CAPACITY + 666)
+                .remove(Key.CAPACITY));
+
+        FacilityInfo facility = facilityDao.getFacilityInfo(f.id);
+        assertThat(facility.builtCapacity).containsEntry(CAR, CAR_BUILT_CAPACITY);
+    }
 
     @Test
     public void does_not_show_utilizations_without_built_capacities() {
@@ -316,11 +415,6 @@ public class UtilizationITest extends AbstractIntegrationTest {
                 );
     }
 
-    private Utilization[] getUtilizations() {
-        return when().get(UrlSchema.FACILITY_UTILIZATION, f.id)
-                .then().statusCode(OK.value())
-                .extract().as(Utilization[].class);
-    }
 
     // helpers
 
@@ -328,8 +422,8 @@ public class UtilizationITest extends AbstractIntegrationTest {
         return new JSONObjectBuilder()
                 .put(Key.CAPACITY_TYPE, CapacityType.CAR)
                 .put(Key.USAGE, Usage.PARK_AND_RIDE)
-                .put(Key.SPACES_AVAILABLE, 42)
-                .put(Key.TIMESTAMP, DateTime.now());
+                .put(Key.TIMESTAMP, DateTime.now())
+                .put(Key.SPACES_AVAILABLE, 42);
     }
 
     private ValidatableResponse submitUtilization(HttpStatus expectedStatus, Long facilityId, JSONObjectBuilder builder) {
@@ -387,7 +481,13 @@ public class UtilizationITest extends AbstractIntegrationTest {
                         tuple(f.id, u3.capacityType, u3.usage, u3.spacesAvailable, u3.timestamp.toInstant()));
     }
 
-    protected Utilization utilize(CapacityType capacityType, Usage usage) {
+    private Utilization[] getUtilizations() {
+        return when().get(UrlSchema.FACILITY_UTILIZATION, f.id)
+                .then().statusCode(OK.value())
+                .extract().as(Utilization[].class);
+    }
+
+    private Utilization utilize(CapacityType capacityType, Usage usage) {
         final Utilization utilization = new Utilization();
         utilization.facilityId = f.id;
         utilization.capacityType = capacityType;

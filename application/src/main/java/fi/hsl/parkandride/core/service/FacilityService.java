@@ -1,4 +1,4 @@
-// Copyright © 2015 HSL <https://www.hsl.fi>
+// Copyright © 2016 HSL <https://www.hsl.fi>
 // This program is dual-licensed under the EUPL v1.2 and AGPLv3 licenses.
 
 package fi.hsl.parkandride.core.service;
@@ -14,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.*;
+import java.util.function.Predicate;
 
 import static fi.hsl.parkandride.core.domain.Permission.*;
 import static fi.hsl.parkandride.core.service.AuthenticationService.authorize;
@@ -99,13 +100,14 @@ public class FacilityService {
 
     @TransactionalWrite
     public void registerUtilization(long facilityId, List<Utilization> utilization, User currentUser) {
-        final FacilityInfo facilityInfo = repository.getFacilityInfo(facilityId);
-        authorize(currentUser, facilityInfo, FACILITY_UTILIZATION_UPDATE);
+        FacilityInfo facility = repository.getFacilityInfo(facilityId);
+        authorize(currentUser, facility, FACILITY_UTILIZATION_UPDATE);
 
-        initUtilizationDefaults(facilityId, utilization);
+        initUtilizationDefaults(facility, utilization);
         validateUtilizations(facilityId, utilization);
+        autoUpdateFacilityCapacity(utilization);
 
-        checkUtilizationApplicability(facilityInfo, utilization);
+        checkUtilizationApplicability(facility, utilization);
 
         utilizationRepository.insertUtilizations(utilization);
         predictionService.signalUpdateNeeded(utilization);
@@ -126,10 +128,15 @@ public class FacilityService {
                 ));
     }
 
-    private static void initUtilizationDefaults(long facilityId, List<Utilization> utilization) {
-        utilization.stream()
-                .filter(u -> u.facilityId == null)
-                .forEach(u -> u.facilityId = facilityId);
+    private static void initUtilizationDefaults(FacilityInfo facility, List<Utilization> utilization) {
+        for (Utilization u : utilization) {
+            if (u.facilityId == null) {
+                u.facilityId = facility.id;
+            }
+            if (u.capacity == null) {
+                u.capacity = facility.builtCapacity.getOrDefault(u.capacityType, u.spacesAvailable);
+            }
+        }
     }
 
     public void validateUtilizations(long facilityId, List<Utilization> utilizations) {
@@ -157,6 +164,34 @@ public class FacilityService {
         Seconds gracePeriod = PredictionRepository.PREDICTION_RESOLUTION.toStandardSeconds().dividedBy(2);
         DateTime timeLimit = DateTime.now().plus(gracePeriod);
         return time != null && time.isAfter(timeLimit);
+    }
+
+    private void autoUpdateFacilityCapacity(List<Utilization> utilization) {
+        for (Utilization u : utilization) {
+            Facility facility = repository.getFacility(u.facilityId);
+
+            Integer builtCapacity = facility.builtCapacity.get(u.capacityType);
+            if (builtCapacity == null) {
+                continue;
+            }
+            if (builtCapacity < u.capacity) {
+                builtCapacity = u.capacity;
+                facility.builtCapacity.put(u.capacityType, builtCapacity);
+                repository.updateFacility(facility.id, facility);
+            }
+
+            Predicate<UnavailableCapacity> matchesUtilization = uc -> uc.capacityType.equals(u.capacityType) && uc.usage.equals(u.usage);
+            int unavailableCapacity = facility.unavailableCapacities.stream()
+                    .filter(matchesUtilization)
+                    .map(uc -> uc.capacity)
+                    .findFirst()
+                    .orElse(0);
+            if (builtCapacity - unavailableCapacity != u.capacity) {
+                facility.unavailableCapacities.removeIf(matchesUtilization);
+                facility.unavailableCapacities.add(new UnavailableCapacity(u.capacityType, u.usage, builtCapacity - u.capacity));
+                repository.updateFacility(facility.id, facility);
+            }
+        }
     }
 
     @TransactionalRead

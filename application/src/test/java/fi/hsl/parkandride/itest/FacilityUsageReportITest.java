@@ -1,4 +1,4 @@
-// Copyright © 2015 HSL <https://www.hsl.fi>
+// Copyright © 2016 HSL <https://www.hsl.fi>
 // This program is dual-licensed under the EUPL v1.2 and AGPLv3 licenses.
 
 package fi.hsl.parkandride.itest;
@@ -116,13 +116,7 @@ public class FacilityUsageReportITest extends AbstractReportingITest {
     public void report_FacilityUsage_withStatusHistory() {
         final ReportParameters params = baseParams();
         params.interval = Days.ONE.toStandardMinutes().getMinutes();
-
-        // Add data for whole month to get all rows
         final LocalDate start = params.startDate;
-        final List<LocalDate> dates = newArrayList(iterateFor(start, p -> !p.isAfter(params.endDate), d -> d.plusDays(1)));
-        dates.forEach(d -> facilityService.registerUtilization(facility1.id, singletonList(
-                utilize(CAR, 10, d.toDateTime(new LocalTime("13:37")), facility1)
-        ), apiUser));
 
         // Add status history, relates to the time window of 6-10
         // 1st day -> IN_OPERATION
@@ -133,6 +127,12 @@ public class FacilityUsageReportITest extends AbstractReportingITest {
         updateStatus(start.plusDays(1).toDateTime(new LocalTime("07:59")), TEMPORARILY_CLOSED);
         updateStatus(start.plusDays(2).toDateTime(new LocalTime("08:00")), INACTIVE);
         updateStatus(start.plusDays(3).toDateTime(new LocalTime("08:01")), IN_OPERATION);
+
+        // Add data for whole month to get all rows
+        final List<LocalDate> dates = newArrayList(iterateFor(start, p -> !p.isAfter(params.endDate), d -> d.plusDays(1)));
+        dates.forEach(d -> facilityService.registerUtilization(facility1.id, singletonList(
+                utilize(CAR, 10, d.toDateTime(new LocalTime("13:37")), facility1)
+        ), apiUser));
 
         final Response whenPostingToReportUrl = postToReportUrl(params, FACILITY_USAGE, adminUser);
         withWorkbook(whenPostingToReportUrl, wb -> {

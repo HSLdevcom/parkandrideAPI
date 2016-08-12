@@ -1,4 +1,4 @@
-// Copyright © 2015 HSL <https://www.hsl.fi>
+// Copyright © 2016 HSL <https://www.hsl.fi>
 // This program is dual-licensed under the EUPL v1.2 and AGPLv3 licenses.
 
 package fi.hsl.parkandride.dev;
@@ -194,6 +194,7 @@ public class DevController {
         u.timestamp = time;
         u.usage = utilizationKey.usage;
         u.spacesAvailable = sineWaveUtilization(time, maxCapacity);
+        u.capacity = maxCapacity;
         return u;
     }
 

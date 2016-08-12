@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration scan="true">
-    <include resource="logback-defaults.xml"/>
+    <include resource="logback-appenderConsole.xml"/>
 
-    <logger name="fi.hsl.parkandride" level="ERROR"/>
-    <logger name="org.springframework" level="ERROR"/>
-    <root level="ERROR"/>
+    <logger name="fi.hsl.parkandride" level="INFO"/>
+    <logger name="org.springframework" level="INFO"/>
+
+    <root level="INFO">
+        <!--<appender-ref ref="CONSOLE"/>-->
+    </root>
 
 </configuration>

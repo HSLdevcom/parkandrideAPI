@@ -74,21 +74,25 @@ public class UtilizationDao implements UtilizationRepository {
     @TransactionalRead
     @Override
     public Set<Utilization> findLatestUtilization(long facilityId) {
-        // TODO: do with a single query
-        List<Tuple> utilizationKeyCombinations = queryFactory.from(qUtilization)
-                .where(qUtilization.facilityId.eq(facilityId))
-                .select(qUtilization.capacityType, qUtilization.usage)
+        QFacilityUtilization latest = new QFacilityUtilization("latest");
+        return new HashSet<>(queryFactory.from(qUtilization)
+                .select(utilizationMapping)
+                .join(queryFactory.from(latest)
+                                .select(latest.facilityId,
+                                        latest.capacityType,
+                                        latest.usage,
+                                        latest.ts.max().as("ts"))
+                                .groupBy(latest.facilityId,
+                                        latest.capacityType,
+                                        latest.usage)
+                                .where(latest.facilityId.eq(facilityId)),
+                        latest)
+                .on(qUtilization.facilityId.eq(latest.facilityId),
+                        qUtilization.capacityType.eq(latest.capacityType),
+                        qUtilization.usage.eq(latest.usage),
+                        qUtilization.ts.eq(latest.ts))
                 .distinct()
-                .fetch();
-        return utilizationKeyCombinations.stream()
-                .map(utilizationKey -> queryFactory.from(qUtilization)
-                        .select(utilizationMapping)
-                        .where(qUtilization.facilityId.eq(facilityId),
-                                qUtilization.capacityType.eq(utilizationKey.get(qUtilization.capacityType)),
-                                qUtilization.usage.eq(utilizationKey.get(qUtilization.usage)))
-                        .orderBy(qUtilization.ts.desc())
-                        .fetchFirst())
-                .collect(Collectors.toSet());
+                .fetch());
     }
 
     @TransactionalRead

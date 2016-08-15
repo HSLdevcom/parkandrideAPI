@@ -44,6 +44,7 @@ import static org.springframework.http.HttpStatus.*;
 public class UtilizationITest extends AbstractIntegrationTest {
 
     private static final int CAR_BUILT_CAPACITY = 1000;
+
     private interface Key {
         String FACILITY_ID = "facilityId";
         String CAPACITY_TYPE = "capacityType";
@@ -57,7 +58,9 @@ public class UtilizationITest extends AbstractIntegrationTest {
     @Inject FacilityDao facilityDao;
     @Inject OperatorDao operatorDao;
 
-    private Facility f;
+    private Facility facility;
+    private Operator operator;
+    private Contact contact;
     private String authToken;
     private DateTimeZone originalDateTimeZone;
 
@@ -75,83 +78,46 @@ public class UtilizationITest extends AbstractIntegrationTest {
     @Before
     public void initFixture() {
         devHelper.deleteAll();
-
-        Operator o = new Operator();
-        o.id = 1l;
-        o.name = new MultilingualString("smooth operator");
-
-        Contact c = new Contact();
-        c.id = 1L;
-        c.name = new MultilingualString("minimal contact");
-
-        f = new Facility();
-        f.id = 1L;
-        f.status = IN_OPERATION;
-        f.pricingMethod = PARK_AND_RIDE_247_FREE;
-        f.name = new MultilingualString("minimal facility");
-        f.operatorId = 1l;
-        f.location = Spatial.fromWktPolygon("POLYGON((25.010822 60.25054, 25.010822 60.250023, 25.012479 60.250337, 25.011449 60.250885, 25.010822 60.25054))");
-        f.contacts = new FacilityContacts(c.id, c.id);
-        f.builtCapacity = ImmutableMap.of(
-                CAR, CAR_BUILT_CAPACITY,
-                BICYCLE, 100,
-                ELECTRIC_CAR, 10
-        );
-
-        operatorDao.insertOperator(o, o.id);
-        contactDao.insertContact(c, c.id);
-        facilityDao.insertFacility(f, f.id);
-
-        devHelper.createOrUpdateUser(new NewUser(1l, "operator", OPERATOR_API, f.operatorId, "operator"));
+        operator = createOperator(1, "smooth operator");
+        contact = createContact(1, "minimal contact");
+        facility = createFacility(1, "minimal facility", operator, contact);
+        devHelper.createOrUpdateUser(new NewUser(1L, "operator", OPERATOR_API, facility.operatorId, "operator"));
         authToken = devHelper.login("operator").token;
     }
 
     @Test
     public void cannot_update_other_operators_facility() {
-        Operator o = new Operator();
-        o.id = 2l;
-        o.name = new MultilingualString("another operator");
+        Operator operator2 = createOperator(2, "another operator");
+        Facility facility2 = createFacility(2, "another facility", operator2, contact);
 
-        Facility f2 = new Facility();
-        f2.id = 2L;
-        f2.status = IN_OPERATION;
-        f2.pricingMethod = PARK_AND_RIDE_247_FREE;
-        f2.name = new MultilingualString("another facility");
-        f2.operatorId = 2l;
-        f2.location = Spatial.fromWktPolygon("POLYGON((25.010822 60.25054, 25.010822 60.250023, 25.012479 60.250337, 25.011449 60.250885, 25.010822 60.25054))");
-        f2.contacts = new FacilityContacts(1l, 1l);
-
-        operatorDao.insertOperator(o, o.id);
-        facilityDao.insertFacility(f2, f2.id);
-
-        submitUtilization(FORBIDDEN, f2.id, minValidPayload());
+        submitUtilization(FORBIDDEN, facility2.id, minValidPayload());
     }
 
     @Test
     public void accepts_ISO8601_UTC_timestamp() {
-        submitUtilization(OK, f.id, minValidPayload().put(Key.TIMESTAMP, "2015-01-01T11:00:00.000Z"));
+        submitUtilization(OK, facility.id, minValidPayload().put(Key.TIMESTAMP, "2015-01-01T11:00:00.000Z"));
 
         assertThat(getUtilizationTimestamp()).isEqualTo(new DateTime(2015, 1, 1, 11, 0, 0, DateTimeZone.UTC));
     }
 
     @Test
     public void accepts_ISO8601_non_UTC_timestamp() {
-        submitUtilization(OK, f.id, minValidPayload().put(Key.TIMESTAMP, "2015-01-01T13:00:00.000+02:00"));
+        submitUtilization(OK, facility.id, minValidPayload().put(Key.TIMESTAMP, "2015-01-01T13:00:00.000+02:00"));
 
         assertThat(getUtilizationTimestamp()).isEqualTo(new DateTime(2015, 1, 1, 11, 0, 0, DateTimeZone.UTC));
     }
 
     @Test
     public void rejects_epoch_timestamps() {
-        submitUtilization(BAD_REQUEST, f.id, minValidPayload().put(Key.TIMESTAMP, System.currentTimeMillis() / 1000)); // in seconds
-        submitUtilization(BAD_REQUEST, f.id, minValidPayload().put(Key.TIMESTAMP, System.currentTimeMillis())); // in milliseconds
+        submitUtilization(BAD_REQUEST, facility.id, minValidPayload().put(Key.TIMESTAMP, System.currentTimeMillis() / 1000)); // in seconds
+        submitUtilization(BAD_REQUEST, facility.id, minValidPayload().put(Key.TIMESTAMP, System.currentTimeMillis())); // in milliseconds
     }
 
     @Test
     public void returns_timestamps_in_default_timezone() {
         DateTimeZone.setDefault(DateTimeZone.forOffsetHours(8));
 
-        submitUtilization(OK, f.id, minValidPayload().put(Key.TIMESTAMP, "2015-01-01T11:00:00.000Z"));
+        submitUtilization(OK, facility.id, minValidPayload().put(Key.TIMESTAMP, "2015-01-01T11:00:00.000Z"));
 
         assertThat(getUtilizationTimestampString()).isEqualTo("2015-01-01T19:00:00.000+08:00");
     }
@@ -170,7 +136,7 @@ public class UtilizationITest extends AbstractIntegrationTest {
 
     @Test
     public void timestamp_is_required() {
-        submitUtilization(BAD_REQUEST, f.id, minValidPayload().put(Key.TIMESTAMP, null))
+        submitUtilization(BAD_REQUEST, facility.id, minValidPayload().put(Key.TIMESTAMP, null))
                 .spec(assertResponse(ValidationException.class))
                 .body("violations[0].path", is("[0]." + Key.TIMESTAMP))
                 .body("violations[0].type", is("NotNull"));
@@ -178,7 +144,7 @@ public class UtilizationITest extends AbstractIntegrationTest {
 
     @Test
     public void timestamp_must_have_timezone() {
-        submitUtilization(BAD_REQUEST, f.id, minValidPayload().put(Key.TIMESTAMP, "2015-01-01T11:00:00.000"))
+        submitUtilization(BAD_REQUEST, facility.id, minValidPayload().put(Key.TIMESTAMP, "2015-01-01T11:00:00.000"))
                 .spec(assertResponse(HttpMessageNotReadableException.class))
                 .body("violations[0].path", is("[0]." + Key.TIMESTAMP))
                 .body("violations[0].type", is("TypeMismatch"))
@@ -187,15 +153,15 @@ public class UtilizationITest extends AbstractIntegrationTest {
 
     @Test
     public void timestamp_must_have_at_least_second_precision() {
-        submitUtilization(OK, f.id, minValidPayload().put(Key.TIMESTAMP, "2015-01-01T11:00:00Z")); // second precision
+        submitUtilization(OK, facility.id, minValidPayload().put(Key.TIMESTAMP, "2015-01-01T11:00:00Z")); // second precision
 
-        submitUtilization(BAD_REQUEST, f.id, minValidPayload().put(Key.TIMESTAMP, "2015-01-01T11:00Z")) // minute precision
+        submitUtilization(BAD_REQUEST, facility.id, minValidPayload().put(Key.TIMESTAMP, "2015-01-01T11:00Z")) // minute precision
                 .spec(assertResponse(HttpMessageNotReadableException.class))
                 .body("violations[0].path", is("[0]." + Key.TIMESTAMP))
                 .body("violations[0].type", is("TypeMismatch"))
                 .body("violations[0].message", containsString("expected ISO 8601 date time with timezone"));
 
-        submitUtilization(BAD_REQUEST, f.id, minValidPayload().put(Key.TIMESTAMP, "2015-01-01")) // date precision
+        submitUtilization(BAD_REQUEST, facility.id, minValidPayload().put(Key.TIMESTAMP, "2015-01-01")) // date precision
                 .spec(assertResponse(HttpMessageNotReadableException.class))
                 .body("violations[0].path", is("[0]." + Key.TIMESTAMP))
                 .body("violations[0].type", is("TypeMismatch"))
@@ -204,12 +170,12 @@ public class UtilizationITest extends AbstractIntegrationTest {
 
     @Test
     public void timestamp_may_be_a_little_into_the_future() { // in case the server clocks are in different time
-        submitUtilization(OK, f.id, minValidPayload().put(Key.TIMESTAMP, DateTime.now().plusMinutes(2)));
+        submitUtilization(OK, facility.id, minValidPayload().put(Key.TIMESTAMP, DateTime.now().plusMinutes(2)));
     }
 
     @Test
     public void timestamp_must_not_be_far_into_the_future() {
-        submitUtilization(BAD_REQUEST, f.id, minValidPayload().put(Key.TIMESTAMP, DateTime.now().plusMinutes(3)))
+        submitUtilization(BAD_REQUEST, facility.id, minValidPayload().put(Key.TIMESTAMP, DateTime.now().plusMinutes(3)))
                 .spec(assertResponse(ValidationException.class))
                 .body("violations[0].path", is("[0]." + Key.TIMESTAMP))
                 .body("violations[0].type", is("NotFuture"));
@@ -217,7 +183,7 @@ public class UtilizationITest extends AbstractIntegrationTest {
 
     @Test
     public void capacity_type_is_required() {
-        submitUtilization(BAD_REQUEST, f.id, minValidPayload().put(Key.CAPACITY_TYPE, null))
+        submitUtilization(BAD_REQUEST, facility.id, minValidPayload().put(Key.CAPACITY_TYPE, null))
                 .spec(assertResponse(ValidationException.class))
                 .body("violations[0].path", is("[0]." + Key.CAPACITY_TYPE))
                 .body("violations[0].type", is("NotNull"));
@@ -225,7 +191,7 @@ public class UtilizationITest extends AbstractIntegrationTest {
 
     @Test
     public void usage_is_required() {
-        submitUtilization(BAD_REQUEST, f.id, minValidPayload().put(Key.USAGE, null))
+        submitUtilization(BAD_REQUEST, facility.id, minValidPayload().put(Key.USAGE, null))
                 .spec(assertResponse(ValidationException.class))
                 .body("violations[0].path", is("[0]." + Key.USAGE))
                 .body("violations[0].type", is("NotNull"));
@@ -233,7 +199,7 @@ public class UtilizationITest extends AbstractIntegrationTest {
 
     @Test
     public void spaces_available_is_required() {
-        submitUtilization(BAD_REQUEST, f.id, minValidPayload().put(Key.SPACES_AVAILABLE, null))
+        submitUtilization(BAD_REQUEST, facility.id, minValidPayload().put(Key.SPACES_AVAILABLE, null))
                 .spec(assertResponse(ValidationException.class))
                 .body("violations[0].path", is("[0]." + Key.SPACES_AVAILABLE))
                 .body("violations[0].type", is("NotNull"));
@@ -241,13 +207,13 @@ public class UtilizationITest extends AbstractIntegrationTest {
 
     @Test
     public void facility_id_in_playload_is_optional() {
-        submitUtilization(OK, f.id, minValidPayload().put(Key.FACILITY_ID, null));
-        submitUtilization(OK, f.id, minValidPayload().put(Key.FACILITY_ID, f.id));
+        submitUtilization(OK, facility.id, minValidPayload().put(Key.FACILITY_ID, null));
+        submitUtilization(OK, facility.id, minValidPayload().put(Key.FACILITY_ID, facility.id));
     }
 
     @Test
     public void facility_id_in_playload_cannot_be_different_from_facility_id_in_path() {
-        submitUtilization(BAD_REQUEST, f.id, minValidPayload().put(Key.FACILITY_ID, f.id + 1))
+        submitUtilization(BAD_REQUEST, facility.id, minValidPayload().put(Key.FACILITY_ID, facility.id + 1))
                 .spec(assertResponse(ValidationException.class))
                 .body("violations[0].path", is("[0]." + Key.FACILITY_ID))
                 .body("violations[0].type", is("NotEqual"));
@@ -255,7 +221,7 @@ public class UtilizationITest extends AbstractIntegrationTest {
 
     @Test
     public void capacity_defaults_to_built_capacity() {
-        submitUtilization(OK, f.id, minValidPayload()
+        submitUtilization(OK, facility.id, minValidPayload()
                 .remove(Key.CAPACITY));
 
         Utilization[] utilizations = getUtilizations();
@@ -265,13 +231,13 @@ public class UtilizationITest extends AbstractIntegrationTest {
 
     @Test
     public void capacity_defaults_to_spaces_available_if_no_built_capacity() {
-        submitUtilization(OK, f.id, minValidPayload()
+        submitUtilization(OK, facility.id, minValidPayload()
                 .put(Key.CAPACITY_TYPE, MOTORCYCLE.name())
                 .put(Key.SPACES_AVAILABLE, 666)
                 .remove(Key.CAPACITY));
         assertThat(getUtilizations()).isEmpty();            // check that motorcycle doesn't yet have built capacity
-        f.builtCapacity = ImmutableMap.of(MOTORCYCLE, 1);   // give motorcycle some capacity to make its utilization visible
-        facilityDao.updateFacility(f.id, f);
+        facility.builtCapacity = ImmutableMap.of(MOTORCYCLE, 1);   // give motorcycle some capacity to make its utilization visible
+        facilityDao.updateFacility(facility.id, facility);
 
         Utilization[] utilizations = getUtilizations();
         assertThat(utilizations).hasSize(1);
@@ -280,74 +246,74 @@ public class UtilizationITest extends AbstractIntegrationTest {
 
     @Test
     public void updating_capacity_will_NOT_initialize_built_capacity() {
-        submitUtilization(OK, f.id, minValidPayload()
+        submitUtilization(OK, facility.id, minValidPayload()
                 .put(Key.CAPACITY_TYPE, MOTORCYCLE.name())
                 .put(Key.CAPACITY, 100));
 
-        FacilityInfo facility = facilityDao.getFacilityInfo(f.id);
+        FacilityInfo facility = facilityDao.getFacilityInfo(this.facility.id);
         assertThat(facility.builtCapacity).doesNotContainKey(MOTORCYCLE);
     }
 
     @Test
     public void updating_capacity_may_increase_built_capacity() {
-        submitUtilization(OK, f.id, minValidPayload()
+        submitUtilization(OK, facility.id, minValidPayload()
                 .put(Key.CAPACITY_TYPE, CAR.name())
                 .put(Key.CAPACITY, CAR_BUILT_CAPACITY + 50));
 
-        FacilityInfo facility = facilityDao.getFacilityInfo(f.id);
+        FacilityInfo facility = facilityDao.getFacilityInfo(this.facility.id);
         assertThat(facility.builtCapacity).containsEntry(CAR, CAR_BUILT_CAPACITY + 50);
     }
 
     @Test
     public void updating_capacity_will_NOT_decrease_built_capacity() {
-        submitUtilization(OK, f.id, minValidPayload()
+        submitUtilization(OK, facility.id, minValidPayload()
                 .put(Key.CAPACITY_TYPE, CAR.name())
                 .put(Key.CAPACITY, CAR_BUILT_CAPACITY - 50));
 
-        FacilityInfo facility = facilityDao.getFacilityInfo(f.id);
+        FacilityInfo facility = facilityDao.getFacilityInfo(this.facility.id);
         assertThat(facility.builtCapacity).containsEntry(CAR, CAR_BUILT_CAPACITY);
     }
 
     @Test
     public void updating_capacity_may_increase_temporarily_unavailable_spaces() {
-        submitUtilization(OK, f.id, minValidPayload()
+        submitUtilization(OK, facility.id, minValidPayload()
                 .put(Key.CAPACITY_TYPE, CAR.name())
                 .put(Key.CAPACITY, CAR_BUILT_CAPACITY - 50));
 
-        Facility facility = facilityDao.getFacility(f.id);
+        Facility facility = facilityDao.getFacility(this.facility.id);
         assertThat(facility.unavailableCapacities).contains(new UnavailableCapacity(CAR, PARK_AND_RIDE, 50));
     }
 
     @Test
     public void updating_capacity_may_decrease_temporarily_unavailable_spaces() {
-        f.unavailableCapacities.add(new UnavailableCapacity(CAR, PARK_AND_RIDE, 50));
-        facilityDao.updateFacility(f.id, f);
+        facility.unavailableCapacities.add(new UnavailableCapacity(CAR, PARK_AND_RIDE, 50));
+        facilityDao.updateFacility(facility.id, facility);
 
-        submitUtilization(OK, f.id, minValidPayload()
+        submitUtilization(OK, facility.id, minValidPayload()
                 .put(Key.CAPACITY_TYPE, CAR.name())
                 .put(Key.CAPACITY, CAR_BUILT_CAPACITY - 40));
 
-        Facility facility = facilityDao.getFacility(f.id);
+        Facility facility = facilityDao.getFacility(this.facility.id);
         assertThat(facility.unavailableCapacities).contains(new UnavailableCapacity(CAR, PARK_AND_RIDE, 40));
     }
 
     @Test
     public void accepts_spaces_available_which_is_larger_than_capacity() {
-        submitUtilization(OK, f.id, minValidPayload()
+        submitUtilization(OK, facility.id, minValidPayload()
                 .put(Key.SPACES_AVAILABLE, CAR_BUILT_CAPACITY + 666)
                 .put(Key.CAPACITY, CAR_BUILT_CAPACITY));
 
-        FacilityInfo facility = facilityDao.getFacilityInfo(f.id);
+        FacilityInfo facility = facilityDao.getFacilityInfo(this.facility.id);
         assertThat(facility.builtCapacity).containsEntry(CAR, CAR_BUILT_CAPACITY);
     }
 
     @Test
     public void accepts_spaces_available_which_is_larger_than_built_capacity() {
-        submitUtilization(OK, f.id, minValidPayload()
+        submitUtilization(OK, facility.id, minValidPayload()
                 .put(Key.SPACES_AVAILABLE, CAR_BUILT_CAPACITY + 666)
                 .remove(Key.CAPACITY));
 
-        FacilityInfo facility = facilityDao.getFacilityInfo(f.id);
+        FacilityInfo facility = facilityDao.getFacilityInfo(this.facility.id);
         assertThat(facility.builtCapacity).containsEntry(CAR, CAR_BUILT_CAPACITY);
     }
 
@@ -355,28 +321,28 @@ public class UtilizationITest extends AbstractIntegrationTest {
     public void does_not_show_utilizations_without_built_capacities() {
         multiCapacityCreate();
 
-        f.builtCapacity = ImmutableMap.of(CAR, 1000);
-        facilityDao.updateFacility(f.id, f);
+        facility.builtCapacity = ImmutableMap.of(CAR, 1000);
+        facilityDao.updateFacility(facility.id, facility);
 
         Utilization[] results = getUtilizations();
 
         assertThat(results)
                 .extracting("facilityId", "capacityType", "usage", "spacesAvailable")
-                .containsOnly(tuple(f.id, CAR, PARK_AND_RIDE, 1));
+                .containsOnly(tuple(facility.id, CAR, PARK_AND_RIDE, 1));
     }
 
     @Test
     public void does_not_show_utilizations_without_usages() {
         multiCapacityCreate();
 
-        f.builtCapacity = ImmutableMap.of(CAR, 1000);
-        f.pricingMethod = CUSTOM;
-        f.pricing = asList(
+        facility.builtCapacity = ImmutableMap.of(CAR, 1000);
+        facility.pricingMethod = CUSTOM;
+        facility.pricing = asList(
                 new Pricing(CAR, COMMERCIAL, 1000, BUSINESS_DAY, "00", "24", "0"),
                 new Pricing(CAR, COMMERCIAL, 1000, SATURDAY, "00", "24", "0"),
                 new Pricing(CAR, COMMERCIAL, 1000, SUNDAY, "00", "24", "0")
         );
-        facilityDao.updateFacility(f.id, f);
+        facilityDao.updateFacility(facility.id, facility);
 
         Utilization[] results = getUtilizations();
 
@@ -393,7 +359,7 @@ public class UtilizationITest extends AbstractIntegrationTest {
                 utilize(CAR, COMMERCIAL),
                 utilize(ELECTRIC_CAR, COMMERCIAL)
         ));
-        f.pricing = asList(
+        facility.pricing = asList(
                 new Pricing(CAR, PARK_AND_RIDE, 100, BUSINESS_DAY, "00", "24", "0"),
                 new Pricing(CAR, PARK_AND_RIDE, 100, SATURDAY, "00", "24", "0"),
                 new Pricing(CAR, PARK_AND_RIDE, 100, SUNDAY, "00", "24", "0"),
@@ -401,8 +367,8 @@ public class UtilizationITest extends AbstractIntegrationTest {
                 new Pricing(ELECTRIC_CAR, COMMERCIAL, 50, SATURDAY, "00", "24", "0"),
                 new Pricing(ELECTRIC_CAR, COMMERCIAL, 50, SUNDAY, "00", "24", "0")
         );
-        f.pricingMethod = CUSTOM;
-        facilityDao.updateFacility(f.id, f);
+        facility.pricingMethod = CUSTOM;
+        facilityDao.updateFacility(facility.id, facility);
 
         final Utilization[] results = getUtilizations();
 
@@ -437,7 +403,7 @@ public class UtilizationITest extends AbstractIntegrationTest {
     }
 
     private String getUtilizationTimestampString() {
-        Response response = when().get(UrlSchema.FACILITY_UTILIZATION, f.id);
+        Response response = when().get(UrlSchema.FACILITY_UTILIZATION, facility.id);
         response.then().assertThat().body(".", hasSize(1));
         return response.body().jsonPath().getString("[0].timestamp");
     }
@@ -476,20 +442,20 @@ public class UtilizationITest extends AbstractIntegrationTest {
         assertThat(results)
                 .extracting("facilityId", "capacityType", "usage", "spacesAvailable", "timestamp")
                 .contains(
-                        tuple(f.id, u1.capacityType, u1.usage, u1.spacesAvailable, u1.timestamp.toInstant()),
-                        tuple(f.id, u2.capacityType, u2.usage, u2.spacesAvailable, u2.timestamp.toInstant()),
-                        tuple(f.id, u3.capacityType, u3.usage, u3.spacesAvailable, u3.timestamp.toInstant()));
+                        tuple(facility.id, u1.capacityType, u1.usage, u1.spacesAvailable, u1.timestamp.toInstant()),
+                        tuple(facility.id, u2.capacityType, u2.usage, u2.spacesAvailable, u2.timestamp.toInstant()),
+                        tuple(facility.id, u3.capacityType, u3.usage, u3.spacesAvailable, u3.timestamp.toInstant()));
     }
 
     private Utilization[] getUtilizations() {
-        return when().get(UrlSchema.FACILITY_UTILIZATION, f.id)
+        return when().get(UrlSchema.FACILITY_UTILIZATION, facility.id)
                 .then().statusCode(OK.value())
                 .extract().as(Utilization[].class);
     }
 
     private Utilization utilize(CapacityType capacityType, Usage usage) {
         final Utilization utilization = new Utilization();
-        utilization.facilityId = f.id;
+        utilization.facilityId = facility.id;
         utilization.capacityType = capacityType;
         utilization.spacesAvailable = 50;
         utilization.usage = usage;
@@ -501,8 +467,42 @@ public class UtilizationITest extends AbstractIntegrationTest {
         givenWithContent(authToken)
                 .body(payload)
                 .when()
-                .put(UrlSchema.FACILITY_UTILIZATION, f.id)
+                .put(UrlSchema.FACILITY_UTILIZATION, facility.id)
                 .then()
                 .statusCode(OK.value());
+    }
+
+    public Facility createFacility(long id, String name, Operator operator, Contact contact) {
+        Facility f = new Facility();
+        f.id = id;
+        f.status = IN_OPERATION;
+        f.pricingMethod = PARK_AND_RIDE_247_FREE;
+        f.name = new MultilingualString(name);
+        f.operatorId = operator.id;
+        f.location = Spatial.fromWktPolygon("POLYGON((25.010822 60.25054, 25.010822 60.250023, 25.012479 60.250337, 25.011449 60.250885, 25.010822 60.25054))");
+        f.contacts = new FacilityContacts(contact.id, contact.id);
+        f.builtCapacity = ImmutableMap.of(
+                CAR, CAR_BUILT_CAPACITY,
+                BICYCLE, 100,
+                ELECTRIC_CAR, 10
+        );
+        facilityDao.insertFacility(f, f.id);
+        return f;
+    }
+
+    public Contact createContact(long id, String name) {
+        Contact c = new Contact();
+        c.id = id;
+        c.name = new MultilingualString(name);
+        contactDao.insertContact(c, c.id);
+        return c;
+    }
+
+    public Operator createOperator(long id, String name) {
+        Operator o = new Operator();
+        o.id = id;
+        o.name = new MultilingualString(name);
+        operatorDao.insertOperator(o, o.id);
+        return o;
     }
 }

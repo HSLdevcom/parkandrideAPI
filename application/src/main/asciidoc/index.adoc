@@ -86,8 +86,8 @@ NOTE: Authentication is *not* needed for read-only (GET) methods.
 === Usage tracking
 API usage is tracked by logging all incoming requests per application. To enable tracking for your specific application's
 needs, please include the `Liipi-Application-Id` header in your requests. The header values must match the following
-pattern: `[a-zA-Z0-9_\-\./]{3,20}`. If no header is specified, the request will still be logged with `null` apllication id.
-The web user interface uses `liipi-ui` as its identifier.
+pattern: `[a-zA-Z0-9_\-\./]{3,20}`. If no header is specified, the request will still be logged with `null` application id.
+For example, the web user interface uses `liipi-ui` as its identifier.
 
 include::{generated}/usage-tracking-example/http-request.adoc[]
 
@@ -348,14 +348,17 @@ See the `statusDescription` field for an explanation of what is happening.
 
 Facilities have built capacity for different types of vehicles.
 This capacity may be divided for different purposes (usage).
-As the time of writing this document, we have identified three different usage types
+At the time of writing this document, we have identified three different usage types.
 
 `PARK_AND_RIDE`::
-This kind of parking slots are meant for commuters that continue to their work place by public transportation.
+Subsidized parking slots for commuters and other people to continue their travel by public transport.
+Not allowed for other people (e.g. visiting a nearby shop by foot). Typically free or very low cost.
+Example: open field next to a train station.
 `HSL_TRAVEL_CARD`::
-As above, but valid HSL Travel Card is required to get in.
+As above, but a valid HSL Travel Card is required to get in.
+Example: alternative payment method in a commercial parking hall.
 `COMMERCIAL`::
-Normal parking facility without restrictions for purpose of use.
+Normal parking facility without restrictions for purpose of use. Normal price.
 
 [[pricing]]
 ==== Pricing

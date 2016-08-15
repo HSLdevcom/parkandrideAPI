@@ -393,8 +393,13 @@ A single facility may contain many different capacity type and usage combination
 This API will show all distinct combinations which have utilization data
 and which are listed in <<facility-details,the facility's pricing field>>.
 
-include::{generated}/utilization-many-example/http-request.adoc[]
-include::{generated}/utilization-many-example/http-response.adoc[]
+include::{generated}/utilization-many-usages-example/http-request.adoc[]
+include::{generated}/utilization-many-usages-example/http-response.adoc[]
+
+There is also an API for retrieving the latest utilization for all facilities with one request.
+
+include::{generated}/utilizations-batch-example/http-request.adoc[]
+include::{generated}/utilizations-batch-example/http-response.adoc[]
 
 [[utilization-update]]
 ==== Updating

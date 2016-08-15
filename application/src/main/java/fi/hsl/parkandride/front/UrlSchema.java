@@ -1,4 +1,4 @@
-// Copyright © 2015 HSL <https://www.hsl.fi>
+// Copyright © 2016 HSL <https://www.hsl.fi>
 // This program is dual-licensed under the EUPL v1.2 and AGPLv3 licenses.
 
 package fi.hsl.parkandride.front;
@@ -22,6 +22,7 @@ public final class UrlSchema {
     public static final String API = "/api/v1";
 
     public static final String FACILITIES = API + "/facilities";
+    public static final String UTILIZATIONS = API + "/utilizations";
 
     public static final String FACILITY_ID = "facilityId";
     public static final String FACILITY = FACILITIES + "/{" + FACILITY_ID + "}";
@@ -31,8 +32,8 @@ public final class UrlSchema {
     public static final String FACILITY_PREDICTION_ABSOLUTE = FACILITY_PREDICTION + "?" + ABSOLUTE_TIME + "={timestamp}";
     public static final String RELATIVE_TIME = "after";
     public static final String FACILITY_PREDICTION_RELATIVE = FACILITY_PREDICTION + "?" + RELATIVE_TIME + "={hhmm}";
-    public static final String CAPACITY_TYPES = API + "/capacity-types";
 
+    public static final String CAPACITY_TYPES = API + "/capacity-types";
     public static final String USAGES = API + "/usages";
     public static final String DAY_TYPES = API + "/day-types";
     public static final String HUBS = API + "/hubs";

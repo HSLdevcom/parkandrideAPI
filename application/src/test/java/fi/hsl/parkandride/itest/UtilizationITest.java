@@ -224,7 +224,7 @@ public class UtilizationITest extends AbstractIntegrationTest {
         submitUtilization(OK, facility.id, minValidPayload()
                 .remove(Key.CAPACITY));
 
-        Utilization[] utilizations = getUtilizations();
+        Utilization[] utilizations = getFacilityUtilization(facility.id);
         assertThat(utilizations).hasSize(1);
         assertThat(utilizations[0].capacity).as("capacity").isEqualTo(CAR_BUILT_CAPACITY);
     }
@@ -235,11 +235,11 @@ public class UtilizationITest extends AbstractIntegrationTest {
                 .put(Key.CAPACITY_TYPE, MOTORCYCLE.name())
                 .put(Key.SPACES_AVAILABLE, 666)
                 .remove(Key.CAPACITY));
-        assertThat(getUtilizations()).isEmpty();            // check that motorcycle doesn't yet have built capacity
+        assertThat(getFacilityUtilization(facility.id)).isEmpty();            // check that motorcycle doesn't yet have built capacity
         facility.builtCapacity = ImmutableMap.of(MOTORCYCLE, 1);   // give motorcycle some capacity to make its utilization visible
         facilityDao.updateFacility(facility.id, facility);
 
-        Utilization[] utilizations = getUtilizations();
+        Utilization[] utilizations = getFacilityUtilization(facility.id);
         assertThat(utilizations).hasSize(1);
         assertThat(utilizations[0].capacity).as("capacity").isEqualTo(666);
     }
@@ -324,7 +324,7 @@ public class UtilizationITest extends AbstractIntegrationTest {
         facility.builtCapacity = ImmutableMap.of(CAR, 1000);
         facilityDao.updateFacility(facility.id, facility);
 
-        Utilization[] results = getUtilizations();
+        Utilization[] results = getFacilityUtilization(facility.id);
 
         assertThat(results)
                 .extracting("facilityId", "capacityType", "usage", "spacesAvailable")
@@ -344,7 +344,7 @@ public class UtilizationITest extends AbstractIntegrationTest {
         );
         facilityDao.updateFacility(facility.id, facility);
 
-        Utilization[] results = getUtilizations();
+        Utilization[] results = getFacilityUtilization(facility.id);
 
         assertThat(results).isEmpty();
     }
@@ -370,7 +370,7 @@ public class UtilizationITest extends AbstractIntegrationTest {
         facility.pricingMethod = CUSTOM;
         facilityDao.updateFacility(facility.id, facility);
 
-        final Utilization[] results = getUtilizations();
+        final Utilization[] results = getFacilityUtilization(facility.id);
 
         assertThat(results)
                 .extracting(u -> tuple(u.capacityType, u.usage))
@@ -379,6 +379,44 @@ public class UtilizationITest extends AbstractIntegrationTest {
                         tuple(CAR, PARK_AND_RIDE),
                         tuple(ELECTRIC_CAR, COMMERCIAL)
                 );
+    }
+
+    @Test
+    public void lists_latest_utilization_for_all_facilities() {
+        Facility facility2 = createFacility(2, "another facility", operator, contact);
+        DateTime t1 = DateTime.now().minusHours(1);
+        DateTime t2 = t1.plusMinutes(1);
+        DateTime t3 = t1.plusMinutes(2);
+        DateTime t4 = t1.plusMinutes(3);
+
+        submitUtilization(OK, facility.id, minValidPayload()
+                .put(Key.TIMESTAMP, t1)
+                .put(Key.SPACES_AVAILABLE, 5));
+        submitUtilization(OK, facility.id, minValidPayload()
+                .put(Key.TIMESTAMP, t2)
+                .put(Key.SPACES_AVAILABLE, 15));
+        submitUtilization(OK, facility2.id, minValidPayload()
+                .put(Key.TIMESTAMP, t3)
+                .put(Key.SPACES_AVAILABLE, 25));
+        submitUtilization(OK, facility2.id, minValidPayload()
+                .put(Key.TIMESTAMP, t4)
+                .put(Key.SPACES_AVAILABLE, 35));
+
+        Utilization u2 = new Utilization();
+        u2.facilityId = facility.id;
+        u2.timestamp = t2;
+        u2.spacesAvailable = 15;
+        u2.capacityType = CAR;
+        u2.usage = PARK_AND_RIDE;
+        u2.capacity = CAR_BUILT_CAPACITY;
+        Utilization u4 = new Utilization();
+        u4.facilityId = facility2.id;
+        u4.timestamp = t4;
+        u4.spacesAvailable = 35;
+        u4.capacityType = CAR;
+        u4.usage = PARK_AND_RIDE;
+        u4.capacity = CAR_BUILT_CAPACITY;
+        assertThat(getUtilizations()).containsOnly(u2, u4);
     }
 
 
@@ -437,7 +475,7 @@ public class UtilizationITest extends AbstractIntegrationTest {
 
         registerUtilizations(payload);
 
-        Utilization[] results = getUtilizations();
+        Utilization[] results = getFacilityUtilization(facility.id);
 
         assertThat(results)
                 .extracting("facilityId", "capacityType", "usage", "spacesAvailable", "timestamp")
@@ -447,8 +485,14 @@ public class UtilizationITest extends AbstractIntegrationTest {
                         tuple(facility.id, u3.capacityType, u3.usage, u3.spacesAvailable, u3.timestamp.toInstant()));
     }
 
+    private Utilization[] getFacilityUtilization(long facilityId) {
+        return when().get(UrlSchema.FACILITY_UTILIZATION, facilityId)
+                .then().statusCode(OK.value())
+                .extract().as(Utilization[].class);
+    }
+
     private Utilization[] getUtilizations() {
-        return when().get(UrlSchema.FACILITY_UTILIZATION, facility.id)
+        return when().get(UrlSchema.UTILIZATIONS)
                 .then().statusCode(OK.value())
                 .extract().as(Utilization[].class);
     }

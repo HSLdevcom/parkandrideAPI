@@ -1,4 +1,4 @@
-// Copyright © 2015 HSL <https://www.hsl.fi>
+// Copyright © 2016 HSL <https://www.hsl.fi>
 // This program is dual-licensed under the EUPL v1.2 and AGPLv3 licenses.
 
 package fi.hsl.parkandride.front;
@@ -25,6 +25,7 @@ import java.util.Set;
 
 import static fi.hsl.parkandride.front.UrlSchema.*;
 import static fi.hsl.parkandride.front.geojson.FeatureCollection.FACILITY_TO_FEATURE;
+import static java.util.stream.Collectors.toSet;
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
@@ -93,6 +94,16 @@ public class FacilityController {
         log.info("findFacilitiesAsFeatureCollection");
         SearchResults<FacilityInfo> results = facilityService.search(search);
         return new ResponseEntity<>(FeatureCollection.ofFacilities(results), OK);
+    }
+
+    @RequestMapping(method = GET, value = UTILIZATIONS, produces = APPLICATION_JSON_VALUE)
+    public ResponseEntity<Set<Utilization>> getUtilizations() {
+        log.info("getUtilizations()");
+        Set<Utilization> results = facilityService.search(new PageableFacilitySearch())
+                .results.stream()
+                .flatMap(facility -> facilityService.findLatestUtilization(facility.id).stream())
+                .collect(toSet());
+        return new ResponseEntity<>(results, OK);
     }
 
     @RequestMapping(method = PUT, value = FACILITY_UTILIZATION, produces = APPLICATION_JSON_VALUE)

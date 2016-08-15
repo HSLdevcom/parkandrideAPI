@@ -383,12 +383,25 @@ public class ApiDocumentation extends AbstractIntegrationTest {
     }
 
     @Test
-    public void utilizationManyExample() throws Exception {
+    public void utilizationManyUsagesExample() throws Exception {
         List<Utilization> utilizations = utilizationsOfManyUsages();
         initializePricingForUtilizations(facilityId, utilizations);
         facilityService.registerUtilization(facilityId, utilizations, currentUser);
 
         mockMvc.perform(get(UrlSchema.FACILITY_UTILIZATION, facilityId))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("[*]", hasSize(2)));
+    }
+
+    @Test
+    public void utilizationsBatchExample() throws Exception {
+        Facility facility1 = facilityService.getFacility(facilityId);
+        Facility facility2 = dummies.createFacility(facility1.operatorId, facility1.contacts);
+        facility2.id = facilityRepository.insertFacility(facility2);
+        facilityService.registerUtilization(facility1.id, Collections.singletonList(newUtilization()), currentUser);
+        facilityService.registerUtilization(facility2.id, Collections.singletonList(newUtilization()), currentUser);
+
+        mockMvc.perform(get(UrlSchema.UTILIZATIONS, facilityId))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("[*]", hasSize(2)));
     }

@@ -1,4 +1,4 @@
-// Copyright © 2015 HSL <https://www.hsl.fi>
+// Copyright © 2016 HSL <https://www.hsl.fi>
 // This program is dual-licensed under the EUPL v1.2 and AGPLv3 licenses.
 
 package fi.hsl.parkandride.config;
@@ -7,13 +7,13 @@ import com.querydsl.sql.SQLExceptionTranslator;
 import com.querydsl.sql.SQLTemplates;
 import com.querydsl.sql.postgresql.PostgreSQLQueryFactory;
 import com.querydsl.sql.spatial.GeoDBTemplates;
+import com.querydsl.sql.spatial.PGGeometryType;
 import com.querydsl.sql.spatial.PostGISTemplates;
 import com.querydsl.sql.types.DateTimeType;
 import com.querydsl.sql.types.EnumByNameType;
 import fi.hsl.parkandride.FeatureProfile;
 import fi.hsl.parkandride.back.H2GeometryType;
 import fi.hsl.parkandride.back.LiipiSQLExceptionTranslator;
-import com.querydsl.sql.spatial.PGGeometryType;
 import fi.hsl.parkandride.back.TimeType;
 import fi.hsl.parkandride.core.back.PhoneType;
 import fi.hsl.parkandride.core.domain.*;
@@ -135,6 +135,8 @@ public class JdbcConfiguration {
         conf.register("UNAVAILABLE_CAPACITY_HISTORY", "USAGE", new EnumByNameType<>(Usage.class));
 
         conf.register("CAPACITY_TYPE", "NAME", new EnumByNameType<>(CapacityType.class));
+
+        conf.register("USAGE", "NAME", new EnumByNameType<>(Usage.class));
 
         conf.register("CONTACT", "PHONE", new PhoneType());
 

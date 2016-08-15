@@ -1,19 +1,18 @@
+// Copyright © 2016 HSL <https://www.hsl.fi>
+// This program is dual-licensed under the EUPL v1.2 and AGPLv3 licenses.
+
 package fi.hsl.parkandride.back.sql;
 
-import static com.querydsl.core.types.PathMetadataFactory.*;
-
-import com.querydsl.core.types.dsl.*;
-
-import com.querydsl.core.types.PathMetadata;
-import javax.annotation.Generated;
 import com.querydsl.core.types.Path;
-
+import com.querydsl.core.types.PathMetadata;
+import com.querydsl.core.types.dsl.EnumPath;
 import com.querydsl.sql.ColumnMetadata;
-import java.sql.Types;
-
 import com.querydsl.sql.spatial.RelationalPathSpatial;
 
-import com.querydsl.spatial.*;
+import javax.annotation.Generated;
+import java.sql.Types;
+
+import static com.querydsl.core.types.PathMetadataFactory.forVariable;
 
 
 
@@ -27,7 +26,7 @@ public class QUsage extends RelationalPathSpatial<QUsage> {
 
     public static final QUsage usage = new QUsage("USAGE");
 
-    public final StringPath name = createString("name");
+    public final EnumPath<fi.hsl.parkandride.core.domain.Usage> name = createEnum("name", fi.hsl.parkandride.core.domain.Usage.class);
 
     public final com.querydsl.sql.PrimaryKey<QUsage> constraint4 = createPrimaryKey(name);
 

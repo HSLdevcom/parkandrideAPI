@@ -74,19 +74,31 @@ public class UtilizationDao implements UtilizationRepository {
     @TransactionalRead
     @Override
     public Set<Utilization> findLatestUtilization(long facilityId) {
+        /* TODO: using limit 1 would be faster than max(), but H2 doesn't support lateral join
+        select latest.*
+        from facility f, capacity_type c, usage u
+        join lateral (
+          select *
+          from facility_utilization
+          where facility_id = f.id and capacity_type = c.name and usage = u.name
+          order by ts desc
+          limit 1
+        ) latest on true;
+         */
         QFacilityUtilization latest = new QFacilityUtilization("latest");
+        PostgreSQLQuery<Tuple> latestQuery = queryFactory.from(latest)
+                .select(latest.facilityId,
+                        latest.capacityType,
+                        latest.usage,
+                        latest.ts.max().as("ts"))
+                .groupBy(latest.facilityId,
+                        latest.capacityType,
+                        latest.usage)
+                .where(latest.facilityId.eq(facilityId));
+
         return new HashSet<>(queryFactory.from(qUtilization)
                 .select(utilizationMapping)
-                .join(queryFactory.from(latest)
-                                .select(latest.facilityId,
-                                        latest.capacityType,
-                                        latest.usage,
-                                        latest.ts.max().as("ts"))
-                                .groupBy(latest.facilityId,
-                                        latest.capacityType,
-                                        latest.usage)
-                                .where(latest.facilityId.eq(facilityId)),
-                        latest)
+                .join(latestQuery, latest)
                 .on(qUtilization.facilityId.eq(latest.facilityId),
                         qUtilization.capacityType.eq(latest.capacityType),
                         qUtilization.usage.eq(latest.usage),

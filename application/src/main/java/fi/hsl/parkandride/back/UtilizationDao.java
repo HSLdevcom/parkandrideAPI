@@ -6,6 +6,7 @@ package fi.hsl.parkandride.back;
 import com.mysema.commons.lang.CloseableIterator;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.MappingProjection;
+import com.querydsl.core.types.SubQueryExpression;
 import com.querydsl.core.types.dsl.ComparableExpressionBase;
 import com.querydsl.sql.StatementOptions;
 import com.querydsl.sql.dml.SQLInsertClause;
@@ -13,9 +14,7 @@ import com.querydsl.sql.postgresql.PostgreSQLQuery;
 import com.querydsl.sql.postgresql.PostgreSQLQueryFactory;
 import fi.hsl.parkandride.back.sql.QFacilityUtilization;
 import fi.hsl.parkandride.core.back.UtilizationRepository;
-import fi.hsl.parkandride.core.domain.Utilization;
-import fi.hsl.parkandride.core.domain.UtilizationKey;
-import fi.hsl.parkandride.core.domain.UtilizationSearch;
+import fi.hsl.parkandride.core.domain.*;
 import fi.hsl.parkandride.core.service.TransactionalRead;
 import fi.hsl.parkandride.core.service.TransactionalWrite;
 import org.joda.time.DateTime;
@@ -74,7 +73,7 @@ public class UtilizationDao implements UtilizationRepository {
     @TransactionalRead
     @Override
     public Set<Utilization> findLatestUtilization(long facilityId) {
-        /* TODO: using limit 1 would be faster than max(), but H2 doesn't support lateral join
+        /* XXX: lateral join would make for cleaner code, but H2 doesn't support it
         select latest.*
         from facility f, capacity_type c, usage u
         join lateral (
@@ -85,26 +84,19 @@ public class UtilizationDao implements UtilizationRepository {
           limit 1
         ) latest on true;
          */
-        QFacilityUtilization latest = new QFacilityUtilization("latest");
-        PostgreSQLQuery<Tuple> latestQuery = queryFactory.from(latest)
-                .select(latest.facilityId,
-                        latest.capacityType,
-                        latest.usage,
-                        latest.ts.max().as("ts"))
-                .groupBy(latest.facilityId,
-                        latest.capacityType,
-                        latest.usage)
-                .where(latest.facilityId.eq(facilityId));
-
-        return new HashSet<>(queryFactory.from(qUtilization)
-                .select(utilizationMapping)
-                .join(latestQuery, latest)
-                .on(qUtilization.facilityId.eq(latest.facilityId),
-                        qUtilization.capacityType.eq(latest.capacityType),
-                        qUtilization.usage.eq(latest.usage),
-                        qUtilization.ts.eq(latest.ts))
-                .distinct()
-                .fetch());
+        List<SubQueryExpression<Utilization>> queries = new ArrayList<>();
+        for (CapacityType capacityType : CapacityType.values()) {
+            for (Usage usage : Usage.values()) {
+                queries.add(queryFactory.from(qUtilization)
+                        .select(utilizationMapping)
+                        .where(qUtilization.facilityId.eq(facilityId),
+                                qUtilization.capacityType.eq(capacityType),
+                                qUtilization.usage.eq(usage))
+                        .orderBy(qUtilization.ts.desc())
+                        .limit(1));
+            }
+        }
+        return new HashSet<>(queryFactory.query().union(queries).fetch());
     }
 
     @TransactionalRead

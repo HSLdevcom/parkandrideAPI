@@ -25,7 +25,6 @@ import java.util.Set;
 
 import static fi.hsl.parkandride.front.UrlSchema.*;
 import static fi.hsl.parkandride.front.geojson.FeatureCollection.FACILITY_TO_FEATURE;
-import static java.util.stream.Collectors.toSet;
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
@@ -99,10 +98,7 @@ public class FacilityController {
     @RequestMapping(method = GET, value = UTILIZATIONS, produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<Set<Utilization>> getUtilizations() {
         log.info("getUtilizations()");
-        Set<Utilization> results = facilityService.search(new PageableFacilitySearch())
-                .results.stream()
-                .flatMap(facility -> facilityService.findLatestUtilization(facility.id).stream())
-                .collect(toSet());
+        Set<Utilization> results = facilityService.findLatestUtilization();
         return new ResponseEntity<>(results, OK);
     }
 

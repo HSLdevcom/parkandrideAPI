@@ -5,11 +5,9 @@ package fi.hsl.parkandride.core.domain.prediction;
 
 import fi.hsl.parkandride.back.AbstractDaoTest;
 import fi.hsl.parkandride.back.Dummies;
+import fi.hsl.parkandride.core.back.FacilityRepository;
 import fi.hsl.parkandride.core.back.UtilizationRepository;
-import fi.hsl.parkandride.core.domain.CapacityType;
-import fi.hsl.parkandride.core.domain.Usage;
-import fi.hsl.parkandride.core.domain.Utilization;
-import fi.hsl.parkandride.core.domain.UtilizationKey;
+import fi.hsl.parkandride.core.domain.*;
 import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
@@ -29,6 +27,7 @@ public abstract class AbstractPredictorTest extends AbstractDaoTest {
 
     @Inject private Dummies dummies;
     @Inject private UtilizationRepository utilizationRepository;
+    @Inject private FacilityRepository facilityRepository;
     private final Predictor predictor;
 
     protected UtilizationKey utilizationKey;
@@ -46,6 +45,9 @@ public abstract class AbstractPredictorTest extends AbstractDaoTest {
     public void init() {
         long facilityId = dummies.createFacility();
         utilizationKey = new UtilizationKey(facilityId, CapacityType.CAR, Usage.PARK_AND_RIDE);
+        Facility facility = facilityRepository.getFacilityForUpdate(facilityId);
+        facility.pricingMethod = PricingMethod.PARK_AND_RIDE_247_FREE;
+        facilityRepository.updateFacility(facilityId, facility);
         utilizationHistory = new UtilizationHistoryImpl(utilizationRepository, utilizationKey);
         predictorState = new PredictorState(1L, predictor.getType(), utilizationKey);
         latestInsertedUtilization = Optional.empty();

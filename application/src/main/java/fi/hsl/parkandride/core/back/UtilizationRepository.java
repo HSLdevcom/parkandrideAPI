@@ -1,4 +1,4 @@
-// Copyright © 2015 HSL <https://www.hsl.fi>
+// Copyright © 2016 HSL <https://www.hsl.fi>
 // This program is dual-licensed under the EUPL v1.2 and AGPLv3 licenses.
 
 package fi.hsl.parkandride.core.back;
@@ -18,7 +18,7 @@ public interface UtilizationRepository {
 
     void insertUtilizations(List<Utilization> utilizations);
 
-    Set<Utilization> findLatestUtilization(long facilityId);
+    Set<Utilization> findLatestUtilization(Long... facilityIds);
 
     Optional<Utilization> findUtilizationAtInstant(UtilizationKey utilizationKey, DateTime instant);
 

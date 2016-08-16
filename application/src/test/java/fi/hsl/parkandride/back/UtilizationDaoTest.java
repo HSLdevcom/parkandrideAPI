@@ -4,9 +4,9 @@
 package fi.hsl.parkandride.back;
 
 import com.mysema.commons.lang.CloseableIterator;
+import fi.hsl.parkandride.core.back.FacilityRepository;
 import fi.hsl.parkandride.core.back.UtilizationRepository;
-import fi.hsl.parkandride.core.domain.Utilization;
-import fi.hsl.parkandride.core.domain.UtilizationKey;
+import fi.hsl.parkandride.core.domain.*;
 import org.joda.time.DateTime;
 import org.joda.time.Minutes;
 import org.junit.Before;
@@ -31,12 +31,13 @@ public class UtilizationDaoTest extends AbstractDaoTest {
 
     @Inject Dummies dummies;
     @Inject UtilizationRepository utilizationDao;
+    @Inject FacilityRepository facilityDao;
 
     private long facilityId;
 
     @Before
     public void initialize() {
-        facilityId = dummies.createFacility();
+        facilityId = createFacility();
     }
 
 
@@ -85,6 +86,44 @@ public class UtilizationDaoTest extends AbstractDaoTest {
         Set<Utilization> results = utilizationDao.findLatestUtilization(facilityId);
 
         assertThat(results).containsOnly(u1, u2, u3);
+    }
+
+    @Test
+    public void findLatestUtilization_hides_capacity_type_and_usage_combinations_which_do_not_have_pricing_information() {
+        Utilization u1 = newUtilization(facilityId, new DateTime(2000, 1, 1, 12, 0), 100, 100);
+        u1.capacityType = CAR;
+        u1.usage = HSL_TRAVEL_CARD;
+        Utilization u2 = newUtilization(facilityId, new DateTime(2000, 1, 1, 13, 0), 200, 200);
+        u2.capacityType = CAR;
+        u2.usage = COMMERCIAL;
+        Utilization u3 = newUtilization(facilityId, new DateTime(2000, 1, 1, 14, 0), 300, 300);
+        u3.capacityType = MOTORCYCLE;
+        u3.usage = HSL_TRAVEL_CARD;
+        utilizationDao.insertUtilizations(asList(u1, u2, u3));
+
+        Facility facility = facilityDao.getFacility(facilityId);
+        facility.pricing.removeIf(pricing -> pricing.usage.equals(HSL_TRAVEL_CARD));
+        facilityDao.updateFacility(facilityId, facility);
+
+        Set<Utilization> results = utilizationDao.findLatestUtilization(facilityId);
+
+        assertThat(results).containsOnly(u2);
+    }
+
+    @Test
+    public void findLatestUtilization_returns_utilizations_for_all_facilities_if_facility_ID_is_not_defined() {
+        long facilityId2 = createFacility();
+        Utilization u1 = newUtilization(facilityId, new DateTime(2000, 1, 1, 12, 0), 100, 100);
+        u1.capacityType = CAR;
+        u1.usage = HSL_TRAVEL_CARD;
+        Utilization u2 = newUtilization(facilityId2, new DateTime(2000, 1, 1, 13, 0), 200, 200);
+        u2.capacityType = CAR;
+        u2.usage = HSL_TRAVEL_CARD;
+        utilizationDao.insertUtilizations(asList(u1, u2));
+
+        Set<Utilization> results = utilizationDao.findLatestUtilization();
+
+        assertThat(results).containsOnly(u1, u2);
     }
 
 
@@ -266,6 +305,26 @@ public class UtilizationDaoTest extends AbstractDaoTest {
 
 
     // helpers
+
+    public long createFacility() {
+        long facilityId = dummies.createFacility();
+
+        // by default support all capacity type and usage combinations in tests
+        Facility facility = facilityDao.getFacility(facilityId);
+        facility.pricingMethod = PricingMethod.CUSTOM;
+        for (CapacityType capacityType : CapacityType.values()) {
+            facility.builtCapacity.put(capacityType, 1000);
+        }
+        for (CapacityType capacityType : CapacityType.values()) {
+            for (Usage usage : Usage.values()) {
+                for (DayType dayType : DayType.values()) {
+                    facility.pricing.add(new Pricing(capacityType, usage, 10000, dayType, "00:00", "24:00", ""));
+                }
+            }
+        }
+        facilityDao.updateFacility(facilityId, facility);
+        return facilityId;
+    }
 
     private static Utilization newUtilization(long facilityId, DateTime time, int spacesAvailable, int capacity) {
         Utilization u = new Utilization();

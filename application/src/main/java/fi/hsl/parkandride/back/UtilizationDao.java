@@ -19,8 +19,15 @@ import fi.hsl.parkandride.core.service.TransactionalRead;
 import fi.hsl.parkandride.core.service.TransactionalWrite;
 import org.joda.time.DateTime;
 import org.joda.time.Minutes;
+import org.springframework.dao.DataAccessResourceFailureException;
+import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.datasource.SingleConnectionDataSource;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -43,6 +50,16 @@ public class UtilizationDao implements UtilizationRepository {
             u.capacity = row.get(qUtilization.capacity);
             return u;
         }
+    };
+    private static final RowMapper<Utilization> utilizationRowMapper = (rs, rowNum) -> {
+        Utilization u = new Utilization();
+        u.facilityId = rs.getLong("facility_id");
+        u.capacityType = CapacityType.valueOf(rs.getString("capacity_type"));
+        u.usage = Usage.valueOf(rs.getString("usage"));
+        u.timestamp = new DateTime(rs.getTimestamp("ts").toInstant().toEpochMilli());
+        u.spacesAvailable = rs.getInt("spaces_available");
+        u.capacity = rs.getInt("capacity");
+        return u;
     };
 
     private final PostgreSQLQueryFactory queryFactory;
@@ -73,30 +90,45 @@ public class UtilizationDao implements UtilizationRepository {
     @TransactionalRead
     @Override
     public Set<Utilization> findLatestUtilization(long facilityId) {
-        /* XXX: lateral join would make for cleaner code, but H2 doesn't support it
-        select latest.*
-        from facility f, capacity_type c, usage u
-        join lateral (
-          select *
-          from facility_utilization
-          where facility_id = f.id and capacity_type = c.name and usage = u.name
-          order by ts desc
-          limit 1
-        ) latest on true;
-         */
-        List<SubQueryExpression<Utilization>> queries = new ArrayList<>();
-        for (CapacityType capacityType : CapacityType.values()) {
-            for (Usage usage : Usage.values()) {
-                queries.add(queryFactory.from(qUtilization)
-                        .select(utilizationMapping)
-                        .where(qUtilization.facilityId.eq(facilityId),
-                                qUtilization.capacityType.eq(capacityType),
-                                qUtilization.usage.eq(usage))
-                        .orderBy(qUtilization.ts.desc())
-                        .limit(1));
+        Connection connection = queryFactory.getConnection();
+        if (isPostgreSQL(connection)) {
+            NamedParameterJdbcTemplate jdbcTemplate = new NamedParameterJdbcTemplate(
+                    new SingleConnectionDataSource(connection, true));
+            return new HashSet<>(jdbcTemplate.query("" +
+                            "SELECT latest.* " +
+                            "FROM capacity_type c, usage u " +
+                            "JOIN LATERAL ( " +
+                            "  SELECT * " +
+                            "  FROM facility_utilization " +
+                            "  WHERE facility_id = :facility_id AND capacity_type = c.name AND usage = u.name " +
+                            "  ORDER BY ts DESC " +
+                            "  LIMIT 1 " +
+                            ") latest ON TRUE",
+                    new MapSqlParameterSource("facility_id", facilityId),
+                    utilizationRowMapper));
+        } else {
+            List<SubQueryExpression<Utilization>> queries = new ArrayList<>();
+            for (CapacityType capacityType : CapacityType.values()) {
+                for (Usage usage : Usage.values()) {
+                    queries.add(queryFactory.from(qUtilization)
+                            .select(utilizationMapping)
+                            .where(qUtilization.facilityId.eq(facilityId),
+                                    qUtilization.capacityType.eq(capacityType),
+                                    qUtilization.usage.eq(usage))
+                            .orderBy(qUtilization.ts.desc())
+                            .limit(1));
+                }
             }
+            return new HashSet<>(queryFactory.query().union(queries).fetch());
         }
-        return new HashSet<>(queryFactory.query().union(queries).fetch());
+    }
+
+    private static boolean isPostgreSQL(Connection connection) {
+        try {
+            return connection.getMetaData().getDatabaseProductName().equals("PostgreSQL");
+        } catch (SQLException e) {
+            throw new DataAccessResourceFailureException("Failed to read connection metadata", e);
+        }
     }
 
     @TransactionalRead

@@ -101,9 +101,17 @@ public class UtilizationDao implements UtilizationRepository {
         }
     }
 
+    private static boolean isPostgreSQL(Connection connection) {
+        try {
+            return connection.getMetaData().getDatabaseProductName().equals("PostgreSQL");
+        } catch (SQLException e) {
+            throw new DataAccessResourceFailureException("Failed to read connection metadata", e);
+        }
+    }
+
     private Set<Utilization> findLatestUtilizationPostgreSQL(Long[] facilityIds, SingleConnectionDataSource dataSource) {
         NamedParameterJdbcTemplate jdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-        return new HashSet<>(jdbcTemplate.query("" +
+        return new LinkedHashSet<>(jdbcTemplate.query("" +
                         "SELECT latest.* " +
                         "FROM (" +
                         "  SELECT DISTINCT facility_id, capacity_type, usage " +
@@ -120,14 +128,6 @@ public class UtilizationDao implements UtilizationRepository {
                         "ORDER BY facility_id, capacity_type, usage",
                 new MapSqlParameterSource("facility_ids", Arrays.asList(facilityIds)),
                 utilizationRowMapper));
-    }
-
-    private static boolean isPostgreSQL(Connection connection) {
-        try {
-            return connection.getMetaData().getDatabaseProductName().equals("PostgreSQL");
-        } catch (SQLException e) {
-            throw new DataAccessResourceFailureException("Failed to read connection metadata", e);
-        }
     }
 
     private Set<Utilization> findLatestUtilizationH2(Long[] facilityIds) {
@@ -154,7 +154,7 @@ public class UtilizationDao implements UtilizationRepository {
                     .orderBy(qUtilization.ts.desc())
                     .limit(1));
         }
-        return new HashSet<>(queryFactory.query()
+        return new LinkedHashSet<>(queryFactory.query()
                 .union(queries)
                 .orderBy(qUtilization.facilityId.asc(),
                         qUtilization.capacityType.asc(),

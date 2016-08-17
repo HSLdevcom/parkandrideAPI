@@ -135,9 +135,7 @@ public class UtilizationDao implements UtilizationRepository {
                 .select(qPricing.facilityId,
                         qPricing.capacityType,
                         qPricing.usage)
-                .where(Stream.of(facilityIds)
-                        .map(facilityId -> qPricing.facilityId.eq(facilityId))
-                        .toArray(Predicate[]::new))
+                .where(facilityIds.length > 0 ? new Predicate[]{qPricing.facilityId.in((Number[]) facilityIds)} : new Predicate[0])
                 .distinct()
                 .fetch();
         // XXX: H2 doesn't support lateral join, so we must do loop unrolling with union

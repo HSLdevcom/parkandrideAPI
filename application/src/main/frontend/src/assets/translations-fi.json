@@ -286,6 +286,8 @@
         },
         "openingHours": {
             "heading": "Aukioloajat",
+            "currentStatus": "Tämänhetkinen tilanne",
+            "open": "Auki",
             "closed": "Kiinni",
             "info": {
                 "label": "Lisätiedot",

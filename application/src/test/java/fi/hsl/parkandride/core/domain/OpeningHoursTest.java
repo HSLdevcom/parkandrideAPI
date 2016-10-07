@@ -14,6 +14,7 @@ import java.util.List;
 
 import static fi.hsl.parkandride.core.domain.CapacityType.*;
 import static fi.hsl.parkandride.core.domain.DayType.*;
+import static fi.hsl.parkandride.core.domain.FacilityStatus.*;
 import static fi.hsl.parkandride.core.domain.Usage.COMMERCIAL;
 import static fi.hsl.parkandride.core.domain.Usage.PARK_AND_RIDE;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -33,7 +34,7 @@ public class OpeningHoursTest {
 
     @Test
     public void empty_opening_hours() {
-        openingHours.initialize(pricing, new DateTime());
+        openingHours.initialize(pricing, new DateTime(), IN_OPERATION);
 
         assertThat(openingHours.byDayType).isEqualTo(ImmutableMap.of());
         assertThat(openingHours.openNow).isFalse();
@@ -46,7 +47,7 @@ public class OpeningHoursTest {
         pricing.add(new Pricing(ELECTRIC_CAR, PARK_AND_RIDE, 10, BUSINESS_DAY, "12", "19", null));
         pricing.add(new Pricing(BICYCLE, COMMERCIAL, 10, BUSINESS_DAY, "8", "10", null));
 
-        openingHours.initialize(pricing, new DateTime());
+        openingHours.initialize(pricing, new DateTime(), IN_OPERATION);
 
         assertThat(openingHours.byDayType).isEqualTo(ImmutableMap.of(
                 BUSINESS_DAY, new TimeDuration("8", "22")
@@ -60,7 +61,7 @@ public class OpeningHoursTest {
     public void is_closed_before_opening_hour() {
         pricing.add(new Pricing(CAR, PARK_AND_RIDE, 10, BUSINESS_DAY, "10:00", "20:00", null));
 
-        openingHours.initialize(pricing, SOME_MONDAY.toDateTime(new LocalTime(9, 59)));
+        openingHours.initialize(pricing, SOME_MONDAY.toDateTime(new LocalTime(9, 59)), IN_OPERATION);
 
         assertThat(openingHours.openNow).isFalse();
     }
@@ -69,7 +70,7 @@ public class OpeningHoursTest {
     public void is_open_on_opening_hour() {
         pricing.add(new Pricing(CAR, PARK_AND_RIDE, 10, BUSINESS_DAY, "10:00", "20:00", null));
 
-        openingHours.initialize(pricing, SOME_MONDAY.toDateTime(new LocalTime(10, 0)));
+        openingHours.initialize(pricing, SOME_MONDAY.toDateTime(new LocalTime(10, 0)), IN_OPERATION);
 
         assertThat(openingHours.openNow).isTrue();
     }
@@ -78,7 +79,7 @@ public class OpeningHoursTest {
     public void is_open_between_opening_and_closing_hours() {
         pricing.add(new Pricing(CAR, PARK_AND_RIDE, 10, BUSINESS_DAY, "10:00", "20:00", null));
 
-        openingHours.initialize(pricing, SOME_MONDAY.toDateTime(new LocalTime(14, 0)));
+        openingHours.initialize(pricing, SOME_MONDAY.toDateTime(new LocalTime(14, 0)), IN_OPERATION);
 
         assertThat(openingHours.openNow).isTrue();
     }
@@ -87,7 +88,7 @@ public class OpeningHoursTest {
     public void is_open_on_closing_hour() {
         pricing.add(new Pricing(CAR, PARK_AND_RIDE, 10, BUSINESS_DAY, "10:00", "20:00", null));
 
-        openingHours.initialize(pricing, SOME_MONDAY.toDateTime(new LocalTime(20, 0)));
+        openingHours.initialize(pricing, SOME_MONDAY.toDateTime(new LocalTime(20, 0)), IN_OPERATION);
 
         assertThat(openingHours.openNow).isTrue();
     }
@@ -96,7 +97,7 @@ public class OpeningHoursTest {
     public void is_closed_after_closing_hour() {
         pricing.add(new Pricing(CAR, PARK_AND_RIDE, 10, BUSINESS_DAY, "10:00", "20:00", null));
 
-        openingHours.initialize(pricing, SOME_MONDAY.toDateTime(new LocalTime(20, 1)));
+        openingHours.initialize(pricing, SOME_MONDAY.toDateTime(new LocalTime(20, 1)), IN_OPERATION);
 
         assertThat(openingHours.openNow).isFalse();
     }
@@ -110,7 +111,7 @@ public class OpeningHoursTest {
         pricing.add(new Pricing(CAR, PARK_AND_RIDE, 10, SATURDAY, "12:00", "16:00", null));
         pricing.add(new Pricing(CAR, PARK_AND_RIDE, 10, SUNDAY, "12:00", "16:00", null));
 
-        openingHours.initialize(pricing, SOME_MONDAY.toDateTime(new LocalTime(11, 0)));
+        openingHours.initialize(pricing, SOME_MONDAY.toDateTime(new LocalTime(11, 0)), IN_OPERATION);
 
         assertThat(openingHours.openNow).isTrue();
     }
@@ -121,7 +122,7 @@ public class OpeningHoursTest {
         pricing.add(new Pricing(CAR, PARK_AND_RIDE, 10, SATURDAY, "12:00", "16:00", null));
         pricing.add(new Pricing(CAR, PARK_AND_RIDE, 10, SUNDAY, "12:00", "16:00", null));
 
-        openingHours.initialize(pricing, SOME_TUESDAY.toDateTime(new LocalTime(11, 0)));
+        openingHours.initialize(pricing, SOME_TUESDAY.toDateTime(new LocalTime(11, 0)), IN_OPERATION);
 
         assertThat(openingHours.openNow).isTrue();
     }
@@ -132,7 +133,7 @@ public class OpeningHoursTest {
         pricing.add(new Pricing(CAR, PARK_AND_RIDE, 10, SATURDAY, "12:00", "16:00", null));
         pricing.add(new Pricing(CAR, PARK_AND_RIDE, 10, SUNDAY, "12:00", "16:00", null));
 
-        openingHours.initialize(pricing, SOME_WEDNESDAY.toDateTime(new LocalTime(11, 0)));
+        openingHours.initialize(pricing, SOME_WEDNESDAY.toDateTime(new LocalTime(11, 0)), IN_OPERATION);
 
         assertThat(openingHours.openNow).isTrue();
     }
@@ -143,7 +144,7 @@ public class OpeningHoursTest {
         pricing.add(new Pricing(CAR, PARK_AND_RIDE, 10, SATURDAY, "12:00", "16:00", null));
         pricing.add(new Pricing(CAR, PARK_AND_RIDE, 10, SUNDAY, "12:00", "16:00", null));
 
-        openingHours.initialize(pricing, SOME_THURSDAY.toDateTime(new LocalTime(11, 0)));
+        openingHours.initialize(pricing, SOME_THURSDAY.toDateTime(new LocalTime(11, 0)), IN_OPERATION);
 
         assertThat(openingHours.openNow).isTrue();
     }
@@ -154,7 +155,7 @@ public class OpeningHoursTest {
         pricing.add(new Pricing(CAR, PARK_AND_RIDE, 10, SATURDAY, "12:00", "16:00", null));
         pricing.add(new Pricing(CAR, PARK_AND_RIDE, 10, SUNDAY, "12:00", "16:00", null));
 
-        openingHours.initialize(pricing, SOME_FRIDAY.toDateTime(new LocalTime(11, 0)));
+        openingHours.initialize(pricing, SOME_FRIDAY.toDateTime(new LocalTime(11, 0)), IN_OPERATION);
 
         assertThat(openingHours.openNow).isTrue();
     }
@@ -165,7 +166,7 @@ public class OpeningHoursTest {
         pricing.add(new Pricing(CAR, PARK_AND_RIDE, 10, SATURDAY, "10:00", "20:00", null));
         pricing.add(new Pricing(CAR, PARK_AND_RIDE, 10, SUNDAY, "12:00", "16:00", null));
 
-        openingHours.initialize(pricing, SOME_SATURDAY.toDateTime(new LocalTime(11, 0)));
+        openingHours.initialize(pricing, SOME_SATURDAY.toDateTime(new LocalTime(11, 0)), IN_OPERATION);
 
         assertThat(openingHours.openNow).isTrue();
     }
@@ -176,8 +177,47 @@ public class OpeningHoursTest {
         pricing.add(new Pricing(CAR, PARK_AND_RIDE, 10, SATURDAY, "12:00", "16:00", null));
         pricing.add(new Pricing(CAR, PARK_AND_RIDE, 10, SUNDAY, "10:00", "20:00", null));
 
-        openingHours.initialize(pricing, SOME_SUNDAY.toDateTime(new LocalTime(11, 0)));
+        openingHours.initialize(pricing, SOME_SUNDAY.toDateTime(new LocalTime(11, 0)), IN_OPERATION);
 
         assertThat(openingHours.openNow).isTrue();
+    }
+
+
+    // open now: facility status
+
+    @Test
+    public void open_normally_when_facility_in_operation() {
+        pricing.add(new Pricing(CAR, PARK_AND_RIDE, 10, BUSINESS_DAY, "10:00", "20:00", null));
+
+        openingHours.initialize(pricing, SOME_MONDAY.toDateTime(new LocalTime(14, 0)), IN_OPERATION);
+
+        assertThat(openingHours.openNow).isTrue();
+    }
+
+    @Test
+    public void open_normally_when_facility_under_exceptional_situation() {
+        pricing.add(new Pricing(CAR, PARK_AND_RIDE, 10, BUSINESS_DAY, "10:00", "20:00", null));
+
+        openingHours.initialize(pricing, SOME_MONDAY.toDateTime(new LocalTime(14, 0)), EXCEPTIONAL_SITUATION);
+
+        assertThat(openingHours.openNow).isTrue();
+    }
+
+    @Test
+    public void closed_when_facility_inactive() {
+        pricing.add(new Pricing(CAR, PARK_AND_RIDE, 10, BUSINESS_DAY, "10:00", "20:00", null));
+
+        openingHours.initialize(pricing, SOME_MONDAY.toDateTime(new LocalTime(14, 0)), INACTIVE);
+
+        assertThat(openingHours.openNow).isFalse();
+    }
+
+    @Test
+    public void closed_when_facility_temporarily_closed() {
+        pricing.add(new Pricing(CAR, PARK_AND_RIDE, 10, BUSINESS_DAY, "10:00", "20:00", null));
+
+        openingHours.initialize(pricing, SOME_MONDAY.toDateTime(new LocalTime(14, 0)), TEMPORARILY_CLOSED);
+
+        assertThat(openingHours.openNow).isFalse();
     }
 }

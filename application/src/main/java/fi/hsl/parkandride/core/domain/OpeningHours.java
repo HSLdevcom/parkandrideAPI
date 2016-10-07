@@ -10,6 +10,8 @@ import javax.validation.Valid;
 import java.util.List;
 import java.util.Map;
 
+import static fi.hsl.parkandride.core.domain.FacilityStatus.EXCEPTIONAL_SITUATION;
+import static fi.hsl.parkandride.core.domain.FacilityStatus.IN_OPERATION;
 import static java.util.stream.Collectors.*;
 
 public class OpeningHours {
@@ -27,7 +29,7 @@ public class OpeningHours {
     @Valid
     public MultilingualUrl url;
 
-    public void initialize(List<Pricing> pricing, DateTime now) {
+    public void initialize(List<Pricing> pricing, DateTime now, FacilityStatus status) {
         byDayType = Maps.newLinkedHashMap();
         // Opening hours by day type: min(time.from) and max(time.until) of pricing rows by dayType
         pricing.stream()
@@ -35,6 +37,8 @@ public class OpeningHours {
                 .forEach((dayType, time) -> byDayType.put(dayType, time.get()));
 
         TimeDuration openToday = byDayType.get(DayType.valueOf(now));
-        openNow = openToday != null && openToday.includes(now.toLocalTime());
+        openNow = (status == IN_OPERATION || status == EXCEPTIONAL_SITUATION)
+                && openToday != null
+                && openToday.includes(now.toLocalTime());
     }
 }

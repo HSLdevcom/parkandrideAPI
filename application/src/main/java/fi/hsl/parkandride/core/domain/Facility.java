@@ -64,7 +64,7 @@ public class Facility extends FacilityInfo {
     public void initialize() {
         sort(pricing, Pricing.COMPARATOR);
         sort(unavailableCapacities, UnavailableCapacity.COMPARATOR);
-        openingHours.initialize(pricing, new DateTime());
+        openingHours.initialize(pricing, new DateTime(), status);
     }
 
     public Set<Usage> analyzeUsages() {

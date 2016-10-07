@@ -64,9 +64,6 @@
 	</div>
 	<div ng-show="viewCtrl.hasOpeningHoursByDayType()">
 		<div class="row">
-			<p>{{"facilities.openingHours.currentStatus" | translate}}: {{viewCtrl.facility.openingHours.openNow ? "facilities.openingHours.open" : "facilities.openingHours.closed" | translate}}</p>
-		</div>
-		<div class="row">
 			<div class="column3 first-column">
 				<div class="panel panel-default row">
 					<table id="opening-hours" class="table table-bordered table-striped table-condensed">
@@ -90,6 +87,12 @@
 					</table>
 				</div>
 			</div>
+		</div>
+		<div class="row">
+			<h4>{{"facilities.openingHours.currentStatus" | translate}}</h4>
+		</div>
+		<div class="row">
+			{{viewCtrl.facility.openingHours.openNow ? "facilities.openingHours.open" : "facilities.openingHours.closed" | translate}}
 		</div>
 	</div>
 	<div ng-show="viewCtrl.hasOpeningHoursInfo()">

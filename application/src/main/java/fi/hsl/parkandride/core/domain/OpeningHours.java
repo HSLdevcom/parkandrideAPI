@@ -4,6 +4,7 @@
 package fi.hsl.parkandride.core.domain;
 
 import com.google.common.collect.Maps;
+import org.joda.time.DateTime;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -12,6 +13,8 @@ import java.util.Map;
 import static java.util.stream.Collectors.*;
 
 public class OpeningHours {
+
+    public Boolean openNow;
 
     /**
      * Summary of min( pricing.from ) and max( pricing.until )
@@ -24,11 +27,14 @@ public class OpeningHours {
     @Valid
     public MultilingualUrl url;
 
-    public void initialize(List<Pricing> pricing) {
+    public void initialize(List<Pricing> pricing, DateTime now) {
         byDayType = Maps.newLinkedHashMap();
         // Opening hours by day type: min(time.from) and max(time.until) of pricing rows by dayType
-        pricing.stream().collect(groupingBy(Pricing::getDayType,
-                mapping(Pricing::getTime, reducing(TimeDuration::add))))
+        pricing.stream()
+                .collect(groupingBy(Pricing::getDayType, mapping(Pricing::getTime, reducing(TimeDuration::add))))
                 .forEach((dayType, time) -> byDayType.put(dayType, time.get()));
+
+        TimeDuration openToday = byDayType.get(DayType.valueOf(now));
+        openNow = openToday != null && openToday.includes(now.toLocalTime());
     }
 }

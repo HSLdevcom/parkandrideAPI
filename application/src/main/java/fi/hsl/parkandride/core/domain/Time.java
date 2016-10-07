@@ -1,13 +1,15 @@
-// Copyright © 2015 HSL <https://www.hsl.fi>
+// Copyright © 2016 HSL <https://www.hsl.fi>
 // This program is dual-licensed under the EUPL v1.2 and AGPLv3 licenses.
 
 package fi.hsl.parkandride.core.domain;
 
-import static com.google.common.base.Strings.isNullOrEmpty;
-import static java.lang.Integer.compare;
+import org.joda.time.LocalTime;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static com.google.common.base.Strings.isNullOrEmpty;
+import static java.lang.Integer.compare;
 
 public class Time extends Number implements Comparable<Time> {
 
@@ -26,6 +28,10 @@ public class Time extends Number implements Comparable<Time> {
 
     public Time(String time) {
         this(parseTime(time));
+    }
+
+    public Time(LocalTime time) {
+        this(60 * time.getHourOfDay() + time.getMinuteOfHour());
     }
 
     public static int parseTime(String time) {

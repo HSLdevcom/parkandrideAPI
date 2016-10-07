@@ -227,6 +227,7 @@ public class ApiDocumentation extends AbstractIntegrationTest {
                         fieldWithPath("paymentInfo.detail").description("Localized details of payment options (OPTIONAL)"),
                         fieldWithPath("paymentInfo.url").description("Localized link to payment options (OPTIONAL)"),
                         fieldWithPath("paymentInfo.paymentMethods").description("Allowed payment methods"),
+                        fieldWithPath("openingHours.openNow").description("Read-only summary of whether the facility is open right now"),
                         fieldWithPath("openingHours.byDayType").description("Read-only summary of pricing rows' opening hours"),
                         fieldWithPath("openingHours.info").description("Localized info about opening hours (OPTIONAL)"),
                         fieldWithPath("openingHours.url").description("Localized link to opening hours info (OPTIONAL)"))));

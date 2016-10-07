@@ -1,9 +1,10 @@
-// Copyright © 2015 HSL <https://www.hsl.fi>
+// Copyright © 2016 HSL <https://www.hsl.fi>
 // This program is dual-licensed under the EUPL v1.2 and AGPLv3 licenses.
 
 package fi.hsl.parkandride.core.domain;
 
 import fi.hsl.parkandride.core.domain.validation.ValidTimeDuration;
+import org.joda.time.LocalTime;
 
 import javax.validation.constraints.NotNull;
 import java.util.Comparator;
@@ -37,8 +38,13 @@ public class TimeDuration implements Comparable<TimeDuration> {
         this.until = checkNotNull(until);
     }
 
+    public boolean includes(LocalTime time) {
+        int minuteOfDay = new Time(time).getMinuteOfDay();
+        return from.getMinuteOfDay() <= minuteOfDay && minuteOfDay <= until.getMinuteOfDay();
+    }
+
     public boolean overlaps(TimeDuration that) {
-        return from.getMinuteOfDay() < that.until.getMinuteOfDay() && that.from.getMinuteOfDay() < until.getMinuteOfDay();
+        return this.from.getMinuteOfDay() < that.until.getMinuteOfDay() && that.from.getMinuteOfDay() < this.until.getMinuteOfDay();
     }
 
     @Override

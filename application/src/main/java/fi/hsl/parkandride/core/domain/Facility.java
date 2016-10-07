@@ -6,6 +6,7 @@ package fi.hsl.parkandride.core.domain;
 import fi.hsl.parkandride.core.domain.validation.ElementLength;
 import fi.hsl.parkandride.core.domain.validation.NotBlankElement;
 import fi.hsl.parkandride.core.domain.validation.NotNullElement;
+import org.joda.time.DateTime;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -63,7 +64,7 @@ public class Facility extends FacilityInfo {
     public void initialize() {
         sort(pricing, Pricing.COMPARATOR);
         sort(unavailableCapacities, UnavailableCapacity.COMPARATOR);
-        openingHours.initialize(pricing);
+        openingHours.initialize(pricing, new DateTime());
     }
 
     public Set<Usage> analyzeUsages() {

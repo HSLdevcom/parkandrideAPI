@@ -6,6 +6,9 @@ package fi.hsl.parkandride.core.domain;
 import com.google.common.collect.ImmutableMap;
 import org.junit.Test;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static fi.hsl.parkandride.core.domain.CapacityType.*;
 import static fi.hsl.parkandride.core.domain.DayType.BUSINESS_DAY;
 import static fi.hsl.parkandride.core.domain.Usage.COMMERCIAL;
@@ -14,23 +17,28 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class OpeningHoursTest {
 
+    private final OpeningHours openingHours = new OpeningHours();
+
     @Test
     public void empty_opening_hours() {
-        Facility facility = new Facility();
-        facility.initialize();
-        assertThat(facility.openingHours.byDayType).isEqualTo(ImmutableMap.of());
+        List<Pricing> pricing = new ArrayList<>();
+
+        openingHours.initialize(pricing);
+
+        assertThat(openingHours.byDayType).isEqualTo(ImmutableMap.of());
     }
 
     @Test
     public void opening_hours_is_min_max_over_capacity_types_and_usages() {
-        Facility facility = new Facility();
         // BUSINESS_DAY: 8-22
-        facility.pricing.add(new Pricing(CAR, PARK_AND_RIDE, 10, BUSINESS_DAY, "17", "22", null));
-        facility.pricing.add(new Pricing(ELECTRIC_CAR, PARK_AND_RIDE, 10, BUSINESS_DAY, "12", "19", null));
-        facility.pricing.add(new Pricing(BICYCLE, COMMERCIAL, 10, BUSINESS_DAY, "8", "10", null));
+        List<Pricing> pricing = new ArrayList<>();
+        pricing.add(new Pricing(CAR, PARK_AND_RIDE, 10, BUSINESS_DAY, "17", "22", null));
+        pricing.add(new Pricing(ELECTRIC_CAR, PARK_AND_RIDE, 10, BUSINESS_DAY, "12", "19", null));
+        pricing.add(new Pricing(BICYCLE, COMMERCIAL, 10, BUSINESS_DAY, "8", "10", null));
 
-        facility.initialize();
-        assertThat(facility.openingHours.byDayType).isEqualTo(ImmutableMap.of(
+        openingHours.initialize(pricing);
+
+        assertThat(openingHours.byDayType).isEqualTo(ImmutableMap.of(
                 BUSINESS_DAY, new TimeDuration("8", "22")
         ));
     }

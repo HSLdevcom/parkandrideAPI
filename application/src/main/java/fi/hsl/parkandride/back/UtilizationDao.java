@@ -152,6 +152,9 @@ public class UtilizationDao implements UtilizationRepository {
                     .orderBy(qUtilization.ts.desc())
                     .limit(1));
         }
+        if (queries.isEmpty()) {
+            return Collections.emptySet();
+        }
         return new LinkedHashSet<>(queryFactory.query()
                 .union(queries)
                 .orderBy(qUtilization.facilityId.asc(),

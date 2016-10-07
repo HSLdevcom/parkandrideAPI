@@ -1,21 +1,18 @@
-// Copyright © 2015 HSL <https://www.hsl.fi>
+// Copyright © 2016 HSL <https://www.hsl.fi>
 // This program is dual-licensed under the EUPL v1.2 and AGPLv3 licenses.
 
 package fi.hsl.parkandride.core.domain;
 
-import static fi.hsl.parkandride.core.domain.CapacityType.BICYCLE;
-import static fi.hsl.parkandride.core.domain.CapacityType.CAR;
-import static fi.hsl.parkandride.core.domain.CapacityType.ELECTRIC_CAR;
+import com.google.common.collect.ImmutableMap;
+import org.junit.Test;
+
+import static fi.hsl.parkandride.core.domain.CapacityType.*;
 import static fi.hsl.parkandride.core.domain.DayType.BUSINESS_DAY;
 import static fi.hsl.parkandride.core.domain.Usage.COMMERCIAL;
 import static fi.hsl.parkandride.core.domain.Usage.PARK_AND_RIDE;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import org.junit.Test;
-
-import com.google.common.collect.ImmutableMap;
-
-public class FacilityTest {
+public class OpeningHoursTest {
 
     @Test
     public void empty_opening_hours() {
@@ -25,7 +22,7 @@ public class FacilityTest {
     }
 
     @Test
-    public void opening_hours_over_capacity_types_and_usages() {
+    public void opening_hours_is_min_max_over_capacity_types_and_usages() {
         Facility facility = new Facility();
         // BUSINESS_DAY: 8-22
         facility.pricing.add(new Pricing(CAR, PARK_AND_RIDE, 10, BUSINESS_DAY, "17", "22", null));
@@ -37,5 +34,4 @@ public class FacilityTest {
                 BUSINESS_DAY, new TimeDuration("8", "22")
         ));
     }
-
 }

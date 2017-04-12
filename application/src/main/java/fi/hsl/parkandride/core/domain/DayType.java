@@ -31,11 +31,4 @@ public enum DayType {
         }
     }
 
-    public static DayType of(DateTime now) {
-        switch (now.getDayOfWeek()) {
-            case 6: return SATURDAY;
-            case 7: return SUNDAY;
-            default: return BUSINESS_DAY;
-        }
-    }
 }

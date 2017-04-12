@@ -85,7 +85,7 @@ public class Facility extends FacilityInfo {
     public boolean isOpen(CapacityType capacityType, Usage usage, DateTime now) {
         if (status == IN_OPERATION || status == EXCEPTIONAL_SITUATION) {
             now = now.withZone(getTimeZone());
-            DayType dayType = DayType.of(now);
+            DayType dayType = DayType.valueOf(now);
             LocalTime currentTime = now.toLocalTime();
             return pricing.stream()
                     .filter(pricing ->

@@ -85,12 +85,12 @@ public class OpeningHoursTest {
     }
 
     @Test
-    public void is_open_on_closing_hour() {
+    public void is_closed_on_closing_hour() {
         pricing.add(new Pricing(CAR, PARK_AND_RIDE, 10, BUSINESS_DAY, "10:00", "20:00", null));
 
         openingHours.initialize(pricing, SOME_MONDAY.toDateTime(new LocalTime(20, 0)), IN_OPERATION);
 
-        assertThat(openingHours.openNow).isTrue();
+        assertThat(openingHours.openNow).isFalse();
     }
 
     @Test

@@ -20,11 +20,14 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.inject.Inject;
 import javax.validation.Valid;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import static fi.hsl.parkandride.front.UrlSchema.*;
 import static fi.hsl.parkandride.front.geojson.FeatureCollection.FACILITY_TO_FEATURE;
+import static java.util.stream.Collectors.toSet;
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
@@ -96,9 +99,16 @@ public class FacilityController {
     }
 
     @RequestMapping(method = GET, value = UTILIZATIONS, produces = APPLICATION_JSON_VALUE)
-    public ResponseEntity<Set<Utilization>> getUtilizations() {
+    public ResponseEntity<Set<UtilizationStatus>> getUtilizations() {
         log.info("getUtilizations()");
-        Set<Utilization> results = facilityService.findLatestUtilization();
+        DateTime now = new DateTime();
+        Map<Long, Facility> facilities = new HashMap<>();
+        Set<UtilizationStatus> results = facilityService.findLatestUtilization().stream()
+                .map(utilization -> {
+                    Facility facility = facilities.computeIfAbsent(utilization.facilityId, facilityService::getFacility);
+                    return new UtilizationStatus(utilization, facility, now);
+                })
+                .collect(toSet());
         return new ResponseEntity<>(results, OK);
     }
 
@@ -113,9 +123,13 @@ public class FacilityController {
     }
 
     @RequestMapping(method = GET, value = FACILITY_UTILIZATION, produces = APPLICATION_JSON_VALUE)
-    public ResponseEntity<Set<Utilization>> getUtilization(@PathVariable(FACILITY_ID) long facilityId) {
+    public ResponseEntity<Set<UtilizationStatus>> getUtilization(@PathVariable(FACILITY_ID) long facilityId) {
         log.info("getUtilization({})", facilityId);
-        Set<Utilization> results = facilityService.findLatestUtilization(facilityId);
+        DateTime now = new DateTime();
+        Facility facility = facilityService.getFacility(facilityId);
+        Set<UtilizationStatus> results = facilityService.findLatestUtilization(facilityId).stream()
+                .map(utilization -> new UtilizationStatus(utilization, facility, now))
+                .collect(toSet());
         return new ResponseEntity<>(results, OK);
     }
 

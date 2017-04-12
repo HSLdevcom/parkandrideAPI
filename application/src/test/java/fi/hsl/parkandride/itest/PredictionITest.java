@@ -104,7 +104,8 @@ public class PredictionITest extends AbstractIntegrationTest {
         assertThat(utilization).as("utilization").isNotEmpty();
         assertThat(prediction).as("prediction").isNotEmpty();
         Set<String> expectedFields = utilization.keySet();
-        expectedFields.remove("capacity"); // TODO: we are not predicting the capacity; should we add the capacity field to predictions?
+        expectedFields.remove("capacity");
+        expectedFields.remove("openNow");
         assertThat(prediction.keySet()).as("prediction's fields should be a superset of utilization's fields")
                 .containsAll(expectedFields);
     }

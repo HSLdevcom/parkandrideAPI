@@ -3,10 +3,13 @@
 
 package fi.hsl.parkandride.core.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import fi.hsl.parkandride.core.domain.validation.ElementLength;
 import fi.hsl.parkandride.core.domain.validation.NotBlankElement;
 import fi.hsl.parkandride.core.domain.validation.NotNullElement;
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
+import org.joda.time.LocalTime;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -15,11 +18,15 @@ import java.util.Set;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Sets.newLinkedHashSet;
+import static fi.hsl.parkandride.core.domain.FacilityStatus.EXCEPTIONAL_SITUATION;
+import static fi.hsl.parkandride.core.domain.FacilityStatus.IN_OPERATION;
 import static java.util.Collections.sort;
 import static java.util.stream.Collectors.mapping;
 import static java.util.stream.Collectors.toSet;
 
 public class Facility extends FacilityInfo {
+
+    private static final DateTimeZone TIME_ZONE = DateTimeZone.forID("Europe/Helsinki");
 
     @NotNull
     @NotNullElement
@@ -73,5 +80,26 @@ public class Facility extends FacilityInfo {
 
     public void normalize() {
         this.pricing = pricingMethod.getPricing(this);
+    }
+
+    public boolean isOpen(CapacityType capacityType, Usage usage, DateTime now) {
+        if (status == IN_OPERATION || status == EXCEPTIONAL_SITUATION) {
+            now = now.withZone(getTimeZone());
+            DayType dayType = DayType.of(now);
+            LocalTime currentTime = now.toLocalTime();
+            return pricing.stream()
+                    .filter(pricing ->
+                            pricing.capacityType.equals(capacityType)
+                            && pricing.usage.equals(usage)
+                            && pricing.dayType.equals(dayType))
+                    .anyMatch(pricing -> pricing.time.includes(currentTime));
+        } else {
+            return false;
+        }
+    }
+
+    @JsonIgnore
+    public DateTimeZone getTimeZone() {
+        return TIME_ZONE;
     }
 }

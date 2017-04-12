@@ -57,7 +57,10 @@ public class Utilization implements Cloneable {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof Utilization)) {
+        if (obj == null) {
+            return false;
+        }
+        if (!(obj.getClass().equals(Utilization.class) )) {
             return false;
         }
         Utilization that = (Utilization) obj;

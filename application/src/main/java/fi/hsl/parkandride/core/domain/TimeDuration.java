@@ -40,7 +40,7 @@ public class TimeDuration implements Comparable<TimeDuration> {
 
     public boolean includes(LocalTime time) {
         int minuteOfDay = new Time(time).getMinuteOfDay();
-        return from.getMinuteOfDay() <= minuteOfDay && minuteOfDay <= until.getMinuteOfDay();
+        return from.getMinuteOfDay() <= minuteOfDay && minuteOfDay < until.getMinuteOfDay();
     }
 
     public boolean overlaps(TimeDuration that) {

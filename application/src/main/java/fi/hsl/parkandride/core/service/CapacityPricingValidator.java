@@ -3,18 +3,17 @@
 
 package fi.hsl.parkandride.core.service;
 
-import static fi.hsl.parkandride.core.domain.PricingMethod.CUSTOM;
-import static fi.hsl.parkandride.core.domain.PricingMethod.PARK_AND_RIDE_247_FREE;
-import static fi.hsl.parkandride.core.domain.Usage.PARK_AND_RIDE;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
+import com.mysema.commons.lang.Pair;
+import fi.hsl.parkandride.core.domain.*;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
-import com.mysema.commons.lang.Pair;
-
-import fi.hsl.parkandride.core.domain.*;
+import static fi.hsl.parkandride.core.domain.PricingMethod.CUSTOM;
+import static fi.hsl.parkandride.core.domain.PricingMethod.PARK_AND_RIDE_247_FREE;
+import static fi.hsl.parkandride.core.domain.Usage.PARK_AND_RIDE;
 
 public final class CapacityPricingValidator {
     private CapacityPricingValidator() {}
@@ -87,8 +86,8 @@ public final class CapacityPricingValidator {
     }
 
     private static void validateHourOverlap(List<Pricing> pricing, int i, Collection<Violation> violations) {
+        Pricing pi = pricing.get(i);
         for (int j = i + 1; j < pricing.size(); ++j) {
-            Pricing pi = pricing.get(i);
             Pricing pj = pricing.get(j);
             if (pi != null && pj != null && pi.overlaps(pj)) {
                 violations.add(pricingOverlap(j));

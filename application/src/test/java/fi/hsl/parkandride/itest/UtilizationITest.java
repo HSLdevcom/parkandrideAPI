@@ -402,20 +402,22 @@ public class UtilizationITest extends AbstractIntegrationTest {
                 .put(Key.TIMESTAMP, t4)
                 .put(Key.SPACES_AVAILABLE, 35));
 
-        Utilization u2 = new Utilization();
+        UtilizationStatus u2 = new UtilizationStatus();
         u2.facilityId = facility.id;
         u2.timestamp = t2;
         u2.spacesAvailable = 15;
         u2.capacityType = CAR;
         u2.usage = PARK_AND_RIDE;
         u2.capacity = CAR_BUILT_CAPACITY;
-        Utilization u4 = new Utilization();
+        u2.openNow = true;
+        UtilizationStatus u4 = new UtilizationStatus();
         u4.facilityId = facility2.id;
         u4.timestamp = t4;
         u4.spacesAvailable = 35;
         u4.capacityType = CAR;
         u4.usage = PARK_AND_RIDE;
         u4.capacity = CAR_BUILT_CAPACITY;
+        u4.openNow = true;
         assertThat(getUtilizations()).containsOnly(u2, u4);
     }
 
@@ -485,16 +487,16 @@ public class UtilizationITest extends AbstractIntegrationTest {
                         tuple(facility.id, u3.capacityType, u3.usage, u3.spacesAvailable, u3.timestamp.toInstant()));
     }
 
-    private Utilization[] getFacilityUtilization(long facilityId) {
+    private UtilizationStatus[] getFacilityUtilization(long facilityId) {
         return when().get(UrlSchema.FACILITY_UTILIZATION, facilityId)
                 .then().statusCode(OK.value())
-                .extract().as(Utilization[].class);
+                .extract().as(UtilizationStatus[].class);
     }
 
-    private Utilization[] getUtilizations() {
+    private UtilizationStatus[] getUtilizations() {
         return when().get(UrlSchema.UTILIZATIONS)
                 .then().statusCode(OK.value())
-                .extract().as(Utilization[].class);
+                .extract().as(UtilizationStatus[].class);
     }
 
     private Utilization utilize(CapacityType capacityType, Usage usage) {

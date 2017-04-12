@@ -381,7 +381,7 @@ public class ApiDocumentation extends AbstractIntegrationTest {
                         fieldWithPath("[]timestamp").description("When this information was last updated"),
                         fieldWithPath("[]spacesAvailable").description("Number of available parking spaces for this facility, capacity type and usage combination"),
                         fieldWithPath("[]capacity").description("Number of parking spaces (both reserved and available) for this facility, capacity type and usage combination"),
-                        fieldWithPath("[]openNow").description("Boolean, is facility currently open for given capacityType and usage"))));
+                        fieldWithPath("[]openNow").description("Boolean, true if facility is currently open for given capacityType and usage"))));
     }
 
     @Test

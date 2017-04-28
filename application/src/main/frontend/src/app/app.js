@@ -17,6 +17,7 @@
         'featureToggle',
 
         'parkandride.about',
+        'parkandride.about-en',
         'parkandride.contacts',
         'parkandride.operators',
         'parkandride.hubList',

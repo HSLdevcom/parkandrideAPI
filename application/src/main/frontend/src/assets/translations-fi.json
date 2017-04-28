@@ -530,7 +530,7 @@
         "logodesc": "HSL Liityntäpysäköinti"
     },
     "about": {
-        "title": "Tietoa palvelusta / Information in English",
+        "title": "Tietoa palvelusta",
         "introduction": "HSL:n Liityntäpysäköintipalvelu tarjoaa tietoja pääkaupunkiseudun liityntäpystäköintipaikoista avoimena datana.",
         "termsOfService": "<a href=\"https://www.hsl.fi/kayttoehdot\">Palvelun käyttöehdot</a>",
         "documentation": "<a href=\"/docs/\">Dokumentaatio sovelluskehittäjille (API-kuvaus)</a>. Palvelulle on myös oma <a href=\"https://github.com/HSLdevcom/parkandrideAPI\">GitHub repository</a>",

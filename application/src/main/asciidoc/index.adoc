@@ -43,7 +43,7 @@ in future development. In the end, this may lead to a need to refactor the APIs.
 Unless such a breaking change is due to some critical security related issue, we will give you
 a warning about it well in advance.
 _Upcoming: Please register yourself and your app to a mailing list
-in order to receive announcements of coming changes. For now, you can contact petro.tamminen@hsl.fi._
+in order to receive announcements of coming changes. For now, you can contact markku.huotari@hsl.fi.
 
 === Development
 

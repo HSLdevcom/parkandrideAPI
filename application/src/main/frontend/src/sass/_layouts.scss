@@ -37,8 +37,7 @@ html, body {
 
 //header logo column
 .logo-column {
-  @extend .col-md-4;
-  @extend .col-xs-6;
+  width: 100%;
 }
 
 //header logo

@@ -1,6 +1,6 @@
 {
   "devDependencies": {
-    "protractor": "5.1.1",
+    "protractor": "1.8.0",
     "protractor-linkuisref-locator": "1.1.2",
     "protractor-html-screenshot-reporter": "0.0.21",
     "jasmine-reporters": "2.2.1",

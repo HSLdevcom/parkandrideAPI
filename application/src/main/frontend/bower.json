@@ -1,6 +1,6 @@
 {
   "name": "parkandrideAPI",
-  "version": "0.0.1-SNAPSHOT",
+  "version": "0.0.2-SNAPSHOT",
   "devDependencies": {
     "angular": "~1.4",
     "angular-mocks": "~1.4",

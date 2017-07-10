@@ -355,7 +355,7 @@ Subsidized parking slots for commuters and other people to continue their travel
 Not allowed for other people (e.g. visiting a nearby shop by foot). Typically free or very low cost.
 Example: open field next to a train station.
 `HSL_TRAVEL_CARD`::
-As above, but a valid HSL Travel Card is required to get in.
+As above, but a valid HSL Travel Card is required.
 Example: alternative payment method in a commercial parking hall.
 `COMMERCIAL`::
 Normal parking facility without restrictions for purpose of use. Normal price.

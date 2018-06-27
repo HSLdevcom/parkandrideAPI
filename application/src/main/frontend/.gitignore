@@ -2,4 +2,5 @@
 /build/
 /node/
 /node_modules/
-/vendor/
+/vendor
+/*.log

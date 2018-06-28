@@ -10,6 +10,7 @@ WORKDIR /opt/app
 USER node
 
 # fetch dependencies
+ADD .yarn-cache.tgz /
 ADD package.json yarn.lock /tmp/
 RUN cd /tmp && yarn
 

@@ -13,11 +13,13 @@ USER node
 COPY --chown=node yarn-offline-mirror /opt/app/yarn-offline-mirror
 COPY --chown=node .yarnrc package.json yarn.lock /opt/app/
 RUN yarn install --frozen-lockfile --non-interactive && \
-    yarn cache clean
+    yarn cache clean && \
+    bower cache clean
 
 # do the build
-# XXX: yarn-offline-mirror is included in this layer a second time even though no files have changed
-COPY --chown=node . /opt/app/
+COPY --chown=node *.* /opt/app/
+COPY --chown=node karma /opt/app/karma/
+COPY --chown=node src /opt/app/src/
 RUN npm run build
 
 # ------------------------------------------------------------

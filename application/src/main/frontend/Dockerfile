@@ -1,4 +1,4 @@
-FROM node:10
+FROM node:10 AS builder
 
 # some bower components expect that bower is installed
 RUN npm install -g bower
@@ -11,11 +11,17 @@ USER node
 
 # fetch dependencies
 ADD .yarn-cache.tgz /
-ADD package.json yarn.lock /tmp/
+COPY package.json yarn.lock /tmp/
 RUN cd /tmp && yarn
 
 # do the build
-ADD . /opt/app/
+COPY . /opt/app/
 RUN ln -s /tmp/node_modules /opt/app/node_modules && \
     ln -s /tmp/node_modules/@bower_components /opt/app/vendor
 RUN npm run build
+
+# ------------------------------------------------------------
+
+FROM nginx:1.15-alpine
+
+COPY --from=builder /opt/app/bin/static /usr/share/nginx/html

@@ -6,3 +6,5 @@ services:
       context: .
       dockerfile: Dockerfile
     image: liipi-web
+    ports:
+      - "8080:80"

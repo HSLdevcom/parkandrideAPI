@@ -1,3 +1,6 @@
+// Copyright © 2018 HSL <https://www.hsl.fi>
+// This program is dual-licensed under the EUPL v1.2 and AGPLv3 licenses.
+
 /**
  * This file/module contains all configuration for the build process.
  */
@@ -70,13 +73,13 @@ module.exports = {
       'vendor/angular-ui-select/dist/select.min.js',
       'vendor/angular-sanitize/angular-sanitize.min.js',
       'vendor/angular-translate-loader-static-files/angular-translate-loader-static-files.js',
-      'vendor/openlayers3/build/ol.js',
+      'node_modules/openlayers/dist/ol.js',
       'vendor/sweetalert2/dist/sweetalert2.min.js',
       'vendor/file-saver-saveas-js/FileSaver.js'
     ],
     css: [
         'vendor/angular-ui-select/dist/select.min.css',
-        'vendor/openlayers3/css/ol.css',
+        'node_modules/openlayers/dist/ol.css',
         'vendor/sweetalert2/dist/sweetalert2.css'
     ],
     assets: [

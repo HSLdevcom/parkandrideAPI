@@ -12,7 +12,7 @@ USER node
 # cache node_modules
 COPY --chown=node yarn-offline-mirror /opt/app/yarn-offline-mirror
 COPY --chown=node .yarnrc package.json yarn.lock /opt/app/
-RUN yarn install --frozen-lockfile --non-interactive && \
+RUN yarn install --frozen-lockfile --non-interactive --no-progress && \
     yarn cache clean && \
     bower cache clean
 
@@ -20,7 +20,7 @@ RUN yarn install --frozen-lockfile --non-interactive && \
 COPY --chown=node *.* /opt/app/
 COPY --chown=node karma /opt/app/karma/
 COPY --chown=node src /opt/app/src/
-RUN npm run build
+RUN yarn run build
 
 # ------------------------------------------------------------
 

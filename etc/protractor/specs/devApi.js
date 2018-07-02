@@ -1,3 +1,6 @@
+// Copyright © 2018 HSL <https://www.hsl.fi>
+// This program is dual-licensed under the EUPL v1.2 and AGPLv3 licenses.
+
 "use strict";
 
 module.exports = function () {
@@ -19,10 +22,10 @@ module.exports = function () {
         var defer = protractor.promise.defer();
         request(options, function(error, message) {
             if (error || message.statusCode >= 400) {
-                console.error("backend error: ", message.body);
+                console.error("backend error: ", error || message.body);
                 defer.reject({
-                    error : error,
-                    message : message
+                    error: error,
+                    message: message
                 });
             } else {
                 defer.fulfill(message);

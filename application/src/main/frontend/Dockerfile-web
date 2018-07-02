@@ -4,26 +4,26 @@ FROM node:10 AS builder
 RUN npm install -g bower
 
 # working directory
-RUN mkdir -p /opt/app && \
-    chown node /opt/app
-WORKDIR /opt/app
+RUN mkdir -p /project && \
+    chown node /project
+WORKDIR /project
 USER node
 
 # cache node_modules
-COPY --chown=node yarn-offline-mirror /opt/app/yarn-offline-mirror
-COPY --chown=node .yarnrc package.json yarn.lock /opt/app/
+COPY --chown=node yarn-offline-mirror /project/yarn-offline-mirror
+COPY --chown=node .yarnrc package.json yarn.lock /project/
 RUN yarn install --frozen-lockfile --non-interactive --no-progress && \
     yarn cache clean && \
     bower cache clean
 
 # do the build
-COPY --chown=node *.* /opt/app/
-COPY --chown=node karma /opt/app/karma/
-COPY --chown=node src /opt/app/src/
+COPY --chown=node *.* /project/
+COPY --chown=node karma /project/karma/
+COPY --chown=node src /project/src/
 RUN yarn run build
 
 # ------------------------------------------------------------
 
 FROM nginx:1.15-alpine
 
-COPY --from=builder /opt/app/bin/static /usr/share/nginx/html
+COPY --from=builder /project/bin/static /usr/share/nginx/html

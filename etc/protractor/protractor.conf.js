@@ -1,12 +1,20 @@
-exports.config = {
-    baseUrl: process.env.SERVER_URL,
-    chromeDriver: 'node_modules/protractor/selenium/chromedriver',
-    directConnect: true,
-    rootElement: 'html',
-    specs: [ 'specs/**/*.spec.js'],
+// Copyright © 2018 HSL <https://www.hsl.fi>
+// This program is dual-licensed under the EUPL v1.2 and AGPLv3 licenses.
 
+exports.config = {
+    // baseUrl: process.env.SERVER_URL,
+    // chromeDriver: 'node_modules/protractor/selenium/chromedriver',
+    // directConnect: true,
+    rootElement: 'html',
+    specs: ['specs/**/*.spec.js'],
+
+    seleniumAddress: 'http://localhost:4444/wd/hub',
+    framework: 'jasmine',
     capabilities: {
-      'browserName': 'firefox'
+        browserName: 'chrome',
+        chromeOptions: {
+            args: ['no-sandbox']
+        }
     },
 
     jasmineNodeOpts: {
@@ -18,7 +26,7 @@ exports.config = {
         showTiming: true
     },
 
-    onPrepare: function(){
+    onPrepare: function () {
         require('protractor-linkuisref-locator')(protractor);
 
         require('jasmine-reporters');
@@ -32,10 +40,12 @@ exports.config = {
 
         browser.driver.manage().window().setSize(1280, 1024);
 
-        global.beforeAll = function(fn) {
+        global.beforeAll = function (fn) {
             var firstTime = true;
-            beforeEach(function() {
-                if (firstTime) { fn(); }
+            beforeEach(function () {
+                if (firstTime) {
+                    fn();
+                }
                 firstTime = false;
             });
         };

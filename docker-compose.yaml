@@ -1,0 +1,21 @@
+version: '3.6'
+services:
+
+  web:
+    build:
+      context: application/src/main/frontend
+      dockerfile: Dockerfile-web
+    image: liipi-web
+    ports:
+      - "8080:80"
+
+  test:
+    build:
+      context: etc/protractor
+      dockerfile: Dockerfile-test
+    image: liipi-test
+    environment:
+      BASEURL: http://web/
+      PTOR_DIR: /project
+    volumes:
+      - "./etc/protractor:/project"

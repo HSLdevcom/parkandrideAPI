@@ -6,8 +6,16 @@ services:
       context: application/src/main/frontend
       dockerfile: Dockerfile-web
     image: liipi-web
+    environment:
+      API_URL: http://api/
     ports:
       - "8080:80"
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile-api
+    image: liipi-api
 
   test:
     build:

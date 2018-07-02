@@ -4,8 +4,8 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
-    <artifactId>parent</artifactId>
     <groupId>fi.hsl.parkandride</groupId>
+    <artifactId>parent</artifactId>
     <version>1-SNAPSHOT</version>
     <relativePath>../parent/pom.xml</relativePath>
   </parent>
@@ -255,6 +255,12 @@
         <directory>src/main/frontend/bin</directory>
       </resource>
       <resource>
+        <directory>src/main/frontend/src/assets</directory>
+        <includes>
+          <include>translations-fi.json</include>
+        </includes>
+      </resource>
+      <resource>
         <directory>src/main/resources</directory>
         <filtering>false</filtering>
         <excludes>
@@ -303,76 +309,7 @@
           </execution>
         </executions>
       </plugin>
-
-      <plugin>
-        <groupId>com.github.eirslett</groupId>
-        <artifactId>frontend-maven-plugin</artifactId>
-        <version>${maven-plugin.frontend.version}</version>
-        <configuration>
-          <workingDirectory>src/main/frontend</workingDirectory>
-        </configuration>
-        <executions>
-
-          <execution>
-            <id>install node and npm</id>
-            <goals>
-              <goal>install-node-and-npm</goal>
-            </goals>
-            <phase>generate-sources</phase>
-            <configuration>
-              <nodeVersion>${maven-plugin.frontend.node.version}</nodeVersion>
-              <npmVersion>${maven-plugin.frontend.npm.version}</npmVersion>
-            </configuration>
-          </execution>
-
-          <execution>
-            <id>npm install</id>
-            <goals>
-              <goal>npm</goal>
-            </goals>
-            <phase>generate-sources</phase>
-          </execution>
-
-          <execution>
-            <id>bower install</id>
-            <goals>
-              <goal>bower</goal>
-            </goals>
-            <phase>process-sources</phase>
-            <configuration>
-              <arguments>install --force-latest</arguments>
-            </configuration>
-          </execution>
-
-          <execution>
-            <id>grunt build</id>
-            <goals>
-              <goal>grunt</goal>
-            </goals>
-            <phase>generate-resources</phase>
-            <configuration>
-              <srcdir>${basedir}/src/main/frontend/src</srcdir>
-              <triggerfiles>
-                <triggerfile>${basedir}/src/main/frontend/Gruntfile.js</triggerfile>
-              </triggerfiles>
-            </configuration>
-          </execution>
-
-          <!-- Commented out because build currently stops here and does not go forward...
-          <execution>
-            <id>javascript tests</id>
-            <goals>
-              <goal>karma</goal>
-            </goals>
-            <configuration>
-              <karmaConfPath>build/karma-unit.js</karmaConfPath>
-            </configuration>
-          </execution>
-          -->
-
-        </executions>
-      </plugin>
-
+      
       <!-- REST API Documentation -->
 
       <plugin>

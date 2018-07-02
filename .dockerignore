@@ -1,0 +1,9 @@
+/target/
+/*/target/
+*.iml
+.classpath
+.project
+.DS_Store
+application.pid
+protractor-results.xml
+/.git/

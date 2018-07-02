@@ -1,0 +1,37 @@
+FROM openjdk:8-jdk AS builder
+
+# tools
+RUN apt-get update && \
+    apt-get install -y maven && \
+    rm -rf /var/lib/apt/lists/*
+
+# working directory
+RUN useradd --create-home app && \
+    mkdir -p /project && \
+    chown app /project
+WORKDIR /project
+USER app
+
+# cache Maven dependencies
+COPY --chown=app pom.xml /project/
+COPY --chown=app parent/pom.xml /project/parent/
+COPY --chown=app application/pom.xml /project/application/
+RUN mvn dependency:go-offline --batch-mode --errors
+
+# do the build
+COPY --chown=app . /project/
+# TODO: add --offline flag after finding out which plugin deps are not downloaded by go-offline
+RUN mvn clean package -P noui --batch-mode --errors
+
+# ------------------------------------------------------------
+
+FROM openjdk:8-jre-slim
+
+RUN adduser --system --home /app app
+WORKDIR /app
+USER app
+
+EXPOSE 8080
+CMD ["java", "-Xmx200m", "-XX:MaxMetaspaceSize=64m", "-jar", "parkandride.jar", "--spring.profiles.active=docker"]
+
+COPY --from=builder /project/application/target/parkandride-application-1-SNAPSHOT.jar /app/parkandride.jar

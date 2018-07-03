@@ -1,10 +1,12 @@
+// Copyright © 2018 HSL <https://www.hsl.fi>
+// This program is dual-licensed under the EUPL v1.2 and AGPLv3 licenses.
+
 "use strict";
 
 var _ = require('lodash');
 
 var po = require('../../pageobjects/pageobjects.js');
 var fixtures = require('../../fixtures/fixtures');
-var arrayAssert = require('../arrayAssert')();
 var devApi = require('../devApi')();
 var common = require('../common');
 
@@ -20,7 +22,7 @@ describe('hub view', function () {
 
     function assertFacilityNamesInAnyOrder(facilitiesTable, expected) {
         expect(facilitiesTable.isDisplayed()).toBe(true);
-        arrayAssert.assertInAnyOrder(facilitiesTable.getNames(), expected);
+        expect(facilitiesTable.getNames()).toContainInAnyOrder(expected)
     }
 
     function totalCapacities(facilities) {
@@ -28,7 +30,7 @@ describe('hub view', function () {
     }
 
     function assertCapacities(capacitiesTable, facilities) {
-        arrayAssert.assertInOrder(capacitiesTable.getTypes(), common.capacityTypeOrder, { allowSkip: true });
+        expect(capacitiesTable.getTypes()).toContainSomeInSameOrder(common.capacityTypeOrder);
         var total = totalCapacities(facilities);
         expect(capacitiesTable.getCapacities(_.keys(total.capacities))).toEqual(total.capacities);
     }
@@ -124,7 +126,7 @@ describe('hub view', function () {
         });
 
         xit('facility capacity types are listed in order', function () {
-            arrayAssert.assertInOrder(viewPage.facilitiesTable.getCapacityTypes(0), common.capacityTypeOrder);
+            expect(viewPage.facilitiesTable.getCapacityTypes(0)).toEqual(common.capacityTypeOrder);
         });
     });
 });

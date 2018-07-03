@@ -1,9 +1,11 @@
+// Copyright © 2018 HSL <https://www.hsl.fi>
+// This program is dual-licensed under the EUPL v1.2 and AGPLv3 licenses.
+
 'use strict';
 
 var _ = require('lodash');
 
 var po = require('../../pageobjects/pageobjects.js');
-var arrayAssert = require('../arrayAssert')();
 var devApi = require('../devApi')();
 var common = require('../common');
 

@@ -1,10 +1,12 @@
+// Copyright © 2018 HSL <https://www.hsl.fi>
+// This program is dual-licensed under the EUPL v1.2 and AGPLv3 licenses.
+
 'use strict';
 
 var _ = require('lodash');
 
 var po = require('../../pageobjects/pageobjects.js');
 var fixtures = require('../../fixtures/fixtures');
-var arrayAssert = require('../arrayAssert')();
 var devApi = require('../devApi')();
 var common = require('../common');
 
@@ -20,8 +22,8 @@ describe('edit hub view', function () {
     var facilityFactory = fixtures.facilityFactory;
 
     function assertFacilityNamesInAnyOrder(facilitiesTable, expected) {
-        expect(facilitiesTable.isDisplayed()).toBe(true);
-        arrayAssert.assertInAnyOrder(facilitiesTable.getNames(), expected);
+        expect(facilitiesTable.isDisplayed()).toBe(true, "facilities table should be displayed");
+        expect(facilitiesTable.getNames()).toContainInAnyOrder(expected);
     }
 
     describe('new hub', function () {
@@ -182,7 +184,7 @@ describe('edit hub view', function () {
                     hubEditPage.toggleFacility(f);
                     if (idx < hub.facilities.length - 1) {
                         expect(hubEditPage.facilitiesTable.isDisplayed()).toBe(true);
-                        arrayAssert.assertInOrder(hubEditPage.facilitiesTable.getNames(), facilityNameOrder, { allowSkip: true });
+                        expect(hubEditPage.facilitiesTable.getNames()).toContainSomeInSameOrder(facilityNameOrder);
                     }
                 });
             });

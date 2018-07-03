@@ -1,10 +1,12 @@
+// Copyright © 2018 HSL <https://www.hsl.fi>
+// This program is dual-licensed under the EUPL v1.2 and AGPLv3 licenses.
+
 'use strict';
 
 var _ = require('lodash');
 
 var po = require('../../pageobjects/pageobjects.js');
 var fixtures = require('../../fixtures/fixtures');
-var arrayAssert = require('../arrayAssert')();
 var devApi = require('../devApi')();
 var common = require('../common');
 
@@ -134,10 +136,10 @@ describe('edit facility view', function () {
                 editPage.openPortAt(200, 198);
                 expect(editPage.portEditModal.isDisplayed()).toBe(true);
 
-                expect(editPage.portEditModal.isEntrySelected()).toBe(false);
-                expect(editPage.portEditModal.isExitSelected()).toBe(false);
-                expect(editPage.portEditModal.isPedestrianSelected()).toBe(true);
-                expect(editPage.portEditModal.isBicycleSelected()).toBe(true);
+                expect(editPage.portEditModal.isEntrySelected()).toBe(false, 'entry should not be selected');
+                expect(editPage.portEditModal.isExitSelected()).toBe(false, 'exit should not be selected');
+                expect(editPage.portEditModal.isPedestrianSelected()).toBe(true, 'pedestrian should be selected');
+                expect(editPage.portEditModal.isBicycleSelected()).toBe(true, 'bicycle should be selected');
 
                 expect(editPage.portEditModal.getStreetAddress()).toEqual(["katu", "gata", "street"]);
                 expect(editPage.portEditModal.getPostalCode()).toBe("00100");
@@ -162,8 +164,8 @@ describe('edit facility view', function () {
                 // Remove port
                 editPage.openPortAt(200, 198);
                 expect(editPage.portEditModal.isDisplayed()).toBe(true);
-                expect(editPage.portEditModal.isPedestrianSelected()).toBe(true);
-                expect(editPage.portEditModal.isBicycleSelected()).toBe(true);
+                expect(editPage.portEditModal.isPedestrianSelected()).toBe(true, 'pedestriean should be selected');
+                expect(editPage.portEditModal.isBicycleSelected()).toBe(true, 'bicycle should be selected');
                 expect(editPage.portEditModal.getCityFi()).toBe("city");
                 editPage.portEditModal.remove();
                 editPage.portEditModal.waitUntilAbsent();
@@ -217,7 +219,7 @@ describe('edit facility view', function () {
             editPage.addAlias(facFull.aliases[0]);
             editPage.addAlias(facFull.aliases[1]);
             editPage.setCapacities(facFull.capacities);
-            arrayAssert.assertInOrder(editPage.getCapacityTypes(), common.capacityTypeOrder);
+            expect(editPage.getCapacityTypes()).toEqual(common.capacityTypeOrder);
 
             editPage.selectService("Valaistus");
             editPage.selectService("Katettu");
@@ -251,7 +253,7 @@ describe('edit facility view', function () {
             editPage.selectOperator("smooth");
             editPage.drawLocation(facCar.locationInput.offset, facCar.locationInput.w, facCar.locationInput.h);
             editPage.setCapacities(facCar.capacities);
-            arrayAssert.assertInOrder(editPage.getCapacityTypes(), common.capacityTypeOrder);
+            expect(editPage.getCapacityTypes()).toEqual(common.capacityTypeOrder);
 
             editPage.selectEmergencyContact("hsl");
             editPage.selectOperatorContact("hsl");

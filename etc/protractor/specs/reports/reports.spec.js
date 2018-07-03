@@ -1,4 +1,4 @@
-// Copyright © 2015 HSL <https://www.hsl.fi>
+// Copyright © 2018 HSL <https://www.hsl.fi>
 // This program is dual-licensed under the EUPL v1.2 and AGPLv3 licenses.
 
 'use strict';
@@ -10,8 +10,6 @@ var po = require('../../pageobjects/pageobjects.js');
 var fixtures = require('../../fixtures/fixtures');
 var devApi = require('../devApi')();
 var common = require('../common');
-
-var arrayAssert = require('../arrayAssert')();
 
 var defaults = {
     interval: '60 min',
@@ -131,10 +129,7 @@ describe('reports', function () {
 
         beforeAll(function() {
             reportPage.facilities.clearSelections();
-            arrayAssert.assertInAnyOrder(
-                reportPage.facilities.getChoices(),
-                [smoothFacility.name, roughFacility.name, keravaFacility.name]
-            );
+            expect(reportPage.facilities.getChoices()).toContainInAnyOrder([smoothFacility.name, roughFacility.name, keravaFacility.name]);
             reportPage.facilities.select(smoothFacility.name);
             reportPage.facilities.select(roughFacility.name);
             reportPage.facilities.select(keravaFacility.name);
@@ -152,19 +147,13 @@ describe('reports', function () {
 
         it('should grey out facilities when filtered out by hub', function() {
             reportPage.hubs.select(westendHub.name);
-            arrayAssert.assertInAnyOrder(
-                reportPage.facilities.getGreyedOutSelections(),
-                [keravaFacility.name]
-            );
+            expect(reportPage.facilities.getGreyedOutSelections()).toContainInAnyOrder([keravaFacility.name]);
             reportPage.hubs.clearSelections();
         });
 
         it('should grey out facilities when filtered out by region', function() {
             reportPage.regions.select('Espoo');
-            arrayAssert.assertInAnyOrder(
-                reportPage.facilities.getGreyedOutSelections(),
-                [keravaFacility.name]
-            );
+            expect(reportPage.facilities.getGreyedOutSelections()).toContainInAnyOrder([keravaFacility.name]);
             reportPage.regions.clearSelections();
         });
     });
@@ -202,10 +191,7 @@ describe('reports', function () {
         });
 
         it('should not show other operator\'s facilities', function() {
-            arrayAssert.assertInAnyOrder(
-                reportPage.facilities.getChoices(),
-                [smoothFacility.name]
-            );
+            expect(reportPage.facilities.getChoices()).toContainInAnyOrder([smoothFacility.name]);
         });
     });
 

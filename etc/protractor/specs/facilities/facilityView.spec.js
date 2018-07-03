@@ -1,10 +1,12 @@
+// Copyright © 2018 HSL <https://www.hsl.fi>
+// This program is dual-licensed under the EUPL v1.2 and AGPLv3 licenses.
+
 "use strict";
 
 var _ = require('lodash');
 
 var po = require('../../pageobjects/pageobjects.js');
 var fixtures = require('../../fixtures/fixtures');
-var arrayAssert = require('../arrayAssert')();
 var devApi = require('../devApi')();
 var common = require('../common');
 
@@ -62,7 +64,7 @@ describe('facility view', function () {
             expect(viewPage.isAliasesDisplayed()).toBe(true);
             expect(viewPage.getAliases()).toEqual(f.aliases);
 
-            arrayAssert.assertInOrder(viewPage.capacitiesTable.getTypes(), common.capacityTypeOrder);
+            expect(viewPage.capacitiesTable.getTypes()).toEqual(common.capacityTypeOrder);
             expect(viewPage.capacitiesTable.getCapacities(_.keys(f.builtCapacity))).toEqual(f.builtCapacity);
 
             expect(viewPage.isPredictionsDisplayed()).toBe(true);

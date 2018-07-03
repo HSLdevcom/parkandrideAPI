@@ -9,6 +9,7 @@
     "type": "git",
     "url": "git@github.com:HSLdevcom/parkandrideAPI.git"
   },
+  "private": true,
   "dependencies": {
     "@bower_components/angular": "git://github.com/angular/bower-angular.git#1.4.7",
     "@bower_components/angular-bootstrap": "git://github.com/angular-ui/bootstrap-bower.git#~0.14.0",

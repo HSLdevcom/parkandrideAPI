@@ -1,3 +1,6 @@
+// Copyright © 2018 HSL <https://www.hsl.fi>
+// This program is dual-licensed under the EUPL v1.2 and AGPLv3 licenses.
+
 "use strict";
 
 module.exports = function(spec) {
@@ -31,18 +34,20 @@ module.exports = function(spec) {
         element.clear().sendKeys("" + input);
     };
 
-    spec.isDisplayed = function(element) {
-        return element.then(
-            function(elem) { return elem.isDisplayed(); },
-            function() { return false; }
-        );
+    spec.isDisplayed = function (element) {
+        return element.isDisplayed().then(
+            function (result) {
+                return result;
+            }, function () {
+                return false;
+            });
     };
 
     // workaround to ensure element is present before invoking actions on it, this might be useful for elements residing inside non-angular components e.g.
     // sweetAlert.
     spec.ensureIsPresent = function(element) {
         browser.wait(function() {
-            return element.then(function(elem) { return elem.isPresent(); });
+            return element.isPresent();
         });
         return element;
     };

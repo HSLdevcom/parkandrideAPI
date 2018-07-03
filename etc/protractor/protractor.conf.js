@@ -9,7 +9,7 @@ exports.config = {
     specs: ['specs/**/*.spec.js'],
 
     seleniumAddress: 'http://localhost:4444/wd/hub',
-    framework: 'jasmine',
+    framework: 'jasmine2',
     capabilities: {
         browserName: 'chrome',
         chromeOptions: {
@@ -35,7 +35,7 @@ exports.config = {
 
         var ScreenshotReporter = require('protractor-html-screenshot-reporter');
         jasmine.getEnv().addReporter(new ScreenshotReporter({
-            baseDirectory: process.env.PTOR_DIR + '/screenshots'
+            baseDirectory: 'screenshots'
         }));
 
         browser.driver.manage().window().setSize(1280, 1024);

@@ -32,6 +32,8 @@ WORKDIR /app
 USER app
 
 EXPOSE 8080
-CMD ["java", "-Xmx200m", "-XX:MaxMetaspaceSize=64m", "-jar", "parkandride.jar", "--spring.profiles.active=docker"]
+# TODO: parameterize the profile for test runs
+# TODO: add docker profile
+CMD ["java", "-Xmx1000m", "-XX:MaxMetaspaceSize=64m", "-jar", "parkandride.jar", "--spring.profiles.active=env_local"]
 
 COPY --from=builder /project/application/target/parkandride-application-1-SNAPSHOT.jar /app/parkandride.jar

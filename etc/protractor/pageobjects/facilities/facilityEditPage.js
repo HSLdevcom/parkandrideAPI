@@ -1,3 +1,6 @@
+// Copyright © 2018 HSL <https://www.hsl.fi>
+// This program is dual-licensed under the EUPL v1.2 and AGPLv3 licenses.
+
 'use strict';
 
 module.exports = function(spec) {
@@ -80,7 +83,7 @@ module.exports = function(spec) {
     that.isServiceSelected = function(name) {
         return spec.services
             .element(by.cssContainingText(".ui-select-match-item", name))
-            .then(
+            .getWebElement().then(
                 function(elem) {
                     return elem.isDisplayed();
                 },
@@ -269,9 +272,7 @@ module.exports = function(spec) {
     };
 
     that.togglePricingRow = function(index) {
-        spec.pricingRows.get(index).then(function(row) {
-            row.element(by.model('rowSelected')).click();
-        });
+        spec.pricingRows.get(index).element(by.model('rowSelected')).click();
     };
 
     that.setPricingMethod = function(pricingMethod) {
@@ -279,45 +280,44 @@ module.exports = function(spec) {
     };
 
     that.setPricing = function(index, pricing) {
-        spec.pricingRows.get(index).then(function(row) {
-            for (var prop in pricing) {
-                switch (prop) {
-                    case 'capacityType':
-                        spec.select(row.element(by.model('pricing.capacityType')), pricing[prop]);
-                        break;
-                    case 'usage':
-                        spec.select(row.element(by.model('pricing.usage')), pricing[prop]);
-                        break;
-                    case 'maxCapacity':
-                        spec.sendKeys(row.element(by.model('pricing.maxCapacity')), pricing[prop]);
-                        break;
-                    case 'dayType':
-                        spec.select(row.element(by.model('pricing.dayType')), pricing[prop]);
-                        break;
-                    case 'is24h':
-                        row.element(by.model('h24')).click();
-                        break;
-                    case 'from':
-                        spec.sendKeys(row.element(by.model('pricing.time.from')), pricing[prop]);
-                        break;
-                    case 'until':
-                        spec.sendKeys(row.element(by.model('pricing.time.until')), pricing[prop]);
-                        break;
-                    case 'isFree':
-                        row.element(by.model('free')).click();
-                        break;
-                    case 'priceFi':
-                        spec.sendKeys(row.element(by.model('pricing.price.fi')), pricing[prop]);
-                        break;
-                    case 'priceSv':
-                        spec.sendKeys(row.element(by.model('pricing.price.sv')), pricing[prop]);
-                        break;
-                    case 'priceEn':
-                        spec.sendKeys(row.element(by.model('pricing.price.en')), pricing[prop]);
-                        break;
-                }
+        var row = spec.pricingRows.get(index);
+        for (var prop in pricing) {
+            switch (prop) {
+                case 'capacityType':
+                    spec.select(row.element(by.model('pricing.capacityType')), pricing[prop]);
+                    break;
+                case 'usage':
+                    spec.select(row.element(by.model('pricing.usage')), pricing[prop]);
+                    break;
+                case 'maxCapacity':
+                    spec.sendKeys(row.element(by.model('pricing.maxCapacity')), pricing[prop]);
+                    break;
+                case 'dayType':
+                    spec.select(row.element(by.model('pricing.dayType')), pricing[prop]);
+                    break;
+                case 'is24h':
+                    row.element(by.model('h24')).click();
+                    break;
+                case 'from':
+                    spec.sendKeys(row.element(by.model('pricing.time.from')), pricing[prop]);
+                    break;
+                case 'until':
+                    spec.sendKeys(row.element(by.model('pricing.time.until')), pricing[prop]);
+                    break;
+                case 'isFree':
+                    row.element(by.model('free')).click();
+                    break;
+                case 'priceFi':
+                    spec.sendKeys(row.element(by.model('pricing.price.fi')), pricing[prop]);
+                    break;
+                case 'priceSv':
+                    spec.sendKeys(row.element(by.model('pricing.price.sv')), pricing[prop]);
+                    break;
+                case 'priceEn':
+                    spec.sendKeys(row.element(by.model('pricing.price.en')), pricing[prop]);
+                    break;
             }
-        });
+        }
     };
 
     that.getPricingCount = function() {
@@ -338,10 +338,7 @@ module.exports = function(spec) {
                 .then(null, otherwiseGetText);
 
             function ifSelect() {
-                return column.element(by.css(".ui-select-match")).then(
-                    function(selected) {
-                        return selected.getText();
-                    });
+                return column.element(by.css(".ui-select-match")).getText();
             }
             function ifTextarea() {
                 return column.element(by.css("textarea")).then(
@@ -400,7 +397,7 @@ module.exports = function(spec) {
     that.getUnavailableCapacities = function() {
         return spec.unavailableCapacityColumns.then(function(columns) {
             return protractor.promise.all(_.map(columns, function(column) {
-                return column.element(by.css("input")).then(
+                return column.element(by.css("input")).getWebElement().then(
                     function(input) {
                         return input.getAttribute("value");
                     },

@@ -1,4 +1,4 @@
-// Copyright © 2015 HSL <https://www.hsl.fi>
+// Copyright © 2018 HSL <https://www.hsl.fi>
 // This program is dual-licensed under the EUPL v1.2 and AGPLv3 licenses.
 
 "use strict";
@@ -17,10 +17,11 @@ module.exports = function (spec) {
 
     spec.datepickerPopup = function (elem) {
         var deferred = protractor.promise.defer();
-        elem.element(by.xpath('following-sibling::*[1]')).then(function (elem) {
+        var nextSibling = elem.element(by.xpath('following-sibling::*[1]'));
+        nextSibling.getWebElement().then(function (elem) {
             elem.getTagName().then(function (tagName) {
                 if ('ul' === tagName.toLowerCase()) {
-                    deferred.fulfill(elem);
+                    deferred.fulfill(nextSibling);
                 } else {
                     deferred.reject(new Error('Next sibling was not an UL element, instead found: ' + tagName))
                 }
@@ -38,12 +39,12 @@ module.exports = function (spec) {
     };
 
     that.verifyOpen = function(elem) {
-        expect(that.isOpen(elem)).toEqualBecause(true, 'datepicker should be open');
+        expect(that.isOpen(elem)).toEqual(true, 'datepicker should be open');
         return this;
     };
 
     that.verifyClosed = function(elem) {
-        expect(that.isOpen(elem)).toEqualBecause(true, 'datepicker should be closed');
+        expect(that.isOpen(elem)).toEqual(true, 'datepicker should be closed');
         return this;
     };
 

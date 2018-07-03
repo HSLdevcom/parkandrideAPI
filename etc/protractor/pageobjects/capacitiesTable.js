@@ -1,3 +1,6 @@
+// Copyright © 2018 HSL <https://www.hsl.fi>
+// This program is dual-licensed under the EUPL v1.2 and AGPLv3 licenses.
+
 "use strict";
 
 module.exports = function (spec) {
@@ -31,7 +34,7 @@ module.exports = function (spec) {
     };
 
     that.getCapacity = function (type) {
-        return that.getBuilt(type).then(function (elem) {
+        return that.getBuilt(type).getWebElement().then(function (elem) {
             return elem.getText()
         }).then(function (value) {
             return spec.parseInt(value);

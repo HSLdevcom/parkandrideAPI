@@ -1,4 +1,4 @@
-// Copyright © 2015 HSL <https://www.hsl.fi>
+// Copyright © 2018 HSL <https://www.hsl.fi>
 // This program is dual-licensed under the EUPL v1.2 and AGPLv3 licenses.
 
 (function() {
@@ -121,7 +121,7 @@
                         }
                     });
                     if (!_.isEmpty(scope.hub.facilityIds)) {
-                        view.fitExtent(extent, map.getSize());
+                        view.fit(extent, map.getSize());
                     }
                     selectedFeatures.on("add", addFeatureListener);
                     selectedFeatures.on("remove", removeFeatureListener);
@@ -171,7 +171,7 @@
                         });
                         var extent = ol.extent.extend(hubLayer.getSource().getExtent(), facilitiesLayer.getSource().getExtent());
                         if (!ol.extent.isEmpty(extent)) {
-                            view.fitExtent(extent, map.getSize());
+                            view.fit(extent, map.getSize());
                         }
                     });
                 }

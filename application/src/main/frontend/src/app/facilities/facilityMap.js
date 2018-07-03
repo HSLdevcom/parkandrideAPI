@@ -1,4 +1,4 @@
-// Copyright © 2015 HSL <https://www.hsl.fi>
+// Copyright © 2018 HSL <https://www.hsl.fi>
 // This program is dual-licensed under the EUPL v1.2 and AGPLv3 licenses.
 
 (function() {
@@ -279,7 +279,7 @@
                     }
 
                     var extent = ol.extent.extend(portsSource.getExtent(), locationSource.getExtent());
-                    view.fitExtent(extent, map.getSize());
+                    view.fit(extent, map.getSize());
                     adjustResolution(view);
                 } else {
                     ctrl.$setValidity("required", false);

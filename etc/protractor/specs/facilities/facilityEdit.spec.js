@@ -133,7 +133,7 @@ describe('edit facility view', function () {
                 expect(editPage.portEditModal.isDisplayed()).toBe(false);
 
                 // Edit port -> ok
-                editPage.openPortAt(200, 198);
+                editPage.openAnyPort();
                 expect(editPage.portEditModal.isDisplayed()).toBe(true);
 
                 expect(editPage.portEditModal.isEntrySelected()).toBe(false, 'entry should not be selected');
@@ -152,7 +152,7 @@ describe('edit facility view', function () {
                 expect(editPage.portEditModal.isDisplayed()).toBe(false);
 
                 // Edit port -> cancel
-                editPage.openPortAt(200, 198);
+                editPage.openAnyPort();
                 expect(editPage.portEditModal.getCity()).toEqual(["city", "city", "city"]);
                 editPage.portEditModal.setCity("kaupunki");
                 editPage.portEditModal.togglePedestrian();
@@ -162,7 +162,7 @@ describe('edit facility view', function () {
                 expect(editPage.portEditModal.isDisplayed()).toBe(false);
 
                 // Remove port
-                editPage.openPortAt(200, 198);
+                editPage.openAnyPort();
                 expect(editPage.portEditModal.isDisplayed()).toBe(true);
                 expect(editPage.portEditModal.isPedestrianSelected()).toBe(true, 'pedestriean should be selected');
                 expect(editPage.portEditModal.isBicycleSelected()).toBe(true, 'bicycle should be selected');

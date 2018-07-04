@@ -1,4 +1,4 @@
-// Copyright © 2015 HSL <https://www.hsl.fi>
+// Copyright © 2018 HSL <https://www.hsl.fi>
 // This program is dual-licensed under the EUPL v1.2 and AGPLv3 licenses.
 
 (function() {
@@ -201,8 +201,9 @@
                     kinetic: new ol.Kinetic(-0.005, 0.05, 100)
                 }));
 
-                return new ol.Map({
-                    target: ngElement.children()[0],
+                var target = ngElement.children()[0];
+                var map = new ol.Map({
+                    target: target,
                     controls: controls,
                     interactions: interactions,
                     layers: layers,
@@ -211,6 +212,8 @@
                         zoom: 12
                     })
                 });
+                target.map = map; // expose the map instance to help testing
+                return map;
             }
     });
 })();

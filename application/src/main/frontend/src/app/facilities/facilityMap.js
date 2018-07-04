@@ -155,6 +155,32 @@
                     });
                     return modalInstance.result;
                 };
+                var viewPort = function (port) {
+                    openPort(port, "view");
+                };
+                var createPort = function (coordinate) {
+                    var port = FacilityResource.newPort(GeoJSON.writeGeometry(new ol.geom.Point(coordinate)));
+                    openPort(port, "create").then(savePort);
+                };
+                var editPort = function (port) {
+                    openPort(port, "edit").then(savePort);
+                };
+                var savePort = function (port) {
+                    if (port._id) {
+                        var portIndex = findPortIndex(port._id);
+                        if (port.entry || port.exit || port.pedestrian || port.bicycle) {
+                            facility.ports[portIndex] = port;
+                            setPortAsFeature(port);
+                        } else {
+                            facility.ports.splice(portIndex, 1);
+                            portsSource.removeFeature(portsSource.getFeatureById(port._id));
+                        }
+                    } else {
+                        port._id = Sequence.nextval();
+                        facility.ports.push(port);
+                        setPortAsFeature(port);
+                    }
+                };
 
                 var adjustResolution = function(view) {
                     // if ports are shown as icon, increment resolution to prevent port icon from overflowing
@@ -212,33 +238,24 @@
                     var drawPortCondition = function(mapBrowserEvent) {
                         return !portsDisabled && scope.editMode == 'ports' && ol.events.condition.noModifierKeys(mapBrowserEvent);
                     };
-                    map.on('dblclick', function(event) {
+                    map.on('dblclick', function (event) {
                         if (drawPortCondition(event)) {
-                            // Edit existing port
-                            var mode = "edit";
                             var port = findPortAtPixel(event.pixel);
-                            if (!port) {
-                                // Create new port
-                                mode = "create";
-                                port = FacilityResource.newPort(GeoJSON.writeGeometry(new ol.geom.Point(event.coordinate)));
+                            if (port) {
+                                editPort(port);
+                            } else {
+                                createPort(event.coordinate);
                             }
-                            openPort(port, mode).then(function (port) {
-                                if (port._id) {
-                                    var portIndex = findPortIndex(port._id);
-                                    if (port.entry || port.exit || port.pedestrian || port.bicycle) {
-                                        facility.ports[portIndex] = port;
-                                        setPortAsFeature(port);
-                                    } else {
-                                        facility.ports.splice(portIndex, 1);
-                                        portsSource.removeFeature(portsSource.getFeatureById(port._id));
-                                    }
-                                } else {
-                                    port._id = Sequence.nextval();
-                                    facility.ports.push(port);
-                                    setPortAsFeature(port);
-                                }
-                            });
                             return false;
+                        }
+                    });
+                    map.on('open-port', function (event) { // helper for test automation
+                        var index = event.detail.index;
+                        var port = facility.ports[index];
+                        if (port) {
+                            editPort(port);
+                        } else {
+                            console.warn("no port at index " + index);
                         }
                     });
                     // FIXME: Moving ports around by dragging won't work until
@@ -253,20 +270,29 @@
                 }
                 // view mode
                 else {
-                    var viewPort;
-                    map.on('click', function(event) {
+                    var isViewing = false;
+                    map.on('click', function (event) {
                         var port = findPortAtPixel(event.pixel);
                         if (port) {
-                            viewPort = true;
+                            isViewing = true;
                             event.preventDefault(); // prevent zoom
-                            openPort(port, "view");
+                            viewPort(port);
                         } else {
-                            viewPort = false;
+                            isViewing = false;
                         }
                     });
-                    map.on('dblclick', function(event) {
-                        if (viewPort) {
+                    map.on('dblclick', function (event) {
+                        if (isViewing) {
                             event.preventDefault();
+                        }
+                    });
+                    map.on('open-port', function (event) { // helper for test automation
+                        var index = event.detail.index;
+                        var port = facility.ports[index];
+                        if (port) {
+                            viewPort(port);
+                        } else {
+                            console.warn("no port at index " + index);
                         }
                     });
                 }

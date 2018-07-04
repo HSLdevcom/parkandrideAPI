@@ -147,7 +147,7 @@ describe('facility view', function () {
             };
         f.toPayload = function() { return f; };
         f = toView(f);
-        viewPage.openPortAt(592, 109);
+        viewPage.openAnyPort();
         expect(portView.isDisplayed()).toBe(true);
         expect(portView.isEntrySelected()).toBe(true);
         expect(portView.isExitSelected()).toBe(true);

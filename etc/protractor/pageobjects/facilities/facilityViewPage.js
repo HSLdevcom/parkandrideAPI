@@ -1,3 +1,6 @@
+// Copyright © 2018 HSL <https://www.hsl.fi>
+// This program is dual-licensed under the EUPL v1.2 and AGPLv3 licenses.
+
 'use strict';
 
 module.exports = function(spec) {
@@ -58,6 +61,14 @@ module.exports = function(spec) {
 
     that.isPredictionsDisplayed = function() {
         return spec.isDisplayed(spec.predictionsBlock);
+    };
+
+    that.openAnyPort = function () {
+        function openAnyPort() {
+            var map = document.querySelector('.facility-map').map;
+            map.dispatchEvent(new CustomEvent('open-port', {detail: {index: 0}}));
+        }
+        browser.executeScript(openAnyPort);
     };
 
     that.openPortAt = function(x, y) {

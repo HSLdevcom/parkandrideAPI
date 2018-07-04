@@ -22,6 +22,7 @@ module.exports = function(spec) {
     spec.zoomOut = element(by.css('button.ol-zoom-in'));
     spec.editModePorts = element(by.id('editModePorts'));
     spec.editModeLocation = element(by.id('editModeLocation'));
+    spec.facilityMap = element(by.css('.facility-map'));
     spec.services = element(by.model('editCtrl.facility.services'));
     spec.emergencyContact = element(by.name('emergencyContact'));
     spec.operatorContact = element(by.name('operatorContact'));
@@ -216,6 +217,14 @@ module.exports = function(spec) {
                 spec.zoomOut.click();
             }
         }
+    };
+
+    that.openAnyPort = function () {
+        function openAnyPort() {
+            var map = document.querySelector('.facility-map').map;
+            map.dispatchEvent(new CustomEvent('open-port', {detail: {index: 0}}));
+        }
+        browser.executeScript(openAnyPort);
     };
 
     that.openPortAt = function(x, y) {

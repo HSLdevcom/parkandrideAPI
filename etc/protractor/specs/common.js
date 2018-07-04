@@ -28,9 +28,9 @@ beforeEach(function () {
                     var result = {};
                     result.pass = util.equals(actualCopy, expectedCopy, customEqualityTesters);
                     if (result.pass) {
-                        result.message = "Expected " + actual + " to not contain in any order " + expected;
+                        result.message = "Expected " + JSON.stringify(actual) + " to not contain in any order " + JSON.stringify(expected);
                     } else {
-                        result.message = "Expected " + actual + " to contain in any order " + expected;
+                        result.message = "Expected " + JSON.stringify(actual) + " to contain in any order " + JSON.stringify(expected);
                     }
                     return result;
                 }
@@ -44,9 +44,9 @@ beforeEach(function () {
                     var toSkip = _.difference(expected, actual);
                     result.pass = util.equals(actual, _.difference(expected, toSkip), customEqualityTesters);
                     if (result.pass) {
-                        result.message = "Expected " + actual + " to not contain in any order " + expected;
+                        result.message = "Expected " + JSON.stringify(actual) + " to not contain in any order " + JSON.stringify(expected);
                     } else {
-                        result.message = "Expected " + actual + " to contain in any order " + expected;
+                        result.message = "Expected " + JSON.stringify(actual) + " to contain in any order " + JSON.stringify(expected);
                     }
                     return result;
                 }

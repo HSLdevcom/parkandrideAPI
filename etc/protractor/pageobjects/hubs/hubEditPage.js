@@ -1,3 +1,6 @@
+// Copyright © 2018 HSL <https://www.hsl.fi>
+// This program is dual-licensed under the EUPL v1.2 and AGPLv3 licenses.
+
 'use strict';
 
 module.exports = function(spec) {
@@ -40,12 +43,13 @@ module.exports = function(spec) {
     };
 
     that.toggleFacility = function (f) {
-        var offsetX = f.locationInput.offset.x + f.locationInput.w / 2;
-        var offsetY = f.locationInput.offset.y + f.locationInput.h / 2;
-        browser.actions()
-            .mouseMove(spec.map, {x: offsetX, y: offsetY}).click()
-            .perform();
-        browser.sleep(clickSleepMs);
+        function toggleFacility() {
+            var facilityId = arguments[0];
+            var map = document.querySelector('.hub-map').map;
+            map.dispatchEvent(new CustomEvent('toggle-facility', {detail: {facilityId: facilityId}}))
+        }
+
+        browser.executeScript(toggleFacility, f.id);
     };
 
     that.save = function () {

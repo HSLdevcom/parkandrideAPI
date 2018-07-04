@@ -101,7 +101,8 @@
                 }
 
                 function removeFeatureListener(collectionEvent) {
-                    var facilityId = collectionEvent.element.getId();
+                    var feature = collectionEvent.element;
+                    var facilityId = feature.getId();
                     scope.hub.facilityIds = _.without(scope.hub.facilityIds, facilityId);
                     removeFacility(facilityId);
                     scope.$apply();
@@ -125,6 +126,28 @@
                     }
                     selectedFeatures.on("add", addFeatureListener);
                     selectedFeatures.on("remove", removeFeatureListener);
+                });
+
+                map.on('toggle-facility', function (event) {
+                    var facilityId = event.detail.facilityId;
+                    var features = facilitiesLayer.getSource().getFeatures();
+                    features.forEach(function (feature) {
+                       if (feature.getId() === facilityId) {
+
+                           var selected = false;
+                           selectedFeatures.forEach(function (selectedFeature) {
+                               if (feature === selectedFeature) {
+                                   selected = true;
+                               }
+                           });
+
+                           if (selected) {
+                               selectedFeatures.remove(feature);
+                           } else {
+                               selectedFeatures.push(feature);
+                           }
+                       }
+                    });
                 });
             }
         };

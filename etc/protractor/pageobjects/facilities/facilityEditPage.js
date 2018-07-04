@@ -341,13 +341,13 @@ module.exports = function(spec) {
                 return column.element(by.css(".ui-select-match")).getText();
             }
             function ifTextarea() {
-                return column.element(by.css("textarea")).then(
+                return column.element(by.css("textarea")).getWebElement().then(
                     function(textarea) {
                         return textarea.getAttribute("value");
                     });
             }
             function ifInput() {
-                return column.element(by.css("input")).then(
+                return column.element(by.css("input")).getWebElement().then(
                     function(input) {
                         return input.getAttribute('type').then(function(type) {
                             if (type === "checkbox") {

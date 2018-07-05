@@ -6,6 +6,10 @@ services:
       context: .
       dockerfile: Dockerfile-api
     image: liipi-api
+    environment:
+      PSQL_USERNAME: liipi
+      PSQL_PASSWORD: liipi
+      PSQL_HOST: db:5432
 
   web:
     build:
@@ -24,3 +28,14 @@ services:
     image: liipi-test
     environment:
       BASEURL: http://web/
+
+  db:
+    build:
+      context: db
+      dockerfile: Dockerfile-db
+    image: liipi-db
+    environment:
+      POSTGRES_USER: liipi
+      POSTGRES_PASSWORD: liipi
+    ports:
+      - "5432:5432"

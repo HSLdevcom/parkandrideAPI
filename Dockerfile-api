@@ -33,7 +33,6 @@ USER app
 
 EXPOSE 8080
 # TODO: parameterize the profile for test runs
-# TODO: add docker profile
-CMD ["java", "-Xmx1000m", "-XX:MaxMetaspaceSize=64m", "-jar", "liipi-api.jar", "--spring.profiles.active=env_local"]
+CMD ["java", "-Xmx500m", "-XX:MaxMetaspaceSize=64m", "-jar", "liipi-api.jar", "--spring.profiles.active=docker,env_local"]
 
 COPY --from=builder /project/target/liipi-api.jar /app/liipi-api.jar

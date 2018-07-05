@@ -1,3 +1,6 @@
+// Copyright © 2018 HSL <https://www.hsl.fi>
+// This program is dual-licensed under the EUPL v1.2 and AGPLv3 licenses.
+
 'use strict';
 
 var _ = require('lodash');
@@ -34,6 +37,7 @@ describe('authorization', function () {
         openLoginModal();
 
         authModal.cancel();
+        browser.sleep(500); // XXX
         expect(authModal.isDisplayed()).toBe(false);
     });
 

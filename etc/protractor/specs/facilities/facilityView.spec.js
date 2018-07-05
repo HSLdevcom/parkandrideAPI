@@ -158,6 +158,7 @@ describe('facility view', function () {
         expect(portView.getCity()).toEqual(["Helsinki", "Helsingfors", "Helsinki"]);
         expect(portView.getInfo()).toEqual(["Info fi", "Info sv", "Info en"]);
         portView.ok();
+        browser.sleep(500); // XXX
         expect(portView.isDisplayed()).toBe(false);
     });
 

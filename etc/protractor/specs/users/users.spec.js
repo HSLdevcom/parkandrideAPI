@@ -269,6 +269,7 @@ describe('users', function () {
             expect(usersPage.confirmModal.isDisplayed()).toBe(true);
 
             usersPage.confirmModal.cancel();
+            browser.sleep(500); // XXX
             expect(usersPage.confirmModal.isDisplayed()).toBe(false);
 
             usersPage.getUsers().then(function (actual) {
@@ -278,10 +279,16 @@ describe('users', function () {
         });
 
         it('after delete, the user list is updated accordingly', function () {
+            usersPage.getUsers().then(function (actual) {
+                expect(actual.length).toBe(2);
+            });
+
             usersPage.delete(1);
             expect(usersPage.confirmModal.isDisplayed()).toBe(true);
+            browser.sleep(500); // XXX
 
             usersPage.confirmModal.confirm();
+            browser.sleep(500); // XXX
             expect(usersPage.confirmModal.isDisplayed()).toBe(false);
 
             usersPage.getUsers().then(function (actual) {

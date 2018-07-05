@@ -1,3 +1,6 @@
+// Copyright © 2018 HSL <https://www.hsl.fi>
+// This program is dual-licensed under the EUPL v1.2 and AGPLv3 licenses.
+
 "use strict";
 
 var components = require('../components/components');
@@ -49,6 +52,12 @@ module.exports = function (spec) {
 
     that.canSetOperator = function() {
         return spec.isDisplayed(spec.operator);
+    };
+
+    that.isOperatorDisabled = function () {
+        return spec.operator.getAttribute("disabled").then(function (disabled) {
+            return disabled === 'true';
+        });
     };
 
     that.save = function() {

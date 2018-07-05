@@ -24,5 +24,3 @@ services:
     image: liipi-test
     environment:
       BASEURL: http://web/
-    volumes:
-      - "./etc/protractor:/project"

@@ -2,8 +2,9 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/application/parkandride-application.iml" filepath="$PROJECT_DIR$/application/parkandride-application.iml" />
-      <module fileurl="file://$PROJECT_DIR$/project.iml" filepath="$PROJECT_DIR$/project.iml" />
+      <module fileurl="file://$PROJECT_DIR$/liipi-api.iml" filepath="$PROJECT_DIR$/liipi-api.iml" />
+      <module fileurl="file://$PROJECT_DIR$/test/liipi-test.iml" filepath="$PROJECT_DIR$/test/liipi-test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/web/liipi-web.iml" filepath="$PROJECT_DIR$/web/liipi-web.iml" />
     </modules>
   </component>
 </project>

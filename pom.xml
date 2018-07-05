@@ -11,7 +11,7 @@
   </parent>
 
   <groupId>fi.hsl.parkandride</groupId>
-  <artifactId>parkandride-application</artifactId>
+  <artifactId>liipi-api</artifactId>
   <version>1-SNAPSHOT</version>
   <packaging>jar</packaging>
 
@@ -316,12 +316,11 @@
   </repositories>
 
   <build>
+    <finalName>${project.artifactId}</finalName>
+
     <resources>
       <resource>
-        <directory>src/main/frontend/bin</directory>
-      </resource>
-      <resource>
-        <directory>src/main/frontend/src/assets</directory>
+        <directory>web/src/assets</directory>
         <includes>
           <include>translations-fi.json</include>
         </includes>

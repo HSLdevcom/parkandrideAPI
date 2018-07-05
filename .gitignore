@@ -1,8 +1,4 @@
 /target/
-/*/target/
-*.iml
-.classpath
-.project
+/.classpath
+/.project
 .DS_Store
-application.pid
-protractor-results.xml

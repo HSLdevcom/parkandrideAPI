@@ -6,13 +6,13 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="parkandride-application" />
+        <module name="liipi-api" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
+      <module name="liipi-api" target="1.8" />
       <module name="parent" target="1.8" />
       <module name="parkandride-application" target="1.8" />
-      <module name="project" target="1.5" />
     </bytecodeTargetLevel>
   </component>
 </project>

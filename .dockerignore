@@ -1,9 +1,6 @@
-/target/
-/*/target/
-*.iml
-.classpath
-.project
-.DS_Store
-application.pid
-protractor-results.xml
 /.git/
+/target/
+# XXX: the api module needs translations from the web module, so the modules cannot be in sibling directories for isolation
+/web/
+!/web/src/assets/
+/test/

@@ -1,6 +1,6 @@
 /bin/
 /build/
-/node/
 /node_modules/
 /vendor
 /*.log
+

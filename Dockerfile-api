@@ -13,11 +13,12 @@ WORKDIR /project
 USER app
 
 # cache Maven dependencies
-COPY --chown=app application/pom.xml /project/
+COPY --chown=app pom.xml /project/
 RUN mvn dependency:go-offline --batch-mode --errors
 
 # do the build
-COPY --chown=app application /project/
+COPY --chown=app web/src/assets/translations-*.json /project/web/src/assets/
+COPY --chown=app src /project/src/
 # TODO: add --offline flag after finding out which plugin deps are not downloaded by go-offline
 RUN mvn clean package -P noui --batch-mode --errors
 
@@ -32,6 +33,6 @@ USER app
 EXPOSE 8080
 # TODO: parameterize the profile for test runs
 # TODO: add docker profile
-CMD ["java", "-Xmx1000m", "-XX:MaxMetaspaceSize=64m", "-jar", "parkandride.jar", "--spring.profiles.active=env_local"]
+CMD ["java", "-Xmx1000m", "-XX:MaxMetaspaceSize=64m", "-jar", "liipi-api.jar", "--spring.profiles.active=env_local"]
 
-COPY --from=builder /project/target/parkandride-application-1-SNAPSHOT.jar /app/parkandride.jar
+COPY --from=builder /project/target/liipi-api.jar /app/liipi-api.jar

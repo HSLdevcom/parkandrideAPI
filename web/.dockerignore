@@ -1,8 +1,5 @@
 /bin/
 /build/
-/node/
 /node_modules/
 /vendor
 /*.log
-/.yarn-cache.tgz
-/.yarn-cache.lock

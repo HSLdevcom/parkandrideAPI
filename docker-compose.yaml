@@ -1,9 +1,15 @@
 version: '3.6'
 services:
 
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile-api
+    image: liipi-api
+
   web:
     build:
-      context: application/src/main/frontend
+      context: web
       dockerfile: Dockerfile-web
     image: liipi-web
     environment:
@@ -11,15 +17,9 @@ services:
     ports:
       - "8080:80"
 
-  api:
-    build:
-      context: .
-      dockerfile: Dockerfile-api
-    image: liipi-api
-
   test:
     build:
-      context: etc/protractor
+      context: test
       dockerfile: Dockerfile-test
     image: liipi-test
     environment:

@@ -4,16 +4,26 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
-    <groupId>fi.hsl.parkandride</groupId>
-    <artifactId>parent</artifactId>
-    <version>1-SNAPSHOT</version>
-    <relativePath>../parent/pom.xml</relativePath>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-parent</artifactId>
+    <version>1.2.7.RELEASE</version>
+    <relativePath/>
   </parent>
 
+  <groupId>fi.hsl.parkandride</groupId>
   <artifactId>parkandride-application</artifactId>
+  <version>1-SNAPSHOT</version>
   <packaging>jar</packaging>
 
   <properties>
+    <java.version>1.8</java.version>
+    <assertj.version>3.2.0</assertj.version>
+    <guava.version>18.0</guava.version>
+    <json-simple.version>1.1.1</json-simple.version>
+    <jackson.version>2.4.5</jackson.version>
+    <maven-plugin.coveralls.version>3.0.0</maven-plugin.coveralls.version>
+    <maven-plugin.jacoco.version>0.7.2.201409121644</maven-plugin.jacoco.version>
+    <generatedSnippetsDir>${project.build.directory}/generated-snippets</generatedSnippetsDir>
     <maven-plugin.frontend.version>0.0.23</maven-plugin.frontend.version>
     <maven-plugin.frontend.node.version>v0.10.38</maven-plugin.frontend.node.version>
     <maven-plugin.frontend.npm.version>2.1.18</maven-plugin.frontend.npm.version>
@@ -52,9 +62,44 @@
   </dependencyManagement>
 
   <dependencies>
+
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-web</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-actuator</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.assertj</groupId>
+      <artifactId>assertj-core</artifactId>
+      <version>${assertj.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.googlecode.json-simple</groupId>
+      <artifactId>json-simple</artifactId>
+      <version>${json-simple.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>nl.jqno.equalsverifier</groupId>
+      <artifactId>equalsverifier</artifactId>
+      <version>1.6</version>
+      <scope>test</scope>
+    </dependency>
+
     <dependency>
       <groupId>com.google.guava</groupId>
       <artifactId>guava</artifactId>
+      <version>${guava.version}</version>
     </dependency>
     <dependency>
       <groupId>org.springframework.data</groupId>
@@ -219,6 +264,12 @@
     <dependency>
       <groupId>com.fasterxml.jackson.datatype</groupId>
       <artifactId>jackson-datatype-joda</artifactId>
+      <version>${jackson.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-core</artifactId>
+      <version>${jackson.version}</version>
     </dependency>
 
     <dependency>
@@ -238,6 +289,7 @@
     <dependency>
       <groupId>org.springframework.restdocs</groupId>
       <artifactId>spring-restdocs-mockmvc</artifactId>
+      <version>1.1.0.RELEASE</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -248,6 +300,20 @@
     </dependency>
 
   </dependencies>
+
+  <repositories>
+    <!-- only required by spring-restdocs -->
+    <repository>
+      <id>spring-milestones</id>
+      <url>https://repo.spring.io/milestone</url>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </repository>
+  </repositories>
 
   <build>
     <resources>
@@ -277,6 +343,26 @@
     </resources>
 
     <plugins>
+
+      <plugin>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <includes>
+            <include>**/*Test.class</include>
+            <include>**/*Documentation.class</include>
+          </includes>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.eluder.coveralls</groupId>
+        <artifactId>coveralls-maven-plugin</artifactId>
+      </plugin>
+
+      <plugin>
+        <groupId>org.jacoco</groupId>
+        <artifactId>jacoco-maven-plugin</artifactId>
+      </plugin>
 
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
@@ -309,7 +395,7 @@
           </execution>
         </executions>
       </plugin>
-      
+
       <!-- REST API Documentation -->
 
       <plugin>
@@ -356,6 +442,42 @@
       </plugin>
 
     </plugins>
+
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.eluder.coveralls</groupId>
+          <artifactId>coveralls-maven-plugin</artifactId>
+          <version>${maven-plugin.coveralls.version}</version>
+        </plugin>
+        <plugin>
+          <groupId>org.jacoco</groupId>
+          <artifactId>jacoco-maven-plugin</artifactId>
+          <version>${maven-plugin.jacoco.version}</version>
+          <configuration>
+            <excludes>
+              <exclude>**/parkandride/dev/**</exclude>
+              <exclude>**/parkandride/back/sql/**</exclude>
+              <exclude>**/parkandride/core/domain/wkt/**</exclude>
+            </excludes>
+          </configuration>
+          <executions>
+            <execution>
+              <id>prepare-agent</id>
+              <goals>
+                <goal>prepare-agent</goal>
+              </goals>
+            </execution>
+            <execution>
+              <id>report</id>
+              <goals>
+                <goal>report</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
+      </plugins>
+    </pluginManagement>
   </build>
 
   <profiles>

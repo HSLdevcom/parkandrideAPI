@@ -13,13 +13,11 @@ WORKDIR /project
 USER app
 
 # cache Maven dependencies
-COPY --chown=app pom.xml /project/
-COPY --chown=app parent/pom.xml /project/parent/
-COPY --chown=app application/pom.xml /project/application/
+COPY --chown=app application/pom.xml /project/
 RUN mvn dependency:go-offline --batch-mode --errors
 
 # do the build
-COPY --chown=app . /project/
+COPY --chown=app application /project/
 # TODO: add --offline flag after finding out which plugin deps are not downloaded by go-offline
 RUN mvn clean package -P noui --batch-mode --errors
 
@@ -36,4 +34,4 @@ EXPOSE 8080
 # TODO: add docker profile
 CMD ["java", "-Xmx1000m", "-XX:MaxMetaspaceSize=64m", "-jar", "parkandride.jar", "--spring.profiles.active=env_local"]
 
-COPY --from=builder /project/application/target/parkandride-application-1-SNAPSHOT.jar /app/parkandride.jar
+COPY --from=builder /project/target/parkandride-application-1-SNAPSHOT.jar /app/parkandride.jar

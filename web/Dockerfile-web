@@ -10,11 +10,11 @@ WORKDIR /project
 USER node
 
 # cache node_modules
-COPY --chown=node yarn-offline-mirror /project/yarn-offline-mirror
-COPY --chown=node .yarnrc package.json yarn.lock /project/
+COPY --chown=node package.json yarn.lock /project/
 RUN yarn install --frozen-lockfile --non-interactive --no-progress && \
     yarn cache clean && \
     bower cache clean
+LABEL cache-this-layer=liipi-web-builder-cache
 
 # do the build
 COPY --chown=node *.* /project/

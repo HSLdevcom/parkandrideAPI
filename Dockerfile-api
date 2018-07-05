@@ -15,6 +15,7 @@ USER app
 # cache Maven dependencies
 COPY --chown=app pom.xml /project/
 RUN mvn dependency:go-offline --batch-mode --errors
+LABEL cache-this-layer=liipi-api-builder-cache
 
 # do the build
 COPY --chown=app web/src/assets/translations-*.json /project/web/src/assets/

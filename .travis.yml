@@ -3,6 +3,11 @@ sudo: required
 services:
   - docker
 
+addons:
+  apt:
+    packages:
+      - docker-ce
+
 script:
   - set -e
   - docker-compose build

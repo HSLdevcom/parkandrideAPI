@@ -4,6 +4,7 @@ services:
   - docker
 
 script:
+  - set -e
   - docker-compose build
   - docker-compose up -d db api web
   - docker-compose run test

@@ -1,4 +1,4 @@
 #!/usr/bin/env bash
 set -eux
 
-mvn clean verify -P noui --batch-mode --errors
+mvn clean verify --batch-mode --errors

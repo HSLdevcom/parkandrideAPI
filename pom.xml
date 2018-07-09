@@ -24,9 +24,6 @@
     <maven-plugin.coveralls.version>3.0.0</maven-plugin.coveralls.version>
     <maven-plugin.jacoco.version>0.7.2.201409121644</maven-plugin.jacoco.version>
     <generatedSnippetsDir>${project.build.directory}/generated-snippets</generatedSnippetsDir>
-    <maven-plugin.frontend.version>0.0.23</maven-plugin.frontend.version>
-    <maven-plugin.frontend.node.version>v0.10.38</maven-plugin.frontend.node.version>
-    <maven-plugin.frontend.npm.version>2.1.18</maven-plugin.frontend.npm.version>
     <hikaricp.version>2.0.1</hikaricp.version>
     <querydsl.version>4.0.4</querydsl.version>
     <flyway.version>3.0</flyway.version>
@@ -480,23 +477,6 @@
   </build>
 
   <profiles>
-
-    <profile>
-      <!-- Skips UI tests -->
-      <id>noui</id>
-      <build>
-        <plugins>
-          <plugin>
-            <artifactId>maven-surefire-plugin</artifactId>
-            <configuration>
-              <excludes>
-                <exclude>**/ProtractorTest.class</exclude>
-              </excludes>
-            </configuration>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
 
     <profile>
       <!-- Runs only documentation tests -->

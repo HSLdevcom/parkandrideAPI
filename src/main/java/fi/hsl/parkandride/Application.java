@@ -1,4 +1,4 @@
-// Copyright © 2015 HSL <https://www.hsl.fi>
+// Copyright © 2018 HSL <https://www.hsl.fi>
 // This program is dual-licensed under the EUPL v1.2 and AGPLv3 licenses.
 
 package fi.hsl.parkandride;
@@ -38,7 +38,10 @@ import org.springframework.http.MediaType;
 import org.springframework.web.filter.CharacterEncodingFilter;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.HandlerExceptionResolver;
-import org.springframework.web.servlet.config.annotation.*;
+import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import org.springframework.web.servlet.mvc.WebContentInterceptor;
 import org.springframework.web.servlet.mvc.method.annotation.ExceptionHandlerExceptionResolver;
 
@@ -146,8 +149,8 @@ public class Application extends WebMvcConfigurerAdapter {
             mappings.add("json", "application/json;charset=UTF-8");
             container.setMimeMappings(mappings);
             if (System.getProperty("wslogging.url") != null &&
-                  container instanceof TomcatEmbeddedServletContainerFactory) {
-                TomcatEmbeddedServletContainerFactory tomcat = (TomcatEmbeddedServletContainerFactory)container;
+                    container instanceof TomcatEmbeddedServletContainerFactory) {
+                TomcatEmbeddedServletContainerFactory tomcat = (TomcatEmbeddedServletContainerFactory) container;
                 WillowAccessValve valve = new WillowAccessValve();
                 valve.setUrl(System.getProperty("wslogging.url"));
                 tomcat.addContextValves(valve);
@@ -161,30 +164,8 @@ public class Application extends WebMvcConfigurerAdapter {
     @Profile({FeatureProfile.DEV})
     public static class DevUIConfig extends WebMvcConfigurerAdapter {
 
-        @Override
-        public void addResourceHandlers(ResourceHandlerRegistry registry) {
-            String projectDir = System.getProperty("user.dir");
-            if (!projectDir.endsWith("application")) {
-                projectDir += "/application";
-            }
-
-            registry.addResourceHandler("/**").addResourceLocations(
-                    "file://" + projectDir + "/src/main/frontend/build/",
-                    "/",
-                    "classpath:/META-INF/resources/",
-                    "classpath:/resources/",
-                    "classpath:/static/",
-                    "classpath:/public/"
-            );
-        }
-
-        @Override
-        public void addViewControllers(ViewControllerRegistry registry) {
-            registry.addViewController("/").setViewName("forward:/index.html");
-        }
-
         @Bean
-        @Profile({ FeatureProfile.H2 })
+        @Profile({FeatureProfile.H2})
         public ServletRegistrationBean h2servletRegistration() {
             ServletRegistrationBean reg = new ServletRegistrationBean(new WebServlet());
             reg.addUrlMappings("/console/*");

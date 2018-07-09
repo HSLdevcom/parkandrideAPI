@@ -33,6 +33,6 @@ USER app
 
 EXPOSE 8080
 ENV SPRING_PROFILES_ACTIVE="docker,psql,env_local"
-CMD ["java", "-XX:+UnlockExperimentalVMOptions", "-XX:+UseCGroupMemoryLimitForHeap", "-jar", "liipi-api.jar"]
+CMD ["java", "-Xmx400m", "-XX:MaxMetaspaceSize=64m", "-jar", "liipi-api.jar"]
 
 COPY --from=builder /project/target/liipi-api.jar /app/liipi-api.jar

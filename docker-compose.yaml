@@ -11,7 +11,7 @@ services:
       PSQL_PASSWORD: liipi
       PSQL_HOST: db:5432
     mem_limit: 500m
-    mem_reservation: 300m
+    mem_reservation: 400m
 
   web:
     build:

@@ -7,6 +7,7 @@ services:
       dockerfile: Dockerfile-api
     image: liipi-api
     environment:
+      SPRING_PROFILES_ACTIVE: docker,psql,ci
       PSQL_USERNAME: liipi
       PSQL_PASSWORD: liipi
       PSQL_HOST: db:5432

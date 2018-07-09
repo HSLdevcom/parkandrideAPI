@@ -25,16 +25,6 @@ services:
     mem_limit: 50m
     mem_reservation: 20m
 
-  test:
-    build:
-      context: test
-      dockerfile: Dockerfile-test
-    image: liipi-test
-    environment:
-      BASEURL: http://web/
-    mem_limit: 1200m
-    mem_reservation: 1100m
-
   db:
     build:
       context: db
@@ -47,3 +37,13 @@ services:
       - "5432:5432"
     mem_limit: 100m
     mem_reservation: 50m
+
+  test:
+    build:
+      context: test
+      dockerfile: Dockerfile-test
+    image: liipi-test
+    environment:
+      BASEURL: http://web/
+    mem_limit: 1200m
+    mem_reservation: 1100m

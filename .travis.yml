@@ -1,32 +1,13 @@
-language: java
-jdk:
-  - oraclejdk8
-env:
-  - PTOR_DIR=$TRAVIS_BUILD_DIR/etc/protractor APP_MODULE=$TRAVIS_BUILD_DIR/application DISPLAY=:99 SPRING_PROFILES_ACTIVE=env_travis
-addons:
-  apt:
-    packages:
-      - language-pack-fi
-  postgresql: "9.3"
-sudo: false
-cache:
-  directories:
-    - $HOME/.m2
-    - etc/protractor/node_modules
-    - application/src/main/frontend/node_modules/
-    - application/src/main/frontend/node/
-    - application/src/main/frontend/vendor/
-before_install:
-  - sh -e /etc/init.d/xvfb start
-install:
-  - bash etc/scripts/db/psql-init-db.sh -U postgres
-  - cd $PTOR_DIR
-  - npm install
+sudo: required
+
+services:
+  - docker
+
 script:
-  - cd $TRAVIS_BUILD_DIR
-  - mvn verify -Dmaven.javadoc.skip=true -B -V
-after_success:
-  - mvn coveralls:report
+  - docker-compose build
+  - docker-compose up -d db api web
+  - docker-compose run test
+
 notifications:
   email: false
   flowdock:

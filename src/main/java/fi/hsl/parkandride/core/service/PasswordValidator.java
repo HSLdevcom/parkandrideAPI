@@ -1,15 +1,14 @@
-// Copyright © 2015 HSL <https://www.hsl.fi>
+// Copyright © 2018 HSL <https://www.hsl.fi>
 // This program is dual-licensed under the EUPL v1.2 and AGPLv3 licenses.
 
 package fi.hsl.parkandride.core.service;
 
+import fi.hsl.parkandride.core.domain.Violation;
+import org.springframework.util.StringUtils;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.regex.Pattern;
-
-import org.springframework.util.StringUtils;
-
-import fi.hsl.parkandride.core.domain.Violation;
 
 public class PasswordValidator {
     private PasswordValidator() {}
@@ -21,7 +20,7 @@ public class PasswordValidator {
             "(?=.*[A-ZÅÄÖ])" +  // at least one uppercase letter
             "(?!.*\\s)" +       // no whitespace inside
             "." +               // everything provided that the previous condition checks pass
-            "{8,15}" +          // min max length
+            "{8,50}" +          // min max length
             "$"                 // end
     );
 
@@ -36,7 +35,7 @@ public class PasswordValidator {
     public static void validate(String password, Collection<Violation> violations) {
         if (!StringUtils.hasText(password) || !PATTERN.matcher(password).matches()) {
             violations.add(new Violation("BadPassword", "password",
-                    "Password with length of 8-15 must contain at least one digit, one lowercase and one uppercase character"));
+                    "Password with length of 8-50 must contain at least one digit, one lowercase and one uppercase character"));
         }
     }
 }

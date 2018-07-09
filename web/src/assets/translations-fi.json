@@ -783,7 +783,7 @@
         "UnavailableCapacityOverflow": "ei voi olla enemmän kuin pysäköintihinnoittelun maksimi",
         "OperatorRequired": "anna operaattori",
         "PasswordConfirmationMismatch": "tarkista, että salasanat ovat identtiset",
-        "BadPassword": "salasanan tulee sisältää 8-15 merkkiä, vähintään yksi numero (0-9), yksi pieni aakkonen (a-ö) ja yksi suuri aakkonen (A-Ö)",
+        "BadPassword": "salasanan tulee sisältää 8-50 merkkiä, vähintään yksi numero (0-9), yksi pieni aakkonen (a-ö) ja yksi suuri aakkonen (A-Ö)",
         "PricingNotFound": "pysäköintihinnoittelua ei löydy",
         "Coordinates": "Koordinaatit ovat ulkona sallituista rajoista: 19° <= x/pituuspiiri <= 32°, 59.5° <= y/leveyspiiri <= 70.5°"
     }

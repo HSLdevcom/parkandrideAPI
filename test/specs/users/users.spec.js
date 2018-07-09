@@ -162,7 +162,7 @@ describe('users', function () {
 
             expect(usersPage.userModal.isDisplayed()).toBe(true);
             expect(usersPage.userModal.getViolations()).toEqual([{ path: "Salasana",
-                message: "salasanan tulee sisältää 8-15 merkkiä, vähintään yksi numero (0-9), yksi pieni aakkonen (a-ö) ja yksi suuri aakkonen (A-Ö)" }]);
+                message: "salasanan tulee sisältää 8-50 merkkiä, vähintään yksi numero (0-9), yksi pieni aakkonen (a-ö) ja yksi suuri aakkonen (A-Ö)" }]);
         });
 
         it('added user is shown on the list', function () {

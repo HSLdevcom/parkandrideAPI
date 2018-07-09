@@ -1,16 +1,15 @@
-// Copyright © 2015 HSL <https://www.hsl.fi>
+// Copyright © 2018 HSL <https://www.hsl.fi>
 // This program is dual-licensed under the EUPL v1.2 and AGPLv3 licenses.
 
 package fi.hsl.parkandride.core.service;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
-import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 @RunWith(Parameterized.class)
 public class PasswordValidatorTest {
@@ -34,7 +33,7 @@ public class PasswordValidatorTest {
                 { "i2345678", false },         // missing uppercase letter
                 { "i2E4 5678", false },        // whitespace inside
                 { "i2E4567", false },          // too short
-                { "i2E4567890123456", false }, // too long
+                { "i2E4567890i2E4567890i2E4567890i2E4567890i2E4567890x", false }, // too long
         };
     }
 

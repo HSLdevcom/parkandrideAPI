@@ -1,6 +1,6 @@
 /.git/
 /target/
 # XXX: the api module needs translations from the web module, so the modules cannot be in sibling directories for isolation
-/web/
-!/web/src/assets/
+web
+!web/src/assets/translations-*.json
 /test/

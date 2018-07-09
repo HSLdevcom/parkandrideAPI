@@ -8,6 +8,10 @@ addons:
     packages:
       - docker-ce
 
+before_script:
+  # Disable services enabled by default to avoid port conflicts
+  - sudo service postgresql stop
+
 script:
   - set -e
   - docker-compose build

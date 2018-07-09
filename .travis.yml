@@ -16,7 +16,8 @@ script:
   - set -e
   - docker-compose build
   - docker-compose up -d db api web
-  - docker-compose run test
+  - ./await-api-up.sh
+  - docker-compose run --rm test
 
 notifications:
   email: false

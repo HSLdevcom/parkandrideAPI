@@ -347,6 +347,7 @@
             <include>**/*Test.class</include>
             <include>**/*Documentation.class</include>
           </includes>
+          <redirectTestOutputToFile>true</redirectTestOutputToFile>
         </configuration>
       </plugin>
 

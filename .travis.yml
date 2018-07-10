@@ -11,22 +11,9 @@ addons:
 before_script:
   # disable services enabled by default to avoid port conflicts
   - sudo service postgresql stop
-  # load cached Docker images
-  - if [[ -d $HOME/docker ]]; then ls $HOME/docker/*.tar.gz | xargs -I {file} sh -c "zcat {file} | docker load"; fi
 
 script:
   - ./ci-build.sh
-
-before_cache:
-  # cache Docker images
-  - ./cache-builder-images.sh
-  - mkdir -p $HOME/docker
-  - docker save liipi-api-builder-cache | gzip -1 > "$HOME/docker/liipi-api-builder-cache.tar.gz"
-  - docker save liipi-web-builder-cache | gzip -1 > "$HOME/docker/liipi-web-builder-cache.tar.gz"
-
-cache:
-  directories:
-    - $HOME/docker
 
 notifications:
   email: false

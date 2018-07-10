@@ -13,11 +13,7 @@ before_script:
   - sudo service postgresql stop
 
 script:
-  - set -e
-  - docker-compose build
-  - docker-compose up -d db api web
-  - ./await-api-up.sh || (docker-compose logs api web db; false)
-  - docker-compose run --rm test
+  - ./ci-build.sh
 
 notifications:
   email: false

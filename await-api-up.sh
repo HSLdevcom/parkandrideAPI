@@ -2,7 +2,7 @@
 set -u
 
 tries=0
-max_tries=20
+max_tries=30
 interval=1
 
 while true; do

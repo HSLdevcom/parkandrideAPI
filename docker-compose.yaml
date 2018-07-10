@@ -44,8 +44,6 @@ services:
     image: liipi-test
     environment:
       BASEURL: http://web/
-    mem_limit: 1200m
-    mem_reservation: 1100m
 
   wait-for-it:
     image: willwill/wait-for-it

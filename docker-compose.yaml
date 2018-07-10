@@ -36,8 +36,6 @@ services:
       POSTGRES_PASSWORD: liipi
     ports:
       - "5432:5432"
-    mem_limit: 100m
-    mem_reservation: 50m
 
   test:
     build:

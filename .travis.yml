@@ -16,7 +16,7 @@ script:
   - set -e
   - docker-compose build
   - docker-compose up -d db api web
-  - ./await-api-up.sh
+  - ./await-api-up.sh || (docker-compose logs api; false)
   - docker-compose run --rm test
 
 notifications:

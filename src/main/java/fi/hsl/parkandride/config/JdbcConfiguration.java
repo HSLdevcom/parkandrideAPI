@@ -1,4 +1,4 @@
-// Copyright © 2016 HSL <https://www.hsl.fi>
+// Copyright © 2018 HSL <https://www.hsl.fi>
 // This program is dual-licensed under the EUPL v1.2 and AGPLv3 licenses.
 
 package fi.hsl.parkandride.config;
@@ -7,7 +7,7 @@ import com.querydsl.sql.SQLExceptionTranslator;
 import com.querydsl.sql.SQLTemplates;
 import com.querydsl.sql.postgresql.PostgreSQLQueryFactory;
 import com.querydsl.sql.spatial.GeoDBTemplates;
-import com.querydsl.sql.spatial.PGGeometryType;
+import com.querydsl.sql.spatial.PGgeometryType2;
 import com.querydsl.sql.spatial.PostGISTemplates;
 import com.querydsl.sql.types.DateTimeType;
 import com.querydsl.sql.types.EnumByNameType;
@@ -98,10 +98,10 @@ public class JdbcConfiguration {
     @Profile(FeatureProfile.PSQL)
     public com.querydsl.sql.Configuration querydslConfigurationPsql() {
         com.querydsl.sql.Configuration conf = querydslConfiguration();
-        conf.register("FACILITY", "LOCATION", new PGGeometryType<>(Polygon.class));
-        conf.register("PORT", "LOCATION", new PGGeometryType<>(Point.class));
-        conf.register("HUB", "LOCATION", new PGGeometryType<>(Point.class));
-        conf.register("REGION", "AREA", new PGGeometryType<>(Polygon.class));
+        conf.register("FACILITY", "LOCATION", new PGgeometryType2<>(Polygon.class));
+        conf.register("PORT", "LOCATION", new PGgeometryType2<>(Point.class));
+        conf.register("HUB", "LOCATION", new PGgeometryType2<>(Point.class));
+        conf.register("REGION", "AREA", new PGgeometryType2<>(Polygon.class));
         return conf;
     }
 

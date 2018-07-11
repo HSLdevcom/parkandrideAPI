@@ -1,4 +1,4 @@
-// Copyright © 2015 HSL <https://www.hsl.fi>
+// Copyright © 2018 HSL <https://www.hsl.fi>
 // This program is dual-licensed under the EUPL v1.2 and AGPLv3 licenses.
 
 package com.querydsl.sql.spatial;
@@ -15,11 +15,15 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 
-public class PGGeometryType<T extends Geometry> extends AbstractType<T> {
+/**
+ * A generic version of {@link PGgeometryType}. Needs to be in same package
+ * to be able to access some package-private utility classes.
+ */
+public class PGgeometryType2<T extends Geometry> extends AbstractType<T> {
 
     private final Class<T> type;
 
-    public PGGeometryType(Class<T> type) {
+    public PGgeometryType2(Class<T> type) {
         super(Types.STRUCT);
         this.type = type;
     }

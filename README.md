@@ -25,12 +25,27 @@ Running UI tests
 
     docker-compose run --rm test
 
+Tagging the temporary Docker containers which were used for building the app, so that the dependency cache will survive `docker image prune`  
+
+    ./cache-builder-images.sh 
+
+Running tests against PostgreSQL (after caching builder images)
+
+    docker-compose up -d db
+    docker run --rm -v "$PWD:/project" --network host liipi-api-builder-cache mvn clean verify -P psql
+
 
 ### Developing locally, outside Docker
 
 Build the API backend
 
     mvn clean verify
+
+The test output will be saved in `target/surefire-reports`
+
+Run tests against PostgreSQL (default is H2)
+
+    mvn clean verify -P psql
 
 Build the web frontend
 

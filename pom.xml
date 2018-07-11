@@ -496,6 +496,23 @@
       </build>
     </profile>
 
+    <profile>
+      <!-- Runs tests against PostgreSQL -->
+      <id>psql</id>
+      <build>
+        <plugins>
+          <plugin>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <configuration>
+              <systemPropertyVariables>
+                <spring.profiles.active>psql</spring.profiles.active>
+              </systemPropertyVariables>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
   </profiles>
 
 </project>

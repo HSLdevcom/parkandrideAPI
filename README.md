@@ -72,6 +72,13 @@ Running only some tests
     yarn run test --specs specs/auth/auth.spec.js
 
 
+# Deployment
+
+Publish the latest built images as version 123
+
+    ./publish.sh 123
+
+
 # License
 
 Copyright © 2015-2018 [HSL](https://www.hsl.fi/)

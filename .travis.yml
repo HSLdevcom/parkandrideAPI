@@ -15,6 +15,11 @@ before_script:
 script:
   - ./ci-build.sh
 
+after_success:
+  - pip install --user awscli
+  - export PATH="$PATH:$HOME/.local/bin"
+  - ./publish.sh "$TRAVIS_BUILD_NUMBER"
+
 notifications:
   email: false
   flowdock:

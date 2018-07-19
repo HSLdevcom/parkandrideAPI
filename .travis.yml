@@ -11,6 +11,12 @@ addons:
 before_script:
   # disable services enabled by default to avoid port conflicts
   - sudo service postgresql stop
+  # update docker-compose
+  - sudo curl -L https://github.com/docker/compose/releases/download/1.22.0/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose
+  - sudo chmod +x /usr/local/bin/docker-compose
+  # print installed versions
+  - docker version
+  - docker-compose --version
 
 script:
   - ./ci-build.sh "$TRAVIS_BUILD_NUMBER"

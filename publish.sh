@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 set -eu
-: ${1:? Usage: $0 new_tag}
+: ${1:? Usage: $0 TAG}
 
 readonly TAG="$1"
 readonly REGISTRY="995219551342.dkr.ecr.eu-west-1.amazonaws.com"

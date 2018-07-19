@@ -1,7 +1,12 @@
 #!/usr/bin/env bash
-set -eux
+set -eu
+: ${1:? Usage: $0 VERSION}
 
-docker-compose build
+readonly VERSION="$1"
+
+set -x
+
+docker-compose build --build-arg version="${VERSION}" api web db
 docker-compose up -d db
 docker-compose run --rm wait-for-it db:5432 --timeout=30 || (docker-compose logs db; false)
 docker-compose up -d api

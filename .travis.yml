@@ -13,7 +13,7 @@ before_script:
   - sudo service postgresql stop
 
 script:
-  - ./ci-build.sh
+  - ./ci-build.sh "$TRAVIS_BUILD_NUMBER"
 
 after_success:
   - pip install --user awscli

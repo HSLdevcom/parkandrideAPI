@@ -21,7 +21,9 @@ LABEL cache-this-layer=liipi-api-builder-cache
 COPY --chown=app web/src/assets/translations-*.json /project/web/src/assets/
 COPY --chown=app src /project/src/
 # TODO: add --offline flag after finding out which plugin deps are not downloaded by go-offline
-RUN mvn clean package --batch-mode --errors
+ARG version=1-SNAPSHOT
+RUN mvn versions:set -DnewVersion="$version" -DgenerateBackupPoms=false --batch-mode --errors && \
+    mvn clean package --batch-mode --errors
 
 # ------------------------------------------------------------
 

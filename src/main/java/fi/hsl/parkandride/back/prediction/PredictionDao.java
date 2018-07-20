@@ -1,14 +1,11 @@
-// Copyright © 2016 HSL <https://www.hsl.fi>
+// Copyright © 2018 HSL <https://www.hsl.fi>
 // This program is dual-licensed under the EUPL v1.2 and AGPLv3 licenses.
 
 package fi.hsl.parkandride.back.prediction;
 
 import com.querydsl.core.QueryException;
 import com.querydsl.core.Tuple;
-import com.querydsl.core.types.Expression;
-import com.querydsl.core.types.MappingProjection;
-import com.querydsl.core.types.Path;
-import com.querydsl.core.types.Projections;
+import com.querydsl.core.types.*;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.sql.dml.SQLInsertClause;
 import com.querydsl.sql.dml.SQLUpdateClause;
@@ -107,13 +104,13 @@ public class PredictionDao implements PredictionRepository {
                 // remove too fine-grained predictions
                 .collect(groupByRoundedTimeKeepingNewest()) // -> Map<DateTime, Prediction>
                 .values().stream()
-                        // normalize resolution
+                // normalize resolution
                 .map(roundTimestampsToPredictionResolution())
-                        // interpolate too coarse-grained predictions
+                // interpolate too coarse-grained predictions
                 .sorted(Comparator.comparing(p -> p.timestamp))
                 .map(Collections::singletonList)                            // 1. wrap values in immutable singleton lists
                 .reduce(new ArrayList<>(), linearInterpolation()).stream()  // 2. mutable ArrayList as accumulator
-                        // normalize range
+                // normalize range
                 .filter(isWithin(start, end)) // after interpolation because of PredictionDaoTest.does_linear_interpolation_also_between_values_outside_the_prediction_window
                 .collect(toList());
     }
@@ -185,6 +182,23 @@ public class PredictionDao implements PredictionRepository {
         if (predictions.isEmpty()) {
             return;
         }
+        List<SubQueryExpression<DateTime>> queries = new ArrayList<>();
+        for (Prediction p : predictions) {
+            queries.add(queryFactory.from(qPredictionHistory)
+                    .select(qPredictionHistory.ts)
+                    .where(qPredictionHistory.predictorId.eq(predictorId),
+                            qPredictionHistory.forecastDistanceInMinutes.eq(((int) new Duration(start, p.timestamp).getStandardMinutes())),
+                            qPredictionHistory.ts.eq(p.timestamp)));
+        }
+        Set<DateTime> conflicts = new HashSet<>(queryFactory.query().unionAll(queries).fetch());
+        // XXX: avoid an infinite retry loop by not inserting predictions which we know to conflict
+        predictions = predictions.stream()
+                .filter(p -> !conflicts.contains(p.timestamp))
+                .collect(toList());
+        if (predictions.isEmpty()) {
+            return;
+        }
+
         SQLInsertClause insert = queryFactory.insert(qPredictionHistory);
         predictions.forEach(p -> insert
                 .set(qPredictionHistory.predictorId, predictorId)

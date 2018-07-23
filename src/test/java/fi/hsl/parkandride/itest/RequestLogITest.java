@@ -1,4 +1,4 @@
-// Copyright © 2015 HSL <https://www.hsl.fi>
+// Copyright © 2018 HSL <https://www.hsl.fi>
 // This program is dual-licensed under the EUPL v1.2 and AGPLv3 licenses.
 
 package fi.hsl.parkandride.itest;
@@ -19,6 +19,7 @@ import org.junit.Test;
 import org.springframework.http.HttpStatus;
 
 import javax.inject.Inject;
+import java.time.Duration;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.CompletableFuture;
@@ -48,6 +49,7 @@ public class RequestLogITest extends AbstractReportingITest {
     @Before
     public void init() {
         unknownSource = messageSource.getMessage("reports.requestlog.unknownSource", null, new Locale("fi"));
+        batchingRequestLogService.staggeredUpdateMaxDelay = Duration.ZERO;
     }
 
     // ---------------------
@@ -168,7 +170,7 @@ public class RequestLogITest extends AbstractReportingITest {
     @Test
     public void illegalApplicationId_resultsInBadRequest() {
         given().header(SOURCE_HEADER, "ömmöm").when().get(UrlSchema.FACILITY, 1)
-            .then().assertThat().statusCode(HttpStatus.BAD_REQUEST.value());
+                .then().assertThat().statusCode(HttpStatus.BAD_REQUEST.value());
     }
 
     @Test

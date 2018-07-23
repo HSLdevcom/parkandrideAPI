@@ -35,6 +35,7 @@ USER app
 
 EXPOSE 8080
 ENV SPRING_PROFILES_ACTIVE="docker,psql"
+ENV TZ="Europe/Helsinki"
 CMD ["java", "-Xmx400m", "-XX:MaxMetaspaceSize=64m", "-XX:+ExitOnOutOfMemoryError", "-jar", "liipi-api.jar"]
 
 COPY --from=builder /project/target/liipi-api.jar /app/liipi-api.jar

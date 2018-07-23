@@ -14,6 +14,7 @@ import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.time.Instant;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -232,8 +233,10 @@ public class AuthenticationService {
         UserSecret userSecret = loadUser(userId);
 
         // Token revoked?
-        if (tokenTimestamp < userSecret.minTokenTimestamp.getMillis()) {
-            throw new AuthenticationRequiredException("Token revoked");
+        long minTokenTimestamp = userSecret.minTokenTimestamp.getMillis();
+        if (tokenTimestamp < minTokenTimestamp) {
+            throw new AuthenticationRequiredException("Token revoked: created " + Instant.ofEpochMilli(tokenTimestamp) +
+                    " but revoked " + Instant.ofEpochMilli(minTokenTimestamp));
         }
 
         // Token type mismatch

@@ -1,4 +1,4 @@
-// Copyright © 2015 HSL <https://www.hsl.fi>
+// Copyright © 2018 HSL <https://www.hsl.fi>
 // This program is dual-licensed under the EUPL v1.2 and AGPLv3 licenses.
 
 package fi.hsl.parkandride.front;
@@ -13,6 +13,8 @@ import fi.hsl.parkandride.core.service.AuthenticationRequiredException;
 import fi.hsl.parkandride.core.service.ValidationException;
 import org.apache.catalina.connector.ClientAbortException;
 import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -37,6 +39,8 @@ import static org.springframework.http.MediaType.APPLICATION_JSON;
 @ControllerAdvice
 public class ExceptionHandlers {
 
+    private static final Logger log = LoggerFactory.getLogger(ExceptionHandlers.class);
+
     @InitBinder
     public void validateApplicationId(HttpServletRequest request) {
         final String appId = request.getHeader(LIIPI_APPLICATION_ID);
@@ -44,7 +48,7 @@ public class ExceptionHandlers {
     }
 
     @ExceptionHandler(NotFoundException.class)
-    @ResponseStatus(value= NOT_FOUND)
+    @ResponseStatus(value = NOT_FOUND)
     public void notFound(HttpServletRequest req, NotFoundException ex) {
         // status: 404
     }
@@ -85,7 +89,8 @@ public class ExceptionHandlers {
 
     @ExceptionHandler(AuthenticationRequiredException.class)
     @ResponseBody
-    public ResponseEntity<Void> authenticationRequiredException(AuthenticationRequiredException ex) {
+    public ResponseEntity<Void> authenticationRequiredException(HttpServletRequest request, AuthenticationRequiredException ex) {
+        log.info("Authentication failed for request " + request.getMethod() + " " + request.getRequestURI(), ex);
         HttpHeaders headers = new HttpHeaders();
         return new ResponseEntity<Void>(null, headers, UNAUTHORIZED);
     }
@@ -114,7 +119,7 @@ public class ExceptionHandlers {
         return path.toString();
     }
 
-    @ExceptionHandler({ HttpRequestMethodNotSupportedException.class, HttpMediaTypeException.class })
+    @ExceptionHandler({HttpRequestMethodNotSupportedException.class, HttpMediaTypeException.class})
     public ResponseEntity<Map<String, Object>> methodNotSupportedException(HttpServletRequest request, ServletException ex) {
         return handleError(request, BAD_REQUEST, ex);
     }

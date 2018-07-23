@@ -1,33 +1,25 @@
-// Copyright © 2015 HSL <https://www.hsl.fi>
+// Copyright © 2018 HSL <https://www.hsl.fi>
 // This program is dual-licensed under the EUPL v1.2 and AGPLv3 licenses.
 
 package fi.hsl.parkandride.core.service;
 
-import static com.google.common.base.Charsets.UTF_8;
-import static fi.hsl.parkandride.core.domain.Permission.ALL_OPERATORS;
-import static org.joda.time.Days.daysBetween;
-
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import javax.crypto.Mac;
-import javax.crypto.spec.SecretKeySpec;
-
+import fi.hsl.parkandride.core.back.UserRepository;
+import fi.hsl.parkandride.core.domain.*;
 import org.apache.commons.codec.binary.Base64;
 import org.jasypt.util.password.PasswordEncryptor;
 import org.joda.time.DateTime;
 import org.joda.time.Period;
 
-import fi.hsl.parkandride.core.back.UserRepository;
-import fi.hsl.parkandride.core.domain.Login;
-import fi.hsl.parkandride.core.domain.NotFoundException;
-import fi.hsl.parkandride.core.domain.OperatorEntity;
-import fi.hsl.parkandride.core.domain.Permission;
-import fi.hsl.parkandride.core.domain.User;
-import fi.hsl.parkandride.core.domain.UserSecret;
-import fi.hsl.parkandride.core.domain.Violation;
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import static com.google.common.base.Charsets.UTF_8;
+import static fi.hsl.parkandride.core.domain.Permission.ALL_OPERATORS;
+import static org.joda.time.Days.daysBetween;
 
 public class AuthenticationService {
 
@@ -146,13 +138,13 @@ public class AuthenticationService {
             login.permissions = login.role.permissions;
             login.operatorId = userSecret.user.operatorId;
             int days = daysBetween(now(), userSecret.passwordUpdatedTimestamp.plus(passwordExpiresDuration)).getDays() + 1;
-        	login.passwordExpireInDays = 0;
+            login.passwordExpireInDays = 0;
             if (days > 0 && days < passwordReminderDuration.getDays()) {
-            	login.passwordExpireInDays = days;
+                login.passwordExpireInDays = days;
             } else if (days <= 0) {
-            	login.passwordExpireInDays = -1;
+                login.passwordExpireInDays = -1;
             }
-        	login.userId = userSecret.user.id;
+            login.userId = userSecret.user.id;
             return login;
         } catch (NotFoundException e) {
             throw new ValidationException(new Violation("BadCredentials"));
@@ -174,7 +166,7 @@ public class AuthenticationService {
         try {
             return userRepository.getUser(id);
         } catch (NotFoundException e) {
-            throw new AuthenticationRequiredException();
+            throw new AuthenticationRequiredException("User not found: " + id);
         }
     }
 
@@ -205,11 +197,11 @@ public class AuthenticationService {
     @TransactionalRead
     public User authenticate(String token) {
         if (token == null) {
-            throw new AuthenticationRequiredException();
+            throw new AuthenticationRequiredException("Token missing");
         }
         Matcher m = TOKEN_PATTERN.matcher(token);
         if (!m.matches()) {
-            throw new AuthenticationRequiredException();
+            throw new AuthenticationRequiredException("Token format invalid");
         }
         String message = m.group("message");
         String type = m.group("type");
@@ -219,7 +211,7 @@ public class AuthenticationService {
         String expectedMac = hmac(message);
 
         if (!expectedMac.equals(givenMac)) {
-            throw new AuthenticationRequiredException();
+            throw new AuthenticationRequiredException("Token MAC mismatch");
         }
         boolean perpetualToken = false;
         switch (type) {
@@ -227,26 +219,26 @@ public class AuthenticationService {
                 // Temporal token expired?
                 DateTime expires = new DateTime(tokenTimestamp).plus(expiresDuration);
                 if (expires.isBeforeNow()) {
-                    throw new AuthenticationRequiredException();
+                    throw new AuthenticationRequiredException("Token expired: " + expires);
                 }
                 break;
             case "P":
                 perpetualToken = true;
                 break;
             default:
-                throw new AuthenticationRequiredException();
+                throw new AuthenticationRequiredException("Token type invalid: " + type);
         }
 
         UserSecret userSecret = loadUser(userId);
 
         // Token revoked?
         if (tokenTimestamp < userSecret.minTokenTimestamp.getMillis()) {
-            throw new AuthenticationRequiredException();
+            throw new AuthenticationRequiredException("Token revoked");
         }
 
         // Token type mismatch
         if (userSecret.user.role.perpetualToken != perpetualToken) {
-            throw new AuthenticationRequiredException();
+            throw new AuthenticationRequiredException("Token type mismatch");
         }
 
         return userSecret.user;

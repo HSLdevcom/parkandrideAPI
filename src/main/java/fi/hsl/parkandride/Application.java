@@ -6,7 +6,6 @@ package fi.hsl.parkandride;
 import com.fasterxml.jackson.databind.Module;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
-import com.nitorcreations.willow.logging.tomcat8.WillowAccessValve;
 import fi.hsl.parkandride.core.domain.Phone;
 import fi.hsl.parkandride.core.domain.Time;
 import fi.hsl.parkandride.core.service.BatchingRequestLogService;
@@ -29,7 +28,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.web.HttpMessageConverters;
 import org.springframework.boot.autoconfigure.web.WebMvcAutoConfiguration;
 import org.springframework.boot.context.embedded.*;
-import org.springframework.boot.context.embedded.tomcat.TomcatEmbeddedServletContainerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
@@ -148,13 +146,6 @@ public class Application extends WebMvcConfigurerAdapter {
             mappings.add("html", "text/html;charset=UTF-8");
             mappings.add("json", "application/json;charset=UTF-8");
             container.setMimeMappings(mappings);
-            if (System.getProperty("wslogging.url") != null &&
-                    container instanceof TomcatEmbeddedServletContainerFactory) {
-                TomcatEmbeddedServletContainerFactory tomcat = (TomcatEmbeddedServletContainerFactory) container;
-                WillowAccessValve valve = new WillowAccessValve();
-                valve.setUrl(System.getProperty("wslogging.url"));
-                tomcat.addContextValves(valve);
-            }
         }
 
     }

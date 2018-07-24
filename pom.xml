@@ -33,7 +33,6 @@
     <hibernate-validator.version>5.1.2.Final</hibernate-validator.version>
     <javax.el.version>2.2.4</javax.el.version>
     <rest-assured.version>2.4.0</rest-assured.version>
-    <willow-version>2.0.2</willow-version>
     <jetty-version>9.3.1.v20150714</jetty-version>
     <jsch-version>0.1.53</jsch-version>
   </properties>
@@ -162,16 +161,6 @@
           <artifactId>postgresql</artifactId>
         </exclusion>
       </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>com.nitorcreations</groupId>
-      <artifactId>willow-logging-tomcat8</artifactId>
-      <version>${willow-version}</version>
-    </dependency>
-    <dependency>
-      <groupId>com.nitorcreations</groupId>
-      <artifactId>willow-logging-logback</artifactId>
-      <version>${willow-version}</version>
     </dependency>
     <dependency>
       <groupId>com.vividsolutions</groupId>

@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<included>
-
-  <appender name="WILLOW" class="com.nitorcreations.willow.logging.logback.WebSocketAppender">
-    <uri>${wslogging.url}</uri>
-  </appender>
-
-</included>

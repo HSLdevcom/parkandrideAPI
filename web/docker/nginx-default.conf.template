@@ -6,6 +6,10 @@ server {
   listen  80;
   server_name  liipi-web;
 
+  gzip_static on;
+  gzip  on;
+  gzip_types  application/json;
+
   if ($http_x_forwarded_proto = 'http') {
     return 301 https://$http_host$request_uri;
   }

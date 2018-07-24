@@ -1,5 +1,10 @@
 FROM node:10 AS builder
 
+# tools
+RUN apt-get update && \
+    apt-get install -y zopfli && \
+    rm -rf /var/lib/apt/lists/*
+
 # some bower components expect that bower is installed
 RUN npm install -g bower
 
@@ -21,6 +26,11 @@ COPY --chown=node *.* /project/
 COPY --chown=node karma /project/karma/
 COPY --chown=node src /project/src/
 RUN yarn run build
+
+# offline compress static resources
+RUN find /project/bin/static -type f -regextype posix-extended \
+        -iregex '.*\.(html?|js|css|svg|otf|eot|ttf|woff|txt|json)' \
+        -exec zopfli '{}' \;
 
 # ------------------------------------------------------------
 

@@ -31,7 +31,7 @@ RUN yarn run build
 
 # offline compress static resources
 RUN find /project/bin/static -type f -regextype posix-extended \
-        -iregex '.*\.(html?|js|css|svg|otf|eot|ttf|woff|txt|json)' \
+        -iregex '.*\.(html?|js|css|svg|otf|ttf|txt|json)' \
         -exec zopfli '{}' \; \
         -exec brotli --best '{}' \;
 

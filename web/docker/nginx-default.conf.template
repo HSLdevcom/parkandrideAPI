@@ -6,7 +6,11 @@ server {
   listen  80;
   server_name  liipi-web;
 
+  # offline compressed static resources
   gzip_static on;
+  brotli_static on;
+
+  # dynamically compressed proxied content
   gzip  on;
   gzip_types  application/json;
 

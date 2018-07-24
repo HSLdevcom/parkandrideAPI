@@ -58,6 +58,7 @@ describe('manage contacts', function () {
 
     it('should require phone or email', function() {
         contactPage.openEditDialog(1);
+        browser.sleep(500); // XXX
         expect(editModal.isDisplayed()).toBe(true);
         editModal.setPhone("");
         editModal.setEmail("");
@@ -79,6 +80,7 @@ describe('manage contacts', function () {
 
     it('should cancel edits', function() {
         contactPage.openEditDialog(1);
+        browser.sleep(500); // XXX
         expect(editModal.isDisplayed()).toBe(true);
         editModal.setPhone("+44 343 222 2222");
         editModal.setEmail("hsl@hsl.fi");

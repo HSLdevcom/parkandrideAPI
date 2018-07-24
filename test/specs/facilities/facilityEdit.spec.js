@@ -229,6 +229,7 @@ describe('edit facility view', function () {
             editPage.selectServiceContact("hsl");
 
             editPage.save();
+            browser.sleep(500); // XXX
             expect(viewPage.isDisplayed()).toBe(true);
 
             // Back to edit...

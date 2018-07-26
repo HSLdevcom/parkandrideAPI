@@ -53,6 +53,12 @@ Build the web frontend
     yarn install
     yarn run build
 
+Developer version of the web frontend, proxying the API backend in port 8080 on the host machine (running in your IDE). The web application will run on <http://localhost:8081> 
+
+    docker-compose up -d webdev
+
+> TODO: There is some live reloading support in the old Grunt build (`yarn run autobuild`), but it doesn't work properly. Grunt is outdated, so consider upgrading to Webpack and webpack-dev-server.  
+
 
 ### Running UI tests locally
 

@@ -27,6 +27,21 @@ services:
     mem_limit: 50m
     mem_reservation: 20m
 
+  webdev:
+    build:
+      context: web
+      dockerfile: Dockerfile-web
+    image: liipi-web
+    environment:
+      API_URL: http://host.docker.internal:8080
+    # FIXME: if the host directory is removed and recreated with the same name, the container cannot anymore see it
+    #volumes:
+    #  - ./web/bin/static:/usr/share/nginx/html:ro
+    ports:
+      - "8081:80"
+    mem_limit: 50m
+    mem_reservation: 20m
+
   db:
     build:
       context: db

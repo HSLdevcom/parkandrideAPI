@@ -37,7 +37,7 @@ RUN find /project/bin/static -type f -regextype posix-extended \
 
 # ------------------------------------------------------------
 
-FROM nginx:1.15 AS nginx-builder
+FROM nginx:1.15.2 AS nginx-builder
 
 # Add brotli module to nginx. Based on the article
 # https://www.fastfwd.com/improve-http-compression-with-brotli/
@@ -86,7 +86,7 @@ LABEL cache-this-layer=liipi-web-nginx-builder-cache
 
 # ------------------------------------------------------------
 
-FROM nginx:1.15
+FROM nginx:1.15.2
 
 COPY --from=nginx-builder /usr/sbin/nginx /usr/sbin/nginx
 

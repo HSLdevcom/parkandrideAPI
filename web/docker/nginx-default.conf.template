@@ -27,6 +27,13 @@ server {
     proxy_set_header  Host $http_host;
   }
 
+  # longer timeout for reports to avoid timeout during normal operation
+  location /api/v1/reports {
+    proxy_read_timeout 600s;
+    proxy_pass  ${API_URL};
+    proxy_set_header  Host $http_host;
+  }
+
   location /internal {
     proxy_pass  ${API_URL};
     proxy_set_header  Host $http_host;
